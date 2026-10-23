@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
@@ -3142,6 +3142,600 @@ fn interaction_or_role<'a>(
     }
 }
 
+struct SourceBlockBuilder {
+    url: Option<String>,
+    terms: Option<String>,
+    origin: Option<String>,
+    ttl: Option<u64>,
+    position: Option<SourcePosition>,
+    alt_ref: Option<f64>,
+    alt_key: Option<String>,
+    datum: Option<String>,
+    time: Option<String>,
+    time_key: Option<String>,
+    time_parts: Option<Vec<String>>,
+    time_scale: Option<String>,
+    fields: Vec<SourceField>,
+}
+
+fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<SourceBlock, String> {
+    let url = builder
+        .url
+        .ok_or_else(|| format!("line {line}: url absent"))?;
+    let terms = builder
+        .terms
+        .ok_or_else(|| format!("line {line}: terms absent"))?;
+    let ttl = builder
+        .ttl
+        .ok_or_else(|| format!("line {line}: ttl absent"))?;
+    if ttl == 0 {
+        return Err(format!("line {line}: ttl must be positive"));
+    }
+    let position = builder
+        .position
+        .ok_or_else(|| format!("line {line}: block position absent"))?;
+    if let SourcePosition::Fixed { lat, lon } = &position
+        && (!(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon))
+    {
+        return Err(format!("line {line}: lat/lon outside range"));
+    }
+    if !matches!(
+        position,
+        SourcePosition::At { .. } | SourcePosition::Sky { .. }
+    ) && builder.alt_ref.is_some() == builder.alt_key.is_some()
+    {
+        return Err(format!(
+            "line {line}: exactly one of alt_ref/alt_key required"
+        ));
+    }
+    let time_refs = usize::from(builder.time.is_some())
+        + usize::from(builder.time_key.is_some())
+        + usize::from(builder.time_parts.is_some());
+    let sky = matches!(position, SourcePosition::Sky { .. });
+    if time_refs != 1 && !(sky && time_refs == 0) {
+        return Err(format!(
+            "line {line}: exactly one of time/time_key/time_parts required"
+        ));
+    }
+    if let Some(parts) = &builder.time_parts
+        && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.is_empty()))
+    {
+        return Err(format!(
+            "line {line}: time_parts needs five or six non-empty keys (Y,M,D,h,m[,s])"
+        ));
+    }
+    if matches!(&position, SourcePosition::Moving { .. }) && builder.time_key.is_none() {
+        return Err(format!(
+            "line {line}: moving block needs time_key and one of alt_ref/alt_key"
+        ));
+    }
+    let datum = match (&position, builder.datum) {
+        (SourcePosition::At { frame, .. }, None) => frame.clone(),
+        (SourcePosition::Sky { frame, epoch, .. }, None) => format!("{frame} {epoch}"),
+        (_, Some(datum)) => datum,
+        (_, None) => return Err(format!("line {line}: datum absent")),
+    };
+    let time_scale = match builder.time_scale {
+        Some(scale) => scale,
+        None if sky => String::new(),
+        None => return Err(format!("line {line}: time_scale absent")),
+    };
+    if builder.fields.is_empty() {
+        return Err(format!("line {line}: fields absent"));
+    }
+    Ok(SourceBlock {
+        url,
+        terms,
+        origin: builder.origin,
+        ttl,
+        position,
+        alt_ref: builder.alt_ref,
+        alt_key: builder.alt_key,
+        datum,
+        time: builder.time,
+        time_key: builder.time_key,
+        time_parts: builder.time_parts,
+        time_scale,
+        fields: builder.fields,
+    })
+}
+
+pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
+    let mut out = Vec::new();
+    let mut current: Option<SourceBlockBuilder> = None;
+    for (index, raw) in content.lines().enumerate() {
+        let line = raw.split('#').next().unwrap_or("").trim();
+        if line.is_empty() {
+            continue;
+        }
+        let line_no = index + 1;
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let head = parts.first().copied().unwrap_or("");
+        if head == "url" {
+            if let Some(builder) = current.take() {
+                out.push(finish_source_block(builder, line_no - 1)?);
+            }
+            if parts.len() != 2 {
+                return Err(format!("line {line_no}: url needs one value"));
+            }
+            current = Some(SourceBlockBuilder {
+                url: Some(parts[1].to_string()),
+                terms: None,
+                origin: None,
+                ttl: None,
+                position: None,
+                alt_ref: None,
+                alt_key: None,
+                datum: None,
+                time: None,
+                time_key: None,
+                time_parts: None,
+                time_scale: None,
+                fields: Vec::new(),
+            });
+            continue;
+        }
+        let Some(builder) = current.as_mut() else {
+            return Err(format!("line {line_no}: {head} outside a source block"));
+        };
+        match head {
+            "terms" if parts.len() >= 2 => builder.terms = Some(parts[1..].join(" ")),
+            "origin" if parts.len() >= 2 => builder.origin = Some(parts[1..].join(" ")),
+            "ttl" if parts.len() == 2 => {
+                builder.ttl = Some(
+                    parts[1]
+                        .parse::<u64>()
+                        .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
+                );
+            }
+            "no-cadence" => builder.ttl = Some(NO_CADENCE),
+            "at" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: at needs a body before attributes"));
+                }
+                let body = parts[1].to_string();
+                let mut frame = None;
+                let mut distance_au = None;
+                let mut time = None;
+                let mut time_key = None;
+                let mut time_parts = None;
+                let mut time_scale = None;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: at token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: at attribute {key} is empty"));
+                    }
+                    match key {
+                        "frame" => frame = Some(value.to_string()),
+                        "distance_au" => {
+                            distance_au = Some(value.parse::<f64>().map_err(|_| {
+                                format!("line {line_no}: distance_au {value} is not a number")
+                            })?)
+                        }
+                        "time" => time = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "time_parts" => {
+                            time_parts = Some(
+                                value
+                                    .split(',')
+                                    .map(|part| part.trim().to_string())
+                                    .collect::<Vec<_>>(),
+                            )
+                        }
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        _ => return Err(format!("line {line_no}: unknown at attribute {key}")),
+                    }
+                }
+                let frame = frame.ok_or_else(|| format!("line {line_no}: at needs frame="))?;
+                builder.position = Some(SourcePosition::At {
+                    body,
+                    frame,
+                    distance_au,
+                });
+                builder.time = time;
+                builder.time_key = time_key;
+                builder.time_parts = time_parts;
+                builder.time_scale = time_scale;
+            }
+            "sky" => {
+                let mut frame = None;
+                let mut ra_key = None;
+                let mut dec_key = None;
+                let mut epoch = None;
+                let mut plx_key = None;
+                let mut dist_key = None;
+                for token in &parts[1..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: sky token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: sky attribute {key} is empty"));
+                    }
+                    match key {
+                        "frame" => frame = Some(value.to_string()),
+                        "ra_key" => ra_key = Some(value.to_string()),
+                        "dec_key" => dec_key = Some(value.to_string()),
+                        "epoch" => epoch = Some(value.to_string()),
+                        "plx_key" => plx_key = Some(value.to_string()),
+                        "dist_key" => dist_key = Some(value.to_string()),
+                        _ => return Err(format!("line {line_no}: unknown sky attribute {key}")),
+                    }
+                }
+                let (Some(ra_key), Some(dec_key), Some(epoch)) = (ra_key, dec_key, epoch) else {
+                    return Err(format!(
+                        "line {line_no}: sky needs ra_key, dec_key and epoch"
+                    ));
+                };
+                let frame = frame.ok_or_else(|| format!("line {line_no}: sky needs frame="))?;
+                builder.position = Some(SourcePosition::Sky {
+                    frame,
+                    ra_key,
+                    dec_key,
+                    epoch,
+                    plx_key,
+                    dist_key,
+                });
+            }
+            "on" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: on needs a body before attributes"));
+                }
+                let mut lat = None;
+                let mut lon = None;
+                let mut alt_ref = None;
+                let mut alt_key = None;
+                let mut datum = None;
+                let mut time = None;
+                let mut time_key = None;
+                let mut time_parts = None;
+                let mut time_scale = None;
+                let mut has_frame = false;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: on token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: on attribute {key} is empty"));
+                    }
+                    match key {
+                        "lat" => lat = value.parse::<f64>().ok(),
+                        "lon" => lon = value.parse::<f64>().ok(),
+                        "alt" | "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt_key" => alt_key = Some(value.to_string()),
+                        "datum" => datum = Some(value.to_string()),
+                        "time" => time = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "time_parts" => {
+                            time_parts = Some(
+                                value
+                                    .split(',')
+                                    .map(|part| part.trim().to_string())
+                                    .collect::<Vec<_>>(),
+                            )
+                        }
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        "frame" => has_frame = true,
+                        _ => return Err(format!("line {line_no}: unknown on attribute {key}")),
+                    }
+                }
+                if !has_frame {
+                    return Err(format!("line {line_no}: on needs frame="));
+                }
+                if let (Some(lat), Some(lon)) = (lat, lon) {
+                    builder.position = Some(SourcePosition::Fixed { lat, lon });
+                }
+                builder.alt_ref = alt_ref;
+                builder.alt_key = alt_key;
+                builder.datum = datum;
+                builder.time = time;
+                builder.time_key = time_key;
+                builder.time_parts = time_parts;
+                builder.time_scale = time_scale;
+            }
+            "query" | "track" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!(
+                        "line {line_no}: {head} needs a body before attributes"
+                    ));
+                }
+                let mut lat_key = None;
+                let mut lon_key = None;
+                let mut alt_ref = None;
+                let mut alt_key = None;
+                let mut time_key = None;
+                let mut datum = None;
+                let mut time_scale = None;
+                let mut has_frame = false;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: {head} token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
+                    }
+                    match key {
+                        "lat_key" => lat_key = Some(value.to_string()),
+                        "lon_key" => lon_key = Some(value.to_string()),
+                        "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt_key" => {
+                            if value == "absent" || value == "pending" {
+                                return Err(format!(
+                                    "line {line_no}: alt_key carries the sentinel {value}; use alt_ref"
+                                ));
+                            }
+                            alt_key = Some(value.to_string())
+                        }
+                        "time_key" => time_key = Some(value.to_string()),
+                        "datum" => datum = Some(value.to_string()),
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        "frame" => has_frame = true,
+                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
+                    }
+                }
+                if !has_frame {
+                    return Err(format!("line {line_no}: {head} needs frame="));
+                }
+                let (Some(lat_key), Some(lon_key), Some(time_key)) = (lat_key, lon_key, time_key)
+                else {
+                    return Err(format!(
+                        "line {line_no}: {head} needs lat_key, lon_key and time_key"
+                    ));
+                };
+                if alt_ref.is_some() == alt_key.is_some() {
+                    return Err(format!(
+                        "line {line_no}: {head} needs exactly one of alt_ref/alt_key"
+                    ));
+                }
+                builder.position = Some(SourcePosition::Moving { lat_key, lon_key });
+                builder.alt_ref = alt_ref;
+                builder.alt_key = alt_key;
+                builder.time_key = Some(time_key);
+                builder.datum = datum;
+                builder.time_scale = time_scale;
+            }
+            "field" | "first" | "last" | "lastrow" | "quantity" if parts.len() >= 5 => {
+                let extract = match head {
+                    "first" => SourceExtract::First,
+                    "last" => SourceExtract::Last,
+                    "lastrow" => SourceExtract::LastRow,
+                    "quantity" => SourceExtract::Quantity,
+                    _ => SourceExtract::Field,
+                };
+                let key = parts[1].to_string();
+                let name = parts[2].to_string();
+                let unit = parts[3].to_string();
+                let mut source_column = None;
+                let mut source_key = None;
+                let mut alt_offset = None;
+                let mut alt_min_offset = None;
+                let mut alt_max_offset = None;
+                let mut where_clause = None;
+                let mut idx = 4usize;
+                while idx < parts.len() {
+                    if parts[idx] == "where" {
+                        where_clause = Some(parts[idx + 1..].join(" "));
+                        break;
+                    }
+                    let token = parts[idx];
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: {head} token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
+                    }
+                    if value == "absent" || value == "pending" {
+                        return Err(format!(
+                            "line {line_no}: {head} attribute {key} carries the sentinel {value}"
+                        ));
+                    }
+                    let parsed = value.parse::<f64>().ok().filter(|v| v.is_finite());
+                    match key {
+                        "source_column" => {
+                            source_column = value.parse::<usize>().ok();
+                            if source_column.is_none() {
+                                return Err(format!(
+                                    "line {line_no}: source_column {value} is not a column"
+                                ));
+                            }
+                        }
+                        "source_key" => source_key = Some(value.to_string()),
+                        "alt_offset" => alt_offset = parsed,
+                        "alt_min_offset" => alt_min_offset = parsed,
+                        "alt_max_offset" => alt_max_offset = parsed,
+                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
+                    }
+                    idx += 1;
+                }
+                if source_column.is_some() == source_key.is_some() {
+                    return Err(format!(
+                        "line {line_no}: exactly one of source_column/source_key required"
+                    ));
+                }
+                let alt_offset =
+                    alt_offset.ok_or_else(|| format!("line {line_no}: alt_offset absent"))?;
+                if alt_min_offset.is_some() != alt_max_offset.is_some() {
+                    return Err(format!(
+                        "line {line_no}: layer needs both alt_min_offset and alt_max_offset"
+                    ));
+                }
+                if let (Some(min), Some(max)) = (alt_min_offset, alt_max_offset)
+                    && min >= max
+                {
+                    return Err(format!("line {line_no}: layer min must be below max"));
+                }
+                builder.fields.push(SourceField {
+                    key,
+                    name,
+                    unit,
+                    extract,
+                    where_clause,
+                    source_column,
+                    source_key,
+                    alt_offset,
+                    alt_min_offset,
+                    alt_max_offset,
+                });
+            }
+            _ => return Err(format!("line {line_no}: unread source directive {head}")),
+        }
+    }
+    if let Some(builder) = current {
+        out.push(finish_source_block(builder, content.lines().count())?);
+    }
+    Ok(out)
+}
+
+pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>> {
+    let mut errors = Vec::new();
+    let mut fields_by_url: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for (index, block) in blocks.iter().enumerate() {
+        let at = |message: String| format!("block {}: {message}", index + 1);
+        if block.url.trim().is_empty() {
+            errors.push(at("url is empty".to_string()));
+        }
+        if block.terms.trim().is_empty() {
+            errors.push(at("terms is empty".to_string()));
+        }
+        if block.ttl == 0 {
+            errors.push(at("ttl must be positive".to_string()));
+        }
+        if block.datum.trim().is_empty() {
+            errors.push(at("datum is empty".to_string()));
+        }
+        if block.time_scale.trim().is_empty()
+            && !matches!(&block.position, SourcePosition::Sky { .. })
+        {
+            errors.push(at("time_scale is empty".to_string()));
+        }
+        match &block.position {
+            SourcePosition::Fixed { lat, lon } => {
+                if !lat.is_finite() || !lon.is_finite() {
+                    errors.push(at("lat/lon must be finite".to_string()));
+                } else if !(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon) {
+                    errors.push(at("lat/lon outside range".to_string()));
+                }
+            }
+            SourcePosition::Moving { lat_key, lon_key } => {
+                if lat_key.trim().is_empty() || lon_key.trim().is_empty() {
+                    errors.push(at("moving position needs lat_key and lon_key".to_string()));
+                }
+            }
+            SourcePosition::At { body, frame, .. } => {
+                if body.trim().is_empty() || frame.trim().is_empty() {
+                    errors.push(at("body-frame position needs body and frame".to_string()));
+                }
+            }
+            SourcePosition::Sky {
+                frame,
+                ra_key,
+                dec_key,
+                epoch,
+                ..
+            } => {
+                if frame.trim().is_empty()
+                    || ra_key.trim().is_empty()
+                    || dec_key.trim().is_empty()
+                    || epoch.trim().is_empty()
+                {
+                    errors.push(at("sky position needs frame, ra_key, dec_key and epoch".to_string()));
+                }
+            }
+        }
+        if !matches!(
+            &block.position,
+            SourcePosition::At { .. } | SourcePosition::Sky { .. }
+        ) && block.alt_ref.is_some() == block.alt_key.is_some()
+        {
+            errors.push(at("exactly one of alt_ref/alt_key required".to_string()));
+        }
+        let time_refs = usize::from(block.time.is_some())
+            + usize::from(block.time_key.is_some())
+            + usize::from(block.time_parts.is_some());
+        let sky = matches!(&block.position, SourcePosition::Sky { .. });
+        if time_refs != 1 && !(sky && time_refs == 0) {
+            errors.push(at(
+                "exactly one of time/time_key/time_parts required".to_string()
+            ));
+        }
+        if let Some(parts) = &block.time_parts
+            && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.trim().is_empty()))
+        {
+            errors.push(at("time_parts needs five or six non-empty keys".to_string()));
+        }
+        if block.fields.is_empty() {
+            errors.push(at("fields are empty".to_string()));
+        }
+        let seen = fields_by_url.entry(block.url.clone()).or_default();
+        for field in &block.fields {
+            if field.key.trim().is_empty()
+                || field.name.trim().is_empty()
+                || field.unit.trim().is_empty()
+            {
+                errors.push(at(format!(
+                    "field {} has an empty key/name/unit",
+                    field.key
+                )));
+            }
+            if field.source_column.is_some() == field.source_key.is_some() {
+                errors.push(at(format!(
+                    "field {} needs exactly one of source_column/source_key",
+                    field.key
+                )));
+            }
+            if let Some(source_key) = &field.source_key
+                && source_key.trim().is_empty()
+            {
+                errors.push(at(format!("field {} has an empty source_key", field.key)));
+            }
+            if !field.alt_offset.is_finite() {
+                errors.push(at(format!(
+                    "field {} has a non-finite alt_offset",
+                    field.key
+                )));
+            }
+            if field.alt_min_offset.is_some() != field.alt_max_offset.is_some() {
+                errors.push(at(format!(
+                    "field {} needs both alt_min_offset and alt_max_offset",
+                    field.key
+                )));
+            }
+            if let (Some(min), Some(max)) = (field.alt_min_offset, field.alt_max_offset) {
+                if !min.is_finite() || !max.is_finite() {
+                    errors.push(at(format!("field {} has a non-finite layer", field.key)));
+                } else if min >= max {
+                    errors.push(at(format!(
+                        "field {} layer min must be below max (got {min} .. {max})",
+                        field.key
+                    )));
+                }
+            }
+            if !seen.insert(field.key.clone()) {
+                errors.push(at(format!(
+                    "field key {} appears twice for the same URL; url#field would be ambiguous",
+                    field.key
+                )));
+            }
+        }
+    }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -4515,5 +5109,275 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 .iter()
                 .all(|e| !matches!(e, Extract::Field(_)))
         );
+    }
+    #[test]
+    fn source_blocks_require_reference_and_field_offset() {
+        let content = "url https://example.org/ndbc/51003.txt\n\
+terms PD-USGov https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
+field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n\
+field WTMP water_temp C source_column=14 alt_offset=-0.6\n";
+        let blocks = parse_source_blocks(content).expect("source block parses");
+        assert_eq!(blocks.len(), 1);
+        assert_eq!(blocks[0].fields.len(), 2);
+        assert_eq!(blocks[0].fields[0].alt_offset, 4.0);
+        assert_eq!(blocks[0].fields[1].alt_offset, -0.6);
+
+        let missing_offset = content.replace(" alt_offset=4.0", "");
+        assert!(parse_source_blocks(&missing_offset).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_layer_offsets_and_refuse_nominal_midpoint() {
+        let layer = "url https://example.org/hfradar\n\
+terms CC-BY-4.0 https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
+field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_offset=0.0\n";
+        let blocks = parse_source_blocks(layer).expect("layer parses");
+        assert_eq!(blocks[0].fields[0].source_column, Some(3));
+        assert_eq!(blocks[0].fields[0].alt_min_offset, Some(-2.5));
+        assert_eq!(blocks[0].fields[0].alt_max_offset, Some(0.0));
+
+        let partial = layer.replace(" alt_max_offset=0.0", "");
+        assert!(parse_source_blocks(&partial).is_err());
+        let pending = layer.replace("alt_offset=0.0", "alt_offset=pending");
+        assert!(parse_source_blocks(&pending).is_err());
+    }
+
+    #[test]
+    fn published_absorption_is_a_field_not_a_medium_slot() {
+        let content = concat!(
+            "url https://example.org/riometer\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field absorption_db absorption dB source_column=1 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("published absorption is a field");
+        assert_eq!(blocks[0].fields[0].key, "absorption_db");
+        assert_eq!(blocks[0].fields[0].unit, "dB");
+
+        let medium_slot = content.replace("field absorption_db", "medium absorption_db");
+        assert!(parse_source_blocks(&medium_slot).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_five_part_time_without_century_guess() {
+        let content = concat!(
+            "url https://example.org/ndbc/51003.txt\n",
+            "terms PD-USGov https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
+            " time_parts=YY,MM,DD,hh,mm time_scale=UTC\n",
+            "field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("five-part time parses");
+        let parts = blocks[0].time_parts.as_ref().expect("time_parts");
+        assert_eq!(
+            parts,
+            &vec![
+                "YY".to_string(),
+                "MM".to_string(),
+                "DD".to_string(),
+                "hh".to_string(),
+                "mm".to_string(),
+            ]
+        );
+        assert!(blocks[0].time.is_none());
+        assert!(blocks[0].time_key.is_none());
+
+        let short = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh");
+        assert!(parse_source_blocks(&short).is_err());
+        let two_forms = content.replace("time_scale=UTC", "time_scale=UTC time_key=timestamp");
+        assert!(parse_source_blocks(&two_forms).is_err());
+
+        let dart = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh,mm,ss");
+        let blocks = parse_source_blocks(&dart).expect("DART seconds are explicit");
+        assert_eq!(blocks[0].time_parts.as_ref().map(Vec::len), Some(6));
+    }
+
+    #[test]
+    fn source_blocks_allow_one_url_with_two_datums() {
+        let content = concat!(
+            "url https://example.org/mixed\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field air air C source_column=1 alt_offset=2.0\n",
+            "url https://example.org/mixed\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field water water C source_column=2 alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("same URL may carry two datums");
+        assert_eq!(blocks.len(), 2);
+        assert_eq!(blocks[0].url, blocks[1].url);
+        assert_eq!(blocks[0].datum, "msl");
+        assert_eq!(blocks[1].datum, "sea_surface");
+        assert_ne!(blocks[0].fields[0].key, blocks[1].fields[0].key);
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let ambiguous = content.replace("field water water", "field air air");
+        let blocks =
+            parse_source_blocks(&ambiguous).expect("duplicate keys parse, then fail validation");
+        assert!(validate_source_blocks(&blocks).is_err());
+    }
+
+    #[test]
+    fn source_blocks_keep_block_datum_and_signed_layer_offsets() {
+        let content = concat!(
+            "url https://example.org/water\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field water water C source_column=1 alt_offset=-0.6 alt_min_offset=-2.5 alt_max_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("signed layer parses");
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let flat = content.replace(
+            "alt_min_offset=-2.5 alt_max_offset=0.0",
+            "alt_min_offset=0 alt_max_offset=0",
+        );
+        assert!(parse_source_blocks(&flat).is_err());
+
+        let mut blocks = blocks;
+        blocks[0].fields[0].alt_min_offset = Some(0.0);
+        blocks[0].fields[0].alt_max_offset = Some(0.0);
+        assert!(validate_source_blocks(&blocks).is_err());
+
+        let field_datum = content.replace("alt_offset=-0.6", "alt_offset=-0.6 datum=msl");
+        assert!(parse_source_blocks(&field_datum).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_body_frame_position() {
+        let content = concat!(
+            "url https://example.org/ace\n",
+            "terms PD-USGov https://example.org/terms\n",
+            "at earth frame=barycenter distance_au=0.99 time_key=time_tag time_scale=UTC\n",
+            "ttl 3600\n",
+            "field 0.gsm_bx bx nT source_key=gsm_bx alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("body-frame block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::At { body, frame, distance_au }
+                if body == "earth" && frame == "barycenter" && *distance_au == Some(0.99)
+        ));
+        assert_eq!(blocks[0].datum, "barycenter");
+        assert_eq!(blocks[0].time_key.as_deref(), Some("time_tag"));
+        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("gsm_bx"));
+    }
+
+    #[test]
+    fn source_blocks_accept_sky_position_without_time() {
+        let content = concat!(
+            "url https://example.org/cat\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "sky frame=icrs ra_key=RAJ2000 dec_key=DEJ2000 epoch=J2000\n",
+            "ttl 604800\n",
+            "field ra ra deg source_key=RAJ2000 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("sky block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::Sky { ra_key, dec_key, epoch, .. }
+                if ra_key == "RAJ2000" && dec_key == "DEJ2000" && epoch == "J2000"
+        ));
+        assert_eq!(blocks[0].datum, "icrs J2000");
+    }
+
+    #[test]
+    fn source_blocks_accept_last_with_where() {
+        let content = concat!(
+            "url https://example.org/x\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "at sun frame=barycenter time_key=time_tag time_scale=UTC\n",
+            "ttl 60\n",
+            "last flux f wm2 source_key=flux alt_offset=0 where energy 0.05-0.4nm\n",
+        );
+        let blocks = parse_source_blocks(content).expect("last block parses");
+        assert_eq!(blocks[0].fields[0].extract, SourceExtract::Last);
+        assert_eq!(
+            blocks[0].fields[0].where_clause.as_deref(),
+            Some("energy 0.05-0.4nm")
+        );
+        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("flux"));
+    }
+
+    #[test]
+    fn source_blocks_accept_moving_platform_keys() {
+        let content = concat!(
+            "url https://example.org/track\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "query earth frame=body lat_key=lat lon_key=lon alt_key=height time_key=t datum=ellipsoid time_scale=UTC\n",
+            "field u current m/s source_column=3 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("moving block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::Moving { lat_key, lon_key }
+                if lat_key == "lat" && lon_key == "lon"
+        ));
+        assert_eq!(blocks[0].alt_key.as_deref(), Some("height"));
+        assert_eq!(blocks[0].time_key.as_deref(), Some("t"));
+    }
+
+    #[test]
+    fn moving_platform_accepts_fixed_alt_ref_without_invented_key() {
+        let content = concat!(
+            "url https://example.org/hfradar\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "query earth frame=body lat_key=LAT lon_key=LON alt_ref=0",
+            " time_key=T datum=sea_surface time_scale=UTC\n",
+            "field VELO radial_velocity m/s source_column=3 alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("moving block with fixed alt_ref");
+        assert_eq!(blocks[0].alt_ref, Some(0.0));
+        assert_eq!(blocks[0].alt_key, None);
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let sentinel = content.replace("alt_ref=0", "alt_key=absent");
+        assert!(parse_source_blocks(&sentinel).is_err());
+    }
+
+    #[test]
+    fn source_field_keeps_column_or_key() {
+        let content = concat!(
+            "url https://example.org/hfradar-wave\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field MWHT wave_height m source_column=3 alt_offset=0.0\n",
+            "field MWPD mean_period s source_key=MWPD alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("column and key fields parse");
+        assert_eq!(blocks[0].fields[0].source_column, Some(3));
+        assert_eq!(blocks[0].fields[0].source_key, None);
+        assert_eq!(blocks[0].fields[1].source_column, None);
+        assert_eq!(blocks[0].fields[1].source_key.as_deref(), Some("MWPD"));
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let missing = content.replace(" source_column=3", "");
+        assert!(parse_source_blocks(&missing).is_err());
+    }
+    #[test]
+    fn source_blocks_refuse_two_reference_forms() {
+        let content = "url https://example.org/x\n\
+terms CC-BY-4.0 https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=1 lon=2 alt_ref=0 alt_key=height datum=msl time=epoch time_key=t time_scale=UTC\n\
+field u u m/s source_column=1 alt_offset=0\n";
+        assert!(parse_source_blocks(content).is_err());
     }
 }

@@ -624,6 +624,78 @@ pub struct ModelHead {
     pub max_degree: u32,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum SourceExtract {
+    #[default]
+    Field,
+    First,
+    Last,
+    LastRow,
+    Quantity,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SourceField {
+    pub key: String,
+    pub name: String,
+    pub unit: String,
+    pub extract: SourceExtract,
+    pub where_clause: Option<String>,
+    pub source_column: Option<usize>,
+    pub source_key: Option<String>,
+    pub alt_offset: f64,
+    pub alt_min_offset: Option<f64>,
+    pub alt_max_offset: Option<f64>,
+}
+
+impl SourceField {
+    pub fn source_ref(&self, block: &SourceBlock) -> String {
+        format!("{}#{}", block.url, self.key)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum SourcePosition {
+    Fixed { lat: f64, lon: f64 },
+    Moving { lat_key: String, lon_key: String },
+    At {
+        body: String,
+        frame: String,
+        distance_au: Option<f64>,
+    },
+    Sky {
+        frame: String,
+        ra_key: String,
+        dec_key: String,
+        epoch: String,
+        plx_key: Option<String>,
+        dist_key: Option<String>,
+    },
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SourceBlock {
+    pub url: String,
+    pub terms: String,
+    pub origin: Option<String>,
+    pub ttl: u64,
+    pub position: SourcePosition,
+    pub alt_ref: Option<f64>,
+    pub alt_key: Option<String>,
+    pub datum: String,
+    pub time: Option<String>,
+    pub time_key: Option<String>,
+    pub time_parts: Option<Vec<String>>,
+    pub time_scale: String,
+    pub fields: Vec<SourceField>,
+}
+
+impl SourceBlock {
+    pub fn field(&self, key: &str) -> Option<&SourceField> {
+        self.fields.iter().find(|field| field.key == key)
+    }
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
