@@ -2,6 +2,9 @@ use std::collections::BTreeMap;
 
 use super::*;
 use crate::mathematikerin::channel::ChannelDescriptor;
+use crate::mathematikerin::manifest::{
+    Manifest, ManifestModel, ManifestSelection, ModelRefusal,
+};
 
 pub trait Radiator: Send + Sync {
     fn accept(&mut self, field: Arc<Buffer>);
@@ -385,15 +388,14 @@ impl Default for ReceiverAperture {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TauSource {
     Measured,
-    Derived,
     Pending,
+    Model,
 }
 
 impl TauSource {
     pub fn parse(token: &str) -> Option<Self> {
         match token {
             "measured" => Some(Self::Measured),
-            "derived" => Some(Self::Derived),
             "pending" => Some(Self::Pending),
             _ => None,
         }
@@ -402,10 +404,19 @@ impl TauSource {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Measured => "measured",
-            Self::Derived => "derived",
             Self::Pending => "pending",
+            Self::Model => "model",
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct FieldModel {
+    pub kernel: u8,
+    pub tau: f64,
+    pub tau_src: TauSource,
+    pub absorption: f64,
+    pub advection: f64,
 }
 
 #[derive(Clone)]
@@ -413,17 +424,68 @@ pub struct FieldConfig {
     pub key: String,
     pub name: String,
     pub band_id: Option<String>,
-    pub kernel: u8,
+    pub model: Option<FieldModel>,
     pub channel_ref: Option<u8>,
-    pub tau: f64,
-    pub tau_src: TauSource,
-    pub absorption: f64,
-    pub advection: f64,
     pub unit: String,
     pub freq: f64,
     pub bin_width: f64,
     pub fold: Option<(u8, String)>,
     pub aperture: Aperture,
+}
+
+impl std::ops::Deref for FieldConfig {
+    type Target = FieldModel;
+
+    fn deref(&self) -> &Self::Target {
+        self.model
+            .as_ref()
+            .expect("FieldConfig carries no model; callers must refuse absent model")
+    }
+}
+
+impl std::ops::DerefMut for FieldConfig {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.model
+            .as_mut()
+            .expect("FieldConfig carries no model; callers must refuse absent model")
+    }
+}
+
+impl FieldConfig {
+    pub fn from_evidence(
+        block: &SourceBlock,
+        field: &SourceField,
+        selection: &ManifestSelection,
+        channel_ref: Option<u8>,
+    ) -> Result<Self, ModelRefusal> {
+        let model = field.selected_model(block, selection)?;
+        Ok(Self::from_model(field, &model, channel_ref))
+    }
+
+    pub fn from_model(
+        field: &SourceField,
+        model: &ManifestModel,
+        channel_ref: Option<u8>,
+    ) -> Self {
+        Self {
+            key: field.key.clone(),
+            name: field.name.clone(),
+            band_id: None,
+            model: Some(FieldModel {
+                kernel: model.kernel(),
+                tau: model.tau(),
+                tau_src: TauSource::Model,
+                absorption: model.absorption(),
+                advection: model.advection(),
+            }),
+            channel_ref,
+            unit: field.unit.clone(),
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+            aperture: Aperture::None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -526,7 +588,6 @@ pub struct Anchor {
     pub kind: AnchorKind,
     pub body: Option<String>,
     pub attrs: BTreeMap<String, String>,
-    pub legacy: bool,
 }
 
 impl Anchor {
@@ -540,6 +601,14 @@ impl Anchor {
                     scale: 1.0,
                 })
                 .unwrap_or(Frame::Manifest),
+            AnchorKind::Query | AnchorKind::Track | AnchorKind::Coverage | AnchorKind::Global => {
+                self.body
+                    .as_ref()
+                    .map(|body| Frame::Body {
+                        body_name: body.clone(),
+                    })
+                    .unwrap_or(Frame::Manifest)
+            }
             AnchorKind::On => {
                 let Some(body) = self.body.as_ref() else {
                     return Frame::Manifest;
@@ -577,6 +646,9 @@ pub enum Frame {
     Barycenter {
         body_name: String,
         scale: f64,
+    },
+    Body {
+        body_name: String,
     },
     Manifest,
 }
@@ -622,6 +694,108 @@ pub struct ModelHead {
     pub norm: crate::archivar::gfc::Norm,
     pub tide_system: Option<String>,
     pub max_degree: u32,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum SourceExtract {
+    #[default]
+    Field,
+    First,
+    Last,
+    LastRow,
+    Quantity,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SourceField {
+    pub key: String,
+    pub name: String,
+    pub unit: String,
+    pub extract: SourceExtract,
+    pub where_clause: Option<String>,
+    pub source_column: Option<usize>,
+    pub source_key: Option<String>,
+    pub alt_offset: f64,
+    pub alt_min_offset: Option<f64>,
+    pub alt_max_offset: Option<f64>,
+}
+
+impl SourceField {
+    pub fn source_ref(&self, block: &SourceBlock) -> String {
+        format!("{}#{}", block.url, self.key)
+    }
+
+    pub fn selected_model(
+        &self,
+        block: &SourceBlock,
+        selection: &ManifestSelection,
+    ) -> Result<ManifestModel, ModelRefusal> {
+        selection.resolve_for(&self.source_ref(block))
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum SourcePosition {
+    Fixed { lat: f64, lon: f64 },
+    Moving { lat_key: String, lon_key: String },
+    At {
+        body: String,
+        frame: String,
+        distance_au: Option<f64>,
+    },
+    Sky {
+        frame: String,
+        ra_key: String,
+        dec_key: String,
+        epoch: String,
+        plx_key: Option<String>,
+        dist_key: Option<String>,
+    },
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SourceBlock {
+    pub url: String,
+    pub terms: String,
+    pub origin: Option<String>,
+    pub ttl: u64,
+    pub position: SourcePosition,
+    pub alt_ref: Option<f64>,
+    pub alt_key: Option<String>,
+    pub datum: String,
+    pub time: Option<String>,
+    pub time_key: Option<String>,
+    pub time_parts: Option<Vec<String>>,
+    pub time_scale: String,
+    pub fields: Vec<SourceField>,
+}
+
+pub struct RuntimeSource {
+    pub block: SourceBlock,
+    pub fields: Vec<FieldConfig>,
+}
+
+impl SourceBlock {
+    pub fn field(&self, key: &str) -> Option<&SourceField> {
+        self.fields.iter().find(|field| field.key == key)
+    }
+
+    pub fn runtime_fields<F>(
+        &self,
+        manifest: &Manifest,
+        channel_for: F,
+    ) -> Result<Vec<FieldConfig>, ModelRefusal>
+    where
+        F: Fn(&SourceField) -> Option<u8>,
+    {
+        self.fields
+            .iter()
+            .map(|field| {
+                let model = manifest.resolve(&field.source_ref(self))?;
+                Ok(FieldConfig::from_model(field, &model, channel_for(field)))
+            })
+            .collect()
+    }
 }
 
 #[derive(Clone)]
@@ -735,7 +909,9 @@ pub type SampleRecord = (
 
 pub fn frame_body_name(frame: &Frame) -> String {
     match frame {
-        Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => body_name.clone(),
+        Frame::Surface { body_name, .. }
+        | Frame::Barycenter { body_name, .. }
+        | Frame::Body { body_name } => body_name.clone(),
         Frame::Manifest => String::new(),
     }
 }
@@ -757,5 +933,204 @@ mod model_kind_tests {
     #[test]
     fn an_unknown_format_carries_no_guessed_kind() {
         assert_eq!(source_model_kind("ephemeris_binary"), None);
+    }
+}
+
+#[cfg(test)]
+mod source_block_model_tests {
+    use super::*;
+    use crate::mathematikerin::manifest::{
+        ManifestIntent, ManifestSelection, ModelGap, ModelRefusal,
+    };
+
+    fn block() -> SourceBlock {
+        SourceBlock {
+            url: "https://example.org/data.csv".to_string(),
+            terms: "CC-BY-4.0 https://example.org/terms".to_string(),
+            origin: None,
+            ttl: 60,
+            position: SourcePosition::Fixed { lat: 1.0, lon: 2.0 },
+            alt_ref: Some(0.0),
+            alt_key: None,
+            datum: "msl".to_string(),
+            time: Some("2026-10-22T00:00:00Z".to_string()),
+            time_key: None,
+            time_parts: None,
+            time_scale: "UTC".to_string(),
+            fields: vec![
+                SourceField {
+                    key: "flux".to_string(),
+                    name: "flux".to_string(),
+                    unit: "W/m^2".to_string(),
+                    extract: SourceExtract::Field,
+                    where_clause: None,
+                    source_column: Some(1),
+                    source_key: None,
+                    alt_offset: 2.0,
+                    alt_min_offset: None,
+                    alt_max_offset: None,
+                },
+                SourceField {
+                    key: "temp".to_string(),
+                    name: "temperature".to_string(),
+                    unit: "K".to_string(),
+                    extract: SourceExtract::Field,
+                    where_clause: None,
+                    source_column: Some(2),
+                    source_key: None,
+                    alt_offset: 2.0,
+                    alt_min_offset: None,
+                    alt_max_offset: None,
+                },
+            ],
+        }
+    }
+
+    #[test]
+    fn field_pointer_joins_url_and_key() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        assert_eq!(
+            field.source_ref(&block),
+            "https://example.org/data.csv#flux"
+        );
+        assert!(block.field("absent").is_none());
+    }
+
+    #[test]
+    fn a_field_without_a_selection_reports_gaps_not_zeroes() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let bare =
+            ManifestSelection::new("https://example.org/data.csv#flux", ManifestIntent::Science)
+                .expect("select");
+        match field.selected_model(&block, &bare) {
+            Err(ModelRefusal::Gaps(gaps)) => assert_eq!(
+                gaps,
+                vec![
+                    ModelGap::Kernel,
+                    ModelGap::Tau,
+                    ModelGap::Absorption,
+                    ModelGap::Advection,
+                ]
+            ),
+            other => panic!("absence must be a gap, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn another_fields_selection_does_not_leak_onto_this_field() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let other =
+            ManifestSelection::new("https://example.org/data.csv#temp", ManifestIntent::Science)
+                .expect("select")
+                .with_kernel("inverse-square")
+                .expect("kernel")
+                .with_model_tau(
+                    60.0,
+                    crate::mathematikerin::manifest::ModelTauSource::Chosen,
+                )
+                .expect("tau")
+                .with_model_absorption(0.0)
+                .expect("absorption")
+                .with_model_advection(0.0)
+                .expect("advection");
+        assert!(matches!(
+            field.selected_model(&block, &other),
+            Err(ModelRefusal::ForeignSource { .. })
+        ));
+    }
+
+    #[test]
+    fn a_complete_selection_supplies_the_model() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let chosen =
+            ManifestSelection::new("https://example.org/data.csv#flux", ManifestIntent::Science)
+                .expect("select")
+                .with_kernel("inverse-square")
+                .expect("kernel")
+                .with_model_tau(
+                    60.0,
+                    crate::mathematikerin::manifest::ModelTauSource::Chosen,
+                )
+                .expect("tau")
+                .with_model_absorption(0.25)
+                .expect("absorption")
+                .with_model_advection(400.0)
+                .expect("advection");
+        let model = field.selected_model(&block, &chosen).expect("model");
+        assert_eq!(model.kernel(), 0);
+        assert_eq!(model.tau(), 60.0);
+        assert_eq!(model.absorption(), 0.25);
+        assert_eq!(model.advection(), 400.0);
+        assert_eq!(field.alt_offset, 2.0, "evidence stays evidence");
+    }
+
+    #[test]
+    fn from_evidence_builds_a_runtime_field_only_from_a_complete_selection() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let chosen =
+            ManifestSelection::new("https://example.org/data.csv#flux", ManifestIntent::Science)
+                .expect("select")
+                .with_kernel("inverse-square")
+                .expect("kernel")
+                .with_model_tau(
+                    60.0,
+                    crate::mathematikerin::manifest::ModelTauSource::Chosen,
+                )
+                .expect("tau")
+                .with_model_absorption(0.25)
+                .expect("absorption")
+                .with_model_advection(400.0)
+                .expect("advection");
+        let field_config =
+            FieldConfig::from_evidence(&block, field, &chosen, Some(7)).expect("runtime field");
+        let model = field_config.model.expect("model");
+        assert_eq!(model.kernel, 0);
+        assert_eq!(model.tau, 60.0);
+        assert_eq!(model.tau_src, TauSource::Model);
+        assert_eq!(model.absorption, 0.25);
+        assert_eq!(model.advection, 400.0);
+        assert_eq!(field_config.channel_ref, Some(7));
+        assert_eq!(field_config.key, "flux");
+    }
+
+    #[test]
+    fn a_block_builds_runtime_fields_only_through_the_manifest() {
+        let block = block();
+        let mut manifest = Manifest::new();
+        for key in ["flux", "temp"] {
+            manifest
+                .add(
+                    ManifestSelection::new(
+                        format!("https://example.org/data.csv#{key}"),
+                        ManifestIntent::Science,
+                    )
+                    .expect("select")
+                    .with_kernel("inverse-square")
+                    .expect("kernel")
+                    .with_model_tau(60.0, crate::mathematikerin::manifest::ModelTauSource::Chosen)
+                    .expect("tau")
+                    .with_model_absorption(0.0)
+                    .expect("absorption")
+                    .with_model_advection(0.0)
+                    .expect("advection"),
+                )
+                .expect("add");
+        }
+        let fields = block
+            .runtime_fields(&manifest, |_| Some(1))
+            .expect("all fields resolve");
+        assert_eq!(fields.len(), 2);
+        assert_eq!(fields[0].model.as_ref().expect("model").tau, 60.0);
+
+        let incomplete = Manifest::new();
+        assert!(matches!(
+            block.runtime_fields(&incomplete, |_| None),
+            Err(ModelRefusal::Unselected { .. })
+        ));
     }
 }

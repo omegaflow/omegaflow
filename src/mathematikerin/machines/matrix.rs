@@ -623,21 +623,19 @@ impl MatrixMachine {
                 lat,
                 lon,
                 alt,
-            } => {
-                (*alt).map(|alt| MetaAnchor::Surface {
-                    body_name: body_name.clone(),
-                    lat: *lat,
-                    lon: *lon,
-                    alt,
-                })
-            }
+            } => (*alt).map(|alt| MetaAnchor::Surface {
+                body_name: body_name.clone(),
+                lat: *lat,
+                lon: *lon,
+                alt,
+            }),
             crate::archivar::Frame::Barycenter { body_name, scale } => {
                 Some(MetaAnchor::Barycenter {
                     body_name: body_name.clone(),
                     scale: *scale,
                 })
             }
-            crate::archivar::Frame::Manifest => None,
+            crate::archivar::Frame::Body { .. } | crate::archivar::Frame::Manifest => None,
         };
         for (channel, sensor) in channels {
             if model_kind == Some(crate::archivar::ModelKind::Static) || !channel.epoch.is_finite()

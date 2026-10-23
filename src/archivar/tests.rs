@@ -84,16 +84,14 @@ fn anchor_from_frame(frame: Frame) -> Option<Anchor> {
                 kind: AnchorKind::On,
                 body: Some(body_name),
                 attrs,
-                legacy: false,
             })
         }
         Frame::Barycenter { body_name, .. } => Some(Anchor {
             kind: AnchorKind::At,
             body: Some(body_name),
             attrs: BTreeMap::new(),
-            legacy: false,
         }),
-        Frame::Manifest => None,
+        Frame::Body { .. } | Frame::Manifest => None,
     }
 }
 
@@ -102,12 +100,14 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
         key: name.into(),
         name: name.into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -151,12 +151,14 @@ fn pds3_label_column_joins_the_field_line_by_source_key() {
         key: "BX PSSO".into(),
         name: "pds3_mischa_bx_pso".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 604800.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 604800.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: "nT".into(),
         freq: 0.0,
         bin_width: 0.0,
@@ -285,7 +287,7 @@ fn test_last_where_no_match_absent() {
 
 #[test]
 fn test_parse_window_directive() {
-    let content = "url https://example.com/x\nttl 600\nat sun\nwindow 1746727000 1746728000\nfield value euv304 inverse-square em W/m2 60.0 0.0 0.0\n";
+    let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nwindow 1746727000 1746728000\nfield value euv304 inverse-square em W/m2 60.0 pending 0.0 0.0\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     assert_eq!(sources[0].window, Some((1746727000.0, 1746728000.0)));
@@ -293,7 +295,7 @@ fn test_parse_window_directive() {
 
 #[test]
 fn test_parse_window_from_after_until_absent() {
-    let content = "url https://example.com/x\nttl 600\nat sun\nwindow 1746728000 1746727000\nfield value euv304 inverse-square em W/m2 60.0 0.0 0.0\n";
+    let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nwindow 1746728000 1746727000\nfield value euv304 inverse-square em W/m2 60.0 pending 0.0 0.0\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     assert_eq!(
@@ -304,7 +306,7 @@ fn test_parse_window_from_after_until_absent() {
 
 #[test]
 fn test_parse_live_directive_marks_live_only() {
-    let content = "url https://example.com/rolling\nttl 60\nlive\nat sun\nfield value euv inverse-square em W/m2 60.0 0.0 0.0\nurl https://example.com/mirrored\nttl 60\nat sun\nfield value euv inverse-square em W/m2 60.0 0.0 0.0\n";
+    let content = "url https://example.com/rolling\nttl 60\nlive\nat sun frame=barycenter\nfield value euv inverse-square em W/m2 60.0 pending 0.0 0.0\nurl https://example.com/mirrored\nttl 60\nat sun frame=barycenter\nfield value euv inverse-square em W/m2 60.0 pending 0.0 0.0\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 2);
     assert!(
@@ -319,7 +321,7 @@ fn test_parse_live_directive_marks_live_only() {
 
 #[test]
 fn test_parse_station_directive_carries_the_code() {
-    let content = "url https://example.com/abk\nttl 86400\non earth 68.358 18.823 380\nstation ABK\nfield intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0\nurl https://example.com/plain\nttl 60\nat sun\nfield value euv inverse-square em W/m2 60.0 0.0 0.0\n";
+    let content = "url https://example.com/abk\nttl 86400\non earth frame=body lat=68.358 lon=18.823 alt=380\nstation ABK\nfield intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 pending 0.0 0.0\nurl https://example.com/plain\nttl 60\nat sun frame=barycenter\nfield value euv inverse-square em W/m2 60.0 pending 0.0 0.0\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 2);
     assert_eq!(sources[0].station_code.as_deref(), Some("ABK"));
@@ -452,7 +454,7 @@ fn test_extract_series_where_filters_rows() {
 
 #[test]
 fn test_parse_where_clause() {
-    let content = "url https://example.com/euvs.json\nttl 600\nat sun\nlast value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line 304\n";
+    let content = "url https://example.com/euvs.json\nttl 600\nat sun frame=barycenter\nlast value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line 304\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     match &sources[0].extracts[0] {
@@ -467,7 +469,7 @@ fn test_parse_where_clause() {
 
 #[test]
 fn test_parse_where_malformed_refused() {
-    let content = "url https://example.com/euvs.json\nttl 600\nat sun\nlast value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line\n";
+    let content = "url https://example.com/euvs.json\nttl 600\nat sun frame=barycenter\nlast value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     assert!(
@@ -478,7 +480,7 @@ fn test_parse_where_malformed_refused() {
 
 #[test]
 fn test_parse_where_refused_on_field() {
-    let content = "url https://example.com/euvs.json\nttl 600\nat sun\nfield value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line 304\n";
+    let content = "url https://example.com/euvs.json\nttl 600\nat sun frame=barycenter\nfield value euv304 inverse-square em W/m2 60.0 pending 0.0 0.0 where line 304\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     assert!(sources[0].extracts.is_empty());
@@ -494,7 +496,7 @@ fn rtsw_wind_json() -> &'static str {
 
 fn source_where_content(name: &str) -> String {
     format!(
-        "url https://example.com/rtsw_wind.json\nttl 60\nat sun\nfirst proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0 where source {name}\n"
+        "url https://example.com/rtsw_wind.json\nttl 60\nat sun frame=barycenter\nfirst proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0 where source {name}\n"
     )
 }
 
@@ -540,7 +542,7 @@ fn test_where_source_case_insensitive() {
 
 #[test]
 fn test_parse_where_source_malformed_refused() {
-    let content = "url https://example.com/rtsw_wind.json\nttl 60\nat sun\nfirst proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0 where source\n";
+    let content = "url https://example.com/rtsw_wind.json\nttl 60\nat sun frame=barycenter\nfirst proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0 where source\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     assert!(
@@ -621,10 +623,10 @@ fn test_anomaly_reporter() {
     );
     report_anomaly("Malformed Data", "https://example.org/y", "JSON parse void");
     let _ = parse_sources(
-        "url https://example.org/em\nttl 60\nformat json\nfield mag mag inverse-square em K 60 0 0\n",
+        "url https://example.org/em\nttl 60\nformat json\nfield mag mag inverse-square em K 60 pending 0 0\n",
     );
     let _ = parse_sources(
-        "url https://example.org/syn\nttl 60\nformat json\non earth\nfield p p inverse-square electroweak K 60 0 0\n",
+        "url https://example.org/syn\nttl 60\nformat json\non earth\nfield p p inverse-square electroweak K 60 pending 0 0\n",
     );
     let anomalies = take_anomalies();
     assert_eq!(anomalies.len(), 5);
@@ -641,9 +643,9 @@ fn test_anomaly_reporter() {
     assert!(body.contains(
         "| Physics Mismatch | https://example.org/em | field mag: unit \"K\" not in force registry |"
     ));
-    assert!(body.contains(
-        "| Invalid Syntax | https://example.org/syn | on needs <body> <lat> <lon> [alt]: on earth |"
-    ));
+    assert!(
+        body.contains("| Invalid Syntax | https://example.org/syn | on missing lat: on earth |")
+    );
     assert!(take_anomalies().is_empty());
     ANOMALY_COLLECT.with(|c| c.set(false));
 }
@@ -754,7 +756,7 @@ fn test_cycle_unit_identity_and_physics_gate() {
     ANOMALY_COLLECT.with(|c| c.set(true));
     let _ = take_anomalies();
     let sources = parse_sources(
-        "url https://example.org/cycle\nttl 60\nformat json\nat earth\nfield n n inverse-square em cycle 60 0 0\n",
+        "url https://example.org/cycle\nttl 60\nformat json\nat earth frame=barycenter\nfield n n inverse-square em cycle 60 pending 0 0\n",
     );
     assert_eq!(sources.len(), 1);
     let anomalies = take_anomalies();
@@ -1036,7 +1038,7 @@ fn test_hapi_row_epoch_from_time_and_tangential_surface() {
 
 #[test]
 fn test_hapi_family_block_line_keeps_the_i_placeholder() {
-    let content = "url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER\nterms erg-sc-rules-of-the-road https://example.org/licence\nttl 300\nat earth\nhapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude\nfield saber_ktemp saber_ktemp inverse-square thermal K 3600 0.0 0.0\nfield saber_tpgpaltitude saber_tpgpaltitude inverse-square thermal km 3600 0.0 0.0\n";
+    let content = "url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER\nterms erg-sc-rules-of-the-road https://example.org/licence\nttl 300\nat earth frame=barycenter\nhapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude\nfield saber_ktemp saber_ktemp inverse-square thermal K 3600 pending 0.0 0.0\nfield saber_tpgpaltitude saber_tpgpaltitude inverse-square thermal km 3600 pending 0.0 0.0\n";
     let sources = parse_sources(content);
     let src = sources.first().expect("the SABER block parses");
     let pairs = src
@@ -1714,12 +1716,14 @@ fn test_celestial_map_redshift_distance() {
                 key: "discoverymag".into(),
                 name: "tns_transient_flux".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 3600.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 3600.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -1832,12 +1836,14 @@ fn test_extract_csv_zip_end_to_end() {
                 key: "discoverymag".into(),
                 name: "tns_transient_flux".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 3600.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 3600.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -1901,13 +1907,13 @@ fn test_extract_csv_zip_end_to_end() {
 fn test_parse_sources_dist_scale() {
     let phi = "url https://example.com/comets.json\n\
 ttl 604800\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra ra\n\
 dec dec\n\
 dist dist_au\n\
 dist_scale 3.085677581e19\n\
-field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
+field H comet_h_mag gaussian-inverse-square em mag 604800 pending 0.0 0.0\n";
     let sources = parse_sources(phi);
     assert_eq!(sources.len(), 1);
     match &sources[0].extracts[0] {
@@ -1922,7 +1928,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
 fn test_parse_sources_dist_without_scale_is_absent() {
     let phi = "url https://example.com/comets.json\n\
 ttl 604800\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra ra\n\
 dec dec\n\
@@ -1939,7 +1945,7 @@ dist dist_au\n";
 fn test_parse_sources_rv_scale_directive() {
     let phi = "url https://example.com/x.json\n\
 ttl 604800\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra ra\n\
 dec dec\n\
@@ -1957,7 +1963,7 @@ rv_scale 1000.0\n";
 fn test_parse_sources_fanout_center_arms() {
     let base = "url https://example.com/fanout.json\n\
 ttl 604800\n\
-at earth\n\
+at earth frame=barycenter\n\
 fanout 10\n";
     let declared = format!("{}fanout_center receiver\n", base);
     let sources = parse_sources(&declared);
@@ -1976,7 +1982,7 @@ fanout 10\n";
 fn test_parse_sources_epoch_mjd_directive() {
     let phi = "url https://example.com/decaps.json\n\
 ttl 604800\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra ra\n\
 dec dec\n\
@@ -2000,7 +2006,7 @@ epoch epochmean mjd\n";
 fn test_parse_sources_epoch_without_mjd_is_raw_tdb() {
     let phi = "url https://example.com/x.json\n\
 ttl 604800\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra ra\n\
 dec dec\n\
@@ -2025,11 +2031,11 @@ fn test_parse_euclid_tap_block() {
     let phi = "url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL\n\
 format tap\n\
 ttl 604800\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra right_ascension\n\
 dec declination\n\
-field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 0.0 0.0\n";
+field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 pending 0.0 0.0\n";
     let sources = parse_sources(phi);
     assert_eq!(sources.len(), 1);
     assert_eq!(sources[0].format, "tap");
@@ -2054,19 +2060,14 @@ field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 0.
 }
 
 #[test]
-fn test_parse_reference_seat_holds() {
+fn test_parse_reference_seat_is_refused() {
     let phi = "url https://arxiv.org/e-print/2012.08534\n\
 format reference\n\
 sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7\n\
 ttl 86400\n";
-    let sources = parse_sources(phi);
-    assert_eq!(sources.len(), 1);
-    assert_eq!(sources[0].format, "reference");
-    assert!(matches!(sources[0].frame(), Frame::Manifest));
-    assert!(sources[0].extracts.is_empty());
-    assert_eq!(
-        sources[0].sha256.as_deref(),
-        Some("bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7")
+    assert!(
+        parse_sources(phi).is_empty(),
+        "a field-less reference is not a measurement source"
     );
 }
 
@@ -2103,21 +2104,21 @@ lon lon\n";
 }
 
 #[test]
-fn test_parse_reference_without_sha256_still_seats() {
+fn test_parse_reference_without_sha256_is_refused() {
     let phi = "url https://example.com/dataset.csv\n\
 format reference\n\
 ttl 86400\n";
-    let sources = parse_sources(phi);
-    assert_eq!(sources.len(), 1);
-    assert_eq!(sources[0].format, "reference");
-    assert_eq!(sources[0].sha256, None);
+    assert!(
+        parse_sources(phi).is_empty(),
+        "a field-less reference is refused even without a sha pin"
+    );
 }
 
 #[test]
 fn test_dead_grammar_refused() {
     let phi = "url https://example.com/dead.json\n\
 ttl 60\n\
-on earth 0.0 0.0 0.0\n\
+on earth frame=body lat=0.0 lon=0.0 alt=0.0\n\
 cmap .\n\
 force em\n\
 field temp temp_c\n";
@@ -2166,12 +2167,14 @@ fn test_extract_cmap_dist_scale_kpc() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2277,12 +2280,14 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2383,12 +2388,14 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2486,12 +2493,14 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2597,12 +2606,14 @@ fn test_extract_cmap_pm_radvel_plx() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2679,7 +2690,7 @@ fn test_empty_data_anomaly() {
     let _gate = ANOMALY_TEST_GATE.lock();
     ANOMALY_COLLECT.with(|c| c.set(true));
     let sources = parse_sources(
-        "url https://example.org/e\nttl 3600\nformat json\nat earth\nmap features\nlat lat\nlon lon\nfield magnitude mag gaussian-inverse-square em mag 3600 0 0\n",
+        "url https://example.org/e\nttl 3600\nformat json\nat earth frame=barycenter\nmap features\nlat lat\nlon lon\nfield magnitude mag gaussian-inverse-square em mag 3600 pending 0 0\n",
     );
     assert_eq!(sources.len(), 1);
     let src = &sources[0];
@@ -2740,12 +2751,14 @@ fn test_extract_cmap_no_distance_skipped() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2840,12 +2853,14 @@ fn test_extract_cmap_null_dist_skipped() {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2933,16 +2948,16 @@ fn test_extract_catalog_allwise_psd_binds_the_six_field_channels() {
     let phi = "url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_psd.bin\n\
 format catalog_allwise_psd\n\
 ttl 31536000\n\
-at sun\n\
+at sun frame=barycenter\n\
 cmap .\n\
 ra ra\n\
 dec dec\n\
-field w1mpro allwise_w1_mag inverse-square em mag 31536000 0.0 0.0\n\
-field w2mpro allwise_w2_mag inverse-square em mag 31536000 0.0 0.0\n\
-field w3mpro allwise_w3_mag inverse-square em mag 31536000 0.0 0.0\n\
-field w4mpro allwise_w4_mag inverse-square em mag 31536000 0.0 0.0\n\
-field w3snr allwise_w3_snr inverse-square em 1 31536000 0.0 0.0\n\
-field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0\n";
+field w1mpro allwise_w1_mag inverse-square em mag 31536000 pending 0.0 0.0\n\
+field w2mpro allwise_w2_mag inverse-square em mag 31536000 pending 0.0 0.0\n\
+field w3mpro allwise_w3_mag inverse-square em mag 31536000 pending 0.0 0.0\n\
+field w4mpro allwise_w4_mag inverse-square em mag 31536000 pending 0.0 0.0\n\
+field w3snr allwise_w3_snr inverse-square em 1 31536000 pending 0.0 0.0\n\
+field w4snr allwise_w4_snr inverse-square em 1 31536000 pending 0.0 0.0\n";
     let sources = parse_sources(phi);
     assert_eq!(sources.len(), 1);
     assert_eq!(sources[0].format, "catalog_allwise_psd");
@@ -2996,11 +3011,11 @@ fn test_osha_cehd_units_route_each_line_to_its_field() {
     let phi = "url https://example.org/osha_cehd_si.txt
 format osha_cehd_si_axis_value_text
 ttl 86400
-on earth 52.5 13.4 0
-field osha_mass_concentration osha_mass_concentration inverse-square diffusion kg/m3 86400 0.0 0.0
-field osha_mass osha_mass inverse-square diffusion kg 86400 0.0 0.0
-field osha_amount_fraction osha_amount_fraction inverse-square diffusion 1 86400 0.0 0.0
-field osha_number_density osha_number_density inverse-square em 1/m3 86400 0.0 0.0
+on earth frame=body lat=52.5 lon=13.4 alt=0
+field osha_mass_concentration osha_mass_concentration inverse-square diffusion kg/m3 86400 pending 0.0 0.0
+field osha_mass osha_mass inverse-square diffusion kg 86400 pending 0.0 0.0
+field osha_amount_fraction osha_amount_fraction inverse-square diffusion 1 86400 pending 0.0 0.0
+field osha_number_density osha_number_density inverse-square em 1/m3 86400 pending 0.0 0.0
 ";
     let sources = super::parse_sources(phi);
     assert_eq!(sources.len(), 1);
@@ -3145,12 +3160,14 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
                 key: "HIflux".into(),
                 name: "alfalfa_hi_flux".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 604800.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -4505,7 +4522,7 @@ fn temp_port_convert_check() {
 
 #[test]
 fn test_profile_map_parse() {
-    let block = "url https://argovis-api.colorado.edu/argo?data=temperature,salinity,pressure\nttl 86400\non earth 0 0 0\nprofile .\nlat geolocation.coordinates.1\nlon geolocation.coordinates.0\nepoch timestamp\npressure pressure\nfield temperature argo_temperature_c erfc thermal C 86400 0.0 0.0\nfield salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0\n";
+    let block = "url https://argovis-api.colorado.edu/argo?data=temperature,salinity,pressure\nttl 86400\non earth frame=body lat=0 lon=0 alt=0\nprofile .\nlat geolocation.coordinates.1\nlon geolocation.coordinates.0\nepoch timestamp\npressure pressure\nfield temperature argo_temperature_c erfc thermal C 86400 pending 0.0 0.0\nfield salinity argo_salinity_psu erfc diffusion psu 86400 pending 0.0 0.0\n";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
     let prof = srcs[0].extracts.iter().find_map(|e| match e {
@@ -4534,7 +4551,7 @@ fn test_profile_map_parse() {
 
 #[test]
 fn test_netcdf_grammar_alt_decibar() {
-    let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
+    let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth frame=body lat=0 lon=0 alt=0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 pending 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 pending 0.0 0.0\n";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
     assert_eq!(srcs[0].format, "netcdf");
@@ -4571,7 +4588,7 @@ fn test_netcdf_grammar_alt_decibar() {
 #[test]
 fn test_build_netcdf_channels() {
     use std::collections::HashMap;
-    let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
+    let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth frame=body lat=0 lon=0 alt=0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 pending 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 pending 0.0 0.0\n";
     let srcs = super::parse_sources(block);
     let u32b = |x: u32| x.to_be_bytes().to_vec();
     let f64b = |x: f64| x.to_bits().to_be_bytes().to_vec();
@@ -4775,12 +4792,14 @@ fn test_load_gate_clips_records_outside_enclosure() {
         key: "em".into(),
         name: "em".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -4954,7 +4973,10 @@ fn test_load_gate_clips_records_outside_enclosure() {
         "a record beyond the jump snap stays raw"
     );
     let thermal = FieldConfig {
-        kernel: 3,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 3,
+            ..fc.model.clone().expect("fixture model")
+        }),
         channel_ref: Some(7),
         ..fc.clone()
     };
@@ -5080,12 +5102,14 @@ fn test_wind_waves_loader_respects_load_gate() {
         key: "wind_waves_rad1".into(),
         name: "wind_waves_rad1".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 1075.0e3,
         bin_width: 3.0e3,
@@ -5534,12 +5558,14 @@ fn test_erddap_argo_map_extract() {
                 key: "4".into(),
                 name: "argo_temp_c".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 0.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 0.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -6268,12 +6294,14 @@ fn test_anchor_body_agnostic() {
             key: "v".into(),
             name: "v".into(),
             band_id: None,
-            kernel: 1,
+            model: Some(crate::archivar::FieldModel {
+                kernel: 1,
+                tau: 0.0,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
+            }),
             channel_ref: Some(0),
-            tau: 0.0,
-            tau_src: crate::archivar::types::TauSource::Measured,
-            absorption: 0.0,
-            advection: 0.0,
             unit: String::new(),
             freq: 0.0,
             bin_width: 0.0,
@@ -6336,12 +6364,14 @@ fn test_anchor_body_agnostic() {
         key: "v".into(),
         name: "v".into(),
         band_id: None,
-        kernel: 1,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 1,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -6497,12 +6527,14 @@ fn test_anchor_applies_declared_unit() {
         key: "bz".into(),
         name: "imf".into(),
         band_id: None,
-        kernel: 1,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 1,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: "nT".into(),
         freq: 0.0,
         bin_width: 0.0,
@@ -6609,7 +6641,7 @@ fn pending_tau_source_does_not_anchor() {
 
 #[test]
 fn test_last_form_captures_unit() {
-    let content = "url https://example.com/mag.json\nttl 60\nat sun\nlast bz_gsm imf_bz inverse-square em nT 6.0 0.0 0.0 where satellite 18\n";
+    let content = "url https://example.com/mag.json\nttl 60\nat sun frame=barycenter\nlast bz_gsm imf_bz inverse-square em nT 6.0 0.0 0.0 where satellite 18\n";
     let sources = parse_sources(content);
     assert_eq!(sources.len(), 1);
     match &sources[0].extracts[0] {
@@ -7114,12 +7146,14 @@ fn test_fetch_dispatch_gate_admits_em_source() {
         key: "flux".into(),
         name: "flux".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -7156,12 +7190,14 @@ fn test_fetch_dispatch_gate_thermal_without_body_medium_is_absent() {
         key: "temp".into(),
         name: "temp".into(),
         band_id: None,
-        kernel: 3,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 3,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(7),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -7417,12 +7453,14 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
         key: "x".into(),
         name: "x".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(9),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -7526,7 +7564,7 @@ fn test_extract_fields_reads_quakeml_events() {
     );
 }
 
-const QUAKEML_BLOCK: &str = "url https://example.org/mt\nttl 60\non earth 0 0 0\nformat quakeml\nquakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0\n";
+const QUAKEML_BLOCK: &str = "url https://example.org/mt\nttl 60\non earth frame=body lat=0 lon=0 alt=0\nformat quakeml\nquakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0\n";
 
 const QUAKEML_TENSOR_BODY: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
 <q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2">
@@ -7681,11 +7719,11 @@ fn kc2g_stations_csv_carries_per_row_position_and_absent_cell() {
     let block = "url https://example.org/kc2g_stations.csv
 ttl 3600
 format kc2g_stations
-on earth 0 0 0
-field mufd_mhz kc2g_mufd_mhz inverse-square em MHz 3600 0.0 0.0
-field fof2_mhz kc2g_fof2_mhz inverse-square em MHz 3600 0.0 0.0
-field tec_tecu kc2g_tec_tecu inverse-square em TECU 3600 0.0 0.0
-field cs kc2g_cs inverse-square em 1 3600 0.0 0.0
+on earth frame=body lat=0 lon=0 alt=0
+field mufd_mhz kc2g_mufd_mhz inverse-square em MHz 3600 pending 0.0 0.0
+field fof2_mhz kc2g_fof2_mhz inverse-square em MHz 3600 pending 0.0 0.0
+field tec_tecu kc2g_tec_tecu inverse-square em TECU 3600 pending 0.0 0.0
+field cs kc2g_cs inverse-square em 1 3600 pending 0.0 0.0
 ";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
@@ -7920,12 +7958,14 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         key: "wind".into(),
         name: "wind".into(),
         band_id: None,
-        kernel: 5,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 5,
+            tau: 60.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 400000.0,
+        }),
         channel_ref: Some(4),
-        tau: 60.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 400000.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -8516,12 +8556,14 @@ fn test_query_admits_surface_sample_within_window() {
         key: "TEMP".into(),
         name: "argo_dac_temp_c".into(),
         band_id: None,
-        kernel: 3,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 3,
+            tau: 604800.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(7),
-        tau: 604800.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: "C".into(),
         freq: 0.0,
         bin_width: 0.0,
@@ -8711,19 +8753,19 @@ fn test_live_sources_extract() {
 fn test_dst_and_co2_mlo_channels_extract_live() {
     let dst_block = "url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
 ttl 3600
-at earth
+at earth frame=barycenter
 map .
 epoch time_tag
-field dst magnetosphere_dst_nt inverse-square em 1 3600.0 0.0 0.0
+field dst magnetosphere_dst_nt inverse-square em 1 3600.0 pending 0.0 0.0
 ";
     let co2_block = "url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
 ttl 3600
 format text
-on earth 19.5 -155.6 0
+on earth frame=body lat=19.5 lon=-155.6 alt=0
 rows .
 epoch year month day 0 0
 gate average 300.0 600.0
-field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
+field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 pending 0.0 0.0
 ";
     let fixture_lsk = full_fixture_lsk();
     let now = fixture_lsk.system_now_tdb().unwrap();
@@ -8809,11 +8851,11 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
         "url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
 ttl 3600
 format text
-on earth 1.35 103.99 0
+on earth frame=body lat=1.35 lon=103.99 alt=0
 rows .
 epoch year month day 0 0
 gate qbo_30hpa_ms -300.0 300.0
-field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
+field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 pending 0.0 0.0
 ";
     let qsrcs = super::parse_sources(qbo_block);
     assert_eq!(qsrcs.len(), 1);
@@ -8855,10 +8897,10 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
     let oulu_block = "url https://www.nmdb.eu/nest/draw_graph.php
 ttl 3600
 format text
-on earth 65.06 25.47 0
+on earth frame=body lat=65.06 lon=25.47 alt=0
 rows .
 epoch 0
-field 1 oulu_neutron_corr_for_eff inverse-square em cpm 3600.0 0.0 0.0
+field 1 oulu_neutron_corr_for_eff inverse-square em cpm 3600.0 pending 0.0 0.0
 ";
     let osrcs = super::parse_sources(oulu_block);
     assert_eq!(osrcs.len(), 1);
@@ -8894,11 +8936,11 @@ field 1 oulu_neutron_corr_for_eff inverse-square em cpm 3600.0 0.0 0.0
     let d20_block = "url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
 ttl 3600
 format text
-on earth 0.0 -120.0 0
+on earth frame=body lat=0.0 lon=-120.0 alt=0
 rows .
 epoch 0
 gate iso_6 0.0 500.0
-field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
+field 4 d20_thermocline_depth_m erfc gravity m 86400.0 pending 0.0 0.0
 ";
     let dsrcs = super::parse_sources(d20_block);
     assert_eq!(dsrcs.len(), 1);
@@ -8922,13 +8964,13 @@ field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
 
     let drifter_block = "url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
 ttl 3600
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 map table.rows
 lat 0
 lon 1
-field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
-field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
-field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
+field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 pending 0.0 0.0
+field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 pending 0.0 0.0
+field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 pending 0.0 0.0
 ";
     let drifter_body = match super::fetch_raw(
         "https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days",
@@ -9037,12 +9079,14 @@ fn test_diagnose_no_samples() {
                 key: "properties.mag".into(),
                 name: "mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 0.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 0.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -9206,12 +9250,14 @@ fn test_ci_body_verdict() {
         key: "m0".into(),
         name: "gcmt_scalar_moment_nm".into(),
         band_id: None,
-        kernel: 1,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 1,
+            tau: 6.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(1),
-        tau: 6.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: "N·m".into(),
         freq: 0.0,
         bin_width: 0.0,
@@ -9395,12 +9441,14 @@ fn test_map_single_object_alt_scale_epoch_default() {
                 key: "velocity".into(),
                 name: "velocity".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 1.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 1.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -9512,12 +9560,14 @@ fn test_map_vel_unit_and_tau_key_override() {
                 key: "v".into(),
                 name: "flow_value".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 7.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 7.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -9611,7 +9661,7 @@ fn test_map_vel_unit_and_tau_key_override() {
 
 #[test]
 fn test_parse_spectral_block() {
-    let block = "url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin\nformat spectral\non earth 19.82 -155.47 0\nttl 86400\nfield irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0\n";
+    let block = "url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin\nformat spectral\non earth frame=body lat=19.82 lon=-155.47 alt=0\nttl 86400\nfield irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 pending 0.0 0.0\n";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
     assert_eq!(srcs[0].format, "spectral");
@@ -9656,7 +9706,7 @@ fn test_parse_sky1_cdn_asset_block() {
     ];
     for (name, unit) in blocks {
         let block = format!(
-            "url https://github.com/omegaflow/sources/releases/download/tag/{name}.sky1\nformat sky1\nat sun\nttl 31536000\nfield {name} {name} inverse-square em {unit} 31536000 0.0 0.0\n"
+            "url https://github.com/omegaflow/sources/releases/download/tag/{name}.sky1\nformat sky1\nat sun frame=barycenter\nttl 31536000\nfield {name} {name} inverse-square em {unit} 31536000 pending 0.0 0.0\n"
         );
         let srcs = super::parse_sources(&block);
         assert_eq!(
@@ -9692,7 +9742,7 @@ fn test_parse_sky1_cdn_asset_block() {
 
 #[test]
 fn test_parse_vel_unit_and_tau_key_directives() {
-    let block = "url https://example.org/flow\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nvel spd km/h\ntau_key row_tau\nfield v flow_value inverse-square thermal W 10 0.0 0.0\n";
+    let block = "url https://example.org/flow\nttl 3600\nformat json\non earth frame=body lat=0 lon=0 alt=0\nmap data\nlat lat\nlon lon\nvel spd km/h\ntau_key row_tau\nfield v flow_value inverse-square thermal W 10 pending 0.0 0.0\n";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
     match &srcs[0].extracts[0] {
@@ -9714,7 +9764,7 @@ fn test_parse_vel_unit_and_tau_key_directives() {
             panic!("expected Map extract")
         }
     }
-    let cmap_block = "url https://example.org/c\nttl 3600\nformat json\nat sun\ncmap data\nra ra\ndec dec\ntau_key tkey\n";
+    let cmap_block = "url https://example.org/c\nttl 3600\nformat json\nat sun frame=barycenter\ncmap data\nra ra\ndec dec\ntau_key tkey\n";
     let csrcs = super::parse_sources(cmap_block);
     assert_eq!(csrcs.len(), 1);
     match &csrcs[0].extracts[0] {
@@ -9724,7 +9774,7 @@ fn test_parse_vel_unit_and_tau_key_directives() {
             panic!("expected CelestialMap extract")
         }
     }
-    let rows_block = "url https://example.org/r\nttl 3600\nformat text\non earth 1 2 0\nrows\nlast_line true\ntau_key rtau\nlastrow T val thermal K 10 0 0\n";
+    let rows_block = "url https://example.org/r\nttl 3600\nformat text\non earth frame=body lat=1 lon=2 alt=0\nrows\nlast_line true\ntau_key rtau\nlastrow T val thermal K 10 0 0\n";
     let rsrcs = super::parse_sources(rows_block);
     assert_eq!(rsrcs.len(), 1);
     match &rsrcs[0].extracts[0] {
@@ -9738,7 +9788,7 @@ fn test_parse_vel_unit_and_tau_key_directives() {
 
 #[test]
 fn test_fold_directive_parse_and_extract() {
-    let block = "url https://example.org/f\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nfold mean nh sh diffusion ppm 100\nfold diff nh sh diffusion ppm 100\n";
+    let block = "url https://example.org/f\nttl 3600\nformat json\non earth frame=body lat=0 lon=0 alt=0\nmap data\nlat lat\nlon lon\nfold mean nh sh diffusion ppm 100\nfold diff nh sh diffusion ppm 100\n";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
     let fields = match &srcs[0].extracts[0] {
@@ -9754,8 +9804,7 @@ fn test_fold_directive_parse_and_extract() {
     assert!(matches!(&fields[1].fold, Some((2, b)) if b == "sh"));
     assert!((fields[0].tau - 100.0).abs() < 1e-12);
     assert_eq!(fields[0].unit, "ppm");
-    let refused =
-        "url https://example.org/f\nttl 3600\nformat json\nat sun\nfold mean a b em mag 100\n";
+    let refused = "url https://example.org/f\nttl 3600\nformat json\nat sun frame=barycenter\nfold mean a b em mag 100\n";
     let rsrcs = super::parse_sources(refused);
     assert_eq!(rsrcs.len(), 1);
     assert!(rsrcs[0].extracts.is_empty());
@@ -9795,12 +9844,14 @@ fn test_fold_directive_parse_and_extract() {
                     key: "nh".into(),
                     name: "fold_mean_nh_sh".into(),
                     band_id: None,
-                    kernel: 0,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: 0,
+                        tau: 100.0,
+                        tau_src: crate::archivar::types::TauSource::Measured,
+                        absorption: 0.0,
+                        advection: 0.0,
+                    }),
                     channel_ref: Some(3),
-                    tau: 100.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
                     unit: "ppm".into(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -9811,12 +9862,14 @@ fn test_fold_directive_parse_and_extract() {
                     key: "nh".into(),
                     name: "fold_diff_nh_sh".into(),
                     band_id: None,
-                    kernel: 0,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: 0,
+                        tau: 100.0,
+                        tau_src: crate::archivar::types::TauSource::Measured,
+                        absorption: 0.0,
+                        advection: 0.0,
+                    }),
                     channel_ref: Some(3),
-                    tau: 100.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
                     unit: "ppm".into(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -9888,7 +9941,7 @@ fn test_fold_directive_parse_and_extract() {
 
 #[test]
 fn test_keplermap_elements_to_icrs() {
-    let block = "url https://example.org/k\nttl 3600\nformat json\nat sun\nkeplermap data a e i\nom om\nw w\nma ma\nepoch epoch\nqr q\ntp tp\nfield H abs_mag inverse-square em mag 100 0 0\n";
+    let block = "url https://example.org/k\nttl 3600\nformat json\nat sun frame=barycenter\nkeplermap data a e i\nom om\nw w\nma ma\nepoch epoch\nqr q\ntp tp\nfield H abs_mag inverse-square em mag 100 pending 0 0\n";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
     match &srcs[0].extracts[0] {
@@ -9952,12 +10005,14 @@ fn test_keplermap_elements_to_icrs() {
                 key: "H".into(),
                 name: "abs_mag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 100.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 100.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -10056,7 +10111,7 @@ fn test_port_block_without_force_classifies_physical() {
     let conv = super::port_block(block);
     assert!(
         conv.contains(
-            "field geometry.coordinates.2 quake_depth gaussian-inverse-square seismic-body km 10 0.0 0.0\n"
+            "field geometry.coordinates.2 quake_depth gaussian-inverse-square seismic-body km 10 pending 0.0 0.0\n"
         ),
         "a physical name without a force directive synthesizes the registry line, got: {conv}"
     );
@@ -10087,7 +10142,7 @@ fn test_port_block_with_force_and_no_unit_synthesizes_through_the_register() {
     let block = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
     let conv = super::port_block(block);
     assert!(
-        conv.contains("field geometry.coordinates.2 quake_depth gaussian-inverse-square seismic-body km 10 0.0 0.0\n"),
+        conv.contains("field geometry.coordinates.2 quake_depth gaussian-inverse-square seismic-body km 10 pending 0.0 0.0\n"),
         "a force directive resolves through the register (quake_depth carries km/tau), got: {conv}"
     );
     assert!(
@@ -10102,7 +10157,7 @@ fn test_port_block_with_force_and_name_unit_synthesizes() {
     let conv = super::port_block(block);
     assert!(
         conv.contains(
-            "field geometry.coordinates.2 omni_bx_gsm_nt inverse-square em nT 60 0.0 0.0\n"
+            "field geometry.coordinates.2 omni_bx_gsm_nt inverse-square em nT 60 pending 0.0 0.0\n"
         ),
         "a force directive with a name-suffix unit synthesizes the line at the register cadence, got: {conv}"
     );
@@ -10116,7 +10171,7 @@ fn test_port_block_with_force_and_name_unit_synthesizes() {
 
 #[test]
 fn test_port_block_hapi_live_measure_classifies_em() {
-    let block = "url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf\nttl 86400\non earth 48.025 2.26\nforce gravity\npath 1.0 magnetosphere_intermagnet_clf_x_nt\n";
+    let block = "url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf\nttl 86400\non earth frame=body lat=48.025 lon=2.26 alt=absent\nforce gravity\npath 1.0 magnetosphere_intermagnet_clf_x_nt\n";
     let measure = super::PortMeasure {
         hapi: true,
         unit: Some("nT".to_string()),
@@ -10296,12 +10351,14 @@ fn test_field_in_nested_port_and_flatten_generic() {
                 key: "v".into(),
                 name: "v".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 10.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 10.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -10411,12 +10468,14 @@ fn test_flux_from_mag_manifests() {
                 key: "mag".into(),
                 name: "cat_vmag".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 100.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 100.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: "mag".into(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -10515,12 +10574,14 @@ fn test_map_lat_sign_lon_sign() {
                 key: "1".into(),
                 name: "fireball_energy_e10j".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 3600.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(0),
-                tau: 3600.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: "e10j".into(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -10645,12 +10706,14 @@ fn test_mag_type_gating() {
                 key: "mag".into(),
                 name: "quake_moment".into(),
                 band_id: None,
-                kernel: 0,
+                model: Some(crate::archivar::FieldModel {
+                    kernel: 0,
+                    tau: 6.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }),
                 channel_ref: Some(1),
-                tau: 6.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
                 unit: "Mw".into(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -10771,12 +10834,12 @@ fn test_frame_registry_distinguishes_routes_on_one_host() {
     );
     reg.insert(
         "api.example.com/asteroids".to_string(),
-        "at sun".to_string(),
+        "at sun frame=barycenter".to_string(),
     );
     let (weather, _) = draft_frame_guess("https://api.example.com/weather?city=berlin", "", &reg);
     let (asteroids, _) = draft_frame_guess("https://api.example.com/asteroids/433", "", &reg);
     assert_eq!(weather, "on earth\n");
-    assert_eq!(asteroids, "at sun\n");
+    assert_eq!(asteroids, "at sun frame=barycenter\n");
 }
 
 #[test]
@@ -12202,7 +12265,7 @@ fn galileo_odr_register_field_matches_component_name() {
 
 #[test]
 fn register_hapi_units_of_maps_short_parameter_to_field_unit() {
-    let content = "url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json\nttl 10\nat earth\nhapi crosswind=champ_thermosphere_crosswind_ms\nfield champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0\n";
+    let content = "url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json\nttl 10\nat earth frame=barycenter\nhapi crosswind=champ_thermosphere_crosswind_ms\nfield champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 pending 0.0 0.0\n";
     let srcs = super::parse_sources(content);
     let map = super::register_hapi_units_of(&srcs);
     assert_eq!(
@@ -12228,7 +12291,7 @@ fn hapi_draft_names_register_unit_when_server_unit_is_off_registry() {
         "off-registry note names the register unit: {fields}"
     );
     assert!(
-        fields.contains("field crosswind crosswind patch-levy advective kg/m3 60 0.0 0.0"),
+        fields.contains("field crosswind crosswind patch-levy advective kg/m3 60 pending 0.0 0.0"),
         "field line keeps the server unit verbatim: {fields}"
     );
     assert!(
@@ -12325,12 +12388,14 @@ fn fits_format_extracts_last_row() {
         key: "FLUX".into(),
         name: "flux".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 604800.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(0),
-        tau: 604800.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -12453,12 +12518,14 @@ fn tar_gz_yaml_format_extracts_member_last_row() {
         key: "KBR1B.range_rate".into(),
         name: "gracefo_kbr_range_rate".into(),
         band_id: None,
-        kernel: 0,
+        model: Some(crate::archivar::FieldModel {
+            kernel: 0,
+            tau: 86400.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+        }),
         channel_ref: Some(5),
-        tau: 86400.0,
-        tau_src: crate::archivar::types::TauSource::Measured,
-        absorption: 0.0,
-        advection: 0.0,
         unit: "m/s".into(),
         freq: 0.0,
         bin_width: 0.0,
@@ -13417,12 +13484,12 @@ fn epa_aqs_block() -> &'static str {
     "url https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
 ttl 86400
 format csv_zip
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 epoch 11
 lat 5
 lon 6
-field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 pending 0.0 0.0
 "
 }
 
@@ -13468,12 +13535,12 @@ fn epa_aqs_csv_gz_block() -> &'static str {
     "url https://example.com/aqs.csv.gz
 ttl 86400
 format csv_gz
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 epoch 11
 lat 5
 lon 6
-field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 pending 0.0 0.0
 "
 }
 
@@ -13566,12 +13633,12 @@ fn test_rows_per_row_lat_lon_and_date_epoch() {
     let block = "url https://example.com/aqs.csv
 ttl 86400
 format csv
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 epoch 11
 lat 5
 lon 6
-field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 pending 0.0 0.0
 ";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
@@ -13608,12 +13675,12 @@ fn test_rows_absent_lat_skips_row() {
     let block = "url https://example.com/aqs.csv
 ttl 86400
 format csv
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 epoch 11
 lat 5
 lon 6
-field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 pending 0.0 0.0
 ";
     let srcs = super::parse_sources(block);
     let mut body = String::from(EPA_AQS_HEADER);
@@ -13630,10 +13697,10 @@ fn test_rows_epoch_iso_datetime_column() {
     let block = "url https://example.com/d20.csv
 ttl 3600
 format text
-on earth 0.0 -120.0 0
+on earth frame=body lat=0.0 lon=-120.0 alt=0
 rows .
 epoch 0
-field 4 d20_thermocline_temp_c erfc thermal C 86400.0 0.0 0.0
+field 4 d20_thermocline_temp_c erfc thermal C 86400.0 pending 0.0 0.0
 ";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
@@ -13715,12 +13782,12 @@ fn test_parse_rows_verbatim_header_key() {
     let block = "url https://example.com/aqs.csv
 ttl 86400
 format csv
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 epoch 11
 lat 5
 lon 6
-field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
+field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 pending 0.0 0.0
 ";
     let srcs = super::parse_sources(block);
     assert_eq!(srcs.len(), 1);
@@ -13740,12 +13807,12 @@ fn test_rows_verbatim_header_key_extracts() {
     let block = "url https://example.com/aqs.csv
 ttl 86400
 format csv
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 epoch 11
 lat 5
 lon 6
-field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
+field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 pending 0.0 0.0
 ";
     let srcs = super::parse_sources(block);
     let body = epa_aqs_rows();
@@ -13773,13 +13840,13 @@ fn test_gbm_tgf_rows_read_per_row_epoch_and_position() {
 ttl 2592000
 format gbm_tgf
 origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
-on earth 0 0 0
+on earth frame=body lat=0 lon=0 alt=0
 rows
 lat_key Lat
 lon_key Lon
 epoch time
 no-cadence
-field NAI_N gbm_tgf_nai_counts inverse-square em count 31536000 0.0 0.0
+field NAI_N gbm_tgf_nai_counts inverse-square em count 31536000 pending 0.0 0.0
 ";
     let mut body = String::from("time,OS_ID,NAI_N,Lon,Lat\n");
     body.push_str("2016-07-31T10:28:12.789350,oTGF1,22,103.2347,-1.7498\n");
@@ -14466,7 +14533,7 @@ format csv\n\
 origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat\n\
 compiler tools/harvest/src/bin/waldo_ab_compiler.rs\n\
 ttl 300\n\
-at earth\n\
+at earth frame=barycenter\n\
 rows\n\
 field amplitude em 1 300\n";
     let sources = parse_sources(block);

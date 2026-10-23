@@ -753,7 +753,7 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
         Frame::Barycenter { body_name, scale } => {
             block.push_str(&format!("at {} {}\n", body_name, scale));
         }
-        Frame::Manifest => {}
+        Frame::Body { .. } | Frame::Manifest => {}
     }
     if let Some(p) = parsed {
         let mut fields = String::new();
@@ -3131,60 +3131,6 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
                 .iter()
                 .any(|e| matches!(e, Extract::Rows { .. }))
         {
-            continue;
-        }
-        if src.format == "reference" {
-            if clock_now_unix().is_some_and(|n| !clock_stale(&clock, &src.url, src.ttl, n)) {
-                fresh += 1;
-                continue;
-            }
-            let bytes = match fetch_raw_bytes(&src.url) {
-                Some(b) => b,
-                None => {
-                    eprintln!("ci-mode: {} reference fetch returned void", src.url);
-                    report_anomaly("API Unreachable", &src.url, "reference fetch returned void");
-                    clock_record(&mut clock, &src.url, false);
-                    dead += 1;
-                    continue;
-                }
-            };
-            if let Some(pin) = src.sha256.as_deref() {
-                let measured = crate::archivar::sha256::sha256_hex(&bytes);
-                if measured != pin {
-                    eprintln!(
-                        "ci-mode: {} reference sha256 drift (measured {}, registered {})",
-                        src.url, measured, pin
-                    );
-                    report_anomaly(
-                        "Sha256 Drift",
-                        &src.url,
-                        &format!("measured {measured}, registered {pin}"),
-                    );
-                    clock_record(&mut clock, &src.url, false);
-                    dead += 1;
-                    continue;
-                }
-            }
-            let Some(netloc) = extract_netloc(&src.url) else {
-                dead += 1;
-                continue;
-            };
-            let file_name = reference_name_from_url(&src.url);
-            let tmp_path = format!("{}/{}", std::env::temp_dir().display(), file_name);
-            let _ = crate::cdn::ensure_release(netloc);
-            if std::fs::write(&tmp_path, &bytes).is_ok()
-                && crate::cdn::upload_release(netloc, &tmp_path)
-            {
-                mirrored += 1;
-                reachable += 1;
-                clock_record(&mut clock, &src.url, true);
-                eprintln!("ci-mode: {} reference ok ({} B)", src.url, bytes.len());
-            } else {
-                eprintln!("ci-mode: {} reference upload returned void", src.url);
-                clock_record(&mut clock, &src.url, false);
-                dead += 1;
-            }
-            let _ = std::fs::remove_file(&tmp_path);
             continue;
         }
         let headers = render_headers(&src.headers, &env);
