@@ -193,20 +193,30 @@ bin convention). Re-measured 2026-09-30: cells 23–25 now fill from the 1-h
 files; cells 3 (bt/speed/density), 14 (speed/density) and 16 stay `not measured`
 (gaps/lag in the 1-h files).
 
-## The σ-metric — superseded as the scoring instance, `not measured`
+## The Δ-rule — `not measured` (named non-measurement, 2026-10-23)
 
-The falsification metric (RMS (measured − pre-registered)/σ, threshold fam,
-`flyby-path-2-falsification-metric-addendum.md`) was superseded as the scoring
-instance by the revised Blatt (`flyby-path-2-preregistration-revised.md`,
-2026-09-27): the field chain recorded here is the **descriptive /
-verification channel**. The live rule is Δ ≤ δ + 3·σ_recon with
-δ = 0.16847323696971178 km (measured, DE441 vs DE442, `flyby_ephemeris_gate`,
-built `d310d5888`) and Δ, σ_recon **`not measured`** — the post-flyby
-reconstruction (SPK + 1-σ covariance) is not published;
+The scoring instance is the revised Blatt (`flyby-path-2-preregistration-revised.md`,
+2026-09-27), not the earlier field-residual metric. The field chain recorded
+here is the **descriptive / verification channel**.
+
+Live rule: **Δ ≤ δ + 3·σ_recon**, with
+
+- Δ = max |x_recon(t) − x_sealed(t)| over the sealed ±21 d window [km, ICRS, geocentric],
+- δ = 0.16847323696971178 km (measured, DE441 vs DE442, `flyby_ephemeris_gate`,
+  built `d310d5888`; 997 hourly samples),
+- σ_recon = published 1σ position uncertainty of the post-flyby solution [km].
+
+**Verdict: `not measured` — named non-measurement.** Δ and σ_recon are not
+measured: the post-flyby reconstruction (SPK + 1σ covariance) is not published;
 `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` is absent (measured
-2026-09-28). No in-situ JUICE field measurement exists yet, so the σ-metric
-is not applied — it is `not measured` with the named trigger (the published
-reconstruction), never a number. Agreement remains silence.
+2026-09-28). No in-situ JUICE field measurement exists yet. Named trigger: the
+published reconstruction. Until the trigger, the verdict stays `not measured`,
+never a number. Agreement remains silence.
+
+The earlier field metric (RMS (measured − pre-registered)/σ, threshold fam,
+`flyby-path-2-falsification-metric-addendum.md`) is retained only as history;
+it was tautological (the pre-registered field state was computed from the same
+upstream channels as the measurement) and is not the scoring instance.
 
 ## Cells left unmeasured — the complete list with reasons
 
