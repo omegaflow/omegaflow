@@ -1409,6 +1409,165 @@ pub fn url_has_fixed_window(template: &str) -> bool {
     false
 }
 
+fn hapi_query_value<'a>(url: &'a str, name: &str) -> Option<&'a str> {
+    let (_, query) = url.split_once('?')?;
+    let query = query.split('#').next()?;
+    query.split('&').find_map(|pair| {
+        let (key, value) = pair.split_once('=')?;
+        (key == name).then_some(value)
+    })
+}
+
+fn hapi_query_set(url: &str, name: &str, value: &str) -> Option<String> {
+    let (head, rest) = url.split_once('?')?;
+    let (query, fragment) = match rest.split_once('#') {
+        Some((q, f)) => (q, format!("#{f}")),
+        None => (rest, String::new()),
+    };
+    let mut found = false;
+    let mut out = String::with_capacity(url.len() + value.len());
+    out.push_str(head);
+    out.push('?');
+    for (i, pair) in query.split('&').enumerate() {
+        if i > 0 {
+            out.push('&');
+        }
+        match pair.split_once('=') {
+            Some((key, _)) if key == name => {
+                out.push_str(key);
+                out.push('=');
+                out.push_str(value);
+                found = true;
+            }
+            _ => out.push_str(pair),
+        }
+    }
+    if !found {
+        return None;
+    }
+    out.push_str(&fragment);
+    Some(out)
+}
+
+fn hapi_iso_seconds(s: &str) -> Option<u64> {
+    crate::archivar::hapi_csv::parse_iso_seconds(s)
+        .filter(|v| v.is_finite() && *v >= 0.0)
+        .map(|v| v as u64)
+}
+
+fn hapi_time_text(unix: u64, original: &str) -> String {
+    if original.contains('T') {
+        hour_str(unix)
+    } else {
+        date_str(unix)
+    }
+}
+
+fn hapi_stop_date(info_json: Option<&str>) -> Option<u64> {
+    let parsed = parse_json(info_json?)?;
+    let JsonVal::Obj(map) = parsed else {
+        return None;
+    };
+    match map.get("stopDate")? {
+        JsonVal::Str(s) => hapi_iso_seconds(s),
+        _ => None,
+    }
+}
+
+pub fn hapi_bound_window(url: &str, now: Option<u64>, info_json: Option<&str>) -> String {
+    let url = match now {
+        Some(unix) if url.contains('{') => {
+            let mut resolved = url.to_string();
+            for (key, value) in time_markers(unix) {
+                resolved = resolved.replace(key, &value);
+            }
+            resolved
+        }
+        _ => url.to_string(),
+    };
+    match hapi_stop_date(info_json) {
+        Some(stop_date) => hapi_clamp_stop(url, now, stop_date),
+        None => url,
+    }
+}
+
+fn hapi_clamp_stop(url: String, now: Option<u64>, stop_date: u64) -> String {
+    let path = url.split('?').next().unwrap_or(&url);
+    if !path.contains("/hapi/data") {
+        return url;
+    }
+    let stop_bound = match now {
+        Some(n) => n.min(stop_date),
+        None => stop_date,
+    };
+    for (start_key, stop_key) in [("start", "stop"), ("time.min", "time.max")] {
+        let (Some(start_text), Some(stop_text)) = (
+            hapi_query_value(&url, start_key),
+            hapi_query_value(&url, stop_key),
+        ) else {
+            continue;
+        };
+        let (Some(start), Some(stop)) = (hapi_iso_seconds(start_text), hapi_iso_seconds(stop_text))
+        else {
+            continue;
+        };
+        let new_stop = stop.min(stop_bound);
+        let window = stop.saturating_sub(start);
+        let new_start = if start >= new_stop {
+            new_stop.saturating_sub(window)
+        } else {
+            start
+        };
+        if new_stop == stop && new_start == start {
+            return url;
+        }
+        let Some(bounded) = hapi_query_set(&url, stop_key, &hapi_time_text(new_stop, stop_text))
+        else {
+            return url;
+        };
+        let Some(bounded) =
+            hapi_query_set(&bounded, start_key, &hapi_time_text(new_start, start_text))
+        else {
+            return url;
+        };
+        return bounded;
+    }
+    url
+}
+
+fn hapi_stop_cache() -> &'static std::sync::Mutex<HashMap<String, u64>> {
+    static CACHE: OnceLock<std::sync::Mutex<HashMap<String, u64>>> = OnceLock::new();
+    CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()))
+}
+
+fn hapi_dataset_stop(info_url: &str) -> Option<u64> {
+    if let Ok(cache) = hapi_stop_cache().lock()
+        && let Some(stop) = cache.get(info_url)
+    {
+        return Some(*stop);
+    }
+    let info = fetch_raw_probe(info_url, None, &[])?;
+    let stop = hapi_stop_date(Some(&info))?;
+    if let Ok(mut cache) = hapi_stop_cache().lock() {
+        cache.insert(info_url.to_string(), stop);
+    }
+    Some(stop)
+}
+
+fn hapi_dataset_url(url: &str, now: Option<u64>) -> String {
+    let path = url.split('?').next().unwrap_or(url);
+    if !path.contains("/hapi/data") {
+        return url.to_string();
+    }
+    let Some(info_url) = super::port::hapi_info_url(url) else {
+        return url.to_string();
+    };
+    let Some(stop) = hapi_dataset_stop(&info_url) else {
+        return url.to_string();
+    };
+    hapi_clamp_stop(url.to_string(), now, stop)
+}
+
 pub fn fetch_one_with_age(
     url: &str,
     body: Option<&str>,
@@ -1417,6 +1576,8 @@ pub fn fetch_one_with_age(
     now: Option<f64>,
     live_only: bool,
 ) -> Option<(String, Option<u64>)> {
+    let bounded = hapi_dataset_url(url, now.map(|n| n.max(0.0) as u64));
+    let url = bounded.as_str();
     if live_only {
         return fetch_raw(url, body, headers).map(|l| (l, None));
     }
@@ -1924,6 +2085,97 @@ mod marker_tests {
             srcs.iter()
                 .any(|s| s.url == "https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt"),
             "archive dart source absent"
+        );
+    }
+}
+
+#[cfg(test)]
+mod hapi_window_tests {
+    use super::*;
+
+    fn unix_at(y: i64, m: i64, d: i64, h: u64) -> u64 {
+        crate::archivar::lsk::days_from_civil(y, m, d).unwrap() as u64 * 86400 + h * 3600
+    }
+
+    fn imag_url() -> &'static str {
+        "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABC/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json"
+    }
+
+    fn cdaweb_url() -> &'static str {
+        "https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800&format=json"
+    }
+
+    #[test]
+    fn hapi_window_clamps_stop_to_the_dataset_stop() {
+        let now = unix_at(2026, 10, 23, 12);
+        let bounded = hapi_bound_window(
+            imag_url(),
+            Some(now),
+            Some(r#"{"id":"ABC","stopDate":"2026-10-20T00:00:00.000Z"}"#),
+        );
+        assert_eq!(
+            hapi_query_value(&bounded, "stop"),
+            Some("2026-10-20T00:00:00Z"),
+            "stop settles on stopDate, not on now"
+        );
+        assert_eq!(
+            hapi_query_value(&bounded, "start"),
+            Some("2026-10-16T00:00:00Z"),
+            "a start before the bounded stop stays put"
+        );
+        assert!(bounded.contains("id=ABC/best-avail/PT1M/xyzf"));
+        assert!(bounded.contains("format=json"));
+    }
+
+    #[test]
+    fn hapi_window_shifts_start_back_by_the_rendered_length() {
+        let now = unix_at(2026, 10, 23, 12);
+        let bounded = hapi_bound_window(
+            cdaweb_url(),
+            Some(now),
+            Some(r#"{"stopDate":"2026-10-15T00:00:00Z"}"#),
+        );
+        let start = hapi_iso_seconds(hapi_query_value(&bounded, "time.min").unwrap()).unwrap();
+        let stop = hapi_iso_seconds(hapi_query_value(&bounded, "time.max").unwrap()).unwrap();
+        assert_eq!(stop, unix_at(2026, 10, 15, 0));
+        assert_eq!(
+            stop - start,
+            now - unix_at(2026, 10, 16, 0),
+            "the window keeps its rendered length"
+        );
+        assert_eq!(
+            hapi_query_value(&bounded, "time.min"),
+            Some("2026-10-07T12:00:00Z")
+        );
+        assert!(bounded.contains("parameters=BX_GSE1800"));
+    }
+
+    #[test]
+    fn hapi_window_without_info_stays_as_rendered() {
+        let now = unix_at(2026, 10, 23, 12);
+        for info in [None, Some(r#"{"stopDate":"void"}"#), Some("{}")] {
+            let bounded = hapi_bound_window(imag_url(), Some(now), info);
+            assert_eq!(
+                hapi_query_value(&bounded, "stop"),
+                Some("2026-10-23T12:00:00Z"),
+                "a missing or invalid stopDate leaves the window untouched"
+            );
+            assert_eq!(
+                hapi_query_value(&bounded, "start"),
+                Some("2026-10-16T00:00:00Z")
+            );
+        }
+    }
+
+    #[test]
+    fn hapi_info_url_keeps_the_route_prefix() {
+        assert_eq!(
+            super::super::port::hapi_info_url(imag_url()).as_deref(),
+            Some("https://imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=ABC/best-avail/PT1M/xyzf")
+        );
+        assert_eq!(
+            super::super::port::hapi_info_url(cdaweb_url()).as_deref(),
+            Some("https://cdaweb.gsfc.nasa.gov/hapi/info?id=OMNI2_H0_MRG1HR")
         );
     }
 }

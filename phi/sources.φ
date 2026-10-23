@@ -101,23 +101,17 @@ channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://api.vedur.is/quakes/events
 terms free-open https://en.vedur.is/about-imo/the-web/conditions
-at earth frame=barycenter
 ttl 60
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-quantity properties.depth vedur_quake_depth_km gaussian-inverse-square geometry km 3600 pending 0.0 0.0
+query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=absent datum=WGS84 time_key=properties.time time_scale=UTC
+field depth vedur_quake_depth_km km source_key=properties.depth alt_offset=0.0
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
-query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=absent time_key=pending
 ttl 60
-map features
 mag_type_key properties.magType
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-quantity geometry.coordinates.2 geosphere_quake_depth_km erfc geometry km 6.0 pending 0.0 0.0
-quantity properties.mag geosphere_quake_magnitude erfc source-parameter Mw 6.0 pending 0.0 0.0
+query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=geometry.coordinates.2 datum=WGS84 time_key=properties.time time_scale=UTC (ms seit Epoche)
+field depth geosphere_quake_depth_km km source_key=geometry.coordinates.2 alt_offset=0.0
+field  mag geosphere_quake_magnitude 1 source_key=properties.mag alt_offset=0.0
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
@@ -264,24 +258,18 @@ last noaa_goes_xray_flux_long_w_m2 noaa_goes_xray_flux_long_w_m2 wm2_1au source_
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
-at earth frame=barycenter
 ttl 60
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-quantity properties.depth quake_depth_km gaussian-inverse-square geometry km 3600 pending 0.0 0.0
+query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=geometry.coordinates.2 datum=WGS84 time_key=properties.time time_scale=UTC
+field depth quake_depth_km km source_key=properties.depth alt_offset=0.0
 
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
 terms CC-BY-4.0 https://reg.bom.gov.au/other/copyright.shtml
-query earth frame=body lat_key=lat lon_key=lon alt_key=absent time_key=pending
 ttl 300
-map observations.data
-lat lat
-lon lon
-field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 pending 0.0 0.0
-field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 pending 0.0 0.0
-field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 pending 0.0 0.0
 channel energy:primary:flux-fourier:parabolic:fluid:unspecified:none K
+query earth frame=body lat_key=lat lon_key=lon alt_key=absent datum=WGS84 time_key=aifstime_utc time_scale=UTC
+field air_temp atmosphere_bom_air_temp_c C source_key=air_temp alt_offset=0.0
+field  rel_hum atmosphere_bom_relative_humidity_pct % source_key=rel_hum alt_offset=0.0
+field  wind_spd_kmh atmosphere_bom_wind_speed_kmh km/h source_key=wind_spd_kmh alt_offset=0.0
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
 terms CC-BY-4.0 https://open-meteo.com/en/licence
@@ -306,17 +294,14 @@ last value safecast_cpm inverse-square em cpm 3600 pending 0.0 0.0 where unit cp
 
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-query earth frame=body lat_key=lat lon_key=lon alt_key=absent time_key=pending
 ttl 300
-map .
-lat lat
-lon lon
-field temp atmosphere_metar_temp_c gaussian-inverse-square thermal C 30.0 pending 0.0 0.0
-field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square thermal C 30.0 pending 0.0 0.0
-field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 pending 0.0 0.0
-field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square advective kt 30.0 pending 0.0 0.0
-field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square advective deg 30.0 pending 0.0 0.0
 channel energy:primary:wave:hyperbolic:fluid:unspecified:none Pa
+query earth frame=body lat_key=lat lon_key=lon alt_key=absent datum=WGS84 time_key=obsTime time_scale=UTC (s seit Epoche)
+field temp atmosphere_metar_temp_c C source_key=temp alt_offset=0.0
+field  dewp atmosphere_metar_dewpoint_c C source_key=dewp alt_offset=0.0
+field  altim atmosphere_metar_pressure_hpa hPa source_key=altim alt_offset=0.0
+field  wspd atmosphere_metar_wind_speed_kt kt source_key=wspd alt_offset=0.0
+field  wdir atmosphere_metar_wind_direction_deg deg source_key=wdir alt_offset=0.0
 
 url https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
 terms ODC-DbCL-1.0 https://data.sensor.community/
@@ -427,13 +412,10 @@ field PTDY pressure_tendency hPa source_column=17 alt_offset=2.4
 
 url https://www.nhc.noaa.gov/CurrentStorms.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at earth frame=barycenter
 ttl 300
-map activeStorms
-lat latitudeNumeric
-lon longitudeNumeric
-field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 pending 0.0 0.0
-field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 pending 0.0 0.0
+at earth frame=barycenter time_key=lastUpdate time_scale=UTC
+field intensity storm_intensity_kt kt source_key=intensity alt_offset=0.0
+field  pressure storm_pressure_mb mb source_key=pressure alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/unidata-nexrad-level2.s3.amazonaws.com/nexrad_level2.bin
 terms free-open https://registry.opendata.aws/noaa-nexrad/
@@ -448,14 +430,11 @@ field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square advective m/s
 
 url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-query earth frame=body lat_key=lat lon_key=lon alt_key=absent time_key=pending
 ttl 600
-map .
-lat lat
-lon lon
-field temp atmosphere_pirep_temp_c gaussian-inverse-square thermal C 600.0 pending 0.0 0.0
-field wspd atmosphere_pirep_wind_speed_kt gaussian-inverse-square advective kt 600.0 pending 0.0 0.0
-field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective deg 600.0 pending 0.0 0.0
+query earth frame=body lat_key=lat lon_key=lon alt_key=absent datum=WGS84 time_key=obsTime time_scale=UTC (s seit Epoche)
+field temp atmosphere_pirep_temp_c C source_key=temp alt_offset=0.0
+field  wspd atmosphere_pirep_wind_speed_kt kt source_key=wspd alt_offset=0.0
+field  wdir atmosphere_pirep_wind_direction_deg deg source_key=wdir alt_offset=0.0
 
 url https://dhm.gov.np/hydrology/hms-Single/4913
 terms DHM-open https://dhm.gov.np/pages/about-us
@@ -597,19 +576,18 @@ quantity properties.mag geosphere_ga_mag_month erfc source-parameter Mw 180.0 pe
 
 url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
 terms CC-BY-SA-4.0 https://api.meteo.lt/
-on earth frame=body lat=54.625992 lon=25.107064 alt=0
 ttl 3600
-last observations.airTemperature meteo_lt_air_temp_c exponential-decay thermal C 3600 pending 0.0 0.0
-last observations.windSpeed meteo_lt_wind_speed_ms patch-levy advective m/s 3600 pending 0.0 0.0
-last observations.windGust meteo_lt_wind_gust_ms patch-levy advective m/s 3600 pending 0.0 0.0
-last observations.windDirection meteo_lt_wind_direction_deg patch-levy advective deg 3600 pending 0.0 0.0
-last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hPa 3600 pending 0.0 0.0
-last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 pending 0.0 0.0
-last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 pending 0.0 0.0
+on earth 54.625992 25.107064 0.0 datum=WGS84 time_key=observationTimeUtc time_scale=UTC
+field observations.airTemperature meteo_lt_air_temp_c C source_key=observations.airTemperature alt_offset=0.0
+field  observations.relativeHumidity meteo_lt_rel_humidity_pct % source_key=observations.relativeHumidity alt_offset=0.0
+field  observations.windSpeed meteo_lt_wind_speed_ms m/s source_key=observations.windSpeed alt_offset=0.0
+field  observations.windGust meteo_lt_wind_gust_ms m/s source_key=observations.windGust alt_offset=0.0
+field  observations.windDirection meteo_lt_wind_direction_deg deg source_key=observations.windDirection alt_offset=0.0
+field  observations.seaLevelPressure meteo_lt_pressure_hpa hPa source_key=observations.seaLevelPressure alt_offset=0.0
+field  observations.precipitation meteo_lt_precipitation_mm mm source_key=observations.precipitation alt_offset=0.0
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-query earth frame=body lat_key=lat lon_key=lng alt_key=absent time_key=pending
 ttl 3600
 stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=waterlevels&units=metric
 stations_path stations
@@ -619,18 +597,16 @@ stations_lon lng
 fanout 40
 fanout_center receiver
 fanout_delay 10
-last data.v hydrosphere_tide_water_level_m inverse-square geometry m 3600 pending 0.0 0.0
+on earth 37.8063 -122.4659 0.0 datum=WGS84 time_key=t time_scale=UTC (time_zone=gmt)
+field data.v hydrosphere_tide_water_level_m m source_key=data.0.v alt_offset=0.0
 
 url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=2000&format=json&age=6
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-query earth frame=body lat_key=lat lon_key=lon alt_key=absent time_key=pending
 ttl 3600
-map .
-lat lat
-lon lon
-field temp pirep_air_temp_c exponential-decay thermal C 360 pending 0.0 0.0
-field wdir pirep_wind_direction_deg patch-levy advective deg 360 pending 0.0 0.0
-field wspd pirep_wind_speed_knot patch-levy advective knot 360 pending 0.0 0.0
+query earth frame=body lat_key=lat lon_key=lon alt_key=absent datum=WGS84 time_key=obsTime time_scale=UTC (s seit Epoche)
+field temp pirep_air_temp_c C source_key=temp alt_offset=0.0
+field  wdir pirep_wind_direction_deg deg source_key=wdir alt_offset=0.0
+field  wspd pirep_wind_speed_knot kt source_key=wspd alt_offset=0.0
 
 url https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
 terms babamul-no-license https://babamul.caltech.edu/
@@ -1213,17 +1189,13 @@ field 0.temperature exosphere_ace_temp_k K source_key=temperature alt_offset=0
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
 terms PD-USGov https://ssd.jpl.nasa.gov/
-at earth frame=barycenter
 ttl 3600
-map data
-lat 3
 lat_sign 4
-lon 5
 lon_sign 6
 alt 7 km
-epoch 0
-field 1 geosphere_fireball_radiated_energy_e10j inverse-square em e10j 3600 pending 0.0 0.0
-field 2 geosphere_fireball_impact_energy_kt inverse-square em kt_tnt 3600 pending 0.0 0.0
+at earth frame=barycenter time_key=date time_scale=UTC
+field 1 geosphere_fireball_radiated_energy_e10j e10_J source_key=energy alt_offset=0.0
+field  2 geosphere_fireball_impact_energy_kt kt_TNT source_key=impact-e alt_offset=0.0
 
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
 terms CC-BY-4.0 https://data.ingv.it/docs/legal-notes.html
@@ -1238,12 +1210,9 @@ quantity properties.mag geosphere_earthquake_mag erfc source-parameter Mw 360.0 
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
 terms dl-de-by-2.0 https://www.imis.bfs.de/
-at earth frame=barycenter
 ttl 3600
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.value bfs_odl_gamma_dose_rate_usv_h inverse-square em usv/h 3600 pending 0.0 0.0
+query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=properties.height_above_sea datum=WGS84 time_key=properties.end_measure time_scale=UTC
+field value bfs_odl_gamma_dose_rate_usv_h usv/h source_key=properties.value alt_offset=0.0
 
 url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
 terms ioc-data-exchange-no-commercial https://www.ioc-sealevelmonitoring.org/
@@ -1341,14 +1310,13 @@ format vmf3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-on earth frame=body lat=38.9925 lon=-76.839833 alt=87
 ttl 86400
 format csv
-rows
-field AOD_500nm aeronet_aod_500nm inverse-square em 1 86400.0 pending 0.0 0.0
-field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 pending 0.0 0.0
-field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 pending 0.0 0.0
-field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 pending 0.0 0.0
+on earth 38.9925 -76.839833 87 datum=WGS84
+field AOD_500nm aeronet_aod_500nm 1 source_key=AOD_500nm alt_offset=0.0
+field  AOD_440nm aeronet_aod_440nm 1 source_key=AOD_440nm alt_offset=0.0
+field  AOD_870nm aeronet_aod_870nm 1 source_key=AOD_870nm alt_offset=0.0
+field  Precipitable_Water(cm) aeronet_precipitable_water_cm cm source_key=Precipitable_Water(cm) alt_offset=0.0
 
 url https://api.bas.ac.uk/superdarn/mirror/v3/
 terms OGL-UK-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
@@ -1373,13 +1341,10 @@ field humidity radiosonde_relative_humidity_pct gaussian-inverse-square diffusio
 url https://api.waterdata.usgs.gov/ogcapi/v0/collections/field-measurements/items?limit=10000&f=json&parameter_code=62611
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://api.waterdata.usgs.gov/ogcapi/v0
-at earth frame=barycenter
 ttl 86400
 format json
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.value hydrosphere_groundwater_depth_ft inverse-square geometry ft 86400 pending 0.0 0.0
+query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=absent datum=WGS84 time_key=time time_scale=UTC (Ende-1-Tag)
+field value hydrosphere_groundwater_depth_ft ft source_key=properties.value alt_offset=0.0
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
 terms wmo-data-policy https://api.woudc.org/
@@ -6595,14 +6560,11 @@ last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square aco
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
 terms other-attribution https://ned.ipac.caltech.edu/
-at sun frame=barycenter
 ttl 86400
 format tap
-cmap .
-ra ra
-dec dec
 z z
-field z ned_redshift_z inverse-linear em 1 86400 pending 0.0 0.0 aperture:none
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field z ned_redshift_z 1 source_key=z alt_offset=0.0
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&network=IM
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
@@ -6626,23 +6588,17 @@ quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 pending 0.0 0.0
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 terms eccc-end-use-licence https://eccc-msc.github.io/open-data/licence/readme_en/
-query earth frame=body lat_key=attributes.Latitude lon_key=attributes.Longitude alt_key=absent time_key=pending
 ttl 86400
-map features
-lat attributes.Latitude
-lon attributes.Longitude
-field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh gaussian-inverse-square advective km/h 3600.0 pending 0.0 0.0
-field attributes.Temperature_C environment_canada_temperature_c gaussian-inverse-square thermal C 3600.0 pending 0.0 0.0
+query earth frame=body lat_key=attributes.Latitude lon_key=attributes.Longitude alt_key=absent datum=WGS84 time_key=attributes.Updated time_scale=UTC (ms seit Epoche)
+field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh km/h source_key=attributes.WindSpeed_kmh alt_offset=0.0
+field  attributes.Temperature_C environment_canada_temperature_c C source_key=attributes.Temperature_C alt_offset=0.0
 
 url https://services.swpc.noaa.gov/json/solar_regions.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at sun frame=barycenter
 ttl 86400
-map .
-lat latitude
-lon carrington_longitude
-quantity area swpc_solar_region_area_millionths inverse-square area millionths 86400 pending 0.0 0.0
-quantity extent swpc_solar_region_extent_deg inverse-square geometry deg 86400 pending 0.0 0.0
+at sun frame=barycenter time_key=observed_date time_scale=UTC
+field area swpc_solar_region_area_millionths millionths source_key=area alt_offset=0.0
+field  extent swpc_solar_region_extent_deg deg source_key=extent alt_offset=0.0
 
 url https://stac.itslive.cloud
 terms PD-USGov https://sti.nasa.gov/disclaimers/
@@ -7302,14 +7258,11 @@ quantity mag_v hipparcos_v_mag inverse-square source-parameter mag 604800 pendin
 
 url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
 terms CC0-1.0 https://www.g-vo.org/
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra RAdeg
-dec DEdeg
-field HRV rave_dr4_radial_velocity_kms gaussian-inverse-square advective km/s 604800 pending 0.0 0.0
-quantity Teff_K rave_dr4_effective_temp_k erfc source-parameter K 604800 pending 0.0 0.0
+sky frame=icrs ra_key=RAdeg dec_key=DEdeg epoch=J2000
+field HRV rave_dr4_radial_velocity_kms km/s source_key=HRV alt_offset=0.0
+field  Teff_K rave_dr4_effective_temp_k K source_key=Teff_K alt_offset=0.0
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
 terms CC-BY-4.0 https://open-meteo.com/en/licence
@@ -7319,13 +7272,10 @@ path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square
 
 url https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra ra
-dec dec
-field flux herschel_pacs_070_flux_mjy inverse-square em mJy 604800 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field flux herschel_pacs_070_flux_mjy mJy source_key=flux alt_offset=0.0
 
 url https://atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-sroc15-v10/
 terms PD-USGov https://sti.nasa.gov/disclaimers/
@@ -7379,48 +7329,34 @@ field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 pending 0.0 0.0
 
 url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
 terms datacentral-acknowledgement https://datacentral.org.au/
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra ra
-dec dec
-plx parallax
-quantity teff galah_dr3_effective_temp_k erfc source-parameter K 604800 pending 0.0 0.0
-field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective km/s 604800 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field teff galah_dr3_effective_temp_k K source_key=teff alt_offset=0.0
+field  rv_galah galah_dr3_radial_velocity_kms km/s source_key=rv_galah alt_offset=0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
 terms attribution https://dc.g-vo.org/
-at sun frame=barycenter
 ttl 604800
-cmap .
-ra raj2000
-dec dej2000
-field flux_dens_red ohmaser_flux_red_jy inverse-square em Jy 604800 pending 0.0 0.0
-field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 pending 0.0 0.0
+sky frame=icrs ra_key=raj2000 dec_key=dej2000 epoch=J2000
+field flux_dens_red ohmaser_flux_red_jy Jy source_key=flux_dens_red alt_offset=0.0
+field  flux_dens_blue ohmaser_flux_blue_jy Jy source_key=flux_dens_blue alt_offset=0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
 terms attribution https://dc.g-vo.org/
-at sun frame=barycenter
 ttl 604800
-cmap .
-ra raj2000
-dec dej2000
-plx parallax
 radvel rv
 rv_scale 1000.0
-quantity teff_k rave_teff_k gaussian-inverse-square source-parameter K 604800 pending 0.0 0.0
-quantity Jmag rave_jmag gaussian-inverse-square source-parameter mag 604800 pending 0.0 0.0
+sky frame=icrs ra_key=raj2000 dec_key=dej2000 epoch=J2000
+field teff_k rave_teff_k K source_key=teff_k alt_offset=0.0
+field  Jmag rave_jmag mag source_key=Jmag alt_offset=0.0
 
 url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra right_ascension
-dec declination
-field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 pending 0.0 0.0
+sky frame=icrs ra_key=right_ascension dec_key=declination epoch=J2000
+field flux_detection_total euclid_detection_flux uJy source_key=flux_detection_total alt_offset=0.0
 
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
 terms CC-BY-4.0 https://erddap.marine.ie/erddap/legal.html
@@ -7436,36 +7372,24 @@ field 3 smartbay_ctd_salinity_psu gaussian-inverse-square diffusion PSU 604800 p
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
 terms other-attribution https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html
-at sun frame=barycenter
 ttl 604800
-cmap .
-ra ra
-dec dec
-dist sy_dist
 dist_scale 3.085677581e16
-quantity st_teff exo_stellarhost_teff_k gaussian-inverse-square source-parameter K 604800 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field st_teff exo_stellarhost_teff_k K source_key=st_teff alt_offset=0.0
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra ra
-dec dec
-plx parallax
-quantity phot_g_mean_mag gaia_dr3_g_mag inverse-square source-parameter mag 604800 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field phot_g_mean_mag gaia_dr3_g_mag mag source_key=phot_g_mean_mag alt_offset=0.0
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra ra
-dec dec
-plx parallax
-quantity phot_g_mean_mag gaia_dr3_g_mag inverse-square source-parameter mag 604800 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field phot_g_mean_mag gaia_dr3_g_mag mag source_key=phot_g_mean_mag alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/alasky.cds.unistra.fr/hips_png_7_0.bin
 terms ODbL-1.0 https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/properties
@@ -9447,26 +9371,19 @@ ttl 604800
 
 url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
 terms CC-BY-NC-4.0 https://ogle.astrouw.edu.pl/atlas/terms.html
-at sun frame=barycenter
 ttl 604800
 format tap
-cmap .
-ra raj2000
-dec dej2000
-epoch obs_time mjd
-quantity magnitude ogle_magnitude inverse-square source-parameter mag 604800 pending 0.0 0.0
+sky frame=icrs ra_key=raj2000 dec_key=dej2000 epoch=J2000
+field magnitude ogle_magnitude mag source_key=magnitude alt_offset=0.0
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
 terms CC-BY-4.0 https://www.sdss.org/collaboration/image-use-policy/
-at sun frame=barycenter
 ttl 604800
-cmap 0.Rows
-ra ra
-dec dec
 z z
-field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 pending 0.0 0.0 aperture:none
-field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 pending 0.0 0.0 aperture:none
-field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 pending 0.0 0.0 aperture:none
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field psfMag_r sdss_photoobj_psfmag_r mag source_key=psfMag_r alt_offset=0.0
+field  psfMag_g sdss_photoobj_psfmag_g mag source_key=psfMag_g alt_offset=0.0
+field  psfMag_i sdss_photoobj_psfmag_i mag source_key=psfMag_i alt_offset=0.0
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
 terms CC-BY-4.0 https://www.sdss.org/collaboration/image-use-policy/
@@ -9807,23 +9724,17 @@ field delay_m galileo_ionocal_delay_m inverse-square em m 604800 pending 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+safcat.viking_er5_zyjj_1j_2hks_catMetaData_fits_V4+WHERE+KSPETROMAG+IS+NOT+NULL
 terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
-at sun frame=barycenter
 ttl 31536000
 format tap
-cmap .
-ra ra
-dec dec
-quantity ksmag viking_ks_petromag inverse-square source-parameter mag 31536000 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field ksmag viking_ks_petromag mag source_key=ksmag alt_offset=0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
 terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
-at sun frame=barycenter
 ttl 31536000
 format tap
-cmap .
-ra ra
-dec dec
-quantity ksmag vhs_ks_mag inverse-square source-parameter mag 31536000 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field ksmag vhs_ks_mag mag source_key=ksmag alt_offset=0.0
 
 url https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
 terms PD-USGov https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
@@ -10630,16 +10541,13 @@ field NG15_RESID pulsar_timing_residual_s inverse-square em s 31536000 pending 0
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
-at sun frame=barycenter
 ttl 31536000
 format tap
-cmap .
-ra ra
-dec dec
-field fnu_12 iras_psc_fnu_12_jy inverse-square em Jy 31536000 pending 0.0 0.0
-field fnu_25 iras_psc_fnu_25_jy inverse-square em Jy 31536000 pending 0.0 0.0
-field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 pending 0.0 0.0
-field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 pending 0.0 0.0
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field fnu_12 iras_psc_fnu_12_jy Jy source_key=fnu_12 alt_offset=0.0
+field  fnu_25 iras_psc_fnu_25_jy Jy source_key=fnu_25 alt_offset=0.0
+field  fnu_60 iras_psc_fnu_60_jy Jy source_key=fnu_60 alt_offset=0.0
+field  fnu_100 iras_psc_fnu_100_jy Jy source_key=fnu_100 alt_offset=0.0
 
 url https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
 terms naoj-copyright https://www.nao.ac.jp/en/terms/copyright.html
@@ -24881,3 +24789,4 @@ at earth frame=barycenter
 ttl 315360000
 format worldclim
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 pending 0.0 0.0
+
