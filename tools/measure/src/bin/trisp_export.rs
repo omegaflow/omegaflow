@@ -75,19 +75,29 @@ fn source_name(path: &Path) -> Option<String> {
     path.file_name().map(|s| s.to_string_lossy().into_owned())
 }
 
+fn attach_log(path: &Path, table: &mut TrispNseTable) {
+    let log_path = path.with_extension("log");
+    if let Ok(log_bytes) = fs::read(&log_path) {
+        if let Ok(log_text) = String::from_utf8(log_bytes) {
+            table.log = trisp_nse::parse_log(&log_text);
+        }
+    }
+}
+
 fn read_table(path: &Path) -> Option<TrispNseTable> {
     let bytes = fs::read(path).ok()?;
     match path.extension().and_then(|e| e.to_str()) {
-        Some("bin") => trisp_nse::parse_bin(&bytes),
+        Some("bin") => {
+            let mut table = trisp_nse::parse_bin(&bytes)?;
+            if table.log.is_empty() {
+                attach_log(path, &mut table);
+            }
+            Some(table)
+        }
         Some("dat") => {
             let text = String::from_utf8(bytes).ok()?;
             let mut table = trisp_nse::parse_dat(&text)?;
-            let log_path = path.with_extension("log");
-            if let Ok(log_bytes) = fs::read(&log_path) {
-                if let Ok(log_text) = String::from_utf8(log_bytes) {
-                    table.log = trisp_nse::parse_log(&log_text);
-                }
-            }
+            attach_log(path, &mut table);
             Some(table)
         }
         _ => None,
@@ -463,6 +473,21 @@ mod tests {
         let dir = temp_dir("dat_log");
         fs::create_dir_all(&dir).expect("temp dir");
         fs::write(dir.join("run.dat"), "tau TTA\n1.0 10.0\n").expect("dat");
+        fs::write(dir.join("run.log"), "TTAMEAN 10.0\nGamma 0.5\n").expect("log");
+        let (runs, skipped) = collect_runs(&dir);
+        assert_eq!(runs.len(), 1);
+        assert_eq!(skipped, 0);
+        assert_eq!(runs[0].table.log_value("Gamma"), Some(0.5));
+        fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn collect_runs_attaches_a_log_to_a_bin_without_one() {
+        let dir = temp_dir("bin_log");
+        fs::create_dir_all(&dir).expect("temp dir");
+        let mut table = table();
+        table.log.clear();
+        fs::write(dir.join("run.bin"), trisp_nse::pack(&table)).expect("bin");
         fs::write(dir.join("run.log"), "TTAMEAN 10.0\nGamma 0.5\n").expect("log");
         let (runs, skipped) = collect_runs(&dir);
         assert_eq!(runs.len(), 1);
