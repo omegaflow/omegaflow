@@ -238,7 +238,7 @@ last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
-at sun
+on earth 0.0 -137.2 35786023
 last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
 last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
 
@@ -379,6 +379,7 @@ url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
 ttl 300
 format csv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
+on earth 19.151 -160.617 0
 lastrow WDIR hydrosphere_buoy_51003_wind_dir patch-levy advective deg 60 0.0 0.0
 lastrow WSPD hydrosphere_buoy_51003_wind_speed patch-levy advective m/s 60 0.0 0.0
 lastrow WVHT hydrosphere_buoy_51003_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
@@ -437,7 +438,7 @@ first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 0.0 0.0 where freque
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 600
-at sun
+on earth 0.0 -75.2 35786023
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
