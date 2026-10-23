@@ -1,0 +1,17 @@
+#!/bin/sh
+# stac_asset_fetch — Wrapper: setzt die benoetigten Env-Namen aus .secrets.local,
+# ohne Werte auszugeben, und execs das Release-Binary.
+set -u
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+bin="$root/target/release/stac_asset_fetch"
+[ -x "$bin" ] || { echo "stac_asset_fetch: Release fehlt (CI/tools-build)" >&2; exit 2; }
+
+for v in CDSE_USER CDSE_PASS CDSE_TOKEN EARTHDATA_EDL_TOKEN EUMETSAT_KEY EUMETSAT_SECRET; do
+    val="$(printenv "$v" 2>/dev/null || true)"
+    if [ -z "$val" ] && [ -f "$root/.secrets.local" ]; then
+        val="$(sed -n "s/^${v}=//p" "$root/.secrets.local" | head -n 1)"
+    fi
+    [ -n "$val" ] && export "$v=$val"
+done
+
+exec "$bin" "$@"
