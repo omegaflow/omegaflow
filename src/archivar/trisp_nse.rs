@@ -246,135 +246,68 @@ pub fn parse_bin(bytes: &[u8]) -> Option<TrispNseTable> {
 mod tests {
     use super::*;
 
-    const DATA_DIR: &str = "data/redacted";
-
-    fn read_data(rel: &str) -> Option<Vec<u8>> {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join(DATA_DIR)
-            .join(rel);
-        match std::fs::read(&path) {
-            Ok(b) => Some(b),
-            Err(_) => {
-                eprintln!("skip: {} absent (gitignored data)", path.display());
-                None
-            }
-        }
-    }
-
-    const EXPECTED_COLUMNS: [&str; 23] = [
-        "tau", "FREQ1", "FREQ2", "FREQ1EFF", "FREQ2EFF", "RFM", "C4P", "LD", "TTA", "Pol", "dPol",
-        "PolC", "dPolC", "I0", "DI0", "x0", "Dx0", "dL", "DdL", "time", "mon", "Chisq", "file",
-    ];
-
-    #[test]
-    fn parse_dat_reads_the_real_column_names() {
-        let Some(bytes) = read_data("sample_a.dat") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("dat is utf8");
-        let table = parse_dat(&text).expect("dat parses");
-        assert_eq!(table.columns.len(), EXPECTED_COLUMNS.len());
-        for (got, want) in table.columns.iter().zip(EXPECTED_COLUMNS.iter()) {
-            assert_eq!(got, want);
+    fn sample_table() -> TrispNseTable {
+        TrispNseTable {
+            columns: vec![
+                "tau".to_string(),
+                "TTA".to_string(),
+                "Pol".to_string(),
+                "PolC".to_string(),
+            ],
+            rows: vec![
+                vec![Some(1.0), Some(10.0), Some(0.90), Some(0.80)],
+                vec![Some(2.0), Some(10.0), Some(0.70), Some(0.60)],
+                vec![Some(3.0), None, None, Some(0.50)],
+            ],
+            log: Vec::new(),
         }
     }
 
     #[test]
-    fn parse_dat_reads_the_real_row_counts() {
-        let Some(bytes) = read_data("sample_a.dat") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("dat is utf8");
-        let table = parse_dat(&text).expect("dat parses");
-        assert_eq!(table.rows.len(), 8);
-        let Some(bytes) = read_data("sample_b.dat") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("dat is utf8");
-        let table = parse_dat(&text).expect("dat parses");
-        assert_eq!(table.rows.len(), 4);
+    fn parse_dat_reads_header_and_rows() {
+        let text = "tau TTA Pol PolC\n1.0 10.0 0.90 0.80\n2.0 10.0 0.70 0.60\n";
+        let table = parse_dat(text).expect("dat parses");
+        assert_eq!(table.columns, ["tau", "TTA", "Pol", "PolC"]);
+        assert_eq!(table.rows.len(), 2);
+        assert_eq!(table.rows[1][0], Some(2.0));
     }
 
     #[test]
-    fn parse_log_reads_ttamean_against_the_fit_result() {
-        let Some(bytes) = read_data("sample_a.log") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("log is utf8");
-        let log = parse_log(&text);
-        let ttamean = log
-            .iter()
-            .find(|(k, _)| k == "TTAMEAN")
-            .and_then(|(_, v)| *v)
-            .expect("TTAMEAN present");
-        assert!((ttamean - 10.0).abs() < 1.0e-4, "TTAMEAN {ttamean}");
-        let Some(bytes) = read_data("sample_b.log") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("log is utf8");
-        let log = parse_log(&text);
-        let ttamean = log
-            .iter()
-            .find(|(k, _)| k == "TTAMEAN")
-            .and_then(|(_, v)| *v)
-            .expect("TTAMEAN present");
-        assert!((ttamean - 20.0).abs() < 1.0e-5, "TTAMEAN {ttamean}");
+    fn parse_log_reads_key_values() {
+        let log = parse_log("TTAMEAN 10.0\nGamma 0.5\ndGamma 0.05\nempty\n");
+        assert_eq!(log.len(), 4);
+        assert_eq!(log[0], ("TTAMEAN".to_string(), Some(10.0)));
+        assert_eq!(log[2], ("dGamma".to_string(), Some(0.05)));
+        assert_eq!(log[3], ("empty".to_string(), None));
     }
 
     #[test]
-    fn log_ttamean_falls_inside_the_dat_tta_range() {
-        let Some(dat_bytes) = read_data("sample_a.dat") else {
-            return;
-        };
-        let Some(log_bytes) = read_data("sample_a.log") else {
-            return;
-        };
-        let dat_text = String::from_utf8(dat_bytes).expect("dat is utf8");
-        let log_text = String::from_utf8(log_bytes).expect("log is utf8");
-        let mut table = parse_dat(&dat_text).expect("dat parses");
-        table.log = parse_log(&log_text);
-        let ttamean = table.log_value("TTAMEAN").expect("TTAMEAN present");
-        let tta = table.column("TTA").expect("TTA column present");
-        let (lo, hi) = tta
-            .iter()
-            .flatten()
-            .fold((f64::INFINITY, f64::NEG_INFINITY), |(lo, hi), &v| {
-                (lo.min(v), hi.max(v))
-            });
-        assert!(
-            ttamean >= lo && ttamean <= hi,
-            "TTAMEAN {ttamean} outside [{lo}, {hi}]"
-        );
+    fn pack_and_roundtrip_hold_the_table() {
+        let mut table = sample_table();
+        table.log = vec![
+            ("TTAMEAN".to_string(), Some(10.0)),
+            ("Gamma".to_string(), Some(0.5)),
+        ];
+        let bin = pack(&table);
+        let parsed = parse_bin(&bin).expect("packed table parses");
+        assert_eq!(parsed, table);
+    }
+
+    #[test]
+    fn series_pairs_pol_and_polc() {
+        let table = sample_table();
+        let series = table.series().expect("series present");
+        assert_eq!(series.len(), 5);
+        assert_eq!(series[0], (1.0, 0.90, COMP_POL));
+        assert_eq!(series[1], (1.0, 0.80, COMP_POLC));
     }
 
     #[test]
     fn missing_column_and_key_are_rejected() {
-        let Some(bytes) = read_data("sample_a.dat") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("dat is utf8");
-        let table = parse_dat(&text).expect("dat parses");
+        let table = sample_table();
         assert!(table.column("absent").is_none());
         assert!(table.column_index("absent").is_none());
         assert!(table.log_value("absent").is_none());
-    }
-
-    #[test]
-    fn pack_and_roundtrip_hold_the_real_table() {
-        let Some(bytes) = read_data("sample_a.dat") else {
-            return;
-        };
-        let text = String::from_utf8(bytes).expect("dat is utf8");
-        let mut table = parse_dat(&text).expect("dat parses");
-        if let Some(log_bytes) = read_data("sample_a.log") {
-            let log_text = String::from_utf8(log_bytes).expect("log is utf8");
-            table.log = parse_log(&log_text);
-        }
-        let bin = pack(&table);
-        let parsed = parse_bin(&bin).expect("packed table parses");
-        assert_eq!(parsed, table);
-        let series = table.series().expect("series present");
-        assert_eq!(series.len(), table.rows.len() * 2);
     }
 
     #[test]

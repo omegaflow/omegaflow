@@ -897,7 +897,7 @@ fn coupled_henon(n: usize, transient: usize, c: f64, x0: f64, y0: f64) -> (Vec<f
 
 fn selftest_temperature_parse() -> bool {
     let cases: [(&str, Option<f64>); 5] = [
-        ("sample_a.bin", Some(10.0)),
+        ("probe_alpha_12.5.bin", Some(12.5)),
         ("run_1.25_abc.bin", Some(1.25)),
         ("no_number_here.bin", None),
         ("series_2_3.bin", Some(3.0)),

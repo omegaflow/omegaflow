@@ -1,7 +1,4 @@
-use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::trisp_nse::{self, TrispNseTable};
-
-const DEFAULT_DIR: &str = "data/redacted";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -22,28 +19,20 @@ fn asset_name(dat_path: &str) -> String {
 }
 
 fn print_inventory(table: &TrispNseTable) {
-    let p0 = table.log_value("P0");
-    let gamma = table.log_value("Gamma");
-    let tau_min = table.log_value("TauMin");
-    let ttamean = table.log_value("TTAMEAN");
     eprintln!(
-        "  tau unit {} (NSE convention); TTA unit {}; Pol/dPol/PolC/dPolC dimensionless",
+        "  {} row(s), {} column(s), {} log key(s); tau unit {}, TTA unit {}",
+        table.rows.len(),
+        table.columns.len(),
+        table.log.len(),
         trisp_nse::TAU_UNIT,
         trisp_nse::TTA_UNIT
-    );
-    eprintln!("  fit: P0 {p0:?}, Gamma {gamma:?}, TauMin {tau_min:?}, TTAMEAN {ttamean:?}");
-    eprintln!(
-        "  substance witness: I(q,t) carries no ICRS position and no force channel — the 26×f64 response record does not carry it; TNSE rests as a Substance witness (carrier em)"
     );
 }
 
 fn compile_pair(dat_path: &std::path::Path, out_dir: &str) -> Option<String> {
     let dat_text = read_text(dat_path)?;
     let Some(mut table) = trisp_nse::parse_dat(&dat_text) else {
-        eprintln!(
-            "{}: parse void — the bin stays unwritten (0 honored)",
-            dat_path.display()
-        );
+        eprintln!("parse void — the bin stays unwritten (0 honored)");
         return None;
     };
     let log_path = dat_path.with_extension("log");
@@ -52,11 +41,11 @@ fn compile_pair(dat_path: &std::path::Path, out_dir: &str) -> Option<String> {
     }
     let bin = trisp_nse::pack(&table);
     let Some(parsed) = trisp_nse::parse_bin(&bin) else {
-        eprintln!("{}: roundtrip void — unverified", dat_path.display());
+        eprintln!("roundtrip void — unverified");
         return None;
     };
     if parsed != table {
-        eprintln!("{}: roundtrip mismatch — unverified", dat_path.display());
+        eprintln!("roundtrip mismatch — unverified");
         return None;
     }
     let asset = asset_name(&dat_path.to_string_lossy());
@@ -65,18 +54,10 @@ fn compile_pair(dat_path: &std::path::Path, out_dir: &str) -> Option<String> {
         let _ = std::fs::create_dir_all(parent);
     }
     if std::fs::write(&out_path, &bin).is_err() {
-        eprintln!("write {} returned void", out_path.display());
+        eprintln!("write returned void");
         return None;
     }
-    eprintln!(
-        "{}: {} row(s), {} column(s), {} log key(s), {} byte(s), sha256 {}",
-        out_path.display(),
-        table.rows.len(),
-        table.columns.len(),
-        table.log.len(),
-        bin.len(),
-        sha256_hex(&bin)
-    );
+    eprintln!("packed {} byte(s)", bin.len());
     print_inventory(&table);
     Some(asset)
 }
@@ -100,7 +81,10 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let dir = match arg_value(&args, "--dir") {
         Some(d) => d,
-        None => DEFAULT_DIR.to_string(),
+        None => {
+            eprintln!("usage: trisp_nse_compiler --dir <path> [--out <path>]");
+            std::process::exit(2);
+        }
     };
     let out_dir = match arg_value(&args, "--out") {
         Some(d) => d,
@@ -108,7 +92,7 @@ fn main() {
     };
     let pairs = collect_pairs(&dir);
     if pairs.is_empty() {
-        eprintln!("{dir}: no .dat file found — nothing written (0 honored)");
+        eprintln!("no .dat file found — nothing written (0 honored)");
         std::process::exit(1);
     }
     let mut written = 0usize;
@@ -121,7 +105,5 @@ fn main() {
         eprintln!("no table packed — nothing written (0 honored)");
         std::process::exit(1);
     }
-    eprintln!(
-        "{written} table(s) packed — output stays local"
-    );
+    eprintln!("{written} table(s) packed — output stays local");
 }
