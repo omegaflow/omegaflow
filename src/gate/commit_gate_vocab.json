@@ -659,6 +659,11 @@
     "wiedervorlage",
     "fired"
   ],
+  "burn_open_absent": [
+    "pending",
+    "unmeasured",
+    "nicht gemessen"
+  ],
   "deferral_markers": [
     "nächster Dispatch",
     "nächsten Dispatch",

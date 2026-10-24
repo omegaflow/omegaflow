@@ -47,6 +47,7 @@ struct Vocab {
     measure_step_markers: Vec<String>,
     measure_step_due: Vec<String>,
     deferral_markers: Vec<String>,
+    burn_open_absent: Vec<String>,
     consent_acts: Vec<(String, String)>,
     human_threshold: Vec<String>,
     registered_word: String,
@@ -152,6 +153,7 @@ fn load_vocab() -> Vocab {
         measure_step_markers: str_list(&json, "measure_step_markers"),
         measure_step_due: str_list(&json, "measure_step_due"),
         deferral_markers: str_list(&json, "deferral_markers"),
+        burn_open_absent: str_list(&json, "burn_open_absent"),
         consent_acts: pair_list(&json, "consent_acts"),
         human_threshold: str_list(&json, "human_threshold"),
         registered_word: str_value(&json, "registered_word"),
@@ -1239,6 +1241,7 @@ impl Gate {
         if is_code && !is_test_file_path(&path) {
             let prod = test_regions_stripped(&content);
             let lower = prod.to_lowercase();
+            let german_lower = strip_string_literals(&prod).to_lowercase();
             let v = vocab();
             let zf_idx = vocab()
                 .zero_fabrication
@@ -1269,7 +1272,7 @@ impl Gate {
             let german_word_idx = v
                 .german_function_words
                 .iter()
-                .find_map(|w| word_index(&lower, w));
+                .find_map(|w| word_index(&german_lower, w));
             if let Some(idx) = german_char_idx.or(german_word_idx) {
                 return Some(Verdict {
                     severity: Severity::Hard,
@@ -1924,9 +1927,10 @@ pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
         let (Some(_open), Some(close_value)) = (open, close) else {
             let low = body.to_lowercase();
             if open.is_some()
-                && (low.contains("pending")
-                    || low.contains("unmeasured")
-                    || low.contains("nicht gemessen"))
+                && vocab()
+                    .burn_open_absent
+                    .iter()
+                    .any(|m| low.contains(m.as_str()))
             {
                 return None;
             }
@@ -2787,6 +2791,37 @@ fn word_present(lower: &str, word: &str) -> bool {
     word_index(lower, word).is_some()
 }
 
+fn strip_string_literals(content: &str) -> String {
+    let mut out = String::with_capacity(content.len());
+    let mut in_str = false;
+    let mut escaped = false;
+    for ch in content.chars() {
+        if in_str {
+            if ch == '\n' {
+                out.push('\n');
+                in_str = false;
+            } else {
+                out.push(' ');
+                if escaped {
+                    escaped = false;
+                } else if ch == '\\' {
+                    escaped = true;
+                } else if ch == '"' {
+                    in_str = false;
+                }
+            }
+            continue;
+        }
+        if ch == '"' {
+            in_str = true;
+            out.push(' ');
+            continue;
+        }
+        out.push(ch);
+    }
+    out
+}
+
 fn word_index(lower: &str, word: &str) -> Option<usize> {
     let w = word.trim().to_lowercase();
     let mut start = 0;
@@ -2794,11 +2829,11 @@ fn word_index(lower: &str, word: &str) -> Option<usize> {
         let pos = start + rel;
         let before = pos == 0 || {
             let c = lower.as_bytes()[pos - 1] as char;
-            !c.is_alphanumeric()
+            !c.is_alphanumeric() && c != '_' && c != '.' && c != '-' && c != '/'
         };
         let after = pos + w.len() >= lower.len() || {
             let c = lower.as_bytes()[pos + w.len()] as char;
-            !c.is_alphanumeric()
+            !c.is_alphanumeric() && c != '_' && c != '.' && c != '-' && c != '/'
         };
         if before && after {
             return Some(pos);
