@@ -1,5 +1,10 @@
 #!/bin/sh
-# cdn-put — der einzige Weg in den CDN.
+# cdn-put — das Tor der Manifestation.
+#
+# Manifestation ist der Begriff der Membran (research/concepts/4d-membrane.md):
+# die Messfläche wird in das Feld gespannt, und was an ihr ankommt, wird
+# manifestiert. Hier heißt das: ein Datensatz wird als CDN-Asset manifestiert.
+# Dieses Tor entscheidet, welche Datensätze manifestiert werden dürfen.
 #
 # usage: bin/cdn-put <tag> <datei>...
 #        bin/cdn-put --check <tag> <datei>...
@@ -76,7 +81,8 @@ for my $path (@files) {
     (my $base = $path) =~ s{.*/}{};
     my $key = "$tag/$base";
     if (!exists $asset{$key}) {
-        # Beidatei: <asset>.sha256 / <asset>.manifest erbt die Lizenz des Assets
+        # Beidatei: <asset>.sha256 / <asset>.manifest ist ein Index über andere
+        # Assets, kein Datensatz — er erbt die Lizenz dessen, was er aufführt.
         if ($base =~ /^(.+?)\.(?:sha256|manifest)$/ && exists $asset{"$tag/$1"}) {
             $key = "$tag/$1";
         }
