@@ -29,7 +29,7 @@ USGov-disclaimer	admitted	standard licence text
 alma-publication-acknowledgement	unread	
 arXiv-nonexclusive-distrib-1.0	refused	grants arXiv a non-exclusive right to distribute, not third parties
 argo-free	unread	
-attribution	unread	
+attribution	refused	not a licence: 8 different sources (UCalgary, GAVO, EDGES, IceCube, NSO, ORNL, WSO) — each needs its own terms token
 babamul-no-license	refused	
 bgi-nc	unread	
 cadc-open	unread	
@@ -69,7 +69,7 @@ noaa-nodd-open	unread
 noaa-open-disclaimer	refused	UHSLC: "Copyright (c) 2015-2026 ... All Rights Reserved"
 non-commercial-government-licence-2.0	unread	
 onc-open	unread	
-other-attribution	unread	
+other-attribution	refused	not a licence: 11 different sources (Copernicus EWDS, Exoplanet Archive, GCN, GSA, HESS, LASP, NED, NSDB, SuperDARN, AOML, NIST, WaterQuality) — each needs its own terms token
 own-work	admitted	standard licence text
 pradan-terms	unread	
 rpw-public-ack	unread	
