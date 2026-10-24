@@ -2702,6 +2702,10 @@ fn usage() {
 fn usage_full() {
     eprintln!("archive_search — full source reference (read --help for the search ladder first)");
     eprintln!();
+    eprintln!("spec:     --quantity <q> --band <b> --unit <u> --cadence <c> --instrument <i>");
+    eprintln!("          the four axes as flags; every hit carries them as `spec: …`");
+    eprintln!("  --values <name>  local search for a variable name (values + name as keywords)");
+    eprintln!();
     eprintln!("  Keyless direct sources first; keyless meta-search second; keyed fallback");
     eprintln!("  last, serial and rate-limited. --all is a fan-out, not a default.");
     eprintln!();
