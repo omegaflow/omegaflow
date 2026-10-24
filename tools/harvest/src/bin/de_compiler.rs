@@ -11,7 +11,6 @@ use omegaflow::pck::{self, PckBody};
 
 const IAU_PCK_10: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
 const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
-const DE_BODIES: [&str; 3] = ["sun", "moon", "earth"];
 const DEFAULT_NETLOC: &str = "ssd.jpl.nasa.gov-de";
 
 fn fetch_text(url: &str) -> Option<String> {
@@ -112,13 +111,14 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--gm <gm.tpc>]... [--ci-mode]"
+            "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--gm <gm.tpc>]... --bodies <name,...> [--ci-mode]"
         );
         eprintln!(
-            "  emits data/<netloc>/ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin"
+            "  --bodies names the extracted bodies (comma-separated) — the scope is declared, never defaulted"
         );
         eprintln!("  --label is the JPL DE edition word (the data lineage), e.g. de440");
         eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov-de");
@@ -137,6 +137,13 @@ fn main() {
             std::process::exit(1);
         }
     };
+    let bodies: Vec<String> = match arg_value(&args, "--bodies") {
+        Some(v) if !v.is_empty() => v.split(',').map(|s| s.trim().to_string()).collect(),
+        _ => {
+            eprintln!("de: --bodies <name,...> is required — the body scope is declared, never defaulted");
+            std::process::exit(1);
+        }
+    };
     let netloc = match arg_value(&args, "--netloc") {
         Some(n) if !n.is_empty() => n,
         _ => DEFAULT_NETLOC.to_string(),
@@ -151,7 +158,7 @@ fn main() {
             skip_next = false;
             continue;
         }
-        if a == "--label" || a == "--netloc" {
+        if a == "--label" || a == "--netloc" || a == "--bodies" {
             skip_next = true;
             continue;
         }
@@ -217,7 +224,7 @@ fn main() {
         gm_pck_text(&gm_local, &label).as_deref(),
         body_pck_text(&pck_local).as_deref(),
     );
-    let in_scope = |name: &str| DE_BODIES.contains(&name);
+    let in_scope = |name: &str| bodies.iter().any(|b| b == name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
     if let Err(e) = std::fs::create_dir_all(&out_dir) {
@@ -227,7 +234,7 @@ fn main() {
     for (target, name) in resolved_bodies(&bsps) {
         if !in_scope(&name) {
             eprintln!(
-                "de: {} (target {}) covered but not compiled — the scope is the sun/moon/earth line",
+                "de: {} (target {}) covered but not compiled — the scope is declared by --bodies",
                 name, target
             );
             continue;

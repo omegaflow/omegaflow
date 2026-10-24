@@ -30,7 +30,7 @@ jobs:
       - name: Compile the RadNet ICRS records and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin radnet_compiler -- \
-            --out radnet.bin --ci-mode \
+            --body earth --out radnet.bin --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "radnet-cdn: radnet.bin returned void" \
                  "radnet compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

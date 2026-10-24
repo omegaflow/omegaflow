@@ -639,16 +639,15 @@ fn write_bin(pixels: &[Pixel]) -> Vec<u8> {
     out.extend_from_slice(&(pixels.len() as u32).to_le_bytes());
     for p in pixels {
         let inc_meas = p.inc.filter(|v| v.is_finite() && *v > 0.0);
-        let inc = match inc_meas {
-            Some(v) => v,
-            None => 0.0,
-        };
-        let present = match inc_meas {
-            Some(_) => 1.0,
-            None => 0.0,
-        };
-        for v in [p.lon, p.lat, p.post, p.vor, p.db, inc, present] {
+        for v in [p.lon, p.lat, p.post, p.vor, p.db] {
             out.extend_from_slice(&v.to_le_bytes());
+        }
+        match inc_meas {
+            Some(v) => {
+                out.extend_from_slice(&v.to_le_bytes());
+                out.extend_from_slice(&1.0f64.to_le_bytes());
+            }
+            None => out.extend_from_slice(&[0u8; 16]),
         }
     }
     out
@@ -685,6 +684,7 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<Pixel>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {

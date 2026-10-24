@@ -11,8 +11,6 @@ const NETLOC: &str = "superdarn.ca";
 const RST_HDW_RAW: &str =
     "https://raw.githubusercontent.com/SuperDARN/rst/main/tables/superdarn/hdw/hdw.dat.";
 
-const EARTH_RADIUS_KM: f64 = 6371.0;
-
 const FIELD_LIST: &str = "\"v\",\"bmazm\",\"frang\",\"rsep\",\"slist\"";
 
 const CHISHAM_A: [f64; 3] = [108.974, 384.416, 1098.28];
@@ -130,11 +128,14 @@ fn list_of(obj: &JsonVal, key: &str) -> Option<Vec<f64>> {
     obj_str(obj, key).map(|s| parse_bracket_list(&s))
 }
 
-fn civil_unix(yr: i64, mo: u32, dy: u32, hr: u32, mt: u32, sc: u32, us: u32) -> Option<f64> {
+fn civil_unix(yr: i64, mo: u32, dy: u32, hr: u32, mt: u32, sc: u32, us: Option<u32>) -> Option<f64> {
     let days = ymd_to_days(yr, mo, dy)?;
-    Some(
-        days as f64 * 86400.0 + hr as f64 * 3600.0 + mt as f64 * 60.0 + sc as f64 + us as f64 / 1e6,
-    )
+    let second =
+        days as f64 * 86400.0 + hr as f64 * 3600.0 + mt as f64 * 60.0 + sc as f64;
+    Some(match us {
+        Some(us) => second + us as f64 / 1e6,
+        None => second,
+    })
 }
 
 fn time_unix(obj: &JsonVal) -> Option<f64> {
@@ -144,10 +145,7 @@ fn time_unix(obj: &JsonVal) -> Option<f64> {
     let hr = obj_num(obj, "time.hr")?;
     let mt = obj_num(obj, "time.mt")?;
     let sc = obj_num(obj, "time.sc")?;
-    let us = match obj_num(obj, "time.us") {
-        Some(v) => v,
-        None => 0.0,
-    };
+    let us = obj_num(obj, "time.us").map(|v| v.max(0.0) as u32);
     civil_unix(
         yr as i64,
         mo as u32,
@@ -155,7 +153,7 @@ fn time_unix(obj: &JsonVal) -> Option<f64> {
         hr as u32,
         mt as u32,
         sc as u32,
-        us.max(0.0) as u32,
+        us,
     )
 }
 
@@ -179,9 +177,9 @@ fn chisham_virtual_height_km(slant_km: f64) -> Option<f64> {
     }
 }
 
-fn chisham_ground_km(slant_km: f64) -> Option<f64> {
+fn chisham_ground_km(slant_km: f64, re_km: f64) -> Option<f64> {
     let h = chisham_virtual_height_km(slant_km)?;
-    let re = EARTH_RADIUS_KM;
+    let re = re_km;
     let rp = re + h;
     let cos_theta = (re * re + rp * rp - slant_km * slant_km) / (2.0 * re * rp);
     if !cos_theta.is_finite() || !(-1.0..=1.0).contains(&cos_theta) {
@@ -195,7 +193,13 @@ fn chisham_ground_km(slant_km: f64) -> Option<f64> {
     }
 }
 
-fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Option<(f64, f64)> {
+fn destination(
+    lat_deg: f64,
+    lon_deg: f64,
+    bearing_deg: f64,
+    dist_km: f64,
+    re_km: f64,
+) -> Option<(f64, f64)> {
     if !lat_deg.is_finite()
         || !lon_deg.is_finite()
         || !bearing_deg.is_finite()
@@ -207,14 +211,19 @@ fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Op
     let lat1 = lat_deg.to_radians();
     let lon1 = lon_deg.to_radians();
     let bearing = bearing_deg.to_radians();
-    let delta = dist_km / EARTH_RADIUS_KM;
+    let delta = dist_km / re_km;
     let lat2 = (lat1.sin() * delta.cos() + lat1.cos() * delta.sin() * bearing.cos()).asin();
     let lon2 = lon1
         + (bearing.sin() * delta.sin() * lat1.cos()).atan2(delta.cos() - lat1.sin() * lat2.sin());
     Some((lat2.to_degrees(), lon2.to_degrees()))
 }
 
-fn gather(body: &str, site: &RadarSite, lsk: &LeapSeconds) -> Result<Vec<GeoRec>, String> {
+fn gather(
+    body: &str,
+    site: &RadarSite,
+    lsk: &LeapSeconds,
+    re_km: f64,
+) -> Result<Vec<GeoRec>, String> {
     let json = fetch_superdarn_ascii(body)
         .ok_or_else(|| "the ascii-call session stayed void (token or body absent)".to_string())?;
     let parsed = parse_json(&json).ok_or_else(|| "the ascii body parses void".to_string())?;
@@ -252,11 +261,11 @@ fn gather(body: &str, site: &RadarSite, lsk: &LeapSeconds) -> Result<Vec<GeoRec>
                 continue;
             }
             let slant_km = frang + gate * rsep;
-            let Some(ground_km) = chisham_ground_km(slant_km) else {
+            let Some(ground_km) = chisham_ground_km(slant_km, re_km) else {
                 skipped += 1;
                 continue;
             };
-            let Some((lat, lon)) = destination(site.lat_deg, site.lon_deg, bearing, ground_km)
+            let Some((lat, lon)) = destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
             else {
                 skipped += 1;
                 continue;
@@ -314,6 +323,7 @@ fn write_asset(records: &[GeoRec], out_path: &str) -> Result<usize, String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let radar = match arg_value(&args, "--radar") {
         Some(v) => v,
@@ -341,8 +351,17 @@ fn main() {
     };
     let out_path = arg_value(&args, "--out");
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let receiver = match arg_value(&args, "--body") {
+        Some(v) if !v.is_empty() => v,
+        _ => {
+            eprintln!(
+                "superdarn: --body <name> is required — the receiver body is declared, never defaulted"
+            );
+            std::process::exit(1);
+        }
+    };
 
-    let usage = "usage: superdarn_compiler --radar <code> --start <YYYY-MM-DD> [--start-time HH:MM] --end <YYYY-MM-DD> [--end-time HH:MM] [--beam all|0..15] --out <superdarn_fitacf.bin> [--ci-mode]";
+    let usage = "usage: superdarn_compiler --body <name> --radar <code> --start <YYYY-MM-DD> [--start-time HH:MM] --end <YYYY-MM-DD> [--end-time HH:MM] [--beam all|0..15] --out <superdarn_fitacf.bin> [--ci-mode]";
     let out_path = match out_path {
         Some(v) => v,
         None => {
@@ -395,7 +414,15 @@ fn main() {
         &end_time,
         &beam,
     );
-    let records = match gather(&body, &site, &lsk) {
+    let re_km = match omegaflow::cdn::body_mean_radius_km(&receiver) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("superdarn: {e}");
+            std::process::exit(1);
+        }
+    };
+    eprintln!("superdarn: {receiver} mean radius {re_km:.4} km from the ephemeris");
+    let records = match gather(&body, &site, &lsk, re_km) {
         Ok(r) => r,
         Err(e) => {
             eprintln!("superdarn_compiler: {e}");
@@ -450,30 +477,32 @@ mod tests {
 
     #[test]
     fn chisham_ground_range_is_shorter_than_slant_range() {
-        let ground = chisham_ground_km(180.0).expect("finite");
+        let re = 6371.0004;
+        let ground = chisham_ground_km(180.0, re).expect("finite");
         assert!(ground > 0.0 && ground < 180.0, "ground {ground}");
-        let far = chisham_ground_km(1500.0).expect("finite");
+        let far = chisham_ground_km(1500.0, re).expect("finite");
         assert!(far > 0.0 && far < 1500.0, "far ground {far}");
-        assert!(chisham_ground_km(-1.0).is_none());
-        assert!(chisham_ground_km(f64::NAN).is_none());
+        assert!(chisham_ground_km(-1.0, re).is_none());
+        assert!(chisham_ground_km(f64::NAN, re).is_none());
     }
 
     #[test]
     fn destination_walks_north_and_east_on_the_sphere() {
-        let (lat, lon) = destination(0.0, 0.0, 0.0, 111.195).expect("finite");
+        let re = 6371.0004;
+        let (lat, lon) = destination(0.0, 0.0, 0.0, 111.195, re).expect("finite");
         assert!((lat - 1.0).abs() < 0.01, "north arc lat {lat}");
         assert!(lon.abs() < 0.01);
-        let (lat, lon) = destination(0.0, 0.0, 90.0, 111.195).expect("finite");
+        let (lat, lon) = destination(0.0, 0.0, 90.0, 111.195, re).expect("finite");
         assert!(lat.abs() < 0.01);
         assert!((lon - 1.0).abs() < 0.01, "east arc lon {lon}");
-        assert!(destination(f64::NAN, 0.0, 0.0, 10.0).is_none());
+        assert!(destination(f64::NAN, 0.0, 0.0, 10.0, re).is_none());
     }
 
     #[test]
     fn civil_unix_carries_epoch_and_microseconds() {
-        assert_eq!(civil_unix(1970, 1, 1, 0, 0, 0, 0), Some(0.0));
-        assert_eq!(civil_unix(1970, 1, 1, 0, 0, 1, 0), Some(1.0));
-        assert_eq!(civil_unix(1970, 1, 1, 0, 0, 0, 500000), Some(0.5));
+        assert_eq!(civil_unix(1970, 1, 1, 0, 0, 0, Some(0)), Some(0.0));
+        assert_eq!(civil_unix(1970, 1, 1, 0, 0, 1, Some(0)), Some(1.0));
+        assert_eq!(civil_unix(1970, 1, 1, 0, 0, 0, Some(500000)), Some(0.5));
     }
 
     #[test]

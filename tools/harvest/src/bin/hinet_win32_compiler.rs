@@ -517,12 +517,12 @@ fn compile_file(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_bin = arg_value(&args, "--out-bin");
     let mut channels_path = arg_value(&args, "--channels");
     let tz_offset: f64 = match arg_value(&args, "--tz-offset") {
-        None => 0.0,
         Some(v) => match v.parse::<f64>() {
             Ok(x) if x.is_finite() => x,
             _ => {
@@ -530,6 +530,12 @@ fn main() {
                 std::process::exit(1);
             }
         },
+        None => {
+            eprintln!(
+                "hinet: --tz-offset <seconds> is required — the timestamp base is declared, never defaulted (win32 records carry JST, 32400)"
+            );
+            std::process::exit(2);
+        }
     };
 
     let mut sources: Vec<PathBuf> = Vec::new();

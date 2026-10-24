@@ -343,12 +343,13 @@ fn iso_to_unix(text: &str) -> Option<f64> {
     let mut t = clock.split(':');
     let h: i64 = t.next()?.parse().ok()?;
     let mi: i64 = t.next()?.parse().ok()?;
-    let se: f64 = match t.next() {
-        Some(x) => x.parse().ok()?,
-        None => 0.0,
-    };
-    let base = days_from_civil(y, mo, da)? as f64 * SECS_PER_DAY;
-    Some(base + h as f64 * 3600.0 + mi as f64 * 60.0 + se)
+    let base = days_from_civil(y, mo, da)? as f64 * SECS_PER_DAY
+        + h as f64 * 3600.0
+        + mi as f64 * 60.0;
+    Some(match t.next() {
+        Some(x) => base + x.parse::<f64>().ok()?,
+        None => base,
+    })
 }
 
 fn civil_from_days(z: i64) -> (i64, i64, i64) {
@@ -1139,6 +1140,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("knmi_compiler: {msg}");

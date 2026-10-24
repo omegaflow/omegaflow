@@ -34,4 +34,4 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin superdarn_rawacf_compiler -- \
             --url https://www.frdr-dfdr.ca/repo/files/7/published/publication_1302/submitted_data/2023/01/20230101.0000.00.fir.a.rawacf.bz2 \
-            --radar fir --date 20230101 --out-bin superdarn_rawacf.bin --ci-mode
+            --body earth --radar fir --date 20230101 --out-bin superdarn_rawacf.bin --ci-mode

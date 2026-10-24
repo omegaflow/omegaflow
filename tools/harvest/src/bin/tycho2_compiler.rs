@@ -8,6 +8,8 @@ const STAR_RECORD_STRIDE: usize = 56;
 
 const HIP_ABSENT: i32 = 0;
 
+const ABSENT_BP_RP_PAD: f32 = 0.0;
+
 struct StarRow {
     hip: i32,
     ra_deg: f64,
@@ -388,10 +390,7 @@ fn encode(row: &StarRow, out: &mut Vec<u8>) {
     out.extend_from_slice(&(row.plx_mas as f32).to_le_bytes());
     out.extend_from_slice(&(row.mag as f32).to_le_bytes());
     out.extend_from_slice(&(10.0f64.powf(-0.4 * row.mag) as f32).to_le_bytes());
-    let bp_rp = match row.bp_rp {
-        Some(v) => v as f32,
-        None => 0.0,
-    };
+    let bp_rp = row.bp_rp.map_or(ABSENT_BP_RP_PAD, |v| v as f32);
     out.extend_from_slice(&bp_rp.to_le_bytes());
     out.extend_from_slice(&(row.rv as f32).to_le_bytes());
     out.extend_from_slice(&sigma_slot(row.sig_plx).to_le_bytes());
@@ -438,6 +437,7 @@ fn sort_records_by_magnitude(buf: &mut [u8]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut source: String = "tycho2".to_string();
     let mut input: Option<String> = None;

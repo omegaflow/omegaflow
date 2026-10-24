@@ -12,7 +12,6 @@ const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck
 const NETLOC: &str = "ssd.jpl.nasa.gov-neptune";
 const LABEL: &str = "de440";
 const NEPTUNE_BARYCENTER: i32 = 8;
-const BODY_NAME: &str = "neptune";
 
 fn fetch_text(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -63,26 +62,45 @@ fn has_barycenter(spk: &SpkFile) -> bool {
         .any(|s| s.target == NEPTUNE_BARYCENTER)
 }
 
+fn arg_value(args: &[String], name: &str) -> Option<String> {
+    args.iter()
+        .position(|a| a == name)
+        .and_then(|i| args.get(i + 1))
+        .cloned()
+}
+
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: neptune_ephemeris_compiler <de440s.bsp> [--pck <body.tpc>]... [--ci-mode]"
+            "usage: neptune_ephemeris_compiler <de440s.bsp> --body <name> [--pck <body.tpc>]... [--ci-mode]"
         );
         eprintln!(
-            "  emits data/{NETLOC}/ephemeris_{LABEL}_{BODY_NAME}.bin (the DE440 Neptune barycenter line)"
+            "  --body names the emitted body (the barycenter line target {NEPTUNE_BARYCENTER})"
         );
         eprintln!("  --pck passes a NAIF body PCK text; absent, pck00010+pck00011 are fetched");
         eprintln!("  --ci-mode uploads the asset to the {NETLOC} CDN release");
         std::process::exit(1);
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let body = match arg_value(&args, "--body") {
+        Some(v) if !v.is_empty() => v,
+        _ => {
+            eprintln!("neptune: --body <name> is required — the receiver body is declared, never defaulted");
+            std::process::exit(1);
+        }
+    };
     let mut pck_local: Vec<String> = Vec::new();
     let mut bsp_path: Option<String> = None;
     let mut skip_next = false;
     for (i, a) in args.iter().enumerate() {
         if skip_next {
             skip_next = false;
+            continue;
+        }
+        if a == "--body" {
+            skip_next = true;
             continue;
         }
         if a == "--pck" {
@@ -166,9 +184,9 @@ fn main() {
         eprintln!("neptune: create {}: {}", out_dir, e);
         std::process::exit(1);
     }
-    let path = format!("{out_dir}/ephemeris_{LABEL}_{BODY_NAME}.bin");
+    let path = format!("{out_dir}/ephemeris_{LABEL}_{body}.bin");
     if !write_binary(
-        &path, BODY_NAME, &granules, &rotations, &nutation, &wgccre, None,
+        &path, &body, &granules, &rotations, &nutation, &wgccre, None,
     ) {
         eprintln!("neptune: write {} returned void", path);
         std::process::exit(1);
@@ -189,7 +207,7 @@ fn main() {
     }
     eprintln!(
         "neptune: {} (target {NEPTUNE_BARYCENTER}) — {} granules — {}",
-        BODY_NAME,
+        body,
         granules.len(),
         path
     );

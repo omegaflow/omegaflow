@@ -225,16 +225,19 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
         .iter()
         .map(|r| r[4])
         .fold(f64::NEG_INFINITY, f64::max);
-    let t_min = records.first().map(|r| r[3]).unwrap_or(f64::NAN);
-    let t_max = records.last().map(|r| r[3]).unwrap_or(f64::NAN);
+    let t_min = records.first().map(|r| r[3]);
+    let t_max = records.last().map(|r| r[3]);
+    let t_range = match (t_min, t_max) {
+        (Some(a), Some(b)) => format!("{a}, {b}"),
+        _ => String::from("absent"),
+    };
     eprintln!(
-        "{out}: {} records ({} skipped), VTEC [{}, {}] TECU, t [{}, {}] unix",
+        "{out}: {} records ({} skipped), VTEC [{}, {}] TECU, t [{}] unix",
         records.len(),
         skipped,
         vt_min,
         vt_max,
-        t_min,
-        t_max
+        t_range
     );
     eprintln!(
         "  records {} bytes, sha256 {}",
@@ -311,6 +314,7 @@ fn compile_url(url: &str, out: &str) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--probe") {
         probe(&path);

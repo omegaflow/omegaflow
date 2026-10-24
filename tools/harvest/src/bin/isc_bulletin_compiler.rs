@@ -80,13 +80,9 @@ fn encode_rec(out: &mut [u8; REC_BYTES], e: &IscEvent) {
     out[16..24].copy_from_slice(&e.lat.to_le_bytes());
     out[24..32].copy_from_slice(&e.lon.to_le_bytes());
     out[32..40].copy_from_slice(&e.depth_km.to_le_bytes());
-    out[40..48].copy_from_slice(
-        &match e.magnitude {
-            Some(v) => v,
-            None => 0.0,
-        }
-        .to_le_bytes(),
-    );
+    if let Some(v) = e.magnitude {
+        out[40..48].copy_from_slice(&v.to_le_bytes());
+    }
     if let Some(ty) = &e.mag_type {
         encode_mag_type(out, ty);
     }
@@ -306,6 +302,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("isc_bulletin_compiler: {msg}");

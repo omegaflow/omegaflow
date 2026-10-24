@@ -228,6 +228,38 @@ pub fn require_ci() {
     }
 }
 
+pub fn body_mean_radius_km(name: &str) -> Result<f64, String> {
+    let props = body_props(name)?;
+    crate::archivar::motion::mean_radius_m(&props)
+        .map(|m| m / 1000.0)
+        .ok_or_else(|| format!("{name} body properties carry no radii"))
+}
+
+pub fn body_ellipsoid(name: &str) -> Result<(f64, f64), String> {
+    let props = body_props(name)?;
+    let a = props.radius_m;
+    let b = props.radii_b.unwrap_or(a);
+    let f = match props.flattening {
+        Some(v) => v,
+        None => (a - b) / a,
+    };
+    if a.is_finite() && a > 0.0 && f.is_finite() && f >= 0.0 && f < 1.0 {
+        Ok((a, f))
+    } else {
+        Err(format!("{name} body properties carry no usable ellipsoid"))
+    }
+}
+
+fn body_props(name: &str) -> Result<crate::archivar::motion::BodyProperties, String> {
+    let url = body_url(name);
+    let bytes = crate::archivar::fetch_raw_bytes(&url)
+        .ok_or_else(|| format!("{name} ephemeris fetch void ({url})"))?;
+    let eph = crate::archivar::parse_ephemeris_binary(&bytes)
+        .ok_or_else(|| format!("{name} ephemeris binary unread ({url})"))?;
+    eph.props
+        .ok_or_else(|| format!("{name} ephemeris carries no body properties"))
+}
+
 pub fn upload_release(tag: &str, path: &str) -> bool {
     if tag == CAPPED_RELEASE {
         eprintln!(

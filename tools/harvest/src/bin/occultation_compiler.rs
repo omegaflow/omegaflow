@@ -52,14 +52,20 @@ fn sexa_to_deg(raw: &str, is_ra: bool) -> Option<f64> {
     }
     let d: f64 = toks[0].parse().ok()?;
     let m: f64 = toks[1].parse().ok()?;
-    let s: f64 = match toks.get(2) {
-        Some(t) => t.replace(',', ".").parse().ok()?,
-        None => 0.0,
-    };
-    if !(d.is_finite() && m.is_finite() && s.is_finite()) {
+    if !(d.is_finite() && m.is_finite()) {
         return None;
     }
-    let mut v = d + m / 60.0 + s / 3600.0;
+    let base = d + m / 60.0;
+    let mut v = match toks.get(2) {
+        Some(t) => {
+            let s: f64 = t.replace(',', ".").parse().ok()?;
+            if !s.is_finite() {
+                return None;
+            }
+            base + s / 3600.0
+        }
+        None => base,
+    };
     if neg {
         v = -v;
     }
@@ -203,6 +209,7 @@ fn fetch_page(page: usize) -> Option<JsonVal> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {

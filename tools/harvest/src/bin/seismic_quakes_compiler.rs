@@ -34,6 +34,8 @@ fn iso_from_ms(ms: f64) -> Option<String> {
     Some(unix_to_iso(sec as f64))
 }
 
+type Row = (String, f64, f64, Option<f64>, Option<f64>, String);
+
 fn feature_list(root: &JsonVal) -> Vec<&JsonVal> {
     match jpath_val(root, "features") {
         Some(JsonVal::Arr(a)) => a.iter().collect(),
@@ -41,7 +43,7 @@ fn feature_list(root: &JsonVal) -> Vec<&JsonVal> {
     }
 }
 
-fn collect_vedur(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, String)>) {
+fn collect_vedur(root: &JsonVal, out: &mut Vec<Row>) {
     for f in feature_list(root) {
         let Some(props) = jpath_val(f, "properties") else {
             continue;
@@ -64,15 +66,15 @@ fn collect_vedur(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, Stri
         if iso.is_empty() {
             continue;
         }
-        let depth = jnum_at(props, &["depth"]).unwrap_or(f64::NAN);
-        let mag = jnum_at(props, &["magnitude"]).unwrap_or(f64::NAN);
+        let depth = jnum_at(props, &["depth"]);
+        let mag = jnum_at(props, &["magnitude"]);
         out.push((iso, lat, lon, depth, mag, "vedur".into()));
     }
 }
 
 fn collect_arcgis(
     root: &JsonVal,
-    out: &mut Vec<(String, f64, f64, f64, f64, String)>,
+    out: &mut Vec<Row>,
     depth_keys: &[&str],
     mag_keys: &[&str],
     time_keys: &[&str],
@@ -97,13 +99,13 @@ fn collect_arcgis(
         if iso.is_empty() {
             continue;
         }
-        let depth = jnum_at(attrs, depth_keys).unwrap_or(f64::NAN);
-        let mag = jnum_at(attrs, mag_keys).unwrap_or(f64::NAN);
+        let depth = jnum_at(attrs, depth_keys);
+        let mag = jnum_at(attrs, mag_keys);
         out.push((iso, lat, lon, depth, mag, src.to_string()));
     }
 }
 
-fn collect_romplus(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, String)>) {
+fn collect_romplus(root: &JsonVal, out: &mut Vec<Row>) {
     for f in feature_list(root) {
         let Some(attrs) = jpath_val(f, "attributes") else {
             continue;
@@ -132,13 +134,14 @@ fn collect_romplus(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, St
             "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}",
             y as i64, mo as i64, dd as i64, hh as i64, mi as i64, ss as i64
         );
-        let depth = jnum_at(attrs, &["Depth"]).unwrap_or(f64::NAN);
-        let mag = jnum_at(attrs, &["Mw", "Ml"]).unwrap_or(f64::NAN);
+        let depth = jnum_at(attrs, &["Depth"]);
+        let mag = jnum_at(attrs, &["Mw", "Ml"]);
         out.push((iso, lat, lon, depth, mag, "romplus".into()));
     }
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {
@@ -146,7 +149,7 @@ fn main() {
         None => "seismic_quakes.csv".to_string(),
     };
 
-    let mut rows: Vec<(String, f64, f64, f64, f64, String)> = Vec::new();
+    let mut rows: Vec<Row> = Vec::new();
     for (url, kind) in [
         (VEDUR_URL, "vedur"),
         (WORLDWIDE_URL, "worldwide"),
@@ -194,15 +197,13 @@ fn main() {
     rows.sort_by(|a, b| a.0.cmp(&b.0).then(a.5.cmp(&b.5)));
     let mut csv = String::from("time,lat,lon,depth_km,mag,source\n");
     for (t, lat, lon, depth, mag, src) in &rows {
-        let ds = if depth.is_finite() {
-            format!("{depth:.1}")
-        } else {
-            String::from("absent")
+        let ds = match depth {
+            Some(v) => format!("{v:.1}"),
+            None => String::from("absent"),
         };
-        let ms = if mag.is_finite() {
-            format!("{mag:.2}")
-        } else {
-            String::from("absent")
+        let ms = match mag {
+            Some(v) => format!("{v:.2}"),
+            None => String::from("absent"),
         };
         csv.push_str(&format!("{t},{lat:.4},{lon:.4},{ds},{ms},{src}\n"));
     }

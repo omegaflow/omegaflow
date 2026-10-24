@@ -200,7 +200,7 @@ fn horizons_request(
         "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
          &COMMAND='{cmd}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
          &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='{step_spec}'\
-         &QUANTITIES='1,2,4'",
+         &QUANTITIES='1,2,4'&REF_PLANE='FRAME'",
         cmd = cmd_safe,
         t_start = t_start_jd,
         t_stop = t_stop_jd,
@@ -285,12 +285,7 @@ fn extract_vectors(text: &str) -> (Vec<(f64, f64, f64, f64)>, Option<f64>) {
                     }
                 }
                 if let (Some(x), Some(y), Some(z)) = (x, y, z) {
-                    let x_m = x * 1000.0;
-                    let ecliptic_c = 0.409092804_f64.cos();
-                    let ecliptic_s = 0.409092804_f64.sin();
-                    let y_icrs = y * 1000.0 * ecliptic_c - z * 1000.0 * ecliptic_s;
-                    let z_icrs = y * 1000.0 * ecliptic_s + z * 1000.0 * ecliptic_c;
-                    vectors.push((jd, x_m, y_icrs, z_icrs));
+                    vectors.push((jd, x * 1000.0, y * 1000.0, z * 1000.0));
                 }
             }
         }
@@ -630,6 +625,7 @@ fn generate_flyby_arc(command: &str, body_name: &str, jd0: f64, radius_d: f64) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     std::fs::create_dir_all("data").ok();
     let bodies_stable: &[(&str, &str)] = &[
         ("Apophis", "apophis"),
@@ -705,8 +701,13 @@ fn main() {
             eprintln!("--uranus-c-spk: ephemeris_uranus.bin does not parse to a BodyEphemeris");
             std::process::exit(1);
         };
+        let Some(body) = omegaflow::ephemeris::body_table().get(&799).map(|b| b.name.clone())
+        else {
+            eprintln!("--uranus-c-spk: target 799 carries no body name in the body table");
+            std::process::exit(1);
+        };
         let mut de_map = std::collections::HashMap::new();
-        de_map.insert("uranus".to_string(), de_eph);
+        de_map.insert(body.clone(), de_eph);
         let spk = match SpkFile::open(&spk_path) {
             Ok(s) => s,
             Err(e) => {
@@ -721,7 +722,7 @@ fn main() {
         let mut days = 0usize;
         while jd <= stop_jd && days < 1_000_000 {
             let tdb = (jd - 2451545.0) * 86400.0;
-            let bary = match omegaflow::archivar::body_barycenter_position("uranus", tdb, &de_map) {
+            let bary = match omegaflow::archivar::body_barycenter_position(&body, tdb, &de_map) {
                 Some(b) => b,
                 None => {
                     eprintln!("--uranus-c-spk: no barycenter granule at jd {jd:.2}");
@@ -797,8 +798,13 @@ fn main() {
             eprintln!("--neptune-c-spk: ephemeris_neptune.bin does not parse to a BodyEphemeris");
             std::process::exit(1);
         };
+        let Some(body) = omegaflow::ephemeris::body_table().get(&899).map(|b| b.name.clone())
+        else {
+            eprintln!("--neptune-c-spk: target 899 carries no body name in the body table");
+            std::process::exit(1);
+        };
         let mut de_map = std::collections::HashMap::new();
-        de_map.insert("neptune".to_string(), de_eph);
+        de_map.insert(body.clone(), de_eph);
         let spk = match SpkFile::open(&spk_path) {
             Ok(s) => s,
             Err(e) => {
@@ -813,8 +819,7 @@ fn main() {
         let mut days = 0usize;
         while jd <= stop_jd && days < 1_000_000 {
             let tdb = (jd - 2451545.0) * 86400.0;
-            let bary = match omegaflow::archivar::body_barycenter_position("neptune", tdb, &de_map)
-            {
+            let bary = match omegaflow::archivar::body_barycenter_position(&body, tdb, &de_map) {
                 Some(b) => b,
                 None => {
                     eprintln!("--neptune-c-spk: no barycenter granule at jd {jd:.2}");

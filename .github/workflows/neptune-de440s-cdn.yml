@@ -37,4 +37,4 @@ jobs:
                  "curl on naif.jpl.nasa.gov did not reach the SPK. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin neptune_ephemeris_compiler -- \
-            kernels/de440s.bsp --ci-mode
+            kernels/de440s.bsp --body neptune --ci-mode

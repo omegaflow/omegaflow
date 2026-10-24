@@ -289,18 +289,20 @@ fn regrid_plane(buf: &[u8], census: &mut Census) -> Option<Plane> {
         let mut row_v = vec![0.0f64; width];
         let mut row_m = vec![false; width];
         for x in 0..width {
-            let v = image.value_f64(&raw, [x, y, 0]).unwrap_or(f64::NAN);
-            if v.is_finite() && v >= 0.0 {
-                row_m[x] = true;
-                row_v[x] = v;
-                measured += 1;
-                if v == 0.0 {
-                    zero_pixels += 1;
-                } else if v > max_count {
-                    max_count = v;
+            let v = match image.value_f64(&raw, [x, y, 0]) {
+                Some(v) if v.is_finite() && v >= 0.0 => v,
+                _ => {
+                    absent_pixels += 1;
+                    continue;
                 }
-            } else {
-                absent_pixels += 1;
+            };
+            row_m[x] = true;
+            row_v[x] = v;
+            measured += 1;
+            if v == 0.0 {
+                zero_pixels += 1;
+            } else if v > max_count {
+                max_count = v;
             }
         }
         regrid.push_row(y, &row_v, &row_m);
@@ -656,6 +658,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("wise_coverage_compiler: {msg}");

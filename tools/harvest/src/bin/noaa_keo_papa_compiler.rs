@@ -227,10 +227,7 @@ fn emit_classic(bytes: &[u8], lsk: &omegaflow::lsk::LeapSeconds) -> Vec<GeoRec> 
         };
         let fill = attr_num(&nc, name, "_FillValue");
         let vscale = attr_num(&nc, name, "scale_factor").unwrap_or(1.0);
-        let voffset = match attr_num(&nc, name, "add_offset") {
-            Some(v) => v,
-            None => 0.0,
-        };
+        let voffset = attr_num(&nc, name, "add_offset");
         let shape = match nc.var(name).and_then(|v| nc.var_shape(v).ok()) {
             Some(s) => s,
             None => continue,
@@ -267,7 +264,11 @@ fn emit_classic(bytes: &[u8], lsk: &omegaflow::lsk::LeapSeconds) -> Vec<GeoRec> 
                         continue;
                     }
                 }
-                let val = (raw * vscale + voffset) * scale;
+                let scaled = match voffset {
+                    Some(o) => raw * vscale + o,
+                    None => raw * vscale,
+                };
+                let val = scaled * scale;
                 if !val.is_finite() {
                     continue;
                 }
@@ -289,6 +290,7 @@ fn emit_classic(bytes: &[u8], lsk: &omegaflow::lsk::LeapSeconds) -> Vec<GeoRec> 
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--probe") {
         match fs::read(&path) {

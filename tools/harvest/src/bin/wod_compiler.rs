@@ -250,26 +250,37 @@ fn probe(bytes: &[u8], name: &str) {
         }
     }
     if let (Some(lat), Some(lon)) = (series(&file, "lat"), series(&file, "lon")) {
-        eprintln!(
-            "  lat[0]={} lon[0]={}",
-            lat.first().copied().unwrap_or(f64::NAN),
-            lon.first().copied().unwrap_or(f64::NAN)
-        );
+        let lat0 = match lat.first() {
+            Some(v) => format!("{v}"),
+            None => String::from("absent"),
+        };
+        let lon0 = match lon.first() {
+            Some(v) => format!("{v}"),
+            None => String::from("absent"),
+        };
+        eprintln!("  lat[0]={lat0} lon[0]={lon0}");
     }
     if let Some(d) = series(&file, "date") {
         let t = match series(&file, "time") {
             Some(v) => v,
             None => Vec::new(),
         };
+        let d0 = match d.first() {
+            Some(v) => format!("{v}"),
+            None => String::from("absent"),
+        };
+        let t0 = match t.first() {
+            Some(v) => format!("{v}"),
+            None => String::from("absent"),
+        };
+        let gmt0 = match series(&file, "GMT_time").and_then(|g| g.first().copied()) {
+            Some(v) => format!("{v}"),
+            None => String::from("absent"),
+        };
         eprintln!(
-            "  date[0]={} time[0]={} ncast={} time_units={:?} GMT_time[0]={}",
-            d.first().copied().unwrap_or(f64::NAN),
-            t.first().copied().unwrap_or(f64::NAN),
+            "  date[0]={d0} time[0]={t0} ncast={} time_units={:?} GMT_time[0]={gmt0}",
             d.len(),
             attr_text(&file, "time", "units"),
-            series(&file, "GMT_time")
-                .and_then(|g| g.first().copied())
-                .unwrap_or(f64::NAN)
         );
     }
     if let Some(z) = ragged(&file, "z", "z_row_size") {
@@ -390,6 +401,7 @@ fn run_loop(args: &[String]) -> i32 {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if flag(&args, "--probe") {
         if let Some((bytes, name)) = load_bytes(&args) {

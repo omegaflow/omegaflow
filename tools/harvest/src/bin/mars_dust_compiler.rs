@@ -23,7 +23,6 @@ const TTL_S: f64 = 604800.0;
 const TAU_S: f64 = 86400.0;
 const JD_UNIX_EPOCH: f64 = 2440587.5;
 const SECS_PER_DAY: f64 = 86400.0;
-const MARS: &str = "mars";
 const EPN_TABLE: &str = "mars_dust.epn_core";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -267,6 +266,7 @@ fn read_bin(data: &[u8]) -> Option<(usize, usize)> {
 fn compile_cube(
     fits: &[u8],
     row: &CubeRow,
+    body: &str,
     lsk: &LeapSeconds,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Result<Vec<[f64; 26]>, String> {
@@ -371,7 +371,7 @@ fn compile_cube(
                 let Some(bf) = bf_grid[j * dims[0] + i] else {
                     continue;
                 };
-                let Some(pos) = body_fixed_vector_to_icrs(MARS, bf, tdb, eph) else {
+                let Some(pos) = body_fixed_vector_to_icrs(body, bf, tdb, eph) else {
                     skipped_pos += 1;
                     continue;
                 };
@@ -411,7 +411,7 @@ fn compile_cube(
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    let usage = "usage: mars_dust_compiler --out <bin> [--row <k> | --url <fits-url> | --input <fits-file>] [--root <tap>] [--ephemeris <path|url>] [--list] [--ci-mode]";
+    let usage = "usage: mars_dust_compiler --body <name> --out <bin> [--row <k> | --url <fits-url> | --input <fits-file>] [--root <tap>] [--ephemeris <path|url>] [--list] [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let root = match arg_value(args, "--root") {
         Some(v) => v,
@@ -423,6 +423,15 @@ fn run(args: &[String]) -> Result<(), String> {
     let out = match arg_value(args, "--out") {
         Some(v) => v,
         None => return Err(usage.to_string()),
+    };
+    let body = match arg_value(args, "--body") {
+        Some(v) if !v.is_empty() => v,
+        _ => {
+            return Err(
+                "--body <name> is required — the receiver body is declared, never defaulted"
+                    .to_string(),
+            );
+        }
     };
     let lsk = parse_lsk(NAIF_LSK_EMBEDDED).ok_or_else(|| {
         "the embedded naif0012.tls stays unread — the JD→TDB step is unavailable".to_string()
@@ -436,9 +445,9 @@ fn run(args: &[String]) -> Result<(), String> {
             .ok_or_else(|| format!("ephemeris fetch void ({EPH_DEFAULT})"))?,
     };
     let eph_body = parse_ephemeris_binary(&eph_bytes)
-        .ok_or_else(|| "the Mars ephemeris binary stays unread — no ICRS frame".to_string())?;
+        .ok_or_else(|| format!("the {body} ephemeris binary stays unread — no ICRS frame"))?;
     let mut eph = HashMap::new();
-    eph.insert(MARS.to_string(), eph_body);
+    eph.insert(body.clone(), eph_body);
     let (fits, row) = match (
         arg_value(args, "--row"),
         arg_value(args, "--url"),
@@ -491,7 +500,7 @@ fn run(args: &[String]) -> Result<(), String> {
             );
         }
     };
-    let records = compile_cube(&fits, &row, &lsk, &eph)?;
+    let records = compile_cube(&fits, &row, &body, &lsk, &eph)?;
     let bin = write_bin(&records);
     if let Some(parent) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(parent);
@@ -512,6 +521,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("mars_dust_compiler: {msg}");

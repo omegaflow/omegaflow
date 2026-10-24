@@ -44,4 +44,4 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin noaa_ocs_hydrodata_compiler -- \
-            --survey "${{ inputs.survey }}" --out "${{ inputs.asset }}" --ci-mode
+            --body earth --survey "${{ inputs.survey }}" --out "${{ inputs.asset }}" --ci-mode

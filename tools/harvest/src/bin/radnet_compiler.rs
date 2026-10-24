@@ -23,7 +23,6 @@ const KERNEL_INVERSE_SQUARE: f64 = 0.0;
 const TTL_S: f64 = 604800.0;
 const TAU_S: f64 = 86400.0;
 const SECS_PER_DAY: f64 = 86400.0;
-const EARTH: &str = "earth";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -570,6 +569,7 @@ fn agol_features(src: &str, tsk: &mut TableSkips) -> Result<Vec<AgolFeature>, St
 }
 
 fn compile(
+    body: &str,
     results: &[ResultRow],
     analysis: &HashMap<String, AnalysisRow>,
     sample: &HashMap<String, SampleRow>,
@@ -662,7 +662,7 @@ fn compile(
             skips.clock += 1;
             continue;
         };
-        let Some(pos) = body_fixed_to_icrs(EARTH, lat, lon, 0.0, tdb, eph) else {
+        let Some(pos) = body_fixed_to_icrs(body, lat, lon, 0.0, tdb, eph) else {
             skips.frame += 1;
             continue;
         };
@@ -672,8 +672,12 @@ fn compile(
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    let usage = "usage: radnet_compiler --out <bin> [--root <efservice-root>] [--agol <url|json-file>] [--ephemeris <path|url>] [--ci-mode]";
+    let usage = "usage: radnet_compiler --body <name> --out <bin> [--root <efservice-root>] [--agol <url|json-file>] [--ephemeris <path|url>] [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let body = match arg_value(args, "--body") {
+        Some(v) => v,
+        None => return Err("--body <name> is required — the receiver body is declared, never defaulted".to_string()),
+    };
     let root = match arg_value(args, "--root") {
         Some(v) => v,
         None => EF_ROOT.to_string(),
@@ -693,17 +697,17 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let eph_bytes = match arg_value(args, "--ephemeris") {
         Some(src) if src.starts_with("http") => {
-            fetch_raw_bytes(&src).ok_or_else(|| format!("earth ephemeris fetch void ({src})"))?
+            fetch_raw_bytes(&src).ok_or_else(|| format!("{body} ephemeris fetch void ({src})"))?
         }
         Some(path) => {
-            std::fs::read(&path).map_err(|e| format!("earth ephemeris read {path}: {e}"))?
+            std::fs::read(&path).map_err(|e| format!("{body} ephemeris read {path}: {e}"))?
         }
-        None => fetch_raw_bytes(&body_url(EARTH))
-            .ok_or_else(|| "earth ephemeris fetch void (CDN)".to_string())?,
+        None => fetch_raw_bytes(&body_url(&body))
+            .ok_or_else(|| format!("{body} ephemeris fetch void (CDN)"))?,
     };
-    let earth = parse_ephemeris_binary(&eph_bytes)
-        .ok_or_else(|| "the earth ephemeris binary stays unread — no ICRS frame".to_string())?;
-    let eph = HashMap::from([(EARTH.to_string(), earth)]);
+    let eph_body = parse_ephemeris_binary(&eph_bytes)
+        .ok_or_else(|| format!("the {body} ephemeris binary stays unread — no ICRS frame"))?;
+    let eph = HashMap::from([(body.clone(), eph_body)]);
 
     let mut tsk = TableSkips::new();
     let features = agol_features(&agol_src, &mut tsk)?;
@@ -724,7 +728,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let results = parse_results(&res_rows, &mut tsk);
 
     let (records, skips, riss_lines) =
-        compile(&results, &analysis, &sample, &location, &layer, &lsk, &eph);
+        compile(&body, &results, &analysis, &sample, &location, &layer, &lsk, &eph);
     if records.is_empty() {
         return Err(format!(
             "no record left the harvest — {} result rows read; skips: no_analysis {}, no_sample {}, no_location {}, unjoined {}, riss_station {}, riss_witness {}, value {}, date {}, clock {}, frame {}",
@@ -787,6 +791,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("radnet_compiler: {msg}");
@@ -1077,6 +1082,7 @@ mod tests {
             },
         ];
         let (records, skips, lines) = compile(
+            "earth",
             &results,
             &analysis,
             &sample,

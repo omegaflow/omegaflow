@@ -98,16 +98,17 @@ fn frame_mean(bytes: &[u8], lsk: &LeapSeconds) -> Option<(f64, f64)> {
         let zscale = zscale_col
             .and_then(|c| table.cell_f64(bytes, row, c))
             .unwrap_or(1.0);
-        let zzero = match zzero_col.and_then(|c| table.cell_f64(bytes, row, c)) {
-            Some(v) => v,
-            None => 0.0,
-        };
+        let zzero = zzero_col.and_then(|c| table.cell_f64(bytes, row, c));
         if let Some(vals) = decode_tile(raw, n_pixels, bytepix, block) {
             for v in vals {
                 if v == null_sentinel {
                     continue;
                 }
-                let v = v as f64 * zscale + zzero;
+                let scaled = v as f64 * zscale;
+                let v = match zzero {
+                    Some(z) => scaled + z,
+                    None => scaled,
+                };
                 if v.is_finite() {
                     sum += v;
                     n += 1;
@@ -128,6 +129,7 @@ fn frame_mean(bytes: &[u8], lsk: &LeapSeconds) -> Option<(f64, f64)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let url = match arg_value(&args, "--url") {

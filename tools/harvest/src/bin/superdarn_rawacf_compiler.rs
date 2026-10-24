@@ -14,8 +14,6 @@ const NETLOC: &str = "frdr-dfdr.ca";
 const RST_HDW_RAW: &str =
     "https://raw.githubusercontent.com/SuperDARN/rst/main/tables/superdarn/hdw/hdw.dat.";
 
-const EARTH_RADIUS_KM: f64 = 6371.0;
-
 const DATACODE: i32 = 0x00010001;
 const DATACHAR: u8 = 1;
 const DATASHORT: u8 = 2;
@@ -419,9 +417,9 @@ fn chisham_virtual_height_km(slant_km: f64) -> Option<f64> {
     }
 }
 
-fn chisham_ground_km(slant_km: f64) -> Option<f64> {
+fn chisham_ground_km(slant_km: f64, re_km: f64) -> Option<f64> {
     let h = chisham_virtual_height_km(slant_km)?;
-    let re = EARTH_RADIUS_KM;
+    let re = re_km;
     let rp = re + h;
     let cos_theta = (re * re + rp * rp - slant_km * slant_km) / (2.0 * re * rp);
     if !cos_theta.is_finite() || !(-1.0..=1.0).contains(&cos_theta) {
@@ -435,7 +433,13 @@ fn chisham_ground_km(slant_km: f64) -> Option<f64> {
     }
 }
 
-fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Option<(f64, f64)> {
+fn destination(
+    lat_deg: f64,
+    lon_deg: f64,
+    bearing_deg: f64,
+    dist_km: f64,
+    re_km: f64,
+) -> Option<(f64, f64)> {
     if !lat_deg.is_finite()
         || !lon_deg.is_finite()
         || !bearing_deg.is_finite()
@@ -447,7 +451,7 @@ fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Op
     let lat1 = lat_deg.to_radians();
     let lon1 = lon_deg.to_radians();
     let bearing = bearing_deg.to_radians();
-    let delta = dist_km / EARTH_RADIUS_KM;
+    let delta = dist_km / re_km;
     let lat2 = (lat1.sin() * delta.cos() + lat1.cos() * delta.sin() * bearing.cos()).asin();
     let lon2 = lon1
         + (bearing.sin() * delta.sin() * lat1.cos()).atan2(delta.cos() - lat1.sin() * lat2.sin());
@@ -461,7 +465,7 @@ fn civil_unix(yr: i64, mo: u32, dy: u32, hr: u32, mt: u32, sc: u32, us: u32) -> 
     )
 }
 
-fn gather(blocks: &[DmapBlock], site: &RadarSite, lsk: &LeapSeconds) -> Vec<GeoRec> {
+fn gather(blocks: &[DmapBlock], site: &RadarSite, lsk: &LeapSeconds, re_km: f64) -> Vec<GeoRec> {
     let mut out = Vec::new();
     let mut skipped = 0usize;
     for b in blocks {
@@ -527,11 +531,11 @@ fn gather(blocks: &[DmapBlock], site: &RadarSite, lsk: &LeapSeconds) -> Vec<GeoR
                 continue;
             }
             let slant_km = frang + gate as f64 * rsep;
-            let Some(ground_km) = chisham_ground_km(slant_km) else {
+            let Some(ground_km) = chisham_ground_km(slant_km, re_km) else {
                 skipped += 1;
                 continue;
             };
-            let Some((lat, lon)) = destination(site.lat_deg, site.lon_deg, bearing, ground_km)
+            let Some((lat, lon)) = destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
             else {
                 skipped += 1;
                 continue;
@@ -562,8 +566,9 @@ fn gather(blocks: &[DmapBlock], site: &RadarSite, lsk: &LeapSeconds) -> Vec<GeoR
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
-    let usage = "usage: superdarn_rawacf_compiler --input <file.rawacf[.bz2]> | --url <url> --out-bin <superdarn_rawacf.bin> [--radar <code>] [--date <YYYYMMDD>] [--ci-mode]";
+    let usage = "usage: superdarn_rawacf_compiler --input <file.rawacf[.bz2]> | --url <url> --out-bin <superdarn_rawacf.bin> [--radar <code>] [--date <YYYYMMDD>] --body <name> [--ci-mode]";
     let out_bin = match arg_value(&args, "--out-bin") {
         Some(v) => v,
         None => {
@@ -589,6 +594,15 @@ fn main() {
         }
     };
     let date = arg_value(&args, "--date").or_else(|| date_from_path(&source));
+    let receiver = match arg_value(&args, "--body") {
+        Some(v) if !v.is_empty() => v,
+        _ => {
+            eprintln!(
+                "superdarn rawacf: --body <name> is required — the receiver body is declared, never defaulted"
+            );
+            std::process::exit(1);
+        }
+    };
 
     let raw = match read_source(&source) {
         Some(b) => b,
@@ -658,7 +672,15 @@ fn main() {
         }
     };
 
-    let mut records = gather(&blocks, &site, &lsk);
+    let re_km = match omegaflow::cdn::body_mean_radius_km(&receiver) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("superdarn rawacf: {e}");
+            std::process::exit(1);
+        }
+    };
+    eprintln!("superdarn rawacf: {receiver} mean radius {re_km:.4} km from the ephemeris");
+    let mut records = gather(&blocks, &site, &lsk, re_km);
     if records.is_empty() {
         eprintln!("superdarn rawacf: no cell rows — the bin stays unwritten (0 honored)");
         std::process::exit(1);
@@ -818,12 +840,13 @@ mod tests {
 
     #[test]
     fn chisham_ground_range_is_shorter_than_slant_range() {
-        let ground = chisham_ground_km(180.0).expect("finite");
+        let re = 6371.0004;
+        let ground = chisham_ground_km(180.0, re).expect("finite");
         assert!(ground > 0.0 && ground < 180.0, "ground {ground}");
-        let far = chisham_ground_km(1500.0).expect("finite");
+        let far = chisham_ground_km(1500.0, re).expect("finite");
         assert!(far > 0.0 && far < 1500.0, "far ground {far}");
-        assert!(chisham_ground_km(-1.0).is_none());
-        assert!(chisham_ground_km(f64::NAN).is_none());
+        assert!(chisham_ground_km(-1.0, re).is_none());
+        assert!(chisham_ground_km(f64::NAN, re).is_none());
     }
 
     #[test]
@@ -837,7 +860,8 @@ mod tests {
         let Some(lsk) = embedded_lsk() else {
             return;
         };
-        let records = gather(&blocks, &site, &lsk);
+        let re = 6371.0004;
+        let records = gather(&blocks, &site, &lsk, re);
         assert_eq!(records.len(), 3);
         assert_eq!(records[0].val, 10.0);
         assert_eq!(records[0].comp, COMP_SDARN_POWER);
@@ -875,7 +899,8 @@ mod tests {
         let Some(lsk) = embedded_lsk() else {
             return;
         };
-        let records = gather(&blocks, &site, &lsk);
+        let re = 6371.0004;
+        let records = gather(&blocks, &site, &lsk, re);
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].val, 20.0);
     }

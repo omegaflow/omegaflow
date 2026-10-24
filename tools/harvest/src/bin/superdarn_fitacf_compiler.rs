@@ -20,7 +20,6 @@ const GRID_FILE: &str = "20160711.sto.v3.0.grid.nc";
 const RST_HDW_RAW: &str =
     "https://raw.githubusercontent.com/SuperDARN/rst/main/tables/superdarn/hdw/hdw.dat.";
 
-const EARTH_RADIUS_KM: f64 = 6371.0;
 const CHISHAM_A: [f64; 3] = [108.974, 384.416, 1098.28];
 const CHISHAM_B: [f64; 3] = [0.0191271, -0.178640, -0.354557];
 const CHISHAM_C: [f64; 3] = [6.68283e-5, 1.81405e-4, 9.39961e-5];
@@ -531,12 +530,16 @@ fn fitacf_mjd(rec: &DmapRecord) -> Option<f64> {
         return None;
     }
     let us = match rec_f64(rec, "time.us") {
-        Some(v) if v >= 0.0 && v < 1_000_000.0 => v,
+        Some(v) if v >= 0.0 && v < 1_000_000.0 => Some(v),
         Some(_) => return None,
-        None => 0.0,
+        None => None,
     };
     let days = days_from_civil(yr as i64, mo as i64, dy as i64) as f64;
-    let frac = ((hr * 60.0 + mt) * 60.0 + sc + us * 1.0e-6) / 86400.0;
+    let secs = (hr * 60.0 + mt) * 60.0 + sc;
+    let frac = match us {
+        Some(us) => (secs + us * 1.0e-6) / 86400.0,
+        None => secs / 86400.0,
+    };
     Some(days + 40587.0 + frac)
 }
 
@@ -590,7 +593,11 @@ impl FitGateRow {
     }
 }
 
-fn fitacf_record_rows(rec: &DmapRecord, site: Option<&HdwSite>) -> Option<Vec<FitGateRow>> {
+fn fitacf_record_rows(
+    rec: &DmapRecord,
+    site: Option<&HdwSite>,
+    re_km: f64,
+) -> Option<Vec<FitGateRow>> {
     let mjd = fitacf_mjd(rec)?;
     let Some(slist) = rec_array(rec, "slist") else {
         return Some(Vec::new());
@@ -634,7 +641,7 @@ fn fitacf_record_rows(rec: &DmapRecord, site: Option<&HdwSite>) -> Option<Vec<Fi
             None => None,
         };
         let (lat, lon) = match (site, frang, rsep, beam) {
-            (Some(s), Some(fr), Some(rs), Some(bm)) => match gate_position(s, bm, fr, rs, gate) {
+            (Some(s), Some(fr), Some(rs), Some(bm)) => match gate_position(s, bm, fr, rs, gate, re_km) {
                 Some((la, lo)) => (Some(la), Some(lo)),
                 None => (None, None),
             },
@@ -666,11 +673,12 @@ fn dmap_fitacf_rows(
     cols: &[Col],
     source: &str,
     site: Option<&HdwSite>,
+    re_km: f64,
 ) -> Vec<Vec<String>> {
     let mut rows = Vec::new();
     let mut void_records = 0usize;
     for rec in recs {
-        match fitacf_record_rows(rec, site) {
+        match fitacf_record_rows(rec, site, re_km) {
             Some(rs) => rows.extend(rs),
             None => void_records += 1,
         }
@@ -1158,7 +1166,14 @@ fn grid_cols() -> Vec<Col> {
     ]
 }
 
-fn process_bytes(bytes: Vec<u8>, cols: Vec<Col>, source: &str, out: Option<&str>, limit: usize) {
+fn process_bytes(
+    bytes: Vec<u8>,
+    cols: Vec<Col>,
+    source: &str,
+    out: Option<&str>,
+    limit: usize,
+    re_km: f64,
+) {
     if bytes.len() >= 8 && bytes[..8] == HDF5_MAGIC {
         let file = match Hdf5File::parse(&bytes) {
             Ok(f) => f,
@@ -1187,7 +1202,7 @@ fn process_bytes(bytes: Vec<u8>, cols: Vec<Col>, source: &str, out: Option<&str>
             }
         };
         let site = site_for(source, None);
-        let rows = dmap_fitacf_rows(&recs, &cols, source, site.as_ref());
+        let rows = dmap_fitacf_rows(&recs, &cols, source, site.as_ref(), re_km);
         let rs = RowSet {
             header: cols.clone(),
             data: rows,
@@ -1445,9 +1460,9 @@ fn chisham_virtual_height_km(slant_km: f64) -> Option<f64> {
     }
 }
 
-fn chisham_ground_km(slant_km: f64) -> Option<f64> {
+fn chisham_ground_km(slant_km: f64, re_km: f64) -> Option<f64> {
     let h = chisham_virtual_height_km(slant_km)?;
-    let re = EARTH_RADIUS_KM;
+    let re = re_km;
     let rp = re + h;
     let cos_theta = (re * re + rp * rp - slant_km * slant_km) / (2.0 * re * rp);
     if !cos_theta.is_finite() || !(-1.0..=1.0).contains(&cos_theta) {
@@ -1461,7 +1476,13 @@ fn chisham_ground_km(slant_km: f64) -> Option<f64> {
     }
 }
 
-fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Option<(f64, f64)> {
+fn destination(
+    lat_deg: f64,
+    lon_deg: f64,
+    bearing_deg: f64,
+    dist_km: f64,
+    re_km: f64,
+) -> Option<(f64, f64)> {
     if !lat_deg.is_finite()
         || !lon_deg.is_finite()
         || !bearing_deg.is_finite()
@@ -1473,7 +1494,7 @@ fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Op
     let lat1 = lat_deg.to_radians();
     let lon1 = lon_deg.to_radians();
     let bearing = bearing_deg.to_radians();
-    let delta = dist_km / EARTH_RADIUS_KM;
+    let delta = dist_km / re_km;
     let lat2 = (lat1.sin() * delta.cos() + lat1.cos() * delta.sin() * bearing.cos()).asin();
     let lon2 = lon1
         + (bearing.sin() * delta.sin() * lat1.cos()).atan2(delta.cos() - lat1.sin() * lat2.sin());
@@ -1486,11 +1507,12 @@ fn gate_position(
     frang: f64,
     rsep: f64,
     gate: f64,
+    re_km: f64,
 ) -> Option<(f64, f64)> {
     let bearing = beam_azimuth(site, bmnum)?;
     let slant_km = frang + gate * rsep;
-    let ground_km = chisham_ground_km(slant_km)?;
-    destination(site.lat_deg, site.lon_deg, bearing, ground_km)
+    let ground_km = chisham_ground_km(slant_km, re_km)?;
+    destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
 }
 
 fn code_from_path(path: &str) -> Option<String> {
@@ -1533,6 +1555,7 @@ fn dmap_fitacf_georecords(
     recs: &[DmapRecord],
     site: &HdwSite,
     lsk: &omegaflow::lsk::LeapSeconds,
+    re_km: f64,
 ) -> Vec<GeoRec> {
     let mut out = Vec::new();
     for rec in recs {
@@ -1582,7 +1605,7 @@ fn dmap_fitacf_georecords(
             else {
                 continue;
             };
-            let Some((lat, lon)) = gate_position(site, bmnum, frang, rsep, gate) else {
+            let Some((lat, lon)) = gate_position(site, bmnum, frang, rsep, gate, re_km) else {
                 continue;
             };
             if !(-90.0..=90.0).contains(&lat) || !(-360.0..=360.0).contains(&lon) {
@@ -1604,7 +1627,14 @@ fn dmap_fitacf_georecords(
     out
 }
 
-fn emit_dmap_fitacf_bin(bytes: &[u8], source: &str, radar: Option<&str>, bin_path: &str, ci: bool) {
+fn emit_dmap_fitacf_bin(
+    bytes: &[u8],
+    source: &str,
+    radar: Option<&str>,
+    bin_path: &str,
+    ci: bool,
+    re_km: f64,
+) {
     if le_u32_at(bytes, 0) != Some(DMAP_CODE) {
         eprintln!(
             "superdarn: {} carries no dmap fitacf body — the bin stays unwritten",
@@ -1653,7 +1683,7 @@ fn emit_dmap_fitacf_bin(bytes: &[u8], source: &str, radar: Option<&str>, bin_pat
             std::process::exit(1);
         }
     };
-    let mut records = dmap_fitacf_georecords(&recs, &site, &lsk);
+    let mut records = dmap_fitacf_georecords(&recs, &site, &lsk, re_km);
     if records.is_empty() {
         eprintln!("superdarn: no cell rows — the bin stays unwritten (0 honored)");
         std::process::exit(1);
@@ -1742,7 +1772,14 @@ fn bounce_files(start: &str, end: &str, radar: &str) -> Option<Vec<String>> {
     Some(names)
 }
 
-fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usize) {
+fn run_bounce(
+    start: &str,
+    end: &str,
+    radar: &str,
+    out: Option<&str>,
+    limit: usize,
+    re_km: f64,
+) {
     let start_norm = bounce_date(start);
     let end_norm = bounce_date(end);
     let files = match bounce_files(&start_norm, &end_norm, radar) {
@@ -1795,7 +1832,7 @@ fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usi
                 continue;
             }
         };
-        let rows = dmap_fitacf_rows(&recs, &cols, &url, site.as_ref());
+        let rows = dmap_fitacf_rows(&recs, &cols, &url, site.as_ref(), re_km);
         eprintln!("superdarn fitacf: {} → {} range rows", name, rows.len());
         all_rows.extend(rows);
     }
@@ -1814,6 +1851,7 @@ fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usi
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let out = arg_value(&args, "--out");
     let limit = arg_usize(&args, "--limit").unwrap_or(8);
@@ -1821,6 +1859,24 @@ fn main() {
         Some(m) => m,
         None => "fitacf".to_string(),
     };
+
+    let receiver = match arg_value(&args, "--body") {
+        Some(v) if !v.is_empty() => v,
+        _ => {
+            eprintln!(
+                "superdarn fitacf: --body <name> is required — the receiver body is declared, never defaulted"
+            );
+            std::process::exit(1);
+        }
+    };
+    let re_km = match omegaflow::cdn::body_mean_radius_km(&receiver) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("superdarn fitacf: {e}");
+            std::process::exit(1);
+        }
+    };
+    eprintln!("superdarn fitacf: {receiver} mean radius {re_km:.4} km from the ephemeris");
 
     if mode == "stations" {
         run_stations(&args, out.as_deref(), limit);
@@ -1857,6 +1913,7 @@ fn main() {
                 arg_value(&args, "--radar").as_deref(),
                 &bin_path,
                 ci,
+                re_km,
             );
             return;
         }
@@ -1865,7 +1922,7 @@ fn main() {
         } else {
             fitacf_cols()
         };
-        process_bytes(bytes, cols, &input, out.as_deref(), limit);
+        process_bytes(bytes, cols, &input, out.as_deref(), limit, re_km);
         return;
     }
 
@@ -1899,6 +1956,7 @@ fn main() {
                 arg_value(&args, "--radar").as_deref(),
                 &bin_path,
                 ci,
+                re_km,
             );
             return;
         }
@@ -1907,7 +1965,7 @@ fn main() {
         } else {
             fitacf_cols()
         };
-        process_bytes(bytes, cols, &url, out.as_deref(), limit);
+        process_bytes(bytes, cols, &url, out.as_deref(), limit, re_km);
         return;
     }
 
@@ -1933,7 +1991,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        run_bounce(&start, &end, &radar, out.as_deref(), limit);
+        run_bounce(&start, &end, &radar, out.as_deref(), limit, re_km);
         return;
     }
 
@@ -1957,7 +2015,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        process_bytes(bytes, grid_cols(), &url, out.as_deref(), limit);
+        process_bytes(bytes, grid_cols(), &url, out.as_deref(), limit, re_km);
         return;
     }
 
@@ -2046,5 +2104,5 @@ fn main() {
         }
     };
     let source = format!("{}/{}", url, chosen.name);
-    process_bytes(bytes, fitacf_cols(), &source, out.as_deref(), limit);
+    process_bytes(bytes, fitacf_cols(), &source, out.as_deref(), limit, re_km);
 }

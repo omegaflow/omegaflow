@@ -39,7 +39,7 @@ jobs:
                  health; exit 1; }
       - name: Compile the PETREL19 sun/moon/earth line and upload
         run: |
-          cargo run -p omegaflow-harvest --release --bin de_compiler -- PETREL19_translation.bsp --label petrel19 --netloc github.com --gm PETREL19.tpc --pck PETREL19.tpc --ci-mode
+          cargo run -p omegaflow-harvest --release --bin de_compiler -- PETREL19_translation.bsp --label petrel19 --netloc github.com --gm PETREL19.tpc --pck PETREL19.tpc --bodies sun,moon,earth --ci-mode
       - name: Verify every registered github.com/petrel19 asset is manifested
         run: |
           set -euo pipefail

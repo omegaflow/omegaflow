@@ -103,21 +103,21 @@ fn parse_angle(raw: &str, hours: bool) -> Option<f64> {
         }
         let d: f64 = parts[0].parse().ok()?;
         let m: f64 = parts[1].parse().ok()?;
-        let sec: f64 = match parts.get(2) {
-            Some(t) => t.parse().ok()?,
-            None => 0.0,
-        };
-        (d.abs() + m / 60.0 + sec / 3600.0, true)
+        let base = d.abs() + m / 60.0;
+        match parts.get(2) {
+            Some(t) => (base + t.parse::<f64>().ok()? / 3600.0, true),
+            None => (base, true),
+        }
     } else {
         let toks: Vec<&str> = s.split_whitespace().collect();
         if toks.len() >= 2 {
             let d: f64 = toks[0].parse().ok()?;
             let m: f64 = toks[1].parse().ok()?;
-            let sec: f64 = match toks.get(2) {
-                Some(t) => t.parse().ok()?,
-                None => 0.0,
-            };
-            (d.abs() + m / 60.0 + sec / 3600.0, true)
+            let base = d.abs() + m / 60.0;
+            match toks.get(2) {
+                Some(t) => (base + t.parse::<f64>().ok()? / 3600.0, true),
+                None => (base, true),
+            }
         } else {
             (s.parse().ok()?, false)
         }
@@ -899,6 +899,7 @@ const JSON_FIXTURE: &str = r#"{"total":4,"rows":[
 ]}"#;
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--selftest") {
         selftest();

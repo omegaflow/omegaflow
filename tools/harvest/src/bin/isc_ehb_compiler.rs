@@ -101,27 +101,15 @@ fn encode_rec(out: &mut [u8; REC_BYTES], a: &EhbArrival) {
     out[16..24].copy_from_slice(&a.lat.to_le_bytes());
     out[24..32].copy_from_slice(&a.lon.to_le_bytes());
     out[32..40].copy_from_slice(&a.depth_km.to_le_bytes());
-    out[40..48].copy_from_slice(
-        &match a.magnitude {
-            Some(v) => v,
-            None => 0.0,
-        }
-        .to_le_bytes(),
-    );
-    out[48..56].copy_from_slice(
-        &match a.residual_s {
-            Some(v) => v,
-            None => 0.0,
-        }
-        .to_le_bytes(),
-    );
-    out[56..64].copy_from_slice(
-        &match a.distance_deg {
-            Some(v) => v,
-            None => 0.0,
-        }
-        .to_le_bytes(),
-    );
+    if let Some(v) = a.magnitude {
+        out[40..48].copy_from_slice(&v.to_le_bytes());
+    }
+    if let Some(v) = a.residual_s {
+        out[48..56].copy_from_slice(&v.to_le_bytes());
+    }
+    if let Some(v) = a.distance_deg {
+        out[56..64].copy_from_slice(&v.to_le_bytes());
+    }
     if let Some(s) = &a.station {
         let mut buf = [0u8; STATION_LEN];
         if fixed_ascii(s, &mut buf, STATION_LEN) {
@@ -454,6 +442,7 @@ fn census(arrivals: &[EhbArrival]) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(

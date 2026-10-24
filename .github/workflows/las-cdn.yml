@@ -39,6 +39,7 @@ jobs:
       - name: Compile the ICRS point samples and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin las_compiler -- \
+            --body earth \
             --input kernels/brookscamp_0-0-0-0.laz \
             --out las_brooks_camp_2012.bin \
             --ci-mode \

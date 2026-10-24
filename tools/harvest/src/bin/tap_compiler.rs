@@ -690,6 +690,16 @@ fn as_obj(j: &JsonVal) -> Option<&std::collections::HashMap<String, JsonVal>> {
     }
 }
 
+fn numeric_arg(args: &[String], slot: usize, name: &str) -> f64 {
+    match args.get(slot).and_then(|s| s.parse::<f64>().ok()) {
+        Some(v) => v,
+        None => {
+            eprintln!("{name}: the value at slot {slot} carries no number");
+            std::process::exit(2);
+        }
+    }
+}
+
 fn dedup_crossmatch(
     cells_rows: Vec<Vec<String>>,
     ra_i: usize,
@@ -740,6 +750,7 @@ fn join_from(table_ref: &str, join_table: &str, join_col: &str, left: bool) -> S
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut root: Option<String> = None;
     let mut out: Option<String> = None;
@@ -858,18 +869,9 @@ fn main() {
             }
             "--mag-bands" => {
                 mag_bands = Some((
-                    match args.get(i + 1).and_then(|s| s.parse().ok()) {
-                        Some(v) => v,
-                        None => 0.0,
-                    },
-                    match args.get(i + 2).and_then(|s| s.parse().ok()) {
-                        Some(v) => v,
-                        None => 0.0,
-                    },
-                    match args.get(i + 3).and_then(|s| s.parse().ok()) {
-                        Some(v) => v,
-                        None => 0.1,
-                    },
+                    numeric_arg(&args, i + 1, "--mag-bands lo"),
+                    numeric_arg(&args, i + 2, "--mag-bands hi"),
+                    numeric_arg(&args, i + 3, "--mag-bands step"),
                 ));
                 i += 3;
             }
@@ -877,20 +879,14 @@ fn main() {
                 band_spec = Some((
                     match args.get(i + 1) {
                         Some(a) => a.clone(),
-                        None => String::new(),
+                        None => {
+                            eprintln!("--band: the band name is missing");
+                            std::process::exit(2);
+                        }
                     },
-                    match args.get(i + 2).and_then(|s| s.parse().ok()) {
-                        Some(v) => v,
-                        None => 0.0,
-                    },
-                    match args.get(i + 3).and_then(|s| s.parse().ok()) {
-                        Some(v) => v,
-                        None => 0.0,
-                    },
-                    match args.get(i + 4).and_then(|s| s.parse().ok()) {
-                        Some(v) => v,
-                        None => 1.0,
-                    },
+                    numeric_arg(&args, i + 2, "--band lo"),
+                    numeric_arg(&args, i + 3, "--band hi"),
+                    numeric_arg(&args, i + 4, "--band step"),
                 ));
                 i += 4;
             }

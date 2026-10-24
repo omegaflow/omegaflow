@@ -122,15 +122,15 @@ fn months_since_unix(units: &str, value: f64) -> Option<f64> {
     if !(1..=12).contains(&month) {
         return None;
     }
-    let clock = match fields.next() {
-        Some(token) => clock_seconds(token)?,
-        None => 0.0,
-    };
     let total = year * 12 + (month - 1) + months;
     let new_year = total.div_euclid(12);
     let new_month = total.rem_euclid(12) + 1;
     let days = days_from_civil(new_year, new_month, day)?;
-    Some(days as f64 * SECS_PER_DAY + clock)
+    let day_start = match fields.next() {
+        Some(token) => days as f64 * SECS_PER_DAY + clock_seconds(token)?,
+        None => days as f64 * SECS_PER_DAY,
+    };
+    Some(day_start)
 }
 
 fn time_unix(units: &str, value: f64) -> Option<f64> {
@@ -339,6 +339,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("hadisst_compiler: {msg}");

@@ -3,6 +3,9 @@ use omegaflow::inflate::gunzip;
 
 const TIC_RECORD_STRIDE: usize = 44;
 
+const ABSENT_PLX_PAD: f32 = 0.0;
+const ABSENT_DIST_PAD: f32 = 0.0;
+
 const COL_ID: usize = 0;
 const COL_RA: usize = 13;
 const COL_DEC: usize = 14;
@@ -37,23 +40,21 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
     }
     let pm_ra = cell_f64(&cells, COL_PMRA)? as f32;
     let pm_de = cell_f64(&cells, COL_PMDEC)? as f32;
-    let plx = match cell_f32(&cells, COL_PLX) {
-        Some(v) if v.is_finite() && v > 0.0 => v,
-        Some(_) | None => 0.0,
+    let plx_meas = match cell_f32(&cells, COL_PLX) {
+        Some(v) if v.is_finite() && v > 0.0 => Some(v),
+        _ => None,
     };
+    let plx = plx_meas.unwrap_or(ABSENT_PLX_PAD);
     let tmag = cell_f64(&cells, COL_TMAG)? as f32;
     if !tmag.is_finite() || tmag <= 0.0 {
         return None;
     }
     let dist_pc = match cell_f32(&cells, COL_DIST) {
         Some(v) if v > 0.0 => v,
-        Some(_) | None => {
-            if plx > 0.0 {
-                1000.0 / plx
-            } else {
-                0.0
-            }
-        }
+        _ => match plx_meas {
+            Some(plx) => 1000.0 / plx,
+            None => ABSENT_DIST_PAD,
+        },
     };
 
     let mut out = Vec::with_capacity(TIC_RECORD_STRIDE);
@@ -111,6 +112,7 @@ fn compile_catalog(input: &str, out_path: &str) -> usize {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 {
         eprintln!("usage: tic_compiler --input <tic_dec_band.csv.gz> --out <tic.bin> [--ci-mode]");

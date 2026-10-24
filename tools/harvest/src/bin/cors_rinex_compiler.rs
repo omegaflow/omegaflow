@@ -88,10 +88,13 @@ fn run(args: &[String]) -> Result<(), String> {
             .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z, a, e2))
     });
     let station = pack_station(&header.marker_name);
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs_f64())
-        .unwrap_or(f64::NAN);
+    let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs_f64(),
+        Err(e) => {
+            eprintln!("system clock before the unix epoch: {e:?} — the future gate has no reference");
+            std::process::exit(1);
+        }
+    };
 
     let mut records: Vec<CorsRecord> = Vec::new();
     let mut skipped_future = 0u64;
@@ -253,6 +256,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("cors_rinex_compiler: {msg}");

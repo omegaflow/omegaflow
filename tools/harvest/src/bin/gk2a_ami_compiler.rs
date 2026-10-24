@@ -45,7 +45,7 @@ enum Calibration {
     },
     Linear {
         gain: f64,
-        offset: f64,
+        offset: Option<f64>,
     },
     Pending,
 }
@@ -84,7 +84,11 @@ impl Calibration {
                 }
             }
             Calibration::Linear { gain, offset } => {
-                let r = gain * count + offset;
+                let scaled = gain * count;
+                let r = match *offset {
+                    Some(o) => scaled + o,
+                    None => scaled,
+                };
                 if r.is_finite() && r > 0.0 {
                     Some(r)
                 } else {
@@ -279,13 +283,9 @@ fn band_id_from_channel(name: &str) -> Option<u8> {
 
 fn scale_offset(obj: &Hdf5Object) -> Option<Calibration> {
     let scale = attr_number(&obj.attrs, "scale_factor")?;
-    let offset = match attr_number(&obj.attrs, "add_offset") {
-        Some(v) => v,
-        None => 0.0,
-    };
     Some(Calibration::Linear {
         gain: scale,
-        offset,
+        offset: attr_number(&obj.attrs, "add_offset"),
     })
 }
 
@@ -320,7 +320,10 @@ fn select_calibration(file: &Hdf5File, obj: &Hdf5Object) -> Calibration {
             lo,
             hi,
         },
-        (Some((gain, offset)), None) => Calibration::Linear { gain, offset },
+        (Some((gain, offset)), None) => Calibration::Linear {
+            gain,
+            offset: Some(offset),
+        },
         _ => Calibration::Pending,
     }
 }
@@ -455,11 +458,17 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
         .ok_or_else(|| format!("channel_name {channel} carries no band id"))?;
     let esun = match scalar_f64(&file, "esun") {
         Some(v) => v as f32,
-        None => 0.0,
+        None => {
+            return Err(
+                "esun absent — the solar irradiance scale stays undeclared".to_string(),
+            );
+        }
     };
     let kappa0 = match scalar_f64(&file, "kappa0") {
         Some(v) => v as f32,
-        None => 0.0,
+        None => {
+            return Err("kappa0 absent — the calibration slope stays undeclared".to_string());
+        }
     };
     let proj = file
         .geostationary_projection()
@@ -791,6 +800,7 @@ fn pixel_bit_layout(file: &Hdf5File) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
@@ -999,7 +1009,7 @@ mod tests {
     fn linear_calibration_applies_gain_and_offset() {
         let calib = Calibration::Linear {
             gain: 0.5,
-            offset: 2.0,
+            offset: Some(2.0),
         };
         assert_eq!(calib.radiance(10.0), Some(7.0));
         assert_eq!(calib.flag(), CALIB_L1B);

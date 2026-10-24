@@ -373,11 +373,11 @@ fn fill_value_of(file: &Hdf5File<'_>, path: &str) -> Option<f64> {
         Some(s) => s,
         None => 1.0,
     };
-    let offset = match file.attr_f64(path, "add_offset") {
-        Some(o) => o,
-        None => 0.0,
-    };
-    Some(raw * scale + offset)
+    let offset = file.attr_f64(path, "add_offset");
+    Some(match offset {
+        Some(o) => raw * scale + o,
+        None => raw * scale,
+    })
 }
 
 fn keep_value(val: f64, fill: Option<f64>) -> bool {
@@ -410,26 +410,20 @@ fn time_unit(units: &str) -> Option<(f64, f64)> {
     let month: i64 = d.next()?.parse().ok()?;
     let day: i64 = d.next()?.parse().ok()?;
     let days = days_from_civil(year, month, day)?;
-    let time_part = match since_parts.next() {
-        Some(t) => t,
-        None => "00:00:00",
+    let day_start = days as f64 * 86400.0;
+    let Some(time_part) = since_parts.next() else {
+        return Some((unit_seconds, day_start));
     };
     let mut t = time_part.split(':');
-    let hh: f64 = match t.next().and_then(|v| v.parse().ok()) {
-        Some(v) => v,
-        None => 0.0,
-    };
-    let mm: f64 = match t.next().and_then(|v| v.parse().ok()) {
-        Some(v) => v,
-        None => 0.0,
-    };
-    let ss: f64 = match t.next().and_then(|v| v.parse().ok()) {
-        Some(v) => v,
-        None => 0.0,
-    };
+    let hh: f64 = t.next().and_then(|v| v.parse().ok())?;
+    let mm: f64 = t.next().and_then(|v| v.parse().ok())?;
+    let seconds = day_start + hh * 3600.0 + mm * 60.0;
     Some((
         unit_seconds,
-        days as f64 * 86400.0 + hh * 3600.0 + mm * 60.0 + ss,
+        match t.next().and_then(|v| v.parse::<f64>().ok()) {
+            Some(ss) => seconds + ss,
+            None => seconds,
+        },
     ))
 }
 
@@ -816,6 +810,7 @@ fn positional_source(args: &[String]) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(

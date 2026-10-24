@@ -10,8 +10,6 @@ use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 const NETLOC: &str = "noaa-ocs-hydrodata-pds.s3.amazonaws.com";
 const BASE: &str = "https://noaa-ocs-hydrodata-pds.s3.amazonaws.com";
 
-const GRS80_A: f64 = 6378137.0;
-const GRS80_INV_F: f64 = 298.257222101;
 const UTM18_CENTRAL_MERIDIAN_DEG: f64 = -75.0;
 const UTM_K0: f64 = 0.9996;
 const UTM_FALSE_EASTING: f64 = 500000.0;
@@ -52,10 +50,7 @@ fn resolve(base: &str, href: &str) -> String {
     while let Some(rest) = h.strip_prefix("./") {
         h = rest;
     }
-    let dir_end = match base.rfind('/').map(|i| i + 1) {
-        Some(v) => v,
-        None => 0,
-    };
+    let dir_end = base.rfind('/').map_or(0, |i| i + 1);
     format!("{}{}", &base[..dir_end], h)
 }
 
@@ -181,9 +176,7 @@ fn real_at(row: &[SqliteValue], i: usize) -> Option<f64> {
     }
 }
 
-fn utm18n_to_latlon(easting: f64, northing: f64) -> Option<(f64, f64)> {
-    let a = GRS80_A;
-    let f = 1.0 / GRS80_INV_F;
+fn utm18n_to_latlon(easting: f64, northing: f64, a: f64, f: f64) -> Option<(f64, f64)> {
     let e2 = f * (2.0 - f);
     let ep2 = e2 / (1.0 - e2);
     let x = easting - UTM_FALSE_EASTING;
@@ -225,7 +218,7 @@ fn utm18n_to_latlon(easting: f64, northing: f64) -> Option<(f64, f64)> {
     }
 }
 
-fn soundings_from_gpkg(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
+fn soundings_from_gpkg(bytes: &[u8], a: f64, f: f64) -> Option<Vec<GbcoRec>> {
     let db = SqliteDb::from_bytes(bytes.to_vec())?;
     let (xi, yi, ei) = sounding_columns(&db)?;
     let rows = db.read_table("soundings")?;
@@ -239,7 +232,7 @@ fn soundings_from_gpkg(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
         if !x.is_finite() || !y.is_finite() || !elev.is_finite() {
             continue;
         }
-        let Some((lat, lon)) = utm18n_to_latlon(x, y) else {
+        let Some((lat, lon)) = utm18n_to_latlon(x, y, a, f) else {
             continue;
         };
         recs.push(GbcoRec { lat, lon, elev });
@@ -306,7 +299,7 @@ fn soundings_from_tif(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(recs)
 }
 
-fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
+fn harvest_survey(item_url: &str, a: f64, f: f64) -> Option<Vec<GbcoRec>> {
     let item_body = fetch_raw(item_url, None, &[])?;
     let item = parse_json(&item_body)?;
     let mut recs = Vec::new();
@@ -315,7 +308,7 @@ fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
         asset_seen = true;
         let url = resolve(item_url, &href);
         if let Some(bytes) = fetch_raw_bytes(&url) {
-            if let Some(r) = soundings_from_gpkg(&bytes) {
+            if let Some(r) = soundings_from_gpkg(&bytes, a, f) {
                 recs.extend(r);
             }
         }
@@ -364,6 +357,17 @@ fn write_records(out: &str, records: &[GbcoRec]) -> Result<usize, String> {
 fn run(args: &[String]) -> Result<(), String> {
     witness_gestalt_identity(MAGIC_OCS)?;
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let receiver = match arg_value(args, "--body") {
+        Some(v) if !v.is_empty() => v,
+        _ => {
+            return Err(
+                "--body <name> is required — the receiver body is declared, never defaulted"
+                    .to_string(),
+            );
+        }
+    };
+    let (a, f) = omegaflow::cdn::body_ellipsoid(&receiver)?;
+    eprintln!("{receiver}: ellipsoid a {a:.3} m f {f:.9} from the ephemeris");
     let out = match arg_value(args, "--out") {
         Some(v) => v,
         None => format!("data/{NETLOC}/ocs_hydro_depth.bin"),
@@ -380,7 +384,7 @@ fn run(args: &[String]) -> Result<(), String> {
 
     if let Some(path) = arg_value(args, "--gpkg") {
         let bytes = std::fs::read(&path).map_err(|e| format!("read {path} returned void: {e}"))?;
-        let recs = soundings_from_gpkg(&bytes)
+        let recs = soundings_from_gpkg(&bytes, a, f)
             .ok_or_else(|| format!("{path}: the soundings table reads void"))?;
         eprintln!("{path}: {} sounding records", recs.len());
         records.extend(recs);
@@ -419,7 +423,7 @@ fn run(args: &[String]) -> Result<(), String> {
                     );
                     continue;
                 };
-                match harvest_survey(&item_url) {
+                match harvest_survey(&item_url, a, f) {
                     Some(mut recs) if !recs.is_empty() => {
                         recs.sort_by(|a, b| {
                             a.lat
@@ -463,7 +467,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 }
             }
             let item_url = resolve(&collection_url, href);
-            match harvest_survey(&item_url) {
+            match harvest_survey(&item_url, a, f) {
                 Some(recs) => {
                     eprintln!("{item_url}: {} sounding records", recs.len());
                     records.extend(recs);
@@ -516,6 +520,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("noaa_ocs_hydrodata_compiler: {msg}");
@@ -529,14 +534,14 @@ mod tests {
 
     #[test]
     fn utm18n_central_meridian_inverse() {
-        let (lat, lon) = utm18n_to_latlon(500000.0, 4649776.224884).unwrap();
+        let (lat, lon) = utm18n_to_latlon(500000.0, 4649776.224884, 6378136.6, 1.0 / 298.254).unwrap();
         assert!((lat - 42.0).abs() < 1e-6);
         assert!((lon - (-75.0)).abs() < 1e-6);
     }
 
     #[test]
     fn utm18n_dd10045_extent_corner() {
-        let (lat, lon) = utm18n_to_latlon(368952.482, 4340727.52).unwrap();
+        let (lat, lon) = utm18n_to_latlon(368952.482, 4340727.52, 6378136.6, 1.0 / 298.254).unwrap();
         assert!((lat - 39.2059397).abs() < 1e-4);
         assert!((lon - (-76.5177658)).abs() < 1e-4);
     }

@@ -239,6 +239,7 @@ fn collect(
     compressed: bool,
     axis: &CrsAxis,
     lsk: &omegaflow::archivar::LeapSeconds,
+    body: &str,
     eph: &HashMap<String, omegaflow::archivar::motion::BodyEphemeris>,
 ) -> Result<(Vec<LasSample>, Skips), String> {
     let mut dec = if compressed {
@@ -280,7 +281,7 @@ fn collect(
             skips.frame += 1;
             continue;
         };
-        let Some(icrs) = body_fixed_to_icrs("earth", lat, lon, alt, tdb, eph) else {
+        let Some(icrs) = body_fixed_to_icrs(body, lat, lon, alt, tdb, eph) else {
             skips.frame += 1;
             continue;
         };
@@ -314,13 +315,22 @@ fn crs_text(crs: &LasCrs) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: las_compiler --input <las|laz|copc.laz> | --url <https-url> --out <path> [--ci-mode]";
+    let usage = "usage: las_compiler --body <name> --input <las|laz|copc.laz> | --url <https-url> --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
         None => {
             eprintln!("{usage}");
+            std::process::exit(1);
+        }
+    };
+
+    let body = match arg_value(&args, "--body") {
+        Some(b) if !b.is_empty() => b,
+        _ => {
+            eprintln!("las: --body <name> is required — the receiver body is declared, never defaulted");
             std::process::exit(1);
         }
     };
@@ -392,21 +402,21 @@ fn main() {
         "z carried as delivered (height m); the VDatum MLLW->ellipsoid chain is unbuilt (no GTX reader) and measured absent for Hawaii — no HI tidal grid in vdatum_regional_20250917.zip (844 CD entries) nor vdatum_all_20250917.zip (1912 CD entries), CD range-read 2026-09-17 — so a Hawaii z stays as delivered"
     );
 
-    let eph_bytes = match fetch_raw_bytes(&body_url("earth")) {
+    let eph_bytes = match fetch_raw_bytes(&body_url(&body)) {
         Some(b) => b,
         None => {
-            eprintln!("earth ephemeris: fetch returned void — the ICRS frame stays unreached");
+            eprintln!("{body} ephemeris: fetch returned void — the ICRS frame stays unreached");
             std::process::exit(1);
         }
     };
-    let earth = match parse_ephemeris_binary(&eph_bytes) {
+    let eph_body = match parse_ephemeris_binary(&eph_bytes) {
         Some(e) => e,
         None => {
-            eprintln!("earth ephemeris: binary unread — the ICRS frame stays unreached");
+            eprintln!("{body} ephemeris: binary unread — the ICRS frame stays unreached");
             std::process::exit(1);
         }
     };
-    let eph = HashMap::from([("earth".to_string(), earth)]);
+    let eph = HashMap::from([(body.clone(), eph_body)]);
     let lsk = match embedded_lsk() {
         Some(l) => l,
         None => {
@@ -424,7 +434,7 @@ fn main() {
         if compressed { "chunks" } else { "records" }
     );
 
-    let (samples, skips) = match collect(&bytes, &header, compressed, &axis, &lsk, &eph) {
+    let (samples, skips) = match collect(&bytes, &header, compressed, &axis, &lsk, &body, &eph) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("las_compiler: {e}");

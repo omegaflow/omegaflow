@@ -43,4 +43,4 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin hinet_win32_compiler -- \
             --start "${{ inputs.start }}" --span "${{ inputs.span }}" \
             --station-count "${{ inputs.station-count }}" \
-            --out-bin hinet.bin --lsk kernels/naif0012.tls --ci-mode
+            --out-bin hinet.bin --lsk kernels/naif0012.tls --tz-offset 32400 --ci-mode

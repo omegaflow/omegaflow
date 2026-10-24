@@ -237,10 +237,7 @@ fn polar_means(bytes: &[u8]) -> Option<(f64, f64)> {
     let (_, hdu2) = FitsHeader::parse(bytes, 0)?;
     let (header, _) = FitsHeader::parse(bytes, hdu2)?;
     let bscale = header.f64("BSCALE").unwrap_or(1.0);
-    let bzero = match header.f64("BZERO") {
-        Some(v) => v,
-        None => 0.0,
-    };
+    let bzero = header.f64("BZERO");
     let cdelt2 = header.f64("CDELT2")?;
     let crval2 = header.f64("CRVAL2")?;
     let crpix2 = header.f64("CRPIX2")?;
@@ -266,7 +263,10 @@ fn polar_means(bytes: &[u8]) -> Option<(f64, f64)> {
                     continue;
                 }
             }
-            let gauss = *raw as f64 * bscale + bzero;
+            let gauss = match bzero {
+                Some(b) => *raw as f64 * bscale + b,
+                None => *raw as f64 * bscale,
+            };
             if !gauss.is_finite() {
                 continue;
             }
@@ -290,6 +290,7 @@ fn polar_means(bytes: &[u8]) -> Option<(f64, f64)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {

@@ -28,6 +28,7 @@ jobs:
       - name: Compile the FITACF DMAP file and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin superdarn_fitacf_compiler -- \
+            --body earth \
             --url https://sdc-serv.usask.ca/data/2026/08/20260820.1630.41.rkn.a.fitacf.bz2 \
             --radar rkn \
             --out-bin superdarn_fitacf.bin \
