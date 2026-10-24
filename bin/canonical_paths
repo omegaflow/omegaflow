@@ -32,3 +32,35 @@ while IFS= read -r f; do
     fi
 done < "$tmp"
 exit $fail
+# --- Gate 1 — nur die Register tragen `terms `-Zeilen -----------------------
+registries="phi/sources.φ research/sources/sources-v3.tsv"
+while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    case " $registries " in *" $f "*) continue ;; esac
+    n=$(perl -ne 'BEGIN{$n=0} $n++ if /^terms /; END{print $n+0}' "$f")
+    if [ "${n:-0}" -ge 5 ]; then
+        echo "canonical_paths: $f traegt $n terms-Zeilen — ein zweites Register" >&2
+        fail=1
+    fi
+done < "$tmp"
+
+# --- Gate 2 — Ersatz, nicht Ergaenzung --------------------------------------
+added=$(git diff --cached --name-only --diff-filter=A | wc -l)
+deleted=$(git diff --cached --name-only --diff-filter=D | wc -l)
+if [ "$added" -gt "$deleted" ] && [ -z "${OMEGAFLOW_NEW:-}" ]; then
+    echo "canonical_paths: $added neu, $deleted geloescht — Ergaenzung ohne Ersatz." >&2
+    echo "canonical_paths: OMEGAFLOW_NEW=\"<grund>\" nennen oder loeschen, was ersetzt wird." >&2
+    fail=1
+fi
+
+# --- Gate 5 — bindend nur in bindend/ ---------------------------------------
+for f in $(git diff --cached --name-only --diff-filter=ACR); do
+    case "$f" in *.md) ;; *) continue ;; esac
+    case "$f" in bindend/*) continue ;; esac
+    [ -f "$f" ] || continue
+    if head -12 "$f" | perl -ne 'exit 0 if /^\s*status:\s*bindend\s*$/; END { exit 1 }'; then
+        echo "canonical_paths: $f ist bindend, liegt aber nicht in bindend/" >&2
+        fail=1
+    fi
+done
+
