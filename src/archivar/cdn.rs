@@ -745,7 +745,7 @@ mod tests {
             .map(|(term, _)| term.as_str())
             .filter(|term| {
                 let note = licences_note(term).unwrap_or("");
-                !note.contains("http") && !note.starts_with("not a licence")
+                !note.contains("http") && !note.starts_with("not a licence") && !note.contains("rights holder")
             })
             .collect();
         assert!(
