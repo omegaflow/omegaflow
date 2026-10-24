@@ -174,6 +174,7 @@ fn slug_of(id: &str) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let id = match arg_value(&args, "--id") {
@@ -187,18 +188,20 @@ fn main() {
             .to_string_lossy()
             .into_owned(),
     };
-    let decimate_s: f64 = match arg_value(&args, "--decimate-s") {
+    let decimate_s: Option<f64> = match arg_value(&args, "--decimate-s") {
         Some(v) => match v.parse() {
-            Ok(v) => v,
+            Ok(v) => Some(v),
             Err(_) => {
                 eprintln!("--decimate-s {v} carries no number");
                 std::process::exit(2);
             }
         },
-        None => 0.0,
+        None => None,
     };
-    if !decimate_s.is_finite() || decimate_s < 0.0 {
-        eprintln!("--decimate-s {decimate_s} carries no non-negative bucket width");
+    if let Some(width) = decimate_s
+        && (!width.is_finite() || width < 0.0)
+    {
+        eprintln!("--decimate-s {width} carries no non-negative bucket width");
         std::process::exit(1);
     }
     let jobs: usize = arg_value(&args, "--jobs")
@@ -305,7 +308,10 @@ fn main() {
         windows.len(),
         date_of(start_day),
         date_of(end_day),
-        decimate_s
+        match decimate_s {
+            Some(width) => format!("{width}"),
+            None => String::from("off"),
+        }
     );
     let records: Arc<Mutex<Vec<(f64, f64, u32)>>> = Arc::new(Mutex::new(Vec::new()));
     let window_rows: Arc<Mutex<usize>> = Arc::new(Mutex::new(0));
@@ -351,15 +357,15 @@ fn main() {
         std::process::exit(1);
     };
     let nchan = params.len().saturating_sub(1) as u32;
-    let mut final_records: Vec<(f64, f64, u32)> = if decimate_s > 0.0 {
+    let mut final_records: Vec<(f64, f64, u32)> = if let Some(width) = decimate_s.filter(|w| *w > 0.0) {
         let mut buckets: HashMap<(u32, i64), Vec<f64>> = HashMap::new();
         for (t, val, comp) in collected {
-            let bucket = (t / decimate_s).floor() as i64;
+            let bucket = (t / width).floor() as i64;
             buckets.entry((comp, bucket)).or_default().push(val);
         }
         let mut out = Vec::with_capacity(buckets.len());
         for ((comp, bucket), mut vals) in buckets {
-            out.push(((bucket as f64 + 0.5) * decimate_s, median(&mut vals), comp));
+            out.push(((bucket as f64 + 0.5) * width, median(&mut vals), comp));
         }
         out
     } else {

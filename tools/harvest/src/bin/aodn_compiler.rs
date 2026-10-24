@@ -167,8 +167,8 @@ fn is_1d(schema: &DapSchema, name: &str) -> bool {
     }
 }
 
-fn attr_list<'a>(das: &'a DapAttrs, var: &str) -> Option<&'a Vec<DapAttr>> {
-    for (k, v) in &das.per_var {
+fn attr_list<'a>(attr_set: &'a DapAttrs, var: &str) -> Option<&'a Vec<DapAttr>> {
+    for (k, v) in &attr_set.per_var {
         if k == var {
             return Some(v);
         }
@@ -194,8 +194,8 @@ fn num_attr(list: &[DapAttr], key: &str) -> Option<f64> {
     }
 }
 
-fn attr_text(das: &DapAttrs, var: &str, key: &str) -> Option<String> {
-    let list = attr_list(das, var)?;
+fn attr_text(attr_set: &DapAttrs, var: &str, key: &str) -> Option<String> {
+    let list = attr_list(attr_set, var)?;
     let a = list.iter().find(|a| a.name == key)?;
     match a.dap_type {
         DapType::Str | DapType::Url => Some(String::from_utf8_lossy(&a.raw).into_owned()),
@@ -203,8 +203,8 @@ fn attr_text(das: &DapAttrs, var: &str, key: &str) -> Option<String> {
     }
 }
 
-fn var_attrs(das: &DapAttrs, var: &str) -> Result<VarAttrs, String> {
-    let list = attr_list(das, var)
+fn var_attrs(attr_set: &DapAttrs, var: &str) -> Result<VarAttrs, String> {
+    let list = attr_list(attr_set, var)
         .ok_or_else(|| format!("the DAS carries no attribute block for '{var}' — no fill gate"))?;
     let fill = match num_attr(list, "_FillValue") {
         Some(f) => Some(f),
@@ -484,9 +484,9 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let das_url = format!("{base}.das");
     let das_text = fetch_text(&das_url)?;
-    let das = parse_das(&das_text).map_err(|e| format!("{das_url}: DAS parse {e:?}"))?;
-    let attrs = var_attrs(&das, &source)?;
-    let time_units = attr_text(&das, "TIME", "units")
+    let attr_set = parse_das(&das_text).map_err(|e| format!("{das_url}: DAS parse {e:?}"))?;
+    let attrs = var_attrs(&attr_set, &source)?;
+    let time_units = attr_text(&attr_set, "TIME", "units")
         .ok_or_else(|| format!("{base}: TIME carries no units — the clock stays unread"))?;
 
     let slice = |name: &str| format!("{name}%5B{start}:1:{last}%5D");
@@ -673,6 +673,7 @@ fn selftest() {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--selftest") {
         selftest();
