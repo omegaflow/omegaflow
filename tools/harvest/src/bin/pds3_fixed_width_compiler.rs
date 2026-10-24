@@ -445,8 +445,22 @@ fn walk_mola(out: &mut Vec<(String, String)>) {
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(spec) = arg_value(&args, "--label-text") {
+        let Some(bytes) = fetch_or_read(&spec) else {
+            eprintln!("--label-text: {spec} did not answer");
+            std::process::exit(2);
+        };
+        match String::from_utf8(bytes) {
+            Ok(text) => print!("{text}"),
+            Err(_) => {
+                eprintln!("--label-text: {spec} is not utf-8");
+                std::process::exit(2);
+            }
+        }
+        return;
+    }
+    omegaflow::archivar::cdn::require_ci();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_arg = arg_value(&args, "--out");
     let netloc = match arg_value(&args, "--netloc") {

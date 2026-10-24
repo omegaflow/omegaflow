@@ -478,7 +478,9 @@ fn main() {
                     let mut matching: Vec<&Probe> = host_rows
                         .iter()
                         .flat_map(|s| s.probes.iter())
-                        .filter(|p| p.url.starts_with(stem))
+                        .filter(|p| {
+                            p.url.starts_with(stem) || stem.starts_with(&p.url)
+                        })
                         .collect();
                     if matching.is_empty() {
                         let any = host_rows.iter().any(|s| !s.probes.is_empty());

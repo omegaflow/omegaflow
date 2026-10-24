@@ -110,4 +110,15 @@ host archives.esac.esa.int
   instrument_quote "The data contained in this dataset contains the data taken by the Giotto FLUXGATE MAGNETOMETER Experiment (MAG)."
   probe 2026-10-24T23:27:17Z 206 https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
   applies https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
+
+host pds-smallbodies.astro.umd.edu
+  instrument fluxgate
+  unit nT nT/Hz**1/2
+  api_cite https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0306d.lbl
+  api_quote "NAME                      = \"BX PSSO\"  UNIT                      = \"NANOTESLA\""
+  instrument_cite https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/catalog/mischa.cat
+  instrument_quote "INSTRUMENT_NAME = \"FLUXGATE MAGNETOMETER\"  INSTRUMENT_TYPE = \"FLUXGATE SENSOR\""
+  probe 2026-10-24T23:36:25Z 206 https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/
+  applies https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/
+  note das Label nennt Einheit und Instrument, nicht die Kadenz; die Kadenz steht in der UT-Spalte und im Zweignamen (100ms, f24s), nicht im Dokument. Der Probe ist das Verzeichnis, nicht jede Tagesdatei — ein Verzeichnis belegt die Pfadfamilie, die einzelne Datei belegt der Compiler-Lauf
   note Einheit nT steht im selben Label (UNIT = "NANOTESLA"), Kadenz 8 s in der Spaltenbeschreibung; Block führt nur die Zeitachse als Feld
