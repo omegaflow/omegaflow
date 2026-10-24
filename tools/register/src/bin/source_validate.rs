@@ -461,7 +461,7 @@ fn main() {
                     Some(probe) => {
                         if !probe_admits(&probe.status) {
                             push(
-                                "probe_absent",
+                                "probe_unanswered",
                                 format!("{tag}\t{name}\t{}\t{}", probe.status, probe.url),
                                 true,
                                 &mut findings,
