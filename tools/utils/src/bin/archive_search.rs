@@ -2705,6 +2705,7 @@ fn usage_full() {
     eprintln!("spec:     --quantity <q> --band <b> --unit <u> --cadence <c> --instrument <i>");
     eprintln!("          the four axes as flags; every hit carries them as `spec: …`");
     eprintln!("  --values <name>  local search for a variable name (values + name as keywords)");
+    eprintln!("  --help-all       this reference: every arm with endpoint, key and fields");
     eprintln!();
     eprintln!("  Keyless direct sources first; keyless meta-search second; keyed fallback");
     eprintln!("  last, serial and rate-limited. --all is a fan-out, not a default.");
