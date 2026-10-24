@@ -21,3 +21,27 @@ host opendata.fmi.fi
 host geomag.usgs.gov
   probe 2026-10-24T22:51:41Z 404 https://geomag.usgs.gov/ws/data/?id=BOU
   note the documented example URL answers 404 direct and through the proton exit; only the 2024-06-17 wayback snapshot answers — the metadata routes (/ws/observatories/, /ws/health) answer 200, the data path does not
+
+host services.swpc.noaa.gov
+  instrument fluxgate
+  unit nT
+  cadence 60
+  api_cite https://www.swpc.noaa.gov/products/goes-magnetometer
+  api_quote "The GOES 3-day Hp plot shows the 1-minute averaged parallel component of the magnetic field in nanoTeslas (nT)"
+  instrument_cite https://www.goes-r.gov/spacesegment/mag.html
+  instrument_quote "measurements of three components of the geomagnetic field with a resolution of 0.016 nT and response frequency of 2.5 Hz"
+  probe 2026-10-24T23:05:25Z 206 https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+  probe 2026-10-24T23:06:29Z 206 https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+  probe 2026-10-24T23:06:30Z 206 https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+  probe 2026-10-24T23:06:30Z 206 https://services.swpc.noaa.gov/json/edited_events.json
+  probe 2026-10-24T23:06:30Z 206 https://services.swpc.noaa.gov/json/f107_cm_flux.json
+  probe 2026-10-24T23:06:31Z 206 https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+  probe 2026-10-24T23:06:31Z 206 https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
+  probe 2026-10-24T23:06:31Z 206 https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+  probe 2026-10-24T23:06:31Z 206 https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+  probe 2026-10-24T23:06:31Z 206 https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+  probe 2026-10-24T23:06:31Z 206 https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+  probe 2026-10-24T23:06:32Z 200 https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
+  probe 2026-10-24T23:06:32Z 206 https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+  probe 2026-10-24T23:06:32Z 206 https://services.swpc.noaa.gov/json/solar_regions.json
+  note the block says cadence 6.0; the page says 1-minute averaged, and the artefact itself is not measurable yet because no mode reads raw JSON

@@ -155,7 +155,7 @@ struct Spec {
     cadences: BTreeSet<u64>,
     api_cite: bool,
     instrument_cite: bool,
-    probe: Option<Probe>,
+    probes: Vec<Probe>,
 }
 
 struct Probe {
@@ -252,7 +252,7 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                             cadences: BTreeSet::new(),
                             api_cite: false,
                             instrument_cite: false,
-                            probe: None,
+                            probes: Vec::new(),
                         },
                     );
                     current = Some(token);
@@ -288,7 +288,7 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                         else {
                             continue;
                         };
-                        entry.probe = Some(Probe {
+                        entry.probes.push(Probe {
                             date,
                             status: (*status).to_string(),
                             url: (*url).to_string(),
@@ -449,36 +449,43 @@ fn main() {
                     &mut hard,
                     &mut soft,
                 ),
-                (Some(stem), Some(entry)) => match &entry.probe {
-                    None => push(
-                        "probe_missing",
-                        format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
-                        true,
-                        &mut findings,
-                        &mut hard,
-                        &mut soft,
-                    ),
-                    Some(probe) => {
-                        if !probe_admits(&probe.status) {
-                            push(
-                                "probe_unanswered",
-                                format!("{tag}\t{name}\t{}\t{}", probe.status, probe.url),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if !probe.url.starts_with(stem) {
-                            push(
-                                "probe_path_mismatch",
-                                format!("{tag}\t{name}\t{stem}\t{}", probe.url),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
+                (Some(stem), Some(entry)) => {
+                    let mut matching: Vec<&Probe> = entry
+                        .probes
+                        .iter()
+                        .filter(|p| p.url.starts_with(stem))
+                        .collect();
+                    if entry.probes.is_empty() {
+                        push(
+                            "probe_missing",
+                            format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    } else if matching.is_empty() {
+                        push(
+                            "probe_path_mismatch",
+                            format!("{tag}\t{name}\t{stem}"),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    } else if !matching.iter().any(|p| probe_admits(&p.status)) {
+                        let p = matching[0];
+                        push(
+                            "probe_unanswered",
+                            format!("{tag}\t{name}\t{}\t{}", p.status, p.url),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    }
+                    matching.sort_by_key(|p| std::cmp::Reverse(parse_probe_ts(&p.date)));
+                    if let Some(probe) = matching.first() {
                         match (parse_probe_ts(&probe.date), now_secs()) {
                             (Some(ts), Some(now)) => {
                                 if ts > now + 86400 {
@@ -518,7 +525,7 @@ fn main() {
                             ),
                         }
                     }
-                },
+                }
             }
         }
 
