@@ -22,6 +22,7 @@ muster="${1:-}"
 
 exec perl - "$PHI" "$KURATIERT" "$muster" <<'PERL'
 use strict; use warnings;
+binmode STDOUT, ':encoding(UTF-8)';
 my ($phi, $kur, $muster) = @ARGV;
 
 # kuratierte Seite: klasse -> [werkzeug, band, beleg]
