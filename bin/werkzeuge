@@ -1,0 +1,96 @@
+#!/bin/sh
+# werkzeuge — die Messklassen des Registers, nach Werkzeug geordnet.
+#
+# Ein Block im Register sagt, WAS gemessen wird (field ... <kraft> <einheit>
+# <kadenz>), aber nicht WOMIT. Diese Tabelle schließt die Lücke: je Klasse
+# (kraft, einheit) das Werkzeug, sein Band und der Beleg. Damit ist die Suche
+# nach der Messung lokal möglich (welche Blöcke liefern diese Klasse?) und
+# online (bin/spec mit demselben Band).
+#
+# Die kuratierte Seite steht in src/archivar/werkzeuge.tsv:
+#   klasse  werkzeug  band  beleg
+# Die Zahlen (Zeilen, Kadenz, Lizenzen) werden bei jedem Lauf frisch aus
+# phi/sources.φ gezählt — sie stehen nicht in der Datei.
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+PHI="${PHI:-$root/phi/sources.φ}"
+KURATIERT="${KURATIERT:-$root/src/archivar/werkzeuge.tsv}"
+muster="${1:-}"
+
+[ -f "$PHI" ] || { echo "werkzeuge: kein Register: $PHI" >&2; exit 2; }
+
+exec perl - "$PHI" "$KURATIERT" "$muster" <<'PERL'
+use strict; use warnings;
+my ($phi, $kur, $muster) = @ARGV;
+
+# kuratierte Seite: klasse -> [werkzeug, band, beleg]
+my %k;
+if (-f $kur) {
+    open my $h, '<:encoding(UTF-8)', $kur or die $!;
+    while (<$h>) {
+        chomp; next if /^#/ || /^\s*$/;
+        my ($kl, $wz, $band, $beleg) = split /\t/;
+        next unless defined $kl;
+        $kl =~ s{/}{\t};
+        $k{lc $kl} = [$wz // '', $band // '', $beleg // ''];
+    }
+    close $h;
+}
+
+# Register zählen: Klasse (kraft, einheit) -> Zeilen, Kadenz, Lizenzen
+open my $p, '<:encoding(UTF-8)', $phi or die $!;
+my (%zeilen, %kadenz, %terms, %felder, %compiler);
+my ($kraft, $einheit, $kad, $tok, $comp);
+while (<$p>) {
+    chomp;
+    if (/^terms (\S+)/) { $tok = $1; next }
+    if (/^compiler (\S+)/) { $comp = $1; next }
+    next unless /^field /;
+    my @t = /"([^"]*)"|(\S+)/g;
+    my @tok; for (my $i = 0; $i < @t; $i += 2) {
+        push @tok, defined $t[$i] ? $t[$i] : $t[$i + 1];
+    }
+    next if @tok < 5;
+    # die Kadenz ist die erste rein numerische Spalte nach der Einheit
+    my $cix;
+    for my $i (2 .. $#tok) { if ($tok[$i] =~ /^\d+(?:\.\d+)?$/) { $cix = $i; last } }
+    next unless defined $cix && $cix >= 3;
+    my ($u, $kr) = ($tok[$cix - 1], $tok[$cix - 2]);
+    my $kl = lc "$kr\t$u";
+    $zeilen{$kl}++;
+    $kadenz{$kl}{$tok[$cix]}++;
+    $terms{$kl}{$tok}++ if defined $tok;
+    $compiler{$kl}{$comp}++ if defined $comp;
+    push @{ $felder{$kl} }, $tok[0] if @{ $felder{$kl} // [] } < 3;
+}
+close $p;
+
+sub mode {
+    my %c = %{ shift() };
+    my @s = sort { $c{$b} <=> $c{$a} } keys %c;
+    return $s[0] // '-';
+}
+
+my @klassen = sort { $zeilen{$b} <=> $zeilen{$a} } keys %zeilen;
+printf "%-30s %-20s %-14s %6s %-8s %-18s %-24s %s\n",
+    "klasse", "werkzeug", "band", "zeilen", "kadenz", "lizenz", "compiler", "beleg";
+for my $kl (@klassen) {
+    my ($kr, $u) = split /\t/, $kl;
+    my $m = lc $muster; $m =~ s{/}{\t};
+    next if length $m && index($kl, $m) < 0
+                         && index(lc($k{$kl}[0] // ""), $m) < 0;
+    my $kur = $k{$kl} // ['', '', ''];
+    printf "%-30s %-20s %-14s %6d %-8s %-18s %-24s %s\n",
+        "$kr/$u",
+        ($kur->[0] || "—"),
+        ($kur->[1] || "—"),
+        $zeilen{$kl},
+        mode($kadenz{$kl}),
+        mode($terms{$kl} // {}),
+        mode($compiler{$kl} // {}),
+        ($kur->[2] || "");
+}
+printf "\n%d Klassen, %d Feldzeilen\n", scalar @klassen,
+    do { my $s = 0; $s += $_ for values %zeilen; $s };
+PERL

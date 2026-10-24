@@ -1,0 +1,18 @@
+# Werkzeug-Inventur — je Messklasse das Werkzeug, sein Band und der Beleg.
+#
+# Warum diese Datei: das Register (phi/sources.φ) trägt je Feld Kraft, Einheit
+# und Kadenz, aber weder das Werkzeug noch sein Band. Ohne diese Spalte bleibt
+# als einzige Suchachse die Marke in der URL — genau der Fehler, der die
+# Schumann-Route und die MISCHA-Blöcke gekostet hat.
+#
+# Spalten: klasse <TAB> werkzeug <TAB> band <TAB> beleg
+#   klasse    kraft/einheit, wie in `bin/werkzeuge` gezählt (klein geschrieben)
+#   werkzeug  Instrumentenklasse (nicht Marke), z. B. "Fluxgate-Magnetometer"
+#   band      Messband, z. B. "DC-64 Hz" — leer, solange nicht gelesen
+#   beleg     URL, auf der der Satz steht; leer = noch nicht recherchiert
+#
+# `bin/werkzeuge` zählt die Zeilen/Kadenzen/Lizenzen je Klasse frisch aus dem
+# Register und verbindet sie mit dieser Tabelle. Leere Zeilen sind die
+# Arbeitsliste; sie werden von oben (meiste Felder) nach unten abgearbeitet.
+klasse	werkzeug	band	beleg
+em/nt	Fluxgate-Magnetometer	DC-64 Hz	https://themis.ssl.berkeley.edu/instrument_fgm.shtml
