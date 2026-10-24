@@ -262,7 +262,7 @@ use std::env;
 use std::fs;
 use std::io::{BufRead, IsTerminal};
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, OnceLock, RwLock};
 
 macro_rules! out {
     ($($t:tt)*) => {{
@@ -625,6 +625,11 @@ fn main() {
     let mut max_set = false;
     let mut stop_set = false;
     let mut stop_cli_value: Option<usize> = None;
+    let mut spec_quantity: Option<String> = None;
+    let mut spec_band: Option<String> = None;
+    let mut spec_unit: Option<String> = None;
+    let mut spec_cadence: Option<String> = None;
+    let mut spec_instrument: Option<String> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -967,6 +972,24 @@ fn main() {
                 usage();
                 std::process::exit(0);
             }
+            "--quantity" | "--band" | "--unit" | "--cadence" | "--instrument" => {
+                let flag = args[i].clone();
+                i += 1;
+                let value = match args.get(i) {
+                    Some(v) if !v.starts_with('-') => v.clone(),
+                    _ => {
+                        eprintln!("archive_search: {flag} needs a value");
+                        std::process::exit(2);
+                    }
+                };
+                match flag.as_str() {
+                    "--quantity" => spec_quantity = Some(value),
+                    "--band" => spec_band = Some(value),
+                    "--unit" => spec_unit = Some(value),
+                    "--cadence" => spec_cadence = Some(value),
+                    _ => spec_instrument = Some(value),
+                }
+            }
             "--help-all" => {
                 usage_full();
                 std::process::exit(0);
@@ -985,6 +1008,23 @@ fn main() {
         }
         i += 1;
     }
+
+    let mut axes: Vec<String> = Vec::new();
+    for (label, value) in [
+        ("quantity", &spec_quantity),
+        ("band", &spec_band),
+        ("unit", &spec_unit),
+        ("cadence", &spec_cadence),
+        ("instrument", &spec_instrument),
+    ] {
+        if let Some(value) = value {
+            let value = value.trim();
+            if !value.is_empty() {
+                axes.push(format!("{label}={value}"));
+            }
+        }
+    }
+    let _ = SPEC_SUFFIX.set(axes.join(";"));
 
     if list_sources {
         out!("{}", net::sources_text());
@@ -1648,26 +1688,14 @@ fn print_cache_clear() {
     );
 }
 
+static SPEC_SUFFIX: OnceLock<String> = OnceLock::new();
+
 fn spec_suffix() -> Option<String> {
-    let mut parts: Vec<String> = Vec::new();
-    for (key, label) in [
-        ("SPEC_QUANTITY", "quantity"),
-        ("SPEC_BAND", "band"),
-        ("SPEC_UNIT", "unit"),
-        ("SPEC_CADENCE", "cadence"),
-        ("SPEC_INSTRUMENT", "instrument"),
-    ] {
-        if let Ok(value) = std::env::var(key) {
-            let value = value.trim();
-            if !value.is_empty() {
-                parts.push(format!("{label}={value}"));
-            }
-        }
-    }
-    if parts.is_empty() {
+    let spec = SPEC_SUFFIX.get()?;
+    if spec.is_empty() {
         None
     } else {
-        Some(parts.join(";"))
+        Some(spec.clone())
     }
 }
 
@@ -2579,6 +2607,8 @@ fn usage() {
     eprintln!("  SPEC FIRST — the measurement leads to the source.");
     eprintln!("  Write quantity · band+unit · cadence+method · instrument class before the brand.");
     eprintln!("  The brand is a fifth term, secondary — often the worst synonym.");
+    eprintln!("  The axes are flags; they are written onto every hit as `spec: …`:");
+    eprintln!("    --quantity <q>  --band <b>  --unit <u>  --cadence <c>  --instrument <i>");
     eprintln!("    bin/spec --quantity \"ELF magnetic field\" --band \"0.001-30 Hz\" --unit nT \\");
     eprintln!("             --cadence \"10 min\" --instrument \"induction coil\" \\");
     eprintln!("             --arms datacite,zenodo,figshare,dataverse");

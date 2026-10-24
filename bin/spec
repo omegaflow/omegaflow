@@ -69,9 +69,13 @@ for arm in $(printf '%s' "$arms" | tr ',' ' '); do
     fi
     for q in "$q1$neg" "$q2$neg" "$q3$neg" ${extra:+"$extra"}; do
         printf '== %s · %s ==\n' "$arm" "$q" >&2
-        out="$(SPEC_QUANTITY="${quantity:-}" SPEC_BAND="${band:-}" SPEC_UNIT="${unit:-}" \
-               SPEC_CADENCE="${cadence:-}" SPEC_INSTRUMENT="${instrument:-}" \
-               "$bin" --"$arm" "$q" 2>&1 | WITHOUT="$without" perl -ne '
+        set -- --"$arm" "$q"
+        [ -n "$quantity" ] && set -- "$@" --quantity "$quantity"
+        [ -n "$band" ] && set -- "$@" --band "$band"
+        [ -n "$unit" ] && set -- "$@" --unit "$unit"
+        [ -n "$cadence" ] && set -- "$@" --cadence "$cadence"
+        [ -n "$instrument" ] && set -- "$@" --instrument "$instrument"
+        out="$("$bin" "$@" 2>&1 | WITHOUT="$without" perl -ne '
             # --without ist ein Filter, kein Suchwort: kein Treffer eines
             # ausgeschlossenen Brands darf die Ausgabe erreichen. Manche Arme
             # liefern keine URL, sondern nur einen DOI — dann trägt das
