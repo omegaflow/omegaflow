@@ -20,10 +20,10 @@ muster="${1:-}"
 
 [ -f "$PHI" ] || { echo "instrumente: kein Register: $PHI" >&2; exit 2; }
 
-exec perl - "$PHI" "$KURATIERT" "$muster" <<'PERL'
+exec perl - "$PHI" "$KURATIERT" "$muster" "$root/src/archivar/licences.tsv" <<'PERL'
 use strict; use warnings; use utf8;
 binmode STDOUT, ':encoding(UTF-8)';
-my ($phi, $kur, $muster) = @ARGV;
+my ($phi, $kur, $muster, $licences) = @ARGV;
 
 # kuratierte Seite: klasse -> [instrument, band, beleg]
 my %k;
@@ -40,13 +40,29 @@ if (-f $kur) {
 }
 
 # Register zählen: Klasse (kraft, einheit) -> Zeilen, Kadenz, Lizenzen
+my %verdict;
+if (-f $licences) {
+    open my $lh, '<', $licences or die $!;
+    while (<$lh>) { chomp; next if /^#/; my ($t, $v) = split /\t/; $verdict{lc $t} = $v if defined $v }
+    close $lh;
+}
+
 open my $p, '<:encoding(UTF-8)', $phi or die $!;
-my (%zeilen, %kadenz, %terms, %felder, %compiler);
-my ($kraft, $einheit, $kad, $tok, $comp);
+my (%zeilen, %kadenz, %terms, %felder, %compiler, %quelle);
+my ($kraft, $einheit, $kad, $tok, $comp, $host, $ttl, $ort, $zeit);
+my $flush = sub { $tok = undef; $comp = undef; $host = undef; $ttl = undef; $ort = undef; $zeit = undef };
 while (<$p>) {
     chomp;
+    if (/^\s*$/) { $flush->(); next }
     if (/^terms (\S+)/) { $tok = $1; next }
     if (/^compiler (\S+)/) { $comp = $1; next }
+    if (/^ttl (\S+)/) { $ttl = $1; next }
+    if (/^(?:at|on) (\S+)(?: (\S+) (\S+))?/) { $ort = $1 . (defined $2 ? " $2 $3" : ""); next }
+    if (/^(?:epoch|last) (\S+)/) { $zeit = $1; next }
+    if (/^range (\S+)/) { $zeit = $1; next }
+    if (/^origin [a-z]+:\/\/([^\/]+)/) { $host = $1; next }
+    if (/^url \S*\/download\/([^\/]+)\//) { $host //= $1; next }
+    if (/^url [a-z]+:\/\/([^\/]+)/) { $host //= $1; next }
     next unless /^field /;
     my @t = /"([^"]*)"|(\S+)/g;
     my @tok; for (my $i = 0; $i < @t; $i += 2) {
@@ -63,6 +79,11 @@ while (<$p>) {
     $kadenz{$kl}{$tok[$cix]}++;
     $terms{$kl}{$tok}++ if defined $tok;
     $compiler{$kl}{$comp}++ if defined $comp;
+    $quelle{$kl}{$host // '?'}{terms} = $tok;
+    $quelle{$kl}{$host // '?'}{n}++;
+    $quelle{$kl}{$host // '?'}{ttl}    //= $ttl;
+    $quelle{$kl}{$host // '?'}{ort}    //= $ort;
+    $quelle{$kl}{$host // '?'}{zeit}   //= $zeit;
     push @{ $felder{$kl} }, $tok[0] if @{ $felder{$kl} // [] } < 3;
 }
 close $p;
@@ -91,6 +112,21 @@ for my $kl (@klassen) {
         mode($terms{$kl} // {}),
         mode($compiler{$kl} // {}),
         ($kur->[2] || "");
+    # Tausch-Ansicht: dieselbe Messung, mehrere Quellen, je mit eigener Lizenz
+    if (length $m) {
+        printf "    %-38s %4s  %-22s %-12s %-5s %-14s %s\n",
+            "quelle", "n", "terms", "urteil", "ttl", "ort", "zeitraum";
+        for my $h (sort { $quelle{$kl}{$b}{n} <=> $quelle{$kl}{$a}{n} }
+                   keys %{ $quelle{$kl} // {} }) {
+            my $t = $quelle{$kl}{$h}{terms};
+            my $v = defined $t ? ($verdict{lc $t} // 'unbeurteilt') : 'unbeurteilt';
+            printf "    %-38s %4d  %-22s %-12s %-5s %-14s %s\n",
+                substr($h, 0, 38), $quelle{$kl}{$h}{n}, $t // '-', $v,
+                $quelle{$kl}{$h}{ttl} // '-',
+                $quelle{$kl}{$h}{ort} // '-',
+                $quelle{$kl}{$h}{zeit} // '-';
+        }
+    }
 }
 printf "\n%d Klassen, %d Feldzeilen\n", scalar @klassen,
     do { my $s = 0; $s += $_ for values %zeilen; $s };
