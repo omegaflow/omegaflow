@@ -1,6 +1,6 @@
 # One row per deduplicated terms token of phi/sources.φ.
-# admitted = may go to the CDN; refused = must not; unread = locked until read.
-# A token without a row is locked by default.
+# admitted = may be manifested; declined = must not. Two verdicts only.
+# A token without a row is not admitted (no verdict = no manifestation).
 CC-BY-3.0	admitted	standard licence text
 CC-BY-4.0	admitted	standard licence text
 CC-BY-NC-3.0-IGO	admitted	standard licence text
@@ -25,6 +25,7 @@ PD-USGov-PDS	admitted	standard licence text
 PDDL-1.0	admitted	standard licence text
 USGov-disclaimer	admitted	standard licence text
 argo-free	admitted	standard licence text
+babamul-no-license	declined	no licence text; access terms missing, kept local-only
 cadc-open	admitted	standard licence text
 cdpp-sipad-licence	declined	redistribution to third parties only with the licensor written consent
 cedar-rules-of-the-road	admitted	standard licence text
@@ -36,14 +37,19 @@ eiscat-rules-of-the-road	admitted	standard licence text
 erg-sc-rules-of-the-road	declined	redistribution of the data files is strictly prohibited
 etalab-2.0	admitted	standard licence text
 gebco-terms	admitted	standard licence text
+ieeg-terms	declined	no licence text; access terms missing, kept local-only
 jp-public-data-license-1.0	admitted	standard licence text
 kari-public-release	declined	all rights reserved
+lasair-copyright	declined	copyright reserved, citation requested, no redistribution grant
 nist-srd-copyright	declined	all rights reserved, reproduction only with prior permission
 no-redistribution	declined	explicit no-redistribution
 noaa-nodd-open	admitted	standard licence text
 noaa-open-disclaimer	declined	all rights reserved
 non-commercial-government-licence-2.0	admitted	standard licence text
 own-work	admitted	standard licence text
+tns-copyright	declined	no licence text; access terms missing, kept local-only
+pradan-terms	declined	no licence text; access terms missing, kept local-only
 vires-esa-attribution	declined	reproduction only inside the VRE, non-commercial
+vizier-scientific-free	declined	free use in a scientific context only; copyright stays with the catalogue
 wdcb-nc	admitted	standard licence text
 wmo-data-policy	admitted	standard licence text
