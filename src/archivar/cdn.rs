@@ -249,7 +249,27 @@ pub fn require_ci() {
 }
 
 pub fn tag_is_admitted(tag: &str) -> bool {
-    registered_netlocs().contains(normalize_tag(tag))
+    let t = normalize_tag(tag);
+    !is_inhouse(t) && registered_netlocs().contains(t)
+}
+
+fn is_inhouse(tag: &str) -> bool {
+    let t = normalize_tag(tag).to_ascii_lowercase();
+    inhouse_tags()
+        .iter()
+        .any(|host| t == *host || t.starts_with(&format!("{host}-")))
+}
+
+fn inhouse_tags() -> &'static [String] {
+    static LIST: OnceLock<Vec<String>> = OnceLock::new();
+    LIST.get_or_init(|| {
+        include_str!("cdn_inhouse.txt")
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty() && !line.starts_with('#'))
+            .map(|line| line.to_ascii_lowercase())
+            .collect()
+    })
 }
 
 pub fn body_mean_radius_km(name: &str) -> Result<f64, String> {
@@ -309,6 +329,13 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
     if !registered_netlocs().contains(normalize_tag(tag)) {
         eprintln!(
             "upload {}: tag {} is not a licensed source in phi/sources.φ — a CDN release is only created for a registered source with an admitted licence (no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required stay off the CDN)",
+            path, tag
+        );
+        return false;
+    }
+    if is_inhouse(tag) {
+        eprintln!(
+            "upload {}: tag {} carries human-subject recordings — PII stays in-house, no CDN release",
             path, tag
         );
         return false;
