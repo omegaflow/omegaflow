@@ -1,7 +1,6 @@
 # One row per deduplicated terms token of phi/sources.φ.
 # admitted = may go to the CDN; refused = must not; unread = locked until read.
 # A token without a row is locked by default.
-term	verdict	note
 CC-BY-3.0	admitted	standard licence text
 CC-BY-4.0	admitted	standard licence text
 CC-BY-NC-3.0-IGO	admitted	standard licence text
@@ -48,7 +47,7 @@ etalab-2.0	admitted	standard licence text
 fingrid-open	refused	API access only, no data licence grant
 free-open	refused	not a licence: 26 different origins, each needs its own terms token
 gebco-terms	admitted	"The GEBCO Grid is placed in the public domain and may be used free of charge"
-gosat-data-policy	refused	default deny, no grant read: 
+gosat-data-policy	refused	G3PA down 2026-10-22..29; no archive copy of the policy — no grant read
 hawc-public	refused	no licence line on the dataset pages
 ia2-acknowledgement	refused	acknowledgement page, no licence grant
 ieeg-terms	refused	service terms, no redistribution grant
@@ -56,7 +55,7 @@ ilrs-no-license	refused
 ioc-data-exchange-no-commercial	refused	no-commercial exchange, no redistribution grant
 ipac-public	refused	VizieR licence: no redistribution grant, copyright stays with the catalogue
 jp-public-data-license-1.0	admitted	standard licence text
-kari-public-release	refused	default deny, no grant read: 
+kari-public-release	refused	KARI site: "� Copyright 2019 KARI All right reserved"
 kcdc-eula	refused	EULA, no redistribution grant
 lasair-copyright	refused	
 ligo-public	refused	alerts are "public", but no licence grants redistribution
@@ -65,51 +64,16 @@ nist-srd-copyright	refused	NIST SRD: all rights reserved, no reproduction withou
 nmdb-non-commercial	refused	NMDB: data are the property of the individual providers, free for non-commercial use only, no redistribution grant
 no-license	refused	no licence stated
 no-redistribution	refused	explicit no-redistribution
-noaa-nodd-open	refused	default deny, no grant read: 
+noaa-nodd-open	refused	NOAA NODD page names no licence; the NOAA legal page is 404 — no quotable grant
 noaa-open-disclaimer	refused	UHSLC: "Copyright (c) 2015-2026 ... All Rights Reserved"
 non-commercial-government-licence-2.0	admitted	NCGL v2: "You are free to: copy, publish, distribute and transmit the Information" for non-commercial purposes
 onc-open	refused	terms-of-use covers user submissions, no data licence stated
 other-attribution	refused	not a licence: 11 different sources (Copernicus EWDS, Exoplanet Archive, GCN, GSA, HESS, LASP, NED, NSDB, SuperDARN, AOML, NIST, WaterQuality) — each needs its own terms token
 own-work	admitted	standard licence text
 pradan-terms	refused	login-gated, no licence grant
-rpw-public-ack	refused	default deny, no grant read: 
+rpw-public-ack	refused	rpw-datacenter.obspm.fr unreachable; no grant read
 tns-copyright	refused	
 vires-esa-attribution	refused	VirES service terms: use and reproduction solely on the VRE, non-commercial only
 vizier-scientific-free	refused	VizieR licence: free for scientific use, copyright stays with the originating catalogue — no redistribution grant
 wdcb-nc	admitted	"open and freely available for scientific, educational, and other non-commercial purposes without restriction"
-wmo-data-policy	refused	default deny, no grant read: 
-no-license-stated	refused	default deny, no grant read: researched 2026-10-13 jvo.nao.ac.jp https://jvo.nao.ac.jp/
-all-rights-reserved	refused	researched 2026-10-13 geoazur.fr https://geoazur.oca.eu/fr/mentions-legales — geoazur "Droits d auteur et copyright"
-per-service-terms	refused	default deny, no grant read: researched 2026-10-13 dc.g-vo.org https://dc.g-vo.org/static/doc/disclaimer.shtml
-public-domain	admitted	researched 2026-10-13 skyserver.sdss.org https://www.sdss.org/collaboration/image-use-policy/ — SDSS "We provide all images on a Creative Commons Attribution license"
-jaxa-site-policy	refused	default deny, no grant read: researched 2026-10-13 gportal.jaxa.jp https://gportal.jaxa.jp/gpr/index/eula
-met-no-free-attribution	refused	default deny, no grant read: researched 2026-10-13 frost.met.no https://data.met.no/DataPolicy
-ucalgary-open-cite	refused	default deny, no grant read: researched 2026-10-13 data.phys.ucalgary.ca https://data.phys.ucalgary.ca/data/how_to_cite.html
-ceda-terms-per-dataset	refused	default deny, no grant read: researched 2026-10-13 dap.ceda.ac.uk https://help.ceda.ac.uk/article/4642-disclaimer
-copernicus-dem-free	refused	default deny, no grant read: researched 2026-10-13 copernicus-dem-30m.s3.amazonaws.com https://dataspace.copernicus.eu/terms-and-conditions
-registration-required	refused	researched 2026-10-13 wis-tns.org https://www.wis-tns.org/ — TNS "free of charge to registered users", no redistribution grant
-wdc-kyoto-scientific-noncommercial	refused	default deny, no grant read: researched 2026-10-13 wdc.kugi.kyoto-u.ac.jp https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html
-themis-scientific-free	refused	default deny, no grant read: researched 2026-10-13 themis.ssl.berkeley.edu https://themis.ssl.berkeley.edu/roadrules.shtml
-superdarn-data-policy	refused	default deny, no grant read: researched 2026-10-13 superdarn.ca https://sdc-serv.usask.ca/piagreement
-unreachable-403	refused	default deny, no grant read: researched 2026-10-13 servisnet.afad.gov.tr https://servisnet.afad.gov.tr/
-opentopography-terms	refused	default deny, no grant read: researched 2026-10-13 portal.opentopography.org https://opentopography.org/citations
-uiowa-spdr-tos	refused	default deny, no grant read: researched 2026-10-13 planet.physics.uiowa.edu https://space.physics.uiowa.edu/spdr/
-ipac-exofop-pcp	refused	default deny, no grant read: researched 2026-10-13 physics.mcgill.ca https://exofop.ipac.caltech.edu/tess/pcp.php
-nsidc-citation-free	refused	default deny, no grant read: researched 2026-10-13 noaadata.apps.nsidc.org https://nsidc.org/about/data-use-and-copyright
-per-item-license	refused	default deny, no grant read: researched 2026-10-13 ndownloader.figshare.com https://figshare.com/terms
-lasp-permission-required	refused	default deny, no grant read: researched 2026-10-13 lasp.colorado.edu https://lasp.colorado.edu/terms-conditions/
-imcce-permission-required	refused	researched 2026-10-13 ftp.imcce.fr https://www.imcce.fr/mentions-legales — superseded: INPOP and NOE run under the SE-OP Licence Ouverte 2.0 (etalab-2.0)
-dlr-scientific-free	admitted	researched 2026-10-13 data.impc.dlr.de https://data.impc.dlr.de/service/license-agreement — redistribution allowed when third parties accept the agreement
-swisstopo-ogd-free	refused	default deny, no grant read: researched 2026-10-13 data.geo.admin.ch https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices
-open-data-policy-registration	refused	default deny, no grant read: researched 2026-10-13 cseslimadou.it https://www.cseslimadou.it/public-data-download/
-no-restrictions	refused	default deny, no grant read: researched 2026-10-13 craam-files-bucket.s3.amazonaws.com https://registry.opendata.aws/craam-open-vlf/
-copernicus-dem-license	refused	default deny, no grant read: researched 2026-10-13 copernicus-dem-90m.s3.amazonaws.com https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/DEM/resources/license/License-COPDEM-30.pdf
-celestrak-usage-policy	refused	default deny, no grant read: researched 2026-10-13 celestrak.org http://celestrak.org/usage-policy.php
-ethz-open-citation	refused	default deny, no grant read: researched 2026-10-13 arclink.ethz.ch https://www.seismo.ethz.ch/en/knowledge/earthquake-data-and-analysis-tools/waveform-data/
-imo-free-attribution	refused	default deny, no grant read: researched 2026-10-13 api.vedur.is https://en.vedur.is/about-imo/the-web/conditions
-license-per-project	refused	default deny, no grant read: researched 2026-10-13 api.sedoo.fr https://www.sedoo.fr/licences/
-source-datasets-own-licenses	refused	default deny, no grant read: researched 2026-10-13 api.opentopodata.org https://www.opentopodata.org/
-eumetsat-data-policy	refused	default deny, no grant read: researched 2026-10-13 api.eumetsat.int https://www.eumetsat.int/legal-framework/data-policy
-auth-required	refused	default deny, no grant read: researched 2026-10-13 api.emiratedatacenter.com https://api.emiratedatacenter.com/v1/science/files
-vires-esa-data-terms	refused	researched 2026-10-13 vires.services https://vires.services/data_terms — ESA data terms, no redistribution outside the VRE
-dataverse-per-dataset	refused	default deny, no grant read: researched 2026-10-13 dataverse.harvard.edu https://dataverse.harvard.edu/
+wmo-data-policy	admitted	WOUDC is operated by the Meteorological Service of Canada (ECCC); the ECCC End-use Licence 2.1.1 permits distribution with attribution
