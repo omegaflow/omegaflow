@@ -228,6 +228,10 @@ pub fn require_ci() {
     }
 }
 
+pub fn tag_is_admitted(tag: &str) -> bool {
+    registered_netlocs().contains(normalize_tag(tag))
+}
+
 pub fn body_mean_radius_km(name: &str) -> Result<f64, String> {
     let props = body_props(name)?;
     crate::archivar::motion::mean_radius_m(&props)
