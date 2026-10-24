@@ -64,9 +64,9 @@ while (<$ph>) {
     chomp;
     if (/^\s*$/) { $flush->(); next }
     if (/^terms (\S+)/) { $terms = $1; next }
-    if (my ($t, $file) = m{^url\s+\S*/releases/download/([^/]+)/(\S+)$}) {
-        push @keys, "$t/$file";
-    }
+    my ($t, $file) = m{^url\s+\S*/releases/download/([^/]+)/(\S+)$} or next;
+        (my $base = $file) =~ s{.*/}{};
+        push @keys, "$t/$base";
 }
 $flush->();
 close $ph;
@@ -76,8 +76,18 @@ for my $path (@files) {
     (my $base = $path) =~ s{.*/}{};
     my $key = "$tag/$base";
     if (!exists $asset{$key}) {
-        push @bad, [$path, 'nicht im Register (kein Block nennt dieses Asset)'];
-        next;
+        # Beidatei: <asset>.sha256 / <asset>.manifest erbt die Lizenz des Assets
+        if ($base =~ /^(.+?)\.(?:sha256|manifest)$/ && exists $asset{"$tag/$1"}) {
+            $key = "$tag/$1";
+        }
+        # eigene Messausgaben (Verdict-/Audit-Logs) sind eigene Arbeit
+        elsif ($base =~ /(?:verdict|audit).*\.log$/i) {
+            next;
+        }
+        else {
+            push @bad, [$path, 'nicht im Register (kein Block nennt dieses Asset)'];
+            next;
+        }
     }
     my $t = $asset{$key};
     if (!defined $t || !$admitted{lc $t}) {
