@@ -161,18 +161,38 @@ fn cdn_tag_of(url: &str) -> Option<&str> {
 
 fn admitted_terms(token: &str) -> bool {
     let t = token.trim().to_ascii_uppercase();
-    !t.is_empty()
-        && (t == "PD"
-            || t.starts_with("PD-")
-            || t.starts_with("CC0")
-            || t.starts_with("CC-BY")
-            || t.starts_with("OGL")
-            || t.starts_with("ETALAB")
-            || t.starts_with("PDL")
-            || t == "JP"
-            || t.starts_with("JP-")
-            || t.starts_with("OWN-WORK")
-            || t.starts_with("REVIEWED-"))
+    if t.is_empty() {
+        return false;
+    }
+    if t == "PD"
+        || t.starts_with("PD-")
+        || t.starts_with("CC0")
+        || t.starts_with("CC-BY")
+        || t.starts_with("OGL")
+        || t.starts_with("ETALAB")
+        || t.starts_with("PDL")
+        || t == "JP"
+        || t.starts_with("JP-")
+        || t.starts_with("OWN-WORK")
+        || t.starts_with("REVIEWED-")
+    {
+        return true;
+    }
+    extra_terms()
+        .iter()
+        .any(|listed| listed.eq_ignore_ascii_case(&t))
+}
+
+fn extra_terms() -> &'static [String] {
+    static LIST: OnceLock<Vec<String>> = OnceLock::new();
+    LIST.get_or_init(|| {
+        include_str!("cdn_admitted_terms.txt")
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty() && !line.starts_with('#'))
+            .map(|line| line.to_ascii_uppercase())
+            .collect()
+    })
 }
 
 fn registered_netlocs() -> &'static HashSet<String> {

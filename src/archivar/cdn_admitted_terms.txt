@@ -1,0 +1,51 @@
+# Licence terms that permit redistribution on the CDN but carry no
+# PD/CC0/CC-BY/OGL/ETALAB/PDL/JP/OWN-WORK/REVIEWED prefix.
+# One token per line. A token that is neither prefixed nor listed here stays
+# locked — upload_release refuses it and the compiler keeps its local-only state.
+# NC terms are admissible because the house itself is non-commercial.
+free-open
+vizier-scientific-free
+other-attribution
+attribution
+vires-esa-attribution
+odc-by-1.0
+odbl-1.0
+odc-dbcl-1.0
+pddl-1.0
+mit
+gpl-3.0
+open-licence-2.0
+dl-de-by-2.0
+dhm-open
+usgov-disclaimer
+noaa-open-disclaimer
+noaa-nodd-open
+kari-public-release
+ipac-public
+argo-free
+onc-open
+cadc-open
+hawc-public
+ligo-public
+gebco-terms
+fingrid-open
+wdcb-nc
+bgi-nc
+nmdb-non-commercial
+ioc-data-exchange-no-commercial
+columbia-research-noncommercial
+non-commercial-government-licence-2.0
+sws-wdc
+wmo-data-policy
+cedar-rules-of-the-road
+erg-sc-rules-of-the-road
+eiscat-rules-of-the-road
+rpw-public-ack
+ia2-acknowledgement
+datacentral-acknowledgement
+alma-publication-acknowledgement
+ieeg-terms
+pradan-terms
+kcdc-eula
+eso-data-access-policy
+eccc-end-use-licence
