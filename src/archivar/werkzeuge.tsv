@@ -17,3 +17,4 @@
 klasse	werkzeug	band	beleg
 em/nt	Fluxgate-Magnetometer	DC-64 Hz	https://themis.ssl.berkeley.edu/instrument_fgm.shtml
 acoustic/m	Wellenpegel (spektrale Energiedichte)	0.03-0.4 Hz	https://www.ndbc.noaa.gov/measdes.shtml
+em/nt/hz**1/2	Fluxgate-Magnetometer (Spektrum, 15 Bänder à 0,625 Hz)	0.039-9.961 Hz	https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0110f.lbl
