@@ -23,32 +23,56 @@ PD	admitted	standard licence text
 PD-USGov	admitted	standard licence text
 PD-USGov-PDS	admitted	standard licence text
 PDDL-1.0	admitted	standard licence text
+SWS-WDC	declined	acknowledgement requested; no redistribution grant
 USGov-disclaimer	admitted	standard licence text
+alma-publication-acknowledgement	declined	acknowledgement requested; no redistribution grant
+arXiv-nonexclusive-distrib-1.0	declined	covers arXiv distribution of a paper, not redistribution of data
 argo-free	admitted	standard licence text
+attribution	declined	placeholder token; names no licence text
 babamul-no-license	declined	no licence text; access terms missing, kept local-only
+bgi-nc	declined	non-commercial use; no redistribution grant evidenced
 cadc-open	admitted	standard licence text
 cdpp-sipad-licence	declined	redistribution to third parties only with the licensor written consent
 cedar-rules-of-the-road	admitted	standard licence text
+columbia-research-noncommercial	declined	non-commercial research use; no redistribution grant evidenced
+datacentral-acknowledgement	declined	acknowledgement requested; no redistribution grant
 dl-de-by-2.0	admitted	standard licence text
 dlr-license	admitted	standard licence text
 eccc-end-use-licence	admitted	standard licence text
 eida-data-policy	admitted	standard licence text
 eiscat-rules-of-the-road	admitted	standard licence text
 erg-sc-rules-of-the-road	declined	redistribution of the data files is strictly prohibited
+eso-data-access-policy	declined	access policy; no redistribution grant evidenced
 etalab-2.0	admitted	standard licence text
+fingrid-open	declined	open access; no grant text evidenced
+free-open	declined	placeholder token; names no licence text
 gebco-terms	admitted	standard licence text
+gosat-data-policy	declined	access policy; no redistribution grant evidenced
+hawc-public	declined	access terms only; no redistribution grant evidenced
+ia2-acknowledgement	declined	acknowledgement requested; no redistribution grant
 ieeg-terms	declined	no licence text; access terms missing, kept local-only
+ilrs-no-license	declined	provider states no licence
+ioc-data-exchange-no-commercial	declined	non-commercial exchange; no redistribution grant evidenced
+ipac-public	declined	public access; no redistribution grant evidenced
 jp-public-data-license-1.0	admitted	standard licence text
 kari-public-release	declined	all rights reserved
+kcdc-eula	declined	EULA; no redistribution grant evidenced
 lasair-copyright	declined	copyright reserved, citation requested, no redistribution grant
+ligo-public	declined	public alerts; no redistribution grant evidenced
+naoj-copyright	declined	copyright reserved
 nist-srd-copyright	declined	all rights reserved, reproduction only with prior permission
+nmdb-non-commercial	declined	non-commercial access; no redistribution grant evidenced
+no-license	declined	provider states no licence
 no-redistribution	declined	explicit no-redistribution
 noaa-nodd-open	admitted	standard licence text
 noaa-open-disclaimer	declined	all rights reserved
 non-commercial-government-licence-2.0	admitted	standard licence text
+onc-open	declined	access terms only; no redistribution grant evidenced
+other-attribution	declined	placeholder token; names no licence text
 own-work	admitted	standard licence text
-tns-copyright	declined	no licence text; access terms missing, kept local-only
 pradan-terms	declined	no licence text; access terms missing, kept local-only
+rpw-public-ack	declined	acknowledgement requested; no redistribution grant
+tns-copyright	declined	no licence text; access terms missing, kept local-only
 vires-esa-attribution	declined	reproduction only inside the VRE, non-commercial
 vizier-scientific-free	declined	free use in a scientific context only; copyright stays with the catalogue
 wdcb-nc	admitted	standard licence text
