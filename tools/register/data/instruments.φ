@@ -45,3 +45,16 @@ host services.swpc.noaa.gov
   probe 2026-10-24T23:06:32Z 206 https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
   probe 2026-10-24T23:06:32Z 206 https://services.swpc.noaa.gov/json/solar_regions.json
   note the block says cadence 6.0; the page says 1-minute averaged, and the artefact itself is not measurable yet because no mode reads raw JSON
+  applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+
+host www.ncei.noaa.gov
+  instrument thermometer
+  unit degree_C
+  cadence 2 3600
+  api_cite https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/readme.txt
+  api_quote "Average air temperature, in degrees C, for the entire hour."
+  instrument_cite https://www.ncei.noaa.gov/access/crn/measurements.html
+  instrument_quote "Each thermometer measures the temperature (in degrees Celsius) every 2 seconds."
+  probe 2026-10-24T23:05:44Z 206 https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/2024/CRNH0203-2024-AZ_Tucson_11_W.txt
+  applies https://www.ncei.noaa.gov/pub/data/uscrn/products
+  note USCRN only; the host serves GOES XRS, spectral irradiance and radiosonde under other paths, each with its own instrument

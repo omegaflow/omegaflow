@@ -150,6 +150,8 @@ struct Ctx {
 }
 
 struct Spec {
+    host: String,
+    applies: String,
     instrument: String,
     units: BTreeSet<String>,
     cadences: BTreeSet<u64>,
@@ -232,34 +234,31 @@ fn host_of(url: &str) -> Option<String> {
     }
 }
 
-fn load_specs(path: &str) -> BTreeMap<String, Spec> {
-    let mut out: BTreeMap<String, Spec> = BTreeMap::new();
+fn load_specs(path: &str) -> Vec<Spec> {
+    let mut out: Vec<Spec> = Vec::new();
     let Ok(content) = fs::read_to_string(path) else {
         return out;
     };
-    let mut current: Option<String> = None;
     for line in content.lines() {
         let p: Vec<&str> = line.split_whitespace().collect();
         let value = p.get(1).map(|s| s.to_string());
         match p.first().copied() {
             Some("host") => {
                 if let Some(token) = value {
-                    out.insert(
-                        token.clone(),
-                        Spec {
-                            instrument: String::new(),
-                            units: BTreeSet::new(),
-                            cadences: BTreeSet::new(),
-                            api_cite: false,
-                            instrument_cite: false,
-                            probes: Vec::new(),
-                        },
-                    );
-                    current = Some(token);
+                    out.push(Spec {
+                        host: token.clone(),
+                        applies: String::new(),
+                        instrument: String::new(),
+                        units: BTreeSet::new(),
+                        cadences: BTreeSet::new(),
+                        api_cite: false,
+                        instrument_cite: false,
+                        probes: Vec::new(),
+                    });
                 }
             }
             Some(key) => {
-                let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) else {
+                let Some(entry) = out.last_mut() else {
                     continue;
                 };
                 match key {
@@ -278,6 +277,11 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                             if let Some(v) = parse_f64(c) {
                                 entry.cadences.insert(v as u64);
                             }
+                        }
+                    }
+                    "applies" => {
+                        if let Some(v) = value {
+                            entry.applies = v;
                         }
                     }
                     "api_cite" => entry.api_cite = value.is_some(),
@@ -302,6 +306,13 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
     }
     out
 }
+fn spec_for<'a>(specs: &'a [Spec], host: &str, url: &str) -> Option<&'a Spec> {
+    specs
+        .iter()
+        .filter(|s| s.host == host && (s.applies.is_empty() || url.starts_with(&s.applies)))
+        .max_by_key(|s| s.applies.len())
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
@@ -432,8 +443,12 @@ fn main() {
 
         if has_observables(&block) {
             let stem = origin_url.map(origin_stem);
-            match (stem, block_host.as_ref().and_then(|h| specs.get(h))) {
-                (None, _) => push(
+            let host_rows: Vec<&Spec> = match block_host.as_ref() {
+                Some(h) => specs.iter().filter(|s| s.host == *h).collect(),
+                None => Vec::new(),
+            };
+            match stem {
+                None => push(
                     "probe_no_origin",
                     format!("{tag}\t{name}"),
                     true,
@@ -441,7 +456,7 @@ fn main() {
                     &mut hard,
                     &mut soft,
                 ),
-                (Some(_), None) => push(
+                Some(_) if host_rows.is_empty() => push(
                     "probe_missing",
                     format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
                     true,
@@ -449,24 +464,20 @@ fn main() {
                     &mut hard,
                     &mut soft,
                 ),
-                (Some(stem), Some(entry)) => {
-                    let mut matching: Vec<&Probe> = entry
-                        .probes
+                Some(stem) => {
+                    let mut matching: Vec<&Probe> = host_rows
                         .iter()
+                        .flat_map(|s| s.probes.iter())
                         .filter(|p| p.url.starts_with(stem))
                         .collect();
-                    if entry.probes.is_empty() {
+                    if matching.is_empty() {
+                        let any = host_rows.iter().any(|s| !s.probes.is_empty());
                         push(
-                            "probe_missing",
-                            format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
-                            true,
-                            &mut findings,
-                            &mut hard,
-                            &mut soft,
-                        );
-                    } else if matching.is_empty() {
-                        push(
-                            "probe_path_mismatch",
+                            if any {
+                                "probe_path_mismatch"
+                            } else {
+                                "probe_missing"
+                            },
                             format!("{tag}\t{name}\t{stem}"),
                             true,
                             &mut findings,
@@ -575,7 +586,7 @@ fn main() {
                 );
             }
             if let Some(inst) = &instrument {
-                let spec = block_host.as_ref().and_then(|h| specs.get(h));
+                let spec = block_host.as_ref().zip(origin_url).and_then(|(h, u)| spec_for(&specs, h, u));
                 match spec {
                     None => push(
                         "spec_missing_for_host",
