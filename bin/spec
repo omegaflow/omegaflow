@@ -53,23 +53,58 @@ q3="$quantity"
 [ -n "$unit" ] && q3="$q3 $unit"
 
 
+total=0
 for arm in $(printf '%s' "$arms" | tr ',' ' '); do
+    # Ein Arm, den --without ausschließt, wird nicht gefahren. Ein Treffer aus
+    # einem ausgeschlossenen Brand ist kein Treffer, den man wegfiltern könnte —
+    # er darf gar nicht erst entstehen.
+    skip_arm=0
+    for x in $without; do
+        [ -n "$x" ] || continue
+        case "$arm" in *"$x"*) skip_arm=1 ;; esac
+    done
+    if [ "$skip_arm" -eq 1 ]; then
+        printf 'spec: arm %s is excluded by --without %s\n' "$arm" "$without" >&2
+        continue
+    fi
     for q in "$q1$neg" "$q2$neg" "$q3$neg" ${extra:+"$extra"}; do
         printf '== %s · %s ==\n' "$arm" "$q" >&2
-        "$bin" --"$arm" "$q" 2>&1 | WITHOUT="$without" perl -ne '
+        out="$("$bin" --"$arm" "$q" 2>&1 | WITHOUT="$without" perl -ne '
             # --without ist ein Filter, kein Suchwort: kein Treffer eines
-            # ausgeschlossenen Brands darf die Ausgabe erreichen.
+            # ausgeschlossenen Brands darf die Ausgabe erreichen. Manche Arme
+            # liefern keine URL, sondern nur einen DOI — dann trägt das
+            # DOI-Präfix den Host (10.5281 = Zenodo, 10.7910 = Dataverse, …).
+            my %doi_host = (
+                "10.5281" => "zenodo.org",
+                "10.7910" => "dataverse.harvard.edu",
+                "10.6084" => "figshare.com",
+                "10.5061" => "datadryad.org",
+                "10.1594" => "pangaea.de",
+            );
             my @ex = grep { length } split /\s+/, ($ENV{WITHOUT} // "");
             if (@ex) {
-                my ($u) = /url\s+(\S+)/;
-                if (defined $u && $u =~ m{://([^/]+)}) {
-                    my $h = lc $1;
+                my $h;
+                if (/https?:\/\/([^\/\s]+)/) { $h = lc $1 }
+                elsif (/doi:\s*(10\.\d+)/) { $h = $doi_host{$1} }
+                if (defined $h) {
                     my $skip = 0;
                     for my $x (@ex) { $skip = 1 if index($h, lc $x) >= 0 }
                     next if $skip;
                 }
             }
             print;
-        ' | head -n "$top"
+        ' | head -n "$top")"
+        printf '%s\n' "$out"
+        total=$((total + $(printf "%s\n" "$out" | perl -ne '$n++ if /^\[[^\]]+\] (?:url\s|doi:\s)/; END { print $n // 0 }')))
     done
 done
+
+# Die vier Achsen werden als Daten festgehalten, nicht nur als Suchtext:
+# sonst lässt sich hinterher nicht fragen, welche Bänder wir schon gesucht
+# haben — und der Lizenzschlüssel bleibt die URL.
+log="${SPEC_LOG:-$root/../omegaflow-work/scratch/spec.φ}"
+if [ -d "$(dirname -- "$log")" ]; then
+    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+        "$(date +%s)" "${quantity:-}" "${band:-}" "${unit:-}" \
+        "${cadence:-}" "${instrument:-}" "$arms" "$total" >> "$log"
+fi
