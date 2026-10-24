@@ -3,6 +3,9 @@
 # One token per line. A token that is neither prefixed nor listed here stays
 # locked — upload_release refuses it and the compiler keeps its local-only state.
 # NC terms are admissible because the house itself is non-commercial.
+# Read 2026-10-24: dlr-license (redistribution allowed when third parties accept the
+# agreement; commercial use needs written permission) and eida-data-policy (open/FAIR,
+# acknowledgement and citation requested, no redistribution prohibition).
 free-open
 vizier-scientific-free
 other-attribution
@@ -49,3 +52,5 @@ pradan-terms
 kcdc-eula
 eso-data-access-policy
 eccc-end-use-licence
+dlr-license
+eida-data-policy
