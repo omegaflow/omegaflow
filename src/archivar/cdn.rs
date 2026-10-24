@@ -243,7 +243,16 @@ pub fn require_ci() {
 }
 
 pub fn tag_is_admitted(tag: &str) -> bool {
-    registered_netlocs().contains(normalize_tag(tag))
+    let t = normalize_tag(tag);
+    let registered = registered_netlocs();
+    if registered.contains(t) {
+        return true;
+    }
+    registered.iter().any(|source| {
+        t.len() > source.len()
+            && t.starts_with(source.as_str())
+            && t.as_bytes()[source.len()] == b'-'
+    })
 }
 
 pub fn body_mean_radius_km(name: &str) -> Result<f64, String> {
@@ -300,7 +309,7 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
         );
         return false;
     }
-    if !registered_netlocs().contains(normalize_tag(tag)) {
+    if !tag_is_admitted(tag) {
         eprintln!(
             "upload {}: tag {} is not a licensed source in phi/sources.φ — a CDN release is only created for a registered source with an admitted licence (no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required stay off the CDN)",
             path, tag
