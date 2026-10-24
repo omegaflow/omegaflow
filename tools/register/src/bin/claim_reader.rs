@@ -151,16 +151,10 @@ fn claim_word(text: &str) -> &'static str {
 
 fn contains_open_word(text: &str) -> bool {
     let low = text.to_lowercase();
-    low.contains("offen:")
-        || low.contains("pending")
-        || low.contains("fehlt")
-        || low.contains("bleibt")
-        || low.contains("ausstehend")
-        || low.contains("wartet")
-        || low.contains("offen bleibt")
-        || low.contains("nicht gebaut")
-        || low.contains("ungebaut")
+    CLAIM_MARKERS.lines().any(|m| !m.is_empty() && low.contains(m))
 }
+
+const CLAIM_MARKERS: &str = include_str!("../data/claim_markers.txt");
 
 fn status_word(t: &str) -> Option<&'static str> {
     let low = t.to_lowercase();

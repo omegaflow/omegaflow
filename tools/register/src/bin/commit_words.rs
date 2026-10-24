@@ -142,13 +142,14 @@ fn words(text: &str) -> Vec<String> {
     text.split(|c: char| !c.is_alphabetic())
         .filter(|w| w.len() >= 4)
         .map(|w| w.to_lowercase())
-        .filter(|w| {
-            !matches!(
-                w.as_str(),
-                "der" | "die" | "das" | "und" | "ich" | "mit" | "auf" | "eine"
-            )
-        })
+        .filter(|w| !is_stopword(w))
         .collect()
+}
+
+const STOPWORDS: &str = include_str!("../data/german_stopwords.txt");
+
+fn is_stopword(w: &str) -> bool {
+    STOPWORDS.lines().any(|s| s == w)
 }
 
 fn lower(s: &str) -> String {

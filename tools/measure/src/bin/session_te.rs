@@ -87,41 +87,9 @@ fn main() {
             words: words(&body).len() as f32,
             nums: numbers(&body).len() as f32,
             commit: if has_commit_marker(&body) { 1.0 } else { 0.0 },
-            leistung: count_words(
-                &body,
-                &[
-                    "commit",
-                    "committet",
-                    "gemacht",
-                    "geba",
-                    "umgesetzt",
-                    "geschrieben",
-                    "gelaufen",
-                    "gebaut",
-                    "getestet",
-                    "verified",
-                    "gelesen",
-                ],
-            ) as f32,
-            offen: count_words(
-                &body,
-                &[
-                    "offen", "pending", "fehlt", "bleibt", "wartet", "noch", "nicht", "kein",
-                ],
-            ) as f32,
-            ausrede: count_words(
-                &body,
-                &[
-                    "aber",
-                    "jedoch",
-                    "leider",
-                    "vielleicht",
-                    "vermutlich",
-                    "wahrscheinlich",
-                    "irgendwann",
-                    "muesste",
-                ],
-            ) as f32,
+            leistung: count_words(&body, &lines(LEISTUNG)) as f32,
+            offen: count_words(&body, &lines(OFFEN)) as f32,
+            ausrede: count_words(&body, &lines(AUSREDE)) as f32,
         };
         by_model.entry(model.clone()).or_default().push(p.clone());
         by_agent.entry(agent.clone()).or_default().push(p);
@@ -234,17 +202,26 @@ fn series(posts: &[Post], which: Series) -> Vec<f32> {
         .collect()
 }
 
+const LEISTUNG: &str = include_str!("../data/session_leistung.txt");
+const OFFEN: &str = include_str!("../data/session_offen.txt");
+const AUSREDE: &str = include_str!("../data/session_ausrede.txt");
+
+fn lines(text: &'static str) -> Vec<&'static str> {
+    text.lines().filter(|line| !line.is_empty()).collect()
+}
+
 fn words(text: &str) -> Vec<String> {
     text.split(|c: char| !c.is_alphabetic())
         .filter(|w| w.len() >= 3)
         .map(|w| w.to_lowercase())
-        .filter(|w| {
-            !matches!(
-                w.as_str(),
-                "der" | "die" | "das" | "und" | "ich" | "mit" | "auf"
-            )
-        })
+        .filter(|w| !is_stopword(w))
         .collect()
+}
+
+const STOPWORDS: &str = include_str!("../data/german_stopwords.txt");
+
+fn is_stopword(w: &str) -> bool {
+    STOPWORDS.lines().any(|s| s == w)
 }
 
 fn numbers(text: &str) -> Vec<f64> {
