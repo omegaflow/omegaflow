@@ -69,14 +69,24 @@ while (<$p>) {
         push @tok, defined $t[$i] ? $t[$i] : $t[$i + 1];
     }
     next if @tok < 5;
-    # die Kadenz ist die erste rein numerische Spalte nach der Einheit
-    my $cix;
-    for my $i (2 .. $#tok) { if ($tok[$i] =~ /^\d+(?:\.\d+)?$/) { $cix = $i; last } }
-    next unless defined $cix && $cix >= 3;
-    my ($u, $kr) = ($tok[$cix - 1], $tok[$cix - 2]);
+    # Grammatik: field <name> [<id>] <kernel> <kraft> <einheit> <kadenz> …
+    # Die Einheit kann selbst numerisch sein (dimensionslos = 1), also wird sie
+    # nicht an Zahlen erkannt, sondern am Kernel, der davor steht.
+    my %kernel = map { $_ => 1 } qw(
+        inverse-square gaussian-inverse-square point exponential-decay
+        patch-levy erfc primary inverse-linear
+    );
+    my $kix;
+    for my $i (1 .. $#tok - 3) {
+        next unless $kernel{ lc $tok[$i] };
+        $kix = $i;
+        last;
+    }
+    next unless defined $kix;
+    my ($u, $kr, $cad) = ($tok[$kix + 2], $tok[$kix + 1], $tok[$kix + 3]);
     my $kl = lc "$kr\t$u";
     $zeilen{$kl}++;
-    $kadenz{$kl}{$tok[$cix]}++;
+    $kadenz{$kl}{$cad}++;
     $terms{$kl}{$tok}++ if defined $tok;
     $compiler{$kl}{$comp}++ if defined $comp;
     $quelle{$kl}{$host // '?'}{terms} = $tok;
