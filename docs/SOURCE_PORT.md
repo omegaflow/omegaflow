@@ -2,11 +2,17 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: dc49a96420a9905bed018be9ad8b259f03c4d77e1e2f8ab129210fe8d23e5d8b
+  sha256: fdf02a20e293dfef857a3bf95de5350342762297430aac850abee53656401e8c
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->
 # Source-Port: Der eine Pfad
+
+> **Nicht mehr bindend (2026-10-24).** Dieses Dokument beschreibt den Stand von
+> v2. Bindend ist `bindend/` im Workshop-Repo (`omegaflow-work/bindend/`), heute
+> genau `sources-v3.md`; geprüft von `bin/bindend`. Die Arbeitsdatei ist
+> `research/sources/sources-v3.tsv`, `phi/sources.φ` ist der eingefrorene
+> v2-Bestand. Dieses Dokument bleibt als Weg- und Pfadkarte lesbar.
 
 Selbsttragend. Interpretierbar von einer Session mit null Vorkontext. Dieses
 Dokument ist der einzige Einstiegspunkt für alle Source-Arbeit (Grind, Port,
