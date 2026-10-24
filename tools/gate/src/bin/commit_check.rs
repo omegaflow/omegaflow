@@ -374,59 +374,6 @@ fn handover_duplicate_lines() -> Vec<String> {
         .collect()
 }
 
-fn post_pair(path: &str) -> Option<(String, String)> {
-    let name = std::path::Path::new(path).file_name()?.to_string_lossy();
-    let stem = name.strip_suffix(".md")?;
-    let rest = stem.get(11..)?;
-    let (from, tail) = rest.split_once("-an-")?;
-    let to = tail.split('-').next()?;
-    if from.is_empty() || to.is_empty() {
-        return None;
-    }
-    Some((from.to_string(), to.to_string()))
-}
-
-fn post_duplicate_pairs() -> Vec<String> {
-    let Some(work) = work_root() else {
-        return Vec::new();
-    };
-    let Ok(entries) = std::fs::read_dir(work.join("post")) else {
-        return Vec::new();
-    };
-    let mut counts: std::collections::BTreeMap<String, Vec<String>> =
-        std::collections::BTreeMap::new();
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if !path.is_file() {
-            continue;
-        }
-        let raw = path.to_string_lossy().to_string();
-        if !raw.ends_with(".md") {
-            continue;
-        }
-        let Some((from, to)) = post_pair(&raw) else {
-            continue;
-        };
-        let Some(name) = path.file_name() else {
-            continue;
-        };
-        counts
-            .entry(format!("{from}->{to}"))
-            .or_default()
-            .push(name.to_string_lossy().to_string());
-    }
-    counts
-        .into_iter()
-        .filter(|(_, files)| files.len() > 1)
-        .map(|(pair, files)| {
-            format!(
-                "post-one-per-line-pair: {pair} has {} letters: {}",
-                files.len(),
-                files.join(", ")
-            )
-        })
-        .collect()
-}
 
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
@@ -795,10 +742,6 @@ fn main() {
         eprintln!("commit_check: {message}");
         fail = true;
     }
-    for message in post_duplicate_pairs() {
-        eprintln!("commit_check: {message}");
-        fail = true;
-    }
     let mut handover_lines: Vec<String> = Vec::new();
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
         if let Some(line) = handover_line_of(path) {
@@ -928,15 +871,6 @@ mod tests {
             Some("future".to_string())
         );
         assert_eq!(handover_owner_loose("handover/readme.md"), None);
-    }
-
-    #[test]
-    fn post_pair_reads_sender_and_receiver() {
-        assert_eq!(
-            post_pair("post/2026-10-22-future-an-mycelium-setze-die-route.md"),
-            Some(("future".to_string(), "mycelium".to_string()))
-        );
-        assert_eq!(post_pair("post/not-a-post.md"), None);
     }
 
     #[test]

@@ -1,0 +1,4 @@
+instrument fluxgate
+  unit nT
+  cadence 1 60
+  cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/

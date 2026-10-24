@@ -8,7 +8,7 @@ allow_root="AGENTS.md opencode.json Cargo.toml Cargo.lock README.md .gitignore .
 fail=0
 tmp="$(mktemp)" || exit 2
 trap 'rm -f "$tmp"' 0 1 2 15
-git diff --cached --name-only --diff-filter=ACR > "$tmp"
+git -c core.quotePath=false diff --cached --name-only --diff-filter=ACR > "$tmp"
 while IFS= read -r f; do
     [ -n "$f" ] || continue
     case "$f" in

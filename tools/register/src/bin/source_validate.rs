@@ -6,6 +6,7 @@ use omegaflow::archivar::kernel_id_of;
 use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
 
 const DEFAULT_PATH: &str = "phi/sources.φ";
+const DEFAULT_SPECS: &str = "tools/register/data/instruments.φ";
 
 struct Ctx {
     fail: bool,
@@ -146,9 +147,52 @@ fn label(block: &[&str], line: usize) -> (String, String) {
     (name, line.to_string())
 }
 
+fn load_specs(path: &str) -> BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool)> {
+    let mut out: BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool)> = BTreeMap::new();
+    let Ok(content) = fs::read_to_string(path) else {
+        return out;
+    };
+    let mut current: Option<String> = None;
+    for line in content.lines() {
+        let p: Vec<&str> = line.split_whitespace().collect();
+        match p.first().copied() {
+            Some("instrument") => {
+                if let Some(token) = p.get(1) {
+                    out.insert(token.to_string(), (BTreeSet::new(), BTreeSet::new(), false));
+                    current = Some(token.to_string());
+                }
+            }
+            Some("unit") => {
+                if let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
+                    for u in &p[1..] {
+                        entry.0.insert(u.to_string());
+                    }
+                }
+            }
+            Some("cadence") => {
+                if let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
+                    for c in &p[1..] {
+                        if let Some(v) = parse_f64(c) {
+                            entry.1.insert(v as u64);
+                        }
+                    }
+                }
+            }
+            Some("cite") => {
+                if p.len() > 1 && let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
+                    entry.2 = true;
+                }
+            }
+            _ => {}
+        }
+    }
+    out
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
+    let mut specs_path = DEFAULT_SPECS.to_string();
     let mut ctx = Ctx {
         fail: false,
         warnings: false,
@@ -163,12 +207,20 @@ fn main() {
                     None => exit(2),
                 }
             }
+            "--specs" => {
+                i += 1;
+                match args.get(i) {
+                    Some(p) => specs_path = p.clone(),
+                    None => exit(2),
+                }
+            }
             "--fail" => ctx.fail = true,
             "--warnings" => ctx.warnings = true,
             _ => {}
         }
         i += 1;
     }
+    let specs = load_specs(&specs_path);
     let content = match fs::read_to_string(&path) {
         Ok(c) => c,
         Err(_) => {
@@ -245,6 +297,8 @@ fn main() {
         }
 
         let no_cadence = field_of(&block, "no-cadence").is_some();
+        let instrument = field_of(&block, "instrument")
+            .and_then(|p| p.get(1).copied().map(str::to_string));
         let mut names: BTreeSet<String> = BTreeSet::new();
 
         for line_text in &block {
@@ -291,6 +345,52 @@ fn main() {
                     &mut hard,
                     &mut soft,
                 );
+            }
+            if let Some(inst) = &instrument {
+                match specs.get(inst) {
+                    None => push(
+                        "instrument_unknown",
+                        format!("{tag}\t{name}\t{fname}\t{inst}"),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    ),
+                    Some((units, cadences, cited)) => {
+                        if !*cited {
+                            push(
+                                "instrument_uncited",
+                                format!("{tag}\t{name}\t{inst}"),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            );
+                        }
+                        if !units.contains(unit) {
+                            push(
+                                "combo_unit",
+                                format!("{tag}\t{name}\t{inst}\t{unit}"),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            );
+                        }
+                        if let Some(c) = cadence.and_then(parse_f64)
+                            && !cadences.contains(&(c as u64))
+                        {
+                            push(
+                                "combo_cadence",
+                                format!("{tag}\t{name}\t{inst}\t{c}"),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            );
+                        }
+                    }
+                }
             }
             if no_cadence {
                 continue;
