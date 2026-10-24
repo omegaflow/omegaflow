@@ -44,10 +44,36 @@ pub fn pdf_text(bytes: &[u8]) -> Option<String> {
     if !joined.is_empty() {
         return Some(joined);
     }
-    if page_nums.is_empty() {
-        return legacy_streams(bytes);
+    if page_nums.is_empty() && let Some(text) = legacy_streams(bytes) {
+        return Some(text);
     }
-    None
+    pdftotext_external(bytes)
+}
+
+fn pdftotext_external(bytes: &[u8]) -> Option<String> {
+    use std::io::Write;
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_nanos();
+    let mut path = std::env::temp_dir();
+    path.push(format!("archive_search_{}_{stamp}.pdf", std::process::id()));
+    {
+        let mut file = std::fs::File::create(&path).ok()?;
+        file.write_all(bytes).ok()?;
+    }
+    let out = std::process::Command::new("pdftotext")
+        .arg("-layout")
+        .arg(&path)
+        .arg("-")
+        .output();
+    let _ = std::fs::remove_file(&path);
+    let out = out.ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let text = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    if text.is_empty() { None } else { Some(text) }
 }
 
 fn legacy_streams(bytes: &[u8]) -> Option<String> {

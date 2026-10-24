@@ -1,18 +1,3 @@
-use std::collections::{BTreeMap, BTreeSet};
-use std::fs;
-use std::process::exit;
-
-use omegaflow::archivar::kernel_id_of;
-use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
-
-const DEFAULT_PATH: &str = "phi/sources.φ";
-const DEFAULT_SPECS: &str = "tools/register/data/instruments.φ";
-
-struct Ctx {
-    fail: bool,
-    warnings: bool,
-}
-
 fn parse_f64(s: &str) -> Option<f64> {
     match s.parse::<f64>() {
         Ok(v) => {
@@ -147,56 +132,78 @@ fn label(block: &[&str], line: usize) -> (String, String) {
     (name, line.to_string())
 }
 
-fn load_specs(path: &str) -> BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool, bool)> {
-    let mut out: BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool, bool)> = BTreeMap::new();
+use std::collections::{BTreeMap, BTreeSet};
+use std::fs;
+use std::process::exit;
+
+use omegaflow::archivar::kernel_id_of;
+use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
+
+const DEFAULT_PATH: &str = "phi/sources.φ";
+const DEFAULT_SPECS: &str = "tools/register/data/instruments.φ";
+
+struct Ctx {
+    fail: bool,
+    warnings: bool,
+}
+
+struct Spec {
+    units: BTreeSet<String>,
+    cadences: BTreeSet<u64>,
+    api_cite: bool,
+    instrument_cite: bool,
+}
+
+fn load_specs(path: &str) -> BTreeMap<String, Spec> {
+    let mut out: BTreeMap<String, Spec> = BTreeMap::new();
     let Ok(content) = fs::read_to_string(path) else {
         return out;
     };
     let mut current: Option<String> = None;
     for line in content.lines() {
         let p: Vec<&str> = line.split_whitespace().collect();
+        let value = p.get(1).map(|s| s.to_string());
         match p.first().copied() {
             Some("instrument") => {
-                if let Some(token) = p.get(1) {
+                if let Some(token) = value {
                     out.insert(
-                        token.to_string(),
-                        (BTreeSet::new(), BTreeSet::new(), false, false),
+                        token.clone(),
+                        Spec {
+                            units: BTreeSet::new(),
+                            cadences: BTreeSet::new(),
+                            api_cite: false,
+                            instrument_cite: false,
+                        },
                     );
-                    current = Some(token.to_string());
+                    current = Some(token);
                 }
             }
-            Some("unit") => {
-                if let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
-                    for u in &p[1..] {
-                        entry.0.insert(u.to_string());
-                    }
-                }
-            }
-            Some("cadence") => {
-                if let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
-                    for c in &p[1..] {
-                        if let Some(v) = parse_f64(c) {
-                            entry.1.insert(v as u64);
+            Some(key) => {
+                let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) else {
+                    continue;
+                };
+                match key {
+                    "unit" => {
+                        for u in &p[1..] {
+                            entry.units.insert(u.to_string());
                         }
                     }
+                    "cadence" => {
+                        for c in &p[1..] {
+                            if let Some(v) = parse_f64(c) {
+                                entry.cadences.insert(v as u64);
+                            }
+                        }
+                    }
+                    "api_cite" => entry.api_cite = value.is_some(),
+                    "instrument_cite" => entry.instrument_cite = value.is_some(),                    _ => {}
                 }
             }
-            Some("api_cite") => {
-                if p.len() > 1 && let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
-                    entry.2 = true;
-                }
-            }
-            Some("instrument_cite") => {
-                if p.len() > 1 && let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
-                    entry.3 = true;
-                }
-            }
-            _ => {}
+            None => {}
         }
     }
     out
 }
-
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
@@ -364,8 +371,8 @@ fn main() {
                         &mut hard,
                         &mut soft,
                     ),
-                    Some((units, cadences, api_cited, instrument_cited)) => {
-                        if !*api_cited || !*instrument_cited {
+                    Some(entry) => {
+                        if !entry.api_cite || !entry.instrument_cite {
                             push(
                                 "spec_incomplete",
                                 format!("{tag}\t{name}\t{inst}"),
@@ -375,7 +382,7 @@ fn main() {
                                 &mut soft,
                             );
                         }
-                        if !units.contains(unit) {
+                        if !entry.units.contains(unit) {
                             push(
                                 "combo_unit",
                                 format!("{tag}\t{name}\t{inst}\t{unit}"),
@@ -386,7 +393,7 @@ fn main() {
                             );
                         }
                         if let Some(c) = cadence.and_then(parse_f64)
-                            && !cadences.contains(&(c as u64))
+                            && !entry.cadences.contains(&(c as u64))
                         {
                             push(
                                 "combo_cadence",
