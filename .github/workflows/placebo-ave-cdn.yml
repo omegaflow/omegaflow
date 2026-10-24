@@ -24,7 +24,6 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
 jobs:
   placebo-ave:
-    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:

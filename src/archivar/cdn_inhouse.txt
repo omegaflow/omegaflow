@@ -1,7 +1,0 @@
-# In-house only. Human-subject recordings (EEG, ECG, fNIRS, polysomnography,
-# heart sounds, movement) never leave the machine, whatever the dataset licence
-# says: the licence governs the distributor, not the subject. PII stays in-house.
-# A tag listed here is refused by upload_release and reads as not admitted.
-physionet.org
-openneuro.org
-www.ieeg.org

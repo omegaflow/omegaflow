@@ -1,0 +1,80 @@
+# One row per deduplicated terms token of phi/sources.φ.
+# admitted = may go to the CDN; refused = must not; unread = locked until read.
+# A token without a row is locked by default.
+term	verdict	note
+CC-BY-3.0	admitted	standard licence text
+CC-BY-4.0	admitted	standard licence text
+CC-BY-NC-3.0-IGO	admitted	standard licence text
+CC-BY-NC-4.0	admitted	standard licence text
+CC-BY-NC-SA-4.0	admitted	standard licence text
+CC-BY-SA-2.0	admitted	standard licence text
+CC-BY-SA-3.0	admitted	standard licence text
+CC-BY-SA-4.0	admitted	standard licence text
+CC0-1.0	admitted	standard licence text
+DHM-open	admitted	standard licence text
+GPL-3.0	admitted	standard licence text
+MIT	admitted	standard licence text
+ODC-By-1.0	admitted	standard licence text
+ODC-DbCL-1.0	admitted	standard licence text
+ODbL-1.0	admitted	standard licence text
+OGL-Canada-2.0	admitted	standard licence text
+OGL-UK-3.0	admitted	standard licence text
+Open-Licence-2.0	admitted	standard licence text
+PD	admitted	standard licence text
+PD-USGov	admitted	standard licence text
+PD-USGov-PDS	admitted	standard licence text
+PDDL-1.0	admitted	standard licence text
+SWS-WDC	unread	
+USGov-disclaimer	admitted	standard licence text
+alma-publication-acknowledgement	unread	
+arXiv-nonexclusive-distrib-1.0	unread	
+argo-free	unread	
+attribution	unread	
+babamul-no-license	refused	
+bgi-nc	unread	
+cadc-open	unread	
+cdpp-sipad-licence	refused	SIPAD V1.1 2000-01-04: redistribution needs the licensor written consent
+cedar-rules-of-the-road	unread	
+columbia-research-noncommercial	unread	
+datacentral-acknowledgement	unread	
+dl-de-by-2.0	admitted	standard licence text
+dlr-license	admitted	IMPC/DLR: redistribution allowed when third parties accept, commercial use needs permission
+eccc-end-use-licence	unread	
+eida-data-policy	admitted	ORFEUS EIDA open and FAIR, acknowledgement requested
+eiscat-rules-of-the-road	unread	
+erg-sc-rules-of-the-road	unread	
+eso-data-access-policy	unread	
+etalab-2.0	admitted	standard licence text
+fingrid-open	unread	
+free-open	unread	
+gebco-terms	unread	
+gosat-data-policy	unread	
+hawc-public	unread	
+ia2-acknowledgement	unread	
+ieeg-terms	unread	
+ilrs-no-license	refused	
+ioc-data-exchange-no-commercial	unread	
+ipac-public	unread	
+jp-public-data-license-1.0	admitted	standard licence text
+kari-public-release	unread	
+kcdc-eula	unread	
+lasair-copyright	refused	
+ligo-public	unread	
+naoj-copyright	refused	
+nist-srd-copyright	refused	NIST SRD: all rights reserved, no reproduction without prior permission
+nmdb-non-commercial	unread	
+no-license	refused	no licence stated
+no-redistribution	refused	explicit no-redistribution
+noaa-nodd-open	unread	
+noaa-open-disclaimer	admitted	standard licence text
+non-commercial-government-licence-2.0	unread	
+onc-open	unread	
+other-attribution	unread	
+own-work	admitted	standard licence text
+pradan-terms	unread	
+rpw-public-ack	unread	
+tns-copyright	refused	
+vires-esa-attribution	unread	
+vizier-scientific-free	unread	
+wdcb-nc	unread	
+wmo-data-policy	unread	
