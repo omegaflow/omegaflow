@@ -32,7 +32,7 @@ argo-free	unread
 attribution	refused	not a licence: 8 different sources (UCalgary, GAVO, EDGES, IceCube, NSO, ORNL, WSO) — each needs its own terms token
 babamul-no-license	refused	
 bgi-nc	unread	
-cadc-open	unread	
+cadc-open	admitted	CADC: "public domain and made available under the Creative Commons License CC BY 4"
 cdpp-sipad-licence	refused	SIPAD V1.1 2000-01-04: redistribution needs the licensor written consent
 cedar-rules-of-the-road	unread	
 columbia-research-noncommercial	unread	
@@ -74,7 +74,7 @@ own-work	admitted	standard licence text
 pradan-terms	unread	
 rpw-public-ack	unread	
 tns-copyright	refused	
-vires-esa-attribution	unread	
+vires-esa-attribution	refused	VirES service terms: use and reproduction solely on the VRE, non-commercial only
 vizier-scientific-free	refused	VizieR licence: free for scientific use, copyright stays with the originating catalogue — no redistribution grant
 wdcb-nc	admitted	"open and freely available for scientific, educational, and other non-commercial purposes without restriction"
 wmo-data-policy	unread	
