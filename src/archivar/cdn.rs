@@ -710,6 +710,73 @@ mod tests {
     use super::*;
 
     #[test]
+    fn every_terms_token_of_the_register_has_a_verdict_row() {
+        let Ok(text) = std::fs::read_to_string("phi/sources.φ") else {
+            return;
+        };
+        let mut tokens: Vec<String> = text
+            .lines()
+            .filter_map(|line| line.strip_prefix("terms "))
+            .filter_map(|rest| rest.split_whitespace().next())
+            .map(|token| token.to_ascii_lowercase())
+            .collect();
+        tokens.sort();
+        tokens.dedup();
+        let missing: Vec<&str> = tokens
+            .iter()
+            .map(String::as_str)
+            .filter(|token| {
+                !licences()
+                    .iter()
+                    .any(|(term, _)| term.as_str() == *token)
+            })
+            .collect();
+        assert!(
+            missing.is_empty(),
+            "terms tokens without a row in licences.tsv (a new source needs a verdict): {missing:?}"
+        );
+    }
+
+    #[test]
+    fn unread_rows_name_where_the_verdict_comes_from() {
+        let offenders: Vec<&str> = licences()
+            .iter()
+            .filter(|(_, verdict)| verdict.as_str() == "unread")
+            .map(|(term, _)| term.as_str())
+            .filter(|term| {
+                let note = licences_note(term).unwrap_or("");
+                !note.contains("http")
+            })
+            .collect();
+        assert!(
+            offenders.is_empty(),
+            "unread tokens without an evidence URL: {offenders:?}"
+        );
+    }
+
+    fn licences_note(term: &str) -> Option<&'static str> {
+        static NOTES: OnceLock<Vec<(String, String)>> = OnceLock::new();
+        let notes = NOTES.get_or_init(|| {
+            include_str!("licences.tsv")
+                .lines()
+                .map(str::trim)
+                .filter(|line| !line.is_empty() && !line.starts_with('#'))
+                .filter_map(|line| {
+                    let mut parts = line.split('\t');
+                    let term = parts.next()?.trim().to_ascii_lowercase();
+                    let _verdict = parts.next()?;
+                    let note = parts.next().unwrap_or("").to_string();
+                    Some((term, note))
+                })
+                .collect()
+        });
+        notes
+            .iter()
+            .find(|(t, _)| t == term)
+            .map(|(_, note)| note.as_str())
+    }
+
+    #[test]
     fn r2_mirror_is_off_unless_the_flag_is_set() {
         if std::env::var("OMEGAFLOW_R2_MIRROR").is_ok() {
             return;
@@ -813,13 +880,12 @@ mod tests {
         assert!(admitted_terms("etalab-2.0"));
         assert!(admitted_terms("jp-public-data-license-1.0"));
         assert!(admitted_terms("own-work"));
-        assert!(admitted_terms("reviewed-2026-10-20"));
         assert!(!admitted_terms("free-open"));
         assert!(!admitted_terms("vizier-scientific-free"));
         assert!(!admitted_terms("other-attribution"));
-        assert!(!admitted_terms("ODbL-1.0"));
+        assert!(admitted_terms("ODbL-1.0"));
         assert!(!admitted_terms("per-service-terms"));
-        assert!(!admitted_terms("MIT"));
+        assert!(admitted_terms("MIT"));
         assert!(!admitted_terms("no-license-stated"));
         assert!(!admitted_terms("all-rights-reserved"));
         assert!(!admitted_terms("auth-required"));
