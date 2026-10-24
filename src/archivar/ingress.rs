@@ -29,44 +29,22 @@ pub fn parse_serial_sample(line: &str) -> Option<(String, f64)> {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
+pub fn serial_ingress<R: std::io::BufRead + Send>(
+    mut reader: R,
+    tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>,
+) {
+    let mut line = String::new();
     loop {
-        for name in serial_ports() {
-            let mut port = match serialport::new(&name, 115_200)
-                .timeout(std::time::Duration::from_millis(50))
-                .open()
-            {
-                Ok(p) => p,
-                Err(_) => continue,
-            };
-            let mut line = String::new();
-            let mut buf = [0u8; 256];
-            let mut batch: Vec<(String, f64, Option<f64>)> = Vec::new();
-            loop {
-                let n = match port.read(&mut buf) {
-                    Ok(n) if n > 0 => n,
-                    _ => break,
-                };
-                for b in &buf[..n] {
-                    if *b == b'\n' {
-                        if let Some((k, v)) = parse_serial_sample(&line) {
-                            batch.push((k, v, None));
-                        }
-                        line.clear();
-                        if batch.len() >= 64 {
-                            let _ = tx.send(batch);
-                            batch = Vec::new();
-                        }
-                    } else {
-                        line.push(*b as char);
-                    }
+        line.clear();
+        match reader.read_line(&mut line) {
+            Ok(0) => thread::sleep(std::time::Duration::from_secs(1)),
+            Ok(_) => {
+                if let Some((k, v)) = parse_serial_sample(line.trim_end()) {
+                    let _ = tx.send(vec![(k, v, None)]);
                 }
             }
-            if !batch.is_empty() {
-                let _ = tx.send(batch);
-            }
+            Err(_) => thread::sleep(std::time::Duration::from_secs(5)),
         }
-        thread::sleep(std::time::Duration::from_secs(5));
     }
 }
 

@@ -842,7 +842,6 @@ version = "1.0.0"
 dependencies = [
  "naga",
  "pollster",
- "serialport",
  "wasm-bindgen",
  "wgpu",
 ]
@@ -894,6 +893,7 @@ name = "omegaflow-service"
 version = "1.0.0"
 dependencies = [
  "omegaflow",
+ "serialport",
 ]
 
 [[package]]

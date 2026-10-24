@@ -7,3 +7,4 @@ description = "live services and watchdogs"
 
 [dependencies]
 omegaflow = { path = "../.." }
+serialport = { version = "4", default-features = false }

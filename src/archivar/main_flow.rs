@@ -736,6 +736,25 @@ fn parse_shard(args: &[String]) -> Result<Option<(usize, usize)>, String> {
     Ok(shard)
 }
 
+fn spawn_serial_bridge() -> Option<std::process::Child> {
+    let exe = match std::env::var("OMEGAFLOW_SERIAL_BRIDGE") {
+        Ok(path) => path,
+        Err(_) => "serial_bridge".to_string(),
+    };
+    match std::process::Command::new(&exe)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::inherit())
+        .spawn()
+    {
+        Ok(child) => Some(child),
+        Err(err) => {
+            eprintln!("serial bridge: {exe} not started: {err} — the hardware edge stays silent");
+            None
+        }
+    }
+}
+
 pub fn main_flow() {
     let env = Arc::new(load_env());
     {
@@ -888,14 +907,19 @@ pub fn main_flow() {
     eprintln!("record consent: silent until the operator speaks (/consent)");
     let battery_tx = sensor_tx.clone();
     thread::spawn(move || battery_ingress(battery_tx));
-    let serial_present = !serial_ports().is_empty();
+    let want_serial =
+        std::env::var("OMEGAFLOW_SERIAL_BRIDGE").is_ok() || !serial_ports().is_empty();
+    let mut serial_bridge = if want_serial { spawn_serial_bridge() } else { None };
+    let serial_present = serial_bridge.is_some();
     let ble_mac = std::env::var("OMEGAFLOW_BLE_HR").ok();
     let fit_dir = std::env::var("FIT_DIR").ok();
     match select_beat_source(serial_present, ble_mac.as_deref(), fit_dir.as_deref()) {
         BeatSource::Serial => {
             eprintln!("beat source: serial — the one beat source; BLE and FIT stand silent");
-            let tx = sensor_tx.clone();
-            thread::spawn(move || serial_ingress(tx));
+            if let Some(stdout) = serial_bridge.as_mut().and_then(|child| child.stdout.take()) {
+                let tx = sensor_tx.clone();
+                thread::spawn(move || serial_ingress(std::io::BufReader::new(stdout), tx));
+            }
         }
         BeatSource::Ble => {
             eprintln!("beat source: BLE — the one beat source; serial and FIT stand silent");
@@ -1019,18 +1043,10 @@ pub fn main_flow() {
         mpsc::channel::<crate::mathematikerin::PresenceFrame>();
     if !hidden {
         let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
-        if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
-            match serialport::new(&port, 115_200)
-                .timeout(std::time::Duration::from_millis(50))
-                .open()
-            {
-                Ok(p) => kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
-                    Box::new(p),
-                ))),
-                Err(_) => eprintln!(
-                    "seismic oscillator: {port} unreachable — the oscillator stays silent"
-                ),
-            }
+        if let Some(stdin) = serial_bridge.as_mut().and_then(|child| child.stdin.take()) {
+            kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
+                Box::new(stdin),
+            )));
         }
         thread::spawn(move || {
             while let Ok(frame) = seismic_rx.recv() {
