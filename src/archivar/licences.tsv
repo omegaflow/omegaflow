@@ -47,7 +47,7 @@ etalab-2.0	admitted	standard licence text
 fingrid-open	declined	API access only, no data licence grant
 free-open	pending	not a licence: 26 different origins, each needs its own terms token
 gebco-terms	admitted	"The GEBCO Grid is placed in the public domain and may be used free of charge"
-gosat-data-policy	declined	G3PA down 2026-10-22..29; no archive copy of the policy — no grant read
+gosat-data-policy	pending	rights holder: NIES (operates G3PA); policy page down until 2026-10-29, no archive copy
 hawc-public	declined	no licence line on the dataset pages
 ia2-acknowledgement	declined	acknowledgement page, no licence grant
 ieeg-terms	declined	service terms, no redistribution grant
@@ -55,7 +55,7 @@ ilrs-no-license	declined
 ioc-data-exchange-no-commercial	declined	no-commercial exchange, no redistribution grant
 ipac-public	declined	VizieR licence: no redistribution grant, copyright stays with the catalogue
 jp-public-data-license-1.0	admitted	standard licence text
-kari-public-release	declined	KARI site: "Copyright (c) 2019 KARI All right reserved"
+kari-public-release	declined	rights holder: KARI; site: Copyright (c) 2019 KARI All right reserved
 kcdc-eula	declined	EULA, no redistribution grant
 lasair-copyright	declined	
 ligo-public	declined	alerts are "public", but no licence grants redistribution
@@ -64,16 +64,16 @@ nist-srd-copyright	declined	NIST SRD: all rights reserved, no reproduction witho
 nmdb-non-commercial	declined	NMDB: data are the property of the individual providers, free for non-commercial use only, no redistribution grant
 no-license	declined	no licence stated
 no-redistribution	declined	explicit no-redistribution
-noaa-nodd-open	declined	NOAA NODD page names no licence; the NOAA legal page is 404 — no quotable grant
+noaa-nodd-open	admitted	rights holder: United States Government (NOAA); 17 USC 105 — works of the US Government carry no copyright
 noaa-open-disclaimer	declined	UHSLC: "Copyright (c) 2015-2026 ... All Rights Reserved"
 non-commercial-government-licence-2.0	admitted	NCGL v2: "You are free to: copy, publish, distribute and transmit the Information" for non-commercial purposes
 onc-open	declined	terms-of-use covers user submissions, no data licence stated
 other-attribution	pending	not a licence: 11 different sources (Copernicus EWDS, Exoplanet Archive, GCN, GSA, HESS, LASP, NED, NSDB, SuperDARN, AOML, NIST, WaterQuality) — each needs its own terms token
 own-work	admitted	standard licence text
 pradan-terms	declined	login-gated, no licence grant
-rpw-public-ack	declined	rpw-datacenter.obspm.fr unreachable; no grant read
+rpw-public-ack	pending	rights holder: RPW team (CNRS/LESIA), data centre OBSPM; terms page unreachable, no sentence read
 tns-copyright	declined	
 vires-esa-attribution	declined	VirES service terms: use and reproduction solely on the VRE, non-commercial only
 vizier-scientific-free	declined	VizieR licence read: free for scientific use, the copyright stays with the originating catalogue, no redistribution grant
 wdcb-nc	admitted	"open and freely available for scientific, educational, and other non-commercial purposes without restriction"
-wmo-data-policy	admitted	WOUDC is operated by the Meteorological Service of Canada (ECCC); the ECCC End-use Licence 2.1.1 permits distribution with attribution
+wmo-data-policy	admitted	rights holder: Environment and Climate Change Canada (MSC, operates WOUDC); ECCC End-use Licence 2.1.1 permits distribution with attribution
