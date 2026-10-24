@@ -58,3 +58,56 @@ host www.ncei.noaa.gov
   probe 2026-10-24T23:05:44Z 206 https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/2024/CRNH0203-2024-AZ_Tucson_11_W.txt
   applies https://www.ncei.noaa.gov/pub/data/uscrn/products
   note USCRN only; the host serves GOES XRS, spectral irradiance and radiosonde under other paths, each with its own instrument
+
+host service.earthscope.org
+  instrument microbarometer
+  unit Pa
+  cadence 0.05
+  api_cite https://service.earthscope.org/fdsnws/station/1/query?network=IM&station=I03H1&level=channel&format=text
+  api_quote "MB3a (Infrasound), 0.01-28 Hz, 0.02 V/Pa-Taurus Fa|9670.25|0.25|PA|20.0"
+  instrument_cite https://ds.iris.edu/ds/nodes/dmc/data/formats/seed-channel-naming/
+  instrument_quote "A barometer, or microbarometer measures pressure. Used to measure the weather pressure or sometimes for state of health monitoring down hole."
+  probe 2026-10-24T23:26:49Z 200 https://service.earthscope.org/fdsnws/station/1/query?network=IM&station=I03H1&level=channel&format=text
+  probe 2026-10-24T23:32:46Z 204 https://service.earthscope.org/fdsnws/dataselect/1/query?network=IM&station=I03H1&channel=BDF&starttime=2026-10-24T00:00:00Z&endtime=2026-10-24T00:10:00Z
+  applies https://service.earthscope.org/fdsnws/dataselect/1/query?network=IM&station=I03H1&channel=BDF
+  note BDF ist 20 Hz (cadence 0.05), nicht 60 s wie im Block; dataselect ohne start/end 422, mit Zeitfenster 204 (kein Treffer im gewählten Fenster), Fenster deshalb nicht als Probe geführt
+
+host cdaweb.gsfc.nasa.gov
+  instrument electrostatic analyzer
+  unit ev/cm2/ster/s
+  cadence 1
+  api_cite https://cdaweb.gsfc.nasa.gov/misc/NotesD.html
+  api_quote "Electron total energy flux integrated over energy (eV/cm2/ster/s). [ELE_TOTAL_ENERGY_FLUX]"
+  instrument_cite https://www.ncei.noaa.gov/products/dmsp-j4-precipitating-electron-ion-spectrometer
+  instrument_quote "It consists of four electrostatic analyzers that record electrons and ions between 30 eV and 30 KeV as they flow past the spacecraft toward Earth."
+  probe 2026-10-24T23:26:17Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssj/precipitating-electrons-ions/
+  probe 2026-10-24T23:32:45Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf17/ssj/precipitating-electrons-ions/
+  probe 2026-10-24T23:32:46Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf18/ssj/precipitating-electrons-ions/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssj/precipitating-electrons-ions/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf17/ssj/precipitating-electrons-ions/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf18/ssj/precipitating-electrons-ions/
+  note Block-Kadenz 86400 ist die Tagesdatei; die Messung selbst wird mit 1 s abgetastet ("A complete cycle is sampled each second", selbe Seite wie instrument_quote)
+
+host opendata.dwd.de
+  instrument resistance thermometer
+  unit degree_C
+  cadence 86400
+  api_cite https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/DESCRIPTION_obsgermany-climate-daily-kl_en.pdf
+  api_quote "TXK daily maximum of temperature at 2 m height °C"
+  instrument_cite https://www.dwd.de/DE/presse/pressebilder/messtechnik_node.html
+  instrument_quote "Darin befinden sich zwei Widerstandsthermometer sowie zwei Sensoren zur Messung der Luftfeuchte."
+  probe 2026-10-24T23:07:49Z 206 https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+  applies https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+  note neun Spalten teilen einen Tagessatz; Register führt K, Pa, m, m/s, 1 — der Datensatz liefert °C, hPa, mm, m/s, 1/8; Tagesmittel/-minimum/-maximum je Spalte
+
+host archives.esac.esa.int
+  instrument fluxgate magnetometer
+  unit nT
+  cadence 8
+  api_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.LBL
+  api_quote "MAGNETIC FIELD DATA (8 SEC) IN A HALLEY CENTERED SOLAR ECLIPTIC COORDINATE SYSTEM"
+  instrument_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/AAREADME.TXT
+  instrument_quote "The data contained in this dataset contains the data taken by the Giotto FLUXGATE MAGNETOMETER Experiment (MAG)."
+  probe 2026-10-24T23:27:17Z 206 https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
+  applies https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
+  note Einheit nT steht im selben Label (UNIT = "NANOTESLA"), Kadenz 8 s in der Spaltenbeschreibung; Block führt nur die Zeitachse als Feld

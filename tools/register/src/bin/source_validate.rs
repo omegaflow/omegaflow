@@ -151,7 +151,7 @@ struct Ctx {
 
 struct Spec {
     host: String,
-    applies: String,
+    applies: Vec<String>,
     instrument: String,
     units: BTreeSet<String>,
     cadences: BTreeSet<u64>,
@@ -247,7 +247,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
                 if let Some(token) = value {
                     out.push(Spec {
                         host: token.clone(),
-                        applies: String::new(),
+                        applies: Vec::new(),
                         instrument: String::new(),
                         units: BTreeSet::new(),
                         cadences: BTreeSet::new(),
@@ -281,7 +281,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
                     }
                     "applies" => {
                         if let Some(v) = value {
-                            entry.applies = v;
+                            entry.applies.push(v);
                         }
                     }
                     "api_cite" => entry.api_cite = value.is_some(),
@@ -309,8 +309,18 @@ fn load_specs(path: &str) -> Vec<Spec> {
 fn spec_for<'a>(specs: &'a [Spec], host: &str, url: &str) -> Option<&'a Spec> {
     specs
         .iter()
-        .filter(|s| s.host == host && (s.applies.is_empty() || url.starts_with(&s.applies)))
-        .max_by_key(|s| s.applies.len())
+        .filter(|s| {
+            s.host == host
+                && (s.applies.is_empty()
+                    || s.applies.iter().any(|a| url.starts_with(a.as_str())))
+        })
+        .max_by_key(|s| {
+            s.applies
+                .iter()
+                .filter(|a| url.starts_with(a.as_str()))
+                .map(|a| a.len())
+                .max()
+        })
 }
 
 fn main() {
