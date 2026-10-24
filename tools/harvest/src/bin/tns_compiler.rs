@@ -142,6 +142,7 @@ fn run(out_path: &str, candidates: &[(f64, f64)], radius: f64, ci: bool) -> Resu
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut out = OUT_DEFAULT.to_string();
     let mut ci = false;

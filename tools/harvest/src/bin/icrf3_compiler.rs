@@ -229,6 +229,7 @@ fn build_ddor_row(line: &str, stats: &mut RowStats) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out = String::from("phi/icrf3_harvest/icrf3.json");
     let mut ci_mode = false;

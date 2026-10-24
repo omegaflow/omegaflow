@@ -445,6 +445,7 @@ fn report_archive(bytes: &[u8], kind: &str) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let env = load_env();
 

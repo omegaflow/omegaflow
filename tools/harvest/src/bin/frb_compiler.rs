@@ -306,6 +306,7 @@ fn build_cat2_row(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out = String::from("phi/frb_harvest/frb_chime_cat1.json");
     let mut ci_mode = false;

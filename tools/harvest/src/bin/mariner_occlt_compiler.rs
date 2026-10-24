@@ -48,6 +48,7 @@ fn tar_dat(bytes: &[u8]) -> Option<Vec<u8>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let mut rows: Vec<[f64; mariner_occlt::MOCC_STRIDE]> = Vec::new();

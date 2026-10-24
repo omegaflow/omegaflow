@@ -686,6 +686,7 @@ fn peek(path: &str, start: u32, end: u32) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--dump") {
         let n = match arg_value(&args, "--bytes").and_then(|v| v.parse().ok()) {

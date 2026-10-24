@@ -115,6 +115,7 @@ fn parse_pressure(text: &str) -> Vec<(f64, f64)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let out_bin = match arg_value(&args, "--out-bin") {
         Some(v) => v,

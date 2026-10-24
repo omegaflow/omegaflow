@@ -514,6 +514,7 @@ fn write_series(path: &str, s: &Series, e: &Event) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let mut ci_mode = false;
     let mut out_dir = String::new();
     let mut event_path = String::new();

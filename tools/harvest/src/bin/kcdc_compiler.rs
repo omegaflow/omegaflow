@@ -532,6 +532,7 @@ fn run() -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     if let Err(e) = run() {
         eprintln!("kcdc_compiler: {e}");
         std::process::exit(1);

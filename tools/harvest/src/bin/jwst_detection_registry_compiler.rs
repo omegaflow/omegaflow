@@ -311,6 +311,7 @@ fn build_registry(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out = "jwst_detection_registry.json".to_string();
     let mut seed_path: Option<String> = None;

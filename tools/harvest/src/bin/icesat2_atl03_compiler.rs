@@ -987,6 +987,7 @@ fn run_harvest(args: &[String]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     run_harvest(&args);
 }

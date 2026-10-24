@@ -94,6 +94,7 @@ fn spot_is_valid(radius_mm: f64, selenoid_mm: f64, flag: u64) -> bool {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let fmt_path = match arg_value(&args, "--fmt") {
         Some(v) => v,

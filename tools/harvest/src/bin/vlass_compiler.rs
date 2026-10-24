@@ -293,6 +293,7 @@ fn gather_component(bytes: &[u8]) -> Option<Vec<VlassComponent>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: vlass_compiler [--kind source|component] [--input <file.fits>] [--url <route>] --out <bin> [--ci-mode]";
     let mut input: Option<String> = None;

@@ -183,6 +183,7 @@ fn read_axis(file: &Hdf5File, name: &str) -> Result<(Vec<u8>, usize, usize), Str
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("nohrsc_snowfall_compiler: {msg}");

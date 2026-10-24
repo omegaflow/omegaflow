@@ -304,6 +304,7 @@ fn verify_artifact(out: &str, expected: Option<&str>) -> Result<Vec<u8>, String>
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let env = secrets();
     let user = credential(&env, "PRADAN_USER");

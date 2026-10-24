@@ -394,6 +394,7 @@ fn stream_fits_member_to_file(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let nside_out: i64 = arg_value(&args, "--nside")
         .and_then(|v| v.parse().ok())

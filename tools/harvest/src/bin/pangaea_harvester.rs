@@ -170,6 +170,7 @@ fn emit_json(tab: &Tab, total: &mut usize) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().collect();
     let mut id: Option<String> = None;
     let mut out: Option<String> = None;

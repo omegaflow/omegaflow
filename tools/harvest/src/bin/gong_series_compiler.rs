@@ -149,6 +149,7 @@ fn compile_run(month: &str, run: &str, days: i64, lmax: u32) -> Vec<(u32, i32, i
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {

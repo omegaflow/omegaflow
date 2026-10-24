@@ -60,6 +60,7 @@ fn fmt_time_step(dn: &[f64]) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let input = match arg_value(&args, "--input") {
         Some(v) => v,

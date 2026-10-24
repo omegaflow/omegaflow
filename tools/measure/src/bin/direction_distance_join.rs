@@ -182,6 +182,7 @@ fn usage() {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let Some(stars_path) = arg_value(&args, "--stars") else {

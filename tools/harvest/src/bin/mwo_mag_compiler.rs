@@ -234,6 +234,7 @@ fn pixel_lat_lon(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
     let Some(kind) = arg_value(&args, "--kind").as_deref().and_then(Kind::parse) else {

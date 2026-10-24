@@ -190,6 +190,7 @@ fn compile_url(url: &str, out: &str) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--probe") {
         let Ok(bytes) = std::fs::read(&path) else {

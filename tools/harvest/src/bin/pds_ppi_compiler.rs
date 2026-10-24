@@ -395,6 +395,7 @@ fn compile_entry(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: pds_ppi_compiler (--table <t> | --all | --list) [--pairs] [--tap <root>] [--out <dir>] [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

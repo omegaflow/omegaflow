@@ -310,6 +310,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: nexrad_level2_compiler --input <volume> | --url <s3-object-url> --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

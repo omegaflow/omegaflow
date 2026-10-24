@@ -95,6 +95,7 @@ fn write_and_verify(records: &[[f64; 9]], bands: &[Option<i64>], out: &str) -> V
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let year_only = args

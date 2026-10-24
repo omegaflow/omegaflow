@@ -81,6 +81,7 @@ fn unpack(bytes: &[u8]) -> Option<Vec<[f64; 4]>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let frame = match arg_value(&args, "--frame") {

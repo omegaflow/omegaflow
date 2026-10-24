@@ -127,6 +127,7 @@ fn run(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut nvss = NVSS_DEFAULT.to_string();
     let mut first = FIRST_DEFAULT.to_string();

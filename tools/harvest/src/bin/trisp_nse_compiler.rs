@@ -78,6 +78,7 @@ fn collect_pairs(dir: &str) -> Vec<std::path::PathBuf> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let dir = match arg_value(&args, "--dir") {
         Some(d) => d,

@@ -130,6 +130,7 @@ fn resolved_bodies(bsps: &[PathBuf]) -> BTreeMap<i32, String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!("usage: inpop_compiler <bsp|spice.tar.gz>... [--pck <body.tpc>]... [--ci-mode]");

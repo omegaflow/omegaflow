@@ -251,6 +251,7 @@ fn run(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci = args.iter().any(|a| a == "--ci-mode");
     let input = match arg_value(&args, "--input") {

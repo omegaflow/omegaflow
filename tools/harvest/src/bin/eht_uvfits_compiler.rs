@@ -389,6 +389,7 @@ fn run_fits(path: &str, pair: (&str, &str)) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         Some("--inspect") => match arg_value(&args, "--inspect") {

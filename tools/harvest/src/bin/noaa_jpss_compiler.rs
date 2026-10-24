@@ -260,6 +260,7 @@ fn emit(bytes: &[u8], granule_name: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     if let Some(path) = arg_value(&args, "--probe") {

@@ -1307,6 +1307,7 @@ fn run(args: &[String]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     run(&args);
 }

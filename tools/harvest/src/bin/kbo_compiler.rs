@@ -381,6 +381,7 @@ fn dedupe(rows: Vec<Vec<JsonVal>>, idx: &HashMap<String, usize>) -> (Vec<Vec<Jso
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out = String::new();
     let mut ci_mode = false;

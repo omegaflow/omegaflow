@@ -141,6 +141,7 @@ impl CompileCounts {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut input: Option<String> = None;
     let mut out_path: Option<String> = None;

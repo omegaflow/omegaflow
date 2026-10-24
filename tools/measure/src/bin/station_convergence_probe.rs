@@ -679,6 +679,7 @@ fn write_station_verdict(out: &str, line: &VerdictLine) -> bool {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if flag(&args, "--help") || flag(&args, "-h") {
         usage();

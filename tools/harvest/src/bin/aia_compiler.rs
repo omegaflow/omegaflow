@@ -676,6 +676,7 @@ fn merge_mode(args: &[String]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(lsk) = omegaflow::archivar::embedded_lsk() else {
         eprintln!("the time base is absent");

@@ -275,6 +275,7 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: vlass_tap_compiler [--kind source|component] [--input <file.csv>] [--url <route>] --out <bin> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

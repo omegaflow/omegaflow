@@ -115,6 +115,7 @@ fn body_carries_series(body: &str, variable: &str) -> bool {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let mut ci_mode = false;
     let mut out_dir = String::from("phi/pipeline/meteo_harvest");
     let mut event_path = String::new();

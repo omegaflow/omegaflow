@@ -16,6 +16,7 @@ const HOUSES: &[(&str, &str)] = &[
 ];
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let ci_mode = std::env::args().any(|a| a == "--ci-mode");
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");

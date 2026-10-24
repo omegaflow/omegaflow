@@ -183,6 +183,7 @@ fn verify_asset(out_path: &str, records: &[SkymapRecord]) -> Result<(), String> 
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut input: Option<String> = None;
     let mut out_path: Option<String> = None;

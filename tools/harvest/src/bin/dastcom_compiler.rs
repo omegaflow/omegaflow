@@ -192,6 +192,7 @@ fn probe_record(file: &mut File, number: u32, t_jd: f64) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 3 {
         eprintln!(

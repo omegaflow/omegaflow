@@ -154,6 +154,7 @@ fn read_bin(data: &[u8]) -> Option<Vec<Obs>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: noaa_cdo_compiler --out <bin> [--window-start <YYYY-MM-DD>] [--window-end <YYYY-MM-DD>] [--stations <n>] [--extent <lat_min,lon_min,lat_max,lon_max>] [--limit <n>] [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

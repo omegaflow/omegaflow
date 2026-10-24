@@ -33,6 +33,7 @@ fn moment(v: [f64; 3]) -> f64 {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let (l1, l2) = match arg_value(&args, "--tle-file") {
         Some(path) => match tle_lines(&path) {

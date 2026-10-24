@@ -39,6 +39,7 @@ fn gather(body: &str) -> Option<Table> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some((src, bytes)) = load_source(&args, DEFAULT_URL) else {
         std::process::exit(1);

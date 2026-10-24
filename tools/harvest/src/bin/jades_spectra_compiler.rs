@@ -341,6 +341,7 @@ fn line_bins(bytes: &[u8], line: &FitsTable, row: usize) -> Vec<(f64, f64, f64)>
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(p) = arg_value(&args, "--probe") {
         probe_fits(&p);

@@ -1466,6 +1466,7 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let bucket = match arg_value(&args, "--bucket") {
         Some(v) => v,

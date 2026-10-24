@@ -154,6 +154,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("usgs_geomag_stations_compiler: {msg}");

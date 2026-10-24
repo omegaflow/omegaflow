@@ -616,6 +616,7 @@ fn positional_source(args: &[String]) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(

@@ -133,6 +133,7 @@ fn json_string(s: &str) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;

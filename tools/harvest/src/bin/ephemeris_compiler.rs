@@ -1571,6 +1571,7 @@ fn summarize(index_path: &str, out_path: &str) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
         eprintln!(

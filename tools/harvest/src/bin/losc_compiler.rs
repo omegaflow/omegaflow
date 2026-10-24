@@ -247,6 +247,7 @@ fn compile(input: &str, out: &str, force_type: u8, presence: f64, ttl_s: f64) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {

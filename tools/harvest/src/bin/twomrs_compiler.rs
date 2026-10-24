@@ -107,6 +107,7 @@ fn fetch_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<Option<f64>>>)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(out) = arg_value(&args, "--out-bin") else {
         eprintln!("--out-bin absent — the asset path stays unnamed");

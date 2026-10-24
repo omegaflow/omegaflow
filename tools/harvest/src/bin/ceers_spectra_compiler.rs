@@ -397,6 +397,7 @@ fn probe_fits(path: &str) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out: Option<String> = None;
     let mut lsk_path: Option<String> = None;

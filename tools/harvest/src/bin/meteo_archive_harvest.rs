@@ -373,6 +373,7 @@ fn harvest_open_meteo(station: &Station, ws: &str, we: &str) -> Vec<Series> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let mut ci_mode = false;
     let mut out_dir = String::from("phi/pipeline/collapse_harvest");
     let mut ws = String::from(WINDOW_START);

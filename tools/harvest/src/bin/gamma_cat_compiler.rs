@@ -70,6 +70,7 @@ fn gather(bytes: &[u8], table: &FitsTable) -> Option<Table> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some((src, raw)) = load_source(&args, DEFAULT_URL) else {
         std::process::exit(1);

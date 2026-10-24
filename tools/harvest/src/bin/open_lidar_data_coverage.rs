@@ -186,6 +186,7 @@ fn coverage(keys: &[String]) -> (Vec<String>, Vec<String>) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: open_lidar_data_coverage [--prefix <data/>] [--out <manifest>] [--bbox|--bbox-off] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines; --bbox emits the LAS header bbox; --emit-ids writes a tile-id sidecar)";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

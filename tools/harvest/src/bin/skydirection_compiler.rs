@@ -496,6 +496,7 @@ fn push_unique(out: &mut Vec<SkyDirection>, incoming: Vec<SkyDirection>) -> usiz
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out_path: Option<String> = None;
     let mut ci = false;

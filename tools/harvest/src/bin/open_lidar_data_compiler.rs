@@ -441,6 +441,7 @@ fn crs_text(crs: &LasCrs) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: open_lidar_data_compiler (--input <copc.laz> | --url <https-url>) --body <receiver> [--crs <epsg>] --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

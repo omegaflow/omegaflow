@@ -140,6 +140,7 @@ fn run(out_path: &str, raw: Vec<u8>, label: &str, ci: bool) -> Result<(), String
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(out_path) = arg_value(&args, "--out") else {
         eprintln!("ionex_compiler: --out <asset.bin> absent — the output path is never silent");

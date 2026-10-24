@@ -15,6 +15,7 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let station = match arg_value(&args, "--station") {

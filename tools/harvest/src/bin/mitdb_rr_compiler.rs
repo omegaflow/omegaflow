@@ -51,6 +51,7 @@ fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let out_path = match arg_value(&args, "--out") {
         Some(v) => v,

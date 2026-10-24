@@ -147,6 +147,7 @@ fn manifest_family(prefix: &str, records: &[[f64; 14]], ci_mode: bool) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let list_mode = args.iter().any(|a| a == "--list");

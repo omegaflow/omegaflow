@@ -127,6 +127,7 @@ fn write_json(rows: &[(f64, f64, f64, f64)], path: &str) -> bool {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let out = match arg_value(&args, "--out") {
         Some(v) => v,

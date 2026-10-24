@@ -118,6 +118,7 @@ fn triad_verdict_line(t: &ThreeWayVerdict, weave_epoch: f64) -> VerdictLine {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
         usage();

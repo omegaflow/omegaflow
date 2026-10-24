@@ -202,6 +202,7 @@ fn zipped_dr2full<F: FnMut(&str, &str)>(bytes: &[u8], mut sink: F) -> Option<usi
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Err(msg) = run(&args) {
         eprintln!("epta_dr2_compiler: {msg}");

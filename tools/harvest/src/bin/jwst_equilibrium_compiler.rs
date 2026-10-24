@@ -210,6 +210,7 @@ fn write_atomic(path: &str, bytes: &[u8]) -> bool {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut input = "jwst_spectra.bin".to_string();
     let mut output = "jwst_equilibrium.bin".to_string();

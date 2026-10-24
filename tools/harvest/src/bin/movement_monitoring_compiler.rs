@@ -300,6 +300,7 @@ fn harvest_record(rel: &str, bucket_s: f64) -> Result<Vec<(f64, f64, u32)>, Stri
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--merge") {
         merge_chunks(&args);

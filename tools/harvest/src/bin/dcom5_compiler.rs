@@ -149,6 +149,7 @@ fn write_comet_catalog(input: &str, out_path: &str) -> Option<usize> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;

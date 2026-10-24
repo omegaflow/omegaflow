@@ -201,6 +201,7 @@ fn parse_penetration(html: &str, source_id: &str) -> Vec<SuprastromSeries> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut ci_mode = false;
     let mut out_dir = String::from(".");

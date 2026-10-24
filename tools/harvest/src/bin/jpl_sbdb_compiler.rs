@@ -197,6 +197,7 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let usage =
         "usage: jpl_sbdb_compiler --out <jpl_sbdb.bin> [--limit <n>] [--page <n>] [--ci-mode]";

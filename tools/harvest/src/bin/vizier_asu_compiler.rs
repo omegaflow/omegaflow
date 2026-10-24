@@ -394,6 +394,7 @@ fn parse_ra_range(spec: &str) -> Option<(f64, f64)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let out = match arg_value(&args, "--out") {
         Some(p) => p,

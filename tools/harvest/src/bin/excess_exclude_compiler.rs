@@ -213,6 +213,7 @@ fn run(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut ir = "tmp/ir.bin".to_string();
     let mut out = OUT_DEFAULT.to_string();

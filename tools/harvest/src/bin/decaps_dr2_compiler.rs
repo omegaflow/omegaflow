@@ -703,6 +703,7 @@ fn header_cards(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let result = if arg_value(&args, "--inspect").is_some() {
         inspect(&args)

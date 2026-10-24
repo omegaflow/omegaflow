@@ -621,6 +621,7 @@ fn curl_verdict(code: u16) -> &'static str {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let out_path = arg_value(&args, "--out");
     let stations_path = arg_value(&args, "--stations");

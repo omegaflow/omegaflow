@@ -480,6 +480,7 @@ fn detection_records(file: &Hdf5File, lsk: &omegaflow::lsk::LeapSeconds) -> Vec<
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let zip_url = match arg_value(&args, "--url") {
         Some(v) => v,

@@ -104,6 +104,7 @@ fn aggregate(dir: &str) -> BTreeMap<(i32, u32), Vec<u8>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() {
         eprintln!("demeter_compiler: no input — the series stays unwritten (0 honored)");

@@ -499,6 +499,7 @@ fn curl_verdict(code: u16) -> &'static str {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let out_bin = match arg_value(&args, "--out-bin") {
         Some(v) => v,

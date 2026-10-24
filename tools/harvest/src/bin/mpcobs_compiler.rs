@@ -307,6 +307,7 @@ fn compile_sharded(input: &str, set: &mut ShardSet, key: ShardKey) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 {
         eprintln!(

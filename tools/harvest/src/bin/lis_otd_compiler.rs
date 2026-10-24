@@ -230,6 +230,7 @@ fn run(out_path: &str, granules: &[String], lsk: &LeapSeconds, ci: bool) -> Resu
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let out = match arg_value(&args, "--out") {
         Some(p) => p,

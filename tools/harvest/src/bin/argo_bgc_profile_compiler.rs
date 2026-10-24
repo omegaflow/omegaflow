@@ -692,6 +692,7 @@ fn run_emit_bin(args: &[String], bgc: &[IndexRow], out_path: &str, ci: bool) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().collect();
     let out = arg_value(&args, "--out");
     let probe = arg_value(&args, "--probe");

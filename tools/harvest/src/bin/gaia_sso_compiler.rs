@@ -45,6 +45,7 @@ fn tap_csv(adql: &str) -> Option<(String, Vec<u8>)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out_path = DEFAULT_OUT.to_string();
     let mut ci_mode = false;

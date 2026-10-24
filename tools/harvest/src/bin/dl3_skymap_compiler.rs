@@ -136,6 +136,7 @@ fn verify_asset(out_path: &str, records: &[SkymapRecord]) -> Result<(), String> 
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
     let telescope = match arg_value(&args, "--telescope") {

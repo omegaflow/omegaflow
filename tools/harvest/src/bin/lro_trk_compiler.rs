@@ -107,6 +107,7 @@ fn write_and_verify(records: &[[f64; 14]], out: &str) -> Vec<u8> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let list_mode = args.iter().any(|a| a == "--list");

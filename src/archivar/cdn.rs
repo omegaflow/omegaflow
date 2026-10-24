@@ -216,6 +216,18 @@ fn registered_netlocs() -> &'static HashSet<String> {
     })
 }
 
+pub fn require_ci() {
+    let env_is = |name: &str, value: &str| {
+        std::env::var(name)
+            .map(|v| v == value)
+            .unwrap_or(false)
+    };
+    if !(env_is("OMEGAFLOW_CI", "1") || env_is("GITHUB_ACTIONS", "true")) {
+        eprintln!("this compiler runs only in CI — dispatch the CDN workflow");
+        std::process::exit(2);
+    }
+}
+
 pub fn upload_release(tag: &str, path: &str) -> bool {
     if tag == CAPPED_RELEASE {
         eprintln!(

@@ -203,6 +203,7 @@ fn run_index(args: &[String]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     run_index(&args);
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

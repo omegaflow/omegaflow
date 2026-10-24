@@ -184,6 +184,7 @@ fn disc_means(bytes: &[u8]) -> Option<(f64, f64)> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {

@@ -2060,6 +2060,7 @@ fn harvest_window(
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(dir) = arg_value(&args, "--rebuild-manifest") {
         rebuild_manifest(&dir);

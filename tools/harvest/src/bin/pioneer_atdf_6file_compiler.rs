@@ -21,6 +21,7 @@ fn jd_date(tdb_s: f64) -> String {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;

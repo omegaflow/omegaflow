@@ -97,6 +97,7 @@ fn write_records(rows: &[StationEpoch], path: Option<&str>) -> usize {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let out = arg_value(&args, "--out");
     let network = arg_value(&args, "--network");

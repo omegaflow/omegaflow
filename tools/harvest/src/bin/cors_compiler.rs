@@ -208,6 +208,7 @@ fn report(summary: &Summary, records: &[CorsRecord]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: cors_compiler --input <rinex> | --url <rinex-url> --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

@@ -327,6 +327,7 @@ fn write_asset(curves: &[CurveStar], out: &str) -> bool {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut out: Option<String> = None;
     let mut ci_mode = false;

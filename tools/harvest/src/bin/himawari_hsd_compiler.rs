@@ -391,6 +391,7 @@ fn probe(name: &str, bytes: &[u8], hsd: &HsdFile, blocks: &[(u8, Vec<u8>)]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {

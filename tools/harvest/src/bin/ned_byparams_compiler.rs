@@ -630,6 +630,7 @@ fn write_array(path: &str, objs: &[Object]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     let mut index: Option<usize> = None;
     let mut dec1_dir: Option<f64> = None;

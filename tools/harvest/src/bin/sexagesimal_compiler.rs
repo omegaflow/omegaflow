@@ -364,6 +364,7 @@ fn write_rows(rows: &[String], out_path: &str, label: &str, skipped: usize) -> u
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 3 {
         eprintln!(

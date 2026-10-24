@@ -101,6 +101,7 @@ fn gravity_of(body: &[u8], lsk: &LeapSeconds, out: &mut Vec<AgravRecord>) -> Opt
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
         println!("usage: agrav_compiler [--out <agrav.bin>] [--ci-mode]");

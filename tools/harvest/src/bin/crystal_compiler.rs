@@ -294,6 +294,7 @@ fn mat_dump(path: &str) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut cods: Vec<String> = Vec::new();
     let mut rixs_dirs: Vec<String> = Vec::new();

@@ -250,6 +250,7 @@ fn fetch_frame(spec: &str, cache_dir: &str) -> Option<Vec<u8>> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || has_flag(&args, "--help") || has_flag(&args, "-h") {
         eprintln!("usage: euvi_compiler (--in <file|dir> | --url <fits|index> | --index <index>)");

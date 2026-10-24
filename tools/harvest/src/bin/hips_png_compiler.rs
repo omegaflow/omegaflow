@@ -561,6 +561,7 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let result = if args.iter().any(|a| a == "--tree") {
         tree_run(&args)

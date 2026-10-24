@@ -1071,6 +1071,7 @@ fn run_harvest(args: &[String]) {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--list") {
         run_list(&args);

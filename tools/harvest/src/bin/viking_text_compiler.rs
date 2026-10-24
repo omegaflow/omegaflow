@@ -8,6 +8,7 @@ const FAMILY_TAG: &str = "ssd.jpl.nasa.gov-planets";
 const OUT: &str = "sources/ssd.jpl.nasa.gov/viking_lander_tracking.bin";
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let ci_mode = std::env::args().any(|a| a == "--ci-mode");
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");

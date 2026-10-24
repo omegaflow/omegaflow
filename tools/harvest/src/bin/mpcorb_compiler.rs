@@ -167,6 +167,7 @@ fn compile_catalog(input: &str, out_path: &str, distant_only: bool) -> Counts {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 {
         eprintln!(

@@ -92,6 +92,7 @@ fn parse_gsics_txt_g18(text: &str) -> GsicsTable {
 }
 
 fn main() {
+    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let gsics_text = if ci_mode {
