@@ -59,8 +59,8 @@ jobs:
       - name: Upload the TIMED worldline to the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          gh release upload celestrak.org data/celestrak.org/timed_orbit.bin \
-            --clobber --repo omegaflow/sources \
+          bin/cdn-put celestrak.org data/celestrak.org/timed_orbit.bin \
+ \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "timed-orbit-cdn: timed_orbit.bin upload returned void" \
                  "gh release upload celestrak.org failed. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

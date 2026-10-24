@@ -126,5 +126,4 @@ jobs:
             exit 0
           fi
           echo "gosat_tanso3.manifest lists $(wc -l < "$tmp/gosat_tanso3.manifest") shards"
-          gh release upload "$TAG" "$tmp/gosat_tanso3.manifest" \
-            --clobber --repo "$REPO"
+          bin/cdn-put "$TAG" "$tmp/gosat_tanso3.manifest"

@@ -130,7 +130,7 @@ jobs:
                 echo '[]' > "$cname"
                 VOIDS=$(printf '%s %s' "$VOIDS" "$i" | tr ' ' '\n' | grep -v '^$' | sort -un | tr '\n' ' ')
               fi
-              if ! gh release upload "$RELEASE" "$cname" --clobber --repo "$REPO"; then
+              if ! bin/cdn-put "$RELEASE" "$cname"; then
                 echo "upload ${cname} void — the cone shard stays open for the next run"
                 complete=0
                 break
@@ -161,7 +161,7 @@ jobs:
               break
             fi
             rm -f raw/ned_cone_*.json
-            if ! gh release upload "$RELEASE" "$part" --clobber --repo "$REPO"; then
+            if ! bin/cdn-put "$RELEASE" "$part"; then
               echo "upload ${part} void — cone shards persist, slice ${next} retried next run"
               break
             fi
@@ -170,7 +170,7 @@ jobs:
 
           # persist the void-cone list so a later run can retry them
           printf '%s\n' $VOIDS | grep -v '^$' | sort -un | jq -R 'tonumber' | jq -s . > "$VOID_FILE"
-          gh release upload "$RELEASE" "$VOID_FILE" --clobber --repo "$REPO"
+          bin/cdn-put "$RELEASE" "$VOID_FILE"
           echo "void cones recorded: $(jq -c . "$VOID_FILE")"
 
           # combine when every slice part is present and ned.json is absent
@@ -209,7 +209,7 @@ jobs:
                   END { if (!first) printf "\n" }'
               echo ']'
             } > ned.json
-            gh release upload "$RELEASE" ned.json --clobber --repo "$REPO"
+            bin/cdn-put "$RELEASE" ned.json
             echo "ned.json uploaded: $(jq 'length' ned.json) objects"
           fi
         env:

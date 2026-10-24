@@ -139,6 +139,4 @@ jobs:
               continue
             fi
             echo "modis_lst_cmg_${product}.manifest lists $(wc -l < "$tmp/modis_lst_cmg_${product}.manifest") shards"
-            gh release upload "$FAMILY" "$tmp/modis_lst_cmg_${product}.manifest" \
-              --clobber --repo "$REPO"
-          done
+            bin/cdn-put "$FAMILY" "$tmp/modis_lst_cmg_${product}.manifest"           done

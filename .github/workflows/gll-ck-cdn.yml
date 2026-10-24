@@ -53,8 +53,7 @@ jobs:
       - name: Mirror the raw kernel to the CDN (the CI manifestator is the only writer)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          gh release upload naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc \
-            --clobber --repo omegaflow/sources
+          bin/cdn-put naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc
       - name: Verify the registered naif.jpl.nasa.gov gll_plt_rec assets are manifested
         run: |
           set -euo pipefail

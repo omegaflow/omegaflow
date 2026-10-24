@@ -22,13 +22,13 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Persist the odf07155 ODF fixture to the spdf CDN namespace
         run: |
-          gh release upload spdf.gsfc.nasa.gov --repo omegaflow/sources \
-            src/archivar/kernels/odf07155.dat --clobber
+          bin/cdn-put spdf.gsfc.nasa.gov \
+            src/archivar/kernels/odf07155.dat
       - name: Record the odf07155 measured census verdict as a CDN asset
         run: |
           cargo run -p omegaflow-measure --release --bin odf_census_probe -- \
             src/archivar/kernels/odf07155.dat > odf07155_census.txt
           test -s odf07155_census.txt || {
             echo "odf-census: the census file is empty — nothing to upload"; exit 1; }
-          gh release upload spdf.gsfc.nasa.gov --repo omegaflow/sources \
-            odf07155_census.txt --clobber
+          bin/cdn-put spdf.gsfc.nasa.gov \
+            odf07155_census.txt

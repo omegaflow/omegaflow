@@ -92,7 +92,7 @@ jobs:
             --skip-null z \
             --out abell_south.json
           jq -s add abell_north.json abell_south.json > abell_clusters.json
-          gh release upload tapvizier.cds.unistra.fr abell_clusters.json --clobber --repo omegaflow/sources \
+          bin/cdn-put tapvizier.cds.unistra.fr abell_clusters.json \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: abell_clusters returned void" \
                  "abell_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

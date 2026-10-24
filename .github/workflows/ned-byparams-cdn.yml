@@ -119,7 +119,7 @@ jobs:
               --pattern 'ned_byparams_band_*.json' --dir parts --clobber
             jq -s 'add | unique_by([.cell, .rank])' parts/ned_byparams_band_*.json \
               > ned_byparams_redshift.json
-            gh release upload "$RELEASE" ned_byparams_redshift.json --clobber --repo "$REPO"
+            bin/cdn-put "$RELEASE" ned_byparams_redshift.json
             echo "ned_byparams_redshift.json uploaded: $(jq 'length' ned_byparams_redshift.json) objects"
           fi
         env:

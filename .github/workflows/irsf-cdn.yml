@@ -46,7 +46,7 @@ jobs:
             [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
           done
           jq -s 'add' kernels/irsf_c*.json > kernels/irsf_mcps.json
-          gh release upload vizier.cds.unistra.fr kernels/irsf_mcps.json --clobber --repo omegaflow/sources \
+          bin/cdn-put vizier.cds.unistra.fr kernels/irsf_mcps.json \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: irsf_mcps returned void" \
                  "irsf chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

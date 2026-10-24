@@ -50,5 +50,4 @@ jobs:
           cargo run --release -p omegaflow-harvest --bin hips3d_compiler -- \
             --properties https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/properties \
             --out wallaby_pilot_dr2_hips3d.bin
-          gh release upload alasky.cds.unistra.fr wallaby_pilot_dr2_hips3d.bin \
-            --repo omegaflow/sources --clobber
+          bin/cdn-put alasky.cds.unistra.fr wallaby_pilot_dr2_hips3d.bin

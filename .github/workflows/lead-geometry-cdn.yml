@@ -34,5 +34,5 @@ jobs:
             > lead_geometry_verdict.txt 2> lead_geometry_sweep.log
           echo "--- sweep diagnostics (stderr) ---"
           cat lead_geometry_sweep.log
-          gh release upload physionet.org --repo omegaflow/sources \
-            lead_geometry_verdict.txt --clobber
+          bin/cdn-put physionet.org \
+            lead_geometry_verdict.txt

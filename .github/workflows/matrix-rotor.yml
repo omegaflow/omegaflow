@@ -99,9 +99,9 @@ jobs:
             if [ -s data/omegaflow_matrix_state.bin ]; then
               local sum; sum="$(sha256sum data/omegaflow_matrix_state.bin | cut -d' ' -f1)"
               cp -f data/omegaflow_matrix_state.bin "data/matrix-state-${sum}.bin"
-              gh release upload "$REL" "data/matrix-state-${sum}.bin" --clobber --repo "$REPO" 2>/dev/null || true
+              bin/cdn-put "$REL" "data/matrix-state-${sum}.bin" 2>/dev/null || true
               printf '%s\n' "matrix-state-${sum}.bin" > data/latest.txt
-              gh release upload "$REL" data/latest.txt --clobber --repo "$REPO" 2>/dev/null || true
+              bin/cdn-put "$REL" data/latest.txt 2>/dev/null || true
               # keep only the two newest state assets, delete the older ones
               gh release view "$REL" --repo "$REPO" --json assets \
                 --jq '[.assets[]|select(.name|startswith("matrix-state-"))]|sort_by(.created_at)|.[].name' 2>/dev/null \
@@ -111,7 +111,7 @@ jobs:
                   done
             fi
             # the last visibility window survives a hard kill on the release, too
-            [ -s matrix-rotor.txt ] && gh release upload "$REL" matrix-rotor.txt --clobber --repo "$REPO" 2>/dev/null || true
+            [ -s matrix-rotor.txt ] && bin/cdn-put "$REL" matrix-rotor.txt 2>/dev/null || true
           }
           {
             echo "SHA $(git rev-parse HEAD)"
@@ -142,12 +142,12 @@ jobs:
           if [ -s data/omegaflow_matrix_state.bin ]; then
             sum="$(sha256sum data/omegaflow_matrix_state.bin | cut -d' ' -f1)"
             cp -f data/omegaflow_matrix_state.bin "data/matrix-state-${sum}.bin"
-            gh release upload "$REL" "data/matrix-state-${sum}.bin" --clobber --repo "$REPO" || true
+            bin/cdn-put "$REL" "data/matrix-state-${sum}.bin" || true
             printf '%s\n' "matrix-state-${sum}.bin" > data/latest.txt
-            gh release upload "$REL" data/latest.txt --clobber --repo "$REPO" || true
+            bin/cdn-put "$REL" data/latest.txt || true
             echo "state nachher: $(stat -c %s data/omegaflow_matrix_state.bin) B (matrix-state-${sum}.bin)"
           fi
-          [ -s matrix-rotor.txt ] && gh release upload "$REL" matrix-rotor.txt --clobber --repo "$REPO" || true
+          [ -s matrix-rotor.txt ] && bin/cdn-put "$REL" matrix-rotor.txt || true
           exit 0
       - uses: actions/upload-artifact@v4
         if: always()

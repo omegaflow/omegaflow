@@ -44,7 +44,7 @@ jobs:
                  "mtg_li: BODY netCDF returned void" \
                  "eumetsat_mtg_li_fetch wrote no *BODY*.nc member. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          gh release upload api.eumetsat.int "${body[@]}" --clobber --repo omegaflow/sources \
+          bin/cdn-put api.eumetsat.int "${body[@]}" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mtg_li: BODY netCDF upload returned void" \
                  "gh release upload api.eumetsat.int returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

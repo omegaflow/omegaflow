@@ -48,7 +48,7 @@ jobs:
               echo "sha256 mismatch $name: $got != $digest — not uploaded"
               failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
             fi
-            if gh release upload "$DST" "$tmp/dl/$name" --clobber --repo "$REPO"; then
+            if bin/cdn-put "$DST" "$tmp/dl/$name"; then
               copied=$((copied+1))
             else
               failed=$((failed+1))

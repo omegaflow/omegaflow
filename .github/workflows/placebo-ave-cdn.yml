@@ -44,5 +44,5 @@ jobs:
       - name: Upload the AVE verdict to the CDN
         continue-on-error: true
         run: |
-          gh release upload openneuro.org --repo omegaflow/sources \
-            placebo_ave_verdict.txt --clobber
+          bin/cdn-put openneuro.org \
+            placebo_ave_verdict.txt

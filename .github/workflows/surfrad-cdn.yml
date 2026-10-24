@@ -83,4 +83,4 @@ jobs:
             exit 0
           fi
           echo "$MANIFEST lists $(wc -l < "$tmp/$MANIFEST") shards"
-          gh release upload "$FAMILY" "$tmp/$MANIFEST" --clobber --repo "$REPO"
+          bin/cdn-put "$FAMILY" "$tmp/$MANIFEST"

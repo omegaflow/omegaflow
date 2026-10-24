@@ -70,5 +70,4 @@ jobs:
       - name: Mirror the raw h5 to the CDN (the CI manifestator is the only writer)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          gh release upload gracedb.ligo.org bayestar2019.h5 \
-            --clobber --repo omegaflow/sources
+          bin/cdn-put gracedb.ligo.org bayestar2019.h5

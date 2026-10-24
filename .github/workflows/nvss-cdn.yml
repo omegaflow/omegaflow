@@ -86,7 +86,7 @@ jobs:
           gh release view ssd.jpl.nasa.gov-nvss --repo omegaflow/sources >/dev/null 2>&1 \
             || gh release create ssd.jpl.nasa.gov-nvss --repo omegaflow/sources \
                  --title "ssd.jpl.nasa.gov-nvss" --notes "CDN family release"
-          gh release upload ssd.jpl.nasa.gov-nvss nvss.json --clobber --repo omegaflow/sources \
+          bin/cdn-put ssd.jpl.nasa.gov-nvss nvss.json \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: nvss returned void" \
                  "nvss chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

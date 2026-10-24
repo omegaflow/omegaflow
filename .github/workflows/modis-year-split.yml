@@ -111,7 +111,7 @@ jobs:
               echo "sha256 mismatch $name: $got != $digest — not moved"
               failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
             fi
-            if ! gh release upload "$tag" "$tmp/dl/$name" --clobber --repo "$REPO"; then
+            if ! bin/cdn-put "$tag" "$tmp/dl/$name"; then
               echo "$name: upload to $tag returned void — not moved"
               failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
             fi

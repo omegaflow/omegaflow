@@ -53,5 +53,4 @@ jobs:
       - name: Mirror the raw skycell layer to the CDN (the CI manifestator is the only writer)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          gh release upload ps1images.stsci.edu rings.v3.skycell.0637.042.stk.g.unconv.num.fits \
-            --clobber --repo omegaflow/sources
+          bin/cdn-put ps1images.stsci.edu rings.v3.skycell.0637.042.stk.g.unconv.num.fits

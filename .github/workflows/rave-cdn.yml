@@ -47,7 +47,7 @@ jobs:
             [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
           done
           jq -s 'add' kernels/rave_c*.json > rave_dr5.json
-          gh release upload rave-survey.org rave_dr5.json --clobber --repo omegaflow/sources \
+          bin/cdn-put rave-survey.org rave_dr5.json \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: rave_dr5 returned void" \
                  "rave_dr5 chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

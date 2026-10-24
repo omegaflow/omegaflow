@@ -60,5 +60,4 @@ jobs:
           cargo run --release -p omegaflow-harvest --bin tar_zst_compiler -- \
             --url https://zenodo.org/api/records/18776222/files/lp_dataset_patched_c000_phase_metadata.tar.zst/content \
             --out conicus3d_wl_lightcone.tar.zst $args
-          gh release upload zenodo.org conicus3d_wl_lightcone.tar.zst \
-            --repo omegaflow/sources --clobber
+          bin/cdn-put zenodo.org conicus3d_wl_lightcone.tar.zst

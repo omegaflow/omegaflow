@@ -37,5 +37,5 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          gh release upload ssd.jpl.nasa.gov-sky-crossmatch sky_crossmatch_verdict.log --clobber --repo omegaflow/sources \
+          bin/cdn-put ssd.jpl.nasa.gov-sky-crossmatch sky_crossmatch_verdict.log \
             || { echo "log upload void — the local log is the artifact"; exit 0; }

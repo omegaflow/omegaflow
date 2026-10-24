@@ -75,7 +75,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          gh release upload ssd.jpl.nasa.gov-signal-cone signal_cone_audit_verdict.log --clobber --repo omegaflow/sources \
+          bin/cdn-put ssd.jpl.nasa.gov-signal-cone signal_cone_audit_verdict.log \
             || { echo "log upload void — the local log is the artifact"; exit 0; }
 
       - uses: actions/cache@v4

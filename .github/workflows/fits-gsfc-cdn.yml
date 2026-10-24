@@ -53,5 +53,4 @@ jobs:
       - name: Mirror the raw sample to the CDN (the CI manifestator is the only writer)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          gh release upload fits.gsfc.nasa.gov WFPC2u5780205r_c0fx.fits \
-            --clobber --repo omegaflow/sources
+          bin/cdn-put fits.gsfc.nasa.gov WFPC2u5780205r_c0fx.fits

@@ -1,8 +1,8 @@
 #!/bin/sh
 # Names every workflow line that publishes to the CDN around the licence check.
-# `gh release upload` is the publication; `gh release create` only opens an empty
-# release (upload_release's ensure_release does that itself).
-# The only gate is bin/cdn-put -> tag_is_admitted -> src/archivar/licences.tsv.
+# The only gate is bin/cdn-put -> phi/sources.φ + src/archivar/licences.tsv.
+# `gh release create` only opens an empty release and is not a publication;
+# `--repo omegaflow/omegaflow` publishes the tool build, not a source asset.
 set -u
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$root" || exit 2
@@ -10,7 +10,13 @@ uploads=0
 files=0
 for f in .github/workflows/*.yml; do
     [ -f "$f" ] || continue
-    hits="$(perl -ne 'print "$.: $_" if /gh release upload/' "$f")"
+    hits="$(perl -ne '
+        next unless /\bgh release upload\b/;
+        next if /--repo\s+"?omegaflow\/omegaflow/;
+        # Meldungstexte ("… returned void", "… failed") sind keine Befehle
+        next if /"[^"]*gh release upload[^"]*(?:returned|failed)/;
+        print "$.: $_";
+    ' "$f")"
     [ -n "$hits" ] || continue
     files=$((files + 1))
     uploads=$((uploads + $(printf '%s\n' "$hits" | wc -l)))

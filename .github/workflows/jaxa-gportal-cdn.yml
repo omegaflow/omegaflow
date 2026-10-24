@@ -163,7 +163,7 @@ jobs:
                  "jaxa-gportal-cdn: fetched payload returned void" \
                  "no jaxa_gportal_*.bin fetched. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          gh release upload gportal.jaxa.jp "${files[@]}" --clobber --repo omegaflow/sources \
+          bin/cdn-put gportal.jaxa.jp "${files[@]}" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "jaxa-gportal-cdn: payload upload returned void" \
                  "gh release upload gportal.jaxa.jp returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
