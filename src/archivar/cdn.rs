@@ -710,7 +710,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn every_terms_token_of_the_register_has_a_verdict_row() {
+    fn every_row_is_a_judged_licence() {
+        let bad: Vec<(&str, &str)> = licences()
+            .iter()
+            .filter(|(_, verdict)| verdict.as_str() != "admitted" && verdict.as_str() != "declined")
+            .map(|(term, verdict)| (term.as_str(), verdict.as_str()))
+            .collect();
+        assert!(
+            bad.is_empty(),
+            "a licence row is either admitted or declined — no third state: {bad:?}"
+        );
+    }
+
+    #[test]
+    fn an_unjudged_terms_token_is_not_admitted() {
         let Ok(text) = std::fs::read_to_string("phi/sources.φ") else {
             return;
         };
@@ -722,19 +735,16 @@ mod tests {
             .collect();
         tokens.sort();
         tokens.dedup();
-        let missing: Vec<&str> = tokens
+        let unjudged: Vec<&str> = tokens
             .iter()
             .map(String::as_str)
             .filter(|token| {
-                !licences()
-                    .iter()
-                    .any(|(term, _)| term.as_str() == *token)
+                !licences().iter().any(|(term, _)| term.as_str() == *token)
             })
             .collect();
-        assert!(
-            missing.is_empty(),
-            "terms tokens without a row in licences.tsv (a new source needs a verdict): {missing:?}"
-        );
+        for token in &unjudged {
+            assert!(!admitted_terms(token), "{token} is not judged and must not be admitted");
+        }
     }
 
     #[test]
