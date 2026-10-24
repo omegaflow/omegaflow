@@ -135,6 +135,7 @@ fn label(block: &[&str], line: usize) -> (String, String) {
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::process::exit;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use omegaflow::archivar::kernel_id_of;
 use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
@@ -145,6 +146,7 @@ const DEFAULT_SPECS: &str = "tools/register/data/instruments.φ";
 struct Ctx {
     fail: bool,
     warnings: bool,
+    probe_max_days: i64,
 }
 
 struct Spec {
@@ -153,6 +155,56 @@ struct Spec {
     cadences: BTreeSet<u64>,
     api_cite: bool,
     instrument_cite: bool,
+    probe: Option<Probe>,
+}
+
+struct Probe {
+    date: String,
+    status: String,
+    url: String,
+}
+
+fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
+    let y = if m <= 2 { y - 1 } else { y };
+    let era = (if y >= 0 { y } else { y - 399 }) / 400;
+    let yoe = y - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    era * 146097 + doe - 719468
+}
+
+fn parse_date(s: &str) -> Option<i64> {
+    let mut it = s.split('-');
+    let y: i64 = it.next()?.parse().ok()?;
+    let m: i64 = it.next()?.parse().ok()?;
+    let d: i64 = it.next()?.parse().ok()?;
+    if it.next().is_some() || !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+        return None;
+    }
+    Some(days_from_civil(y, m, d))
+}
+
+fn today_days() -> Option<i64> {
+    let secs = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
+    Some((secs / 86400) as i64)
+}
+
+fn probe_admits(status: &str) -> bool {
+    status
+        .parse::<u16>()
+        .ok()
+        .is_some_and(|code| (200..300).contains(&code))
+}
+
+fn origin_stem(url: &str) -> &str {
+    let cut = url
+        .find('?')
+        .into_iter()
+        .chain(url.find('{'))
+        .min()
+        .unwrap_or(url.len());
+    &url[..cut]
 }
 
 fn host_of(url: &str) -> Option<String> {
@@ -185,6 +237,7 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                             cadences: BTreeSet::new(),
                             api_cite: false,
                             instrument_cite: false,
+                            probe: None,
                         },
                     );
                     current = Some(token);
@@ -214,6 +267,18 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                     }
                     "api_cite" => entry.api_cite = value.is_some(),
                     "instrument_cite" => entry.instrument_cite = value.is_some(),
+                    "probe" => {
+                        let (Some(date), Some(status), Some(url)) =
+                            (value.clone(), p.get(2), p.get(3))
+                        else {
+                            continue;
+                        };
+                        entry.probe = Some(Probe {
+                            date,
+                            status: (*status).to_string(),
+                            url: (*url).to_string(),
+                        });
+                    }
                     _ => {}
                 }
             }
@@ -229,6 +294,7 @@ fn main() {
     let mut ctx = Ctx {
         fail: false,
         warnings: false,
+        probe_max_days: 0,
     };
     let mut i = 1;
     while i < args.len() {
@@ -249,6 +315,13 @@ fn main() {
             }
             "--fail" => ctx.fail = true,
             "--warnings" => ctx.warnings = true,
+            "--probe-max-days" => {
+                i += 1;
+                match args.get(i).and_then(|v| v.parse::<i64>().ok()) {
+                    Some(v) => ctx.probe_max_days = v,
+                    None => exit(2),
+                }
+            }
             _ => {}
         }
         i += 1;
@@ -332,10 +405,95 @@ fn main() {
         let no_cadence = field_of(&block, "no-cadence").is_some();
         let instrument = field_of(&block, "instrument")
             .and_then(|p| p.get(1).copied().map(str::to_string));
-        let block_host = field_of(&block, "origin")
-            .and_then(|p| p.get(1).copied())
-            .and_then(host_of);
+        let origin_url = field_of(&block, "origin").and_then(|p| p.get(1).copied());
+        let block_host = origin_url.and_then(host_of);
         let mut names: BTreeSet<String> = BTreeSet::new();
+
+        if has_observables(&block) {
+            let stem = origin_url.map(origin_stem);
+            match (stem, block_host.as_ref().and_then(|h| specs.get(h))) {
+                (None, _) => push(
+                    "probe_no_origin",
+                    format!("{tag}\t{name}"),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                ),
+                (Some(_), None) => push(
+                    "probe_missing",
+                    format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                ),
+                (Some(stem), Some(entry)) => match &entry.probe {
+                    None => push(
+                        "probe_missing",
+                        format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    ),
+                    Some(probe) => {
+                        if !probe_admits(&probe.status) {
+                            push(
+                                "probe_absent",
+                                format!("{tag}\t{name}\t{}\t{}", probe.status, probe.url),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            );
+                        }
+                        if !probe.url.starts_with(stem) {
+                            push(
+                                "probe_path_mismatch",
+                                format!("{tag}\t{name}\t{stem}\t{}", probe.url),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            );
+                        }
+                        match (parse_date(&probe.date), today_days()) {
+                            (Some(day), Some(today)) => {
+                                let age = today - day;
+                                if age < -1 {
+                                    push(
+                                        "probe_date",
+                                        format!("{tag}\t{name}\t{}\tfuture", probe.date),
+                                        true,
+                                        &mut findings,
+                                        &mut hard,
+                                        &mut soft,
+                                    );
+                                } else if ctx.probe_max_days > 0 && age > ctx.probe_max_days {
+                                    push(
+                                        "probe_stale",
+                                        format!("{tag}\t{name}\t{}\t{age}d", probe.date),
+                                        true,
+                                        &mut findings,
+                                        &mut hard,
+                                        &mut soft,
+                                    );
+                                }
+                            }
+                            _ => push(
+                                "probe_date",
+                                format!("{tag}\t{name}\t{}", probe.date),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            ),
+                        }
+                    }
+                },
+            }
+        }
 
         for line_text in &block {
             let parts: Vec<&str> = line_text.split_whitespace().collect();
