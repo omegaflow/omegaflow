@@ -23,57 +23,57 @@ PD	admitted	standard licence text
 PD-USGov	admitted	standard licence text
 PD-USGov-PDS	admitted	standard licence text
 PDDL-1.0	admitted	standard licence text
-SWS-WDC	declined	BOM copyright, no redistribution grant
+SWS-WDC	pending	rights holder not yet named or no declining sentence read: BOM copyright, no redistribution grant
 USGov-disclaimer	admitted	standard licence text
-alma-publication-acknowledgement	declined	publication acknowledgement, no redistribution grant
-arXiv-nonexclusive-distrib-1.0	declined	grants arXiv a non-exclusive right to distribute, not third parties
+alma-publication-acknowledgement	pending	rights holder not yet named or no declining sentence read: publication acknowledgement, no redistribution grant
+arXiv-nonexclusive-distrib-1.0	pending	rights holder not yet named or no declining sentence read: grants arXiv a non-exclusive right to distribute, not third parties
 argo-free	admitted	"Argo data are freely available without restriction"
 attribution	pending	not a licence: 8 different sources (UCalgary, GAVO, EDGES, IceCube, NSO, ORNL, WSO) — each needs its own terms token
-babamul-no-license	declined	
-bgi-nc	declined	free for non-commercial use, no redistribution grant
+babamul-no-license	pending	rights holder not yet named or no declining sentence read: 
+bgi-nc	pending	rights holder not yet named or no declining sentence read: free for non-commercial use, no redistribution grant
 cadc-open	admitted	CADC: "public domain and made available under the Creative Commons License CC BY 4"
-cdpp-sipad-licence	declined	SIPAD V1.1 2000-01-04: redistribution needs the licensor written consent
+cdpp-sipad-licence	declined	rights holder: CNES/CNRS (SIPAD licensor); communication to third parties needs the Licensor written prior agreement
 cedar-rules-of-the-road	admitted	CEDAR rules of the road: data may be made available through another database with acknowledgement, data suppliers named in publications
-columbia-research-noncommercial	declined	research terms, no redistribution grant
-datacentral-acknowledgement	declined	acknowledgement only, no licence grant
+columbia-research-noncommercial	pending	rights holder not yet named or no declining sentence read: research terms, no redistribution grant
+datacentral-acknowledgement	pending	rights holder not yet named or no declining sentence read: acknowledgement only, no licence grant
 dl-de-by-2.0	admitted	standard licence text
 dlr-license	admitted	IMPC/DLR: redistribution allowed when third parties accept, commercial use needs permission
 eccc-end-use-licence	admitted	ECCC End-use Licence 2.1.1: "free to copy, modify, publish, translate, adapt, distribute ... for any lawful purpose" with attribution
 eida-data-policy	admitted	ORFEUS EIDA open and FAIR, acknowledgement requested
 eiscat-rules-of-the-road	admitted	EISCAT rules of the road: redistribution through another database allowed with acknowledgement and supplier contact
-erg-sc-rules-of-the-road	declined	"Redistribution of the data files is strictly prohibited"
-eso-data-access-policy	declined	VizieR licence: no redistribution grant, copyright stays with the catalogue
+erg-sc-rules-of-the-road	declined	rights holder: ERG Science Center (ISEE/Nagoya); "Redistribution of the data files is strictly prohibited"
+eso-data-access-policy	pending	rights holder not yet named or no declining sentence read: VizieR licence: no redistribution grant, copyright stays with the catalogue
 etalab-2.0	admitted	standard licence text
-fingrid-open	declined	API access only, no data licence grant
+fingrid-open	pending	rights holder not yet named or no declining sentence read: API access only, no data licence grant
 free-open	pending	not a licence: 26 different origins, each needs its own terms token
 gebco-terms	admitted	"The GEBCO Grid is placed in the public domain and may be used free of charge"
 gosat-data-policy	pending	rights holder: NIES (operates G3PA); policy page down until 2026-10-29, no archive copy
-hawc-public	declined	no licence line on the dataset pages
-ia2-acknowledgement	declined	acknowledgement page, no licence grant
-ieeg-terms	declined	service terms, no redistribution grant
-ilrs-no-license	declined	
-ioc-data-exchange-no-commercial	declined	no-commercial exchange, no redistribution grant
-ipac-public	declined	VizieR licence: no redistribution grant, copyright stays with the catalogue
+hawc-public	pending	rights holder not yet named or no declining sentence read: no licence line on the dataset pages
+ia2-acknowledgement	pending	rights holder not yet named or no declining sentence read: acknowledgement page, no licence grant
+ieeg-terms	pending	rights holder not yet named or no declining sentence read: service terms, no redistribution grant
+ilrs-no-license	pending	rights holder not yet named or no declining sentence read: 
+ioc-data-exchange-no-commercial	pending	rights holder not yet named or no declining sentence read: no-commercial exchange, no redistribution grant
+ipac-public	pending	rights holder not yet named or no declining sentence read: VizieR licence: no redistribution grant, copyright stays with the catalogue
 jp-public-data-license-1.0	admitted	standard licence text
-kari-public-release	declined	rights holder: KARI; site: Copyright (c) 2019 KARI All right reserved
-kcdc-eula	declined	EULA, no redistribution grant
-lasair-copyright	declined	
-ligo-public	declined	alerts are "public", but no licence grants redistribution
-naoj-copyright	declined	
-nist-srd-copyright	declined	NIST SRD: all rights reserved, no reproduction without prior permission
-nmdb-non-commercial	declined	NMDB: data are the property of the individual providers, free for non-commercial use only, no redistribution grant
-no-license	declined	no licence stated
-no-redistribution	declined	explicit no-redistribution
+kari-public-release	declined	rights holder: KARI; "Copyright (c) 2019 KARI All right reserved"
+kcdc-eula	pending	rights holder not yet named or no declining sentence read: EULA, no redistribution grant
+lasair-copyright	pending	rights holder not yet named or no declining sentence read: 
+ligo-public	pending	rights holder not yet named or no declining sentence read: alerts are "public", but no licence grants redistribution
+naoj-copyright	pending	rights holder not yet named or no declining sentence read: 
+nist-srd-copyright	declined	rights holder: US Secretary of Commerce; "All rights reserved ... may not be reproduced ... without prior permission"
+nmdb-non-commercial	pending	rights holder not yet named or no declining sentence read: NMDB: data are the property of the individual providers, free for non-commercial use only, no redistribution grant
+no-license	pending	rights holder not yet named or no declining sentence read: no licence stated
+no-redistribution	declined	rights holder: SuperMAG (JHU/APL); explicit no-redistribution
 noaa-nodd-open	admitted	rights holder: United States Government (NOAA); 17 USC 105 — works of the US Government carry no copyright
-noaa-open-disclaimer	declined	UHSLC: "Copyright (c) 2015-2026 ... All Rights Reserved"
+noaa-open-disclaimer	declined	rights holder: University of Hawaii Sea Level Center; "Copyright (c) 2015-2026 ... All Rights Reserved"
 non-commercial-government-licence-2.0	admitted	NCGL v2: "You are free to: copy, publish, distribute and transmit the Information" for non-commercial purposes
-onc-open	declined	terms-of-use covers user submissions, no data licence stated
+onc-open	pending	rights holder not yet named or no declining sentence read: terms-of-use covers user submissions, no data licence stated
 other-attribution	pending	not a licence: 11 different sources (Copernicus EWDS, Exoplanet Archive, GCN, GSA, HESS, LASP, NED, NSDB, SuperDARN, AOML, NIST, WaterQuality) — each needs its own terms token
 own-work	admitted	standard licence text
-pradan-terms	declined	login-gated, no licence grant
+pradan-terms	pending	rights holder not yet named or no declining sentence read: login-gated, no licence grant
 rpw-public-ack	pending	rights holder: RPW team (CNRS/LESIA), data centre OBSPM; terms page unreachable, no sentence read
-tns-copyright	declined	
-vires-esa-attribution	declined	VirES service terms: use and reproduction solely on the VRE, non-commercial only
-vizier-scientific-free	declined	VizieR licence read: free for scientific use, the copyright stays with the originating catalogue, no redistribution grant
+tns-copyright	pending	rights holder not yet named or no declining sentence read: 
+vires-esa-attribution	declined	rights holder: ESA; service terms allow reproduction solely on the VRE, non-commercial
+vizier-scientific-free	pending	rights holder not yet named or no declining sentence read: VizieR licence read: free for scientific use, the copyright stays with the originating catalogue, no redistribution grant
 wdcb-nc	admitted	"open and freely available for scientific, educational, and other non-commercial purposes without restriction"
 wmo-data-policy	admitted	rights holder: Environment and Climate Change Canada (MSC, operates WOUDC); ECCC End-use Licence 2.1.1 permits distribution with attribution
