@@ -46,7 +46,7 @@ erg-sc-rules-of-the-road	unread
 eso-data-access-policy	unread	
 etalab-2.0	admitted	standard licence text
 fingrid-open	unread	
-free-open	unread	
+free-open	refused	not a licence: 26 different origins, each needs its own terms token
 gebco-terms	unread	
 gosat-data-policy	unread	
 hawc-public	unread	
@@ -75,6 +75,6 @@ pradan-terms	unread
 rpw-public-ack	unread	
 tns-copyright	refused	
 vires-esa-attribution	unread	
-vizier-scientific-free	unread	
+vizier-scientific-free	refused	VizieR licence: free for scientific use, copyright stays with the originating catalogue — no redistribution grant
 wdcb-nc	unread	
 wmo-data-policy	unread	
