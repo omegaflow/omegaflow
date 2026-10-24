@@ -1648,6 +1648,29 @@ fn print_cache_clear() {
     );
 }
 
+fn spec_suffix() -> Option<String> {
+    let mut parts: Vec<String> = Vec::new();
+    for (key, label) in [
+        ("SPEC_QUANTITY", "quantity"),
+        ("SPEC_BAND", "band"),
+        ("SPEC_UNIT", "unit"),
+        ("SPEC_CADENCE", "cadence"),
+        ("SPEC_INSTRUMENT", "instrument"),
+    ] {
+        if let Ok(value) = std::env::var(key) {
+            let value = value.trim();
+            if !value.is_empty() {
+                parts.push(format!("{label}={value}"));
+            }
+        }
+    }
+    if parts.is_empty() {
+        None
+    } else {
+        Some(parts.join(";"))
+    }
+}
+
 fn emit_hits(
     sink: &mut output::Sink,
     mut lines: Vec<String>,
@@ -1657,6 +1680,14 @@ fn emit_hits(
     fulltext_used: &mut usize,
 ) {
     fulltext::run_budget(fulltext_on, &mut lines, fulltext_limit, fulltext_used);
+    if let Some(spec) = spec_suffix() {
+        for line in lines.iter_mut() {
+            if line.starts_with('[') && (line.contains("] url ") || line.contains("] doi: ")) {
+                line.push_str("\tspec: ");
+                line.push_str(&spec);
+            }
+        }
+    }
     sink.emit(&lines, mode);
 }
 

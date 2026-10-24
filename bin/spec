@@ -69,7 +69,9 @@ for arm in $(printf '%s' "$arms" | tr ',' ' '); do
     fi
     for q in "$q1$neg" "$q2$neg" "$q3$neg" ${extra:+"$extra"}; do
         printf '== %s · %s ==\n' "$arm" "$q" >&2
-        out="$("$bin" --"$arm" "$q" 2>&1 | WITHOUT="$without" SPEC_Q="${quantity:-}" SPEC_B="${band:-}" SPEC_U="${unit:-}" SPEC_C="${cadence:-}" SPEC_I="${instrument:-}" perl -ne '
+        out="$(SPEC_QUANTITY="${quantity:-}" SPEC_BAND="${band:-}" SPEC_UNIT="${unit:-}" \
+               SPEC_CADENCE="${cadence:-}" SPEC_INSTRUMENT="${instrument:-}" \
+               "$bin" --"$arm" "$q" 2>&1 | WITHOUT="$without" perl -ne '
             # --without ist ein Filter, kein Suchwort: kein Treffer eines
             # ausgeschlossenen Brands darf die Ausgabe erreichen. Manche Arme
             # liefern keine URL, sondern nur einen DOI — dann trägt das
@@ -91,18 +93,6 @@ for arm in $(printf '%s' "$arms" | tr ',' ' '); do
                     for my $x (@ex) { $skip = 1 if index($h, lc $x) >= 0 }
                     next if $skip;
                 }
-            }
-            # Jeder Treffer trägt die Messung, unter der er gefunden wurde.
-            # Ohne das bleibt als Lizenzschlüssel nur die URL.
-            if (/^\[[^\]]+\] (?:url\s|doi:\s)/) {
-                my @axes;
-                push @axes, "quantity=" . $ENV{SPEC_Q} if length($ENV{SPEC_Q} // "");
-                push @axes, "band=" . $ENV{SPEC_B}     if length($ENV{SPEC_B} // "");
-                push @axes, "unit=" . $ENV{SPEC_U}     if length($ENV{SPEC_U} // "");
-                push @axes, "cadence=" . $ENV{SPEC_C}  if length($ENV{SPEC_C} // "");
-                push @axes, "instrument=" . $ENV{SPEC_I} if length($ENV{SPEC_I} // "");
-                s/\s*$//;
-                $_ .= "\tspec: " . join(";", @axes) . "\n" if @axes;
             }
             print;
         ' | head -n "$top")"
