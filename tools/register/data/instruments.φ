@@ -1,7 +1,18 @@
-instrument fluxgate
+host imag-data.bgs.ac.uk
+  instrument fluxgate
   unit nT
   cadence 1 60
   api_cite https://imag-data.bgs.ac.uk/GIN_V1/
   api_quote "samplesPerDay 1440 = Minute; orientation XYZF; HAPI 3.1"
   instrument_cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/
   instrument_quote "Fluxgate variometers usually have 3 orthogonal fluxgate sensors; Resolution 0.1nT"
+  note bulk distribution needs written permission
+
+host opendata.fmi.fi
+  instrument fluxgate
+  unit nT
+  cadence 60
+  api_cite https://opendata.fmi.fi/wfs
+  api_quote "storedquery_id=fmi::observations::magnetometer::simple; CC BY 4.0 (en.ilmatieteenlaitos.fi/open-data-licence)"
+  instrument_cite https://www.sgo.fi/Data/Magnetometer/magnDescr.php
+  instrument_quote "Danish fluxgate magnetometer (FG); sampling rate 2 Hz; one-minute values are averages of +/- 30 s around the full minute"

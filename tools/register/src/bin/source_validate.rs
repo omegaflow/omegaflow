@@ -148,10 +148,21 @@ struct Ctx {
 }
 
 struct Spec {
+    instrument: String,
     units: BTreeSet<String>,
     cadences: BTreeSet<u64>,
     api_cite: bool,
     instrument_cite: bool,
+}
+
+fn host_of(url: &str) -> Option<String> {
+    let rest = url.split_once("://")?.1;
+    let host = rest.split(['/', '?']).next()?;
+    if host.is_empty() {
+        None
+    } else {
+        Some(host.to_string())
+    }
 }
 
 fn load_specs(path: &str) -> BTreeMap<String, Spec> {
@@ -164,11 +175,12 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
         let p: Vec<&str> = line.split_whitespace().collect();
         let value = p.get(1).map(|s| s.to_string());
         match p.first().copied() {
-            Some("instrument") => {
+            Some("host") => {
                 if let Some(token) = value {
                     out.insert(
                         token.clone(),
                         Spec {
+                            instrument: String::new(),
                             units: BTreeSet::new(),
                             cadences: BTreeSet::new(),
                             api_cite: false,
@@ -183,6 +195,11 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                     continue;
                 };
                 match key {
+                    "instrument" => {
+                        if let Some(v) = value {
+                            entry.instrument = v;
+                        }
+                    }
                     "unit" => {
                         for u in &p[1..] {
                             entry.units.insert(u.to_string());
@@ -196,7 +213,8 @@ fn load_specs(path: &str) -> BTreeMap<String, Spec> {
                         }
                     }
                     "api_cite" => entry.api_cite = value.is_some(),
-                    "instrument_cite" => entry.instrument_cite = value.is_some(),                    _ => {}
+                    "instrument_cite" => entry.instrument_cite = value.is_some(),
+                    _ => {}
                 }
             }
             None => {}
@@ -314,6 +332,9 @@ fn main() {
         let no_cadence = field_of(&block, "no-cadence").is_some();
         let instrument = field_of(&block, "instrument")
             .and_then(|p| p.get(1).copied().map(str::to_string));
+        let block_host = field_of(&block, "origin")
+            .and_then(|p| p.get(1).copied())
+            .and_then(host_of);
         let mut names: BTreeSet<String> = BTreeSet::new();
 
         for line_text in &block {
@@ -362,9 +383,10 @@ fn main() {
                 );
             }
             if let Some(inst) = &instrument {
-                match specs.get(inst) {
+                let spec = block_host.as_ref().and_then(|h| specs.get(h));
+                match spec {
                     None => push(
-                        "instrument_unknown",
+                        "spec_missing_for_host",
                         format!("{tag}\t{name}\t{fname}\t{inst}"),
                         true,
                         &mut findings,
@@ -372,6 +394,16 @@ fn main() {
                         &mut soft,
                     ),
                     Some(entry) => {
+                        if entry.instrument != *inst {
+                            push(
+                                "instrument_mismatch",
+                                format!("{tag}\t{name}\t{inst}\t{}", entry.instrument),
+                                true,
+                                &mut findings,
+                                &mut hard,
+                                &mut soft,
+                            );
+                        }
                         if !entry.api_cite || !entry.instrument_cite {
                             push(
                                 "spec_incomplete",
