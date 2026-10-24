@@ -1,17 +1,22 @@
 #!/bin/sh
 # Gate 3 — keine zweite Linie. Ein Push darf nur main aktualisieren; ein Branch,
-# der die Maschine verlässt, ist eine Linie, die niemand mehr sieht.
-# Lokale Branches bleiben erlaubt (sie erreichen kein Remote), müssen aber vor
-# dem nächsten Push gelöscht oder gemerged werden.
+# der die Maschine verlaesst, ist eine Linie, die niemand mehr sieht.
+# Loeschungen sind erlaubt (sie bauen Linien ab, nicht auf). Lokale Branches
+# bleiben erlaubt, solange sie das Remote nicht erreichen.
 set -u
 rc=0
 while read -r local_ref local_sha remote_ref remote_sha; do
     case "$remote_ref" in
-        refs/heads/main) ;;
+        refs/heads/main|refs/tags/*) ;;
         *)
-            echo "pre-push: $remote_ref abgelehnt — es gibt nur eine Linie: main" >&2
-            echo "pre-push: lokal weiterarbeiten ist erlaubt, aber nicht veröffentlichen." >&2
-            rc=1
+            case "$local_sha" in
+                0000000000000000000000000000000000000000) ;;
+                *)
+                    echo "pre-push: $remote_ref abgelehnt — es gibt nur eine Linie: main" >&2
+                    echo "pre-push: lokal weiterarbeiten ist erlaubt, aber nicht veroeffentlichen." >&2
+                    rc=1
+                    ;;
+            esac
             ;;
     esac
 done
