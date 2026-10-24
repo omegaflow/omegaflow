@@ -56,6 +56,20 @@ q3="$quantity"
 for arm in $(printf '%s' "$arms" | tr ',' ' '); do
     for q in "$q1$neg" "$q2$neg" "$q3$neg" ${extra:+"$extra"}; do
         printf '== %s · %s ==\n' "$arm" "$q" >&2
-        "$bin" --"$arm" "$q" 2>&1 | head -n "$top"
+        "$bin" --"$arm" "$q" 2>&1 | WITHOUT="$without" perl -ne '
+            # --without ist ein Filter, kein Suchwort: kein Treffer eines
+            # ausgeschlossenen Brands darf die Ausgabe erreichen.
+            my @ex = grep { length } split /\s+/, ($ENV{WITHOUT} // "");
+            if (@ex) {
+                my ($u) = /url\s+(\S+)/;
+                if (defined $u && $u =~ m{://([^/]+)}) {
+                    my $h = lc $1;
+                    my $skip = 0;
+                    for my $x (@ex) { $skip = 1 if index($h, lc $x) >= 0 }
+                    next if $skip;
+                }
+            }
+            print;
+        ' | head -n "$top"
     done
 done
