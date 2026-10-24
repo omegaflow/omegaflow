@@ -34,14 +34,14 @@ babamul-no-license	refused
 bgi-nc	refused	free for non-commercial use, no redistribution grant
 cadc-open	admitted	CADC: "public domain and made available under the Creative Commons License CC BY 4"
 cdpp-sipad-licence	refused	SIPAD V1.1 2000-01-04: redistribution needs the licensor written consent
-cedar-rules-of-the-road	unread	
+cedar-rules-of-the-road	admitted	CEDAR rules of the road: data may be made available through another database with acknowledgement, data suppliers named in publications
 columbia-research-noncommercial	refused	research terms, no redistribution grant
 datacentral-acknowledgement	refused	acknowledgement only, no licence grant
 dl-de-by-2.0	admitted	standard licence text
 dlr-license	admitted	IMPC/DLR: redistribution allowed when third parties accept, commercial use needs permission
 eccc-end-use-licence	admitted	ECCC End-use Licence 2.1.1: "free to copy, modify, publish, translate, adapt, distribute ... for any lawful purpose" with attribution
 eida-data-policy	admitted	ORFEUS EIDA open and FAIR, acknowledgement requested
-eiscat-rules-of-the-road	unread	
+eiscat-rules-of-the-road	admitted	EISCAT rules of the road: redistribution through another database allowed with acknowledgement and supplier contact
 erg-sc-rules-of-the-road	refused	"Redistribution of the data files is strictly prohibited"
 eso-data-access-policy	refused	VizieR licence: no redistribution grant, copyright stays with the catalogue
 etalab-2.0	admitted	standard licence text
@@ -62,7 +62,7 @@ lasair-copyright	refused
 ligo-public	refused	alerts are "public", but no licence grants redistribution
 naoj-copyright	refused	
 nist-srd-copyright	refused	NIST SRD: all rights reserved, no reproduction without prior permission
-nmdb-non-commercial	unread	
+nmdb-non-commercial	refused	NMDB: data are the property of the individual providers, free for non-commercial use only, no redistribution grant
 no-license	refused	no licence stated
 no-redistribution	refused	explicit no-redistribution
 noaa-nodd-open	unread	
