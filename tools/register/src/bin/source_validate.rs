@@ -185,9 +185,24 @@ fn parse_date(s: &str) -> Option<i64> {
     Some(days_from_civil(y, m, d))
 }
 
-fn today_days() -> Option<i64> {
-    let secs = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
-    Some((secs / 86400) as i64)
+fn now_secs() -> Option<i64> {
+    Some(SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs() as i64)
+}
+
+fn parse_probe_ts(s: &str) -> Option<i64> {
+    if let Some((date, time)) = s.split_once('T') {
+        let day = parse_date(date)?;
+        let mut it = time.trim_end_matches('Z').split(':');
+        let h: i64 = it.next()?.parse().ok()?;
+        let m: i64 = it.next()?.parse().ok()?;
+        let sec: i64 = it.next()?.parse().ok()?;
+        if h > 23 || m > 59 || sec > 60 {
+            return None;
+        }
+        Some(day * 86400 + h * 3600 + m * 60 + sec)
+    } else {
+        Some(parse_date(s)? * 86400 + 86399)
+    }
 }
 
 fn probe_admits(status: &str) -> bool {
@@ -458,10 +473,12 @@ fn main() {
                                 &mut soft,
                             );
                         }
-                        match (parse_date(&probe.date), today_days()) {
-                            (Some(day), Some(today)) => {
-                                let age = today - day;
-                                if age < -1 {
+                        let ttl = field_of(&block, "ttl")
+                            .and_then(|p| p.get(1).copied())
+                            .and_then(|v| v.parse::<i64>().ok());
+                        match (parse_probe_ts(&probe.date), now_secs()) {
+                            (Some(ts), Some(now)) => {
+                                if ts > now + 86400 {
                                     push(
                                         "probe_date",
                                         format!("{tag}\t{name}\t{}\tfuture", probe.date),
@@ -470,15 +487,29 @@ fn main() {
                                         &mut hard,
                                         &mut soft,
                                     );
-                                } else if ctx.probe_max_days > 0 && age > ctx.probe_max_days {
-                                    push(
-                                        "probe_stale",
-                                        format!("{tag}\t{name}\t{}\t{age}d", probe.date),
-                                        true,
-                                        &mut findings,
-                                        &mut hard,
-                                        &mut soft,
-                                    );
+                                } else {
+                                    let limit = ttl
+                                        .filter(|t| *t > 0)
+                                        .or_else(|| {
+                                            (ctx.probe_max_days > 0)
+                                                .then_some(ctx.probe_max_days * 86400)
+                                        });
+                                    if let Some(limit) = limit
+                                        && now - ts > limit
+                                    {
+                                        push(
+                                            "probe_stale",
+                                            format!(
+                                                "{tag}\t{name}\t{}\t{}s>{limit}s",
+                                                probe.date,
+                                                now - ts
+                                            ),
+                                            true,
+                                            &mut findings,
+                                            &mut hard,
+                                            &mut soft,
+                                        );
+                                    }
                                 }
                             }
                             _ => push(

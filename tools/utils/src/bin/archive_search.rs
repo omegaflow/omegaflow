@@ -415,6 +415,7 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--apis" => Some(Mode::Net("apis")),
         "--datacite" => Some(Mode::Net("datacite")),
         "--sniff" => Some(Mode::Net("sniff")),
+        "--probe" => Some(Mode::Net("probe")),
         "--zenodo" => Some(Mode::Net("zenodo")),
         "--youcom" => Some(Mode::Net("youcom")),
         "--youmcp" => Some(Mode::Net("youmcp")),
@@ -3157,6 +3158,9 @@ fn usage_full() {
     );
     eprintln!(
         "reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)"
+    );
+    eprintln!(
+        "probe:    archive_search --probe <url>   (one line for a host row: probe <utc> <status> <url>, the status the compiler would see on the direct path)"
     );
     eprintln!(
         "images:   archive_search --pdf-image <file|url> [--out <dir>]   (lifts embedded JPEG/PNG/JP2 from a PDF; without --out the files land in the temp dir)"

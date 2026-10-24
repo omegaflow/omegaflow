@@ -594,12 +594,40 @@ pub(crate) fn json_escape(s: &str) -> String {
 }
 
 pub(crate) fn today() -> String {
+    now_utc()[..10].to_string()
+}
+
+pub(crate) fn now_utc() -> String {
     let secs = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
         Ok(d) => d.as_secs() as i64,
         Err(neg) => -(neg.duration().as_secs() as i64),
     };
     let (y, m, d) = civil_from_days(secs.div_euclid(86400));
-    format!("{:04}-{:02}-{:02}", y, m, d)
+    let s = secs.rem_euclid(86400);
+    format!(
+        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+        y,
+        m,
+        d,
+        s / 3600,
+        (s % 3600) / 60,
+        s % 60
+    )
+}
+
+pub fn probe_lines(url: &str) -> Vec<String> {
+    if let Some(repo) = crate::find_repo_root() {
+        crate::token::set_secrets(crate::secrets::load_env(&repo));
+    }
+    let fetched = verdict_probe(url, "30", &Exit::Direct);
+    let status = match &fetched {
+        Some(f) => match f.status {
+            Some(code) => code.to_string(),
+            None => "absent".to_string(),
+        },
+        None => "absent".to_string(),
+    };
+    vec![format!("probe {} {} {}", now_utc(), status, url)]
 }
 
 fn civil_from_days(z: i64) -> (i64, u32, u32) {
@@ -5931,6 +5959,9 @@ fn run_lines_dispatch(
     }
     if !BROWSE_MODES.contains(&mode) && query.trim().is_empty() {
         return vec![format!("usage — archive_search --{mode} <query>")];
+    }
+    if mode == "probe" {
+        return probe_lines(query);
     }
     let decorated = crate::filters::decorate(mode, query);
     let query = decorated.as_str();
