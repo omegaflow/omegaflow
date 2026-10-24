@@ -738,19 +738,19 @@ mod tests {
     }
 
     #[test]
-    fn unread_rows_name_where_the_verdict_comes_from() {
+    fn pending_rows_name_where_the_verdict_comes_from() {
         let offenders: Vec<&str> = licences()
             .iter()
-            .filter(|(_, verdict)| verdict.as_str() == "unread")
+            .filter(|(_, verdict)| verdict.as_str() == "pending")
             .map(|(term, _)| term.as_str())
             .filter(|term| {
                 let note = licences_note(term).unwrap_or("");
-                !note.contains("http")
+                !note.contains("http") && !note.starts_with("not a licence")
             })
             .collect();
         assert!(
             offenders.is_empty(),
-            "unread tokens without an evidence URL: {offenders:?}"
+            "pending tokens without an evidence URL and without the not-a-licence mark: {offenders:?}"
         );
     }
 
