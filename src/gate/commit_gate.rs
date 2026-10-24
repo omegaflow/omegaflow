@@ -1268,6 +1268,30 @@ impl Gate {
                     });
                 }
             }
+            if path.starts_with("tools/") && path.contains("/src/bin/") && prod.contains("upload_release(") {
+                let mut public = false;
+                let mut rest = prod.as_str();
+                while let Some(start) = rest.find('"') {
+                    let after = &rest[start + 1..];
+                    let Some(end) = after.find('"') else {
+                        break;
+                    };
+                    if crate::archivar::cdn::tag_is_admitted(&after[..end]) {
+                        public = true;
+                        break;
+                    }
+                    rest = &after[end + 1..];
+                }
+                if public && !prod.contains("require_ci()") {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "compiler-without-require-ci".to_string(),
+                        line: 1,
+                        feedback: "a binary that compiles an admitted (CDN) source must carry require_ci() at the top of main — without it it runs locally, writes sources/ and never uploads; a LOCK source (no admitted tag) stays exempt".to_string(),
+                        quote: clip(&prod, 90),
+                    });
+                }
+            }
             let german_char_idx = v.german_chars.iter().find_map(|c| prod.find(*c));
             let german_word_idx = v
                 .german_function_words
