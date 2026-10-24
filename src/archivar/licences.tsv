@@ -27,7 +27,7 @@ PDDL-1.0	admitted	standard licence text
 SWS-WDC	unread	
 USGov-disclaimer	admitted	standard licence text
 alma-publication-acknowledgement	unread	
-arXiv-nonexclusive-distrib-1.0	unread	
+arXiv-nonexclusive-distrib-1.0	refused	grants arXiv a non-exclusive right to distribute, not third parties
 argo-free	unread	
 attribution	unread	
 babamul-no-license	refused	
@@ -42,19 +42,19 @@ dlr-license	admitted	IMPC/DLR: redistribution allowed when third parties accept,
 eccc-end-use-licence	unread	
 eida-data-policy	admitted	ORFEUS EIDA open and FAIR, acknowledgement requested
 eiscat-rules-of-the-road	unread	
-erg-sc-rules-of-the-road	unread	
-eso-data-access-policy	unread	
+erg-sc-rules-of-the-road	refused	"Redistribution of the data files is strictly prohibited"
+eso-data-access-policy	refused	VizieR licence: no redistribution grant, copyright stays with the catalogue
 etalab-2.0	admitted	standard licence text
 fingrid-open	unread	
 free-open	refused	not a licence: 26 different origins, each needs its own terms token
-gebco-terms	unread	
+gebco-terms	admitted	"The GEBCO Grid is placed in the public domain and may be used free of charge"
 gosat-data-policy	unread	
 hawc-public	unread	
 ia2-acknowledgement	unread	
 ieeg-terms	unread	
 ilrs-no-license	refused	
 ioc-data-exchange-no-commercial	unread	
-ipac-public	unread	
+ipac-public	refused	VizieR licence: no redistribution grant, copyright stays with the catalogue
 jp-public-data-license-1.0	admitted	standard licence text
 kari-public-release	unread	
 kcdc-eula	unread	
@@ -66,7 +66,7 @@ nmdb-non-commercial	unread
 no-license	refused	no licence stated
 no-redistribution	refused	explicit no-redistribution
 noaa-nodd-open	unread	
-noaa-open-disclaimer	admitted	standard licence text
+noaa-open-disclaimer	refused	UHSLC: "Copyright (c) 2015-2026 ... All Rights Reserved"
 non-commercial-government-licence-2.0	unread	
 onc-open	unread	
 other-attribution	unread	
@@ -76,5 +76,5 @@ rpw-public-ack	unread
 tns-copyright	refused	
 vires-esa-attribution	unread	
 vizier-scientific-free	refused	VizieR licence: free for scientific use, copyright stays with the originating catalogue — no redistribution grant
-wdcb-nc	unread	
+wdcb-nc	admitted	"open and freely available for scientific, educational, and other non-commercial purposes without restriction"
 wmo-data-policy	unread	
