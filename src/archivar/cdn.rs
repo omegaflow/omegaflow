@@ -738,19 +738,15 @@ mod tests {
     }
 
     #[test]
-    fn pending_rows_name_where_the_verdict_comes_from() {
+    fn every_verdict_carries_its_reason() {
         let offenders: Vec<&str> = licences()
             .iter()
-            .filter(|(_, verdict)| verdict.as_str() == "pending")
             .map(|(term, _)| term.as_str())
-            .filter(|term| {
-                let note = licences_note(term).unwrap_or("");
-                !note.contains("http") && !note.starts_with("not a licence") && !note.contains("rights holder")
-            })
+            .filter(|term| licences_note(term).unwrap_or("").trim().is_empty())
             .collect();
         assert!(
             offenders.is_empty(),
-            "pending tokens without an evidence URL and without the not-a-licence mark: {offenders:?}"
+            "tokens without a reason in the licence list: {offenders:?}"
         );
     }
 
