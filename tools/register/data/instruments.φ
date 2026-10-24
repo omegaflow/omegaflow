@@ -122,3 +122,56 @@ host pds-smallbodies.astro.umd.edu
   applies https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/
   note das Label nennt Einheit und Instrument, nicht die Kadenz; die Kadenz steht in der UT-Spalte und im Zweignamen (100ms, f24s), nicht im Dokument. Der Probe ist das Verzeichnis, nicht jede Tagesdatei — ein Verzeichnis belegt die Pfadfamilie, die einzelne Datei belegt der Compiler-Lauf
   note Einheit nT steht im selben Label (UNIT = "NANOTESLA"), Kadenz 8 s in der Spaltenbeschreibung; Block führt nur die Zeitachse als Feld
+
+host pds-geosciences.wustl.edu
+  instrument transponder
+  unit Hz
+  cadence 1
+  api_cite https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/catalog/dataset.cat
+  api_quote "ODFs in this data set were usually generated at a 1-second sampling rate."
+  instrument_cite https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/catalog/inst.cat
+  instrument_quote "The MRO telecommunications system was designed to transmit at X- and Ka-Band. Ka-band doppler data are currently not available."
+  probe 2026-10-24T23:34:33Z 206 https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/mromagr2006_242_0216xmmmv1.odf
+  probe 2026-10-24T23:25:26Z 200 https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
+  probe 2026-10-24T23:34:33Z 200 https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
+  applies https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
+  applies https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
+  note Einheit woertlich aus derselben api_cite-Seite: "Two-way Doppler (Hertz)"; Messgroesse und Zeitbezug aus dem ODF-SIS: "The Doppler observable (in Hertz) is computed according to the following equation. The time tag is at the mid-point of the compression interval". Die Odyssee-ODFs nutzen dieselbe ODF/TRK-2-18-Satzstruktur; ihre Datensatzdoku war in diesem Lauf nicht lesbar, die 1 s sind daher nur fuer die MRO-ODFs woertlich belegt
+
+host spdf.gsfc.nasa.gov
+  instrument magnetometer
+  unit nT
+  cadence 3600 86400
+  api_cite https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/00readme_v1.txt
+  api_quote "This directory contains hourly averages of parameters for the interplanetary magnetic field, solar wind plasma and spacecraft trajectory coordinates"
+  instrument_cite https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/vy1mgd.txt
+  instrument_quote "the required accuracy of the measurements would be 0.1 nT, determined by the combined noise of the sensors and the spacecraft field"
+  probe 2026-10-24T23:23:46Z 206 https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
+  probe 2026-10-24T23:39:08Z 206 https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
+  applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/
+  applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/
+  note Zitate aus Zeilen zusammengefuegt (Leerzeichen normalisiert); gilt fuer voyager1/merged und voyager2/merged (die daily.asc-Bloecke); die uebrigen spdf-Pfade (helios, voyager_saturn, voyager_occlt, wind_waves) fuehren eigene readme und sind von dieser Zeile nicht gedeckt
+
+host hfradar.ioos.us
+  instrument hf-radar
+  unit cm/s
+  cadence 3600
+  api_cite https://hfradar.ioos.us/erddap/info/BML_BML1/index.html
+  api_quote "attribute VELO units String cm/s"
+  instrument_cite https://ioos.noaa.gov/project/hf-radar/
+  instrument_quote "Accuracies of the radar-derived velocities, from numerous peer-reviewed studies, have been shown to be typically in the range 5-10 cm/s."
+  probe 2026-10-24T23:24:56Z 200 https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+  applies https://hfradar.ioos.us/erddap/tabledap/
+  note alle 204 Blockpfade der Gruppe liegen unter /erddap/tabledap/ (VELO/VELU/VELV in cm/s); der Endpunkt nennt keine Kadenz, die Stunde steht auf der IOOS-Seite; der Block sagt 21600 s, das ist die Parser-Zahl, nicht die Kadenz des Anbieters
+
+host cdaweb.gsfc.nasa.gov
+  instrument fluxgate
+  unit nT
+  cadence 8
+  api_cite https://cdaweb.gsfc.nasa.gov/hapi/info?id=MMS1_FGM_SRVY_L2@0
+  api_quote "Magnetic field vector in Geocentric Solar Ecliptic (GSE) cartesian coordinates plus Btotal (8 or 16 S/s), units:nT"
+  instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesM.html#MMS1_FGM_SRVY_L2
+  instrument_quote "The Fluxgate Magnetometers (FGM) on Magnetospheric Multiscale consist of a traditional Analog Fluxgate Magnetometer (AFG), and a Digital Fluxgate magnetometer (DFG)."
+  probe 2026-10-24T23:25:53Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min=2026-10-24T00:00:00Z&time.max=2026-10-24T00:10:00Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0
+  note die 14 weiteren ids der Gruppe (MMS1_EDP/FPI, OMNI2_H0_MRG1HR, PSP_FLD/SWP/COHO1HR, SOLO_L2_RPW, THA/THG, TIMED_L2A_SABER, WI_H0/H2/K0) sind Plasma-, Teilchen-, EUV- und weitere Feldprodukte mit anderen Instrumenten und Einheiten; diese Zeile deckt nur das Fluxgate-Survey-Produkt
