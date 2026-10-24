@@ -147,8 +147,8 @@ fn label(block: &[&str], line: usize) -> (String, String) {
     (name, line.to_string())
 }
 
-fn load_specs(path: &str) -> BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool)> {
-    let mut out: BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool)> = BTreeMap::new();
+fn load_specs(path: &str) -> BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool, bool)> {
+    let mut out: BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, bool, bool)> = BTreeMap::new();
     let Ok(content) = fs::read_to_string(path) else {
         return out;
     };
@@ -158,7 +158,10 @@ fn load_specs(path: &str) -> BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, 
         match p.first().copied() {
             Some("instrument") => {
                 if let Some(token) = p.get(1) {
-                    out.insert(token.to_string(), (BTreeSet::new(), BTreeSet::new(), false));
+                    out.insert(
+                        token.to_string(),
+                        (BTreeSet::new(), BTreeSet::new(), false, false),
+                    );
                     current = Some(token.to_string());
                 }
             }
@@ -178,9 +181,14 @@ fn load_specs(path: &str) -> BTreeMap<String, (BTreeSet<String>, BTreeSet<u64>, 
                     }
                 }
             }
-            Some("cite") => {
+            Some("api_cite") => {
                 if p.len() > 1 && let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
                     entry.2 = true;
+                }
+            }
+            Some("instrument_cite") => {
+                if p.len() > 1 && let Some(entry) = current.as_ref().and_then(|t| out.get_mut(t)) {
+                    entry.3 = true;
                 }
             }
             _ => {}
@@ -356,10 +364,10 @@ fn main() {
                         &mut hard,
                         &mut soft,
                     ),
-                    Some((units, cadences, cited)) => {
-                        if !*cited {
+                    Some((units, cadences, api_cited, instrument_cited)) => {
+                        if !*api_cited || !*instrument_cited {
                             push(
-                                "instrument_uncited",
+                                "spec_incomplete",
                                 format!("{tag}\t{name}\t{inst}"),
                                 true,
                                 &mut findings,

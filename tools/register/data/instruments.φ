@@ -1,4 +1,6 @@
 instrument fluxgate
   unit nT
   cadence 1 60
-  cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/
+  version 5.3.2
+  api_cite https://imag-data.bgs.ac.uk/GIN_V1/
+  instrument_cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/
