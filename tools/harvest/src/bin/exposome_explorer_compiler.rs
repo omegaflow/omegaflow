@@ -193,7 +193,6 @@ fn is_identifier(name: &str) -> bool {
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let url = match arg_value(&args, "--url") {
         Some(v) => v,

@@ -415,7 +415,6 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
         println!(

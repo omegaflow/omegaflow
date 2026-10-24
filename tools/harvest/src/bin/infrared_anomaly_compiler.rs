@@ -169,7 +169,6 @@ fn run(
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut ir = "tmp/ir.bin".to_string();
     let mut stars = "tmp/dr3_stars.bin".to_string();

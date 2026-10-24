@@ -199,7 +199,6 @@ fn load(args: &[String]) -> Option<(String, Vec<u8>)> {
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some((src, bytes)) = load(&args) else {
         eprintln!("pangaea: {ORIGIN} stays unfetched");

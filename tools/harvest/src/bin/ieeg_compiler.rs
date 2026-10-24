@@ -478,7 +478,6 @@ fn run() -> Result<(), String> {
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     if let Err(e) = run() {
         eprintln!("ieeg_compiler: {e}");
         std::process::exit(1);

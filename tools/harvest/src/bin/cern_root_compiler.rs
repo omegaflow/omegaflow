@@ -82,7 +82,6 @@ fn report_trees(bytes: &[u8]) {
 }
 
 fn main() {
-    omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(source) = arg_value(&args, "--probe") else {
         eprintln!("--probe <url|file> required");
