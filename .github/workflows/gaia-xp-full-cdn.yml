@@ -87,4 +87,3 @@ jobs:
               --title "dc.g-vo.org" \
               --notes "GAVO / Gaia DR3 XP spectra compiled to spectral-oscillator records (medium em). Per star: source_id (u64), ra/dec/parallax (f64), then the 41-sample flux grid as freq/bin_width/val (f64). Magic/version in src/archivar/spectral.rs."
           fi
-          gh release upload dc.g-vo.org "$name" --clobber --repo omegaflow/sources

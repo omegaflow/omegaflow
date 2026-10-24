@@ -72,7 +72,7 @@ jobs:
             gh release download ssd.jpl.nasa.gov -p "allwise_part_*.fp01" --repo omegaflow/sources --dir parts --clobber
             ./target/release/wise_coverage_combiner --parts-dir parts --out allwise_coverage.fp01 \
               --expect-tiles "$total"
-            gh release upload irsa.ipac.caltech.edu allwise_coverage.fp01 --clobber --repo omegaflow/sources
+            bin/cdn-put irsa.ipac.caltech.edu allwise_coverage.fp01
             echo "allwise_coverage.fp01 uploaded: $(stat -c%s allwise_coverage.fp01) bytes"
           fi
 

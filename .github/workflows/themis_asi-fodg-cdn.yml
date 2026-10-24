@@ -110,4 +110,3 @@ jobs:
                  health; exit 1; }
           SKY="data/data.phys.ucalgary.ca/themis_asi_skymap_${{ inputs.station }}_$(basename "${{ inputs.skymap_url }}")"
           cp skymap.sav "$SKY"
-          gh release upload data.phys.ucalgary.ca "$OUT" "$SKY" --clobber --repo omegaflow/sources

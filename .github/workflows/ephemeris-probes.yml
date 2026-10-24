@@ -68,7 +68,7 @@ jobs:
             || gh release create anderson-residuals --repo omegaflow/sources \
                  --title "Anderson flyby residuals — curated Table I" \
                  --notes "Curated Anderson et al. 2008 (PRL 100, 091102) Table I. Written by ephemeris-probes.yml (CI-only)."
-          gh release upload anderson-residuals "$seed" --repo omegaflow/sources --clobber
+          bin/cdn-put anderson-residuals "$seed"
           mkdir -p data/flyby2
           cp "$seed" data/flyby2/anderson_residuals.tsv
       - name: Die drei Erd-Haus-Linien laden (INPOP lokal kompiliert, kein CDN-Spiegel)

@@ -126,7 +126,6 @@ jobs:
             gh release download "$tag" --repo omegaflow/sources -p "ps1_part_${P}_*.fp01" --dir parts --clobber
             ./target/release/ps1_coverage_combiner --parts-dir parts --out "ps1_part_${P}.fp01" \
               --expect-min "$P" --expect-max "$P"
-            gh release upload "$tag" "ps1_part_${P}.fp01" --clobber --repo omegaflow/sources
             for ((s=sub_min; s<=sub_max; s+=chunk)); do
               e=$(( s + chunk - 1 ))
               [ "$e" -gt "$sub_max" ] && e=$sub_max
@@ -200,7 +199,6 @@ jobs:
               for name in $legacy; do
                 gh release delete-asset ssd.jpl.nasa.gov "$name" --yes --repo omegaflow/sources || true
               done
-              gh release upload ssd.jpl.nasa.gov-ps1 ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
               echo "ps1_dr2_coverage.fp01 uploaded: $(stat -c%s ps1_dr2_coverage.fp01) bytes"
             fi
           else

@@ -138,7 +138,7 @@ jobs:
           for f in ck90341a_rtr.bc ck90341b_rtr.bc ck90342a_rtr.bc ck90342b_rtr.bc \
                    ck90343a_rtr.bc ck90343b_rtr.bc ck90344a_rtr.bc ck90344b_rtr.bc; do
             if [ -f "$f" ]; then
-              gh release upload naif.jpl.nasa.gov "$f" --clobber --repo omegaflow/sources
+              bin/cdn-put naif.jpl.nasa.gov "$f"
             fi
           done
 

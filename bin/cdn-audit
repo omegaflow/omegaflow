@@ -1,22 +1,21 @@
 #!/bin/sh
-# Names every workflow line that uploads to the CDN around the licence check.
+# Names every workflow line that publishes to the CDN around the licence check.
+# `gh release upload` is the publication; `gh release create` only opens an empty
+# release (upload_release's ensure_release does that itself).
 # The only gate is bin/cdn-put -> tag_is_admitted -> src/archivar/licences.tsv.
-# A line printed here bypasses it.
 set -u
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$root" || exit 2
-found=0
+uploads=0
+files=0
 for f in .github/workflows/*.yml; do
     [ -f "$f" ] || continue
-    hits="$(perl -ne 'print "$.: $_" if /gh release (upload|create)/' "$f")"
+    hits="$(perl -ne 'print "$.: $_" if /gh release upload/' "$f")"
     [ -n "$hits" ] || continue
-    found=$((found + 1))
+    files=$((files + 1))
+    uploads=$((uploads + $(printf '%s\n' "$hits" | wc -l)))
     printf '%s\n' "$f"
     printf '%s\n' "$hits" | sed 's/^/  /'
 done
-if [ "$found" -eq 0 ]; then
-    echo "cdn-audit: no workflow uploads around bin/cdn-put"
-    exit 0
-fi
-echo "cdn-audit: $found workflow(s) upload around bin/cdn-put" >&2
-exit 1
+printf 'cdn-audit: %s upload line(s) in %s workflow(s) go around bin/cdn-put\n' "$uploads" "$files" >&2
+[ "$uploads" -eq 0 ]

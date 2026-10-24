@@ -38,4 +38,4 @@ jobs:
       - name: Upload the SSB field asset to the CDN
         run: |
           set -euo pipefail
-          gh release upload ssb out/ssb_field.bin --clobber --repo omegaflow/sources
+          bin/cdn-put ssb out/ssb_field.bin

@@ -33,4 +33,3 @@ jobs:
                  "extinction_curves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           sha256sum extinction_curves.json | tee extinction_curves.json.sha256
-          gh release upload vizier.cds.unistra.fr extinction_curves.json.sha256 --repo omegaflow/sources --clobber

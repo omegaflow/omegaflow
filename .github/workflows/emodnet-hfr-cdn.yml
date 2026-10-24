@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           out=data/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
           sha256sum "$out" | tee "$out.sha256"
-          gh release upload erddap.emodnet-physics.eu "$out.sha256" --repo omegaflow/sources --clobber
+          bin/cdn-put erddap.emodnet-physics.eu "$out.sha256"
       - name: Verify the uploaded asset — HTTP 200, size and sha256 match the compiler output
         run: |
           set -euo pipefail

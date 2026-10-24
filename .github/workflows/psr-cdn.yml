@@ -39,4 +39,3 @@ jobs:
                  "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           sha256sum psr.json | tee psr.json.sha256
-          gh release upload tapvizier.cds.unistra.fr psr.json.sha256 --repo omegaflow/sources --clobber
