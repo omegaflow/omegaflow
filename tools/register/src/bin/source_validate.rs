@@ -473,9 +473,6 @@ fn main() {
                                 &mut soft,
                             );
                         }
-                        let ttl = field_of(&block, "ttl")
-                            .and_then(|p| p.get(1).copied())
-                            .and_then(|v| v.parse::<i64>().ok());
                         match (parse_probe_ts(&probe.date), now_secs()) {
                             (Some(ts), Some(now)) => {
                                 if ts > now + 86400 {
@@ -487,16 +484,9 @@ fn main() {
                                         &mut hard,
                                         &mut soft,
                                     );
-                                } else {
-                                    let limit = ttl
-                                        .filter(|t| *t > 0)
-                                        .or_else(|| {
-                                            (ctx.probe_max_days > 0)
-                                                .then_some(ctx.probe_max_days * 86400)
-                                        });
-                                    if let Some(limit) = limit
-                                        && now - ts > limit
-                                    {
+                                } else if ctx.probe_max_days > 0 {
+                                    let limit = ctx.probe_max_days * 86400;
+                                    if now - ts > limit {
                                         push(
                                             "probe_stale",
                                             format!(
