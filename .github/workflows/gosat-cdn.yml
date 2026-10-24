@@ -31,6 +31,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   raster:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     outputs:
       shards: ${{ steps.gen.outputs.shards }}
@@ -68,6 +69,7 @@ jobs:
           done
           echo "shards=[${shards}]" >> "$GITHUB_OUTPUT"
   release:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Ensure the product.gosat-gw.nies.go.jp release exists on the CDN
@@ -83,6 +85,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.shard }}
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 720
     strategy:
@@ -105,6 +108,7 @@ jobs:
   series-manifest:
     needs: [raster, compile]
     if: always() && needs.raster.result == 'success'
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Fold every month shard on the CDN into the year-less series manifest

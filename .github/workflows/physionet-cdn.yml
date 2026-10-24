@@ -21,6 +21,7 @@ jobs:
     concurrency:
       group: physionet-cdn-mitdb
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -38,6 +39,7 @@ jobs:
     concurrency:
       group: physionet-cdn-mitdb-rr
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -55,6 +57,7 @@ jobs:
     concurrency:
       group: physionet-cdn-circor
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
@@ -69,6 +72,7 @@ jobs:
               --out circor_pcg.bin --ci-mode --jobs 8
 
   raster-bidsleep:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     outputs:
@@ -109,6 +113,7 @@ jobs:
     concurrency:
       group: physionet-cdn-bidsleep-${{ matrix.chunk }}
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     strategy:
@@ -132,6 +137,7 @@ jobs:
     concurrency:
       group: physionet-cdn-bidsleep-merge
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: [raster-bidsleep, bidsleep]
@@ -152,6 +158,7 @@ jobs:
               bidsleep_mehrnacht_r6.bin bidsleep_mehrnacht_r7.bin
 
   raster-ltmm:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     outputs:
@@ -192,6 +199,7 @@ jobs:
     concurrency:
       group: physionet-cdn-ltmm-${{ matrix.chunk }}
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     strategy:
@@ -215,6 +223,7 @@ jobs:
     concurrency:
       group: physionet-cdn-ltmm-merge
       cancel-in-progress: false
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: [raster-ltmm, ltmm]
