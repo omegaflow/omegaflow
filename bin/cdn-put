@@ -1,16 +1,17 @@
 #!/bin/sh
-# cdn-put — der einzige Weg in den CDN. Fragt die Lizenzliste, bevor gh läuft.
+# cdn-put — der einzige Weg in den CDN.
 #
-# usage: bin/cdn-put <tag> <datei>...   (ein oder mehrere Assets)
-#        bin/cdn-put --check <tag>      (nur das Tor, kein Upload; exit 0/2)
+# usage: bin/cdn-put <tag> <datei>...
+#        bin/cdn-put --check <tag> <datei>...
 #
-# Das Tor ist dieselbe Regel wie `omegaflow::archivar::cdn::tag_is_admitted`:
-# ein Tag ist aufgenommen, wenn er ein registrierter Netloc aus phi/sources.φ
-# ist und der Block, der ihn nennt, eine `admitted`-Lizenz trägt — oder wenn er
-# ein Familien-Tag `<netloc>-<familie>` eines solchen Netlocs ist.
-#
-# Eine direkte `gh release upload`-Zeile geht an diesem Tor vorbei;
-# `bin/cdn-audit` nennt jede solche Zeile.
+# Geprüft wird der DATENSATZ, nicht der Tag: der Block in phi/sources.φ, dessen
+# `url …/download/<tag>/<datei>` genau dieses Asset nennt, trägt die Lizenz.
+# Ein Tag ist nur der Ablageort (ein GitHub-Release je Host) — er sagt nichts
+# über die Lizenz. Deshalb gilt:
+#   - Block mit genau dieser Datei gefunden  -> sein `terms` entscheidet
+#   - kein solcher Block                     -> verweigert (nicht registriert)
+# `gh release upload` geht an dieser Prüfung vorbei; `bin/cdn-audit` nennt jede
+# solche Zeile.
 set -u
 export LC_ALL=C
 self="$0"
@@ -25,25 +26,21 @@ LICENCES="${LICENCES:-$root/src/archivar/licences.tsv}"
 CDN_REPO="${CDN_REPO:-omegaflow/sources}"
 
 check=""
-if [ "${1:-}" = "--check" ]; then
-    check=1
-    shift
-fi
+if [ "${1:-}" = "--check" ]; then check=1; shift; fi
 
-if [ $# -lt 1 ]; then
-    echo "cdn-put: usage: cdn-put [--check] <tag> [<datei>...]" >&2
+if [ $# -lt 2 ]; then
+    echo "cdn-put: usage: cdn-put [--check] <tag> <datei>..." >&2
     exit 2
 fi
-tag="$1"
-shift
+tag="$1"; shift
 
 [ -f "$PHI" ] || { echo "cdn-put: no register at $PHI" >&2; exit 2; }
 [ -f "$LICENCES" ] || { echo "cdn-put: no licence list at $LICENCES" >&2; exit 2; }
 
 gate() {
-    perl - "$PHI" "$LICENCES" "$1" <<'PERL'
+    perl - "$PHI" "$LICENCES" "$tag" "$@" <<'PERL'
 use strict; use warnings;
-my ($phi, $lic, $tag) = @ARGV;
+my ($phi, $lic, $tag, @files) = @ARGV;
 
 my %admitted;
 open my $lh, '<', $lic or die "cdn-put: $lic: $!\n";
@@ -55,76 +52,53 @@ while (<$lh>) {
 }
 close $lh;
 
-sub netloc_of {
-    my ($u) = @_;
-    return undef unless $u =~ m{://};
-    my ($rest) = $u =~ m{://(.*)$}s;
-    my ($nl) = $rest =~ m{^([^/?]+)};
-    return (defined $nl && length $nl) ? $nl : undef;
-}
-sub normalize_tag { my ($t) = @_; $t =~ s{^www\.}{}; return $t }
-
-my %registered;
+# Asset-Datei -> Lizenz des Datensatzes, der sie nennt.
+my %asset;
 open my $ph, '<:encoding(UTF-8)', $phi or die "cdn-put: $phi: $!\n";
-my (@netlocs, $terms, $tag_of_block, @origins);
+my ($terms, @keys);
 my $flush = sub {
-    if (defined $terms && $admitted{lc $terms}) {
-        if (defined $tag_of_block) {
-            # der CDN-Tag ist die Autorität: er nennt den Anbieter, der liefert
-            $registered{normalize_tag($tag_of_block)} = 1;
-        } else {
-            # ohne CDN-Zeile trägt der erste Origin den Anbieter; weitere URLs
-            # auf derselben Zeile sind Zitate (arXiv, archive.org) und kein Netloc
-            $registered{normalize_tag($_) } = 1 for @netlocs;
-        }
-    }
-    @netlocs = (); $terms = undef; $tag_of_block = undef;
+    for my $k (@keys) { $asset{$k} = $terms }
+    @keys = (); $terms = undef;
 };
 while (<$ph>) {
     chomp;
     if (/^\s*$/) { $flush->(); next }
     if (/^terms (\S+)/) { $terms = $1; next }
-    if (/^url (\S+)/) {
-        my $u = $1;
-        if (my ($t) = $u =~ m{/releases/download/([^/]+)/}) {
-            $tag_of_block //= $t;
-        } else {
-            my $nl = netloc_of($u);
-            push @netlocs, $nl if defined $nl;
-        }
-    } elsif (/^origin (\S+)/) {
-        my $nl = netloc_of($1);
-        push @netlocs, $nl if defined $nl;
+    if (my ($t, $file) = m{^url\s+\S*/releases/download/([^/]+)/(\S+)$}) {
+        push @keys, "$t/$file";
     }
 }
 $flush->();
 close $ph;
 
-my $t = normalize_tag($tag);
-exit 0 if $registered{$t};
-for my $src (keys %registered) {
-    next unless length $t > length $src;
-    next unless index($t, $src) == 0;
-    exit 0 if substr($t, length $src, 1) eq '-';
+my @bad;
+for my $path (@files) {
+    (my $base = $path) =~ s{.*/}{};
+    my $key = "$tag/$base";
+    if (!exists $asset{$key}) {
+        push @bad, [$path, 'nicht im Register (kein Block nennt dieses Asset)'];
+        next;
+    }
+    my $t = $asset{$key};
+    if (!defined $t || !$admitted{lc $t}) {
+        push @bad, [$path, 'terms ' . ($t // '-') . ' ist nicht aufgenommen'];
+    }
 }
-exit 2;
+for my $b (@bad) {
+    print STDERR "cdn-put: $tag/" . do { (my $x = $b->[0]) =~ s{.*/}{}; $x } . ": $b->[1]\n";
+}
+exit(@bad ? 2 : 0);
 PERL
 }
 
-gate "$tag"
+gate "$@"
 if [ $? -ne 0 ]; then
-    echo "cdn-put: $tag is not an admitted licence in src/archivar/licences.tsv — refused before any upload" >&2
+    echo "cdn-put: refused before any upload — the dataset's licence in src/archivar/licences.tsv does not admit it" >&2
     exit 2
 fi
-[ -n "$check" ] && { echo "cdn-put: $tag admitted"; exit 0; }
-
-if [ $# -eq 0 ]; then
-    echo "cdn-put: no file given" >&2
-    exit 2
-fi
+[ -n "$check" ] && { echo "cdn-put: $tag $* admitted"; exit 0; }
 
 if ! gh release upload "$tag" "$@" --clobber --repo "$CDN_REPO"; then
-    # ein fehlendes Release ist kein Lizenzproblem: anlegen und einmal wiederholen
     gh release create "$tag" --repo "$CDN_REPO" >/dev/null 2>&1 || true
     gh release upload "$tag" "$@" --clobber --repo "$CDN_REPO" || exit 1
 fi
