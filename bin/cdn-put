@@ -1,0 +1,21 @@
+#!/bin/sh
+# The only way into the CDN from a workflow. It asks the licence list first:
+# tag_is_admitted(tag) against src/archivar/licences.tsv, then upload_release.
+# A direct `gh release upload` bypasses this gate — bin/cdn-audit names every such line.
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+bin="$root/target/release/cdn_put"
+if [ ! -x "$bin" ]; then
+    bin="$root/target/debug/cdn_put"
+fi
+if [ ! -x "$bin" ]; then
+    echo "cdn-put: pending — no cdn_put binary (the build belongs to CI)" >&2
+    exit 2
+fi
+exec "$bin" "$@"

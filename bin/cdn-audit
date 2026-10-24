@@ -1,0 +1,22 @@
+#!/bin/sh
+# Names every workflow line that uploads to the CDN around the licence check.
+# The only gate is bin/cdn-put -> tag_is_admitted -> src/archivar/licences.tsv.
+# A line printed here bypasses it.
+set -u
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$root" || exit 2
+found=0
+for f in .github/workflows/*.yml; do
+    [ -f "$f" ] || continue
+    hits="$(perl -ne 'print "$.: $_" if /gh release (upload|create)/' "$f")"
+    [ -n "$hits" ] || continue
+    found=$((found + 1))
+    printf '%s\n' "$f"
+    printf '%s\n' "$hits" | sed 's/^/  /'
+done
+if [ "$found" -eq 0 ]; then
+    echo "cdn-audit: no workflow uploads around bin/cdn-put"
+    exit 0
+fi
+echo "cdn-audit: $found workflow(s) upload around bin/cdn-put" >&2
+exit 1
