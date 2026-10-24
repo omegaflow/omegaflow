@@ -436,7 +436,7 @@ fn report_family(label: &str, pred: &BTreeMap<i64, f64>, out: &BTreeMap<i64, Agg
             if observed > q95 {
                 "traegt (observed max clears the null)"
             } else {
-                "traegt nicht (observed max sits inside the null)"
+                "does not carry (observed max sits inside the null)"
             }
         );
     } else {

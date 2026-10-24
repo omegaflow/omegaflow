@@ -950,7 +950,7 @@ fn main() {
     }
 
     println!();
-    println!("=== Positivkontrolle — planted coupling, same run, same cone machine ===");
+    println!("=== positive control — planted coupling, same run, same cone machine ===");
     if let Some(d) = d_sun_wind {
         let (pc_driver, pc_target) = planted_pair(n, PC_PLANTED_LAG, PC_SEED);
         let mut pc_best: Option<(usize, f64, f64)> = None;
@@ -996,7 +996,7 @@ fn main() {
                             if arrow { "PFEIL" } else { "under fam" }
                         );
                         println!(
-                            "d(sun↔wind) = {:.3e} m | d/c = {:.3e} s = {:.3} min | reach(τ) = {:.3e} m | τ ≥ d/c: {} | PE gate: {} | Positivkontrolle: {}",
+                            "d(sun↔wind) = {:.3e} m | d/c = {:.3e} s = {:.3} min | reach(τ) = {:.3e} m | τ ≥ d/c: {} | PE gate: {} | positive control: {}",
                             d,
                             d / C_LIGHT,
                             d / C_LIGHT / 60.0,
@@ -1010,25 +1010,25 @@ fn main() {
                             if arrow && holds && best_lag == PC_PLANTED_LAG {
                                 "BESTANDEN (Pfeil within the cone)"
                             } else if !arrow {
-                                "NICHT BESTANDEN (no arrow)"
+                                "FAILED (no arrow)"
                             } else if !holds {
-                                "NICHT BESTANDEN (arrow outside the cone)"
+                                "FAILED (arrow outside the cone)"
                             } else {
-                                "NICHT BESTANDEN (measured τ ≠ planted τ)"
+                                "FAILED (measured τ ≠ planted τ)"
                             }
                         );
                     }
                     None => println!(
-                        "Positivkontrolle: the em law carries no reach — NICHT BESTANDEN (absent)"
+                        "positive control: the em law carries no reach — FAILED (absent)"
                     ),
                 }
             }
             None => println!(
-                "Positivkontrolle: no TE field — NICHT BESTANDEN (the planted pair stays unmeasured)"
+                "positive control: no TE field — FAILED (the planted pair stays unmeasured)"
             ),
         }
     } else {
-        println!("Positivkontrolle: d(sun↔wind) absent — NICHT BESTANDEN (no d/c, no cone test)");
+        println!("positive control: d(sun↔wind) absent — FAILED (no d/c, no cone test)");
     }
 
     println!();

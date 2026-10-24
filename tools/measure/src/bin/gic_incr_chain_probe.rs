@@ -544,7 +544,7 @@ fn main() {
         let q_bz_cond = q95(&bz_null_cond);
         let (delta, verdict) = match (bz_cond, q_bz_cond) {
             (Some(o), Some(q)) if o > q => (Some(o - q), "traegt"),
-            (Some(o), Some(q)) => (Some(o - q), "traegt nicht"),
+            (Some(o), Some(q)) => (Some(o - q), "does not carry"),
             _ => (None, "pending"),
         };
         println!(
@@ -605,7 +605,7 @@ fn main() {
         let q_v_cond = q95(&v_null_cond);
         let (delta, verdict) = match (v_cond, q_v_cond) {
             (Some(o), Some(q)) if o > q => (Some(o - q), "traegt"),
-            (Some(o), Some(q)) => (Some(o - q), "traegt nicht"),
+            (Some(o), Some(q)) => (Some(o - q), "does not carry"),
             _ => (None, "pending"),
         };
         println!(
@@ -661,7 +661,7 @@ fn main() {
             let p = obs.map(|o| p_value(o, &null)).unwrap_or(1.0);
             let verdict = match (obs, q) {
                 (Some(o), Some(q)) if o > q => "traegt",
-                (Some(_), Some(_)) => "traegt nicht",
+                (Some(_), Some(_)) => "does not carry",
                 _ => "pending",
             };
             println!(
@@ -717,7 +717,7 @@ fn main() {
         let verdict = if band_best.0 > q {
             "traegt"
         } else {
-            "traegt nicht"
+            "does not carry"
         };
         println!(
             "observed max TE(band->G) = {:.4e} at {} lag {} d | family null95 = {q:.4e} | p = {:.4} | {verdict}",

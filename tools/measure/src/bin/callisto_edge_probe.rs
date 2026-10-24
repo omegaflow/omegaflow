@@ -310,7 +310,7 @@ fn main() {
         if observed > q95 {
             "traegt (observed max clears the phase/block-shift null)"
         } else {
-            "traegt nicht (observed max sits inside the surrogate null)"
+            "does not carry (observed max sits inside the surrogate null)"
         }
     );
 }
