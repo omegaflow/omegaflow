@@ -420,7 +420,13 @@ fn main() {
         let no_cadence = field_of(&block, "no-cadence").is_some();
         let instrument = field_of(&block, "instrument")
             .and_then(|p| p.get(1).copied().map(str::to_string));
-        let origin_url = field_of(&block, "origin").and_then(|p| p.get(1).copied());
+        let origin_url = field_of(&block, "origin")
+            .and_then(|p| p.get(1).copied())
+            .or_else(|| {
+                let url = field_of(&block, "url").and_then(|p| p.get(1).copied())?;
+                (!url.starts_with("https://github.com/omegaflow/sources/releases/download/"))
+                    .then_some(url)
+            });
         let block_host = origin_url.and_then(host_of);
         let mut names: BTreeSet<String> = BTreeSet::new();
 
