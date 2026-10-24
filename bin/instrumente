@@ -1,40 +1,40 @@
 #!/bin/sh
-# werkzeuge — die Messklassen des Registers, nach Werkzeug geordnet.
+# instrumente — die Messklassen des Registers, nach Instrument geordnet.
 #
 # Ein Block im Register sagt, WAS gemessen wird (field ... <kraft> <einheit>
 # <kadenz>), aber nicht WOMIT. Diese Tabelle schließt die Lücke: je Klasse
-# (kraft, einheit) das Werkzeug, sein Band und der Beleg. Damit ist die Suche
+# (kraft, einheit) das Instrument, sein Band und der Beleg. Damit ist die Suche
 # nach der Messung lokal möglich (welche Blöcke liefern diese Klasse?) und
 # online (bin/spec mit demselben Band).
 #
 # Die kuratierte Seite steht in src/archivar/werkzeuge.tsv:
-#   klasse  werkzeug  band  beleg
+#   klasse  instrument  band  beleg
 # Die Zahlen (Zeilen, Kadenz, Lizenzen) werden bei jedem Lauf frisch aus
 # phi/sources.φ gezählt — sie stehen nicht in der Datei.
 set -u
 export LC_ALL=C
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 PHI="${PHI:-$root/phi/sources.φ}"
-KURATIERT="${KURATIERT:-$root/src/archivar/werkzeuge.tsv}"
+KURATIERT="${KURATIERT:-$root/src/archivar/instrumente.tsv}"
 muster="${1:-}"
 
-[ -f "$PHI" ] || { echo "werkzeuge: kein Register: $PHI" >&2; exit 2; }
+[ -f "$PHI" ] || { echo "instrumente: kein Register: $PHI" >&2; exit 2; }
 
 exec perl - "$PHI" "$KURATIERT" "$muster" <<'PERL'
-use strict; use warnings;
+use strict; use warnings; use utf8;
 binmode STDOUT, ':encoding(UTF-8)';
 my ($phi, $kur, $muster) = @ARGV;
 
-# kuratierte Seite: klasse -> [werkzeug, band, beleg]
+# kuratierte Seite: klasse -> [instrument, band, beleg]
 my %k;
 if (-f $kur) {
     open my $h, '<:encoding(UTF-8)', $kur or die $!;
     while (<$h>) {
         chomp; next if /^#/ || /^\s*$/;
-        my ($kl, $wz, $band, $beleg) = split /\t/;
+        my ($kl, $ins, $band, $beleg) = split /\t/;
         next unless defined $kl;
         $kl =~ s{/}{\t};
-        $k{lc $kl} = [$wz // '', $band // '', $beleg // ''];
+        $k{lc $kl} = [$ins // "", $band // "", $beleg // ""];
     }
     close $h;
 }
@@ -75,7 +75,7 @@ sub mode {
 
 my @klassen = sort { $zeilen{$b} <=> $zeilen{$a} } keys %zeilen;
 printf "%-30s %-20s %-14s %6s %-8s %-18s %-24s %s\n",
-    "klasse", "werkzeug", "band", "zeilen", "kadenz", "lizenz", "compiler", "beleg";
+    "klasse", "instrument", "band", "zeilen", "kadenz", "lizenz", "compiler", "beleg";
 for my $kl (@klassen) {
     my ($kr, $u) = split /\t/, $kl;
     my $m = lc $muster; $m =~ s{/}{\t};

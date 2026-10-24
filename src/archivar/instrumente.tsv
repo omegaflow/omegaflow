@@ -1,20 +1,21 @@
-# Werkzeug-Inventur — je Messklasse das Werkzeug, sein Band und der Beleg.
+# Instrumenten-Inventur — je Messklasse das Instrument, sein Band und der Beleg.
 #
 # Warum diese Datei: das Register (phi/sources.φ) trägt je Feld Kraft, Einheit
-# und Kadenz, aber weder das Werkzeug noch sein Band. Ohne diese Spalte bleibt
+# und Kadenz, aber weder das Instrument noch sein Band. Ohne diese Spalte bleibt
 # als einzige Suchachse die Marke in der URL — genau der Fehler, der die
 # Schumann-Route und die MISCHA-Blöcke gekostet hat.
 #
-# Spalten: klasse <TAB> werkzeug <TAB> band <TAB> beleg
-#   klasse    kraft/einheit, wie in `bin/werkzeuge` gezählt (klein geschrieben)
-#   werkzeug  Instrumentenklasse (nicht Marke), z. B. "Fluxgate-Magnetometer"
+# Spalten: klasse <TAB> instrument <TAB> band <TAB> beleg
+#   klasse    kraft/einheit, wie in `bin/instrumente` gezählt (klein geschrieben)
+#   instrument  Messgerät (nicht Marke), z. B. "Fluxgate-Magnetometer"; ein
+#             Werkzeug ist es nicht: ein Compiler oder eine Suche misst nichts
 #   band      Messband, z. B. "DC-64 Hz" — leer, solange nicht gelesen
 #   beleg     URL, auf der der Satz steht; leer = noch nicht recherchiert
 #
-# `bin/werkzeuge` zählt die Zeilen/Kadenzen/Lizenzen je Klasse frisch aus dem
+# `bin/instrumente` zählt die Zeilen/Kadenzen/Lizenzen je Klasse frisch aus dem
 # Register und verbindet sie mit dieser Tabelle. Leere Zeilen sind die
 # Arbeitsliste; sie werden von oben (meiste Felder) nach unten abgearbeitet.
-klasse	werkzeug	band	beleg
+klasse	instrument	band	beleg
 em/nt	Fluxgate-Magnetometer	DC-64 Hz	https://themis.ssl.berkeley.edu/instrument_fgm.shtml
 acoustic/m	Wellenpegel (spektrale Energiedichte)	0.03-0.4 Hz	https://www.ndbc.noaa.gov/measdes.shtml
 em/nt/hz**1/2	Fluxgate-Magnetometer (Spektrum, 15 Bänder à 0,625 Hz)	0.039-9.961 Hz	https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0110f.lbl
