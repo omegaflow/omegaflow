@@ -5931,3 +5931,520 @@ host coastwatch.pfeg.noaa.gov
   applies https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5
   note ERSSTv5 Monatsanalyse (2592000 s), 2°×2°-Gitter; Basis sind Schiff-/Boienbeobachtungen aus ICOADS.
 
+host isdc-data.gfz.de
+  instrument PLP
+  unit cm-3
+  sampling 15
+  interval 15
+  api_cite https://gfzpublic.gfz.de/rest/items/item_4772897_4/component/file_4777888/content
+  api_quote "electron electron # geocentr geocentr density temperature # [s] [km] [deg] [deg] [1/cm^3] [K]"
+  instrument_cite https://geomag.us/info/Smaus/Doc/champ_encyc.pdf
+  instrument_quote "The PLP, which was not damaged, provides the spacecraft potential, electron temperature and electron density, once in 15 seconds."
+  probe 2026-10-25T11:01:00Z absent https://isdc-data.gfz.de/champ/ME/Level2/PLPT/2006/CH-ME-2-PLPT+2006-01-02_1.zip
+  applies https://isdc-data.gfz.de/champ/ME/Level2/PLPT/{year}/CH-ME-2-PLPT+{date}_1.zip id=11108
+  note PLPT-Formatbeschreibung: Spalte electron density in 1/cm^3, 15-s-Raster; Instrumentendoku nennt 15 s je Messung. Datenpfad mit Beispiel 2006 absent.
+
+host jeodpp.jrc.ec.europa.eu
+  instrument MSI
+  unit m2
+  sampling 432000
+  interval 157680000
+  api_cite https://developers.google.com/earth-engine/datasets/catalog/JRC_GHSL_P2023A_GHS_BUILT_S
+  api_quote "This raster dataset depicts the distribution of built-up surfaces, expressed in square metres per 100 m grid cell."
+  instrument_cite https://www.esa.int/esapub/bulletin/bulletin131/bul131b_martimort.pdf
+  instrument_quote "The Multi-Spectral Instrument (MSI) features 13 spectral bands from the visible and near-infrared (VNIR) to the short-wave infrared (SWIR), featuring four at 10 m, six at 20 m and three at 60 m resolution."
+  probe 2026-10-25T11:09:35Z 206 https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
+  applies https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip id=13349
+  note Fläche in m2 je 100-m-Zelle; Reihe in 5-Jahres-Epochen (157680000 s). MSI-Wiederholung 5 Tage (S. 29 derselben Quelle: "5 days between revisits").
+
+host jeodpp.jrc.ec.europa.eu
+  instrument EDGAR
+  unit kg/m2/s
+  sampling 2592000
+  interval 2592000
+  api_cite https://edgar.jrc.ec.europa.eu/dataset_ap81
+  api_quote "Emission fluxes: kg/m2/s at 0.1x0.1degree resolution, .NetCDF file per year, substance and sector is produced including for each sector the emission fluxes for the 12 months."
+  instrument_cite https://edgar.jrc.ec.europa.eu/
+  instrument_quote "EDGAR provides both emissions as national totals and gridmaps at 0.1 x 0.1 degree resolution at global level, with yearly, monthly and up to hourly data."
+  probe 2026-10-25T11:09:36Z 206 https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_FT2022_AP_new/monthly/SO2/
+  applies https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_FT2022_AP_new/monthly/SO2/ id=15673
+  note Kompilation ohne Sensor (bottom-up-Inventar aus Aktivitaetsdaten); Monatsraster, Fluss in kg/m2/s.
+
+host madrigal.eiscat.se
+  instrument ISR
+  unit 1/m3
+  sampling 1
+  interval 1
+  api_cite https://remote1.ece.illinois.edu/madrigal/parameterMetadata
+  api_quote "| NE | Electron density (Ne) | m-3 | 510 |"
+  instrument_cite https://eiscat.se/technology/resources/eiscat-data/
+  instrument_quote "The basic data measured with the incoherent scatter radar technique are profiles of electron density, electron and ion temperature, and ion velocity."
+  probe 2026-10-25T11:13:45Z 200 https://madrigal.eiscat.se
+  applies https://madrigal.eiscat.se id=32828
+  note Madrigal-Parametertabelle fuehrt NE in m-3; EISCAT nennt Zeitaufloesung unter einer Sekunde, Datenreihe sekundlich.
+
+host mars.nasa.gov
+  instrument REMS
+  unit K
+  sampling 1
+  interval 3600
+  api_cite https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems_temperature.html
+  api_quote "It displays air temperature in Kelvin against local mean solar time over 224 th sol of the MSL mission. The groupings of data reflect the REMS collection cadence of 5-minute sessions every hour and periodic 1-hour sessions during the day."
+  instrument_cite https://science.nasa.gov/mission/msl-curiosity/science-instruments/
+  instrument_quote "Autonomously record at least 5 minutes of data at 1 Hz each hour, every sol (Martian day), for all sensors (i.e., total baseline of two hours per sol); maximum of three hours of operation per sol allows a continuous block of monitoring time if desired."
+  probe 2026-10-25T11:13:46Z 206 https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+  applies https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json id=8413
+  note REMS-Lufttemperatur in Kelvin, stuendliche Messfenster (3600 s), Sensor 1 Hz.
+
+host noaa-goes18.s3.amazonaws.com
+  instrument GLM
+  unit J
+  sampling 0.002
+  interval 20
+  api_cite https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C01527
+  api_quote "A Lightning Detection product file contains a set of flashes, and its constituent groups and events for a 20 second period. The units of measure for the flash, group, and event radiant energy values is Joules."
+  instrument_cite https://www.goes-r.gov/spacesegment/glm.html
+  instrument_quote "The Geostationary Lightning Mapper (GLM) is a single-channel, near-infrared optical detector on the GOES-R Series satellites."
+  probe 2026-10-25T11:16:39Z 404 https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
+  applies https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/ id=11268
+  note L2-LCFA je 20 s, Strahlungsenergie in Joule; GLM-Bildrate 2 ms (Technikdaten derselben Instrumentenseite).
+
+host noaa-himawari9.s3.amazonaws.com
+  instrument AHI
+  unit W/m2/sr/um
+  sampling 600
+  interval 600
+  api_cite https://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v13.pdf
+  api_quote "Slope [W / (m2 sr μm count)]"
+  instrument_cite https://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/spsg_ahi.html
+  instrument_quote "Himawari-8 and Himawari-9 have a new payload called the Advanced Himawari Imager (AHI) for dedicated meteorological mission."
+  probe 2026-10-25T11:16:40Z 404 https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/
+  applies https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/ id=1165
+  note HSD-Kalibrierung in W/(m2 sr um); Vollscheiben-Zyklus 10 min (600 s).
+
+host nxsa.esac.esa.int
+  instrument EPIC
+  unit W/m2
+  api_cite https://heasarc.gsfc.nasa.gov/W3Browse/all/xmmssc.html
+  api_quote "EP_4_Flux The EPIC band 4 flux (erg/cm2/s). Fluxes are calculated by the SAS tasks emldetect and by srcmatch for the various input bands."
+  instrument_cite https://www.cosmos.esa.int/web/xmm-newton/technical-details-epic
+  instrument_quote "The XMM-Newton spacecraft is carrying a set of three X-ray CCD cameras, comprising the European Photon Imaging Camera (EPIC)."
+  probe 2026-10-25T11:16:42Z 400 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+  applies https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL id=12431
+  note Katalogfluss in erg/cm2/s (Anbieter-Schreibweise), Register-Token W/m2; EPIC-CCDs liefern Ereignislisten ohne festes Zeitraster.
+
+host mast.stsci.edu
+  instrument NIRSpec
+  unit W/m2/Hz
+  api_cite https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/README_NIRSpec_DR0.7.txt
+  api_quote "Wavelength in microns, flux density in Jy."
+  instrument_cite https://science.nasa.gov/mission/webb/nirspec/
+  instrument_quote "NIRSpec detects near-infrared wavelengths and is capable of observing more than 100 objects simultaneously."
+  probe 2026-10-25T11:16:41Z 400 https://mast.stsci.edu/api/v0.1/Download/file
+  applies https://mast.stsci.edu/api/v0.1/Download/file id=12289
+  note Flussdichte in Jy (Anbieter-Schreibweise), Register-Token W/m2/Hz; Spektren ohne festes Zeitraster.
+
+host s3.us-west-2.amazonaws.com
+  instrument GEDI
+  unit m
+  api_cite https://lpdaac.usgs.gov/documents/586/gedi_l2a_dictionary_P001_v1.html
+  api_quote "rh. m. Relative height metrics at 1 % interval."
+  instrument_cite https://gedi.umd.edu/instrument/instrument-overview/
+  instrument_quote "GEDI is a full-waveform lidar instrument that makes detailed measurements of the 3D structure of the Earth’s surface."
+  probe 2026-10-25T11:16:43Z 403 https://s3.us-west-2.amazonaws.com/lp-prod-protected
+  applies https://s3.us-west-2.amazonaws.com/lp-prod-protected id=10689
+  note rh98 in m; Profil entlang der Spur, kein Zeitraster (Wellenform in 1-ns-Schritten).
+
+host sdc-serv.usask.ca
+  instrument SuperDARN
+  unit m/s
+  sampling 60
+  interval 60
+  api_cite https://pydarn.readthedocs.io/en/main/user/range_time/
+  api_quote "Line of sight velocity (m/s)."
+  instrument_cite https://superdarn.ca/
+  instrument_quote "Our international scientific radar network consists of 35+ high frequency (HF) radars located in both the Northern and Southern Hemispheres."
+  probe 2026-10-25T11:16:46Z 500 https://sdc-serv.usask.ca/data/
+  applies https://sdc-serv.usask.ca/data/ id=12010
+  note fitacf: Line-of-sight-Geschwindigkeit in m/s; Aufzeichnung im Minutenraster.
+
+host kcdc.iap.kit.edu
+  instrument KASCADE
+  unit eV
+  sampling 1
+  interval 1
+  api_cite https://arxiv.org/pdf/1504.06696
+  api_quote "KASCADE [2], as an extensive air shower (EAS) experiment, studies the cosmic ray primary composition and the hadronic interactions in the energy range of E0 = 10 14 − 10 17 eV."
+  instrument_cite https://kcdc.iap.kit.edu/
+  instrument_quote "KASCADE was a very successful large detector array which recorded data during more than 20 years on site of the KIT-Campus North, Karlsruhe, Germany"
+  probe 2026-10-25T11:13:42Z 200 https://kcdc.iap.kit.edu
+  applies https://kcdc.iap.kit.edu id=11127
+  note Primaerenergie in eV; ein Datensatz je Luftschauer (ereignisgetriggert), keine feste Zeitbasis.
+
+host noaadata.apps.nsidc.org
+  instrument IMS
+  unit m2
+  sampling 86400
+  interval 86400
+  api_cite https://nsidc.org/data/g02186/versions/1
+  api_quote "MASIE products include an ASCII text file of sea ice extent values in square km for each Arctic region"
+  instrument_cite https://nsidc.org/sites/default/files/g02186-v001-userguide_1.pdf
+  instrument_quote "The input data comes from the 1 km and 4 km Interactive Multisensor Snow and Ice Mapping System (IMS) snow and ice product produced by the National Ice Center (NIC)."
+  probe 2026-10-25T11:20:50Z 206 https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
+  applies https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv id=2415
+  note Ausdehnung in Quadratkilometern (Anbieter), Register-Token m2; Tagesreihe.
+
+host nispdata.nso.edu
+  instrument KPVT
+  unit T
+  sampling 86400
+  interval 2358720
+  api_cite https://nso.edu/data/historical-archive/
+  api_quote "Synoptic maps of the magnetic field and He I 1083 intensity, one per Carrington rotation, starting with rotation 1625 (19 Feb 1975)."
+  instrument_cite https://www.swsc-journal.org/articles/swsc/pdf/2024/01/swsc230030.pdf
+  instrument_quote "the Kitt Peak Vacuum Telescope 512-channel (1974–1993) and Spectro-Magnetograph (1992–2003) instruments were succeeded by the Synoptic Optical Long-term Investigations of the Sun, Vector Spectro-Magnetograph (SOLIS/VSM)"
+  probe 2026-10-25T11:23:58Z absent https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/
+  applies https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/ id=33630
+  note Synoptische Karte je Carrington-Rotation (2358720 s); Tagesbeobachtung.
+
+host reg.bom.gov.au
+  instrument thermometer
+  unit C
+  sampling 600
+  interval 600
+  api_cite https://www.bom.gov.au/products/IDN60901/IDN60901.95765.shtml
+  api_quote "| Date/Time EDT | Temp °C | App Temp °C | Dew Point °C | Rel Hum % | Delta-T °C | Wind | Press QNH hPa | Press MSL hPa | Rain since 9am mm |"
+  instrument_cite https://www.bom.gov.au/climate/cdo/about/definitionstemp.shtml
+  instrument_quote "Maximum and minimum temperature thermometers are placed inside a Stevenson Screen."
+  probe 2026-10-25T11:24:44Z 200 http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+  applies http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json id=307
+  note Lufttemperatur in °C, Stationsreihe im 10-Minuten-Takt (600 s).
+
+host stac.itslive.cloud
+  instrument Landsat OLI
+  unit m/yr
+  api_cite https://its-live.jpl.nasa.gov/
+  api_quote "itslive-granules: Individual image pair velocity measurements (Landsat, Sentinel-1, Sentinel-2)"
+  instrument_cite https://tc.copernicus.org/articles/19/3517/2025/
+  instrument_quote "ITS_LIVE has computed surface velocities using every, excluding those with high cloud cover, available image from Landsat 4 through Landsat 9 as well as Sentinel-1 and Sentinel-2"
+  probe 2026-10-25T10:04:11Z 200 https://stac.itslive.cloud/collections/itslive-granules/items
+  applies https://stac.itslive.cloud/collections/itslive-granules/items
+  note Granule = Bildpaar, keine feste Zeitreihe; Blockeinheit m/yr. Der STAC-Katalog enthaelt auch Sentinel-Granules, der Block nennt nur Landsat.
+
+host stereo-ssc.nascom.nasa.gov
+  instrument EUVI
+  unit 1
+  sampling 150
+  interval 150
+  api_cite https://arxiv.org/pdf/0902.1711
+  api_quote "In this research we focus on the EUVI images in 171 A and 195 A with a time cadence of 2.5 and 10 minutes respectively."
+  instrument_cite https://stereo-ssc.nascom.nasa.gov/beacon/latest/ahead_euvi_171_latest.txt
+  instrument_quote "Image of the Sun, taken by the SECCHI Extreme Ultraviolet Imager (EUVI) on the STEREO Ahead observatory"
+  probe 2026-10-25T11:14:24Z 200 https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi/L0_YMD/a/img/euvi/2024/01/01/
+  applies https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi/L0_YMD/a/img/euvi/{YYYY}/{MM}/{DD}/
+  note 171-A-Kanal mit 2,5 min; 195-A-Kanal 10 min. Bilder sind Einzelbilder (unit 1 = Mittelwert der Bildwerte), kein Stundenmittel.
+
+host superdarn.ca
+  instrument SuperDARN HF radar
+  unit m/s
+  sampling 120
+  interval 120
+  api_cite https://superdarn.ca/pydarn
+  api_quote "Currently pyDARN online supports plotting line-of-sight velocity (ms-1), spectral width (ms-1), power (dB), and elevation (°)."
+  instrument_cite https://superdarn.github.io/dawg/files/sup_material/FITACF3_white_paper.pdf
+  instrument_quote "The integration time is 3.5– 7 s/beam so that the full field of view is scanned within one or two minutes."
+  probe 2026-10-25T11:00:39Z 200 https://superdarn.ca/
+  applies https://superdarn.ca/
+  note sampling 120 = Obergrenze des Vollscans (16 Beams), nicht die Integration pro Beam; fitacf liefert LOS-Geschwindigkeit in m/s.
+
+host unidata-nexrad-level2.s3.amazonaws.com
+  instrument NEXRAD WSR-88D
+  unit dBZ
+  sampling 20
+  interval 300
+  api_cite https://www.weather.gov/iwx/wsr_88d
+  api_quote "The main difference is composite reflectivity shows the highest dBZ (strongest reflected energy) at all elevation scans, not just the reflected energy at a single elevation scan."
+  instrument_cite https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00345
+  instrument_quote "NOAA Next Generation Radar (NEXRAD) Level 2 Base Data"
+  probe 2026-10-25T10:01:27Z 200 https://unidata-nexrad-level2.s3.amazonaws.com/
+  applies https://unidata-nexrad-level2.s3.amazonaws.com/
+  note Volumenscan 14 Elevationen in 5 min (interval 300), ein Bild alle 20 s; Level-II-Reflektivitaet in dBZ.
+
+host vizier.cds.unistra.fr
+  instrument LHAASO-KM2A
+  unit cm-2 s-1 TeV-1
+  api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/ApJS/271/25?format=html
+  api_quote "N0 is in units of 1013cm-2^/s/TeV and 10-16cm-2/s/TeV for the WCDA and the KM2A components, respectively."
+  instrument_cite https://english.ihep.cas.cn/tfyzx/news/latest/202403/t20240331_659082.html
+  instrument_quote "The Large High-Altitude Air Shower Observatory (LHAASO) officially published its first catalog of gamma-ray sources"
+  probe 2026-10-25T11:00:50Z 200 https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
+  applies https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
+  note Feld lhaaso_km2a_e0_50tev = KM2A-Komponente; ReadMe Note (5) setzt E0=50 TeV fuer KM2A.
+
+host vizier.cds.unistra.fr
+  instrument LHAASO-WCDA
+  unit cm-2 s-1 TeV-1
+  api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/ApJS/271/25?format=html
+  api_quote "3TeV for the WCDA component and 50TeV for the KM2A component"
+  instrument_cite https://arxiv.org/abs/2009.12737
+  instrument_quote "One of its main goals is to survey the northern sky for very-high-energy (above 100 GeV) gamma ray sources via its ground-based Water Cherenkov Detector Array (WCDA)."
+  probe 2026-10-25T11:00:50Z 200 https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
+  applies https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
+  note Blockinstrument LHAASO ist die Observatoriums-Klasse; Feld lhaaso_sky1_e0_3tev ist die WCDA-Komponente (E0=3 TeV), nicht KM2A.
+
+host vizier.cds.unistra.fr
+  instrument 6dF
+  unit K
+  api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/III/283?format=html
+  api_quote "38- 42 I5 K Teffs [2417/46285] SPARV effective temperature"
+  instrument_cite https://aat.anu.edu.au/about-us/uk-schmidt-telescope
+  instrument_quote "The excellent optics and wide field of the telescope were subsequently exploited by the 6dF (6-degree Field) system, a multi-object fibre-optic spectrograph facility, which can obtain the spectra of more than 100 objects in a single field simultaneously."
+  probe 2026-10-25T11:01:21Z 200 https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
+  applies https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
+  note RAVE DR6; der Blockinstrument-Eintrag RAVE ist die Survey, das messende Geraet ist der 6dF-Spektrograph am UK Schmidt Telescope.
+
+host vo.km3net.de
+  instrument ANTARES
+  unit 1
+  api_cite https://vo.km3net.de/ant20_01/nu/cone/form
+  api_quote "The data set corresponds to the track sample (muon neutrino candidates) of a study meant to search for a point sources with data collected from January 2007 to December 2017 by the ANTARES neutrino telescope."
+  instrument_cite https://ecap.nat.fau.de/indexphp/research/neutrino-astronomy/antares-km3net/
+  instrument_quote "The detector consists of 12 vertical strings and an instrumentation line that are anchored to the seabed and tightened by underwater buoys."
+  probe 2026-10-25T11:01:22Z 200 https://vo.km3net.de/ant20_01/nu/cone/form
+  applies https://vo.km3net.de/ant20_01/nu/cone/form
+  note Ereigniskatalog (unit 1 = Ereignis), kein Zeitraster; der Host vo.km3net.de traegt ANTARES-Daten, nicht KM3NeT.
+
+host web.corral.tacc.utexas.edu
+  instrument NIRSpec
+  unit W/m2/Hz
+  api_cite https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/README_NIRSpec_DR0.7.txt
+  api_quote "The extracted 1D (x1d) spectra have units of flux density (Jy)"
+  instrument_cite https://science.nasa.gov/mission/webb/nirspec/
+  instrument_quote "NIRSpec operates over a wavelength range of 0.6 to 5 microns."
+  probe 2026-10-25T11:01:32Z 200 https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
+  applies https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
+  note ReadMe nennt Jy fuer die x1d-Spektren; Blockeinheit W/m2/Hz (1 Jy = 1e-26 W/m2/Hz, Umrechnung nicht im Dokument). NIRSpec-Gitter (MR) und Prisma.
+
+host webservices.ingv.it
+  instrument seismometer
+  unit km
+  api_cite https://earthquake.usgs.gov/fdsnws/event/1/
+  api_quote "| `maxdepth` | Decimal [-100, 1000] km | 1000 | Limit to events with depth less than the specified maximum. |"
+  instrument_cite https://www.fdsn.org/networks/detail/IV/
+  instrument_quote "IV: Italian National Seismic Network"
+  probe 2026-10-25T10:10:47Z 200 https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+  applies https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+  note Ereigniskatalog; Tiefe in km. Das FDSN-Netz IV ist die italienische Nationnetz-Kennung, das Sensorwort der Netzwerkseite ist "seismic network".
+
+host wso.stanford.edu
+  instrument magnetograph
+  unit T
+  sampling 86400
+  interval 864000
+  api_cite http://wso.stanford.edu/Polar.html
+  api_quote "Each 10 days the usable daily polar field measurements in a centered 30-day window are averaged."
+  instrument_cite http://wso.stanford.edu/
+  instrument_quote "The Wilcox Solar Observatory (WSO) began collecting daily observations of the Sun's global (or mean) magnetic field in May 1975"
+  probe 2026-10-25T11:01:36Z 200 http://wso.stanford.edu/Polar.html
+  applies http://wso.stanford.edu/Polar.html
+  note Tagesmessung (sampling 86400), Reihe ist ein 10-Tage-Mittel (interval 864000). Die Seite nennt keine Einheit; Blockeinheit T.
+
+host zenodo.org
+  instrument EXI
+  unit 1
+  api_cite https://zenodo.org/records/10275974
+  api_quote "The file comprises the dust storm database compiled from images captured by the Emirates eXploration Imager (EXI) aboard the Emirates Mars Mission (EMM)."
+  instrument_cite https://lasp.colorado.edu/instruments/exi/
+  instrument_quote "The EXI instrument is a multi-wavelength radiation tolerant camera"
+  probe 2026-10-25T11:01:37Z 206 https://zenodo.org/api/records/10275974/files/DustStormDatabaseEXI_MY36_V1.xlsx/content
+  applies https://zenodo.org/api/records/10275974/files/DustStormDatabaseEXI_MY36_V1.xlsx/content
+  note CDOD ist eine Staub-Optische-Dicke (dimensionslos, unit 1); Katalog aus Bildern, kein Zeitraster.
+
+host zenodo.org
+  instrument MAGIC
+  unit TeV
+  api_cite https://zenodo.org/records/13898269
+  api_quote "This data set corresponds to 60 hours of observations of the Crab Nebula performed between 2013 and 2018 under different observational conditions."
+  instrument_cite https://www.mpg.de/5571159/The_MAGIC_Telescopes
+  instrument_quote "The mirror diameter of each telescope is 17 metres, making this the world's largest reflector of its kind."
+  probe 2026-10-25T11:01:38Z 206 https://zenodo.org/api/records/13898269/files/magic_dl3_pdr1.zip/content
+  applies https://zenodo.org/api/records/13898269/files/magic_dl3_pdr1.zip/content
+  note DL3 nach GADF, Energie in TeV; Beobachtungszeitraum 2013-2018, kein regelmaessiges Raster.
+
+host zenodo.org
+  instrument ZTF
+  unit mag
+  interval 172800
+  api_cite https://zenodo.org/records/11123894
+  api_quote "This is the first release of the features computed by the ALeRCE community alert broker"
+  instrument_cite https://www.ztf.caltech.edu/
+  instrument_quote "ZTF has been continuously scanning the entire Northern sky every two days since 2018."
+  probe 2026-10-25T11:01:38Z 206 https://zenodo.org/api/records/11123894/files/features.parquet/content
+  applies https://zenodo.org/api/records/11123894/files/features.parquet/content
+  note Features aus dem ZTF-Alertstrom; Nordhimmel-Scan alle 2 Tage (interval 172800). Amplitude in mag, im ReadMe nicht als Einheit ausgeschrieben.
+
+host zenodo.org
+  instrument seismometer
+  unit Mw
+  api_cite https://zenodo.org/records/8084659
+  api_quote "CEDC catalog.xlsx : the seismic catalog from China Earthquake Data Center"
+  instrument_cite https://en.wikipedia.org/wiki/China_Earthquake_Networks_Center
+  instrument_quote "It is responsible for the operational guidance and management of the national seismic network"
+  probe 2026-10-25T11:01:40Z 206 https://zenodo.org/api/records/8084659/files/CEDC%20catalog.xlsx/content
+  applies https://zenodo.org/api/records/8084659/files/CEDC%20catalog.xlsx/content
+  note Katalog-Magnitude Mw aus dem CENC-Netz; kein Einzelsensor. Der Blockeintrag "seismometer" ist die Sensorklasse des Netzes, nicht ein Geraet.
+
+host zenodo.org
+  instrument DECam
+  unit mag
+  api_cite https://zenodo.org/records/16755566
+  api_quote "The data was generated by the Dark Energy Survey (DES) team using:"
+  instrument_cite https://www.darkenergysurvey.org/the-des-project/instrument/
+  instrument_quote "The instrument used by DES is the newly constructed Dark Energy Camera (DECam), which is mounted on the Victor M. Blanco 4-meter Telescope at the Cerro Tololo Inter-American Observatory (CTIO) in the Chilean Andes."
+  probe 2026-10-25T11:01:42Z 206 https://zenodo.org/api/records/16755566/files/DES-SN5YR-UDT-Ready.zip/content
+  applies https://zenodo.org/api/records/16755566/files/DES-SN5YR-UDT-Ready.zip/content
+  note Distanzmodul in mag (Spalte MU_SH0ES), kein Zeitraster.
+
+host zenodo.org
+  instrument seismometer
+  unit km/s
+  api_cite https://zenodo.org/records/3993276
+  api_quote "This folder contains three tomography models, DETOX-P1, DETOX-P2 and DETOX-P3"
+  instrument_cite https://www.usgs.gov/programs/earthquake-hazards/gsn-global-seismographic-network
+  instrument_quote "Most stations in the network have two collocated broadband seismometers"
+  probe 2026-10-25T11:01:43Z 206 https://zenodo.org/api/records/3993276/files/DETOX_MODELS.zip/content
+  applies https://zenodo.org/api/records/3993276/files/DETOX_MODELS.zip/content
+  note S-Wellengeschwindigkeit in km/s; Globaltomographie aus Breitband-Seismogrammen, kein Zeitraster.
+
+host zenodo.org
+  instrument LEAP phased array
+  unit s
+  api_cite https://zenodo.org/records/8300645
+  api_quote "The dataset contains high-precision pulsar timing data from25 millisecond pulsars collected with the five largest radio telescopes in Europe, as well as the Large European Array for Pulsars."
+  instrument_cite https://www.epta.eu.org/the-leap-project.html
+  instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  applies https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  note Timing-Residuen in s; der Blockeintrag "radiotelescope" ist die Klasse, das Produkt ist das LEAP-Phased-Array aus fuenf Teleskopen.
+
+host zenodo.org
+  instrument GPS receiver
+  unit mm/yr
+  api_cite https://zenodo.org/records/7798617
+  api_quote "The `gps_campaign.dat` file contains the horizontal and vertical velocities of the 432 campaign GPS stations from the Crustal Movement Observation Network of China (CMONOC) project."
+  instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC6210552/
+  instrument_quote "The Crustal Movement Observation Network of China (CMONOC) consists of 260 continuous stations and 2000 campaign stations"
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/7798617/files/gps_campaign.dat/content
+  applies https://zenodo.org/api/records/7798617/files/gps_campaign.dat/content
+  note Kampagnen-GPS; Horizontal- und Vertikalgeschwindigkeit in mm/yr.
+
+host zenodo.org
+  instrument GPS receiver
+  unit mm/yr
+  api_cite https://zenodo.org/records/7798617
+  api_quote "The `gps_cmonoc.dat` file contains the horizontal and vertical velocities of the 35 continuous GPS stations from the Crustal Movement Observation Network of China (CMONOC) project."
+  instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC6210552/
+  instrument_quote "The Crustal Movement Observation Network of China (CMONOC) consists of 260 continuous stations and 2000 campaign stations"
+  probe 2026-10-25T11:01:45Z 206 https://zenodo.org/api/records/7798617/files/gps_cmonoc.dat/content
+  applies https://zenodo.org/api/records/7798617/files/gps_cmonoc.dat/content
+  note Kontinuierliches GPS (CMONOC), 35 Stationen; Geschwindigkeit in mm/yr.
+
+host zenodo.org
+  instrument NIRCam
+  unit nJy
+  api_cite https://archive.stsci.edu/hlsp/jades
+  api_quote "| **Filter** | **1st Release 5-sigma (nJy)** | **Filter** | **1st Release 5-sigma (nJy)** | **Filter** | **1st Release 5-sigma (nJy)** |"
+  instrument_cite https://science.nasa.gov/mission/webb/nircam/
+  instrument_quote "NIRCam is designed to capture light ranging in wavelength from 0.6 microns (visible red) to 5 microns (mid-infrared)."
+  probe 2026-10-25T11:01:46Z 206 https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
+  applies https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
+  note F090W bis F444W Thumbnails; Flussdichte in nJy nach der JADES-Sensitivitaetstabelle. Die FITS-Header der Thumbnails tragen keinen BUNIT.
+
+host zenodo.org
+  instrument OmegaCAM
+  unit 1
+  api_cite https://zenodo.org/records/16366035
+  api_quote "Complete weak gravitational lensing catalog from KiDS Data Release 4.1 containing 21.2 million galaxies with photometric redshifts and shape measurements."
+  instrument_cite https://www.eso.org/sci/publications/announcements/sciann17695.html
+  instrument_quote "The imaging data included in this DR1 are obtained using the wide-field camera OmegaCAM in the filters: u, g, r, i, z, H_α."
+  probe 2026-10-25T11:01:49Z 206 https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content
+  applies https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content
+  note Elliptizitaet e1 (unit 1), kein Zeitraster; KiDS-Daten mit VST/OmegaCAM.
+
+host zenodo.org
+  instrument seismometer
+  unit km/s
+  api_cite https://zenodo.org/records/11212270
+  api_quote "Filters are available to filter S-wave velocity structure up to degree 12 (S12RTS), 20 (S20RTS) or degree 40 (S40RTS)"
+  instrument_cite https://www.usgs.gov/programs/earthquake-hazards/gsn-global-seismographic-network
+  instrument_quote "Most stations in the network have two collocated broadband seismometers"
+  probe 2026-10-25T11:01:52Z 206 https://zenodo.org/api/records/11212270/files/S40RTS.sph/content
+  applies https://zenodo.org/api/records/11212270/files/S40RTS.sph/content
+  note S-Wellengeschwindigkeitsmodell in km/s (Sphaerische Harmonische, 21 Splines); kein Zeitraster.
+
+host zenodo.org
+  instrument LEDA
+  unit 1
+  api_cite https://zenodo.org/records/400690
+  api_quote "Initial data release of LEDA characterization data from February 2016 testing campaign."
+  instrument_cite https://arxiv.org/abs/1709.09313
+  instrument_quote "LEDA systems include the station correlator, five well-separated redundant dual polarization radiometers and backend electronics."
+  probe 2026-10-25T11:01:54Z 200 https://zenodo.org/records/400690
+  applies https://zenodo.org/records/400690
+  note Outrigger-Spektralleistung (unit 1, dimensionslos); 30-85-MHz-Radiometer, kein Zeitraster.
+
+host zenodo.org
+  instrument Lovell
+  unit s
+  api_cite https://zenodo.org/records/8300645
+  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  instrument_cite https://www.epta.eu.org/the-leap-project.html
+  instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  applies https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  note EPTA DR2; Timing-Residuen in s; das Produkt ist die LEAP-Kollaboration aus fuenf Teleskopen, jedes ist ein eigenes Instrument.
+
+host zenodo.org
+  instrument Nancay
+  unit s
+  api_cite https://zenodo.org/records/8300645
+  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  instrument_cite https://www.epta.eu.org/the-leap-project.html
+  instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  applies https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  note EPTA DR2; Timing-Residuen in s.
+
+host zenodo.org
+  instrument Effelsberg
+  unit s
+  api_cite https://zenodo.org/records/8300645
+  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  instrument_cite https://www.epta.eu.org/the-leap-project.html
+  instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  applies https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  note EPTA DR2; Timing-Residuen in s.
+
+host zenodo.org
+  instrument Westerbork
+  unit s
+  api_cite https://zenodo.org/records/8300645
+  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  instrument_cite https://www.epta.eu.org/the-leap-project.html
+  instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  applies https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  note EPTA DR2; Timing-Residuen in s.
+
+host zenodo.org
+  instrument Sardinia
+  unit s
+  api_cite https://zenodo.org/records/8300645
+  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  instrument_cite https://www.epta.eu.org/the-leap-project.html
+  instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
+  probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  applies https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+  note EPTA DR2; Timing-Residuen in s.
+

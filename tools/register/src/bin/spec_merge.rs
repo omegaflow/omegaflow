@@ -106,14 +106,19 @@ fn merge_rows(out_path: &str, state_path: &str) {
         }
         normalize(&mut b);
         if let (Some(h), Some(p)) = (host_of(&b), product_of(&b)) {
-            if let Some(&i) = seen.get(&(h.clone(), p.clone())) {
+            let inst = match field(&b, "instrument") {
+                Some(v) => v,
+                None => String::new(),
+            };
+            let key = (h.clone(), format!("{p}\t{inst}"));
+            if let Some(&i) = seen.get(&key) {
                 if cites(&b) > cites(&rows[i].1) {
                     rows[i].1 = b;
                     replaced += 1;
                 }
                 continue;
             }
-            seen.insert((h, p), rows.len());
+            seen.insert(key, rows.len());
             rows.push((0, b));
             added += 1;
         }
@@ -149,7 +154,7 @@ fn apply_instruments(tsv_path: &str) {
         let Ok(n) = n.trim().parse::<usize>() else {
             continue;
         };
-        if inst.trim().eq_ignore_ascii_case("pending") {
+        if inst.trim().eq_ignore_ascii_case("pending") || inst.trim() == "-" {
             continue;
         }
         map.insert(n, inst.trim().to_string());
@@ -158,6 +163,7 @@ fn apply_instruments(tsv_path: &str) {
     let mut lines: Vec<String> = text.lines().map(str::to_string).collect();
     let starts: Vec<usize> = blocks(&text).into_iter().map(|(s, _)| s).collect();
     let mut added = 0usize;
+    let mut ins: Vec<(usize, String)> = Vec::new();
     for (idx, start) in starts.iter().enumerate() {
         let Some(inst) = map.get(start) else {
             continue;
@@ -173,9 +179,12 @@ fn apply_instruments(tsv_path: &str) {
             .iter()
             .position(|l| l.starts_with("origin "))
         {
-            lines.insert(start + pos, format!("instrument {inst}"));
-            added += 1;
+            ins.push((start + pos, format!("instrument {inst}")));
         }
+    }
+    for (at, line) in ins.into_iter().rev() {
+        lines.insert(at, line);
+        added += 1;
     }
     fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
     println!("instrument: {added} eingesetzt");
@@ -380,6 +389,260 @@ fn probe_drop_failed() {
     println!("probe: {dropped} Fehlschlaege entfernt");
 }
 
+fn probes_from_tsv(path: &str) {
+    let tsv = fs::read_to_string(path).expect("tsv");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut rows = blocks(&fs::read_to_string(REG).expect("register"));
+    let phi_blocks = blocks(&phi_text);
+    let mut added = 0usize;
+    let mut missed = 0usize;
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(n), Some(probe)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let Ok(line_no) = n.trim().parse::<usize>() else {
+            continue;
+        };
+        let probe = probe.trim();
+        if !probe.starts_with("probe ") {
+            continue;
+        }
+        let Some((_, block)) = phi_blocks.iter().find(|(s, _)| *s == line_no) else {
+            missed += 1;
+            continue;
+        };
+        let Some(origin) = field(block, "origin") else {
+            missed += 1;
+            continue;
+        };
+        let Some(url) = origin.split_whitespace().next() else {
+            missed += 1;
+            continue;
+        };
+        let Some(host) = url
+            .split_once("://")
+            .and_then(|(_, r)| r.split(['/', '?', ':']).next())
+            .map(|h| h.trim_start_matches("www.").to_string())
+        else {
+            missed += 1;
+            continue;
+        };
+        let stem = url.split(['?', '{']).next().unwrap_or(url);
+        let mut best: Option<(usize, usize)> = None;
+        for (i, (_, r)) in rows.iter().enumerate() {
+            if host_of(r).as_deref() != Some(host.as_str()) {
+                continue;
+            }
+            let Some(applies) = field(r, "applies") else {
+                continue;
+            };
+            if !(url.starts_with(&applies) || applies.starts_with(stem)) {
+                continue;
+            }
+            if best.is_none_or(|(_, len)| applies.len() > len) {
+                best = Some((i, applies.len()));
+            }
+        }
+        let Some((i, _)) = best else {
+            missed += 1;
+            continue;
+        };
+        let probe_url = probe.split_whitespace().nth(3).unwrap_or("");
+        let exists = rows[i]
+            .1
+            .iter()
+            .filter(|l| l.trim_start().starts_with("probe "))
+            .any(|l| l.split_whitespace().nth(3) == Some(probe_url));
+        if exists {
+            continue;
+        }
+        let at = rows[i]
+            .1
+            .iter()
+            .position(|l| l.starts_with("  applies "))
+            .unwrap_or(rows[i].1.len());
+        rows[i].1.insert(at, format!("  {probe}"));
+        added += 1;
+    }
+    let mut out = String::new();
+    for (_, b) in &rows {
+        out.push_str(&b.join("\n"));
+        out.push_str("\n\n");
+    }
+    fs::write(REG, out).expect("register write");
+    println!("probes: {added} uebernommen, {missed} ohne Zeile");
+}
+
+fn fill_instruments() {
+    let reg_text = fs::read_to_string(REG).expect("register");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let rows = blocks(&reg_text);
+    let phi_blocks = blocks(&phi_text);
+    let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
+    let mut done = 0usize;
+    let mut ambiguous = 0usize;
+    let mut insertions: Vec<(usize, String)> = Vec::new();
+    for (idx, (start, block)) in phi_blocks.iter().enumerate() {
+        let has_fields = block.iter().any(|l| {
+            let p: Vec<&str> = l.split_whitespace().collect();
+            matches!(p.first(), Some(&"field") | Some(&"quantity"))
+        });
+        if !has_fields || block.iter().any(|l| l.starts_with("instrument ")) {
+            continue;
+        }
+        let Some(origin) = field(block, "origin") else {
+            continue;
+        };
+        let Some(url) = origin.split_whitespace().next() else {
+            continue;
+        };
+        let Some(host) = url
+            .split_once("://")
+            .and_then(|(_, r)| r.split(['/', '?', ':']).next())
+            .map(|h| h.trim_start_matches("www.").to_string())
+        else {
+            continue;
+        };
+        let stem = url.split(['?', '{']).next().unwrap_or(url);
+        let mut names: Vec<String> = Vec::new();
+        for (_, r) in &rows {
+            if host_of(r).as_deref() != Some(host.as_str()) {
+                continue;
+            }
+            let Some(applies) = field(r, "applies") else {
+                continue;
+            };
+            if !(url.starts_with(&applies) || applies.starts_with(stem)) {
+                continue;
+            }
+            if let Some(inst) = field(r, "instrument")
+                && inst != "-"
+                && !names.iter().any(|n| n.eq_ignore_ascii_case(&inst))
+            {
+                names.push(inst);
+            }
+        }
+        if names.len() != 1 {
+            if names.len() > 1 {
+                ambiguous += 1;
+            }
+            continue;
+        }
+        let end = phi_blocks
+            .get(idx + 1)
+            .map(|(s, _)| s - 1)
+            .unwrap_or(lines.len());
+        if let Some(pos) = lines[start - 1..end.min(lines.len())]
+            .iter()
+            .position(|l| l.starts_with("origin "))
+        {
+            insertions.push((start + pos, format!("instrument {}", names[0])));
+            done += 1;
+        }
+    }
+    for (at, line) in insertions.into_iter().rev() {
+        lines.insert(at, line);
+    }
+    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    println!("instrument: {done} eindeutig eingesetzt, {ambiguous} mehrdeutig");
+}
+
+fn clean() {
+    let text = fs::read_to_string(REG).expect("register");
+    let mut out = String::new();
+    let mut removed = 0usize;
+    for (_, b) in blocks(&text) {
+        let mut keep: Vec<String> = Vec::new();
+        for mut line in b {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            if matches!(p.first(), Some(&"sampling") | Some(&"interval"))
+                && p.get(1) == Some(&"none")
+            {
+                removed += 1;
+                continue;
+            }
+            if p.first() == Some(&"instrument") {
+                let rest = p[1..].join(" ");
+                if rest.to_ascii_lowercase().starts_with("6df") {
+                    line = "  instrument 6dF".to_string();
+                }
+            }
+            keep.push(line);
+        }
+        out.push_str(&keep.join("\n"));
+        out.push_str("\n\n");
+    }
+    fs::write(REG, out).expect("register write");
+    println!("clean: {removed} none-Zeilen entfernt");
+}
+
+fn repair_instruments() {
+    let reg_text = fs::read_to_string(REG).expect("register");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let rows = blocks(&reg_text);
+    let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
+    let mut drop: Vec<usize> = Vec::new();
+    for (start, block) in blocks(&phi_text) {
+        let insts: Vec<(usize, String)> = block
+            .iter()
+            .enumerate()
+            .filter_map(|(i, l)| l.strip_prefix("instrument ").map(|v| (start + i, v.to_string())))
+            .collect();
+        if insts.len() < 2 {
+            continue;
+        }
+        let Some(origin) = field(&block, "origin") else {
+            continue;
+        };
+        let Some(url) = origin.split_whitespace().next() else {
+            continue;
+        };
+        let Some(host) = url
+            .split_once("://")
+            .and_then(|(_, r)| r.split(['/', '?', ':']).next())
+            .map(|h| h.trim_start_matches("www.").to_string())
+        else {
+            continue;
+        };
+        let mut row_insts: Vec<String> = Vec::new();
+        for (_, r) in &rows {
+            if host_of(r).as_deref() != Some(host.as_str()) {
+                continue;
+            }
+            let Some(applies) = field(r, "applies") else {
+                continue;
+            };
+            if !url.starts_with(&applies) {
+                continue;
+            }
+            if let Some(inst) = field(r, "instrument")
+                && !row_insts.iter().any(|n| n.eq_ignore_ascii_case(&inst))
+            {
+                row_insts.push(inst);
+            }
+        }
+        let keep: Vec<&(usize, String)> = insts
+            .iter()
+            .filter(|(_, i)| row_insts.iter().any(|r| r.eq_ignore_ascii_case(i)))
+            .collect();
+        if keep.len() == 1 {
+            for (ln, _) in &insts {
+                if *ln != keep[0].0 {
+                    drop.push(*ln);
+                }
+            }
+        }
+    }
+    drop.sort_unstable();
+    drop.dedup();
+    for ln in drop.iter().rev() {
+        lines.remove(ln - 1);
+    }
+    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    println!("repair: {} falsche Instrumentzeilen entfernt", drop.len());
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -388,6 +651,10 @@ fn main() {
         Some("hostdocs") => host_docs(),
         Some("probe-fill") => probe_fill(),
         Some("probe-drop-failed") => probe_drop_failed(),
+        Some("probes") if args.len() >= 3 => probes_from_tsv(&args[2]),
+        Some("fill-instruments") => fill_instruments(),
+        Some("clean") => clean(),
+        Some("repair-instruments") => repair_instruments(),
         _ => {
             eprintln!("spec_merge rows <out.φ> <states.φ> | instruments <tsv> | hostdocs");
             std::process::exit(2);

@@ -307,7 +307,7 @@ quantity 4 sed_quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
 origin http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
-instrument -
+instrument thermometer
 terms CC-BY-4.0 https://reg.bom.gov.au/other/copyright.shtml
 ttl 300
 map observations.data
@@ -1676,6 +1676,7 @@ quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/ads.atmosphere.copernicus.eu/cams_so2_emission.nc
 terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
 origin https://ads.atmosphere.copernicus.eu/api/
+instrument CAMS-GLOB-ANT
 format cams_so2
 header PRIVATE-TOKEN {CDS_API_KEY}
 ttl 86400
@@ -2100,7 +2101,6 @@ url https://github.com/omegaflow/sources/releases/download/download.geofabrik.de
 terms ODbL-1.0 https://download.geofabrik.de/
 format osm_nodes
 origin https://download.geofabrik.de/europe/monaco-latest.osm.pbf
-instrument -
 compiler tools/harvest/src/bin/osm_pbf_compiler.rs
 at earth
 ttl 86400
@@ -2422,7 +2422,7 @@ url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.o
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format masie_ice_extent
 origin https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
-instrument -
+instrument IMS
 compiler tools/harvest/src/bin/masie_compiler.rs
 at earth
 ttl 86400
@@ -8409,6 +8409,7 @@ quantity lod eop_iers_lod_s inverse-square geometry s 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 origin https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+instrument REMS
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
 on mars 18.445 77.45 0
@@ -8418,6 +8419,7 @@ field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoust
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
 origin https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+instrument REMS
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
 on mars -4.5895 137.4417 0
@@ -10258,7 +10260,7 @@ field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective k
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
 origin https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
-instrument -
+instrument UKST
 terms attribution https://dc.g-vo.org/
 ttl 604800
 at sun
@@ -10310,7 +10312,6 @@ field 3 smartbay_ctd_salinity_psu gaussian-inverse-square diffusion PSU 60 0.0 0
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
-instrument -
 terms other-attribution https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html
 ttl 604800
 at sun
@@ -12017,6 +12018,7 @@ url https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/sup
 terms free-open https://sdc-serv.usask.ca/
 format superdarn_fitacf
 origin https://sdc-serv.usask.ca/data/
+instrument SuperDARN
 compiler tools/harvest/src/bin/superdarn_fitacf_compiler.rs
 sha256 c5e1238a08c310363545ff94085a95ac1ab5ec44974de2dd70b57aa4b0b1d0b7
 at earth
@@ -12363,7 +12365,6 @@ field toar_surface_o3_ppb toar_surface_o3_ppb gaussian-inverse-square diffusion 
 url https://github.com/omegaflow/sources/releases/download/transparency.entsoe.eu/entsoe_a78.bin
 terms CC-BY-4.0 https://transparency.entsoe.eu/
 origin https://web-api.tp.entsoe.eu/api
-instrument -
 format entsoe_unavailability
 compiler tools/harvest/src/bin/entsoe_compiler.rs
 at earth
@@ -12538,6 +12539,7 @@ last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square geometry m/s2 8
 url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
+instrument LASCO
 format soho_lasco_cme
 compiler tools/harvest/src/bin/soho_lasco_compiler.rs
 at sun
@@ -12726,7 +12728,6 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/cdr.eionet.europa.eu/eionet_cdr.bin
 format eionet_cdr
 origin https://cdr.eionet.europa.eu/at/eu/eprtrdat/envxwzhwa/EU_Report_2017_27Aug19.xml
-instrument -
 terms CC-BY-4.0 https://cdr.eionet.europa.eu/legalnotice
 compiler tools/harvest/src/bin/eionet_cdr_compiler.rs
 sha256 4ac92594eef4749ae52763950a6e164b5a0d34a27ab815a9b44a6e78f875a4f7
@@ -13109,7 +13110,6 @@ url https://github.com/omegaflow/sources/releases/download/data.giss.nasa.gov/gi
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gistemp_aod550_axis_value_text
 origin https://data.giss.nasa.gov/modelforce/strataer/data/tau_reff_Sato-Lacis.nc
-instrument -
 compiler tools/harvest/src/bin/gistemp_aod_compiler.rs
 sha256 1ba4e901a84731edd543d6de6a5f30920ddb746652e5f8fa05efed557036bde6
 ttl 31536000
@@ -13347,6 +13347,7 @@ url https://github.com/omegaflow/sources/releases/download/itrf.ign.fr/sinex.bin
 terms etalab-2.0 https://itrf.ign.fr/en/solutions/ITRF2020
 format sinex
 origin https://itrf.ign.fr/ftp/pub/itrf/itrf2020/ITRF2020-IVS-TRF.SSC
+instrument MSI
 compiler tools/harvest/src/bin/itrf_sinex_compiler.rs
 sha256 8dd67252912ca0f44744fb264ace22a4870c9775409108542ee268c3c285182f
 at earth
@@ -29430,7 +29431,6 @@ field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/exoplanets.json
 terms ipac-public https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync table=pscomppars
-instrument -
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -32017,7 +32017,11 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.s
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.8300645
 format sky1
 origin https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
-instrument radiotelescope
+instrument Lovell
+instrument Nancay
+instrument Effelsberg
+instrument Westerbork
+instrument Sardinia
 compiler tools/harvest/src/bin/epta_dr2_compiler.rs
 sha256 3c4285c23bdf30b3fcee97e3a151241637939265c346a24c6c72dd1633dec151
 at sun
@@ -32590,7 +32594,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_brightsample.fits
 terms CC-BY-4.0 https://zenodo.org/records/17086764
 origin https://zenodo.org/api/records/17086764/files/KiDS_DR4_brightsample.fits/content
-instrument VST
+instrument OmegaCAM
 format fits
 at sun
 no-sampling
@@ -32603,7 +32607,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_w
 terms CC-BY-4.0 https://zenodo.org/records/16366035
 format fits
 origin https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content
-instrument VST
+instrument OmegaCAM
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 dcc2bf039190d0c53542f6f08ac6ce27e749dd31999cd4ab049edd4d41fbef32
 at sun
@@ -32686,7 +32690,6 @@ quantity magnitude ogle_magnitude inverse-square source-parameter mag 604800 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/pantheon_sh0es.dat
 terms CC-BY-4.0 https://zenodo.org/records/16365279
 origin https://zenodo.org/api/records/16365279/files/Pantheon_SH0ES.dat/content
-instrument -
 format ascii
 compiler tools/harvest/src/bin/ascii_table_compiler.rs
 at sun
