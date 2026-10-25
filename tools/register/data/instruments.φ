@@ -43,7 +43,7 @@ host services.swpc.noaa.gov
   note the block says cadence 6.0; the page says 1-minute averaged, and the artefact itself is not measurable yet because no mode reads raw JSON
   applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 
-host www.ncei.noaa.gov
+host ncei.noaa.gov
   instrument thermometer
   unit degree_C
   cadence 2 3600
@@ -223,7 +223,7 @@ host ssd-api.jpl.nasa.gov
   applies https://ssd-api.jpl.nasa.gov/fireball.api
   note keine Kadenz belegt: Ereigniskatalog; der Block sagt 3600, das ist die Parser-Zahl
 
-host www.ndbc.noaa.gov
+host ndbc.noaa.gov
   instrument wind speed
   unit m/s
   cadence 3600
@@ -249,7 +249,7 @@ host gml.noaa.gov
   applies https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
   note cadence 604800 kommt aus dem Produkt selbst (Wochenmittel), nicht aus dem Zitat; der zweite Blockpfad (met_brw_insitu_1_obop_hour) ist Meteorologie mit anderem Sensor
 
-host www.ngdc.noaa.gov
+host ngdc.noaa.gov
   instrument radio telescope
   unit sfu
   cadence 86400
@@ -320,3 +320,94 @@ host vires.services
   probe 2026-10-25T08:48:24Z 200 https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start=2026-10-24T00:00:00Z&stop=2026-10-24T00:05:00Z&parameters=Absolute_STEC&format=json
   applies https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F
   note Parameter ist Absolute_STEC (slant), nicht "TEC" — mit TEC antwortet der Endpunkt 404; Einheit TECU aus der info-Antwort
+
+host imag-data.bgs.ac.uk
+  instrument fluxgate
+  unit nT
+  cadence 60
+  api_cite https://imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=abk/best-avail/PT1M/xyzf
+  api_quote "\"units\" : [ \"nT\", \"nT\", \"nT\" ]  \"cadence\" : \"PT1M\""
+  instrument_cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/
+  instrument_quote "Fluxgate variometers usually have 3 orthogonal fluxgate sensors."
+  probe 2026-10-25T08:52:12Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=abk/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:30Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aia/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:32Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ars/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:32Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=asc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:33Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=asp/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:33Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bdv/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:34Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bel/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:34Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bfo/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:35Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=blc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:36Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bou/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:37Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=brd/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:37Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=brw/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:38Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bsl/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:38Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cbb/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:38Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cki/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:39Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cmo/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:39Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cnb/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:40Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cpl/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:41Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=csy/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:41Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cta/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:42Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cyg/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:43Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ded/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:45Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dou/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:47Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=eyr/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:47Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=fcc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:48Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=frd/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:48Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=frn/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:48Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=fur/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:49Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gan/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:49Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gdh/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:51Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gng/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:51Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gua/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:54Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hlp/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:54Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hon/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:55Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hrn/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:55Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hyb/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:56Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=iqa/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:58Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=izn/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:53:59Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kak/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:00Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kdu/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:00Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kep/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:01Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kir/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:02Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kny/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:03Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lon/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:05Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lrm/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lyc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:07Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mab/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:07Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=maw/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:09Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mea/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:25Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mmb/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:26Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=naq/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:26Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nck/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:27Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=new/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:27Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ngk/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:28Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nur/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:28Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ott/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:29Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pag/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:33Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pst/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:49Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sba/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:50Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sbl/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:50Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=she/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:51Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=shu/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:51Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sit/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:52Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sjg/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:52Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sod/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:53Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=stj/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:56Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tdc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:56Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=thl/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:57Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=thy/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:58Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ttb/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:59Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tuc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:54:59Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ups/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:00Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=val/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:00Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vic/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:02Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vna/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:03Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vos/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:04Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vss/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:05Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wic/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wng/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ykc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  applies https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
+  note die Dokumente sind offen und lesbar; die Weitergabe der Daten ist es nicht — bulk distribution verlangt written permission (state/wartend.phi, LOCK rechtlich). Die Zeile belegt die Messung, sie gibt die Daten nicht frei. Die Register-origin traegt keine dataset-id, deshalb deckt eine Zeile den Endpunkt

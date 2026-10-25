@@ -215,23 +215,16 @@ fn probe_admits(status: &str) -> bool {
 }
 
 fn origin_stem(url: &str) -> &str {
-    let cut = url
-        .find('?')
-        .into_iter()
-        .chain(url.find('{'))
-        .min()
-        .unwrap_or(url.len());
-    &url[..cut]
+    &url[..url.find('?').unwrap_or(url.len())]
 }
 
 fn host_of(url: &str) -> Option<String> {
     let rest = url.split_once("://")?.1;
     let host = rest.split(['/', '?']).next()?;
     if host.is_empty() {
-        None
-    } else {
-        Some(host.to_string())
+        return None;
     }
+    Some(host.strip_prefix("www.").unwrap_or(host).to_string())
 }
 
 fn load_specs(path: &str) -> Vec<Spec> {
