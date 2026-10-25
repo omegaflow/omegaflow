@@ -1,7 +1,7 @@
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::cdn::upload_release;
 use omegaflow::gaia_sso::{
-    GAIA_SSO_TABLE, GAIA_TAP_SYNC, GaiaBody, TNO_NAME, parse_bin, parse_observation_csv, write_bin,
+    GAIA_SSO_TABLE, GAIA_TAP_SYNC, GaiaBody, parse_bin, parse_observation_csv, tno_table, write_bin,
 };
 use std::process::Command;
 const CDN_RELEASE: &str = "gea.esac.esa.int";
@@ -80,7 +80,7 @@ fn main() {
     let mut all: Vec<GaiaBody> = Vec::new();
     let mut total_rows = 0usize;
     let mut total_emitted = 0usize;
-    for (name, number_mp) in TNO_NAME {
+    for (name, number_mp) in tno_table() {
         let adql = observation_adql(*number_mp);
         let Some((code, body)) = tap_csv(&adql) else {
             println!(
@@ -186,6 +186,6 @@ mod tests {
 
     #[test]
     fn table_covers_fourteen_bright_bodies() {
-        assert_eq!(TNO_NAME.len(), 14);
+        assert_eq!(tno_table().len(), 14);
     }
 }

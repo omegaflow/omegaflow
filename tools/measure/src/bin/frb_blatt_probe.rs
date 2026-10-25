@@ -104,8 +104,8 @@ struct TrainVerdict {
     name: String,
     n: usize,
     best_distance: usize,
-    te: f64,
-    thr: f64,
+    te: Option<f64>,
+    thr: Option<f64>,
     arrow: bool,
     family_bound: bool,
 }
@@ -119,15 +119,15 @@ fn run_trains(trains: &[(String, Vec<f64>)]) -> (f64, Vec<TrainVerdict>) {
                 name: name.clone(),
                 n: dts.len(),
                 best_distance: 0,
-                te: f64::NAN,
-                thr: f64::NAN,
+                te: None,
+                thr: None,
                 arrow: false,
                 family_bound: false,
             });
             continue;
         }
         let mut best: Option<(usize, f64)> = None;
-        let mut best_thr = f64::NAN;
+        let mut best_thr: Option<f64> = None;
         for &distance in DISTANCES.iter() {
             let seed = SEED ^ (distance as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
             let future: Vec<f32> = dts[distance..].iter().map(|&d| d as f32).collect();
@@ -144,7 +144,7 @@ fn run_trains(trains: &[(String, Vec<f64>)]) -> (f64, Vec<TrainVerdict>) {
             if let Some(te) = self_te(dts, distance) {
                 if best.map_or(true, |(_, b)| te > b) {
                     best = Some((distance, te));
-                    best_thr = mean_plus_2sigma(&surr).unwrap_or(f64::NAN);
+                    best_thr = mean_plus_2sigma(&surr);
                 }
             }
         }
@@ -155,8 +155,8 @@ fn run_trains(trains: &[(String, Vec<f64>)]) -> (f64, Vec<TrainVerdict>) {
                     name: name.clone(),
                     n: dts.len(),
                     best_distance: 0,
-                    te: f64::NAN,
-                    thr: f64::NAN,
+                    te: None,
+                    thr: None,
                     arrow: false,
                     family_bound: false,
                 });
@@ -164,12 +164,12 @@ fn run_trains(trains: &[(String, Vec<f64>)]) -> (f64, Vec<TrainVerdict>) {
             }
         };
         let arrow = te > fam;
-        let family_bound = !arrow && te > best_thr;
+        let family_bound = !arrow && best_thr.is_some_and(|t| te > t);
         verdicts.push(TrainVerdict {
             name: name.clone(),
             n: dts.len(),
             best_distance,
-            te,
+            te: Some(te),
             thr: best_thr,
             arrow,
             family_bound,
@@ -224,7 +224,7 @@ fn main() {
             "ARROW — the train carries memory: modulated beam"
         } else if v.family_bound {
             "family bound — no arrow, above its own surrogate threshold"
-        } else if v.te.is_nan() {
+        } else if v.te.is_none() {
             "no statement — fewer than MIN_N intervals"
         } else {
             "still — no memory: explosive impulse form"
@@ -232,13 +232,17 @@ fn main() {
         if v.arrow {
             arrows += 1;
         }
-        if v.te.is_nan() {
-            println!("    {:16} | n = {:3} | no statement", v.name, v.n);
-        } else {
-            println!(
-                "    {:16} | n = {:3} | dist {:2} | TE {:>10.4e} | thr {:>10.4e} | {}",
-                v.name, v.n, v.best_distance, v.te, v.thr, word
-            );
+        match v.te {
+            None => println!("    {:16} | n = {:3} | no statement", v.name, v.n),
+            Some(te) => println!(
+                "    {:16} | n = {:3} | dist {:2} | TE {:>10.4e} | thr {} | {}",
+                v.name,
+                v.n,
+                v.best_distance,
+                te,
+                v.thr.map_or("absent".to_string(), |t| format!("{t:>10.4e}")),
+                word
+            ),
         }
     }
 
@@ -277,7 +281,9 @@ fn main() {
         let arrow = verdicts
             .iter()
             .filter(|v| v.arrow)
-            .max_by(|a, b| a.te.total_cmp(&b.te));
+            .filter_map(|v| v.te.map(|te| (v, te)))
+            .max_by(|a, b| a.1.total_cmp(&b.1))
+            .map(|(v, _)| v);
         match arrow {
             Some(v) => match trains.iter().find(|(name, _)| *name == v.name) {
                 Some((_, dts)) => {

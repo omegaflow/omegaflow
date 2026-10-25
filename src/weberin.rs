@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use crate::archivar::cometels::CometelsRec;
 use crate::archivar::dastcom::{CometRec, comet_state_at};
-use crate::archivar::gaia_sso::{GaiaBody, TNO_NAME, ang_sep_arcsec, predicted_radec, tno_number};
+use crate::archivar::gaia_sso::{GaiaBody, ang_sep_arcsec, predicted_radec, tno_table};
 #[cfg(test)]
 use crate::archivar::kepler::{AU_M, GM_SUN_M3_S2};
 use crate::archivar::mpcorb::{self, MpcorbRec};
@@ -329,8 +329,22 @@ pub fn body_number(name: &str) -> Option<u32> {
         .map(|(_, num)| num)
 }
 
+pub fn class_body_table(class: &str) -> Vec<(&'static str, u32)> {
+    SMALL_BODY_NUMBERS_TSV
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            let n = p.next()?;
+            let num = p.next()?.parse().ok()?;
+            let declared = p.next()?;
+            (declared == class).then_some((n, num))
+        })
+        .collect()
+}
+
 pub fn small_body_number(name: &str) -> Option<u32> {
-    body_number(name).or_else(|| tno_number(name))
+    body_number(name)
 }
 
 pub const BODY_COMET: &[(&str, &str)] = &[("encke", "2P")];
@@ -466,7 +480,7 @@ impl Weberin {
                 names.push((*n).to_string());
             }
         }
-        for (n, _) in TNO_NAME {
+        for (n, _) in tno_table() {
             if !names.iter().any(|k| k == n) {
                 names.push((*n).to_string());
             }
@@ -1850,18 +1864,18 @@ impl Weberin {
             return Vec::new();
         };
         let mut verdicts = Vec::new();
-        for (name, number_mp) in TNO_NAME {
+        for (name, number_mp) in tno_table() {
             let kepler = dastcom
                 .iter()
-                .find(|r| r.number == *number_mp)
+                .find(|r| r.number == number_mp)
                 .map(|r| GaiaKepler::Dast(r.clone()))
                 .or_else(|| {
                     mpcorb_recs
                         .iter()
-                        .find(|r| r.number == *number_mp)
+                        .find(|r| r.number == number_mp)
                         .map(|r| GaiaKepler::Mpc(*r))
                 });
-            let gaia_group = gaia_bodies.iter().find(|b| b.number_mp == *number_mp);
+            let gaia_group = gaia_bodies.iter().find(|b| b.number_mp == number_mp);
             match (kepler, gaia_group) {
                 (None, None) => {}
                 (None, Some(_)) => verdicts.push(BodyGaiaVerdict {

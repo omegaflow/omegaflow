@@ -432,23 +432,23 @@ fn main() {
         let d1 = ab.iter().filter(|x| **x > 1.0).count();
         let d10 = ab.iter().filter(|x| **x > 10.0).count();
         let d100 = ab.iter().filter(|x| **x > 100.0).count();
+        let cad_a = med_dt(&va).map_or("absent".to_string(), |d| format!("{d:.3}"));
         out.push(format!(
-            "  st{}: n {} mean {ma:.3} Hz | resid {ra_min:.1}..{ra_max:.1} Hz | |resid| med {:.3} p90 {:.3} max {:.3} Hz | >1 Hz {c1} >10 Hz {c10} >100 Hz {c100} | cadence med {:.3} s",
+            "  st{}: n {} mean {ma:.3} Hz | resid {ra_min:.1}..{ra_max:.1} Hz | |resid| med {:.3} p90 {:.3} max {:.3} Hz | >1 Hz {c1} >10 Hz {c10} >100 Hz {c100} | cadence med {cad_a} s",
             c.a,
             va.len(),
             quantile(&aa, 0.5),
             quantile(&aa, 0.9),
             aa.iter().fold(f64::NEG_INFINITY, |m, x| m.max(*x)),
-            med_dt(&va).unwrap_or(f64::NAN)
         ));
+        let cad_b = med_dt(&vb).map_or("absent".to_string(), |d| format!("{d:.3}"));
         out.push(format!(
-            "  st{}: n {} mean {mb:.3} Hz | resid {rb_min:.1}..{rb_max:.1} Hz | |resid| med {:.3} p90 {:.3} max {:.3} Hz | >1 Hz {d1} >10 Hz {d10} >100 Hz {d100} | cadence med {:.3} s",
+            "  st{}: n {} mean {mb:.3} Hz | resid {rb_min:.1}..{rb_max:.1} Hz | |resid| med {:.3} p90 {:.3} max {:.3} Hz | >1 Hz {d1} >10 Hz {d10} >100 Hz {d100} | cadence med {cad_b} s",
             c.b,
             vb.len(),
             quantile(&ab, 0.5),
             quantile(&ab, 0.9),
             ab.iter().fold(f64::NEG_INFINITY, |m, x| m.max(*x)),
-            med_dt(&vb).unwrap_or(f64::NAN)
         ));
 
         for qn in 0..QUART {

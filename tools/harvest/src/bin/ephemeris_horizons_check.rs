@@ -10,16 +10,18 @@ const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download/s
 const HORIZONS_API: &str = "https://ssd.jpl.nasa.gov/api/horizons.api";
 const HALLEY_SOLUTION_EPOCH_JD: f64 = 2439875.5;
 
-const BODIES: [(&str, &str); 8] = [
-    ("mercury", "199"),
-    ("venus", "299"),
-    ("earth", "399"),
-    ("mars", "499"),
-    ("jupiter", "599"),
-    ("saturn", "699"),
-    ("uranus", "799"),
-    ("neptune", "899"),
-];
+const HORIZONS_BODIES: &str = include_str!("../data/horizons_bodies.tsv");
+
+fn horizons_bodies() -> Vec<(&'static str, &'static str)> {
+    HORIZONS_BODIES
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            Some((p.next()?, p.next()?))
+        })
+        .collect()
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -70,10 +72,14 @@ fn horizons_vectors(
         if cols.len() < 8 {
             continue;
         }
-        let jd: f64 = cols[0].trim().parse().ok().unwrap_or(f64::NAN);
-        let x: f64 = cols[2].trim().parse().ok().unwrap_or(f64::NAN);
-        let y: f64 = cols[3].trim().parse().ok().unwrap_or(f64::NAN);
-        let z: f64 = cols[4].trim().parse().ok().unwrap_or(f64::NAN);
+        let (Ok(jd), Ok(x), Ok(y), Ok(z)) = (
+            cols[0].trim().parse::<f64>(),
+            cols[2].trim().parse::<f64>(),
+            cols[3].trim().parse::<f64>(),
+            cols[4].trim().parse::<f64>(),
+        ) else {
+            continue;
+        };
         if ![jd, x, y, z].iter().all(|v| v.is_finite()) {
             continue;
         }
@@ -191,14 +197,15 @@ fn main() {
         check_halley_calibration();
         return;
     }
+    let table = horizons_bodies();
     let bodies: Vec<(&str, &str)> = match arg_value(&args, "--body") {
-        Some(name) => BODIES.iter().filter(|(n, _)| *n == name).copied().collect(),
-        None => BODIES.to_vec(),
+        Some(name) => table.iter().filter(|(n, _)| *n == name).copied().collect(),
+        None => table.clone(),
     };
     if bodies.is_empty() {
         eprintln!(
             "unknown body — know {}",
-            BODIES
+            table
                 .iter()
                 .map(|(n, _)| *n)
                 .collect::<Vec<_>>()

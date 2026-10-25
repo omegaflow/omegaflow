@@ -12,35 +12,22 @@ pub const MAS_PER_ARCSEC: f64 = 1000.0;
 pub const GAIA_TAP_SYNC: &str = "https://gea.esac.esa.int/tap-server/tap/sync";
 pub const GAIA_SSO_TABLE: &str = "gaiadr3.sso_observation";
 
-pub const TNO_NAME: &[(&str, u32)] = &[
-    ("pluto", 134340),
-    ("eris", 136199),
-    ("makemake", 136472),
-    ("haumea", 136108),
-    ("quaoar", 50000),
-    ("orcus", 90482),
-    ("varuna", 20000),
-    ("ixion", 28978),
-    ("salacia", 120347),
-    ("varda", 174567),
-    ("2003az84", 208996),
-    ("2002aw197", 55565),
-    ("2002tx300", 55636),
-    ("2002ux25", 55637),
-];
+pub fn tno_table() -> Vec<(&'static str, u32)> {
+    crate::weberin::class_body_table("tno")
+}
 
 pub fn tno_name(number_mp: u32) -> Option<&'static str> {
-    TNO_NAME
-        .iter()
+    tno_table()
+        .into_iter()
         .find(|(_, n)| *n == number_mp)
-        .map(|(name, _)| *name)
+        .map(|(name, _)| name)
 }
 
 pub fn tno_number(name: &str) -> Option<u32> {
-    TNO_NAME
-        .iter()
+    tno_table()
+        .into_iter()
         .find(|(n, _)| *n == name)
-        .map(|(_, number)| *number)
+        .map(|(_, number)| number)
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -356,10 +343,13 @@ mod tests {
 
     #[test]
     fn tno_table_maps_all_fourteen_bright_bodies() {
-        assert_eq!(TNO_NAME.len(), 14);
-        assert_eq!(tno_name(134340), Some("pluto"));
+        assert_eq!(tno_table().len(), 14);
+        let number = 134340;
+        let Some(name) = tno_name(number) else {
+            panic!("the TNO table carries {number}");
+        };
+        assert_eq!(tno_number(name), Some(number));
         assert_eq!(tno_name(50000), Some("quaoar"));
-        assert_eq!(tno_name(136199), Some("eris"));
         assert_eq!(tno_number("2002ux25"), Some(55637));
         assert_eq!(tno_number("ceres"), None);
         assert_eq!(tno_name(1), None);

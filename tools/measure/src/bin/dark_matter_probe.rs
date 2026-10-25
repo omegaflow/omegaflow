@@ -4,11 +4,9 @@ use omegaflow::archivar::{
 };
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use omegaflow::weberin::{planetary_bodies, woven_major_bodies};
 use std::collections::HashMap;
 
-const MODEL_BODIES: [&str; 9] = [
-    "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
-];
 const PROBES: [&str; 5] = [
     "pioneer10",
     "pioneer11",
@@ -24,14 +22,36 @@ const WINDOW_DAYS: i64 = 180;
 const LAG_MAX: usize = 2;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 
-const POSITIVE: &[(&str, &str, i64, i64, i64)] = &[
-    ("voyager1", "jupiter", 1979, 3, 5),
-    ("voyager1", "saturn", 1980, 11, 12),
-    ("voyager2", "jupiter", 1979, 7, 9),
-    ("voyager2", "saturn", 1981, 8, 26),
-    ("voyager2", "uranus", 1986, 1, 24),
-    ("voyager2", "neptune", 1989, 8, 25),
-];
+const FLYBY_WINDOWS: &str = include_str!("../data/flyby_windows.tsv");
+const SELFTEST_TARGETS: &str = include_str!("../data/selftest_targets.tsv");
+
+fn selftest_targets() -> Vec<(&'static str, &'static str)> {
+    SELFTEST_TARGETS
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            Some((p.next()?, p.next()?))
+        })
+        .collect()
+}
+
+fn flyby_windows() -> Vec<(&'static str, &'static str, i64, i64, i64)> {
+    FLYBY_WINDOWS
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            Some((
+                p.next()?,
+                p.next()?,
+                p.next()?.parse().ok()?,
+                p.next()?.parse().ok()?,
+                p.next()?.parse().ok()?,
+            ))
+        })
+        .collect()
+}
 
 const NULLS: &[(&str, [f64; 3])] = &[
     ("leer A", [-100.0 * AU_M, -60.0 * AU_M, 0.0]),
@@ -522,11 +542,7 @@ fn fine_positive(
     if pos.len() < 3 {
         return None;
     }
-    let known_gm = planets
-        .iter()
-        .find(|p| p.name == planet)
-        .map(|p| p.gm)
-        .unwrap_or(f64::NAN);
+    let known_gm = planets.iter().find(|p| p.name == planet).map(|p| p.gm)?;
     let mut d: Vec<f32> = Vec::new();
     let mut r: Vec<f32> = Vec::new();
     let mut ruck: Vec<f32> = Vec::new();
@@ -742,13 +758,15 @@ fn run_grid(residues: &HashMap<String, Residue>) {
 
 fn main() {
     std::fs::create_dir_all("data").ok();
+    let model_bodies = woven_major_bodies();
+    let planet_bodies = planetary_bodies();
     let sources = load_sources();
     let items: Vec<(usize, SourceConfig, String)> = sources
         .iter()
         .enumerate()
         .filter(|(_, s)| {
             s.format == "ephemeris_binary"
-                && MODEL_BODIES.contains(&s.body.as_deref().unwrap_or(""))
+                && model_bodies.iter().any(|m| Some(m.as_str()) == s.body.as_deref())
         })
         .map(|(idx, s)| {
             (
@@ -802,15 +820,19 @@ fn main() {
             None => eprintln!("{name}: bin parse void"),
         }
     }
-    if planets.len() < MODEL_BODIES.len() {
+    if planets.len() < model_bodies.len() {
         eprintln!(
             "model incomplete: {} of {} bodies",
             planets.len(),
-            MODEL_BODIES.len()
+            model_bodies.len()
         );
     }
-    let earth_j2 = planets.iter().find(|p| p.name == "earth").map(|p| p.j2);
-    let moon_in = planets.iter().any(|p| p.name == "moon");
+    let Some(host) = omegaflow::odp::dsn_host() else {
+        eprintln!("host declaration void — the reference body of the residue is absent");
+        return;
+    };
+    let earth_j2 = planets.iter().find(|p| p.name == host).map(|p| p.j2);
+    let moon_in = planets.iter().any(|p| !planet_bodies.contains(&p.name));
     match earth_j2 {
         Some(earth_j2) => println!(
             "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2}, residue a_obs − a_known per daily step"
@@ -837,7 +859,7 @@ fn main() {
     println!(
         "\n=== positive control (fine arcs, leave-one-out) — the machine must recover the omitted planet and measure its mass ==="
     );
-    for (probe, planet, ..) in POSITIVE {
+    for (probe, planet, ..) in flyby_windows() {
         let arc_name = format!("{probe}_{planet}");
         if !load_arc(&arc_name, &mut eph) {
             continue;
@@ -878,7 +900,7 @@ fn main() {
     run_grid(&residues);
 
     println!("\n=== self-test — does the TE machine carry an artificial lump (R = 1/d²)? ===");
-    for (probe, planet) in [("voyager1", "saturn"), ("voyager2", "neptune")] {
+    for (probe, planet) in selftest_targets() {
         if let Some(res) = residues.get(probe) {
             selfcheck(probe, planet, res, &eph);
         }
