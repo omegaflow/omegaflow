@@ -205,6 +205,9 @@ fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> 
 
 const RECEIVER_MODELS: &str = include_str!("kernels/receiver_models.tsv");
 
+const NO_EOP_UT1_UTC_S: f64 = 0.0;
+const NO_EOP_POLAR_MOTION_AS: f64 = 0.0;
+
 pub fn receiver_model(name: &str) -> Option<&'static str> {
     RECEIVER_MODELS
         .lines()
@@ -224,12 +227,16 @@ fn iau_receiver_to_icrs(name: &str, xyz_m: [f64; 3], tdb: f64) -> Option<[f64; 3
     let tdb_jd = tdb / 86400.0 + J2000_EPOCH;
     let lsk = crate::archivar::embedded_lsk()?;
     let unix_utc = lsk.tdb_to_unix(tdb)?;
-    let ut1_jd = unix_utc / 86400.0 + 2440587.5;
-    let eop = crate::mathematikerin::receiver::EopSample {
-        ut1_utc_s: 0.0,
-        pm_x_arcsec: 0.0,
-        pm_y_arcsec: 0.0,
+    let mjd_utc = unix_utc / 86400.0 + 40587.0;
+    let eop = match crate::archivar::eop::kernel().and_then(|s| s.at(mjd_utc)) {
+        Some(sample) => sample,
+        None => crate::mathematikerin::receiver::EopSample {
+            ut1_utc_s: NO_EOP_UT1_UTC_S,
+            pm_x_arcsec: NO_EOP_POLAR_MOTION_AS,
+            pm_y_arcsec: NO_EOP_POLAR_MOTION_AS,
+        },
     };
+    let ut1_jd = (unix_utc + eop.ut1_utc_s) / 86400.0 + 2440587.5;
     let km = [xyz_m[0] / 1000.0, xyz_m[1] / 1000.0, xyz_m[2] / 1000.0];
     let icrs_km = crate::mathematikerin::receiver::itrf_to_icrs(km, ut1_jd, tdb_jd, &eop)?;
     Some([
