@@ -21,7 +21,6 @@ root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
 rel="$root/target/release"
 bin="$rel/$tool"
 manifest="$rel/.tools_manifest"
-stamp="$rel/.tools_manifest.checked"
 base="https://github.com/omegaflow/omegaflow/releases/download/tools-latest"
 
 mkdir -p "$rel"
@@ -34,25 +33,9 @@ if command -v flock >/dev/null 2>&1; then
     flock -w 120 9 2>/dev/null || true
 fi
 
-# TTL gate: within the watchdog cadence (2^6 min = 3840 s) the network is
-# skipped — but only when the installed binary matches the cached manifest
-# (content-addressed, never mtime): a stale artifact refreshes.
-if [ -f "$stamp" ] && [ -f "$manifest" ]; then
-    mtime="$(stat -c %Y "$stamp" 2>/dev/null || stat -f %m "$stamp" 2>/dev/null || echo 0)"
-    now="$(date +%s)"
-    if [ "$now" -lt $(( mtime + 3840 )) ]; then
-        remote_sha="$(awk -v t="$tool" '$1 == t { print $2 }' "$manifest")"
-        local_sha=""
-        [ -f "$bin" ] && local_sha="$(sha256sum "$bin" | awk '{print $1}')"
-        if [ -n "$remote_sha" ] && [ "$local_sha" = "$remote_sha" ]; then
-            exit 0
-        fi
-    fi
-fi
-
-# The attempt stamps the gate before it runs: a refused or absent release is
-# consulted at most once per cadence, never on every call.
-touch "$stamp"
+# No time TTL: every call measures the release manifest (a few hundred bytes).
+# A gate rule published in tools-latest is read on the next commit, not up to
+# 64 minutes later; the binary download stays content-addressed by sha256.
 
 # measure the release route, then fetch the manifest (curl primary, gh secondary)
 code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$base/tools.manifest" 2>/dev/null)"
