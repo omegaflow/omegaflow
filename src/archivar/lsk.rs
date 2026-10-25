@@ -15,6 +15,13 @@ pub struct LeapSeconds {
     pub deltas: Vec<(f64, f64)>,
 }
 
+fn tdb_minus_tt_seconds(unix: f64) -> f64 {
+    let d = unix / 86400.0 + 40587.0 - 51544.5;
+    let g = (357.53 + 0.9856003 * d) * std::f64::consts::PI / 180.0;
+    let lm = (246.11 + 0.9025179 * d) * std::f64::consts::PI / 180.0;
+    0.001657 * g.sin() + 0.000022 * lm.sin()
+}
+
 impl LeapSeconds {
     pub fn leap_at(&self, unix: f64) -> Option<f64> {
         self.deltas
@@ -35,12 +42,16 @@ impl LeapSeconds {
                 delta_t_at_unix(unix)
             }
         };
-        Some(unix + to_tt - J2000_UNIX_OFFSET)
+        Some(unix + to_tt - J2000_UNIX_OFFSET + tdb_minus_tt_seconds(unix))
     }
 
     pub fn tdb_to_unix(&self, tdb: f64) -> Option<f64> {
         for &(offset, _) in self.deltas.iter().rev() {
-            let unix = tdb - self.delta_t_a - offset + J2000_UNIX_OFFSET;
+            let mut unix = tdb - self.delta_t_a - offset + J2000_UNIX_OFFSET;
+            for _ in 0..2 {
+                unix = tdb - self.delta_t_a - offset - tdb_minus_tt_seconds(unix)
+                    + J2000_UNIX_OFFSET;
+            }
             if self.leap_at(unix) == Some(offset) {
                 return Some(unix);
             }
@@ -52,7 +63,7 @@ impl LeapSeconds {
         }
         let mut unix = tdb + J2000_UNIX_OFFSET;
         for _ in 0..2 {
-            unix = tdb + J2000_UNIX_OFFSET - delta_t_at_unix(unix);
+            unix = tdb + J2000_UNIX_OFFSET - delta_t_at_unix(unix) - tdb_minus_tt_seconds(unix);
         }
         Some(unix)
     }
@@ -178,7 +189,13 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         assert!((lsk.delta_t_a - 32.184).abs() < 1e-12);
         let now = 1700000000.0;
         assert_eq!(lsk.leap_at(now), Some(37.0));
-        assert_eq!(lsk.unix_to_tdb(now), Some(now + 69.184 - J2000_UNIX_OFFSET));
+        let tdb = lsk.unix_to_tdb(now).expect("a post-1972 unix carries a tdb");
+        let tt = now + 69.184 - J2000_UNIX_OFFSET;
+        assert!(
+            (tdb - tt).abs() < 1.8e-3,
+            "the tdb periodic term stays under 1.8 ms, was {}",
+            tdb - tt
+        );
         assert_eq!(lsk.tdb_to_unix(lsk.unix_to_tdb(now).unwrap()), Some(now));
     }
 
@@ -211,10 +228,11 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         let tdb_1968 = lsk
             .unix_to_tdb(unix_1968)
             .expect("a 1968 UT1 epoch resolves through the Delta T polynomial");
-        let expect_1968 = unix_1968 + delta_t_at_unix(unix_1968) - J2000_UNIX_OFFSET;
+        let expect_1968 =
+            unix_1968 + delta_t_at_unix(unix_1968) - J2000_UNIX_OFFSET + tdb_minus_tt_seconds(unix_1968);
         assert!(
             (tdb_1968 - expect_1968).abs() < 1e-9,
-            "pre-1972 carries TT = UT1 + Delta T, was {tdb_1968}"
+            "pre-1972 carries TDB = UT1 + Delta T + (TDB-TT), was {tdb_1968}"
         );
         let back = lsk
             .tdb_to_unix(tdb_1968)
