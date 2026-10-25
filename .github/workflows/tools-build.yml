@@ -1,12 +1,12 @@
 name: tools-build
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '*/30 * * * *'
+  push:
+    paths: ['tools/**','src/**','bin/**','Cargo.toml','Cargo.lock']
 permissions:
   contents: write
 concurrency:
-  group: tools-build
+  group: tools-build-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   build:
