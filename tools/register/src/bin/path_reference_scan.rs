@@ -175,6 +175,7 @@ fn is_skipped(rel: &str) -> bool {
         || rel.starts_with("mail/")
         || rel.starts_with("state/")
         || rel == "opencode.json"
+        || rel == "queries.φ"
         || rel.ends_with(".stunnel.conf")
 }
 
