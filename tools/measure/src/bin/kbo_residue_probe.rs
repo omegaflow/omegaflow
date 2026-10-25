@@ -7,11 +7,9 @@ use omegaflow::cdn::CDN_BASE;
 use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::kbo::{FAM_CLASSICAL, KboRec, family_name, rec_from_row, state_at};
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::weberin::planetary_bodies;
 use std::collections::HashMap;
 
-const PLANETS: [&str; 8] = [
-    "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
-];
 const PROBES: [&str; 3] = ["voyager1", "voyager2", "new_horizons"];
 const GM_SUN: f64 = omegaflow::kepler::GM_SUN_M3_S2;
 const AU_M: f64 = omegaflow::kepler::AU_M;
@@ -450,14 +448,15 @@ fn main() {
         i += 1;
     }
 
+    let planet_bodies = planetary_bodies();
     let sources = load_sources();
     let items: Vec<(usize, SourceConfig, String)> = sources
         .iter()
         .enumerate()
         .filter(|(_, s)| {
+            let body = s.body.as_deref().unwrap_or("");
             s.format == "ephemeris_binary"
-                && (PLANETS.contains(&s.body.as_deref().unwrap_or(""))
-                    || PROBES.contains(&s.body.as_deref().unwrap_or("")))
+                && (planet_bodies.iter().any(|p| p == body) || PROBES.contains(&body))
         })
         .map(|(idx, s)| {
             (
@@ -488,7 +487,7 @@ fn main() {
                 let (lo, hi) = coverage(&e);
                 eprintln!("{name:<9} gm {gm:?} span {lo:.2}..{hi:.2}");
                 eph.insert(name.clone(), e);
-                if PLANETS.contains(&name.as_str()) {
+                if planet_bodies.iter().any(|p| p == &name) {
                     match gm {
                         Some(gm) if gm.is_finite() && gm > 0.0 => {
                             planets.push(Planet { name, gm });
@@ -503,11 +502,11 @@ fn main() {
     if check_only {
         return;
     }
-    if planets.len() < PLANETS.len() {
+    if planets.len() < planet_bodies.len() {
         eprintln!(
             "model incomplete: {} of {} planets",
             planets.len(),
-            PLANETS.len()
+            planet_bodies.len()
         );
         if planets.is_empty() {
             return;

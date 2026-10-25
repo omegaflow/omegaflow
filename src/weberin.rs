@@ -273,6 +273,28 @@ pub fn woven_major_bodies() -> Vec<String> {
     names
 }
 
+pub fn planetary_bodies() -> Vec<String> {
+    let table = crate::archivar::ephemeris::body_table();
+    let Some(origin) = frame_origin_name() else {
+        return Vec::new();
+    };
+    let Some(origin_id) = table
+        .iter()
+        .find(|(_, b)| b.name == origin)
+        .map(|(id, _)| *id)
+    else {
+        return Vec::new();
+    };
+    woven_major_bodies()
+        .into_iter()
+        .filter(|n| {
+            table
+                .values()
+                .any(|b| &b.name == n && b.parent == Some(origin_id))
+        })
+        .collect()
+}
+
 pub fn frame_origin_name() -> Option<String> {
     let declared = FRAME_ORIGIN_DECL
         .lines()

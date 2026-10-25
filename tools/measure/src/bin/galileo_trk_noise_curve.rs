@@ -3,6 +3,7 @@ use std::collections::{BTreeMap, HashMap};
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::atdf::parse_resid_bin;
 use omegaflow::odf::parse_podf_bin;
+use omegaflow::odp::dsn_host;
 
 const DAY_S: f64 = 86400.0;
 const AU: f64 = 1.495978707e11;
@@ -61,8 +62,9 @@ fn median(vals: &[f64]) -> f64 {
 }
 
 fn geom(t: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<(f64, f64, f64)> {
+    let host = dsn_host()?;
     let p_pos = body_barycenter_position("galileo_daily", t, eph)?;
-    let e_pos = body_barycenter_position("earth", t, eph)?;
+    let e_pos = body_barycenter_position(host, t, eph)?;
     let sun = [0.0, 0.0, 0.0];
     let r_probe = norm(sub(p_pos, sun));
     let r_earth = norm(sub(e_pos, sun));
@@ -135,8 +137,12 @@ impl Bands {
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body for the noise curve");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("{b} ephemeris bin void");
             return;

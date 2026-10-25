@@ -3,6 +3,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::archivar::lsk::days_from_civil;
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
+use omegaflow::odp::dsn_host;
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{
     conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
@@ -341,8 +342,12 @@ fn main() {
             }
         }
     }
+    let Some(host) = dsn_host() else {
+        println!("galileo_floor_stair_te: host declaration void — no receiver body");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    if !load_eph("galileo_daily", &mut eph) || !load_eph("earth", &mut eph) {
+    if !load_eph("galileo_daily", &mut eph) || !load_eph(host, &mut eph) {
         println!("galileo_floor_stair_te: ephemeris binaries void");
         return;
     }
@@ -416,7 +421,7 @@ fn main() {
                 }
                 let tmean = c.tdb_sum / c.n as f64;
                 let eps = body_barycenter_position("galileo_daily", tmean, &eph)
-                    .zip(body_barycenter_position("earth", tmean, &eph))
+                    .zip(body_barycenter_position(host, tmean, &eph))
                     .and_then(|(p, e)| elong_deg(p, e));
                 vals.push(DayVal {
                     day: *day,

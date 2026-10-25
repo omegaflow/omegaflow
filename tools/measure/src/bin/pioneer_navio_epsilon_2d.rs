@@ -5,6 +5,7 @@ use omegaflow::archivar::odp::dsn_station;
 use omegaflow::archivar::spectral::civil_from_days;
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::odf::parse_p11r_bin;
+use omegaflow::odp::dsn_host;
 
 const DAY_S: f64 = 86400.0;
 const AU: f64 = 1.495978707e11;
@@ -96,8 +97,12 @@ struct DayRow {
 }
 
 fn run(probe: &str, sc_body: &str) {
+    let Some(host) = dsn_host() else {
+        eprintln!("{probe}: host declaration void — no receiver body");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in [sc_body, "earth"] {
+    for b in [sc_body, host] {
         if !load(b, &mut eph) {
             eprintln!("{probe}: {b} ephemeris bin void");
             return;
@@ -137,7 +142,7 @@ fn run(probe: &str, sc_body: &str) {
         let t = *day as f64 * DAY_S;
         let (Some(p_pos), Some(e_pos)) = (
             body_barycenter_position(sc_body, t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(host, t, &eph),
         ) else {
             continue;
         };

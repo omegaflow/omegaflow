@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use omegaflow::archivar::odp::dsn_station;
+use omegaflow::archivar::odp::{dsn_host, dsn_station};
 use omegaflow::archivar::{
     BodyEphemeris, Motion, body_barycenter_position, fetch_raw_bytes, light_time_worldline,
     parse_ephemeris_binary,
@@ -239,7 +239,7 @@ fn resolve_station(
             alt_m: alt,
         });
     }
-    if body == "earth" {
+    if dsn_host() == Some(body.as_str()) {
         if let Some(id) = default_dsn {
             if let Some((la, lo, al)) = dsn_station(id) {
                 return Ok(Station {
@@ -411,7 +411,15 @@ fn main() {
 
     let s1_body = match arg_token(&args, "--body") {
         Some(b) => b,
-        None => "earth".to_string(),
+        None => match dsn_host() {
+            Some(h) => h.to_string(),
+            None => {
+                println!(
+                    "  body: absent — the host declaration is void; no default body is invented (0 honored)"
+                );
+                return;
+            }
+        },
     };
     let s1 = match resolve_station(
         &args,
