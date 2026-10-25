@@ -205,8 +205,7 @@ fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> 
 
 const RECEIVER_MODELS: &str = include_str!("kernels/receiver_models.tsv");
 
-const NO_EOP_UT1_UTC_S: f64 = 0.0;
-const NO_EOP_POLAR_MOTION_AS: f64 = 0.0;
+pub const RECEIVER_ABSENCE_CONVENTION: &str = "a declared IAU receiver without an EOP row for its epoch is absent, not zero: the series is produced continuously, so a missing row is pending/nicht_gemessen (bindend/messzustaende-v3.md, rule 2), never 0.0; body_fixed_to_icrs returns None and the caller decides whether the class may exist at all";
 
 pub fn receiver_model(name: &str) -> Option<&'static str> {
     RECEIVER_MODELS
@@ -228,14 +227,7 @@ fn iau_receiver_to_icrs(name: &str, xyz_m: [f64; 3], tdb: f64) -> Option<[f64; 3
     let lsk = crate::archivar::embedded_lsk()?;
     let unix_utc = lsk.tdb_to_unix(tdb)?;
     let mjd_utc = unix_utc / 86400.0 + 40587.0;
-    let eop = match crate::archivar::eop::kernel().and_then(|s| s.at(mjd_utc)) {
-        Some(sample) => sample,
-        None => crate::mathematikerin::receiver::EopSample {
-            ut1_utc_s: NO_EOP_UT1_UTC_S,
-            pm_x_arcsec: NO_EOP_POLAR_MOTION_AS,
-            pm_y_arcsec: NO_EOP_POLAR_MOTION_AS,
-        },
-    };
+    let eop = crate::archivar::eop::kernel().and_then(|s| s.at(mjd_utc))?;
     let ut1_jd = (unix_utc + eop.ut1_utc_s) / 86400.0 + 2440587.5;
     let km = [xyz_m[0] / 1000.0, xyz_m[1] / 1000.0, xyz_m[2] / 1000.0];
     let icrs_km = crate::mathematikerin::receiver::itrf_to_icrs(km, ut1_jd, tdb_jd, &eop)?;
@@ -306,6 +298,9 @@ pub fn body_fixed_vector_to_icrs(
     if let Some([xi, yi, zi]) = iau_receiver_to_icrs(name, [xb, yb, zb], tdb) {
         return Some([xi + bx, yi + by, zi + bz]);
     }
+    if receiver_model(name).is_some() {
+        return None;
+    }
     if !e.rotation_matrices.is_empty() {
         let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
         let mut best: Option<(&[f64; 9], f64)> = None;
@@ -348,6 +343,9 @@ pub fn body_fixed_to_icrs_smooth(
     let [xb, yb, zb] = geodetic_to_body_fixed(bp, lat, lon, alt)?;
     if let Some([xi, yi, zi]) = iau_receiver_to_icrs(name, [xb, yb, zb], tdb) {
         return Some([xi + bx, yi + by, zi + bz]);
+    }
+    if receiver_model(name).is_some() {
+        return None;
     }
     let jd = tdb / 86400.0 + J2000_EPOCH;
     let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)?;
@@ -865,6 +863,18 @@ mod tests {
     fn the_receiver_model_is_declared_as_data() {
         assert_eq!(receiver_model("earth"), Some("iau2006-2000a"));
         assert_eq!(receiver_model("mars"), None);
+    }
+
+    #[test]
+    fn a_declared_receiver_without_an_eop_row_is_absent() {
+        let props = earth_props();
+        let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
+        map.insert("earth".to_string(), zero_eph(props));
+        let xyz = [6378136.6, 0.0, 0.0];
+        let inside = (61200.0 + 2400000.5 - 2451545.0) * 86400.0;
+        assert!(body_fixed_vector_to_icrs("earth", xyz, inside, &map).is_some());
+        let beyond = (61257.0 + 2400000.5 - 2451545.0) * 86400.0;
+        assert!(body_fixed_vector_to_icrs("earth", xyz, beyond, &map).is_none());
     }
 
     #[test]

@@ -7376,7 +7376,7 @@ fn test_body_barycenter_position_at_granule_boundary() {
 
 #[test]
 fn test_body_barycenter_velocity_linear_granule() {
-    let now = 840511523.88;
+    let now = 834235200.0;
     let jd_now = super::J2000_EPOCH + now / 86400.0;
     let mut eph = super::BodyEphemeris {
         granules: Vec::new(),
@@ -8449,7 +8449,7 @@ fn test_gracefo_l1b_tar_gz_yaml_source_parses() {
 
 #[test]
 fn test_query_admits_surface_sample_within_window() {
-    let now = 840511523.88;
+    let now = 834235200.0;
     let jd_now = super::J2000_EPOCH + now / 86400.0;
     let props = super::BodyProperties {
         α0_deg: 270.0,
@@ -11221,7 +11221,7 @@ fn gbco_depth_threads_hold_stations_on_the_measured_surface() {
 
 #[test]
 fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
-    let now = 840511523.88;
+    let now = 834235200.0;
     let recs = vec![crate::geo::GbcoRec {
         lat: 72.49,
         lon: -156.6,
@@ -11283,7 +11283,7 @@ fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
 
 #[test]
 fn gestalt_surface_threads_roundtrip_projects_to_icrs_finite() {
-    let now = 840511523.88;
+    let now = 834235200.0;
     let recs = vec![
         crate::geo::GbcoRec {
             lat: -67.6,
@@ -11402,7 +11402,7 @@ fn gestalt_surface_threads_skip_records_without_a_finite_measured_depth() {
 
 #[test]
 fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
-    let now = 840511523.88;
+    let now = 834235200.0;
     let recs = vec![
         crate::geo::GbcoRec {
             lat: -67.6,
