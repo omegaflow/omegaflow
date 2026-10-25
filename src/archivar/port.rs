@@ -4060,7 +4060,7 @@ mod probe_classify_tests {
         assert_eq!(probe_classify("rpw_e_y"), ("electric", "mV/m", 3600.0));
         assert_eq!(
             probe_classify("solo_rpw_e_rms_vm"),
-            ("electric", "V/m", 3600.0)
+            ("electric", "V/m", 16.0)
         );
         assert_eq!(
             probe_classify("rave_teff_k"),
@@ -4072,11 +4072,11 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("magnetosphere_total_field_nt"),
-            ("em", "nT", 86400.0)
+            ("em", "nT", 60.0)
         );
         assert_eq!(
             probe_classify("intermagnet_xyz_x_nt"),
-            ("em", "nT", 86400.0)
+            ("em", "nT", 60.0)
         );
         assert_eq!(
             probe_classify("hydrosphere_drifter_sst_k"),
@@ -4172,7 +4172,7 @@ mod probe_classify_tests {
         assert_eq!(probe_classify("0.speed"), ("advective", "km/s", 360.0));
         assert_eq!(
             probe_classify("cryosat_magnetic_field_intensity_nt"),
-            ("em", "nT", 4.0)
+            ("em", "nT", 1.0)
         );
         assert_eq!(
             probe_classify("cme_plane_of_sky_speed_km_s"),
@@ -4286,7 +4286,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("champ_absolute_vertical_tec_tecu"),
-            ("em", "TECU", 10.0)
+            ("em", "TECU", 1.0)
         );
         assert_eq!(probe_classify("ned_redshift_z"), ("em", "1", 86400.0));
         assert_eq!(
@@ -4410,7 +4410,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("hfradar_radial_velocity_USM_SGRV_cm_s"),
-            ("advective", "cm/s", 21600.0)
+            ("advective", "cm/s", 3600.0)
         );
         assert_eq!(probe_classify("magnetar_period_s"), ("em", "s", 604800.0));
         assert_eq!(

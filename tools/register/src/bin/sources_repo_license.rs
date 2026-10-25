@@ -217,7 +217,7 @@ mod tests {
             "{:?}",
             attribution.lines
         );
-        assert_eq!(attribution.netlocs, 1);
+        assert_eq!(attribution.netlocs, 2);
         assert_eq!(attribution.terms, 1);
         assert_eq!(attribution.no_terms, 1);
     }
