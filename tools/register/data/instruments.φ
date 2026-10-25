@@ -284,3 +284,39 @@ host erddap.marine.ie
   applies https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16
   note Dieselbe info-Seite trägt die Kadenz wörtlich: "attribute NC_GLOBAL update_interval String PT1M" und die Instrumentzuordnung "attribute salinity sdn_instrument_name String Sea-Bird SBE 16Plus V2 SEACAT C-T Recorder". CTD = Conductivity-Temperature-Depth; der Sensor steht auf 25 m Tiefe (Beschreibung derselben Seite).
 
+
+host vires.services
+  instrument langmuir probe
+  unit cm-3 K V
+  cadence 0.5
+  api_cite https://vires.services/hapi/info?id=SW_FAST_EFIA_LP_1B
+  api_quote "Swarm A plasma fast track data from the Langmuir Probe (LP) at 2Hz rate"
+  instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_EFIx_LP_1B
+  instrument_quote "Electric field instrument (EFI) Langmuir probe (LP) measurements at 2Hz The EFIx_LP_1B Product contains plasma data from the Langmuir Probe (LP) of the Electrical Field Instrument (EFI)."
+  probe 2026-10-25T08:48:16Z 200 https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start=2026-10-24T00:00:00Z&stop=2026-10-24T00:05:00Z&parameters=N_ion&format=json
+  applies https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B
+  note Einheiten woertlich aus der info-Antwort: N_ion/N_elec cm-3, T_elec K, Vs V; Kadenz PT0.5S
+
+host vires.services
+  instrument fluxgate
+  unit uA/m2
+  cadence 1
+  api_cite https://vires.services/hapi/info?id=SW_FAST_FACATMS_2F
+  api_quote "Time series of field-aligned and radial current densities along the orbit from single satellite measurements. Field-aligned current (FAC) density is derived by the multiplication of the radial current"
+  instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_FACxTMS_2F
+  instrument_quote "Time series of field-aligned and radial current densities along the orbit from single satellite measurements. Field-aligned current (FAC) density is derived by the multiplication of the radial current"
+  probe 2026-10-25T08:48:16Z 200 https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start=2026-10-24T00:00:00Z&stop=2026-10-24T00:05:00Z&parameters=FAC&format=json
+  applies https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F
+  note Einheit uA/m2 woertlich aus der info-Antwort; FAC wird aus dem Magnetfeld abgeleitet (dieselben Fluxgate-Sensoren wie SW_FAST_MAGA_LR_1B)
+
+host vires.services
+  instrument gnss receiver
+  unit TECU
+  cadence 1
+  api_cite https://vires.services/hapi/info?id=SW_FAST_TECATMS_2F
+  api_quote "Absolute_STEC  Absolute slant TEC  units: TECU"
+  instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_TECxTMS_2F
+  instrument_quote "Ionospheric total electron content"
+  probe 2026-10-25T08:48:24Z 200 https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start=2026-10-24T00:00:00Z&stop=2026-10-24T00:05:00Z&parameters=Absolute_STEC&format=json
+  applies https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F
+  note Parameter ist Absolute_STEC (slant), nicht "TEC" — mit TEC antwortet der Endpunkt 404; Einheit TECU aus der info-Antwort
