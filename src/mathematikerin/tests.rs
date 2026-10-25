@@ -1338,7 +1338,7 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
 fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_riss() {
     use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
     use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};
-    let t = 8.4e8;
+    let t = 8.3e8;
     let sample = || AstroSample {
         tdb: t,
         ra_deg: 12.5,
@@ -1410,7 +1410,7 @@ fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_ris
 fn sky_tick_folds_bodies_by_name_and_stations_last() {
     use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
     use crate::machines::{MetaAnchor, NameMeta};
-    let t = 8.4e8;
+    let t = 8.3e8;
     let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
         let rec = crate::wind_orbit::orbit_rec(&[
             (t - 100.0, pos, [0.0, 0.0, 0.0]),
@@ -1542,7 +1542,7 @@ fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
     use crate::archivar::{BodyEphemeris, Buffer, VerdictLine, VerdictWord};
     use crate::machines::{MetaAnchor, NameMeta};
     use crate::weberin::{BodyLine, StationLine, WitnessLine};
-    let t = 8.4e8;
+    let t = 8.3e8;
     let orbit_body = |pos: [f64; 3]| -> BodyEphemeris {
         let rec = crate::wind_orbit::orbit_rec(&[
             (t - 100.0, pos, [0.0, 0.0, 0.0]),
@@ -1658,7 +1658,7 @@ fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
 fn volume_probe_parity_masked_corner_and_plain() {
     use crate::archivar::volume::{Axis, AxisKind, Volume};
     use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
-    let t = 8.4e8;
+    let t = 8.3e8;
     let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
         let rec = crate::wind_orbit::orbit_rec(&[
             (t - 100.0, pos, [0.0, 0.0, 0.0]),
@@ -1849,7 +1849,7 @@ fn em_aperture_flux_bit_scales_and_kernel_proxy_does_not() {
         eprintln!("em aperture parity skipped: no adapter");
         return;
     }
-    let t = 8.4e8;
+    let t = 8.3e8;
     app.t_presence = t;
 
     let record = |z_flux: f64, presence: f64| -> Record {

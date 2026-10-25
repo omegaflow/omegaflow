@@ -450,7 +450,7 @@ mod tests {
     #[test]
     fn a_single_direction_oscillator_creates_angular_field_mass_at_its_direction() {
         let d = direction("flare", 30.0, 60.0, vec![(8.4e8, 18.5)]);
-        let t = 8.4e8;
+        let t = 8.3e8;
         let oscs = osc_window(&[d], t, S2_TAU_DEFAULT_S);
         assert_eq!(oscs.len(), 1);
         let field = field_at(oscs[0].p_hat, &oscs, S2_LMAX);
@@ -666,7 +666,7 @@ mod tests {
 
     #[test]
     fn a_covered_body_manifests_a_unit_oscillator() {
-        let t = 8.4e8;
+        let t = 8.3e8;
         let eph = body_eph("earth", t - 10.0, t + 10.0, None);
         let o = S2Osc::from_body("earth", t, &eph).expect("a covered body carries a worldline");
         assert!((o.weight - 1.0).abs() < 1e-12);
@@ -678,7 +678,7 @@ mod tests {
 
     #[test]
     fn a_body_without_a_covering_granule_manifests_no_oscillator() {
-        let t = 8.4e8;
+        let t = 8.3e8;
         let eph = body_eph("earth", t + 100.0, t + 200.0, None);
         assert!(S2Osc::from_body("earth", t, &eph).is_none());
         let empty: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -687,7 +687,7 @@ mod tests {
 
     #[test]
     fn a_station_manifests_a_unit_oscillator() {
-        let t = 8.4e8;
+        let t = 8.3e8;
         let eph = body_eph("earth", t - 10.0, t + 10.0, Some(body_props()));
         let o = S2Osc::from_station("earth", 52.0, 13.0, 100.0, t, &eph)
             .expect("a station on a covered body carries a worldline");
