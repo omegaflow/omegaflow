@@ -330,6 +330,17 @@ host vires.services
   instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_EFIx_LP_1B
   instrument_quote "Electric field instrument (EFI) Langmuir probe (LP) measurements at 2Hz The EFIx_LP_1B Product contains plasma data from the Langmuir Probe (LP) of the Electrical Field Instrument (EFI)."
   probe 2026-10-25T08:48:16Z 200 https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start=2026-10-24T00:00:00Z&stop=2026-10-24T00:05:00Z&parameters=N_ion&format=json
+  probe 2026-10-25T11:08:00Z 200 https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
+  probe 2026-10-25T11:08:02Z 200 https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
+  probe 2026-10-25T11:08:04Z 200 https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
+  probe 2026-10-25T11:08:05Z 200 https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
+  probe 2026-10-25T11:08:06Z 200 https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
+  probe 2026-10-25T11:08:07Z 200 https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+  probe 2026-10-25T11:08:08Z 200 https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+  probe 2026-10-25T11:10:55Z 400 https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
+  probe 2026-10-25T11:10:56Z 400 https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
+  probe 2026-10-25T11:10:58Z 400 https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
+  probe 2026-10-25T11:11:09Z 400 https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=Absolute_VTEC&format=json
   applies https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B
   note Einheiten woertlich aus der info-Antwort: N_ion/N_elec cm-3, T_elec K, Vs V; Kadenz PT0.5S
 
@@ -445,6 +456,80 @@ host imag-data.bgs.ac.uk
   probe 2026-10-25T08:55:05Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wic/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
   probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wng/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
   probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ykc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
+  probe 2026-10-25T11:09:30Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aae/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:31Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=abg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:32Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ale/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:33Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ams/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:34Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=api/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:35Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aqu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:37Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bfe/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:39Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bmt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:40Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bng/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:41Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=box/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:45Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=clf/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:49Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cnh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:50Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=czt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:51Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dlr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:52Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dlt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:53Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dmc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:54Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=drv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:55Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dur/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:56Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ebr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:56Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=esk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:58Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gck/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:58Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gln/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:09:59Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gna/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:00Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gui/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:01Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gzh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:04Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=had/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:05Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hbk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:06Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=her/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:06Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hrb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:08Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:09Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ipm/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:10Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=irt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:11Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=isk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:11Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=jai/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:13Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=jco/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:14Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=khb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:15Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kiv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:16Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kmh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:17Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kou/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:17Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ler/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:18Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lnp/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:20Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lov/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:22Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lvv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:23Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lzh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:24Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mbc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:26Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mbo/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:26Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mcq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:28Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mgd/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:29Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mid/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:30Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mlt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:30Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mzl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:31Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nvs/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:32Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=orc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:33Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=paf/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:34Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pbq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:34Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=peg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:35Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pet/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:36Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=phu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:37Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pil/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:38Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ppt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:39Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=qsb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:40Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=res/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:41Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=reu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:42Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sfs/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:42Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=spg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:43Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=spt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:44Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=stt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:47Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:48Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tam/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:48Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tan/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:49Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tik/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:51Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tsu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:52Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wmq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+  probe 2026-10-25T11:10:53Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=yak/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
   applies https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
   note die Dokumente sind offen und lesbar; die Weitergabe der Daten ist es nicht — bulk distribution verlangt written permission (state/wartend.phi, LOCK rechtlich). Die Zeile belegt die Messung, sie gibt die Daten nicht frei. Die Register-origin traegt keine dataset-id, deshalb deckt eine Zeile den Endpunkt
 
@@ -1124,6 +1209,24 @@ host cdaweb.gsfc.nasa.gov
   instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesP.html#PSP_COHO1HR_MERGED_MAG_PLASMA
   instrument_quote "PSP_COHO1HR_MERGED_MAG_PLASMA: Merged hourly magnetic field, plasma, proton fluxes, and ephermis data of PSP"
   probe 2026-10-25T09:07:41Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min=2022-06-01T00:00:00Z&time.max=2022-06-01T03:00:00Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
+  probe 2026-10-25T11:08:10Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
+  probe 2026-10-25T11:08:11Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
+  probe 2026-10-25T11:08:12Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FPI_FAST_L2_DES-MOMS&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_des_numberdensity_fast,mms1_des_bulkv_gse_fast&format=json
+  probe 2026-10-25T11:08:13Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
+  probe 2026-10-25T11:08:14Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=psp_fld_l2_mag_RTN&format=json
+  probe 2026-10-25T11:08:16Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=np_moment_gd,wp_moment_gd&format=json
+  probe 2026-10-25T11:08:17Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=SN_RMS_E&format=json
+  probe 2026-10-25T11:08:18Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_fgs_btotal,tha_fgs_gse&format=json
+  probe 2026-10-25T11:08:20Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_MOM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_peim_density,tha_peim_velocity_gse&format=json
+  probe 2026-10-25T11:08:21Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
+  probe 2026-10-25T11:08:22Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=tpgpaltitude,ktemp&format=json
+  probe 2026-10-25T11:08:23Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
+  probe 2026-10-25T11:08:24Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H2_MFI&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSM&format=json
+  probe 2026-10-25T11:08:25Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_K0_SWE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=V_GSE,Np&format=json
+  probe 2026-10-25T11:08:57Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2017-07-01T00:00:00Z&time.max=2026-08-04T00:00:00Z&parameters=Magnitude,BGSM&format=csv
+  probe 2026-10-25T11:09:27Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2017-07-01T00:00:00Z&time.max=2026-10-10T00:00:00Z&parameters=Np,Vp&format=csv
+  probe 2026-10-25T11:09:28Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
+  probe 2026-10-25T11:12:44Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
   applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA
   note /info 200; BR/BT/BN/B[nT], VR/VT/VN[km/sec], fill -1.0E31; Messung 2022-06-01: 5 Zeilen 00:00..04:00Z, dt 3600 s.
 
@@ -2667,6 +2770,7 @@ host atmos.nmsu.edu
   host_cite https://atmos.nmsu.edu/PDS/data/VXRS_1101/ODF/8031031A.LBL
   host_quote "HTTP last-modified: Wed, 18 Dec 2013 15:34:04 GMT"
   probe 2026-10-25T10:16:37Z 206 https://atmos.nmsu.edu/PDS/data/VXRS_1101/ODF/8031031A.LBL
+  probe 2026-10-25T11:11:16Z 404 https://atmos.nmsu.edu/PDS/data/VXRS_1101..VXRS_1104/ODF/
   applies https://atmos.nmsu.edu/PDS/data/VXRS_1101..VXRS_1104/ODF/
   note ODF liegt direkt unter dem Volume (VXRS_1101/ODF), nicht unter DATA/ODF; Label nennt VENUS EXPRESS / RSS. Kadenz ist die je Record gesetzte Integration Time, 604800 s steht nicht im Label.
 
@@ -3595,6 +3699,7 @@ host frdr-dfdr.ca
   instrument_cite https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
   instrument_quote "SuperDARN is an international collaboration operating high frequency (HF) radars deployed in the northern and southern hemispheres to measure ionospheric plasma circulation."
   probe 2026-10-25T10:00:30Z 206 https://www.frdr-dfdr.ca/repo/files/7/published/publication_1302/submitted_data/2023RAWACF.readme.txt
+  probe 2026-10-25T11:12:05Z 200 https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
   applies https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
   note Das README (Kopie der RST-RAWACF-Tabelle) deklariert pwr0 ausdruecklich mit Units "None"; nur mxpwr ist dort dB. Der Block setzt dB. Kadenz ist nicht fix: intt.sc/intt.us ist Integrationszeit je Record, ein File umfasst nominell 2 Stunden.
 
@@ -4104,6 +4209,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20100114163814id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:04:13Z 206 https://web.archive.org/web/20100114163814id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
+  probe 2026-10-25T11:12:51Z 206 https://web.archive.org/web/20030514061730id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
   applies https://web.archive.org/web/20030514061730id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
   note Obninsk Bulletin, Dekade _2 des Monats 2000-07; Parameter und Einheit km wie oben. Die Block-Origin ohne :80 liefert bei --probe absent; korrekte Capture erst mit :80 (per --wayback-available gemessen).
 
@@ -4117,6 +4223,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20051124035849id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:14Z 206 https://web.archive.org/web/20051124035849id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
+  probe 2026-10-25T11:12:53Z 206 https://web.archive.org/web/20030514061251id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
   applies https://web.archive.org/web/20030514061251id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
   note Obninsk Bulletin, Dekade _1 des Monats 2000-08; Parameter und Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4130,6 +4237,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:16Z 206 https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
+  probe 2026-10-25T11:12:56Z 206 https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
   applies https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
   note Obninsk Bulletin, Dekade _2 des Monats 2000-08; Parameter und Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4143,6 +4251,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20190905142451id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:17Z 206 https://web.archive.org/web/20190905142451id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
+  probe 2026-10-25T11:13:00Z 206 https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
   applies https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (1993-01). Parameter wie im Bulletin, Einheit km aus dem Parameter-Katalog der USGS-Doku. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4169,6 +4278,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:18Z 206 https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
+  probe 2026-10-25T11:13:07Z 206 https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
   applies https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (2000-02). Parameter wie im Bulletin, Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4182,6 +4292,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:20Z 206 https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
+  probe 2026-10-25T11:13:08Z 206 https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
   applies https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (2000-05). Parameter wie im Bulletin, Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4208,6 +4319,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:22Z 206 https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
+  probe 2026-10-25T11:13:12Z 206 https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
   applies https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (2000-07). Parameter wie im Bulletin, Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4234,6 +4346,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20190902071540id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:26Z 206 https://web.archive.org/web/20190902071540id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
+  probe 2026-10-25T11:13:14Z 206 https://web.archive.org/web/20180212021813id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
   applies https://web.archive.org/web/20180212021813id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (2009-01). Parameter wie im Bulletin, Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4247,6 +4360,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20190902080725id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:29Z 206 https://web.archive.org/web/20190902080725id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
+  probe 2026-10-25T11:13:16Z 206 https://web.archive.org/web/20181102023325id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
   applies https://web.archive.org/web/20181102023325id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (2014-06). Parameter wie im Bulletin, Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
@@ -4260,6 +4374,7 @@ host web.archive.org
   host_cite https://web.archive.org/web/20190905174141id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:31Z 206 https://web.archive.org/web/20190905174141id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
+  probe 2026-10-25T11:13:28Z 206 https://web.archive.org/web/20181102023200id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
   applies https://web.archive.org/web/20181102023200id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
   note catalog/ = Monatsdatei des Obninsk-Bulletin-Katalogs (2014-07). Parameter wie im Bulletin, Einheit km wie oben. Block-Origin ohne :80 liefert absent; korrekte Capture mit :80.
 
