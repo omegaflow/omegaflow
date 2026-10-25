@@ -224,6 +224,14 @@ fn origin_stem(url: &str) -> &str {
     &url[..cut]
 }
 
+fn norm_host(host: &str) -> String {
+    let h = host.strip_prefix("www.").unwrap_or(host);
+    h.strip_suffix(":80")
+        .or_else(|| h.strip_suffix(":443"))
+        .unwrap_or(h)
+        .to_string()
+}
+
 fn host_of(url: &str) -> Option<String> {
     let rest = url.split_once("://")?.1;
     let host = rest.split(['/', '?']).next()?;
@@ -231,6 +239,10 @@ fn host_of(url: &str) -> Option<String> {
         return None;
     }
     let host = host.strip_prefix("www.").unwrap_or(host);
+    let host = host
+        .strip_suffix(":80")
+        .or_else(|| host.strip_suffix(":443"))
+        .unwrap_or(host);
     if host == "github.com"
         && let Some(tag) = rest
             .strip_prefix("github.com/omegaflow/sources/releases/download/")
@@ -254,7 +266,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
             Some("host") => {
                 if let Some(token) = value {
                     out.push(Spec {
-                        host: token.clone(),
+                        host: norm_host(&token),
                         applies: Vec::new(),
                         instrument: String::new(),
                         units: BTreeSet::new(),
@@ -450,7 +462,16 @@ fn list_open_blocks(content: &str, specs: &[Spec]) {
             continue;
         }
         for inst in &instruments {
-            match spec_for_inst(specs, &host, &origin, inst, &[]) {
+            let url_rest = match field_of(&block, "url") {
+                Some(p) => p[1..].join(" "),
+                None => String::new(),
+            };
+            let key_url = if url_rest.is_empty() || url_rest == origin {
+                origin.to_string()
+            } else {
+                format!("{origin};{url_rest}")
+            };
+            match spec_for_inst(specs, &host, &key_url, inst, &[]) {
                 Ok(_) => {}
                 Err(names) if names.is_empty() => {
                     println!("{start}\tno_spec\t{host}\t{inst}\t{origin}\t{fname}\t{unit}");
@@ -495,7 +516,7 @@ fn list_without_fields(content: &str) {
 }
 
 fn dump_blocks(content: &str) {
-    println!("line\turl\tfield_key\torigin\tinstrument\tunit\tinterval");
+    println!("line\turl\tfield_key\tformat\torigin\tinstrument\tunit\tinterval");
     for (start, block) in blocks(content) {
         let mut keys: Vec<String> = Vec::new();
         let mut unit = String::new();
@@ -554,8 +575,12 @@ fn dump_blocks(content: &str) {
             Some(v) => v,
             None => String::new(),
         };
+        let fmt = match get("format") {
+            Some(v) => v,
+            None => String::new(),
+        };
         println!(
-            "{start}\t{url}\t{}\t{origin}\t{inst}\t{unit}\t{interval}",
+            "{start}\t{url}\t{}\t{fmt}\t{origin}\t{inst}\t{unit}\t{interval}",
             keys.join(",")
         );
     }

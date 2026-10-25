@@ -867,6 +867,14 @@ fn apply_fields(path: &str) {
         let Some((start, block)) = phi_blocks
             .iter()
             .find(|(_, b)| field(b, "url").as_deref() == Some(url.trim()))
+            .or_else(|| {
+                phi_blocks.iter().find(|(_, b)| {
+                    let Some(u) = field(b, "url") else {
+                        return false;
+                    };
+                    u.ends_with(&format!("/{}", url.trim()))
+                })
+            })
         else {
             skipped += 1;
             continue;
@@ -1009,6 +1017,14 @@ fn apply_instruments_url(path: &str) {
         let Some((start, block)) = phi_blocks
             .iter()
             .find(|(_, b)| field(b, "url").as_deref() == Some(url.trim()))
+            .or_else(|| {
+                phi_blocks.iter().find(|(_, b)| {
+                    let Some(u) = field(b, "url") else {
+                        return false;
+                    };
+                    u.ends_with(&format!("/{}", url.trim()))
+                })
+            })
             .or_else(|| {
                 phi_blocks.iter().find(|(_, b)| {
                     let Some(origin) = field(b, "origin") else {
@@ -1253,6 +1269,948 @@ fn sync_fields() {
     println!("sync-fields: {synced} Zeilen an Block-Keys gebunden");
 }
 
+fn set_instruments_by_asset(path: &str) {
+    use std::collections::BTreeMap;
+    let tsv = fs::read_to_string(path).expect("tsv");
+    let mut map: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(asset), Some(inst)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let asset = asset.trim().to_string();
+        let names: Vec<String> = if inst.trim() == "-" {
+            Vec::new()
+        } else {
+            inst.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()
+        };
+        if !asset.is_empty() {
+            map.insert(asset, names);
+        }
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut done = 0usize;
+    for (_, block) in blocks(&text) {
+        let url = match field(&block, "url") {
+            Some(u) => u,
+            None => String::new(),
+        };
+        let names = map.iter().find(|(a, _)| url.ends_with(&format!("/{a}"))).map(|(_, v)| v.clone());
+        let Some(names) = names else {
+            out.extend(block);
+            out.push(String::new());
+            continue;
+        };
+        done += 1;
+        let mut inserted = false;
+        for l in block {
+            if l.starts_with("instrument ") {
+                continue;
+            }
+            out.push(l.clone());
+            if !inserted && l.starts_with("origin ") {
+                for n in &names {
+                    out.push(format!("instrument {n}"));
+                }
+                inserted = true;
+            }
+        }
+        if !inserted {
+            for n in &names {
+                out.push(format!("instrument {n}"));
+            }
+        }
+        out.push(String::new());
+    }
+    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    println!("set-instruments-by-asset: {done} Bloecke gesetzt");
+}
+
+fn strip_block_for_derived(block: &[String]) -> Vec<String> {
+    let mut stripped: Vec<String> = Vec::new();
+    for l in block {
+        let head = l.split_whitespace().next().unwrap_or("");
+        if matches!(head, "field" | "quantity" | "last" | "instrument") {
+            continue;
+        }
+        if head == "at" || head == "on" || head == "query" {
+            continue;
+        }
+        stripped.push(l.clone());
+    }
+    stripped
+}
+
+fn append_derived(out_path: &str, moved: &[String]) {
+    let mut out = match fs::read_to_string(out_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
+    };
+    if !out.is_empty() && !out.ends_with("\n\n") {
+        out.push_str("\n\n");
+    }
+    out.push_str(&moved.join("\n"));
+    if let Some(parent) = std::path::Path::new(out_path).parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    fs::write(out_path, out).expect("out write");
+}
+
+fn aussondern_format(format_value: &str, out_path: &str) {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut keep: Vec<String> = Vec::new();
+    let mut moved: Vec<String> = Vec::new();
+    let mut count = 0usize;
+    for (_, block) in blocks(&text) {
+        if field(&block, "format").as_deref() == Some(format_value) {
+            moved.extend(strip_block_for_derived(&block));
+            moved.push(String::new());
+            count += 1;
+            continue;
+        }
+        keep.extend(block);
+        keep.push(String::new());
+    }
+    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    append_derived(out_path, &moved);
+    println!("aussondern-format {format_value}: {count} Bloecke verschoben");
+}
+
+fn url_matches(template: &str, url: &str) -> bool {
+    if url == template || url.ends_with(&format!("/{template}")) {
+        return true;
+    }
+    if let (Some(open), Some(close)) = (template.find('<'), template.find('>'))
+        && open < close
+    {
+        let pre = &template[..open];
+        let suf = &template[close + 1..];
+        return url.starts_with(pre) && url.ends_with(suf);
+    }
+    false
+}
+
+fn aussondern_assets(list_path: &str, out_path: &str) {
+    let mut wanted: BTreeMap<String, String> = BTreeMap::new();
+    let list = match fs::read_to_string(list_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
+    };
+    for line in list.lines() {
+        if line.contains("REFERENZ") {
+            let cols: Vec<&str> = line.split('\t').collect();
+            let asset = match cols.first() {
+                Some(s) => s.trim().to_string(),
+                None => String::new(),
+            };
+            if asset.is_empty() {
+                continue;
+            }
+            let reason = if cols.len() > 2 {
+                cols[2..].join(" ").trim().to_string()
+            } else {
+                String::new()
+            };
+            wanted.insert(asset, reason);
+        }
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut keep: Vec<String> = Vec::new();
+    let mut moved: Vec<String> = Vec::new();
+    let mut count = 0usize;
+    for (_, block) in blocks(&text) {
+        let url = match field(&block, "url") {
+            Some(u) => u,
+            None => String::new(),
+        };
+        let origin = or_empty(field(&block, "origin"));
+        let hit_key = wanted
+            .iter()
+            .find(|(a, _)| {
+                url_matches(a, &url)
+                    || (!origin.is_empty()
+                        && origin.split(';').any(|o| url_matches(a, o.trim())))
+            })
+            .map(|(a, _)| a.clone());
+        let Some(key) = hit_key else {
+            keep.extend(block);
+            keep.push(String::new());
+            continue;
+        };
+        let reason = or_empty(wanted.remove(&key));
+        let mut stripped = strip_block_for_derived(&block);
+        if !reason.is_empty() && !stripped.iter().any(|l| l.starts_with("keine_messung ")) {
+            stripped.push(format!("keine_messung \"{reason}\""));
+        }
+        println!("  verschoben: {url}");
+        moved.extend(stripped);
+        moved.push(String::new());
+        count += 1;
+    }
+    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    append_derived(out_path, &moved);
+    println!("aussondern-assets: {count} Bloecke verschoben");
+    for key in wanted.keys() {
+        println!("  nicht getroffen: {key}");
+    }
+}
+
+fn replace_blocks(path: &str) {
+    use std::collections::BTreeMap;
+    let src = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut new_blocks: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for (_, b) in blocks(&src) {
+        if let Some(u) = field(&b, "url") {
+            new_blocks.insert(u, b);
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    let mut replaced = 0usize;
+    for (_, b) in blocks(&text) {
+        let url = field(&b, "url");
+        if let Some(u) = &url
+            && let Some(nb) = new_blocks.remove(u)
+        {
+            out.extend(nb);
+            out.push(String::new());
+            replaced += 1;
+            continue;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    let added = new_blocks.len();
+    for (_, b) in new_blocks {
+        out.extend(b);
+        out.push(String::new());
+    }
+    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    println!("replace-blocks: {replaced} ersetzt, {added} neu angehaengt");
+}
+
+fn github_token() -> String {
+    let candidates = [
+        or_empty(std::env::var("OMEGAFLOW_SECRETS_FILE").ok()),
+        format!(
+            "{}/.secrets.local",
+            or_empty(std::env::var("HOME").ok())
+        ),
+        ".secrets.local".to_string(),
+    ];
+    for path in candidates {
+        if path.is_empty() {
+            continue;
+        }
+        let text = match fs::read_to_string(&path) {
+            Ok(s) => s,
+            Err(_) => continue,
+        };
+        for line in text.lines() {
+            if let Some(v) = line.strip_prefix("GH_TOKEN=") {
+                let t = v.trim().trim_matches('"').to_string();
+                if !t.is_empty() {
+                    return t;
+                }
+            }
+        }
+    }
+    String::new()
+}
+
+fn derived_dedup(path: &str) {
+    let text = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut by_url: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut order: Vec<String> = Vec::new();
+    let mut total = 0usize;
+    for (_, b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        total += 1;
+        match by_url.get_mut(&url) {
+            Some(prev) if prev.len() >= b.len() => {}
+            Some(prev) => {
+                *prev = b;
+            }
+            None => {
+                order.push(url.clone());
+                by_url.insert(url, b);
+            }
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    for url in &order {
+        if let Some(b) = by_url.remove(url) {
+            out.extend(b);
+            out.push(String::new());
+        }
+    }
+    fs::write(path, out.join("\n") + "\n").expect("derived write");
+    println!(
+        "derived-dedup: {total} gelesen, {} eindeutig, {} Dubletten entfernt",
+        order.len(),
+        total - order.len()
+    );
+}
+
+fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
+    let token = github_token();
+    if token.is_empty() {
+        println!("fill-sha: GH_TOKEN fehlt");
+        return;
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut report: Vec<String> = Vec::new();
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    let mut done = 0usize;
+    let mut corrected = 0usize;
+    let mut skipped = 0usize;
+    let mut downloaded = 0usize;
+    let mut api_calls = 0usize;
+    for (_, block) in blocks(&text) {
+        let existing = or_empty(field(&block, "sha256"));
+        let url = match field(&block, "url") {
+            Some(u) => u,
+            None => String::new(),
+        };
+        let marker = "/releases/download/";
+        if !url.contains(marker) {
+            out.extend(block);
+            out.push(String::new());
+            continue;
+        }
+        let rest = url.split(marker).nth(1).unwrap_or("");
+        let mut parts = rest.splitn(2, '/');
+        let tag = parts.next().unwrap_or("");
+        let asset = rest.rsplit('/').next().unwrap_or("");
+        if tag.is_empty() || asset.is_empty() || asset == tag {
+            skipped += 1;
+            report.push(format!("{url}\t{tag}\t{asset}\tpfad-ohne-asset\t0"));
+            out.extend(block);
+            out.push(String::new());
+            continue;
+        }
+        let body = match cache.get(tag) {
+            Some(b) => b.clone(),
+            None => {
+                let api =
+                    format!("https://api.github.com/repos/omegaflow/sources/releases/tags/{tag}");
+                let rel = Command::new("curl")
+                    .args(["-sS", "-H", &format!("Authorization: Bearer {token}"), &api])
+                    .output();
+                api_calls += 1;
+                let b = match rel {
+                    Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+                    Err(_) => String::new(),
+                };
+                cache.insert(tag.to_string(), b.clone());
+                b
+            }
+        };
+        let needle = format!("\"name\": \"{asset}\"");
+        let mut hash = String::new();
+        let mut asset_id = String::new();
+        let mut asset_size = 0u64;
+        let mut found = false;
+        if let Some(pos) = body.find(&needle) {
+            found = true;
+            let before_lo = pos.saturating_sub(400);
+            let before = &body[before_lo..pos];
+            if let Some(ip) = before.rfind("\"id\":") {
+                asset_id = before[ip + 5..]
+                    .trim_start()
+                    .split(|c: char| !c.is_ascii_digit())
+                    .next()
+                    .unwrap_or("")
+                    .to_string();
+            }
+            let after_start = pos + needle.len();
+            let after_end = match body[after_start..].find("\"name\":") {
+                Some(i) => after_start + i,
+                None => (after_start + 4000).min(body.len()),
+            };
+            let after = &body[after_start..after_end];
+            if let Some(dp) = after.find("\"digest\": \"sha256:") {
+                hash = after[dp + 18..]
+                    .split('"')
+                    .next()
+                    .unwrap_or("")
+                    .to_string();
+            }
+            if let Some(sp) = after.find("\"size\":") {
+                let digits = after[sp + 7..]
+                    .trim_start()
+                    .split(|c: char| !c.is_ascii_digit())
+                    .next()
+                    .unwrap_or("");
+                if let Ok(sz) = digits.parse::<u64>() {
+                    asset_size = sz;
+                }
+            }
+        }
+        if hash.len() != 64 && found && !asset_id.is_empty() && asset_size > 0 && asset_size <= max_bytes
+        {
+            let dl = format!("https://api.github.com/repos/omegaflow/sources/releases/assets/{asset_id}");
+            let tmp = std::env::temp_dir().join(format!("omegaflow-sha-{asset_id}"));
+            let got = Command::new("curl")
+                .args([
+                    "-sSL",
+                    "-H",
+                    &format!("Authorization: Bearer {token}"),
+                    "-H",
+                    "Accept: application/octet-stream",
+                    "-o",
+                    &tmp.to_string_lossy(),
+                    &dl,
+                ])
+                .status();
+            if got.map(|s| s.success()).unwrap_or(false) {
+                if let Ok(o) = Command::new("sha256sum").arg(&tmp).output() {
+                    let h = String::from_utf8_lossy(&o.stdout)
+                        .split_whitespace()
+                        .next()
+                        .unwrap_or("")
+                        .to_string();
+                    if h.len() == 64 {
+                        hash = h;
+                        downloaded += 1;
+                    }
+                }
+            }
+            let _ = fs::remove_file(&tmp);
+        }
+        if hash.len() != 64 {
+            skipped += 1;
+            let reason = if !found {
+                if body.contains("\"message\": \"Not Found\"") {
+                    "tag-404"
+                } else {
+                    "asset-nicht-im-release"
+                }
+            } else if asset_size > max_bytes {
+                "kein-digest-zu-gross"
+            } else {
+                "kein-digest"
+            };
+            report.push(format!("{url}\t{tag}\t{asset}\t{reason}\t{asset_size}"));
+            out.extend(block);
+            out.push(String::new());
+            continue;
+        }
+        let mut inserted = false;
+        for l in block {
+            if l.starts_with("sha256 ") {
+                out.push(format!("sha256 {hash}"));
+                inserted = true;
+                continue;
+            }
+            out.push(l.clone());
+            if !inserted && l.starts_with("compiler ") {
+                out.push(format!("sha256 {hash}"));
+                inserted = true;
+            }
+        }
+        if !inserted {
+            out.push(format!("sha256 {hash}"));
+        }
+        out.push(String::new());
+        done += 1;
+        if !existing.is_empty() && existing != hash {
+            corrected += 1;
+            report.push(format!("{url}\t{tag}\t{asset}\tkORRIGIERT\t{existing}->{hash}"));
+        }
+    }
+    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    if let Some(p) = report_path {
+        if let Some(parent) = std::path::Path::new(p).parent() {
+            let _ = fs::create_dir_all(parent);
+        }
+        fs::write(p, report.join("\n") + "\n").expect("report write");
+    }
+    println!(
+        "fill-sha: {done} Hashes geprueft/gesetzt ({downloaded} per Download, {corrected} korrigiert), {skipped} nicht aufloesbar, {api_calls} API-Aufrufe"
+    );
+}
+
+fn has_measurement_line(block: &[String]) -> bool {
+    block.iter().any(|l| {
+        l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last ")
+    })
+}
+
+fn split_field(path: &str, with_path: &str, without_path: &str) {
+    let src = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut with: Vec<String> = Vec::new();
+    let mut without: Vec<String> = Vec::new();
+    let (mut nw, mut no) = (0usize, 0usize);
+    for (_, b) in blocks(&src) {
+        if has_measurement_line(&b) {
+            with.extend(b);
+            with.push(String::new());
+            nw += 1;
+        } else {
+            without.extend(b);
+            without.push(String::new());
+            no += 1;
+        }
+    }
+    if let Some(p) = std::path::Path::new(with_path).parent() {
+        let _ = fs::create_dir_all(p);
+    }
+    fs::write(with_path, with.join("\n") + "\n").expect("with write");
+    fs::write(without_path, without.join("\n") + "\n").expect("without write");
+    println!("split-field: {nw} mit Messzeile, {no} ohne Messzeile");
+}
+
+fn derived_clean(path: &str) {
+    let text = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut keep: Vec<String> = Vec::new();
+    let mut removed: Vec<String> = Vec::new();
+    for (_, b) in blocks(&text) {
+        if has_measurement_line(&b) {
+            removed.push(or_empty(field(&b, "url")));
+            continue;
+        }
+        keep.extend(b);
+        keep.push(String::new());
+    }
+    fs::write(path, keep.join("\n") + "\n").expect("derived write");
+    println!("derived-clean: {} Messbloecke entfernt", removed.len());
+    for u in removed {
+        println!("  raus: {u}");
+    }
+}
+
+fn merge_rebuild(blocks_path: &str, derived_path: &str) {
+    let src = match fs::read_to_string(blocks_path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut measurements: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut refs: Vec<(String, Vec<String>)> = Vec::new();
+    for (_, b) in blocks(&src) {
+        let url = match field(&b, "url") {
+            Some(u) => u,
+            None => continue,
+        };
+        if has_measurement_line(&b) {
+            measurements.insert(url, b);
+        } else {
+            refs.push((url, b));
+        }
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let (mut replaced, mut appended) = (0usize, 0usize);
+    for (_, b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        if let Some(nb) = measurements.remove(&url) {
+            out.extend(nb);
+            out.push(String::new());
+            replaced += 1;
+            continue;
+        }
+        if refs.iter().any(|(u, _)| *u == url) {
+            continue;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    let extra = measurements.len();
+    for (_, b) in measurements {
+        out.extend(b);
+        out.push(String::new());
+        appended += 1;
+    }
+    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+
+    let mut derived: Vec<String> = Vec::new();
+    let mut ref_count = 0usize;
+    for (_, b) in refs {
+        derived.extend(strip_block_for_derived(&b));
+        derived.push(String::new());
+        ref_count += 1;
+    }
+    if !derived.is_empty() {
+        append_derived(derived_path, &derived);
+    }
+    println!(
+        "merge-rebuild: {replaced} ersetzt, {extra} neu angehaengt, {ref_count} Referenzen ausgesondert"
+    );
+    let _ = appended;
+}
+
+fn filter_rows(rows_path: &str, blocks_path: &str, out_path: &str) {
+    use std::collections::BTreeSet;
+    let rows = match fs::read_to_string(rows_path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let block_src = match fs::read_to_string(blocks_path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut urls: BTreeSet<String> = BTreeSet::new();
+    for (_, b) in blocks(&block_src) {
+        if let Some(u) = field(&b, "url") {
+            urls.insert(u);
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    let (mut kept, mut dropped) = (0usize, 0usize);
+    for (_, b) in blocks(&rows) {
+        let applies = or_empty(field(&b, "applies"));
+        let target = applies.split_whitespace().next().unwrap_or("");
+        if urls.contains(target) {
+            out.extend(b);
+            out.push(String::new());
+            kept += 1;
+        } else {
+            dropped += 1;
+        }
+    }
+    if let Some(p) = std::path::Path::new(out_path).parent() {
+        let _ = fs::create_dir_all(p);
+    }
+    fs::write(out_path, out.join("\n") + "\n").expect("out write");
+    println!("filter-rows: {kept} behalten, {dropped} verworfen");
+}
+
+fn dups(mode: &str) {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut groups: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for (_, b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        let key = match mode {
+            "sha256" => or_empty(field(&b, "sha256")),
+            "origin" => or_empty(field(&b, "origin")),
+            _ => {
+                let origin = or_empty(field(&b, "origin"));
+                let fk = match b.iter().find(|l| {
+                    l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity ")
+                }) {
+                    Some(l) => l.split_whitespace().nth(1).unwrap_or("").to_string(),
+                    None => String::new(),
+                };
+                format!("{origin}\t{fk}")
+            }
+        };
+        if key.is_empty() {
+            continue;
+        }
+        groups.entry(key).or_default().push(url);
+    }
+    let mut n = 0usize;
+    for (key, urls) in &groups {
+        if urls.len() > 1 {
+            n += 1;
+            println!("{key}");
+            for u in urls {
+                println!("  {u}");
+            }
+        }
+    }
+    println!("dups {mode}: {n} Gruppen mit mehr als einem Block");
+}
+
+fn suggest_assets(path: &str, out_path: &str) {
+    use std::collections::BTreeSet;
+    let token = github_token();
+    if token.is_empty() {
+        println!("suggest-assets: GH_TOKEN fehlt");
+        return;
+    }
+    let list = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut cache: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut out: Vec<String> = Vec::new();
+    for line in list.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 3 {
+            continue;
+        }
+        let tag = cols[1].trim();
+        let asset = cols[2].trim();
+        if tag.is_empty() || asset.is_empty() {
+            continue;
+        }
+        let names = match cache.get(tag) {
+            Some(v) => v.clone(),
+            None => {
+                let api =
+                    format!("https://api.github.com/repos/omegaflow/sources/releases/tags/{tag}");
+                let body = match Command::new("curl")
+                    .args(["-sS", "-H", &format!("Authorization: Bearer {token}"), &api])
+                    .output()
+                {
+                    Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+                    Err(_) => String::new(),
+                };
+                let mut names: Vec<String> = Vec::new();
+                if let Some(apos) = body.find("\"assets\":") {
+                    let mut rest = &body[apos..];
+                    while let Some(p) = rest.find("\"name\": \"") {
+                        let tail = &rest[p + 9..];
+                        let name = tail.split('"').next().unwrap_or("").to_string();
+                        let nlen = name.len();
+                        if !name.is_empty() {
+                            names.push(name);
+                        }
+                        rest = &tail[nlen.min(tail.len())..];
+                    }
+                }
+                cache.insert(tag.to_string(), names.clone());
+                names
+            }
+        };
+        let mut cands: BTreeSet<String> = BTreeSet::new();
+        let stem = asset.split('.').next().unwrap_or(asset);
+        for n in &names {
+            let nstem = n.split('.').next().unwrap_or(n);
+            if n == asset || nstem == stem || (stem.len() >= 6 && nstem.starts_with(stem)) {
+                cands.insert(n.clone());
+            }
+        }
+        let pick: Vec<String> = cands.into_iter().take(3).collect();
+        out.push(format!(
+            "{}\t{}\t{}\t{}\t{}\t{}",
+            cols[0].trim(),
+            tag,
+            asset,
+            cols.get(3).map(|s| s.trim()).unwrap_or(""),
+            pick.len(),
+            pick.join(",")
+        ));
+    }
+    if let Some(p) = std::path::Path::new(out_path).parent() {
+        let _ = fs::create_dir_all(p);
+    }
+    fs::write(out_path, out.join("\n") + "\n").expect("suggest write");
+    let with = out.iter().filter(|l| !l.ends_with("\t0\t")).count();
+    println!(
+        "suggest-assets: {} Zeilen, {with} mit Vorschlag, {} Tags abgefragt",
+        out.len(),
+        cache.len()
+    );
+}
+
+fn set_row_key(block: &mut Vec<String>, key: &str, value: &str) {
+    let prefix = format!("{key} ");
+    if let Some(pos) = block.iter().position(|l| l.starts_with(&prefix)) {
+        block[pos] = format!("{key} {value}");
+        return;
+    }
+    let pos = block
+        .iter()
+        .position(|l| l.starts_with("applies "))
+        .unwrap_or(block.len());
+    block.insert(pos, format!("{key} {value}"));
+}
+
+fn set_instrument_lines(block: &mut Vec<String>, instruments: &[String]) {
+    block.retain(|l| !l.starts_with("instrument "));
+    let pos = block
+        .iter()
+        .position(|l| l.starts_with("applies "))
+        .unwrap_or(block.len());
+    for (i, name) in instruments.iter().enumerate() {
+        block.insert(pos + i, format!("instrument {name}"));
+    }
+}
+
+fn spec_matches_block(spec_url: &str, url: &str, origin: &str, fkey: &str) -> bool {
+    if (!url.is_empty() && url == spec_url)
+        || (!origin.is_empty()
+            && origin.split(';').any(|o| o.trim() == spec_url))
+    {
+        return true;
+    }
+    if origin.contains("<name>") {
+        let base = spec_url.rsplit('/').next().unwrap_or("").to_lowercase();
+        let stem: String = base
+            .chars()
+            .take_while(|c| c.is_ascii_alphanumeric())
+            .collect();
+        if stem.len() >= 4 && !fkey.is_empty() && fkey.starts_with(&stem) {
+            return true;
+        }
+    }
+    false
+}
+
+fn apply_specs(list_path: &str, derived_path: &str) {
+    let list = match fs::read_to_string(list_path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    struct Spec {
+        url: String,
+        instruments: Vec<String>,
+        inst_cite: String,
+        inst_quote: String,
+        data_cite: String,
+        data_quote: String,
+        status: String,
+    }
+    let mut specs: Vec<Spec> = Vec::new();
+    for line in list.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 7 {
+            continue;
+        }
+        specs.push(Spec {
+            url: cols[0].trim().to_string(),
+            instruments: cols[1]
+                .split('|')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty() && s != "-")
+                .collect(),
+            inst_cite: cols[2].trim().to_string(),
+            inst_quote: cols[3].trim().to_string(),
+            data_cite: cols[4].trim().to_string(),
+            data_quote: cols[5].trim().to_string(),
+            status: cols[6].trim().to_string(),
+        });
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut block_url_by_spec: BTreeMap<String, String> = BTreeMap::new();
+    for (_, b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        let origin = or_empty(field(&b, "origin"));
+        let fkey = b
+            .iter()
+            .find(|l| l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity "))
+            .and_then(|l| l.split_whitespace().nth(2).or_else(|| l.split_whitespace().nth(1)))
+            .unwrap_or("")
+            .to_lowercase();
+        if let Some(spec) = specs
+            .iter()
+            .find(|s| spec_matches_block(&s.url, &url, &origin, &fkey))
+        {
+            block_url_by_spec.insert(spec.url.clone(), url.clone());
+        }
+    }
+
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut reg_out: Vec<String> = Vec::new();
+    let mut rows_touched = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let applies = or_empty(field(&b, "applies"));
+        let target = applies.split_whitespace().next().unwrap_or("").to_string();
+        let hit = specs.iter().find(|s| {
+            !target.is_empty()
+                && (target == s.url
+                    || block_url_by_spec
+                        .get(&s.url)
+                        .map(|u| *u == target)
+                        .unwrap_or(false))
+        });
+        if let Some(spec) = hit {
+            if !spec.instruments.is_empty() {
+                set_instrument_lines(&mut b, &spec.instruments);
+            }
+            if !spec.data_cite.is_empty() {
+                set_row_key(&mut b, "api_cite", &spec.data_cite);
+            }
+            if !spec.data_quote.is_empty() {
+                set_row_key(&mut b, "api_quote", &spec.data_quote);
+            }
+            if !spec.inst_cite.is_empty() {
+                set_row_key(&mut b, "instrument_cite", &spec.inst_cite);
+            }
+            if !spec.inst_quote.is_empty() {
+                set_row_key(&mut b, "instrument_quote", &spec.inst_quote);
+            }
+            rows_touched += 1;
+        }
+        reg_out.extend(b);
+        reg_out.push(String::new());
+    }
+    fs::write(REG, reg_out.join("\n") + "\n").expect("register write");
+
+    let mut keep: Vec<String> = Vec::new();
+    let mut moved: Vec<String> = Vec::new();
+    let mut blocks_touched = 0usize;
+    let mut refs = 0usize;
+    for (_, mut b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        let origin = or_empty(field(&b, "origin"));
+        let fkey = b
+            .iter()
+            .find(|l| l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity "))
+            .and_then(|l| l.split_whitespace().nth(2).or_else(|| l.split_whitespace().nth(1)))
+            .unwrap_or("")
+            .to_lowercase();
+        let hit = specs
+            .iter()
+            .find(|s| spec_matches_block(&s.url, &url, &origin, &fkey));
+        let Some(spec) = hit else {
+            keep.extend(b);
+            keep.push(String::new());
+            continue;
+        };
+        if spec.status == "keine_messung" {
+            let mut stripped = strip_block_for_derived(&b);
+            if !spec.data_quote.is_empty() {
+                stripped.push(format!("keine_messung \"{}\"", spec.data_quote));
+            }
+            moved.extend(stripped);
+            moved.push(String::new());
+            refs += 1;
+            continue;
+        }
+        if !spec.instruments.is_empty() {
+            set_instrument_lines(&mut b, &spec.instruments);
+        }
+        keep.extend(b);
+        keep.push(String::new());
+        blocks_touched += 1;
+    }
+    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    if !moved.is_empty() {
+        append_derived(derived_path, &moved);
+    }
+    println!(
+        "apply-specs: {rows_touched} Registerzeilen, {blocks_touched} Bloecke, {refs} Referenzen ausgesondert, {} Spec-Zeilen gelesen",
+        specs.len()
+    );
+}
+
+fn url_cut(path: &str, needle: &str) {
+    let text = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut keep: Vec<String> = Vec::new();
+    let mut n = 0usize;
+    for (_, b) in blocks(&text) {
+        let u = or_empty(field(&b, "url"));
+        if !u.is_empty() && (u == needle || u.ends_with(&format!("/{needle}"))) {
+            n += 1;
+            continue;
+        }
+        keep.extend(b);
+        keep.push(String::new());
+    }
+    fs::write(path, keep.join("\n") + "\n").expect("url-cut write");
+    println!("url-cut: {n} Block/Bloecke entfernt aus {path}");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -1270,6 +2228,25 @@ fn main() {
         Some("instrumentize") if args.len() >= 3 => instrumentize(&args[2]),
         Some("set-instruments") if args.len() >= 3 => set_instruments(&args[2]),
         Some("apply-instruments-url") if args.len() >= 3 => apply_instruments_url(&args[2]),
+        Some("set-instruments-by-asset") if args.len() >= 3 => set_instruments_by_asset(&args[2]),
+        Some("aussondern-assets") if args.len() >= 4 => aussondern_assets(&args[2], &args[3]),
+        Some("aussondern-format") if args.len() >= 4 => aussondern_format(&args[2], &args[3]),
+        Some("replace-blocks") if args.len() >= 3 => replace_blocks(&args[2]),
+        Some("split-field") if args.len() >= 5 => split_field(&args[2], &args[3], &args[4]),
+        Some("merge-rebuild") if args.len() >= 4 => merge_rebuild(&args[2], &args[3]),
+        Some("derived-clean") if args.len() >= 3 => derived_clean(&args[2]),
+        Some("derived-dedup") if args.len() >= 3 => derived_dedup(&args[2]),
+        Some("dups") if args.len() >= 3 => dups(&args[2]),
+        Some("suggest-assets") if args.len() >= 4 => suggest_assets(&args[2], &args[3]),
+        Some("apply-specs") if args.len() >= 4 => apply_specs(&args[2], &args[3]),
+        Some("url-cut") if args.len() >= 4 => url_cut(&args[2], &args[3]),
+        Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
+        Some("fill-sha") => fill_sha(
+            args.get(2).map(String::as_str),
+            args.get(3)
+                .and_then(|s| s.parse::<u64>().ok())
+                .unwrap_or(200_000_000),
+        ),
         Some("aussondern") if args.len() >= 4 => aussondern(&args[2], &args[3], args.get(4).map(String::as_str)),
         Some("restore-missing") if args.len() >= 3 => restore_missing(&args[2]),
         Some("verify-specs") => verify_specs(),
