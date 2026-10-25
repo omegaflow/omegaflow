@@ -1353,14 +1353,6 @@ rows .
 epoch 0
 field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
-format orbit_bin
-origin https://tle.ivanstanojevic.me/api/tle/26998
-terms free-open https://celestrak.org/usage-policy.php
-compiler tools/harvest/src/bin/timed_tle_compiler.rs
-sha256 31b3f9b3374931ff8ae4e22f07ea8f6dd442d04739bde0377be332e49ab2b2e9
-at timed
-ttl 7200
 
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 origin https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
@@ -2042,101 +2034,17 @@ origin https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
 sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_earth.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_jupiter.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mars.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_moon.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_neptune.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_saturn.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_sun.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_uranus.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_venus.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_deimos.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_noe4
-origin https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.bsp
-compiler tools/harvest/src/bin/noe4_compiler.rs
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_phobos.bin
-terms etalab-2.0 https://seop.obspm.fr/en/terms/
-format ephemeris_noe4
-origin https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.bsp
-compiler tools/harvest/src/bin/noe4_compiler.rs
-at sun
-ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ftp.space.dtu.dk/pcn_2015.bin
 format pcn
@@ -2176,32 +2084,8 @@ on earth 41.111 42.699 1834.093
 ttl 86400
 terms free-open https://nbmg.unr.edu/Copyright.html
 
-url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_earth.bin
-terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
-format ephemeris_petrel19
-origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 935fae882501311e61c9386f8e83cbc398d96565028e9c11904101f2ed6f7651
-at earth
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_moon.bin
-terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
-format ephemeris_petrel19
-origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 e53d5a3b0160b2f8fa3ab383e3d0e34afc61ea5287ad154c37280ee0a27592bf
-at moon
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_sun.bin
-terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
-format ephemeris_petrel19
-origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 3656f56b0cfce11c3c1033f79c904125efc84a102b964c410a1bea05de108217
-at sun
-ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gpm_ku.bin
 terms free-open https://gportal.jaxa.jp/gpr/index/eula
@@ -3460,13 +3344,6 @@ compiler tools/harvest/src/bin/osc_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_orbit.bin
-format orbit_bin
-origin https://spdf.gsfc.nasa.gov/pub/data/wind/orbit/pre_or/
-terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
-compiler tools/harvest/src/bin/wind_orbit_compiler.rs
-at wind
-ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_waves.bin
 format wind_waves
@@ -3504,94 +3381,15 @@ compiler tools/harvest/src/bin/dcom5_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_earth.bin
-format ephemeris_de440
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 8b8998bdad00fe3377dc5e732ba8bdf01618ad62c4bed343cdf2b7b0c27c0e03
-at earth
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_moon.bin
-format ephemeris_de440
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 64ad003b75e9133030384fd62798226bca005247af5b736376eb97c75df63732
-at moon
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_sun.bin
-format ephemeris_de440
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 7700832ea5998d22eaf8da873c8b23073cd2447585fcd888a31b81475ef2df76
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin
-format ephemeris_de441
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 ad4c8cb05a5375cb553779f55f011cd96c679e7a110a26ca253676410c396d58
-at earth
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_moon.bin
-format ephemeris_de441
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 7cfb8971757d6a3fcc121854748f86989c331df1447efaa984661a0eba65e8eb
-at moon
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_sun.bin
-format ephemeris_de441
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 e682d727beb4d6afc2c3dcaa7720796751b02a1613b6f78c6e8187bf566b84c2
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_earth.bin
-format ephemeris_de442
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 1f920307eb446e973648646abd40a78d5e0be3097ab506528d881bd9012be25c
-at earth
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_moon.bin
-format ephemeris_de442
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 489c6890dc146ca4b8d77a4e40c105f3f7e589644cce1c06ca6851ef2ebd93d9
-at moon
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_sun.bin
-format ephemeris_de442
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-sha256 996e6944f3dc3bc999c209f6c283f79a2770e00ddc9f324da9df05df36bfac30
-at sun
-ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-neptune/ephemeris_de440_neptune.bin
-format ephemeris_de440
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
-compiler tools/harvest/src/bin/neptune_ephemeris_compiler.rs
-at neptune
-ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/swarm-diss.eo.esa.int/swarm_tec.bin
 terms free-open https://earth.esa.int/eogateway/catalog/swarm-level-2-daily
@@ -12433,12 +12231,6 @@ at earth
 ttl 2592000
 field dwd_vapour_pressure dwd_vapour_pressure gaussian-inverse-square acoustic Pa 86400 0.0 0.0
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/geophysical.ker
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/geophysical.ker
-format kernel_text
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-body geophysical
-ttl 2592000
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
 origin http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
@@ -13262,19 +13054,7 @@ field fnu_25 iras_psc_fnu_25_jy inverse-square em Jy 31536000 0.0 0.0
 field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 0.0 0.0
 field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 0.0 0.0
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
-format kernel_text
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-body naif0012
-ttl 31536000
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc
-format kernel_text
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-body gm_de440
-ttl 31536000
 
 url https://vdatum.noaa.gov/download/data/
 origin https://vdatum.noaa.gov/download/data/
@@ -15191,85 +14971,15 @@ format csv
 at earth
 no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_jupiter.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_mars.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_mercury.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_moon.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_neptune.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_saturn.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_sun.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_uranus.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_venus.bin
-terms free-open https://iaaras.ru/en/usage/
-format ephemeris_epm
-origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
-compiler tools/harvest/src/bin/epm_compiler.rs
-at sun
-no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/github.com/gamma_cat.bin
 terms free-open https://gamma-cat.readthedocs.io/use/terms.html
@@ -27798,797 +27508,103 @@ sha256 b1f8523dd90eecfb307fbc35878b47dc5d18f99b37a94e92fc267f6bc5470ea3
 format reference
 no-sampling
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at adrastea
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at amalthea
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at apophis
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ariel
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at atlas
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at atlas_3i
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at bennu
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at callisto
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_cassini.bin
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/spk/990807A_SCEPH_EM52_EP13.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at cassini
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ceres
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at charon
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at deimos
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at despina
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at dione
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at earth
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at enceladus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at encke
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at epimetheus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at eris
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eros.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at eros
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at europa
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at galatea
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galileo.bin
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/spk/s970311a.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at galileo
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ganymede
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at haumea
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at helene
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at himalia
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at hydra
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at hyperion
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at iapetus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at io
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at iss
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at janus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-sha256 b68842c95c0bd66c3fff18c837cb7cbdeae28165890bb8c10e75356ddd2a015a
-at juice
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juice_cog
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_official.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-format ephemeris_binary
-compiler tools/harvest/src/bin/raw_mirror.rs
-sha256 aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a
-at juice
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juno
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juno_asteroid
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at jupiter
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at jwst
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at kerberos
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at larissa
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at makemake
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mariner10.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
-compiler tools/harvest/src/bin/ephemeris_mariner10_compiler.rs
-sha256 67949cb6718be222c62c47286f16edbfbab5e35975fbcf0dfb9257645bbe0ae8
-at mariner10
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mars
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mercury
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_messenger.bin
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/messsp_1000/data/spk/msgr_040803_120516_140823_od268sc_0.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at messenger
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at metis
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mimas
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at miranda
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at moon
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at naiad
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_near.bin
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/nearsp_1000/data/spk/near_cruise_nav_v1.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at near
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at neptune
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at neptune_c
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at nereid
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at nix
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at oberon
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pallas
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pandora
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at parker_solar_probe
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at phobos
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at phoebe
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pluto
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at prometheus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at proteus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at rhea
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at saturn
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at solar_orbiter
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at styx
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at sun
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at tethys
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at thalassa
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at thebe
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at titan
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at titania
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at triton
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at umbriel
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at uranus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at uranus_c
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at venus
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
-terms PD-USGov https://ssd.jpl.nasa.gov/
-format ephemeris_binary
-origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at vesta
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager1_spk.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/voyager_1.ST+1991_a54418u.merged.bsp
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at voyager1
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager2_spk.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/voyager_2.ST+1992_m05208u.merged.bsp
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at voyager2
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at cassini
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at europa_clipper
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at galileo
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e2.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at galileo
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at halley
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_itokawa.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at itokawa
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at messenger
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_near.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at near
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 28568e3cadc1a864ac54c5b06cdc9267eeded9b45b9452f0be3bd369d63e9e16
-at new_horizons
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 bd86242fe2d4bd1f7d4ab3a8e9a7a9ccbd43db82b01ef46a3325d16c5dc768a4
-at pioneer10_daily
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer11_daily.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 7ea383fda24450d8f490e15c3e6aa37a38626f01b118bd8cfd0cfa13d7506063
-at pioneer11_daily
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at rosetta
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 459a3912612ae43c7bdbb453c638375c25f09a08a14810133424e0982ae8b7bf
-at voyager1
-no-sampling
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
-format ephemeris_binary
-terms PD-USGov https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/api/horizons.api
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 8d716add977f245f207f2467962b5c55d86566858855adef37995f7f5d9a9682
-at voyager2
-no-sampling
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astl_format.txt
 terms PD-USGov https://ssd.jpl.nasa.gov/
@@ -31351,13 +30367,6 @@ no-sampling
 terms free-open http://www.gsras.ru/
 quantity gsras_teleseismic_catalog_magnitude gsras_teleseismic_catalog_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
-terms kari-public-release https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
-format ephemeris_binary
-origin https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
-compiler tools/harvest/src/bin/kplo_spice_compiler.rs
-at kplo
-no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/www.lamost.org/lamost_dr10.bin
 terms CC-BY-4.0 https://www.lamost.org/dr10/
@@ -32457,26 +31466,8 @@ terms PD https://naif.jpl.nasa.gov/naif/rules.html
 sha256 cd4bab15b8ac4ecb1257627ce42ce7738947ed79ccb27b29ebc32283335e3b7f
 no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
-format kernel_text
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-body pck00010
-no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura111.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura111.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura117.bsp
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura117.bsp
@@ -32485,40 +31476,10 @@ terms PD https://naif.jpl.nasa.gov/naif/rules.html
 sha256 86ff648d828911fd4f201e3cf81d72c5c3d3eed4b5753b7cf6f85a1c736dc2ed
 no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097xl-899.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097xl-899.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura111xl-799.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura111xl-799.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp
-format spk
-terms PD https://naif.jpl.nasa.gov/naif/rules.html
-at sun
-no-sampling
 
 url https://opendata.auger.org/catalog/data.zip
 origin https://opendata.auger.org/catalog/data.zip
