@@ -2,6 +2,7 @@ url https://github.com/omegaflow/sources/releases/download/thredds.aodn.org.au/a
 terms CC-BY-4.0 https://imos.org.au/conditions-of-use
 format aodn
 origin https://thredds.aodn.org.au/thredds/dodsC/IMOS/ANMN/NRS/NRSMAI/aggregated_timeseries/IMOS_ANMN-NRS_TZ_20080411_NRSMAI_FV01_TEMP-aggregated-timeseries_END-20260421_C-20260919.nc
+instrument SBE39
 compiler tools/harvest/src/bin/aodn_compiler.rs
 sha256 01516b2b85374afe65c7769eed6e89a22840956811e4f879e7ddf274c4974543
 on earth -42.5911 148.2256 0
@@ -86,6 +87,7 @@ field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 origin https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+instrument Seismograph
 terms CC-BY-4.0 https://www.p2pquake.net/secondary_use/
 ttl 60
 at earth
@@ -107,6 +109,7 @@ quantity properties.depth vedur_quake_depth_km gaussian-inverse-square geometry 
 
 url https://api.geonet.org.nz/quake?MMI=4
 origin https://api.geonet.org.nz/quake?MMI=4
+instrument Seismograph
 terms CC-BY-3.0 https://www.geonet.org.nz/policy
 ttl 60
 map features
@@ -117,6 +120,7 @@ quantity properties.magnitude geonet_quake_magnitude gaussian-inverse-square sou
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 origin https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+instrument seismometer
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 ttl 60
 map features
@@ -145,6 +149,7 @@ url https://github.com/omegaflow/sources/releases/download/data.impc.dlr.de/impc
 terms dlr-license https://data.impc.dlr.de/service/license-agreement
 format impc_roti
 origin https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
+instrument GNSS
 compiler tools/harvest/src/bin/impc_roti_compiler.rs
 at earth
 ttl 60
@@ -153,6 +158,7 @@ quantity impc_roti_tecu_min impc_roti_tecu_min inverse-square scale TECU/min 60 
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat.geojson
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-01&endtime=2026-10-02
+instrument seismometer
 format json
 ttl 60
 at earth
@@ -167,6 +173,7 @@ url https://github.com/omegaflow/sources/releases/download/eyes.nasa.gov/dsn_sna
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format dsn_snapshot
 origin https://eyes.nasa.gov/dsn/data/dsn.xml
+instrument DSN
 compiler tools/harvest/src/bin/dsn_compiler.rs
 sha256 5db02383d316490a7fa298642336f21a0513ac80ba2d1d00c5d4a51265eca980
 at earth
@@ -182,6 +189,7 @@ url https://github.com/omegaflow/sources/releases/download/geofon.gfz-potsdam.de
 terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
 format fdsn_waveform
 origin https://geofon.gfz-potsdam.de/fdsnws/dataselect/1/query
+instrument STS-2
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
 at earth
 ttl 60
@@ -202,6 +210,7 @@ url https://github.com/omegaflow/sources/releases/download/service.earthscope.or
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format fdsn_waveform
 origin https://service.earthscope.org/fdsnws/dataselect/1/query
+instrument seismometer
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
 ttl 60
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0
@@ -218,6 +227,7 @@ field fdsn_waveform_bdf_pa fdsn_waveform_bdf_pa inverse-square acoustic pa 0.05 
 
 url https://seismic-api.science.unimelb.edu.au/today-quakes
 origin https://seismic-api.science.unimelb.edu.au/today-quakes
+instrument seismograph
 terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
 ttl 60
 at earth
@@ -273,6 +283,7 @@ last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 wh
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 origin https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+instrument seismometer
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
 ttl 60
 at earth
@@ -283,6 +294,7 @@ quantity properties.depth quake_depth_km gaussian-inverse-square geometry km 360
 
 url http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
 origin http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
+instrument seismometer
 terms free-open https://www.seismo.ethz.ch/en/knowledge/earthquake-data-and-analysis-tools/waveform-data/
 ttl 60
 format csv
@@ -294,6 +306,7 @@ quantity 4 sed_quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
 origin http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+instrument -
 terms CC-BY-4.0 https://reg.bom.gov.au/other/copyright.shtml
 ttl 300
 map observations.data
@@ -328,6 +341,7 @@ last value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
 
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 origin https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+instrument ASOS
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 300
 map .
@@ -388,6 +402,7 @@ field bpa_gic_ellensburg_wa_a bpa_gic_ellensburg_wa_a inverse-square electric A 
 field bpa_gic_bothell_wa_a bpa_gic_bothell_wa_a inverse-square electric A 300.0 0.0 0.0
 field bpa_gic_moses_lake_wa_a bpa_gic_moses_lake_wa_a inverse-square electric A 300.0 0.0 0.0
 origin https://transmission.bpa.gov/business/operations/gic/gic.txt
+instrument GIC
 
 url https://gracedb.ligo.org/api/superevents/?limit=10
 origin https://gracedb.ligo.org/api/superevents/?limit=10
@@ -398,6 +413,7 @@ last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/three-day-quakes
 origin https://seismic-api.science.unimelb.edu.au/three-day-quakes
+instrument seismograph
 terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
 ttl 300
 at earth
@@ -408,6 +424,7 @@ quantity properties.mag geosphere_ga_mag_3day erfc source-parameter Mw 30.0 0.0 
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
 origin https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+instrument Streamgage
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 ttl 300
 map value.timeSeries
@@ -453,6 +470,7 @@ field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective
 url https://github.com/omegaflow/sources/releases/download/api.eumetsat.int/W_XX-EUMETSAT-Darmstadt,IMG+SAT,MTI1+LI-2-LFL--FD--CHK-BODY--ARC-NC4E_C_EUMT_20261006080024_L2PF_OPE_20261006075009_20261006080009_N__O_0048_0001.nc
 format mtg_li
 origin https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691
+instrument LI
 terms free-open https://www.eumetsat.int/legal-framework/data-policy
 compiler tools/harvest/src/bin/eumetsat_mtg_li_fetch.rs
 at earth
@@ -502,6 +520,7 @@ last items.value hydrosphere_river_stage_m inverse-square geometry m 900.0 0.0 0
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
 origin https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+instrument ODL-Sonde
 terms dl-de-by-2.0 https://www.imis.bfs.de/
 ttl 3600
 at earth
@@ -512,6 +531,7 @@ field properties.value bfs_odl_gamma_dose_rate_usv_h inverse-square em usv/h 360
 
 url https://www.ndbc.noaa.gov/data/realtime2/21414.dart
 origin https://www.ndbc.noaa.gov/data/realtime2/21414.dart
+instrument bpr
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 900
 on earth 48.977 178.199 0
@@ -525,6 +545,7 @@ quantity HEIGHT ndbc_dart_21414_height_m inverse-square geometry m 900 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
 origin https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
+instrument CTD
 terms onc-open https://data.oceannetworks.ca/
 ttl 1800
 at earth
@@ -542,6 +563,7 @@ field value oceannetworks_ctd_conductivity_sm inverse-square electric S/m 1800 0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
 origin https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
+instrument CTD
 terms onc-open https://data.oceannetworks.ca/
 ttl 1800
 at earth
@@ -559,6 +581,7 @@ field value oceannetworks_ctd_pressure_decibar gaussian-inverse-square advective
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
 origin https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
+instrument CTD
 terms onc-open https://data.oceannetworks.ca/
 ttl 1800
 at earth
@@ -576,6 +599,7 @@ field value oceannetworks_ctd_salinity_psu erfc diffusion psu 1800 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
 origin https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
+instrument CTD
 terms onc-open https://data.oceannetworks.ca/
 ttl 1800
 at earth
@@ -593,6 +617,7 @@ field value oceannetworks_ctd_temperature_c erfc thermal C 1800 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/month-quakes
 origin https://seismic-api.science.unimelb.edu.au/month-quakes
+instrument seismograph
 terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
 ttl 1800
 at earth
@@ -813,6 +838,7 @@ field wind_swe_np_percc wind_swe_np_percc gaussian-inverse-square diffusion cm-3
 
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
 origin https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
+instrument Campbell
 terms free-open https://data.neracoos.org/erddap/legal.html
 ttl 3600
 map table.rows
@@ -824,6 +850,7 @@ field 4 neracoos_wind_gust_m_s gaussian-inverse-square advective m/s 3600 0.0 0.
 
 url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
 origin https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
+instrument EEA
 terms CC-BY-4.0 https://eeadmz1-downloads-api-appservice.azurewebsites.net/
 ttl 3600
 format eea_aq_parquet
@@ -915,6 +942,7 @@ first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square adve
 url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
 format openmeteo_pollen_axis_value_text
 origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=52.52&longitude=13.405&hourly=birch_pollen&timezone=UTC
+instrument CAMS
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 compiler tools/harvest/src/bin/openmeteo_pollen_compiler.rs
 sha256 42a7f2f8199f84cdb13a55c56265edf4766b97a9e36ca00052b7b06d00bdc2a7
@@ -925,6 +953,7 @@ field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-squa
 url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
 format opensensemap_temperatur
 origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
+instrument senseBox
 terms PDDL-1.0 https://sensebox.de/de/opensensemap.html
 compiler tools/harvest/src/bin/opensensemap_compiler.rs
 sha256 f5a043b1a9c53461b00d55aea7b357416ad647c1931621981cbca6717767cfbe
@@ -958,6 +987,7 @@ field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diff
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv
 origin https://cdaweb.gsfc.nasa.gov/hapi
+instrument IDM
 harvest de2
 terms CC0-1.0 https://doi.org/10.48322/z50y-hd65
 ttl 3600
@@ -1000,6 +1030,7 @@ field omni_hro_solarwind_pressure_npa omni_hro_solarwind_pressure_npa patch-levy
 url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://www.cpc.ncep.noaa.gov/data/indices/qbo.u30.index
+instrument radiosonde
 compiler tools/harvest/src/bin/qbo_compiler.rs
 ttl 2592000
 format text
@@ -1011,6 +1042,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyIso.csv
+instrument TAO
 compiler tools/harvest/src/bin/d20_compiler.rs
 ttl 86400
 format text
@@ -1023,6 +1055,7 @@ quantity 4 d20_thermocline_depth_m erfc geometry m 86400.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv
+instrument TAO
 compiler tools/harvest/src/bin/tao_wnd_compiler.rs
 sha256 b7719c89710e0701ccf31ad0c70ebabe0510a845ec707acaa56c521b395bb892
 ttl 86400
@@ -1039,6 +1072,7 @@ field 4 tao_wnd_zonal_m_s patch-levy advective m/s 86400.0 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
 terms CC-BY-4.0 https://erddap.emso.eu/erddap/legal.html
 origin https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
+instrument CTD
 compiler tools/harvest/src/bin/emso_compiler.rs
 ttl 3600
 map table.rows
@@ -1054,6 +1088,7 @@ url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu-eve
 terms other-attribution https://lasp.colorado.edu/eve/data_access/
 format eve
 origin https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2b
+instrument EVE
 compiler tools/harvest/src/bin/eve_compiler.rs
 sha256 0c0de10e1edc6fd06e4c8abeca4e14b4464b762b92ee40c1019d7f8825adc87a
 at sun
@@ -1074,6 +1109,7 @@ url https://github.com/omegaflow/sources/releases/download/lgdc.uml.edu/giro_fas
 terms CC-BY-NC-SA-4.0 https://giro.uml.edu/didbase/RulesOfTheRoad.html
 format giro_fastchar
 origin https://lgdc.uml.edu/fastchar/getbest
+instrument ionosonde
 compiler tools/harvest/src/bin/giro_fastchar_compiler.rs
 ttl 3600
 field fof2_mhz giro_fastchar_fof2_mhz inverse-square em MHz 3600 0.0 0.0
@@ -1094,6 +1130,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-gk2a-pds.s3.amaz
 terms noaa-nodd-open https://noaa-gk2a-pds.s3.amazonaws.com/AMI/L1B/FD/
 format gk2a_ami
 origin https://noaa-gk2a-pds.s3.amazonaws.com/AMI/L1B/FD/
+instrument AMI
 compiler tools/harvest/src/bin/gk2a_ami_compiler.rs
 ttl 3600
 field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
@@ -1102,6 +1139,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-goes16.s3.amazon
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
 origin https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/
+instrument ABI
 compiler tools/harvest/src/bin/goes16_abi_compiler.rs
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -1110,6 +1148,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-goes18.s3.amazon
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
 origin https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/
+instrument ABI
 compiler tools/harvest/src/bin/goes18_abi_compiler.rs
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -1118,6 +1157,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazon
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
 origin https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/
+instrument ABI
 compiler tools/harvest/src/bin/goes_abi_compiler.rs
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -1126,6 +1166,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-himawari9.s3.ama
 terms free-open https://registry.opendata.aws/noaa-himawari/
 format himawari_hsd
 origin https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/
+instrument AHI
 compiler tools/harvest/src/bin/himawari_hsd_compiler.rs
 ttl 3600
 field rad himawari_ahi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -1134,6 +1175,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-oar-hourly-gdp-p
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format gdp_drifter
 origin https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr
+instrument drifter
 compiler tools/harvest/src/bin/gdp_drifter_compiler.rs
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
@@ -1142,6 +1184,7 @@ url https://github.com/omegaflow/sources/releases/download/rpw-lira.obspm.fr/rpw
 terms rpw-public-ack https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
 format rpw_efield
 origin https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
+instrument RPW
 compiler tools/harvest/src/bin/bia_efield_compiler.rs
 at solar_orbiter
 ttl 3600
@@ -1152,6 +1195,7 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format swpc_efield
 origin https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
+instrument US-Canada-1D
 compiler tools/harvest/src/bin/swpc_efield_compiler.rs
 at earth
 ttl 3600
@@ -1172,6 +1216,7 @@ field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv
 terms CC-BY-4.0 https://zenodo.org/records/15225820
 origin https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content
+instrument inductioncoil
 harvest raw_zenodo
 format csv
 sha256 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272
@@ -1184,6 +1229,7 @@ field freq3 resonance_schumann_f3_hz inverse-square em Hz 3600 0.0 0.0
 
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
 origin https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
+instrument glider
 terms free-open https://gliders.ioos.us/erddap/legal.html
 ttl 3600
 map table.rows
@@ -1208,6 +1254,7 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 604800 0.0 0.0
 
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME?startDate={week_ago}&endDate={today}
 origin https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME?startDate={week_ago}&endDate={today}
+instrument LASCO
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 3600
 at sun
@@ -1225,6 +1272,7 @@ regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/
 
 url https://maps.sensor.community/data/v2/data.json
 origin https://maps.sensor.community/data/v2/data.json
+instrument SDS011
 terms ODC-DbCL-1.0 https://maps.sensor.community/
 ttl 3600
 map .
@@ -1240,6 +1288,7 @@ field sensordatavalues.value_type=pressure.value sensorcommunity_pressure_pa gau
 
 url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 origin https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+instrument GLM
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 3600
 at earth
@@ -1253,6 +1302,7 @@ field properties.detected_energy glm_bolide_radiant_energy_j inverse-square em J
 
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 origin https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+instrument ACE
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 3600
 at earth 0.99
@@ -1263,6 +1313,7 @@ field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
 origin https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+instrument SWEPAM
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 3600
 at earth 0.99
@@ -1272,6 +1323,7 @@ field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/solar_regions.json
 origin https://services.swpc.noaa.gov/json/solar_regions.json
+instrument SWPC
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 at sun
@@ -1311,6 +1363,7 @@ quantity properties.mag geosphere_earthquake_mag erfc source-parameter Mw 360.0 
 
 url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
 origin https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+instrument tidegauge
 terms ioc-data-exchange-no-commercial https://www.ioc-sealevelmonitoring.org/
 ttl 3600
 map .
@@ -1335,6 +1388,7 @@ last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
 
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
 origin https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
+instrument neutron
 terms nmdb-non-commercial https://www.nmdb.eu/
 ttl 3600
 format text
@@ -1345,6 +1399,7 @@ field 1 oulu_neutron_corr_for_eff inverse-square em % 3600.0 0.0 0.0
 
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
 origin https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
+instrument neutron
 terms nmdb-non-commercial https://www.nmdb.eu/
 ttl 3600
 format text
@@ -1391,6 +1446,7 @@ last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 360
 url https://github.com/omegaflow/sources/releases/download/dd.weather.gc.ca/eccc_gdps_15km.grib2
 terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
 origin https://dd.weather.gc.ca/{today_yyyymmdd}/WXO-DD/model_gdps/15km/
+instrument GDPS
 format grib2
 ttl 21600
 at earth
@@ -1409,6 +1465,7 @@ ttl 21600
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
 origin https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
+instrument Cimel
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
 format csv
@@ -1427,6 +1484,7 @@ ttl 86400
 
 url https://api.v2.sondehub.org/sonde/Y3313219
 origin https://api.v2.sondehub.org/sonde/Y3313219
+instrument radiosonde
 terms CC-BY-SA-2.0 https://registry.opendata.aws/sondehub-telemetry/
 ttl 86400
 map .
@@ -1442,6 +1500,7 @@ field humidity radiosonde_relative_humidity_pct gaussian-inverse-square diffusio
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
 origin https://api.woudc.org/collections/totalozone/items?limit=1
+instrument Dobson
 terms wmo-data-policy https://api.woudc.org/
 ttl 86400
 map features
@@ -1452,6 +1511,7 @@ field properties.daily_columno3 woudc_total_ozone_column_du gaussian-inverse-squ
 
 url https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
 origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
+instrument PM2.5
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 ttl 86400
 format csv_zip
@@ -1470,6 +1530,7 @@ ttl 86400
 
 url https://cddis.nasa.gov/archive/gnss/data/daily/{year}/brdc/BRDC00IGS_R_{year}{yday}0000_01D_MN.rnx.gz
 origin https://cddis.nasa.gov/archive/gnss/data/daily/{year}/brdc/BRDC00IGS_R_{year}{yday}0000_01D_MN.rnx.gz
+instrument GPS
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
 format rinex
@@ -1479,6 +1540,7 @@ field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
 
 url https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
 origin https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
+instrument HFradar
 terms free-open https://ceotr.ocean.dal.ca/erddap/legal.html
 ttl 86400
 map table.rows
@@ -1553,6 +1615,7 @@ ttl 86400
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+instrument TAO
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 map table.rows
@@ -1562,6 +1625,7 @@ field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 864
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=max(time)-7days
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=max(time)-7days
+instrument TAO
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
@@ -1584,6 +1648,7 @@ lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal 
 
 url https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
 origin https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
+instrument radar
 terms CC-BY-4.0 https://erddap.hfrnode.eu/erddap/legal.html
 ttl 86400
 map table.rows
@@ -1623,6 +1688,7 @@ url https://github.com/omegaflow/sources/releases/download/api.dataplatform.knmi
 terms CC-BY-4.0 https://developer.dataplatform.knmi.nl/fair-use
 format knmi
 origin https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
+instrument AWS
 compiler tools/harvest/src/bin/knmi_compiler.rs
 sha256 0d374c6dcf7d86075edf4415f068b45dbe1e89bf685c5c71bdf8ee893eaef1b3
 at earth
@@ -1633,6 +1699,7 @@ url https://github.com/omegaflow/sources/releases/download/api.dataplatform.knmi
 terms CC-BY-4.0 https://developer.dataplatform.knmi.nl/fair-use
 format knmi
 origin https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
+instrument AWS
 compiler tools/harvest/src/bin/knmi_compiler.rs
 sha256 bd5ea73f574013e04e3e1b0cf836f0067712635012330d274faf0c6dd4c87c01
 at earth
@@ -1643,6 +1710,7 @@ url https://github.com/omegaflow/sources/releases/download/api.dataplatform.knmi
 terms CC-BY-4.0 https://developer.dataplatform.knmi.nl/fair-use
 format knmi
 origin https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
+instrument AWS
 compiler tools/harvest/src/bin/knmi_compiler.rs
 sha256 b744dad2981a657210d200c8e31b9fc014a56c78dbc426c5be0cacedb9d9be1b
 at earth
@@ -1652,6 +1720,7 @@ field knmi_wind_speed knmi_wind_speed patch-levy advective m/s 600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
 format epa_aqs_pm25
 origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
+instrument PM2.5
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 compiler tools/harvest/src/bin/epa_aqs_compiler.rs
 ttl 86400
@@ -1660,6 +1729,7 @@ field epa_aqs_pm25_ug_m3 epa_aqs_pm25_ug_m3 gaussian-inverse-square diffusion ug
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_voc.bin
 format epa_aqs_voc
 origin https://aqs.epa.gov/aqsweb/airdata/daily_VOCS_2024.zip
+instrument VOC
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 compiler tools/harvest/src/bin/epa_aqs_compiler.rs
 ttl 86400
@@ -1785,6 +1855,7 @@ field epa_aqs_voc_46201 epa_aqs_voc_46201 gaussian-inverse-square diffusion ppbC
 url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/open_meteo_archive.json
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 origin https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.405&hourly=temperature_2m,pressure_msl,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&start_date=2025-01-01&end_date=2025-01-02
+instrument ERA5
 format open_meteo_archive
 compiler tools/harvest/src/bin/open_meteo_archive_compiler.rs
 ttl 86400
@@ -1800,6 +1871,7 @@ url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format swot_l2_lr_ssh
 origin https://archive.podaac.earthdata.nasa.gov
+instrument KaRIn
 compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
 ttl 86400
 quantity swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square geometry m 86400 0.0 0.0
@@ -1872,6 +1944,7 @@ field goes16_mag_bz_nt goes16_mag_bz_nt inverse-square em nT 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin
 format omni2_serie_daily
 origin https://cdaweb.gsfc.nasa.gov/hapi
+instrument OMNI
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni2_compiler.rs
 at sun
@@ -1887,6 +1960,7 @@ field omni_solarwind_pressure_npa_daily omni_solarwind_pressure_npa_daily patch-
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
+instrument OMNI
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni2_compiler.rs
 at sun
@@ -1927,6 +2001,7 @@ ttl 86400
 format ionex
 header Authorization {EARTHDATA_EDL_TOKEN}
 origin https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
+instrument GPS
 at earth
 field tec ionex_tec inverse-square em tecu 7200 0.0 0.0
 
@@ -1934,6 +2009,7 @@ url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.
 format hfrnet_rtv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
+instrument radar
 compiler tools/harvest/src/bin/hfrnet_compiler.rs
 ttl 86400
 field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
@@ -1942,6 +2018,7 @@ field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/craam-files-bucket.s3.amazonaws.com/vlf_awesome.csv
 format vlf_awesome
 origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
+instrument AWESOME
 terms PD https://registry.opendata.aws/craam-open-vlf/
 compiler tools/harvest/src/bin/vlf_awesome_compiler.rs
 at earth
@@ -1951,6 +2028,7 @@ field vlf_awesome_narrowband_amp vlf_awesome_narrowband_amp inverse-square em db
 url https://github.com/omegaflow/sources/releases/download/craam-files-bucket.s3.amazonaws.com/waldo_ab.csv
 format waldo_ab
 origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
+instrument AWESOME
 terms PD https://registry.opendata.aws/craam-open-vlf/
 compiler tools/harvest/src/bin/waldo_ab_compiler.rs
 sha256 69906d5e844816a24785627d350126675dbde71c65cc42241179b90bf74bb035
@@ -1961,6 +2039,7 @@ field amplitude waldo_ab_amplitude_db inverse-square em db 300 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc_synthetic_profile_index.txt
 terms free-open https://argo.ucsd.edu/data/
 origin https://data-argo.ifremer.fr/argo_synthetic-profile_index.txt
+instrument CTD
 format argo_index
 ttl 86400
 at earth
@@ -1973,6 +2052,7 @@ url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-eocis
 terms CC-BY-4.0 https://artefacts.ceda.ac.uk/licences/specific_licences/esacci_sst_terms_and_conditions_v2.pdf
 format esacci_sst_l4_cdr3
 origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
+instrument AATSR
 compiler tools/harvest/src/bin/esacci_sst_compiler.rs
 ttl 86400
 field esacci_sst_l4_cdr3 esacci_sst_l4_cdr3 exponential-decay thermal K 86400 0.0 0.0
@@ -1981,6 +2061,7 @@ url https://github.com/omegaflow/sources/releases/download/data.epa.gov/radnet.b
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 format radnet
 origin https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
+instrument RadNet
 compiler tools/harvest/src/bin/radnet_compiler.rs
 sha256 128ac4fd695f63a2e5fd156e1b416408880577555acf9e676d0e76b242a31c34
 at earth
@@ -1991,6 +2072,7 @@ url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format black_marble_vnp46a3_nightlight
 origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
+instrument VIIRS
 compiler tools/harvest/src/bin/vnp46a3_compiler.rs
 header Authorization {EARTHDATA_EDL_TOKEN}
 ttl 86400
@@ -1999,6 +2081,7 @@ field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square e
 url https://github.com/omegaflow/sources/releases/download/donnees-data.asc-csa.gc.ca/carisma_mag.bin
 format carisma_mag
 origin https://donnees-data.asc-csa.gc.ca/users/OpenData_DonneesOuvertes/pub/CARISMA/carisma_csv/mag/daily/2009/DAWS/20090105DAWS.MAG.csv
+instrument FGM
 terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
 compiler tools/harvest/src/bin/carisma_mag_compiler.rs
 sha256 2d4398f557d98ec621438ed544008303ce88a942b192963228c7be0c63d4698e
@@ -2012,6 +2095,7 @@ url https://github.com/omegaflow/sources/releases/download/download.geofabrik.de
 terms ODbL-1.0 https://download.geofabrik.de/
 format osm_nodes
 origin https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+instrument -
 compiler tools/harvest/src/bin/osm_pbf_compiler.rs
 at earth
 ttl 86400
@@ -2021,6 +2105,7 @@ url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physic
 terms CC-BY-4.0 https://erddap.emodnet-physics.eu/erddap/legal.html
 format emodnet_hfr
 origin https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
+instrument HFradar
 compiler tools/harvest/src/bin/emodnet_hfr_compiler.rs
 ttl 86400
 field EWCT emodnet_hfr_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
@@ -2141,6 +2226,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ftp.space.dtu.dk/pcn_2015.bin
 format pcn
 origin https://ftp.space.dtu.dk/WDC/indices/pcn/PCN_definitive/pcn2015d.dat
+instrument magnetometer
 terms CC-BY-4.0
 compiler tools/harvest/src/bin/pcn_compiler.rs
 sha256 2704914d8831a257122afb3525c846d834a401a4c49b912af0e2540064fb7a62
@@ -2151,6 +2237,7 @@ field pcn_mvm pcn_mvm inverse-square electric mV/m 60 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_rrl.bin
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 origin https://gea.esac.esa.int/tap-server/tap/sync
+instrument telescope
 format gaia_rrl
 compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
 at sun
@@ -2207,6 +2294,7 @@ url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_
 terms free-open https://gportal.jaxa.jp/gpr/index/eula
 format jaxa_gpm_ku
 origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
+instrument DPR
 compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
 at earth
 ttl 86400
@@ -2251,6 +2339,7 @@ field sod_dbdt_pt1h intermagnet_dbdt inverse-square em nT 60 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/swarm_fac.bin
 format swarm_fac
 origin https://isdc-data.gfz.de/swarm/OPER/Level2/FAC_TMS/Sat_AC/small_scale/SW_OPER_FAC_TMS_2F_20201201T000000_20201201T235959_0402.cdf
+instrument VFM
 terms CC-BY-4.0
 compiler tools/harvest/src/bin/swarm_fac_compiler.rs
 at earth
@@ -2261,6 +2350,7 @@ url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format aia
 origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list
+instrument AIA
 compiler tools/harvest/src/bin/aia_rs_list_compiler.rs
 sha256 92b0dd6028c2a8547558b0832bd90f7968de204508b06ee234b17d024d8007d5
 at sun
@@ -2277,6 +2367,7 @@ url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
 origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=hmi.M_720s
+instrument HMI
 compiler tools/harvest/src/bin/hmi_compiler.rs
 sha256 08f0fd9fb28007899d931bac7a49342a1e078d8781202b46971da68e568c7fbd
 at sun
@@ -2287,6 +2378,7 @@ url https://github.com/omegaflow/sources/releases/download/manati.star.nesdis.no
 terms PD-USGov https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB/
 format ascat_wind
 origin https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB/
+instrument ASCAT
 compiler tools/harvest/src/bin/ascat_compiler.rs
 ttl 86400
 field ascat_wind_speed_m_s ascat_wind_speed_m_s patch-levy advective m/s 86400 0.0 0.0
@@ -2296,6 +2388,7 @@ url https://github.com/omegaflow/sources/releases/download/ncdc.noaa.gov/noaa_cd
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format noaa_cdo_ghcnd_tmax
 origin https://www.ncdc.noaa.gov/cdo-web/api/v2/data
+instrument station
 compiler tools/harvest/src/bin/noaa_cdo_compiler.rs
 ttl 86400
 field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
@@ -2323,6 +2416,7 @@ url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.o
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format masie_ice_extent
 origin https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
+instrument -
 compiler tools/harvest/src/bin/masie_compiler.rs
 at earth
 ttl 86400
@@ -2348,6 +2442,7 @@ url https://github.com/omegaflow/sources/releases/download/nohrsc.noaa.gov/nohrs
 format nohrsc_snowfall
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://www.nohrsc.noaa.gov/snowfall/data
+instrument snowgauge
 compiler tools/harvest/src/bin/nohrsc_snowfall_compiler.rs
 at earth
 ttl 86400
@@ -3428,6 +3523,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 format bidsleep
 origin https://physionet.org/files/bidsleep-dataset/1.0.0/
+instrument accelerometer
 terms ODC-By-1.0 https://physionet.org/content/bidsleep-dataset/1.0.0/
 compiler tools/harvest/src/bin/bidsleep_compiler.rs
 on earth 42.6334 -71.3162 0
@@ -3597,6 +3693,7 @@ url https://github.com/omegaflow/sources/releases/download/swarm-diss.eo.esa.int
 terms free-open https://earth.esa.int/eogateway/catalog/swarm-level-2-daily
 format swarm_tec
 origin https://swarm-diss.eo.esa.int/?do=download&file=swarm/Level2daily/Entire_mission_data/TEC/TMS/Sat_A/SW_OPER_TECATMS_2F_20131125T000000_20131125T235959_0502.ZIP
+instrument Swarm
 compiler tools/harvest/src/bin/swarm_tec_compiler.rs
 sha256 42550ef8aa8cd1171852cd5263f52ce3e287866753e39c357f1caec4f75e3fad
 at earth
@@ -3610,6 +3707,7 @@ url https://github.com/omegaflow/sources/releases/download/unidata-nexrad-level2
 terms free-open https://registry.opendata.aws/noaa-nexrad/
 format nexrad_level2
 origin https://unidata-nexrad-level2.s3.amazonaws.com/
+instrument NEXRAD
 compiler tools/harvest/src/bin/nexrad_level2_compiler.rs
 at earth
 ttl 420
@@ -3637,6 +3735,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/waterservices.usgs.gov/usgs_nwis_dv_streamflow.json
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://waterservices.usgs.gov/nwis/dv/?format=json&sites=01646500&parameterCd=00060
+instrument Streamgage
 format json
 ttl 86400
 at earth
@@ -8292,6 +8391,7 @@ ttl 86400
 
 url https://maia.usno.navy.mil/ser7/finals2000A.all
 origin https://maia.usno.navy.mil/ser7/finals2000A.all
+instrument VLBI
 terms CC0-1.0 https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance
 format finals
 at earth
@@ -8331,6 +8431,7 @@ last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square aco
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
 origin https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
+instrument unknown
 terms other-attribution https://ned.ipac.caltech.edu/
 format tap
 ttl 86400
@@ -8357,6 +8458,7 @@ ttl 86400
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&network=IM
 origin https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&network=IM
+instrument seismometer
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 ttl 86400
 format text
@@ -8367,6 +8469,7 @@ quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 0.0 0.0
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
 origin https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
+instrument seismometer
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 ttl 86400
 format text
@@ -8377,6 +8480,7 @@ quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 0.0 0.0
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 origin https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+instrument station
 terms eccc-end-use-licence https://eccc-msc.github.io/open-data/licence/readme_en/
 ttl 86400
 map features
@@ -8488,6 +8592,7 @@ field igra_dewpoint_c igra_dewpoint_c exponential-decay thermal C 43200 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/realtime2/15006.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/15006.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth -6 -10 0
@@ -8528,6 +8633,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 34.7 -72.4 0
@@ -8568,6 +8674,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41002.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/41002.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 31.743 -74.955 0
@@ -8608,6 +8715,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41010.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/41010.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 28.86 -78.478 0
@@ -8648,6 +8756,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41043.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/41043.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 21.09 -64.864 0
@@ -8688,6 +8797,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41049.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/41049.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 27.505 -62.271 0
@@ -8728,6 +8838,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 25.90 -89.67 0
@@ -8768,6 +8879,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 25.16 -94.42 0
@@ -8808,6 +8920,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 28.50 -84.52 0
@@ -8848,6 +8961,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 22.14 -91.39 0
@@ -8888,6 +9002,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 38.46 -74.70 0
@@ -8928,6 +9043,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 42.35 -70.69 0
@@ -8968,6 +9084,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45001.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/45001.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 48.061 -87.793 0
@@ -9008,6 +9125,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45161.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/45161.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 43.185 -86.354 0
@@ -9048,6 +9166,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45178.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/45178.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 44.603 -73.394 0
@@ -9088,6 +9207,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45186.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/45186.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 42.368 -87.795 0
@@ -9128,6 +9248,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45207.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/45207.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 41.731 -81.367 0
@@ -9168,6 +9289,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 56.30 -148.17 0
@@ -9208,6 +9330,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 42.67 -124.82 0
@@ -9248,6 +9371,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 46.06 -124.96 0
@@ -9288,6 +9412,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 37.36 -122.88 0
@@ -9328,6 +9453,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 40.74 -124.54 0
@@ -9368,6 +9494,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 33.75 -119.20 0
@@ -9408,6 +9535,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 37.75 -122.84 0
@@ -9448,6 +9576,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 46.12 -124.51 0
@@ -9488,6 +9617,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46035.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46035.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 57.034 -177.468 0
@@ -9528,6 +9658,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 32.42 -119.53 0
@@ -9568,6 +9699,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 34.26 -119.86 0
@@ -9608,6 +9740,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 34.27 -120.68 0
@@ -9648,6 +9781,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 38.07 -124.03 0
@@ -9688,6 +9822,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 33.66 -120.20 0
@@ -9728,6 +9863,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46071.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46071.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 51.035 179.808 0
@@ -9768,6 +9904,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46075.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46075.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 53.93 -160.763 0
@@ -9808,6 +9945,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 32.49 -118.02 0
@@ -9848,6 +9986,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 23.52 -153.82 0
@@ -9888,6 +10027,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 24.44 -162.00 0
@@ -9928,6 +10068,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
 origin https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
 on earth 17.56 -152.39 0
@@ -9992,6 +10133,7 @@ field flux planck_ercsc_857ghz_flux_jy inverse-square em Jy 604800 0.0 0.0
 
 url http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
 origin http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
+instrument Hipparcos
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -10004,6 +10146,7 @@ quantity mag_v hipparcos_v_mag inverse-square source-parameter mag 604800 0.0 0.
 
 url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
 origin http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
+instrument 6dF
 terms CC0-1.0 https://www.g-vo.org/
 format tap
 ttl 604800
@@ -10023,6 +10166,7 @@ path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square
 
 url https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
 origin https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
+instrument PACS
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -10047,6 +10191,7 @@ ttl 604800
 
 url https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
 origin https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
+instrument optode
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
 format netcdf
@@ -10063,6 +10208,7 @@ field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
 url https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
 origin https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
+instrument optode
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
 format netcdf
@@ -10079,6 +10225,7 @@ field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
 url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
 origin https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+instrument CTD
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
 format netcdf
@@ -10105,6 +10252,7 @@ field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective k
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
 origin https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
+instrument -
 terms attribution https://dc.g-vo.org/
 ttl 604800
 at sun
@@ -10116,6 +10264,7 @@ field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
 origin https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
+instrument UKST
 terms attribution https://dc.g-vo.org/
 ttl 604800
 at sun
@@ -10130,6 +10279,7 @@ quantity Jmag rave_jmag gaussian-inverse-square source-parameter mag 604800 0.0 
 
 url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL
 origin https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL
+instrument VIS
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -10154,6 +10304,7 @@ field 3 smartbay_ctd_salinity_psu gaussian-inverse-square diffusion PSU 60 0.0 0
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+instrument -
 terms other-attribution https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html
 ttl 604800
 at sun
@@ -10166,6 +10317,7 @@ quantity st_teff exo_stellarhost_teff_k gaussian-inverse-square source-parameter
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
 origin https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
+instrument telescope
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -10178,6 +10330,7 @@ quantity phot_g_mean_mag gaia_dr3_g_mag inverse-square source-parameter mag 6048
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
 origin https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
+instrument telescope
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -10208,6 +10361,7 @@ url https://github.com/omegaflow/sources/releases/download/almascience.org/eht_u
 terms alma-publication-acknowledgement https://almascience.org/almadata/ec/eht/2016.1.01404.V/
 format eht_uvfits
 origin https://almascience.org/almadata/ec/eht/2016.1.01404.V/
+instrument ALMA
 compiler tools/harvest/src/bin/eht_uvfits_compiler.rs
 at earth
 sha256 04680693d3aa18c766d15cbe776485636488570b9359d4687b31cd36bfb20ac0
@@ -10227,6 +10381,7 @@ url https://github.com/omegaflow/sources/releases/download/api.lsst.fink-portal.
 terms CC-BY-4.0 https://zenodo.org/records/4036589
 format fink_cutout
 origin https://api.lsst.fink-portal.org/api/v1/cutouts
+instrument LSSTCam
 compiler tools/harvest/src/bin/fink_cutout_compiler.rs
 ttl 604800
 field fink_cutout_flux_njy fink_cutout_flux_njy inverse-square em nJy 604800 0.0 0.0
@@ -10254,6 +10409,7 @@ url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format mars_express_odf
 origin https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF/
+instrument MaRS
 compiler tools/harvest/src/bin/mars_express_odf_compiler.rs
 at earth
 ttl 604800
@@ -10307,6 +10463,7 @@ url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format cassini_odf
 origin https://atmos.nmsu.edu/pdsd/archive/data/
+instrument RSS
 compiler tools/harvest/src/bin/cassini_odf_compiler.rs
 sha256 12d9357f4ba3cf5475a041fd4b385e75bf078250403b2a19fad01b673a1b8db3
 at earth
@@ -10317,6 +10474,7 @@ url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format cassini_rsr
 origin https://atmos.nmsu.edu/pdsd/archive/data/
+instrument RSS
 compiler tools/harvest/src/bin/cassini_rsr_compiler.rs
 sha256 f908832767be5c17b754665a50b32e6f1579c0b686380871e3fe29b99f05a7e8
 at earth
@@ -10328,6 +10486,7 @@ url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format cassini_tnf
 origin https://atmos.nmsu.edu/pdsd/archive/data/
+instrument RSS
 compiler tools/harvest/src/bin/cassini_tnf_compiler.rs
 sha256 b8d0dc527febf16bd1c3d2172d5e83acd921e39f142efa0a2204983faf129ab6
 at earth
@@ -10338,6 +10497,7 @@ url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_o
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format juno_ocru_odf
 origin https://atmos.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/
+instrument RSS
 compiler tools/harvest/src/bin/juno_odf_compiler.rs
 sha256 a37e76a4a66d504f2b9ebe0fb072fb570ce008591e7078ebb903917e3c973413
 at earth
@@ -10348,6 +10508,7 @@ url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_o
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format juno_odf
 origin https://atmos.nmsu.edu/PDS/data/<volume>/DATA/ODF/
+instrument RSS
 compiler tools/harvest/src/bin/juno_odf_compiler.rs
 at earth
 ttl 604800
@@ -10357,6 +10518,7 @@ url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/vex_od
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format vex_odf
 origin https://atmos.nmsu.edu/PDS/data/VXRS_1101..VXRS_1104/ODF/
+instrument RSS
 compiler tools/harvest/src/bin/vex_odf_compiler.rs
 at earth
 ttl 604800
@@ -10366,6 +10528,7 @@ url https://github.com/omegaflow/sources/releases/download/bison.ph.bham.ac.uk/b
 terms free-open https://bison.ph.bham.ac.uk/portal/about
 format bison_velocity
 origin https://bison.ph.bham.ac.uk/downloads/data/allsites-alldata-waverage-fill.fits.gz
+instrument RSS
 compiler tools/harvest/src/bin/bison_compiler.rs
 at sun
 ttl 604800
@@ -10376,6 +10539,7 @@ terms CC-BY-4.0 https://cds.climate.copernicus.eu/
 ttl 604800
 format copernicus_cdm_obs
 origin https://cds.climate.copernicus.eu/api
+instrument IFS
 compiler tools/harvest/src/bin/copernicus_cuon_compiler.rs
 at earth
 field copernicus_air_dewpoint copernicus_air_dewpoint exponential-decay thermal K 3600 0.0 0.0
@@ -10394,6 +10558,7 @@ terms CC-BY-4.0 https://cds.climate.copernicus.eu/
 ttl 604800
 format copernicus_cdm_obs
 origin https://cds.climate.copernicus.eu/api
+instrument IFS
 compiler tools/harvest/src/bin/copernicus_cuon_compiler.rs
 at earth
 field copernicus_air_pressure_at_sea_level copernicus_air_pressure_at_sea_level gaussian-inverse-square acoustic Pa 21600 0.0 0.0
@@ -10408,6 +10573,7 @@ url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/
 terms free-open https://argo.ucsd.edu/data/
 format argo_bgc
 origin https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz
+instrument optode
 compiler tools/harvest/src/bin/argo_bgc_profile_compiler.rs
 sha256 7b6e18a062eb32ce2bd4022eb23421f056d84762e189cb9caae664786a369215
 ttl 604800
@@ -10441,6 +10607,7 @@ url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.
 terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
 format pds3_binary
 origin https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/LRS_SW_WF_00N_007080E.lbl
+instrument LRS
 compiler tools/harvest/src/bin/pds3_binary_compiler.rs
 sha256 772e51d16c4a68537255144f66faba5c7aade396cfc5f17d9572e7e7afb2a776
 at moon
@@ -10451,6 +10618,7 @@ url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.
 terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
 format pds3_binary
 origin https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/LRS_SW_WF_00S_007080E.lbl
+instrument LRS
 compiler tools/harvest/src/bin/pds3_binary_compiler.rs
 sha256 8c681469da1d59b00bb36348b2e6ac0f1cabc0da6a19760a62404f8553995c62
 at moon
@@ -10538,6 +10706,7 @@ url https://github.com/omegaflow/sources/releases/download/data.oceannetworks.ca
 terms onc-open https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&token={OCEANNETWORKS_TOKEN}&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD
 format onc_hydrophone_psd
 origin https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&token={OCEANNETWORKS_TOKEN}&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD
+instrument Hydrophone
 compiler tools/harvest/src/bin/onc_hydrophone_compiler.rs
 at earth
 ttl 604800
@@ -10602,6 +10771,7 @@ url https://github.com/omegaflow/sources/releases/download/ecad.eu/ecad_eca_tx_T
 terms CC-BY-NC-4.0 https://knmi-ecad-assets-prd.s3.amazonaws.com/documents/ECAD_datapolicy.pdf
 format ecad
 origin https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip#TX_STAID000001.txt
+instrument thermometer
 compiler tools/harvest/src/bin/ecad_compiler.rs
 sha256 198aea26ff59d69f5c9ca9dac72f20230a96ef7dfeaa3ebd35c069e6c8529a25
 at earth
@@ -10636,6 +10806,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/magnetar_flat.json
 terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
 origin https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+instrument RXTE
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
 at sun
@@ -10673,6 +10844,7 @@ url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac
 terms other-attribution https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+instrument NIRSpec
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
 sha256 e9c75a3639143198d881733c28ae34384938f92b39078831cbb07912d77dbf9e
 at sun
@@ -10681,6 +10853,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/figshare.com/eaglei_2014.bin
 origin https://ndownloader.figshare.com/files/42547717
+instrument outage
 terms CC-BY-4.0 https://doi.org/10.6084/m9.figshare.24237376
 compiler tools/harvest/src/bin/eaglei_compiler.rs
 sha256 c791efe081d52248a1fc14a89b56b1030bc4885432daf61bc6e2ef5fa8aef064
@@ -10693,6 +10866,7 @@ url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdar
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 format superdarn_rawacf
 origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
+instrument radar
 compiler tools/harvest/src/bin/superdarn_rawacf_compiler.rs
 sha256 6f60033e51e8bfb21e02e8389988e6e60460b015b91d31b746c6a56bc2d8a0ba
 ttl 604800
@@ -10702,6 +10876,7 @@ url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/xp_s
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format xp_spectra
 origin https://dc.g-vo.org/tap/sync
+instrument Gaia
 compiler tools/harvest/src/bin/gaia_xp_compiler.rs
 at sun
 ttl 2628000
@@ -10710,6 +10885,7 @@ field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/geofon.gfz-potsdam.de/fdsn_event.bin
 terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
 origin https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=xml&limit=20000
+instrument Seismograph
 format fdsn_event
 compiler tools/harvest/src/bin/fdsn_event_compiler.rs
 at earth
@@ -10757,6 +10933,7 @@ url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/surfrad_
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format surfrad
 origin https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat
+instrument pyrheliometer
 compiler tools/harvest/src/bin/surfrad_compiler.rs
 sha256 68e33da9fa45f7c0d8ab4b679e604048b396359ffd82cd491aac25e4fcb877ba
 at earth
@@ -10767,6 +10944,7 @@ url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/surfrad_
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format surfrad
 origin https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat
+instrument pyranometer
 compiler tools/harvest/src/bin/surfrad_compiler.rs
 sha256 d31177b6be26752331d9ab4118468da82d5033cc9355bb098115f7df3c4cf340
 at earth
@@ -10795,6 +10973,7 @@ url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format ams02_spec
 origin https://heasarc.gsfc.nasa.gov/FTP/heasarc/dbase/tdat_files/heasarc_ams02spec.tdat.gz
+instrument outage
 compiler tools/harvest/src/bin/ams02_tdat_compiler.rs
 sha256 1a64e5b311039ce2d01499c2f98b242e6a74f53b6cd0c0b6273879e9e299224a
 at earth
@@ -10850,6 +11029,7 @@ url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format drs_fits
 origin https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
+instrument outage
 compiler tools/harvest/src/bin/drs_fits_compiler.rs
 at earth
 ttl 604800
@@ -10859,6 +11039,7 @@ field gz lpf_drs_dg_z_ms2 primary mass poisson elliptic vacuum none inverse-squa
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/COM_CMB_IQU-smica_2048_R3.00_full.fits
+instrument HFI/LFI
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/cmb_planck_compiler.rs
 ttl 604800
@@ -10871,6 +11052,7 @@ field T cmb_planck_smica_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_dust_av_rq_n512.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_2/all-sky-maps/maps/component-maps/foregrounds/COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits
+instrument HFI
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/dust_map_compiler.rs
 ttl 604800
@@ -10884,6 +11066,7 @@ quantity av_rq planck_dust_av_rq_mag gaussian-inverse-square source-parameter ma
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_psz2_sz_mmf3.json
 origin https://irsa.ipac.caltech.edu/TAP/sync
+instrument HFI
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/planck_psz2_compiler.rs
 sha256 12fb5a1d079b6bc7af617336de2070da55f5e2e1af033383358c3310aed12c49
@@ -10915,6 +11098,7 @@ url https://github.com/omegaflow/sources/releases/download/isc.ac.uk/isc_bulleti
 terms CC-BY-SA-3.0 https://isc.ac.uk/iscgem/download.php
 format iscb
 origin https://www.isc.ac.uk/fdsnws/event/1/query
+instrument Seismograph
 compiler tools/harvest/src/bin/isc_bulletin_compiler.rs
 sha256 a20da758359e15a4a20483b8f88d2072bc7f5edfae685e35283680329c21b334
 at earth
@@ -10934,6 +11118,7 @@ url https://github.com/omegaflow/sources/releases/download/jades.herts.ac.uk/jad
 terms CC-BY-4.0 https://archive.stsci.edu/hlsp/jades
 format jwst_spectra
 origin https://jades.herts.ac.uk/DR4/Combined_DR4_external_v1.2.1.fits
+instrument NIRSpec
 compiler tools/harvest/src/bin/jades_spectra_compiler.rs
 at sun
 ttl 604800
@@ -10970,6 +11155,7 @@ field kcdc_lopes_efieldmax_v_m kcdc_lopes_efieldmax_v_m inverse-square electric 
 
 url https://github.com/omegaflow/sources/releases/download/lambda.gsfc.nasa.gov/cmb_act_f150_n64.json
 origin https://lambda.gsfc.nasa.gov/data/act/maps/published/act-planck_dr4dr6_coadd_AA_daynight_f150_map_srcfree_healpix.fits
+instrument ACT
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 compiler tools/harvest/src/bin/cmb_act_compiler.rs
 ttl 604800
@@ -10982,6 +11168,7 @@ field T cmb_act_f150_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/lambda.gsfc.nasa.gov/cmb_spt_d1_n64.json
 origin https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2
+instrument SPT
 terms CC0-1.0 https://lambda.gsfc.nasa.gov/contact/
 compiler tools/harvest/src/bin/cmb_planck_compiler.rs
 ttl 604800
@@ -11004,6 +11191,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-byparams/ned_byparams_redshift.json
 terms other-attribution https://ned.ipac.caltech.edu/
 origin https://ned.ipac.caltech.edu/byparams
+instrument unknown
 compiler tools/harvest/src/bin/ned_byparams_compiler.rs
 ttl 604800
 at sun
@@ -11016,6 +11204,7 @@ field z ned_byparams_redshift_z inverse-linear em 1 604800 0.0 0.0 aperture:none
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-ned/ned.json
 terms other-attribution https://ned.ipac.caltech.edu/
 origin https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
+instrument unknown
 compiler tools/harvest/src/bin/ned_cone_compiler.rs
 ttl 604800
 at sun
@@ -11049,6 +11238,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 604800
 format noaa_dcdb_bathymetry
 origin https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com
+instrument multibeam
 compiler tools/harvest/src/bin/noaa_dcdb_bathymetry_compiler.rs
 at earth
 quantity noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square geometry m 604800 0.0 0.0
@@ -11065,6 +11255,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-global-hourly-pd
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format noaa_isd
 origin https://noaa-global-hourly-pds.s3.amazonaws.com
+instrument hygrothermometer
 compiler tools/harvest/src/bin/noaa_isd_compiler.rs
 at earth
 ttl 604800
@@ -11078,6 +11269,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bi
 terms free-open https://registry.opendata.aws/noaa-goes/
 format glm_l2
 origin https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
+instrument GLM
 compiler tools/harvest/src/bin/glm_l2_compiler.rs
 sha256 1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213
 ttl 604800
@@ -11087,6 +11279,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-gsod-pds.s3.amaz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format noaa_gsod
 origin https://noaa-gsod-pds.s3.amazonaws.com
+instrument hygrothermometer
 compiler tools/harvest/src/bin/noaa_gsod_compiler.rs
 at earth
 ttl 604800
@@ -11112,6 +11305,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 604800
 format noaa_keo_papa
 origin https://noaa-oar-keo-papa-pds.s3.amazonaws.com
+instrument CTD
 compiler tools/harvest/src/bin/noaa_keo_papa_compiler.rs
 at earth
 field noaa_keo_temp_c noaa_keo_temp_c exponential-decay thermal C 86400 0.0 0.0
@@ -11124,6 +11318,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 604800
 format noaa_wod
 origin https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc
+instrument CTD
 compiler tools/harvest/src/bin/wod_compiler.rs
 field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree_C 604800 0.0 0.0
 field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 604800 0.0 0.0
@@ -11149,6 +11344,7 @@ url https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.am
 terms CC-BY-3.0 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
 format las
 origin https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
+instrument LiDAR
 compiler tools/harvest/src/bin/open_lidar_data_compiler.rs
 sha256 e6560344c5e939458c890e62d5972dbfb273f8aa2cdd6e00bdb6ec2feef09c4e
 at earth
@@ -11715,6 +11911,7 @@ url https://github.com/omegaflow/sources/releases/download/pdssbn.astro.umd.edu/
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format dart_tnf
 origin https://pdssbn.astro.umd.edu/holdings/pds4-dart:data_trk234-v1.0/
+instrument DART
 compiler tools/harvest/src/bin/dart_tnf_compiler.rs
 sha256 b38e476a7a938efd574163b4d8671566a0b3f8ce6c1ea11e3ed59d52ad0749fb
 at earth
@@ -11725,6 +11922,7 @@ url https://github.com/omegaflow/sources/releases/download/planet.physics.uiowa.
 terms free-open https://space.physics.uiowa.edu/spdr/
 format hapi_csv
 origin https://planet.physics.uiowa.edu/das/das2Server/hapi
+instrument MAG
 compiler tools/harvest/src/bin/das2_iowa_compiler.rs
 sha256 cd2e9d2bd3f822b610c8ec9432cc413cde495b9d8a64f4582a63191018102f62
 at saturn
@@ -11746,6 +11944,7 @@ url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies
 terms gosat-data-policy https://product.gosat-gw.nies.go.jp/
 format gosat_tanso3
 origin https://product.gosat-gw.nies.go.jp
+instrument TANSO-3
 compiler tools/harvest/src/bin/gosat_tanso3_compiler.rs
 ttl 604800
 field gosat_tanso3_radiance_focus_band1_w_m2_sr_um gosat_tanso3_radiance_focus_band1_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -11759,6 +11958,7 @@ url https://github.com/omegaflow/sources/releases/download/psa.esa.int/bc_mpo_ma
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format bc_mpo_mag
 origin https://psa.esa.int/psa-tap/data?retrieval_access=DIRECT&retrieval_type=PRODUCT&tapclient=EPN-TAP&id=urn:esa:psa:bc_mpo_mag:data_derived:mag_der_sc_ib_a001_e2k_00000_20181024
+instrument MPO-MAG
 compiler tools/harvest/src/bin/bc_mpo_mag_compiler.rs
 sha256 8f83ec798948ad53971a8f7c4a174d8f2210b50b374a1c0abece6698286f399b
 at sun
@@ -11771,6 +11971,7 @@ url https://github.com/omegaflow/sources/releases/download/psl.noaa.gov/godas_po
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format godas_pottmp_axis_value_text
 origin https://psl.noaa.gov/thredds/dodsC/Datasets/godas/pottmp.2024.nc
+instrument MOM
 compiler tools/harvest/src/bin/godas_pottmp_compiler.rs
 sha256 c2448a108014c088a7a56e522dd801e3f628eab55e5a233d276d640e7faf2845
 on earth 0.4994604 180.5 0
@@ -11789,6 +11990,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/rave-survey.org/rave_dr5.json
 terms vizier-scientific-free https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=III/279/rave_dr5
+instrument 6dF
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
 at sun
@@ -12001,6 +12203,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/
 terms free-open https://ssd-api.jpl.nasa.gov/
 format sb_radar
 origin https://ssd-api.jpl.nasa.gov/sb_radar.api
+instrument radar
 compiler tools/harvest/src/bin/sb_radar_compiler.rs
 sha256 442cf01c1c5af7fc3952fb020086441aac7f623612c836299ab658a18d7d85b9
 at earth
@@ -12035,6 +12238,7 @@ ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-nvss/nvss.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss xmatch=V/154/sdss16
+instrument VLA
 terms vizier-scientific-free https://ssd.jpl.nasa.gov/
 compiler tools/harvest/src/bin/tap_compiler.rs
 sha256 e825e736095e066d3c91ced3ad1b0b90dffe272064a02d3b5173d20e4b5ddec9
@@ -12050,6 +12254,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-plan
 format viking_text
 terms PD-USGov https://ssd.jpl.nasa.gov/
 origin https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt ; https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
+instrument DSN
 compiler tools/harvest/src/bin/viking_text_compiler.rs
 sha256 da0e55ff5a4858e2174b932582c02f69a00c744ccf1d05334e58d4d019620f9c
 at earth
@@ -12069,6 +12274,7 @@ ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
+instrument VLA
 terms vizier-scientific-free https://ssd.jpl.nasa.gov/
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -12084,6 +12290,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst
 format jwst_spectra
 terms PD https://archive.stsci.edu/publishing/data-use
 origin https://mast.stsci.edu/api/v0.1/Download/file
+instrument NIRSpec
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
 sha256 fb18192418cec56b5ff736f215e7c78572f2124e4f9460bada7e107f0bcc5535
 at sun
@@ -12094,6 +12301,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/radi
 format radio
 terms vizier-scientific-free https://ssd.jpl.nasa.gov/
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss xmatch=V/154/sdss16
+instrument VLA
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
 compiler tools/harvest/src/bin/radio_compiler.rs
 at sun
@@ -12104,6 +12312,7 @@ url https://github.com/omegaflow/sources/releases/download/storage.googleapis.co
 terms CC0-1.0 https://catalog.data.gov/dataset/nrs-hybrid-millidecade-spectra
 format flac
 origin https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
+instrument hydrophone
 compiler tools/harvest/src/bin/flac_compiler.rs
 at earth
 ttl 604800
@@ -12138,6 +12347,7 @@ url https://github.com/omegaflow/sources/releases/download/toar-data.fz-juelich.
 terms CC-BY-4.0 https://toar-data.fz-juelich.de/footer/terms-of-use.html
 format toar_surface_o3
 origin https://toar-data.fz-juelich.de/api/v2/
+instrument TOAR
 compiler tools/harvest/src/bin/toar_timeseries_compiler.rs
 sha256 8fd5522427c65c3818300e6061ad86ab6ed973c9875b6c393099ece8fc0242df
 at earth
@@ -12147,6 +12357,7 @@ field toar_surface_o3_ppb toar_surface_o3_ppb gaussian-inverse-square diffusion 
 url https://github.com/omegaflow/sources/releases/download/transparency.entsoe.eu/entsoe_a78.bin
 terms CC-BY-4.0 https://transparency.entsoe.eu/
 origin https://web-api.tp.entsoe.eu/api
+instrument -
 format entsoe_unavailability
 compiler tools/harvest/src/bin/entsoe_compiler.rs
 at earth
@@ -12157,6 +12368,7 @@ url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 format las
 origin https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz
+instrument lidar
 compiler tools/harvest/src/bin/las_compiler.rs
 at earth
 ttl 604800
@@ -12187,6 +12399,7 @@ url https://github.com/omegaflow/sources/releases/download/web.corral.tacc.utexa
 terms CC-BY-4.0 https://zenodo.org/records/15472354
 format jwst_spectra
 origin https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
+instrument NIRSpec
 origin https://zenodo.org/records/15472354
 compiler tools/harvest/src/bin/ceers_spectra_compiler.rs
 sha256 47937dec2184a870337462d5220285485c99306e838f3fb88e6f90dd1324438d
@@ -12197,6 +12410,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/DustStormDatabaseEXI_MY36_V1.xlsx
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 origin https://zenodo.org/api/records/10275974/files/DustStormDatabaseEXI_MY36_V1.xlsx/content
+instrument EXI
 format emm_exi_dust
 at mars
 ttl 604800
@@ -12204,6 +12418,7 @@ field cdod emm_exi_cdod inverse-square em 1 86400 0.0 0.0
 
 url https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
 origin https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
+instrument IBIS
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -12215,6 +12430,7 @@ field flux integral_source_flux_mcrab inverse-square em mCrab 604800 0.0 0.0
 
 url https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
 origin https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+instrument EPIC
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
@@ -12232,6 +12448,7 @@ ttl 604800
 
 url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
 origin https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
+instrument CCD
 terms CC-BY-NC-4.0 https://ogle.astrouw.edu.pl/atlas/terms.html
 format tap
 ttl 604800
@@ -12244,6 +12461,7 @@ quantity magnitude ogle_magnitude inverse-square source-parameter mag 604800 0.0
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
 origin https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
+instrument CCD
 terms CC-BY-4.0 https://www.sdss.org/collaboration/image-use-policy/
 ttl 604800
 at sun
@@ -12257,6 +12475,7 @@ field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
 origin https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
+instrument Spectrograph
 terms CC-BY-4.0 https://www.sdss.org/collaboration/image-use-policy/
 ttl 604800
 at sun
@@ -12269,6 +12488,7 @@ field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 
 
 url https://uhslc.soest.hawaii.edu/erddap/tabledap/global_hourly_fast.json?time,latitude,longitude,sea_level&time%3E=max(time)-2days
 origin https://uhslc.soest.hawaii.edu/erddap/tabledap/global_hourly_fast.json?time,latitude,longitude,sea_level&time%3E=max(time)-2days
+instrument tide-gauge
 terms noaa-open-disclaimer https://uhslc.soest.hawaii.edu/
 ttl 604800
 map table.rows
@@ -12292,6 +12512,7 @@ url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdata
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format modis_lst_cmg
 origin https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/
+instrument MODIS
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 691200
@@ -12334,6 +12555,7 @@ url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdata
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format modis_lst_cmg
 origin https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/
+instrument MODIS
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 2592000
@@ -12353,6 +12575,7 @@ url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadi
 terms non-commercial-government-licence-2.0 https://www.metoffice.gov.uk/hadobs/hadisst/
 format hadisst_sst
 origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
+instrument thermometer
 compiler tools/harvest/src/bin/hadisst_compiler.rs
 ttl 2592000
 field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
@@ -12442,6 +12665,7 @@ ttl 2592000
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
 origin http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
+instrument VIRCAM
 terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
 format tap
 ttl 31536000
@@ -12453,6 +12677,7 @@ quantity ksmag vhs_ks_mag inverse-square source-parameter mag 31536000 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+safcat.viking_er5_zyjj_1j_2hks_catMetaData_fits_V4+WHERE+KSPETROMAG+IS+NOT+NULL
 origin http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+safcat.viking_er5_zyjj_1j_2hks_catMetaData_fits_V4+WHERE+KSPETROMAG+IS+NOT+NULL
+instrument VIRCAM
 terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
 format tap
 ttl 31536000
@@ -12464,6 +12689,7 @@ quantity ksmag viking_ks_petromag inverse-square source-parameter mag 31536000 0
 
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,flux_g+FROM+ls_dr10.tractor+WHERE+flux_g+IS+NOT+NULL
 origin https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,flux_g+FROM+ls_dr10.tractor+WHERE+flux_g+IS+NOT+NULL
+instrument DECam
 terms CC-BY-4.0 https://datalab.noirlab.edu/about/disclaimers
 format tap
 ttl 31536000
@@ -12494,6 +12720,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/cdr.eionet.europa.eu/eionet_cdr.bin
 format eionet_cdr
 origin https://cdr.eionet.europa.eu/at/eu/eprtrdat/envxwzhwa/EU_Report_2017_27Aug19.xml
+instrument -
 terms CC-BY-4.0 https://cdr.eionet.europa.eu/legalnotice
 compiler tools/harvest/src/bin/eionet_cdr_compiler.rs
 sha256 4ac92594eef4749ae52763950a6e164b5a0d34a27ab815a9b44a6e78f875a4f7
@@ -12876,6 +13103,7 @@ url https://github.com/omegaflow/sources/releases/download/data.giss.nasa.gov/gi
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gistemp_aod550_axis_value_text
 origin https://data.giss.nasa.gov/modelforce/strataer/data/tau_reff_Sato-Lacis.nc
+instrument -
 compiler tools/harvest/src/bin/gistemp_aod_compiler.rs
 sha256 1ba4e901a84731edd543d6de6a5f30920ddb746652e5f8fa05efed557036bde6
 ttl 31536000
@@ -12884,6 +13112,7 @@ field gistemp_aod550 gistemp_aod550_aod550 exponential-decay em 1 31536000 0.0 0
 url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_2hwc.sky1
 terms hawc-public https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
 origin https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
+instrument HAWC
 compiler tools/harvest/src/bin/hawc_compiler.rs
 format sky1
 at sun
@@ -12893,6 +13122,7 @@ field hawc_2hwc hawc_2hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_3hwc.sky1
 terms hawc-public https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
 origin https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
+instrument HAWC
 compiler tools/harvest/src/bin/hawc_compiler.rs
 format sky1
 at sun
@@ -12912,6 +13142,7 @@ url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu
 terms CC0-1.0 https://doi.org/10.7910/DVN/K88GFI
 format decaps_dr2_stars
 origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
+instrument DECam
 compiler tools/harvest/src/bin/decaps_dr2_compiler.rs
 at sun
 ttl 31536000
@@ -12991,6 +13222,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/gw250207_115645.sky1
 terms ligo-public https://gracedb.ligo.org/api/superevents/S250207bg/files/bayestar.multiorder.fits
 origin https://gracedb.ligo.org/api/superevents/S250207bg/files/bayestar.multiorder.fits
+instrument interferometer
 compiler tools/harvest/src/bin/gw_skymap_compiler.rs
 format sky1
 at sun
@@ -13010,6 +13242,7 @@ url https://github.com/omegaflow/sources/releases/download/gwosc.org/losc.bin
 terms CC-BY-4.0 https://gwosc.org/yellow_box/
 format losc
 origin https://gwosc.org/eventapi/json/GWTC-1-confident/GW150914/v3/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5
+instrument LIGO
 compiler tools/harvest/src/bin/losc_compiler.rs
 sha256 155df05741d0e79b11d228dd41f91b6c303a9dde82aea01fcd5bb953449beb14
 ttl 31536000
@@ -13018,6 +13251,7 @@ quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
 terms other-attribution https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
 origin https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
+instrument Cherenkov
 compiler tools/harvest/src/bin/dl3_skymap_compiler.rs
 format sky1
 at sun
@@ -13046,6 +13280,7 @@ url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu
 format catalog_allwise_psd
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/async
+instrument WISE
 compiler tools/harvest/src/bin/allwise_tap_compiler.rs
 ttl 31536000
 at sun
@@ -13081,6 +13316,7 @@ url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu
 format twomass_psc
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/2MASS/download/allsky/
+instrument 2MASS
 compiler tools/harvest/src/bin/twomass_compiler.rs
 sha256 8448b0bb6afb18ae720a9dcf78ee69f636cbbd33bf1bb669a1d0dbecf4364d92
 at sun
@@ -13146,6 +13382,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/obis.osha.gov/osha_cehd_si.txt
 format osha_cehd_si_axis_value_text
 origin https://www.osha.gov/sites/default/files/healthsamples.zip
+instrument pump
 terms PD-USGov https://www.osha.gov/opengov/health-samples
 compiler tools/harvest/src/bin/osha_cehd_compiler.rs
 ttl 31536000
@@ -13170,6 +13407,7 @@ ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-icecat/icecat_sky1.sky1
 origin https://dataverse.harvard.edu/api/access/datafile/7502710
+instrument camera
 compiler tools/harvest/src/bin/icecat_compiler.rs
 format sky1
 terms CC0-1.0 https://doi.org/10.7910/DVN/SCRUCD
@@ -13192,6 +13430,7 @@ url https://github.com/omegaflow/sources/releases/download/stac.itslive.cloud/it
 format its_live_velocity
 terms CC-BY-4.0 https://its-live.jpl.nasa.gov/
 origin https://stac.itslive.cloud/collections/itslive-granules/items
+instrument Landsat
 compiler tools/harvest/src/bin/its_live_compiler.rs
 at earth
 ttl 31536000
@@ -13206,6 +13445,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/vo.km3net.de/antares_events_2007_2017.sky1
 terms free-open https://www.km3net.org/about-km3net/open-access
 origin https://vo.km3net.de/ant20_01/nu/cone/form
+instrument ANTARES
 compiler tools/harvest/src/bin/antares_vo_compiler.rs
 format sky1
 at sun
@@ -13215,6 +13455,7 @@ field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 3153
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/magic_dl3_pdr1.zip
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 origin https://zenodo.org/api/records/13898269/files/magic_dl3_pdr1.zip/content
+instrument MAGIC
 format magic_dl3
 at sun
 ttl 31536000
@@ -13250,6 +13491,7 @@ ttl 31536000
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
 origin https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
+instrument IRAS
 format tap
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 ttl 31536000
@@ -13298,6 +13540,7 @@ quantity HEIGHT ndbc_dart_21414_height_m inverse-square geometry m 900 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 34.7 -72.4 0
@@ -13338,6 +13581,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 31.743 -74.955 0
@@ -13378,6 +13622,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 28.86 -78.478 0
@@ -13418,6 +13663,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 21.09 -64.864 0
@@ -13458,6 +13704,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 27.505 -62.271 0
@@ -13498,6 +13745,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 25.90 -89.67 0
@@ -13538,6 +13786,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 25.16 -94.42 0
@@ -13578,6 +13827,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 28.50 -84.52 0
@@ -13618,6 +13868,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 22.14 -91.39 0
@@ -13658,6 +13909,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 38.46 -74.70 0
@@ -13698,6 +13950,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 42.35 -70.69 0
@@ -13738,6 +13991,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 48.061 -87.793 0
@@ -13778,6 +14032,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 43.185 -86.354 0
@@ -13818,6 +14073,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 44.603 -73.394 0
@@ -13858,6 +14114,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 42.368 -87.795 0
@@ -13898,6 +14155,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 41.731 -81.367 0
@@ -13938,6 +14196,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 56.30 -148.17 0
@@ -13978,6 +14237,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 42.67 -124.82 0
@@ -14018,6 +14278,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 46.06 -124.96 0
@@ -14058,6 +14319,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 37.36 -122.88 0
@@ -14098,6 +14360,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 40.74 -124.54 0
@@ -14138,6 +14401,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 33.75 -119.20 0
@@ -14178,6 +14442,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 37.75 -122.84 0
@@ -14218,6 +14483,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 46.12 -124.51 0
@@ -14258,6 +14524,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 57.034 -177.468 0
@@ -14298,6 +14565,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 32.42 -119.53 0
@@ -14338,6 +14606,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 34.26 -119.86 0
@@ -14378,6 +14647,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 34.27 -120.68 0
@@ -14418,6 +14688,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 38.07 -124.03 0
@@ -14458,6 +14729,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 33.66 -120.20 0
@@ -14498,6 +14770,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 51.035 179.808 0
@@ -14538,6 +14811,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 53.93 -160.763 0
@@ -14578,6 +14852,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 32.49 -118.02 0
@@ -14618,6 +14893,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 23.52 -153.82 0
@@ -14658,6 +14934,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 24.44 -162.00 0
@@ -14698,6 +14975,7 @@ fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
 origin https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
+instrument anemometer
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
 on earth 17.56 -152.39 0
@@ -14801,6 +15079,7 @@ url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madr
 terms cedar-rules-of-the-road https://cedar.openmadrigal.org/
 format openmadrigal
 origin https://cedar.openmadrigal.org
+instrument PFISR
 on earth 65.13 -147.47 0.211
 no-sampling
 field pfisr_isr_ne_m3 pfisr_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
@@ -14811,6 +15090,7 @@ url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madr
 terms cedar-rules-of-the-road https://cedar.openmadrigal.org/
 format openmadrigal
 origin https://cedar.openmadrigal.org
+instrument PFISR
 on earth 42.619 288.510 0.146
 no-sampling
 field NE openmadrigal_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
@@ -14888,6 +15168,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/bicepkeck.org/bk18_bandpowers_20210607.txt
 terms CC-BY-4.0 http://bicepkeck.org/bk18_2021_release.html
 origin http://bicepkeck.org/BK18_datarelease/BK18_bandpowers_20210607.txt
+instrument BICEP3
 no-sampling
 format text
 at earth
@@ -14937,6 +15218,7 @@ url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/128/16/table2
+instrument Parkes
 compiler tools/harvest/src/bin/tap_compiler.rs
 sha256 e7a6ee02332f70dc05e6b03d50b6579f48ee4b6f699495bb23546f3ec1cd655d
 at sun
@@ -14958,6 +15240,7 @@ url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/142/170/table1
+instrument ALFA
 compiler tools/harvest/src/bin/tap_compiler.rs
 sha256 b92c126e625ec78fcc3217f4a218e5adf297faa492374c95c2c958fead8e1ff3
 at sun
@@ -14981,6 +15264,7 @@ url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/391/887/table1
+instrument Parkes
 compiler tools/harvest/src/bin/tap_compiler.rs
 at sun
 no-sampling
@@ -15014,6 +15298,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/frb_chime_cat1.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/257/59/table2.dat
+instrument CHIME
 compiler tools/harvest/src/bin/frb_compiler.rs
 format json
 no-sampling
@@ -15079,6 +15364,7 @@ url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.
 terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
 format pds4_fixed_width
 origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
+instrument RSS
 compiler tools/harvest/src/bin/pds4_binary_compiler.rs
 at venus
 no-sampling
@@ -15131,6 +15417,7 @@ url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_i
 terms CC-BY-NC-SA-4.0 https://doi.org/10.25928/bgrseis_bbhf-ifsd
 format bgr_infrasound
 origin https://download.bgr.de/bgr/geophysik/Infrasound_hf_product/netCDF/BGR_infrasound_hf_product.zip
+instrument microbarometer
 compiler tools/harvest/src/bin/bgr_infrasound_compiler.rs
 no-sampling
 quantity bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg inverse-square geometry deg 300 0.0 0.0
@@ -15295,6 +15582,7 @@ quantity morph_sigma morph_sigma inverse-square source-parameter deg 33554432.0 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/akari_psc.json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=select+*+from+akaripsc
+instrument outage
 format tap
 at sun
 no-sampling
@@ -15306,6 +15594,7 @@ field akari_mir_flux_jy akari_mir_flux_jy inverse-square em Jy 31536000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/fermi_4fgl.json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=select+*+from+4fgl
+instrument outage
 format tap
 at sun
 no-sampling
@@ -15317,6 +15606,7 @@ field tevcat_flux tevcat_flux inverse-square em Crab 604800 0.0 0.0 aperture:non
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/maxi_master.json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=select+*+from+maximaster
+instrument outage
 format tap
 at sun
 no-sampling
@@ -15370,6 +15660,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_objects_dr24.json
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+ztf.ztf_objects_dr24
+instrument ZTF
 format tap
 at sun
 no-sampling
@@ -19446,6 +19737,7 @@ field ocean_salinity woa23_ocean_salinity_psu gaussian-inverse-square diffusion 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu/hyperleda.json
 terms other-attribution https://ned.ipac.caltech.edu/
 origin https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+NEDTAP.objdir
+instrument unknown
 format tap
 at sun
 no-sampling
@@ -19744,6 +20036,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/nh_rex_tnf_lunocc2012.csv
 origin https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/tnf/lunocc2012.tnf
+instrument REX
 compiler tools/harvest/src/bin/tnf_compiler.rs
 format csv
 terms PD-USGov https://sti.nasa.gov/disclaimers/
@@ -27498,6 +27791,7 @@ url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro
 format pds3_fixed_width
 terms no-license https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
 origin https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/krfm.dat
+instrument KRFM
 compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 sha256 69e20d261157fc2a74c48de8fec6b774a948d33930ca782c19dc261ed228fd54
 at mars
@@ -27549,6 +27843,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/portal.opentopography.org/srtm15_plus_globaldem.tif
 terms PD https://opentopography.org/usageterms
 origin https://portal.opentopography.org/API/globaldem?demtype=SRTM15Plus&south=40&north=41&west=-10&east=-9&outputFormat=GTiff&API_Key={OPENTOPOGRAPHY_API_KEY}
+instrument SRTM
 format geotiff
 no-sampling
 at earth
@@ -27567,6 +27862,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/da
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format dawn_odf
 origin https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-ceres/data-odf/ + https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-vesta/data-odf/
+instrument RSS
 compiler tools/harvest/src/bin/dawn_odf_compiler.rs
 at earth
 no-sampling
@@ -27576,6 +27872,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 format pds3_fixed_width
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/l00074ng.tab
+instrument NLR
 compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 at eros
 no-sampling
@@ -27586,6 +27883,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 format pds4_fixed_width
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.xml
+instrument OLA
 origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.dat
 compiler tools/harvest/src/bin/ola_compiler.rs
 at bennu
@@ -27596,6 +27894,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_f_20051029_20051118.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_f_20051029_20051118.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27606,6 +27905,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050911_20050929.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050911_20050929.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27616,6 +27916,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27626,6 +27927,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27636,6 +27938,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27646,6 +27949,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27656,6 +27960,7 @@ url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pd
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.xml
+instrument LIDAR
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.tab
 compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
 at itokawa
@@ -27666,6 +27971,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_efd.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_efd
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b54
+instrument EFD
 compiler tools/harvest/src/bin/cses_efd_compiler.rs
 sha256 8d7fd66d48128a11a91ef19da9daa1ed99b704c5441ea692ee84efe183784ba6
 at earth
@@ -27678,6 +27984,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_hpm.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_hpm
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b52
+instrument HPM
 compiler tools/harvest/src/bin/cses_hpm_compiler.rs
 sha256 a6870b12d9b439b627b78009e180e2a932d5b766778e14fd7cbf20a9cf0e0172
 at earth
@@ -27690,6 +27997,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_lap.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_lap
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b50
+instrument LAP
 compiler tools/harvest/src/bin/cses_lap_compiler.rs
 sha256 8ad1b259cdd2a3edff1a667a8d7bd8567aed1ef8f2b6af7b52fdb5f098875138
 at earth
@@ -27703,6 +28011,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_scm.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_scm
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55
+instrument SCM
 compiler tools/harvest/src/bin/cses_scm_compiler.rs
 sha256 c1fed9fa9e1fd2bfad2ec2f35209ee0c8b3dacc3a986b71d9f7fa8f1856f9545
 at earth
@@ -28930,6 +29239,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/auge
 terms CC-BY-SA-4.0 https://creativecommons.org/licenses/by-sa/4.0/
 format auger
 origin https://opendata.auger.org/catalog/data.zip
+instrument Auger
 compiler tools/harvest/src/bin/auger_compiler.rs
 sha256 03c85879e13f3b0193345ee7b92677237108abcf0e1c95ec93a9a560a25e0fc6
 at earth
@@ -28954,24 +29264,26 @@ url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+RAJ2000,DEJ2000,UD,LD,Plx+FROM+%22J/A%2BA/431/773/charm2%22+WHERE+Method=%27LO%27
-no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_Name_RAJ2000_DEJ2000_Dist_S1400_FROM__J-ApJS-208-17-psrcat__WHERE_RAJ2000_IS_NOT_NULL_ORDER_BY_S1400_DESC.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+instrument VLA
 no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_Name_RAJ2000_DEJ2000_Speak_Sint_FROM__J-ApJS-205-1-catalog__WHERE_RAJ2000_IS_NOT_NULL_AND_Speak_1_ORDER_BY_Speak_DESC.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+instrument VLA
 no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_Fpeak_Fint_FROM__VIII-92-first14__WHERE_RAJ2000_IS_NOT_NULL.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+instrument WISE
 no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_HRV_D_W1mag_W2mag_FROM__J-MNRAS-506-1896-hecate__WHERE_RAJ2000_IS_NOT_NULL.json
@@ -28984,6 +29296,7 @@ url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+instrument APOGEE
 no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_RAJ2000_DEJ2000_Teff_Jmag_Hmag_Ksmag_FROM__22III-286-catalog_22.json
@@ -28995,6 +29308,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync tables=VII/110A/table3,VII/110A/table4
+instrument UKST
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29006,6 +29320,7 @@ z z
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/avo_rad.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/avo.rad/catalog
+instrument VLA
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29050,6 +29365,7 @@ quantity m2 cb_secondary_mass gaussian-inverse-square source-parameter M_sun 604
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/chandra_csc.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=IX/70/csc21mas
+instrument ACIS
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29072,6 +29388,7 @@ quantity LD charm2_ld_mas inverse-square geometry mas 31536000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/corot.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/corot/Bright_star
+instrument CoRoT
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29092,6 +29409,7 @@ quantity logg corot_logg gaussian-inverse-square source-parameter logg 604800 0.
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/ApJ/944/94/table2
+instrument alfa
 compiler tools/harvest/src/bin/cosmicflows_compiler.rs
 sha256 07c7ebc8fb48d3f473c171712f828b3b2211032860215c63001e5fd69cb2884b
 no-sampling
@@ -29106,6 +29424,7 @@ field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/exoplanets.json
 terms ipac-public https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync table=pscomppars
+instrument -
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29120,6 +29439,7 @@ quantity rade planet_radius gaussian-inverse-square geometry R_earth 604800 0.0 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frb_a279.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/693/A279/frbs
+instrument Apertif
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29165,6 +29485,7 @@ quantity period gcvs_period_d gaussian-inverse-square source-parameter d 604800 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/harps_rvcat.json
 terms eso-data-access-policy https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://archive.eso.org/tap_cat/sync table=safcat.HARPS_RVCAT_V1
+instrument HARPS
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29210,6 +29531,7 @@ z z
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/merlin.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/merlin/merlin
+instrument e-MERLIN
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29228,6 +29550,7 @@ field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/polarbase.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/polarbase/polarbase
+instrument ESPaDOnS
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29311,6 +29634,7 @@ field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/swiftgrb.json
 terms PD-USGov https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync table=swiftgrb
+instrument outage
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29366,14 +29690,12 @@ quantity teff wd_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.
 url https://github.com/omegaflow/sources/releases/download/topex.ucsd.edu/srtm15_plus_v2.5.5.nc
 terms PD https://opentopography.org/usageterms
 origin https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.5.5.nc
-format netcdf
-no-sampling
-at earth
-quantity elevation srtm15_plus_elevation_m inverse-square geometry m 31536000 0.0 0.0
+instrument SRTM
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/denis.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/denis/denis
+instrument denis
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29407,6 +29729,7 @@ quantity e_ebv extinction_ebv_unc_mag inverse-square source-parameter mag 604800
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/irsf_mcps.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=II/288/out
+instrument SIRIUS
 compiler tools/harvest/src/bin/tap_compiler.rs
 no-sampling
 at sun
@@ -29419,6 +29742,7 @@ url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format sky1
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
+instrument LHAASO
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-sampling
 at sun
@@ -29428,6 +29752,7 @@ url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format sky1
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
+instrument LHAASO
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-sampling
 at sun
@@ -30780,6 +31105,7 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul199806.dat
 origin https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 2a473911eb81894a9a88929dbe7e52fb9974c49f582e55d4dbb8c350d5c4c4eb
 at earth
@@ -30790,6 +31116,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_2.dat
 origin https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 5c6e0a42d4787cccb6e656e380b0ad0b75d0409e13212f785714509b8662bfed
 at earth
@@ -30800,6 +31127,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_3.dat
 origin https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 b2ab4dd2a96a31a7b104585caba8b06cc7a3532c00f186b599f32c6a57b09db8
 at earth
@@ -30810,6 +31138,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_1.dat
 origin https://web.archive.org/web/20030513181110id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 f30f3cd22527fdc613fd1beee3fa4b37bc7bd10d7edfd29ad7eec48eb232bdcb
 at earth
@@ -30820,6 +31149,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_2.dat
 origin https://web.archive.org/web/20030930094743id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 9df523b8d483fd89af7613b41602bf972d63e06af98afee7061e964e918f94e1
 at earth
@@ -30830,6 +31160,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_3.dat
 origin https://web.archive.org/web/20030513013706id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_3.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 c306d8a091a4e5e2ca49bd8de01042b2a6838d989dfcd43f1874053cc1a77f75
 at earth
@@ -30840,6 +31171,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_1.dat
 origin https://web.archive.org/web/20030513013759id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 76c4b3ccb08c00561988f49489ec292d7fc701487b0ff4fa96e4fa50f21c90d9
 at earth
@@ -30850,6 +31182,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_2.dat
 origin https://web.archive.org/web/20030513014417id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 f31beb854edf53294d562fcfbcdb0fc7eedcbc2293c2a589ac8bd4f62822de23
 at earth
@@ -30860,6 +31193,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_3.dat
 origin https://web.archive.org/web/20030513013922id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_3.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 7b3cf9beb6ac89e577a9414606e27928b937483a629ca265dd1df787e9482842
 at earth
@@ -30870,6 +31204,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_1.dat
 origin https://web.archive.org/web/20030513013843id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 aaac78a69e89856912a739cf0136117daa71a5bec925224d226a1c3895187b2c
 at earth
@@ -30880,6 +31215,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_2.dat
 origin https://web.archive.org/web/20030514060940id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 269468eef13b9abea69f6bb43df4ee830fa03786e8feecffacdd13d8c6b18a02
 at earth
@@ -30890,6 +31226,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_3.dat
 origin https://web.archive.org/web/20030514061246id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_3.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 fa2792d62b8bda299ca8867d7f7ff79ef1b478bb0e83c0c22ef5181066758c78
 at earth
@@ -30900,6 +31237,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_1.dat
 origin https://web.archive.org/web/20030514061343id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a6450188b9e12370d856b66e3d24d888c0e861a0d927fc24fce2e10ad9017f86
 at earth
@@ -30910,6 +31248,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_2.dat
 origin https://web.archive.org/web/20030514061346id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 09d6ff5d82e7ba1eb060fbca2c246a71101246dd5fe98382884966e1c63467a7
 at earth
@@ -30920,6 +31259,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_3.dat
 origin https://web.archive.org/web/20030514061256id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_3.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d5c1ce7714b61566cbd13b4502c5fee438cfd8b79fcb22c34f9f2e5b3949cb56
 at earth
@@ -30931,6 +31271,7 @@ channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:free-surface Pa
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_1.dat
 origin https://web.archive.org/web/20030514061444id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 448002f5e875eea45e5f6fd91fbf130a6af97d9bf3d1b96286932be1ab76ed06
 at earth
@@ -30941,6 +31282,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_2.dat
 origin https://web.archive.org/web/20030514061510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 20ccb6a922a7ee342d41886da72e27616e875404bd160850ec6183e8c53e19c2
 at earth
@@ -30951,6 +31293,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_3.dat
 origin https://web.archive.org/web/20030514061523id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_3.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 26eec2866b44148810ebe0aeeaaf8db5b9e4828704ad603e4a9a6a240ebfa80e
 at earth
@@ -30961,6 +31304,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_1.dat
 origin https://web.archive.org/web/20030514061626id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 9f147341c0e1a95de0bd8c07eb0ce4ba41d715464c8f32fcfb4c548fab92ebd9
 at earth
@@ -30971,6 +31315,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_2.dat
 origin https://web.archive.org/web/20030514061730id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d8701f23e623f8bd6c269d99fc2a827cce0ec29721a89694288361162f07004a
 at earth
@@ -30981,6 +31326,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_1.dat
 origin https://web.archive.org/web/20030514061251id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 e752644ecc1c34411e32d0dd897d9d865e546253af853e664e36d9059f2f77ad
 at earth
@@ -30991,6 +31337,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_2.dat
 origin https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 89de9c28ab97f96ba765a970705402735a91bb98a51c99c5df3aa133a189f93b
 at earth
@@ -31025,6 +31372,7 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat199301.dat
 origin https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 8b44665facdfd61ff6b897e74b2955a234bbc65730a6bc330bc317a0f2d11ec9
 at earth
@@ -31035,6 +31383,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200001.dat
 origin https://web.archive.org/web/20030514061309id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 116f0c7c26b2a24f815b795b76ad1e784d9cd79d26c37c7b8754cb6f96fb6ebe
 at earth
@@ -31045,6 +31394,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200002.dat
 origin https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d9273bd6592993d300da484723bc64689ec0c148cdbed7f00e5666b0303afba7
 at earth
@@ -31055,6 +31405,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200005.dat
 origin https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 fd56c77b67a77b795da2c4fe99c706e0227421273342c29a527d029593e53354
 at earth
@@ -31065,6 +31416,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200006.dat
 origin https://web.archive.org/web/20030515081038id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200006.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 00ecda8051a04ca0576195ebd43dcd11e23d5dc0a9b54f1be7ca9adb1c6b27d9
 at earth
@@ -31075,6 +31427,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200007.dat
 origin https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 02555dc7b880a3456f8b196bb9f42ac2b72dc50830ac22e5e82a445a292099ce
 at earth
@@ -31085,6 +31438,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200101.dat
 origin https://web.archive.org/web/20180212024918id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2001/cat200101.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 50fd686642af89f6a1ee8094c59809203fa1fa1edb20484c469dc493d128e21b
 at earth
@@ -31095,6 +31449,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200901.dat
 origin https://web.archive.org/web/20180212021813id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 f9390259b6ba408f51e882e8c4cb532e43b5abe6e1ea89d16b9cb7cee8d70301
 at earth
@@ -31105,6 +31460,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201406.dat
 origin https://web.archive.org/web/20181102023325id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 e2160ebd5d3e7796056b0ad93a6c06ee0d6e73116497b0cd4a31ee7858d6629b
 at earth
@@ -31115,6 +31471,7 @@ quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201407.dat
 origin https://web.archive.org/web/20181102023200id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
+instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 4c0d988fc4be0428b8ae6489fe8ede45cc29a8cb5fddd5c875257962b3a8aac8
 at earth
@@ -31311,6 +31668,7 @@ url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlas
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format catalog_vlass_tap_component
 origin https://ws-uv.canfar.net/youcat/sync
+instrument VLA
 compiler tools/harvest/src/bin/vlass_tap_compiler.rs
 no-sampling
 at sun
@@ -31324,6 +31682,7 @@ url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlas
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format catalog_vlass_tap_source
 origin https://ws-uv.canfar.net/youcat/sync
+instrument VLA
 compiler tools/harvest/src/bin/vlass_tap_compiler.rs
 no-sampling
 at sun
@@ -31343,6 +31702,7 @@ no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/www.gsras.ru/gsras_teleseismic_catalog_1993.txt
 origin http://www.gsras.ru/ftp/Teleseismic_Catalog/1993.txt
+instrument seismograph
 compiler tools/harvest/src/bin/raw_mirror.rs
 harvest raw_mirror
 sha256 781d33abfe61af66241260696684a514758c2f613aefac891e0eb99f619f8861
@@ -31363,6 +31723,7 @@ url https://github.com/omegaflow/sources/releases/download/www.lamost.org/lamost
 terms CC-BY-4.0 https://www.lamost.org/dr10/
 format lamost_dr10
 origin https://www.lamost.org/dr10/v2.0/voservice/tap/sync
+instrument spectrograph
 compiler tools/harvest/src/bin/lamost_compiler.rs
 at sun
 no-sampling
@@ -31567,6 +31928,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/alerce_features.parquet
 terms CC-BY-4.0 https://zenodo.org/records/11123894
 origin https://zenodo.org/api/records/11123894/files/features.parquet/content
+instrument ZTF
 format parquet
 compiler tools/harvest/src/bin/parquet_table_compiler.rs
 no-sampling
@@ -31576,6 +31938,7 @@ quantity SF_ML_amplitude alerce_ztf_sf_ml_amplitude inverse-square source-parame
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/ampere_fac.bin
 format ampere_fac
 origin https://zenodo.org/api/records/22345897/files/ampere.202309.v2.k060_m08.north.grd.zip/content
+instrument Iridium
 terms CC0-1.0 https://zenodo.org/records/22345897
 compiler tools/harvest/src/bin/ampere_fac_compiler.rs
 at earth
@@ -31599,6 +31962,7 @@ no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/cedc_catalog.xlsx
 origin https://zenodo.org/api/records/8084659/files/CEDC%20catalog.xlsx/content
+instrument seismometer
 compiler tools/harvest/src/bin/raw_mirror.rs
 harvest raw_zenodo
 sha256 40ba4601d3f8d32753dd8de8eedd7ffe2bb5c341c3ae9f3303e43c474d75dfb4
@@ -31617,6 +31981,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/dawn_linefluxes.fits
 terms CC-BY-4.0 https://zenodo.org/records/22734795
 origin https://zenodo.org/api/records/22734795/files/djapipes_default_v4.6.0.linefluxes.fits/content
+instrument NIRSpec
 format fits
 at sun
 no-sampling
@@ -31625,6 +31990,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/des-sn5yr-udt-ready.zip
 terms CC-BY-4.0 https://zenodo.org/records/16755566
 origin https://zenodo.org/api/records/16755566/files/DES-SN5YR-UDT-Ready.zip/content
+instrument DECam
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-sampling
@@ -31634,6 +32000,7 @@ quantity MU_SH0ES des_dr2_distance_modulus inverse-square source-parameter mag 3
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/detox_models.zip
 terms CC-BY-4.0 https://zenodo.org/records/3993276
 origin https://zenodo.org/api/records/3993276/files/DETOX_MODELS.zip/content
+instrument seismometer
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-sampling
@@ -31644,6 +32011,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.s
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.8300645
 format sky1
 origin https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+instrument radiotelescope
 compiler tools/harvest/src/bin/epta_dr2_compiler.rs
 sha256 3c4285c23bdf30b3fcee97e3a151241637939265c346a24c6c72dd1633dec151
 at sun
@@ -31653,6 +32021,7 @@ field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_campaign.dat
 origin https://zenodo.org/api/records/7798617/files/gps_campaign.dat/content
+instrument GPS
 compiler tools/harvest/src/bin/raw_mirror.rs
 harvest raw_zenodo
 sha256 06f66d84a74576716eeeaece77ebf7c4fb641cd46e921f3c5c19ce8ed6757725
@@ -31664,6 +32033,7 @@ channel momentum:primary:creep:elliptic:elastic-solid:unspecified:none mm/yr
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_cmonoc.dat
 origin https://zenodo.org/api/records/7798617/files/gps_cmonoc.dat/content
+instrument GPS
 compiler tools/harvest/src/bin/raw_mirror.rs
 harvest raw_zenodo
 sha256 7766cd0ac5cc754cfdc8a6cac1de888fe07f770bf0984608ea7c0f13a5c39bde
@@ -32140,6 +32510,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/hi4pi_1.5deg.fits
 terms CC-BY-4.0 https://zenodo.org/records/5500447
 origin https://zenodo.org/api/records/5500447/files/hi4pi_1.5deg.fits/content
+instrument Effelsberg
 format fits
 at sun
 no-sampling
@@ -32161,6 +32532,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/jades_earl
 terms CC-BY-4.0 https://zenodo.org/records/7460116
 format tar_fits
 origin https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
+instrument NIRCam
 no-sampling
 field JADES-GS-z10-0/data_f090w.0.mean JADES-GS-z10-0/data_f090w.0.mean inverse-square em njy 33554432.0 0.0 0.0 3.323078e+14
 field JADES-GS-z10-0/data_f115w.0.mean JADES-GS-z10-0/data_f115w.0.mean inverse-square em njy 33554432.0 0.0 0.0 2.597268e+14
@@ -32202,6 +32574,7 @@ field JADES-GS-z13-0/data_f444w.0.mean JADES-GS-z13-0/data_f444w.0.mean inverse-
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/jwstcomet-v1.1.zip
 terms MIT https://zenodo.org/records/20610727
 origin https://zenodo.org/api/records/20610727/files/apertureSynthesis/jwstComet-v1.1.zip/content
+instrument NIRSpec
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-sampling
@@ -32211,6 +32584,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_brightsample.fits
 terms CC-BY-4.0 https://zenodo.org/records/17086764
 origin https://zenodo.org/api/records/17086764/files/KiDS_DR4_brightsample.fits/content
+instrument VST
 format fits
 at sun
 no-sampling
@@ -32223,6 +32597,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_w
 terms CC-BY-4.0 https://zenodo.org/records/16366035
 format fits
 origin https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content
+instrument VST
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 dcc2bf039190d0c53542f6f08ac6ce27e749dd31999cd4ab049edd4d41fbef32
 at sun
@@ -32239,6 +32614,7 @@ terms CC-BY-NC-4.0 https://zenodo.org/records/8098323
 format kyoto_pressure
 no-sampling
 origin https://zenodo.org/records/8098323/files/data.zip
+instrument BME280
 at earth
 field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
 
@@ -32270,6 +32646,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/mirage_v2.0.0.zip
 terms MIT https://zenodo.org/records/21990891
 origin https://zenodo.org/api/records/21990891/files/Ganglet/Mirage-v2.0.0.zip/content
+instrument NIRSpec
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 at sun
@@ -32279,6 +32656,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/miri_wfss-v1.2.zip
 terms MIT https://zenodo.org/records/22803722
 origin https://zenodo.org/api/records/22803722/files/fengwusun/miri_wfss-v1.2.zip/content
+instrument MIRI
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-sampling
@@ -32288,6 +32666,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/ogle_table2.zip
 terms CC-BY-4.0 https://zenodo.org/records/3886372
 origin https://zenodo.org/api/records/3886372/files/Table2.txt.zip/content
+instrument ZTF
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 at sun
@@ -32301,6 +32680,7 @@ quantity magnitude ogle_magnitude inverse-square source-parameter mag 604800 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/pantheon_sh0es.dat
 terms CC-BY-4.0 https://zenodo.org/records/16365279
 origin https://zenodo.org/api/records/16365279/files/Pantheon_SH0ES.dat/content
+instrument -
 format ascii
 compiler tools/harvest/src/bin/ascii_table_compiler.rs
 at sun
@@ -32350,6 +32730,7 @@ no-sampling
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/s40rts.sph
 terms CC-BY-4.0 https://zenodo.org/records/11212270
 origin https://zenodo.org/api/records/11212270/files/S40RTS.sph/content
+instrument seismometer
 format ascii
 compiler tools/harvest/src/bin/ascii_table_compiler.rs
 at earth
@@ -32359,6 +32740,7 @@ quantity vs s40rts_shear_velocity gaussian-inverse-square source-parameter km/s 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/smss-dr4-param-public-5.fits.zip
 terms CC-BY-4.0 https://zenodo.org/records/15108911
 origin https://zenodo.org/api/records/15108911/files/SMSS-DR4-PARAM-public-5.fits.zip/content
+instrument SkyMapper
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-sampling
@@ -32368,6 +32750,7 @@ quantity mag atlas_dr4_magnitude inverse-square source-parameter mag 31536000 0.
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/specsr-v1.2.0.zip
 terms MIT https://zenodo.org/records/23192226
 origin https://zenodo.org/api/records/23192226/files/aryana-haghjoo/specsr-v1.2.0.zip/content
+instrument NIRSpec
 format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-sampling
@@ -32378,6 +32761,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_
 terms CC-BY-4.0 https://zenodo.org/records/10374021
 format superdarn_cpcp
 origin https://zenodo.org/api/records/10374021/files/20160311.north.map2/content
+instrument SuperDARN
 compiler tools/harvest/src/bin/superdarn_cpcp_compiler.rs
 at earth
 no-sampling
@@ -32386,6 +32770,7 @@ field superdarn_cpcp_pot_drop superdarn_cpcp_pot_drop inverse-square electric kV
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_cpcp_nc.bin
 format superdarn_cpcp_nc
 origin https://zenodo.org/api/records/10875060/files/superDARN.zip/content
+instrument SuperDARN
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 compiler tools/harvest/src/bin/superdarn_cpcp_nc_compiler.rs
 at earth
@@ -32444,6 +32829,7 @@ url https://madrigal.eiscat.se/madrigal/isprintService.py?file=/opt/madrigal/exp
 terms eiscat-rules-of-the-road https://madrigal.eiscat.se/
 format openmadrigal
 origin https://madrigal.eiscat.se
+instrument ISR
 on earth 69.586 19.227 0.077
 no-sampling
 field eiscat_isr_ne_m3 eiscat_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
@@ -32561,9 +32947,6 @@ no-sampling
 
 url https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
 origin https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
-terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-at earth
-no-sampling
 
 url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
 origin https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
@@ -32577,6 +32960,7 @@ no-sampling
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
+instrument LAT
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format tap
 no-sampling
@@ -32597,6 +32981,7 @@ quantity LD charm2_ld_mas inverse-square geometry mas 604800 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
+instrument LAT
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 at sun
@@ -32609,6 +32994,7 @@ field S1400 atnf_pulsar_flux_1400mhz_mjy inverse-square em mJy 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Speak,Sint+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Speak,Sint+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+instrument VLA
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 at sun
@@ -32620,6 +33006,7 @@ field Sint cornish_integrated_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+"VIII/92/first14"+WHERE+RAJ2000+IS+NOT+NULL
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+"VIII/92/first14"+WHERE+RAJ2000+IS+NOT+NULL
+instrument VLA
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 at sun
@@ -32631,6 +33018,7 @@ field Fint first_radio_integrated_flux_mjy inverse-square em mJy 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL
+instrument APOGEE
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 at sun
@@ -32656,6 +33044,7 @@ quantity Min1 gcvs_min1_magnitude gaussian-inverse-square source-parameter mag 8
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
+instrument CARMENES
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 at sun
@@ -32669,6 +33058,7 @@ quantity Ksmag apogee_dr17_ksmag gaussian-inverse-square source-parameter mag 60
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+instrument CARMENES
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 at sun
@@ -32688,17 +33078,11 @@ no-sampling
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
-terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
-no-sampling
-format asu-tsv
-at sun
-cmap .
-ra _RAJ2000
-dec _DEJ2000
-quantity LDD jsdc_ldd_mas inverse-square geometry mas 604800 0.0 0.0
+instrument interferometer
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
+instrument RAVE
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 format asu-tsv
@@ -32713,6 +33097,7 @@ quantity Teffir rave_dr6_teff_irfm gaussian-inverse-square source-parameter K 60
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/598/A78&-out.max=623604&-out.all
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/598/A78&-out.max=623604&-out.all
+instrument GMRT
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 format asu-tsv
@@ -32725,6 +33110,7 @@ field Speak tgss_adr1_speak_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/633/A99/members&-out.max=100000
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/633/A99/members&-out.max=100000
+instrument Gaia
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 format asu-tsv
@@ -32749,6 +33135,7 @@ no-sampling
 
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
 origin https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
+instrument VLA
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format tap
 no-sampling
@@ -32761,6 +33148,7 @@ field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
 origin https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
+instrument VLA
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format tap
 no-sampling
@@ -32773,6 +33161,7 @@ field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0
 
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
 origin https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
+instrument VLA
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format tap
 no-sampling
@@ -32830,6 +33219,7 @@ no-sampling
 url https://zenodo.org/api/records/4444068/files/Node_1_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32841,6 +33231,7 @@ field GIC_QDC kellerman_node1_gic_qdc_a inverse-square electric A 1 0.0 0.0
 url https://zenodo.org/api/records/4444068/files/Node_2_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32852,6 +33243,7 @@ field GIC_QDC kellerman_node2_gic_qdc_a inverse-square electric A 1 0.0 0.0
 url https://zenodo.org/api/records/4444068/files/Node_3_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32863,6 +33255,7 @@ field GIC_QDC kellerman_node3_gic_qdc_a inverse-square electric A 1 0.0 0.0
 url https://zenodo.org/api/records/4444068/files/Node_4_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32874,6 +33267,7 @@ field GIC_QDC kellerman_node4_gic_qdc_a inverse-square electric A 1 0.0 0.0
 url https://zenodo.org/api/records/4444068/files/Node_5_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32885,6 +33279,7 @@ field GIC_QDC kellerman_node5_gic_qdc_a inverse-square electric A 1 0.0 0.0
 url https://zenodo.org/api/records/4444068/files/Node_6_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32896,6 +33291,7 @@ field GIC_QDC kellerman_node6_gic_qdc_a inverse-square electric A 1 0.0 0.0
 url https://zenodo.org/api/records/4444068/files/Node_7_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
+instrument GICsensor
 no-sampling
 format csv_gz
 at earth
@@ -32946,6 +33342,7 @@ url https://github.com/omegaflow/sources/releases/download/geodata.ucdavis.edu/w
 terms CC-BY-NC-4.0 https://www.worldclim.org/about.html
 format worldclim
 origin https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tavg.zip
+instrument Wetterstation
 compiler tools/harvest/src/bin/worldclim_compiler.rs
 sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
@@ -32956,6 +33353,7 @@ url https://github.com/omegaflow/sources/releases/download/icgem.gfz.de/gfc.bin
 terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007
 format gfc
 origin https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc
+instrument GRACE
 compiler tools/harvest/src/bin/gfc_compiler.rs
 at earth
 no-sampling
@@ -32992,6 +33390,7 @@ url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-gebco
 terms gebco-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
 format gbco_axis_value_text
 origin https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
+instrument Multibeam
 compiler tools/harvest/src/bin/gbco_series_compiler.rs
 at earth
 no-sampling
@@ -33009,6 +33408,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/wglc_strok
 terms CC-BY-4.0 https://zenodo.org/records/20277101
 format csv
 origin https://zenodo.org/api/records/20277101/files/wglc_timeseries_30m_daily.nc/content
+instrument WWLLN
 compiler tools/harvest/src/bin/wglc_compiler.rs
 at earth
 ttl 86400
@@ -33019,6 +33419,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/hmi_
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi_polar
 origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch?ds=hmi.synoptic_mr_polfil_720s&op=exp_request&protocol=fits&method=url_quick
+instrument HMI
 compiler tools/harvest/src/bin/hmi_polar_compiler.rs
 at sun
 ttl 2592000
@@ -33041,6 +33442,7 @@ terms babamul-no-license https://babamul.caltech.edu/
 header Authorization Bearer {BABAMUL_API_TOKEN}
 format sky1
 origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
+instrument ZTF
 compiler tools/harvest/src/bin/babamul_compiler.rs
 at sun
 ttl 3600
@@ -33064,6 +33466,7 @@ terms PD-USGov https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
 header Authorization {EARTHDATA_EDL_TOKEN}
 format icrf3
 origin https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/ + https://datacenter.iers.org/products/reference-systems/celestial/icrf3/
+instrument VLBI
 compiler tools/harvest/src/bin/icrf3_compiler.rs
 at sun
 ttl 31536000
@@ -33074,6 +33477,7 @@ url https://www.ieeg.org/services
 terms ieeg-terms https://www.ieeg.org/services
 format openneuro_eeg
 origin https://www.ieeg.org/services
+instrument EEG
 compiler tools/harvest/src/bin/ieeg_compiler.rs
 at earth
 ttl 86400
@@ -33103,6 +33507,7 @@ url https://supermag.jhuapl.edu/lib/services/?service=substorms&downloadtype=sub
 terms no-redistribution https://supermag.jhuapl.edu/lib/services/
 format substorm
 origin https://supermag.jhuapl.edu/lib/services/
+instrument magnetometer
 compiler tools/harvest/src/bin/substorm_compiler.rs
 at earth
 ttl 86400
@@ -33125,6 +33530,7 @@ field dec_deg tns_dec_deg inverse-square geometry deg 604800 0.0 0.0 aperture:no
 url https://github.com/omegaflow/sources/releases/download/flood-api.open-meteo.com/openmeteo_river_discharge_27.7_85.3.txt
 format openmeteo_flood_axis_value_text
 origin https://flood-api.open-meteo.com/v1/flood?latitude=27.7&longitude=85.3&daily=river_discharge&forecast_days=92&timezone=UTC
+instrument GloFAS
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 compiler tools/harvest/src/bin/openmeteo_flood_compiler.rs
 sha256 c11240dca294d67c38b28dbe7e4dadb30966c763333631093fb3accff7a4359e
@@ -33136,6 +33542,7 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format swpc_radio_bursts
 origin https://services.swpc.noaa.gov/json/edited_events.json
+instrument RSTN
 compiler tools/harvest/src/bin/swpc_radio_bursts_compiler.rs
 sha256 7622114c4b8e4cd83ff2d05763e5f17311c3b54144508757912ae90244dffb66
 at sun
@@ -33148,6 +33555,7 @@ field swpc_radio_burst_subtype_code swpc_radio_burst_subtype_code inverse-square
 
 url https://github.com/omegaflow/sources/releases/download/data.openei.org/grid_outage_events.bin
 origin https://data.openei.org/files/6458/Outage_Dataset_R1.zip
+instrument outage
 terms CC-BY-4.0 https://data.openei.org/submissions/6458
 compiler tools/harvest/src/bin/grid_outage_event_compiler.rs
 sha256 8c309b5a5ded071ba53d1b8f7a1a56addb70ce1ddf56d4ab03c0de0c9854ff69
@@ -33173,6 +33581,7 @@ url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/mdi
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format mdi_polar
 origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=mdi.synoptic_Mr_polfil_96m
+instrument MDI
 compiler tools/harvest/src/bin/mdi_polar_compiler.rs
 sha256 b443a28188aa8034bedf03d83f6c8ad739693ce3f88e016d6a621cee61905d5e
 at sun
@@ -33185,6 +33594,7 @@ url https://github.com/omegaflow/sources/releases/download/sun.stanford.edu/soho
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format soho_eit_195
 origin http://sun.stanford.edu/synop/EIT/195A/
+instrument EIT
 compiler tools/harvest/src/bin/soho_eit_synoptic_compiler.rs
 sha256 1da0eb2e08ef456658175ff0e8fb6874a01f54ad0ce57473558c6d39b639408a
 at sun
@@ -33210,6 +33620,7 @@ url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu
 terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
 format mwo_magnetogram
 origin https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/VQK56Z
+instrument magnetograph
 compiler tools/harvest/src/bin/mwo_magnetogram_compiler.rs
 at sun
 ttl 86400
@@ -33232,6 +33643,7 @@ url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/sb
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gsfc_ssi
 origin https://sbuv.gsfc.nasa.gov/solar/compositev2/
+instrument SBUV
 compiler tools/harvest/src/bin/gsfc_ssi_compiler.rs
 sha256 84bf034c96bdab73e980c6c948c1cd4a33873e5a1cb49a807a432f16a8f9b6d2
 at sun
@@ -33256,6 +33668,7 @@ url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/so
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gsfc_ssi
 origin https://lasp.colorado.edu/data/sorce/ssi_data/solstice/fuv/txt/
+instrument SOLSTICE
 compiler tools/harvest/src/bin/gsfc_ssi_compiler.rs
 sha256 51f53b3f4c9f50ade34f22c9168195cb344c747e51789fa2b82a5938a9a6c063
 at sun
@@ -33268,6 +33681,7 @@ url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu/sor
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format sorce_ascii
 origin https://lasp.colorado.edu/data/sorce/ssi_data/sim/txt/
+instrument SIM
 compiler tools/harvest/src/bin/sorce_sim_compiler.rs
 sha256 21b8259570963b64a997f615a04dcbe30da04981ff0cfc5b8b46086244ea47cc
 at sun
@@ -33280,6 +33694,7 @@ url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu/tim
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format timed_see_spwx
 origin https://lasp.colorado.edu/data/timed_see/spwx/
+instrument SEE
 compiler tools/harvest/src/bin/timed_see_compiler.rs
 sha256 a78b00dff975995992313c6336236a65becd3e3590df8c2716777ac6ec8402b7
 at sun
@@ -33297,6 +33712,7 @@ url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/151/52/table2
+instrument Parkes
 compiler tools/harvest/src/bin/tap_compiler.rs
 sha256 639fae506205268c339b00ff2c4b9c3a879f62ae3a2f4e4fa047091332cbaf92
 at sun
@@ -33377,6 +33793,7 @@ url https://github.com/omegaflow/sources/releases/download/icecube.wisc.edu/aman
 terms attribution https://icecube.wisc.edu/data-releases/2008/09/amanda-7-year-data/
 format amanda_7yr
 origin https://icecube.wisc.edu/data-releases/20080911_AMANDA_7_Year_Data.zip
+instrument AMANDA
 compiler tools/harvest/src/bin/amanda_compiler.rs
 sha256 42e9a2167eea1ebafbb14573d22d2b4e480d1553afd52d92e5f864d18fde1175
 witness s2-direction
@@ -33390,6 +33807,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/sk_atm_bin
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.8401262
 format sk_atm_bins
 origin https://zenodo.org/api/records/8401262/files/sk_atm_2023.tar.gz/content
+instrument SuperK
 compiler tools/harvest/src/bin/sk_atm_bins_compiler.rs
 sha256 b6ae7f061528c356e13b98a5e00609e9bf3cc0021bf98559f74f0c82834bb6ad
 at earth
@@ -33404,6 +33822,7 @@ url https://github.com/omegaflow/sources/releases/download/loco.lab.asu.edu/edge
 terms attribution https://galileo.sese.asu.edu/edges-data/Readme.md
 format spectral
 origin https://loco.lab.asu.edu/edges/edges-data-release/
+instrument antenna
 compiler tools/harvest/src/bin/edges_compiler.rs
 sha256 84bd37ac23c939e762071d6e07662891028f4456cdb2668d87d0629db2afdd5a
 at earth
@@ -33414,6 +33833,7 @@ url https://github.com/omegaflow/sources/releases/download/loco.lab.asu.edu/edge
 terms attribution https://galileo.sese.asu.edu/edges-data/Readme.md
 format spectral
 origin https://loco.lab.asu.edu/edges/edges-data-release/
+instrument antenna
 compiler tools/harvest/src/bin/edges_compiler.rs
 sha256 f4946b1730ee7758775dd2248d2c1cebb2b405e7332c86963b44ca8e9600b68f
 at earth
@@ -33424,6 +33844,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/leda.bin
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.400690
 format spectral
 origin https://zenodo.org/records/400690
+instrument LEDA
 compiler tools/harvest/src/bin/leda_compiler.rs
 sha256 3fd58c492556c564cb44094a79ffd7c74f7ff3d5c0ee0bd9ce5cac4efa63820c
 at earth
@@ -33473,6 +33894,7 @@ field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/imbrium.mit.edu/lro_trk.bin
 format lro_trk
 origin http://imbrium.mit.edu/LRORS/DATA/TRK/
+instrument RSS
 terms PD-USGov-PDS https://pds-geosciences.wustl.edu/missions/lro/lola.htm
 compiler tools/harvest/src/bin/lro_trk_compiler.rs
 at earth
@@ -33483,6 +33905,7 @@ url https://github.com/omegaflow/sources/releases/download/deepspace.jpl.nasa.go
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format icrf3
 origin https://deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt
+instrument DSN
 compiler tools/harvest/src/bin/icrf3_compiler.rs
 at sun
 ttl 31536000
@@ -33522,6 +33945,7 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 terms PD-USGov https://www.swpc.noaa.gov/content/disclaimer
 format text
 origin https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json ; https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+instrument RTSW
 compiler tools/harvest/src/bin/swpc_rtsw_compiler.rs
 at sun
 ttl 60
@@ -33567,6 +33991,7 @@ url https://github.com/omegaflow/sources/releases/download/downloads.sws.bom.gov
 terms SWS-WDC https://www.sws.bom.gov.au/World_Data_Centre/1/7
 format sws_ionosonde
 origin https://downloads.sws.bom.gov.au/wdc/iondata/de/juliusruh/0318.00/031800.25.gz
+instrument ionosonde
 compiler tools/harvest/src/bin/sws_ionosonde_compiler.rs
 sha256 9eb32cae8ff47383a5fb9b14f8d2e9a543809de773a72fd05150e626b05e6397
 at earth
@@ -33577,6 +34002,7 @@ url https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
 terms naoj-copyright https://www.nao.ac.jp/en/terms/copyright.html
 format sky1
 origin https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
+instrument FOREST
 compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
 at sun
 ttl 31536000

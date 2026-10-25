@@ -154,9 +154,13 @@ struct Spec {
     applies: Vec<String>,
     instrument: String,
     units: BTreeSet<String>,
+    source_units: BTreeSet<String>,
     samplings: BTreeSet<u64>,
+    intervals: BTreeSet<u64>,
     api_cite: bool,
     instrument_cite: bool,
+    host_cite: bool,
+    ttl: Option<u64>,
     probes: Vec<Probe>,
 }
 
@@ -253,9 +257,13 @@ fn load_specs(path: &str) -> Vec<Spec> {
                         applies: Vec::new(),
                         instrument: String::new(),
                         units: BTreeSet::new(),
+                        source_units: BTreeSet::new(),
                         samplings: BTreeSet::new(),
+                        intervals: BTreeSet::new(),
                         api_cite: false,
                         instrument_cite: false,
+                        host_cite: false,
+                        ttl: None,
                         probes: Vec::new(),
                     });
                 }
@@ -271,14 +279,37 @@ fn load_specs(path: &str) -> Vec<Spec> {
                         }
                     }
                     "unit" => {
-                        for u in &p[1..] {
-                            entry.units.insert(u.to_string());
+                        for raw in &p[1..] {
+                            for u in raw.split(';').filter(|s| !s.is_empty()) {
+                                if force_id_of(u).is_some()
+                                    || quantity_kind_of(u).is_some()
+                                    || kernel_id_of(u).is_some()
+                                {
+                                    entry.units.insert(u.to_string());
+                                } else {
+                                    entry.source_units.insert(u.to_string());
+                                }
+                            }
+                        }
+                    }
+                    "source_unit" => {
+                        for raw in &p[1..] {
+                            for u in raw.split(';').filter(|s| !s.is_empty()) {
+                                entry.source_units.insert(u.to_string());
+                            }
                         }
                     }
                     "sampling" => {
                         for c in &p[1..] {
                             if let Some(v) = parse_f64(c) {
                                 entry.samplings.insert(v as u64);
+                            }
+                        }
+                    }
+                    "interval" => {
+                        for c in &p[1..] {
+                            if let Some(v) = parse_f64(c) {
+                                entry.intervals.insert(v as u64);
                             }
                         }
                     }
@@ -289,6 +320,8 @@ fn load_specs(path: &str) -> Vec<Spec> {
                     }
                     "api_cite" => entry.api_cite = value.is_some(),
                     "instrument_cite" => entry.instrument_cite = value.is_some(),
+                    "host_cite" => entry.host_cite = value.is_some(),
+                    "ttl" => entry.ttl = value.as_deref().and_then(parse_f64).map(|v| v as u64),
                     "probe" => {
                         let (Some(date), Some(status), Some(url)) =
                             (value.clone(), p.get(2), p.get(3))
@@ -320,21 +353,45 @@ fn url_id(url: &str) -> Option<String> {
     }
 }
 
-fn spec_for<'a>(specs: &'a [Spec], host: &str, url: &str) -> Option<&'a Spec> {
-    specs
+fn applies_len(s: &Spec, url: &str) -> Option<usize> {
+    s.applies
         .iter()
-        .filter(|s| {
-            s.host == host
-                && (s.applies.is_empty()
-                    || s.applies.iter().any(|a| url.starts_with(a.as_str())))
+        .filter(|a| {
+            url.starts_with(a.as_str())
+                || url.split(';').any(|u| u.trim().starts_with(a.as_str()))
         })
-        .max_by_key(|s| {
-            s.applies
-                .iter()
-                .filter(|a| url.starts_with(a.as_str()))
-                .map(|a| a.len())
-                .max()
-        })
+        .map(|a| a.len())
+        .max()
+}
+
+fn spec_for_inst<'a>(
+    specs: &'a [Spec],
+    host: &str,
+    url: &str,
+    inst: &str,
+) -> Result<&'a Spec, Vec<String>> {
+    let cands: Vec<&Spec> = specs
+        .iter()
+        .filter(|s| s.host == host && (s.applies.is_empty() || applies_len(s, url).is_some()))
+        .collect();
+    if cands.is_empty() {
+        return Err(Vec::new());
+    }
+    let exact: Vec<&Spec> = cands
+        .iter()
+        .copied()
+        .filter(|s| s.instrument.eq_ignore_ascii_case(inst))
+        .collect();
+    if exact.is_empty() {
+        let mut names: Vec<String> = cands.iter().map(|s| s.instrument.clone()).collect();
+        names.sort();
+        names.dedup();
+        return Err(names);
+    }
+    Ok(*exact
+        .iter()
+        .max_by_key(|s| applies_len(s, url))
+        .expect("exact ist nicht leer"))
 }
 
 fn main() {
@@ -453,10 +510,21 @@ fn main() {
         }
 
         let no_cadence = field_of(&block, "no-sampling").is_some();
-        let instrument = field_of(&block, "instrument")
-            .and_then(|p| p.get(1).copied().map(str::to_string));
-        let origin_url = field_of(&block, "origin")
-            .and_then(|p| p.get(1).copied())
+        let instruments: Vec<String> = {
+            let mut v: Vec<String> = Vec::new();
+            for line in &block {
+                let p: Vec<&str> = line.split_whitespace().collect();
+                if p.first() == Some(&"instrument")
+                    && let Some(tok) = p.get(1)
+                    && !v.iter().any(|x| x.eq_ignore_ascii_case(tok))
+                {
+                    v.push((*tok).to_string());
+                }
+            }
+            v
+        };
+        let origin_rest: Option<String> = field_of(&block, "origin").map(|p| p[1..].join(" "));
+        let origin_url = origin_rest.as_deref().and_then(|s| s.split_whitespace().next())
             .or_else(|| {
                 let url = field_of(&block, "url").and_then(|p| p.get(1).copied())?;
                 (!url.starts_with("https://github.com/omegaflow/sources/releases/download/"))
@@ -465,7 +533,7 @@ fn main() {
         let block_host = origin_url.and_then(host_of);
         let mut names: BTreeSet<String> = BTreeSet::new();
 
-        if has_observables(&block) && instrument.is_none() {
+        if has_observables(&block) && instruments.is_empty() {
             push(
                 "instrument_missing",
                 format!("{tag}\t{name}"),
@@ -483,14 +551,7 @@ fn main() {
                 None => Vec::new(),
             };
             match stem {
-                None => push(
-                    "probe_no_origin",
-                    format!("{tag}\t{name}"),
-                    true,
-                    &mut findings,
-                    &mut hard,
-                    &mut soft,
-                ),
+                None => {}
                 Some(_) if host_rows.is_empty() => push(
                     "probe_missing",
                     format!("{tag}\t{name}\t{}", block_host.as_deref().unwrap_or("-")),
@@ -581,6 +642,77 @@ fn main() {
             }
         }
 
+        let mut matched: Vec<&Spec> = Vec::new();
+        if has_observables(&block)
+            && let (Some(h), Some(u)) = (block_host.as_ref(), origin_rest.as_deref().or(origin_url))
+        {
+            for inst in &instruments {
+                match spec_for_inst(&specs, h, u, inst) {
+                    Ok(entry) => matched.push(entry),
+                    Err(names) if names.is_empty() => push(
+                        "spec_missing_for_host",
+                        format!("{tag}\t{name}\t{inst}"),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    ),
+                    Err(names) => push(
+                        "instrument_mismatch",
+                        format!("{tag}\t{name}\t{inst}\t{}", names.join(",")),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    ),
+                }
+            }
+            for entry in &matched {
+                if !entry.api_cite || !entry.instrument_cite {
+                    push(
+                        "spec_incomplete",
+                        format!("{tag}\t{name}\t{}", entry.instrument),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                }
+                if !entry.host_cite {
+                    push(
+                        "host_doc_missing",
+                        format!("{tag}\t{name}\t{}", entry.instrument),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                }
+            }
+            if let Some(block_ttl) = field_of(&block, "ttl")
+                .and_then(|p| p.get(1).copied())
+                .and_then(parse_f64)
+            {
+                for entry in &matched {
+                    if let Some(doc) = entry.ttl
+                        && block_ttl as u64 != doc
+                    {
+                        push(
+                            "ttl_mismatch",
+                            format!(
+                                "{tag}\t{name}\t{}\t{}!={doc}",
+                                entry.instrument, block_ttl as u64
+                            ),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    }
+                }
+            }
+        }
+
         for line_text in &block {
             let parts: Vec<&str> = line_text.split_whitespace().collect();
             let head = match parts.first() {
@@ -626,61 +758,30 @@ fn main() {
                     &mut soft,
                 );
             }
-            if let Some(inst) = &instrument {
-                let spec = block_host.as_ref().zip(origin_url).and_then(|(h, u)| spec_for(&specs, h, u));
-                match spec {
-                    None => push(
-                        "spec_missing_for_host",
-                        format!("{tag}\t{name}\t{fname}\t{inst}"),
+            if !matched.is_empty() {
+                if !matched.iter().any(|e| e.units.is_empty() || e.units.contains(unit)) {
+                    push(
+                        "combo_unit",
+                        format!("{tag}\t{name}\t{}\t{unit}", matched.iter().map(|e| e.instrument.as_str()).collect::<Vec<_>>().join(",")),
                         true,
                         &mut findings,
                         &mut hard,
                         &mut soft,
-                    ),
-                    Some(entry) => {
-                        if entry.instrument != *inst {
-                            push(
-                                "instrument_mismatch",
-                                format!("{tag}\t{name}\t{inst}\t{}", entry.instrument),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if !entry.api_cite || !entry.instrument_cite {
-                            push(
-                                "spec_incomplete",
-                                format!("{tag}\t{name}\t{inst}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if !entry.units.contains(unit) {
-                            push(
-                                "combo_unit",
-                                format!("{tag}\t{name}\t{inst}\t{unit}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if let Some(c) = cadence.and_then(parse_f64)
-                            && !entry.samplings.contains(&(c as u64))
-                        {
-                            push(
-                                "combo_sampling",
-                                format!("{tag}\t{name}\t{inst}\t{c}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                    }
+                    );
+                }
+                if !no_cadence
+                    && let Some(c) = cadence.and_then(parse_f64)
+                    && matched.iter().any(|e| !e.intervals.is_empty())
+                    && !matched.iter().any(|e| e.intervals.contains(&(c as u64)))
+                {
+                    push(
+                        "interval_mismatch",
+                        format!("{tag}\t{name}\t{}\t{c}", matched.iter().map(|e| e.instrument.as_str()).collect::<Vec<_>>().join(",")),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
                 }
             }
             if no_cadence {
