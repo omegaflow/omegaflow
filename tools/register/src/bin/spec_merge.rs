@@ -10,16 +10,20 @@ fn blocks(text: &str) -> Vec<(usize, Vec<String>)> {
     let mut cur: Vec<String> = Vec::new();
     let mut start = 0usize;
     for (idx, line) in text.lines().enumerate() {
+        let begins = line.starts_with("host ") || line.starts_with("zustand ");
+        if begins && !cur.is_empty() {
+            out.push((start, std::mem::take(&mut cur)));
+        }
         if line.trim().is_empty() {
             if !cur.is_empty() {
                 out.push((start, std::mem::take(&mut cur)));
             }
-        } else {
-            if cur.is_empty() {
-                start = idx + 1;
-            }
-            cur.push(line.to_string());
+            continue;
         }
+        if cur.is_empty() {
+            start = idx + 1;
+        }
+        cur.push(line.to_string());
     }
     if !cur.is_empty() {
         out.push((start, cur));
@@ -182,7 +186,13 @@ fn host_docs() {
     let mut out = String::new();
     let mut docs = 0usize;
     let mut failed = 0usize;
+    let mut rows = 0usize;
+    let mut with_probe = 0usize;
     for (_, mut b) in blocks(&text) {
+        rows += 1;
+        if field(&b, "probe").is_some() {
+            with_probe += 1;
+        }
         if b.iter().any(|l| l.starts_with("  host_cite ")) {
             out.push_str(&b.join("\n"));
             out.push_str("\n\n");
@@ -235,7 +245,7 @@ fn host_docs() {
         out.push_str("\n\n");
     }
     fs::write(REG, out).expect("register write");
-    println!("host_cite: {docs} ergaenzt, {failed} ohne Header");
+    println!("rows {rows}, mit probe {with_probe}, host_cite: {docs} ergaenzt, {failed} ohne Header");
 }
 
 fn main() {
