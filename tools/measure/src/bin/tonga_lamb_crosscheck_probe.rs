@@ -2,12 +2,19 @@ use omegaflow::archivar::geo::{COMP_BGR_AZIM, COMP_BGR_VAPP, MAGIC_BGR, parse_bi
 use omegaflow::archivar::{angular_distance_deg, embedded_lsk, fetch_raw_bytes};
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::days_from_civil;
+use omegaflow::odp::dsn_host;
 use omegaflow::spectral::civil_from_days;
+use std::sync::OnceLock;
 
 const TONGA_LAT: f64 = -20.536;
 const TONGA_LON: f64 = -175.382;
 const LAMB_SPEED_KM_S: f64 = 0.306;
-const EARTH_RADIUS_KM: f64 = 6371.0;
+
+static RECEIVER_RADIUS_KM: OnceLock<f64> = OnceLock::new();
+
+fn receiver_radius_km() -> Option<f64> {
+    RECEIVER_RADIUS_KM.get().copied()
+}
 const WATER_START_UNIX: f64 = 1642220085.0;
 const DEFAULT_BIN: &str = "sources/download.bgr.de/bgr_infrasound_IS52_2022.bin";
 const KYOTO_LAT: f64 = 35.02938;
@@ -180,7 +187,10 @@ fn kyoto_pressure_section() {
     for name in &absent {
         println!("absent member (named, not filled): {name}");
     }
-    let d = distance_km(KYOTO_LAT, KYOTO_LON, TONGA_LAT, TONGA_LON);
+    let Some(d) = distance_km(KYOTO_LAT, KYOTO_LON, TONGA_LAT, TONGA_LON) else {
+        println!("Kyoto-A: the receiver radius is absent — the distance stays unmeasured");
+        return;
+    };
     let predicted = WATER_START_UNIX + d / LAMB_SPEED_KM_S;
     println!("station: lat {KYOTO_LAT}, lon {KYOTO_LON}");
     println!("great-circle distance to the source: {d:.1} km");
@@ -350,7 +360,11 @@ fn ear_section(station_id: &str, lat: f64, lon: f64, label: &str) {
         println!();
         return;
     }
-    let d = distance_km(lat, lon, TONGA_LAT, TONGA_LON);
+    let Some(d) = distance_km(lat, lon, TONGA_LAT, TONGA_LON) else {
+        println!("{label} ear: the receiver radius is absent — the distance stays unmeasured");
+        println!();
+        return;
+    };
     let predicted = WATER_START_UNIX + d / LAMB_SPEED_KM_S;
     let Some(p_base) = mean_before(&ap, WATER_START_UNIX) else {
         println!("{label} ear: pressure carries no pre-eruption baseline — cross-check pending");
@@ -467,8 +481,9 @@ fn bearing_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     (y.atan2(x).to_degrees() + 360.0) % 360.0
 }
 
-fn distance_km(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
-    angular_distance_deg(lat1, lon1, lat2, lon2).to_radians() * EARTH_RADIUS_KM
+fn distance_km(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> Option<f64> {
+    let r = receiver_radius_km()?;
+    Some(angular_distance_deg(lat1, lon1, lat2, lon2).to_radians() * r)
 }
 
 fn wrap_deg(a: f64) -> f64 {
@@ -494,6 +509,18 @@ fn main() {
         Some(v) => v,
         None => DEFAULT_BIN.to_string(),
     };
+    let Some(host) = dsn_host() else {
+        println!("cross-check pending: the host declaration is void — no receiver radius");
+        return;
+    };
+    let radius_km = match omegaflow::cdn::body_mean_radius_km(host) {
+        Ok(r) => r,
+        Err(e) => {
+            println!("cross-check pending: the receiver radius is absent — {e}");
+            return;
+        }
+    };
+    let _ = RECEIVER_RADIUS_KM.set(radius_km);
 
     println!(
         "=== Tonga 2022 Lamb-wave cross-check — BGR detection vs Lamb travel time + water start time ==="
@@ -537,8 +564,11 @@ fn main() {
     };
 
     let (slat, slon) = (azim[0].lat, azim[0].lon);
-    let d = distance_km(slat, slon, TONGA_LAT, TONGA_LON);
-    let c = 2.0 * std::f64::consts::PI * EARTH_RADIUS_KM;
+    let Some(d) = distance_km(slat, slon, TONGA_LAT, TONGA_LON) else {
+        println!("cross-check pending: the receiver radius is absent — the distance stays unmeasured");
+        return;
+    };
+    let c = 2.0 * std::f64::consts::PI * radius_km;
     let back_azim = bearing_deg(slat, slon, TONGA_LAT, TONGA_LON);
 
     println!("station: lat {slat}, lon {slon} (from the BGR bin)");

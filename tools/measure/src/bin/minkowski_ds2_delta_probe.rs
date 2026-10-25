@@ -82,7 +82,7 @@ fn spacelike_count(fixture: &[Osc], exposure: f64) -> usize {
 
 fn sun(dt: f64) -> Osc {
     Osc {
-        name: "sun",
+        name: "distant",
         d: AU,
         dt,
         val: 1.0,

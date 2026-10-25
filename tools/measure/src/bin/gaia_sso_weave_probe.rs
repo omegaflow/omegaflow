@@ -4,7 +4,7 @@ use std::sync::Arc;
 use omegaflow::archivar::{BodyEphemeris, parse_ephemeris_binary};
 use omegaflow::dastcom::{AsteroidRec, RECORD_STRIDE, parse_record};
 use omegaflow::gaia_sso::{GaiaBody, parse_bin};
-use omegaflow::weberin::{GaiaFold, ReceiverWorldline, Weberin};
+use omegaflow::weberin::{GaiaFold, ReceiverWorldline, Weberin, frame_origin_name};
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -111,13 +111,17 @@ fn main() {
         };
         eph.insert(receiver.label().to_string(), receiver_eph);
     }
-    let Some(sun) = read_eph(&eph_dir, "sun") else {
+    let Some(origin) = frame_origin_name() else {
+        println!("gaia_sso weave: the frame-origin declaration is void — the fold stays unread");
+        return;
+    };
+    let Some(sun) = read_eph(&eph_dir, &origin) else {
         println!(
             "gaia_sso weave: the sun ephemeris bin is void — the heliocentric fold stays unread"
         );
         return;
     };
-    sun_map.insert("sun".to_string(), sun);
+    sun_map.insert(origin, sun);
 
     let mut w = Weberin::new();
     w.eph = Some(Arc::new(eph));

@@ -5,6 +5,7 @@ use omegaflow::archivar::mpcorb::{self, MpcorbRec};
 use omegaflow::archivar::{
     BodyEphemeris, J2000_EPOCH, body_barycenter_position, parse_ephemeris_binary,
 };
+use omegaflow::weberin::frame_origin_name;
 
 fn load_mpcorb(path: &str) -> Vec<MpcorbRec> {
     match std::fs::read(path) {
@@ -58,9 +59,13 @@ fn main() {
         return;
     };
     let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
-    sun_map.insert("sun".to_string(), sun.clone());
+    let Some(origin) = frame_origin_name() else {
+        println!("des_y6 weave: frame-origin declaration void — the fold to barycentric is unread");
+        return;
+    };
+    sun_map.insert(origin.clone(), sun.clone());
     let tdb = (DES_Y6_EPOCH_JD - J2000_EPOCH) * 86400.0;
-    let Some(sun_p) = body_barycenter_position("sun", tdb, &sun_map) else {
+    let Some(sun_p) = body_barycenter_position(&origin, tdb, &sun_map) else {
         println!("des_y6 weave: the sun barycentric position at epoch is void");
         return;
     };
