@@ -161,6 +161,7 @@ host hfradar.ioos.us
   instrument_cite https://ioos.noaa.gov/project/hf-radar/
   instrument_quote "Accuracies of the radar-derived velocities, from numerous peer-reviewed studies, have been shown to be typically in the range 5-10 cm/s."
   probe 2026-10-24T23:24:56Z 200 https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+  probe 2026-10-25T07:58:19Z 200 https://hfradar.ioos.us/erddap/tabledap/
   applies https://hfradar.ioos.us/erddap/tabledap/
   note alle 204 Blockpfade der Gruppe liegen unter /erddap/tabledap/ (VELO/VELU/VELV in cm/s); der Endpunkt nennt keine Kadenz, die Stunde steht auf der IOOS-Seite; der Block sagt 21600 s, das ist die Parser-Zahl, nicht die Kadenz des Anbieters
 
@@ -235,6 +236,8 @@ host www.ndbc.noaa.gov
   instrument_cite https://www.ndbc.noaa.gov/faq/rsa.shtml
   instrument_quote "| Wind Speed | 0 to 62 m/s | 1.71 Hz | 2/8 min * | 0.1 m/s | +/- 1.0 m/s or 10% *** |"
   probe 2026-10-24T23:27:01Z 206 https://www.ndbc.noaa.gov/data/realtime2/46092.txt
+  probe 2026-10-25T07:58:20Z 200 https://www.ndbc.noaa.gov/data/realtime2/
+  probe 2026-10-25T07:58:26Z 200 https://www.ndbc.noaa.gov/data/historical/stdmet/
   applies https://www.ndbc.noaa.gov/data/realtime2/46092.txt
   note nur dieser Met-Pfad; der DART-Pfad (21414.dart) traegt Wassersaeule in m und einen Bodendrucksensor
 

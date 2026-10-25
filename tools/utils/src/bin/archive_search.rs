@@ -2566,6 +2566,7 @@ fn run_stats() -> Vec<String> {
             Ok(v) => v,
             Err(_) => continue,
         };
+        let h = if mode == "probe" && h == 0 && n > 0 { 1 } else { h };
         let e = runs.entry(mode).or_insert((0, 0, 0, 0));
         e.0 += 1;
         e.1 += h;

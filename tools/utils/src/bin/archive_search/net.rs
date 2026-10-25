@@ -5912,12 +5912,16 @@ fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
         Ok(v) => v,
         Err(_) => "-".to_string(),
     };
-    let url_lines = lines
+    let prefix = format!("[{mode}] ");
+    let hit_lines = lines
         .iter()
-        .filter(|l| l.starts_with(&format!("[{mode}] url ")))
+        .filter(|l| {
+            let t = l.strip_prefix(prefix.as_str()).unwrap_or(l);
+            t.starts_with("url ") || t.starts_with("probe ")
+        })
         .count();
-    let hits = url_lines.min(max);
-    let pending = url_lines == 0 && lines.iter().any(|l| l.contains("] pending"));
+    let hits = hit_lines.min(max);
+    let pending = hit_lines == 0 && lines.iter().any(|l| l.contains("] pending"));
     let clean: String = query
         .chars()
         .map(|c| {
