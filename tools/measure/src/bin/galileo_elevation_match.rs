@@ -275,23 +275,20 @@ impl KeyState {
 
 fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
     let host = dsn_host()?;
-    let (lat_deg, lon_deg, _alt) = dsn_station(station)?;
+    let (lat_deg, lon_deg, alt_m) = dsn_station(station)?;
     let p = body_barycenter_position("galileo_daily", t, eph)?;
     let e = body_barycenter_position(host, t, eph)?;
-    let v = sub(p, e);
+    let st = body_fixed_to_icrs(host, lat_deg, lon_deg, alt_m, t, eph)?;
+    let up = norm(sub(st, e));
+    if up <= 0.0 || !up.is_finite() {
+        return None;
+    }
+    let v = sub(p, st);
     let r = norm(v);
     if r <= 0.0 || !r.is_finite() {
         return None;
     }
-    let dec = (v[2] / r).clamp(-1.0, 1.0).asin();
-    let ra = v[1].atan2(v[0]);
-    let jd = t / 86400.0 + 2451545.0;
-    let props = eph.get(host)?.props.as_ref()?;
-    let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
-    let lst = (gmst + lon_deg).rem_euclid(360.0).to_radians();
-    let ha = lst - ra;
-    let phi = lat_deg.to_radians();
-    let sin_el = phi.sin() * dec.sin() + phi.cos() * dec.cos() * ha.cos();
+    let sin_el = dot(v, sub(st, e)) / (r * up);
     Some(sin_el.clamp(-1.0, 1.0).asin().to_degrees())
 }
 
@@ -467,28 +464,15 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
         let dec = (v[2] / r).clamp(-1.0, 1.0).asin().to_degrees();
         let ra = v[1].atan2(v[0]).to_degrees();
         let ra = if ra < 0.0 { ra + 360.0 } else { ra };
-        let jd = 2451545.0 + tq / 86400.0;
-        let Some(props) = eph.get(host).and_then(|e| e.props.as_ref()) else {
-            continue;
-        };
-        let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
         println!(
-            "sanity {tag} tdb {tq:.0}: probe ra {ra:.2} dec {dec:.2} dist {:.3} AU; gmst {gmst:.2}",
+            "sanity {tag} tdb {tq:.0}: probe ra {ra:.2} dec {dec:.2} dist {:.3} AU",
             r / 1.495978707e11
         );
         for station in [14i64, 43, 63] {
-            let (lat, lon, _alt) = dsn_station(station).unwrap_or((0.0, 0.0, 0.0));
-            let lst = (gmst + lon).rem_euclid(360.0);
-            let mut ha = (lst - ra).rem_euclid(360.0);
-            if ha > 180.0 {
-                ha -= 360.0;
+            match elevation_at(tq, station, eph) {
+                Some(el) => println!("   st{station}: elevation {el:.2} deg"),
+                None => println!("   st{station}: elevation absent"),
             }
-            let sinel = lat.to_radians().sin() * dec.to_radians().sin()
-                + lat.to_radians().cos() * dec.to_radians().cos() * ha.to_radians().cos();
-            let el = sinel.clamp(-1.0, 1.0).asin().to_degrees();
-            println!(
-                "   st{station} lat {lat:.1} lon {lon:.1}: lst {lst:.2} ha {ha:.2} textbook-el {el:.2}"
-            );
         }
     }
 
@@ -680,7 +664,7 @@ fn main() {
             .to_string(),
     );
     out.push("binding: pass/sub-arc/state construction identical to galileo_pass_strength_ramp (gap > gap_s pass boundary; |resid| > 1000 Hz lock excluded; strength floor <= -2560, plateau >= -1900, between or 0 = transition/pad; sub-arc = contiguous same-state run split on state change, > 120 s gap, or 60 samples; chunk noise = resid RMS about the chunk mean; chunk >= 30 samples enters the pool)".to_string());
-    out.push("elevation proxy: spherical-astronomy topocentric elevation of the probe above the station horizon; probe topocentric direction = galileo_daily barycenter minus earth barycenter (ICRS RA/Dec; station parallax negligible at ~6 AU, probe-earth dist 1-6 AU over the era); station geodetic position via dsn_station (DSS 14 35.4268333N -116.8900000E, DSS 43 -35.4014889N 148.9816167E, DSS 63 40.4312500N -4.2487778E); local sidereal time = the host body's declared prime-meridian rotation (BodyProperties w0_deg + dw_dt_deg_per_day from J2000; tdb~UT1 to ~1 min, equinox-of-date vs ICRS RA <= ~0.5 deg) + east longitude; elevation = asin(sin lat sin dec + cos lat cos dec cos HA), horizon = 0 deg; validated by pass gating (file samples occupy exactly the positive-elevation hours, e.g. DSS43 1997-01-04 peak ~+71 deg at 04:00 UTC)".to_string());
+    out.push("elevation: the station worldline comes from body_fixed_to_icrs (host pole, prime meridian and nutation from the ephemeris); probe direction = galileo_daily barycenter minus the station position; elevation = asin(unit(probe - station) · unit(station - geocenter)), horizon = 0 deg; validated by pass gating (file samples occupy exactly the positive-elevation hours, e.g. DSS43 1997-01-04 peak ~+71 deg at 04:00 UTC)".to_string());
     out.push("matched-elevation comparison: (A) per dual pass, floor and plateau sub-arcs whose chunk-mean elevations both fall within a tolerance window of width 2T (best common window per pass, min(state sample n) maximised, both >= 30); (B) per pass per elevation band of width band_w, sample-level floor vs plateau noise within the same band".to_string());
     out.push(format!(
         "pass gap threshold: {gap_s:.0} s; band width W {band_w:.0} deg; stations 14/43/63; modes 1 (elevation computed) and 2 (structure only)"
