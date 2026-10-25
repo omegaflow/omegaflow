@@ -107,6 +107,12 @@ fn main() {
     println!("distance {origin_body}-{body} {:.1} km", n / 1000.0);
     if let Some(e) = map.get(&body) {
         println!("bin {body}: {} rotation matrices", e.rotation_matrices.len());
+        if let Some(p) = e.props.as_ref() {
+            let jd = tdb / 86400.0 + 2451545.0;
+            if let Some((ra, dec, w)) = omegaflow::archivar::orientation_angles_at(p, jd) {
+                println!("code orientation at jd {jd:.5}: ra {ra:.4} dec {dec:.4} w {w:.4}");
+            }
+        }
     }
     println!(
         "sub-{origin_body} point at unix {epoch_unix}: lon {lon:.6} lat {lat:.6} (ours)"
