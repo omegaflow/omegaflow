@@ -4,8 +4,9 @@ use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::ephemeris::body_of_ephemeris_asset;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    BodyEphemeris, BodyProperties, C_LIGHT, body_barycenter_position, embedded_lsk,
-    fetch_raw_bytes, light_time_worldline, parse_ephemeris_binary,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, body_fixed_to_icrs,
+    body_fixed_to_icrs_smooth, embedded_lsk, fetch_raw_bytes, light_time_worldline,
+    parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::odp::dsn_host;
@@ -114,23 +115,29 @@ fn fit_rows(rows: &[&Row]) -> Option<[f64; 4]> {
     solve4(fit.ata, fit.atb)
 }
 
-fn station_offset(jd_utc: f64, props: &BodyProperties) -> Option<([f64; 3], [f64; 3])> {
-    let f = props.flattening?;
-    let lr = OBS_LAT_DEG.to_radians();
-    let nr = OBS_LON_DEG.to_radians();
-    let e2 = f * (2.0 - f);
-    let sl = lr.sin();
-    let n = props.radius_m / (1.0 - e2 * sl * sl).sqrt();
-    let xb = (n + OBS_ALT_M) * lr.cos() * nr.cos();
-    let yb = (n + OBS_ALT_M) * lr.cos() * nr.sin();
-    let zb = (n * (1.0 - e2) + OBS_ALT_M) * sl;
-    let d = jd_utc - JD_J2000;
-    let g = (props.w0_deg + props.dw_dt_deg_per_day * d).rem_euclid(360.0).to_radians();
-    let (sg, cg) = g.sin_cos();
-    let pos = [xb * cg - yb * sg, xb * sg + yb * cg, zb];
-    let rot_rad_s = props.dw_dt_deg_per_day.to_radians() / 86400.0;
-    let vel = [-pos[1] * rot_rad_s, pos[0] * rot_rad_s, 0.0];
-    Some((pos, vel))
+fn station_offset(
+    map: &HashMap<String, BodyEphemeris>,
+    host: &str,
+    jd_utc: f64,
+) -> Option<([f64; 3], [f64; 3])> {
+    let tdb = (jd_utc - JD_J2000) * 86400.0;
+    let dt = 1.0;
+    let at = |t: f64| -> Option<[f64; 3]> {
+        let p = body_fixed_to_icrs(host, OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M, t, map)?;
+        let b = body_barycenter_position(host, t, map)?;
+        Some([p[0] - b[0], p[1] - b[1], p[2] - b[2]])
+    };
+    let p0 = at(tdb)?;
+    let pp = body_fixed_to_icrs_smooth(host, OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M, tdb + dt, map)?;
+    let bp = body_barycenter_position(host, tdb + dt, map)?;
+    let pm = body_fixed_to_icrs_smooth(host, OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M, tdb - dt, map)?;
+    let bm = body_barycenter_position(host, tdb - dt, map)?;
+    let vel = [
+        (pp[0] - bp[0] - pm[0] + bm[0]) / (2.0 * dt),
+        (pp[1] - bp[1] - pm[1] + bm[1]) / (2.0 * dt),
+        (pp[2] - bp[2] - pm[2] + bm[2]) / (2.0 * dt),
+    ];
+    Some((p0, vel))
 }
 
 fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
@@ -407,15 +414,7 @@ fn main() {
                 rows.push(None);
                 continue;
             };
-            let Some(props) = map
-                .get(&line.host)
-                .and_then(|e| e.props.as_ref())
-                .filter(|p| p.flattening.is_some())
-            else {
-                rows.push(None);
-                continue;
-            };
-            let Some((off, v_rot)) = station_offset(o.jd_utc, props) else {
+            let Some((off, v_rot)) = station_offset(map, &line.host, o.jd_utc) else {
                 rows.push(None);
                 continue;
             };
