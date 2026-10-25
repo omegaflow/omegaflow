@@ -748,3 +748,130 @@ host pds-geosciences.wustl.edu
   probe 2026-10-25T09:06:01Z 206 https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
   applies https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
   note Deskriptor: Mission Venera 15/16, Instrument "Radar Altimeter", ASCII; Planetoidenradius in km, along-track footprint 10 km (high-res) bzw. ca. 70 km (low-res). Kadenz nicht ausgewiesen.
+host spdf.gsfc.nasa.gov
+  instrument radio science (S/X-band occultation receiver)
+  unit samples/s
+  cadence 0.00000625
+  api_cite https://nssdc.gsfc.nasa.gov/nmc/datasetDisplay.do?id=PSPA-00316
+  api_quote "The sample rate is 160,000 samples/s for both S-band and X-band."
+  instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1973-085A-02
+  instrument_quote "This experiment used X- (8400 MHz) and S- (2113 MHz) band, on-board radio systems for whatever scientific purposes could be devised."
+  probe 2026-10-25T09:14:45Z 206 https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/PSPA-00316_DD029604_05-FEB-74.tar
+  applies https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
+  note Block ist ein tar-Bundle aus PSPA-00316 (NSSDCA-Beschreibung nennt die Abtastrate); die beiliegenden attrib/*_att sind NSSDC-Attributobjekte ohne Einheit, sie tragen nur Format-ID NSSD1260 und Stream-Groessen.
+
+host spdf.gsfc.nasa.gov
+  instrument S-band transmitter/receiver (Doppler tracking)
+  unit Hz
+  api_cite https://sbnarchive.psi.edu/pds3/dawn/grav/DWNCGRS_0/DOCUMENT/T2-18-L5.PDF
+  api_quote "The DDOD Doppler observables are phase delay rate measurements and have units of Hz"
+  instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC5255541
+  instrument_quote "The Pioneer 10 and 11 spacecraft used S-band transmitters and receivers."
+  probe 2026-10-25T09:14:46Z 206 https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER/73288o74360_bj_sc23.odf
+  applies https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER
+  note Die .odf sind DSN Orbit Data Files im TRK-2-18-Format (820-013, Rev. E); api_quote aus Anhang A.2, Leerzeichen normalisiert. Kadenz ist die per-Record gesetzte Compression Time (TRK-2-18 Item 21, Sekunden), nicht konstant. Das Verzeichnis-readme von Turyshev20170327_Pioneer-10 sagt ausdruecklich "we do not have any information on the data formats" — daher das DSN-Spezifikationsdokument als Formatbeleg.
+
+host spdf.gsfc.nasa.gov
+  instrument S-band transmitter/receiver (Doppler tracking)
+  unit seconds
+  api_cite https://asd.gsfc.nasa.gov/Craig.Markwardt/atdf
+  api_quote "For example column 30, Sampler Time, is the sampler time in seconds multiplied by 100. Thus, this column can keep up to 0.01 seconds of precision."
+  instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC5255541
+  instrument_quote "The Pioneer 10 and 11 spacecraft used S-band transmitters and receivers."
+  probe 2026-10-25T09:14:47Z 206 https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/87037T071.DAT
+  applies https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/
+  note ATDF = DSN TRK-2-25; physikalischer Record 2016 32-bit-Woerter / 28 logische Records zu 288 Byte (Markwardt-Notizen). Kadenz ist nicht fix: der Sampler-Time-Schritt ist 0.1 s, die Doppler-Integration schwankt je Pass.
+
+host spdf.gsfc.nasa.gov
+  instrument S-band transmitter/receiver (Doppler tracking)
+  unit Hz
+  api_cite https://sbnarchive.psi.edu/pds3/dawn/grav/DWNCGRS_0/DOCUMENT/T2-18-L5.PDF
+  api_quote "The DDOD Doppler observables are phase delay rate measurements and have units of Hz"
+  instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC5255541
+  instrument_quote "The Pioneer 10 and 11 spacecraft used S-band transmitters and receivers."
+  probe 2026-10-25T09:17:38Z 206 https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER/74108o360_bj_archive_sc24.odf
+  applies https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER
+  note Wie Block 10862, nur Pioneer 11 (SC 24); Dateien .odf im TRK-2-18-Format, Kadenz = Compression Time je Record.
+
+host spdf.gsfc.nasa.gov
+  instrument radio science (narrow-band S/X-band occultation receiver)
+  unit Hz
+  cadence 0.0016 0.000533333
+  api_cite https://nssdc.gsfc.nasa.gov/nmc/datasetDisplay.do?id=PSPA-00217
+  api_quote "After filtering and decimation, the sampling rates are exactly 625 Hz at S-band and 1875 Hz at X-band."
+  instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1977-084A-02
+  instrument_quote "The system was a coherent S- and X-band downlink and an S-band uplink."
+  probe 2026-10-25T09:14:45Z 206 https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/PSPA-00217_DD059825_13-NOV-80.tar
+  applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/
+  note Kadenz aus den Abtastraten: 1/625 s bzw. 1/1875 s. Datenrecords 512 complex words, Muster S,X,X,X.
+
+host spdf.gsfc.nasa.gov
+  instrument radio science (S/X-band transponder, Doppler and range tracking)
+  unit second of day
+  api_cite https://nssdc.gsfc.nasa.gov/nmc/datasetDisplay.do?id=PSPA-00049
+  api_quote "the transponder record contains the instrument on and off times (in year, day of year, hour, minute, and second of day); the network ID; station number; and transmitter type and frequency."
+  instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1977-084A-02
+  instrument_quote "The system was a coherent S- and X-band downlink and an S-band uplink."
+  probe 2026-10-25T09:14:46Z 206 https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/PSPA-00049_DD059517_21-OCT-80.tar
+  applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
+  note Die NSSDCA-Beschreibung nennt fuer die Tracking-Records Doppler-Frequenz, Range und Time-Tag, aber keine Einheit der Doppler-Werte und keine Kadenz; belegt ist nur die Zeitbasis (second of day) im Transponder-Record. Block = 1792-Wort-Bloecke mit 64-Wort-File-ID, 64-Wort-Transponder und 26 Tracking-Records.
+
+host spdf.gsfc.nasa.gov
+  instrument solar EUV photodiode spectrometer (CELIAS/SEM)
+  unit count rate; flux 26-34 nm / 0.1-50 nm
+  cadence 86400
+  api_cite https://spdf.gsfc.nasa.gov/pub/data/soho/celias/sem_1day/00readme.txt
+  api_quote "This directory contains CDF files with the CELIAS-SEM 1-day data, including Channel 1 through 3 count rates, first order flux (26-34 nm, average of CH1 and CH3), central order flux (0.1 - 50 nm, CH2)"
+  instrument_cite https://www.ieap.uni-kiel.de/et/soho/celias/instrument.html
+  instrument_quote "The Solar Extreme-Ultra-Violet Monitor, SEM, is a highly stable photodiode spectrometer that will continuously measure the full solar disk absolute photon flux at the prominent and scientifically important He II 30.4 nm line, as well as the absolute integral flux between 17 and 70 nm."
+  probe 2026-10-25T09:14:47Z 206 https://spdf.gsfc.nasa.gov/pub/data/soho/celias/ascii/CELIAS_SEM_daily_avg.tar.gz
+  applies https://spdf.gsfc.nasa.gov/pub/data/soho/celias/ascii/CELIAS_SEM_daily_avg.tar.gz
+  note Der Block ist ein tar.gz; das Verzeichnis ascii/ enthaelt nur die vier tar.gz-Bundles und keine eigene Readme. Die Beschreibung des Produkts (1-day, CH1-CH3, 26-34 nm / 0.1-50 nm) steht im sem_1day-Readme derselben Sammlung; die LASP-Release-Notes v4 fuehren als Einheit photons cm^-2 s^-1 und als Werte "daily average".
+
+host spdf.gsfc.nasa.gov
+  instrument fluxgate magnetometer
+  unit nT
+  cadence 3600
+  api_cite https://spdf.gsfc.nasa.gov/pub/data/imp/imp8/mag/1hr_ascii_sw/00readme.txt
+  api_quote "This data set has annual files of hourly IMP 8 magnetic field averages, in ASCII format."
+  instrument_cite https://www.eoportal.org/satellite-missions/imp-8
+  instrument_quote "MAG is a boom-mounted triaxial fluxgate magnetometer."
+  probe 2026-10-25T09:14:45Z 206 https://spdf.gsfc.nasa.gov/pub/data/imp/imp8/mag/1hr_ascii_sw/imp_mag_hr_sw1974.asc
+  applies https://spdf.gsfc.nasa.gov/pub/data/imp/imp8/mag/1hr_ascii_sw/
+  note Stundenmittel entstehen nur aus 1-min-Werten mit Solarwind-Flag; Word 10 ist "Field Magnitude Average |B| ... nT", Words 14-18 Bx/By/Bz in nT. Jahresdateien 1973-2002.
+
+host spdf.gsfc.nasa.gov
+  instrument fluxgate magnetometer (E2, merged mit Plasma-Analysator E1)
+  unit nanoteslas
+  cadence 86400
+  api_cite https://spdf.gsfc.nasa.gov/pub/data/helios/helios1/merged/he1mgd.txt
+  api_quote "For the daily resolution data (one file), simple averages were taken over the hourly values."
+  instrument_cite https://spase-metadata.org/NASA/NumericalData/Helios1/E2/PT1H.html
+  instrument_quote "The instrument (E2) consisted of a triaxial fluxgate magnetometer mounted on a 2.75-m boom to make magnetic field measurements up to 4 Hz."
+  probe 2026-10-25T09:14:46Z 206 https://spdf.gsfc.nasa.gov/pub/data/helios/helios1/merged/helios1_daily.asc
+  applies https://spdf.gsfc.nasa.gov/pub/data/helios/helios1/merged/helios1_daily.asc
+  note Ein File mit Tagesmitteln aus den Stundenwerten; Words 9-15 in nanoteslas, Word 16 km/s, Word 19 protons/cm3. Die Tagesrecords tragen im Stundenfeld den Wert 0.
+
+host spdf.gsfc.nasa.gov
+  instrument fluxgate magnetometer (E2, merged mit Plasma-Analysator E1)
+  unit nanoteslas
+  cadence 86400
+  api_cite https://spdf.gsfc.nasa.gov/pub/data/helios/helios2/merged/he2mgd.txt
+  api_quote "For the daily resolution data (one file), simple averages were taken over the hourly values."
+  instrument_cite https://spase-metadata.org/NASA/NumericalData/Helios2/E2/PT1H.html
+  instrument_quote "The instrument (E2) consisted of a triaxial fluxgate magnetometer mounted on a 2.75-m boom to make magnetic field measurements up to 4 Hz."
+  probe 2026-10-25T09:14:47Z 206 https://spdf.gsfc.nasa.gov/pub/data/helios/helios2/merged/helios2_daily.asc
+  applies https://spdf.gsfc.nasa.gov/pub/data/helios/helios2/merged/helios2_daily.asc
+  note Wie Helios 1, nur Helios 2; he2mgd.txt beschreibt dasselbe Spaltenformat (nanoteslas fuer Words 9-15).
+
+host spdf.gsfc.nasa.gov
+  instrument radio receiver (WAVES: TNR, RAD1, RAD2)
+  unit normalized receiver voltage
+  cadence 60
+  api_cite https://wind.nasa.gov/data_sources.php
+  api_quote "1 minute resolution normalized receiver voltages from the RAD1, RAD2 and TNR receivers are available from CDAWeb."
+  instrument_cite https://solar-radio.gsfc.nasa.gov/wind/instrument.html
+  instrument_quote "After preamplification, the sensor outputs are routed to the analysis electronics, consisting of a low frequency (DC - 10 kHz) FFT receiver, a broadband (4 kHz - 256 kHz) multi-channel analyzer designed principally to study the electron thermal noise, two dual radio receivers covering the band 20 kHz to 13.825 MHz, and a time-domain waveform sampler (sampling to 120,000/s)."
+  probe 2026-10-25T09:14:48Z 206 https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/1994/wi_h1_wav_19941110_v01.cdf
+  applies https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
+  note wav_h1 traegt taegliche CDF-Dateien wi_h1_wav_YYYYMMDD_v01.cdf. Das WAVES-Readme nennt "one file/day" und "3-min averages" nur fuer die Plot-Serien; die CDAWeb-Notes zu WI_H1_WAV geben 24 sec an, die Instrumentenseite 3-min- bis 1-min-Aufloesung — der belegte Wert hier ist die 1-Minuten-Angabe aus data_sources.php.

@@ -215,7 +215,8 @@ fn probe_admits(status: &str) -> bool {
 }
 
 fn origin_stem(url: &str) -> &str {
-    &url[..url.find('?').unwrap_or(url.len())]
+    let cut = url.find('?').into_iter().chain(url.find('{')).min().unwrap_or(url.len());
+    &url[..cut]
 }
 
 fn host_of(url: &str) -> Option<String> {
