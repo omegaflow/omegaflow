@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    BodyEphemeris, body_barycenter_position, body_fixed_vector_to_icrs, embedded_lsk,
+    BodyEphemeris, body_barycenter_position, body_fixed_to_icrs_smooth,
+    body_fixed_vector_to_icrs, embedded_lsk, body_fixed_to_icrs,
     parse_ephemeris_binary,
 };
 
@@ -31,6 +32,16 @@ fn main() {
         println!("usage: pck_subeobserver_probe --body <name> --body-bin <bin> --origin <name> --origin-bin <bin>");
         return;
     };
+    let epoch_unix = arg_value(&args, "--unix")
+        .and_then(|v| v.parse::<f64>().ok())
+        .filter(|v| v.is_finite() && *v > 0.0)
+        .unwrap_or(EPOCH_UNIX);
+    let ref_lon = arg_value(&args, "--ref-lon")
+        .and_then(|v| v.parse::<f64>().ok())
+        .unwrap_or(HORIZONS_LON_DEG);
+    let ref_lat = arg_value(&args, "--ref-lat")
+        .and_then(|v| v.parse::<f64>().ok())
+        .unwrap_or(HORIZONS_LAT_DEG);
     let (Some(body_eph), Some(origin_eph)) = (load(&body_path), load(&origin_path)) else {
         println!("a bin reads unparsed — the sub-observer point stays unmeasured");
         return;
@@ -39,7 +50,7 @@ fn main() {
         println!("the embedded LSK carries no naif0012 table — the TDB axis stays unconverted");
         return;
     };
-    let Some(tdb) = lsk.unix_to_tdb(EPOCH_UNIX) else {
+    let Some(tdb) = lsk.unix_to_tdb(epoch_unix) else {
         println!("the epoch reads void on the leap table");
         return;
     };
@@ -94,18 +105,40 @@ fn main() {
     let dec = (to_origin[2] / n).asin().to_degrees();
     println!("geocentric astrometric RA {ra:.4} h DEC {dec:.4} deg");
     println!("distance {origin_body}-{body} {:.1} km", n / 1000.0);
-    if let Some(p) = map.get(&body).and_then(|e| e.props.as_ref()) {
-        println!(
-            "props {body}: a0 {:.4} d a0 {:.6} d0 {:.4} w0 {:.4} dw {:.7}",
-            p.α0_deg, p.dα0_dt_deg_per_century, p.δ0_deg, p.w0_deg, p.dw_dt_deg_per_day
-        );
+    if let Some(e) = map.get(&body) {
+        println!("bin {body}: {} rotation matrices", e.rotation_matrices.len());
     }
     println!(
-        "sub-{origin_body} point at 2000-01-01T12:00Z: lon {lon:.6} lat {lat:.6} (ours)"
+        "sub-{origin_body} point at unix {epoch_unix}: lon {lon:.6} lat {lat:.6} (ours)"
     );
     println!(
-        "horizons: lon {HORIZONS_LON_DEG:.6} lat {HORIZONS_LAT_DEG:.6} → dlon {:.6} dlat {:.6} deg",
-        lon - HORIZONS_LON_DEG,
-        lat - HORIZONS_LAT_DEG
+        "reference: lon {ref_lon:.6} lat {ref_lat:.6} → dlon {:.6} dlat {:.6} deg",
+        lon - ref_lon,
+        lat - ref_lat
     );
+    if let Some(s) = body_fixed_to_icrs_smooth(&body, ref_lat, ref_lon, 0.0, tdb, &map) {
+        let v = [s[0] - body_bc[0], s[1] - body_bc[1], s[2] - body_bc[2]];
+        let vn = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+        let to = [to_origin[0], to_origin[1], to_origin[2]];
+        let tn = (to[0] * to[0] + to[1] * to[1] + to[2] * to[2]).sqrt();
+        let cos = (v[0] * to[0] + v[1] * to[1] + v[2] * to[2]) / (vn * tn);
+        println!(
+            "smooth path: the reference surface point sits {:.6} deg from the {origin_body} direction",
+            cos.clamp(-1.0, 1.0).acos().to_degrees()
+        );
+    } else {
+        println!("smooth path: the reference surface point is absent");
+    }
+    if let (Some(m), Some(s)) = (
+        body_fixed_to_icrs(&body, ref_lat, ref_lon, 0.0, tdb, &map),
+        body_fixed_to_icrs_smooth(&body, ref_lat, ref_lon, 0.0, tdb, &map),
+    ) {
+        let d = [m[0] - s[0], m[1] - s[1], m[2] - s[2]];
+        let dn = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+        let sn = (s[0] * s[0] + s[1] * s[1] + s[2] * s[2]).sqrt();
+        println!(
+            "matrix path vs polynomial path: {:.6} deg apart",
+            (dn / sn).asin().to_degrees()
+        );
+    }
 }
