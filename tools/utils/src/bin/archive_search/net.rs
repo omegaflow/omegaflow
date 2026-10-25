@@ -2663,57 +2663,6 @@ fn firecrawl_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-pub fn searchapi_lines(query: &str, token: &str, max: usize) -> Vec<String> {
-    if token.is_empty() {
-        return vec!["pending — SEARCHAPI_API_KEY absent from .secrets.local/.env".to_string()];
-    }
-    let url = format!(
-        "https://www.searchapi.io/api/v1/search?engine=google&q={}&num={}&api_key={}",
-        urlencode(query),
-        max,
-        urlencode(token)
-    );
-    match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = organic_lines(&v, "organic_results", max);
-                if out.is_empty() {
-                    out.push(format!("absent — SearchApi carries no entry: {}", query));
-                }
-                out
-            }
-            None => vec!["pending — the SearchApi response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!("pending — SearchApi HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
-    }
-}
-
-pub fn serpapi_lines(query: &str, token: &str, max: usize) -> Vec<String> {
-    if token.is_empty() {
-        return vec!["pending — SERPAPI_API_KEY absent from .secrets.local/.env".to_string()];
-    }
-    let url = format!(
-        "https://serpapi.com/search.json?engine=google&q={}&num={}&api_key={}",
-        urlencode(query),
-        max,
-        urlencode(token)
-    );
-    match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = organic_lines(&v, "organic_results", max);
-                if out.is_empty() {
-                    out.push(format!("absent — SerpApi carries no entry: {}", query));
-                }
-                out
-            }
-            None => vec!["pending — the SerpApi response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!("pending — SerpApi HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
-    }
-}
 
 pub fn oeis_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!("https://oeis.org/search?q={}&fmt=json", urlencode(query));
@@ -5417,8 +5366,6 @@ const QUERY_MODES: &[&str] = &[
     "linkup",
     "serper",
     "firecrawl",
-    "searchapi",
-    "serpapi",
     "oeis",
     "hal",
     "wiby",
@@ -5472,9 +5419,7 @@ const QUERY_MODES: &[&str] = &[
     "alphafold",
     "alphaxiv",
     "alphaxiv-researchers",
-    "consensus",
     "perplexity",
-    "gemini",
     "wikidata",
     "ckan",
     "cmr",
@@ -5516,7 +5461,6 @@ const QUERY_MODES: &[&str] = &[
     "orcid",
     "ror",
     "opencitations",
-    "grepapp",
     "scholexplorer",
     "mendeley",
     "usgs",
@@ -6112,34 +6056,6 @@ fn run_lines_dispatch(
                 )],
             }
         }
-        "searchapi" => {
-            let token = resolve_key(
-                env.get("SEARCHAPI_API_KEY")
-                    .map(String::as_str)
-                    .unwrap_or(""),
-                env,
-            );
-            match token {
-                Secret::Value(t) => searchapi_lines(query, &t, max),
-                Secret::Absent(marker) => vec![format!(
-                    "pending — {} absent from .secrets.local/.env",
-                    token_key("SEARCHAPI_API_KEY", marker)
-                )],
-            }
-        }
-        "serpapi" => {
-            let token = resolve_key(
-                env.get("SERPAPI_API_KEY").map(String::as_str).unwrap_or(""),
-                env,
-            );
-            match token {
-                Secret::Value(t) => serpapi_lines(query, &t, max),
-                Secret::Absent(marker) => vec![format!(
-                    "pending — {} absent from .secrets.local/.env",
-                    token_key("SERPAPI_API_KEY", marker)
-                )],
-            }
-        }
         "oeis" => oeis_lines(query, max),
         "hal" => hal_lines(query, max),
         "wiby" => wiby_lines(query, max),
@@ -6394,23 +6310,7 @@ fn run_lines_dispatch(
         "nssdca" => crate::nssdc::nssdca_lines(query, max),
         "nssdc-auth" => crate::cas_auth::nssdc_auth_lines(env),
         "ssdc-auth" => crate::cas_auth::ssdc_auth_lines(query, env),
-        "consensus" => {
-            let token = resolve_key(
-                env.get("CONSENSUS_API_KEY")
-                    .map(String::as_str)
-                    .unwrap_or(""),
-                env,
-            );
-            match token {
-                Secret::Value(t) => crate::consensus::consensus_lines(query, &t, max),
-                Secret::Absent(marker) => vec![format!(
-                    "pending — {} absent from .secrets.local/.env",
-                    token_key("CONSENSUS_API_KEY", marker)
-                )],
-            }
-        }
         "perplexity" => crate::perplexity::perplexity_lines(query),
-        "gemini" => crate::gemini::gemini_lines(query),
         "wikidata" => crate::wikidata::wikidata_lines(query, max),
         "googlecse" => crate::googlecse::googlecse_lines(query, max),
         "ckan" => crate::ckan::ckan_lines(query, max),
@@ -6462,7 +6362,6 @@ fn run_lines_dispatch(
         "orcid" => crate::orcid::orcid_lines(query, max),
         "ror" => crate::ror::ror_lines(query, max),
         "opencitations" => crate::opencitations::opencitations_lines(query, max),
-        "grepapp" => crate::grepapp::grepapp_lines(query, max),
         "scholexplorer" => crate::scholexplorer::scholexplorer_lines(query, max),
         "mendeley" => crate::mendeley::mendeley_lines(query, max),
         "usgs" => crate::usgs::usgs_lines(query, max),

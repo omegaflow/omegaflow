@@ -18,10 +18,6 @@ host opendata.fmi.fi
   instrument_quote "Danish fluxgate magnetometer (FG); sampling rate 2 Hz; one-minute values are averages of +/- 30 s around the full minute"
   probe 2026-10-24T22:51:40Z 200 https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::observations::magnetometer::simple&stationname=sodankyla&starttime=2026-10-24T00:00:00Z&endtime=2026-10-24T01:00:00Z
 
-host geomag.usgs.gov
-  probe 2026-10-24T22:51:41Z 404 https://geomag.usgs.gov/ws/data/?id=BOU
-  note the documented example URL answers 404 direct and through the proton exit; only the 2024-06-17 wayback snapshot answers — the metadata routes (/ws/observatories/, /ws/health) answer 200, the data path does not
-
 host services.swpc.noaa.gov
   instrument fluxgate
   unit nT

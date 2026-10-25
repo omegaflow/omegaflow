@@ -32,8 +32,6 @@ mod cmr;
 mod cochrane;
 #[path = "archive_search/cod.rs"]
 mod cod;
-#[path = "archive_search/consensus.rs"]
-mod consensus;
 #[path = "archive_search/copernicus.rs"]
 mod copernicus;
 #[path = "archive_search/core.rs"]
@@ -86,8 +84,6 @@ mod gaia;
 mod gbif;
 #[path = "archive_search/gbooks.rs"]
 mod gbooks;
-#[path = "archive_search/gemini.rs"]
-mod gemini;
 #[path = "archive_search/geonames.rs"]
 mod geonames;
 #[path = "archive_search/git.rs"]
@@ -98,8 +94,6 @@ mod go;
 mod googlecse;
 #[path = "archive_search/gosat.rs"]
 mod gosat;
-#[path = "archive_search/grepapp.rs"]
-mod grepapp;
 #[path = "archive_search/groups.rs"]
 mod groups;
 #[path = "archive_search/heasarc.rs"]
@@ -347,7 +341,6 @@ enum Mode {
     PdfText,
     ArxivSrc,
     Oai,
-    Consensus,
     Lasair,
     Perplexity,
     Lpf,
@@ -390,15 +383,12 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--searxng" => Some(Mode::Net("searxng")),
         "--tavily" => Some(Mode::Net("tavily")),
         "--exa" => Some(Mode::Net("exa")),
-        "--consensus" => Some(Mode::Consensus),
         "--lasair" => Some(Mode::Lasair),
         "--perplexity" => Some(Mode::Perplexity),
         "--lpf" => Some(Mode::Lpf),
         "--linkup" => Some(Mode::Net("linkup")),
         "--serper" => Some(Mode::Net("serper")),
         "--firecrawl" => Some(Mode::Net("firecrawl")),
-        "--searchapi" => Some(Mode::Net("searchapi")),
-        "--serpapi" => Some(Mode::Net("serpapi")),
         "--oeis" => Some(Mode::Net("oeis")),
         "--hal" => Some(Mode::Net("hal")),
         "--wiby" => Some(Mode::Net("wiby")),
@@ -453,7 +443,6 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--openlibrary" => Some(Mode::Net("openlibrary")),
         "--stackexchange" => Some(Mode::Net("stackexchange")),
         "--sourcegraph" => Some(Mode::Net("sourcegraph")),
-        "--gemini" => Some(Mode::Net("gemini")),
         "--wikidata" => Some(Mode::Net("wikidata")),
         "--googlecse" => Some(Mode::Net("googlecse")),
         "--ckan" => Some(Mode::Net("ckan")),
@@ -495,7 +484,6 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--orcid" => Some(Mode::Net("orcid")),
         "--ror" => Some(Mode::Net("ror")),
         "--opencitations" => Some(Mode::Net("opencitations")),
-        "--grepapp" => Some(Mode::Net("grepapp")),
         "--scholexplorer" => Some(Mode::Net("scholexplorer")),
         "--mendeley" => Some(Mode::Net("mendeley")),
         "--usgs" => Some(Mode::Net("usgs")),
@@ -554,7 +542,6 @@ impl Mode {
             Mode::PdfText => "pdf-text",
             Mode::ArxivSrc => "arxiv-src",
             Mode::Oai => "arxiv-oai",
-            Mode::Consensus => "consensus",
             Mode::Lasair => "lasair",
             Mode::Perplexity => "perplexity",
             Mode::Lpf => "lpf",
@@ -1401,42 +1388,6 @@ fn main() {
             }
             Mode::Oai => {
                 let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
-                emit_hits(
-                    &mut sink,
-                    lines,
-                    mode.label(),
-                    fulltext_on,
-                    fulltext_limit,
-                    &mut fulltext_used,
-                );
-            }
-            Mode::Consensus => {
-                let query = keywords.join(" ");
-                let mut env_map = match secrets_root() {
-                    Some(repo) => secrets::load_env(&repo),
-                    None => env::vars().collect(),
-                };
-                token_cmd::refresh_env(&mut env_map);
-                let key = secrets::resolve_key(
-                    env_map
-                        .get("CONSENSUS_API_KEY")
-                        .map(String::as_str)
-                        .unwrap_or(""),
-                    &env_map,
-                );
-                let lines = match key {
-                    secrets::Secret::Value(t) => consensus::consensus_lines(&query, &t, 10),
-                    secrets::Secret::Absent(marker) => {
-                        let name = match marker {
-                            Some(m) => format!("CONSENSUS_API_KEY marker {{{m}}}"),
-                            None => "CONSENSUS_API_KEY".to_string(),
-                        };
-                        vec![format!(
-                            "pending — {} absent from .secrets.local/.env",
-                            name
-                        )]
-                    }
-                };
                 emit_hits(
                     &mut sink,
                     lines,
@@ -2643,7 +2594,7 @@ fn usage() {
     eprintln!(
         "       archive_search --base \"query\"       (BASE_API_KEY; 1.1 s spacing enforced)"
     );
-    eprintln!("  --perplexity/--gemini/other keyed routes: only if 1–3 stayed empty");
+    eprintln!("  --perplexity/other keyed routes: only if 1–3 stayed empty");
     eprintln!("  --youcom (paid) is excluded; --youmcp (free) is keyless and allowed.");
     eprintln!();
     eprintln!("  Do not start with --all or --jobs >1. --all fans out over many arms;");
@@ -2668,7 +2619,7 @@ fn usage() {
     eprintln!();
     eprintln!("NETWORK SOURCES");
     eprintln!("  One arm per call, e.g. --arxiv, --crossref, --openalex, --pubmed,");
-    eprintln!("  --europepmc, --pangaea, --fdsn, --github, --grepapp, --openlibrary.");
+    eprintln!("  --europepmc, --pangaea, --fdsn, --github, --openlibrary.");
     eprintln!("  --list-sources prints every arm and its groups; --help-all prints the");
     eprintln!("  full per-arm reference (endpoint, key, fields).");
     eprintln!("  Key scope: Z_AI_API_KEY is the OpenCode provider key; archive_search");
@@ -2676,8 +2627,8 @@ fn usage() {
     eprintln!("  OMEGAFLOW_SECRETS_FILE, the private-house fallback, or OMEGAFLOW_<KEY>_CMD.");
     eprintln!("  ydc-server/you-discover is an agent/skill finder, not web search.");
     eprintln!("  Keyless meta: --4get --mwmbl --marginalia --searxng --youmcp --wiby --ia-search.");
-    eprintln!("  Keyed fallback: --base, --perplexity, --gemini, --brave,");
-    eprintln!("  --exa, --tavily, --serper, --firecrawl, --searchapi, --serpapi.");
+    eprintln!("  Keyed fallback: --base, --perplexity, --brave,");
+    eprintln!("  --exa, --tavily, --serper, --firecrawl.");
     eprintln!("  --all [--stop <n>] [--jobs <n>] [--dedupe|--no-dedupe] [--group ...]");
     eprintln!("      fan-out; keep --jobs 1 when any keyed route is present.");
     eprintln!();
@@ -2784,7 +2735,7 @@ fn usage_full() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--cdse|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--lasair|--perplexity|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--cdse|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2817,10 +2768,8 @@ fn usage_full() {
         "  --firecrawl Firecrawl search (api.firecrawl.dev/v1/search, Bearer; OSS self-host fallback); url + title/description"
     );
     eprintln!(
-        "  --searchapi SearchApi.io (searchapi.io/api/v1/search, Bearer); url + title/position/snippet"
     );
     eprintln!(
-        "  --serpapi   SerpApi (serpapi.com/search.json, api_key); url + title/position/snippet"
     );
     eprintln!(
         "  --oeis      OEIS integer-sequence search (oeis.org/search?fmt=json), keyless; url + title/data"
@@ -2841,7 +2790,6 @@ fn usage_full() {
         "  --sourcegraph Sourcegraph code search (sourcegraph.com/.api/search/stream), keyless; repo/path/line/match"
     );
     eprintln!(
-        "  --gemini    Google Gemini answer+search (generativelanguage.googleapis.com), GEMINI_API_KEY; answer text + Google-Search grounding sources (model=<id> overrides gemini-flash-latest)"
     );
     eprintln!(
         "  --wikidata  Wikidata entity search (wikidata.org/w/api.php wbsearchentities), keyless; id/label/description"
@@ -2970,7 +2918,6 @@ fn usage_full() {
         "  --opencitations OpenCitations citation count (opencitations.net/index/api/v1, DOI only), keyless; doi + citations"
     );
     eprintln!(
-        "  --grepapp   grep.app code search (grep.app/api/search), keyless; repo/path (Vercel checkpoint may answer 429)"
     );
     eprintln!(
         "  --scholexplorer OpenAIRE Scholexplorer links (api.scholexplorer.openaire.eu/v3/Links, DOI/PMID), keyless; target + relation type"
@@ -3066,7 +3013,6 @@ fn usage_full() {
         "  --exa       Exa Search API (api.exa.ai), EXA_API_KEY; url + title/author/published/text"
     );
     eprintln!(
-        "  --consensus Consensus literature search (api.consensus.app), CONSENSUS_API_KEY; title/doi/publish_year/citation_count/study_type/takeaway"
     );
     eprintln!(
         "  --lasair    Lasair LSST object query (api.lasair.lsst.ac.uk), LASAIR_LSST_TOKEN; objectId -> present diaObject fields (direct, then socks5h 127.0.0.1:25344)"
