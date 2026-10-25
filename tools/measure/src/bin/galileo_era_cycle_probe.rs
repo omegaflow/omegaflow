@@ -2,6 +2,7 @@ use std::collections::{BTreeMap, HashMap};
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
+use omegaflow_measure::absent;
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -108,7 +109,11 @@ fn spearman(x: &[f64], y: &[f64]) -> Option<f64> {
 
 fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = omegaflow::odp::dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -151,7 +156,7 @@ fn main() {
         let t = day as f64 * DAY_S;
         if let (Some(p), Some(e)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(host, t, &eph),
         ) {
             let r_probe = norm(p);
             let r_earth = norm(e);
@@ -208,7 +213,7 @@ fn main() {
             qr.entry((y as i64, rl)).or_default().push(c.2);
         }
         println!("\n== mode {m}: {} day cells ==", rows.len());
-        let mut spe: Vec<(String, f64, f64, usize)> = Vec::new();
+        let mut spe: Vec<(String, Option<f64>, Option<f64>, usize)> = Vec::new();
         for rl in ["CONJ eps0-30", "MID eps30-150", "OPP eps150-180"] {
             let days: Vec<f64> = cells
                 .iter()
@@ -225,31 +230,33 @@ fn main() {
             if nd > 0 {
                 spe.push((
                     rl.to_string(),
-                    rho.unwrap_or(f64::NAN),
-                    median(&rms_v).unwrap_or(f64::NAN),
+                    rho,
+                    median(&rms_v),
                     nd,
                 ));
             }
         }
         for (rl, rho, med, nd) in &spe {
             println!(
-                "  {rl}: n_days {nd}  pooled-day median {med:.1} Hz  spearman(dayRMS vs day) {rho:+.2}"
+                "  {rl}: n_days {nd}  pooled-day median {} Hz  spearman(dayRMS vs day) {}",
+                absent::number(*med, 1),
+                rho.map_or("absent".to_string(), |r| format!("{r:+.2}"))
             );
         }
         println!("  per (year, quarter, regime): n days, median day RMS Hz");
         for ((y, q, rl), v) in &yr {
             println!(
-                "    {y}-q{q} {rl}: n {:>2}  med {:6.2} Hz",
+                "    {y}-q{q} {rl}: n {:>2}  med {} Hz",
                 v.len(),
-                median(v).unwrap_or(f64::NAN)
+                absent::number(median(v), 2)
             );
         }
         println!("  per (year, regime) pooled across quarters:");
         for ((y, rl), v) in &qr {
             println!(
-                "    {y} {rl}: n_days {:>2}  med {:6.2} Hz",
+                "    {y} {rl}: n_days {:>2}  med {} Hz",
                 v.len(),
-                median(v).unwrap_or(f64::NAN)
+                absent::number(median(v), 2)
             );
         }
     }
@@ -295,9 +302,9 @@ fn main() {
         }
         for (y, v) in &near {
             println!(
-                "    {y}: n {} med {:.2} Hz",
+                "    {y}: n {} med {} Hz",
                 v.len(),
-                median(v).unwrap_or(f64::NAN)
+                absent::number(median(v), 2)
             );
         }
     }
@@ -336,16 +343,19 @@ fn main() {
                         v
                     },
                 );
-                let med_o = median(opp).unwrap_or(f64::NAN);
-                let med_c = median(conj).unwrap_or(f64::NAN);
+                let med_o = median(opp);
+                let med_c = median(conj);
                 println!(
-                    "  mode {m} {y}: OPP n {:>2} med {:.2} Hz | CONJ n {:>2} med {:.2} Hz | ratio {:.1}x | same-year spearman(all eps) {rho_all:+.2}",
+                    "  mode {m} {y}: OPP n {:>2} med {} Hz | CONJ n {:>2} med {} Hz | ratio {} | same-year spearman(all eps) {}",
                     opp.len(),
-                    med_o,
+                    absent::number(med_o, 2),
                     conj.len(),
-                    med_c,
-                    med_o / med_c,
-                    rho_all = rho_all.unwrap_or(f64::NAN)
+                    absent::number(med_c, 2),
+                    match (med_o, med_c) {
+                        (Some(o), Some(c)) if c != 0.0 => format!("{:.1}x", o / c),
+                        _ => "absent".to_string(),
+                    },
+                    rho_all.map_or("absent".to_string(), |r| format!("{r:+.2}"))
                 );
             }
         }

@@ -1,6 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::mitdb::{decimate, decode_212, envelope, parse_hea};
 use omegaflow::te::{phase_randomized_surrogate, topological_te_phase, transfer_entropy_lag};
+use omegaflow_measure::absent;
 
 const BASE: &str = "https://physionet.org/files/mitdb/1.0.0/";
 const BUCKET_S: f64 = 1.0;
@@ -128,8 +129,8 @@ fn main() {
     let mut best: Option<(usize, f64)> = None;
     for lag in 0..=LAG_MAX {
         let seed = SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let ab = transfer_entropy_lag(&b, &a, lag).unwrap_or(f64::NAN);
-        let ba = transfer_entropy_lag(&a, &b, lag).unwrap_or(f64::NAN);
+        let ab = transfer_entropy_lag(&b, &a, lag);
+        let ba = transfer_entropy_lag(&a, &b, lag);
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         for _ in 0..N_SURR {
             let sa = phase_randomized_surrogate(&a, &mut rng);
@@ -139,12 +140,17 @@ fn main() {
                 }
             }
         }
-        if ab > best.map_or(f64::NEG_INFINITY, |(_, v)| v) {
-            best = Some((lag, ab));
+        if let Some(v) = ab {
+            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+                best = Some((lag, v));
+            }
         }
         println!(
-            "{:>4} | {:>11.4e} | {:>11.4e} | {:>11.4e}",
-            lag, ab, ba, fam
+            "{:>4} | {:>11} | {:>11} | {:>11.4e}",
+            lag,
+            absent::scientific(ab, 4),
+            absent::scientific(ba, 4),
+            fam
         );
     }
     println!();

@@ -3,6 +3,8 @@ use std::fs;
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
+use omegaflow::odp::dsn_host;
+use omegaflow_measure::absent;
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -212,12 +214,16 @@ fn main() {
     };
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
         }
     }
-    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
+    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key(host);
     let Ok(bytes) = fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
@@ -305,7 +311,7 @@ fn main() {
             let t = d as f64 * DAY_S;
             if let (Some(p), Some(e)) = (
                 body_barycenter_position("galileo_daily", t, &eph),
-                body_barycenter_position("earth", t, &eph),
+                body_barycenter_position(host, t, &eph),
             ) {
                 if let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p)) {
                     geo.insert(
@@ -396,12 +402,12 @@ fn main() {
             let loud = sub.iter().filter(|c| c.rms >= LOUD_HZ).count();
             push(String::new());
             push(format!(
-                "== mode {mode} {name}: {n_samp} samples, {} cells, {} distinct days, {}-{}, loud {loud}, median cell RMS {:.4} Hz ==",
+                "== mode {mode} {name}: {n_samp} samples, {} cells, {} distinct days, {}-{}, loud {loud}, median cell RMS {} Hz ==",
                 sub.len(),
                 days.len(),
                 fmt_opt_t0(sub.iter().map(|c| c.t0).min_by(f64::total_cmp)),
                 fmt_opt_t0(sub.iter().map(|c| c.t0).max_by(f64::total_cmp)),
-                median(&rms_v).unwrap_or(f64::NAN)
+                absent::number(median(&rms_v), 4)
             ));
             let stations: BTreeSet<i64> = sub.iter().map(|c| c.st).collect();
             for st in &stations {
@@ -411,15 +417,14 @@ fn main() {
                 let sloud = ssub.iter().filter(|c| c.rms >= LOUD_HZ).count();
                 let s_samp: usize = ssub.iter().map(|c| c.n).sum();
                 push(format!(
-                    "  st{st}: {} samples, {} cells, {} days, {}-{}, loud {sloud}, median {:.4} Hz, span med n {}",
+                    "  st{st}: {} samples, {} cells, {} days, {}-{}, loud {sloud}, median {} Hz, span med n {}",
                     s_samp,
                     ssub.len(),
                     sdays.len(),
                     fmt_opt_t0(ssub.iter().map(|c| c.t0).min_by(f64::total_cmp)),
                     fmt_opt_t0(ssub.iter().map(|c| c.t0).max_by(f64::total_cmp)),
-                    median(&srms).unwrap_or(f64::NAN),
-                    median(&ssub.iter().map(|c| c.n as f64).collect::<Vec<f64>>())
-                        .unwrap_or(f64::NAN) as usize
+                    absent::number(median(&srms), 4),
+                    absent::number(median(&ssub.iter().map(|c| c.n as f64).collect::<Vec<f64>>()), 0)
                 ));
             }
         }
@@ -456,10 +461,10 @@ fn main() {
             let loud30 = n30.iter().filter(|c| c.rms >= LOUD_HZ).count();
             let n30_rms: Vec<f64> = n30.iter().map(|c| c.rms).collect();
             line.push_str(&format!(
-                " n>=30 {}c/{}l/med {:.4} Hz",
+                " n>=30 {}c/{}l/med {} Hz",
                 n30.len(),
                 loud30,
-                median(&n30_rms).unwrap_or(f64::NAN)
+                absent::number(median(&n30_rms), 4)
             ));
             push(line);
         }
@@ -537,13 +542,13 @@ fn main() {
                 let d1 = run.last().unwrap().day;
                 let run_len = d1 - d0 + 1;
                 push(format!(
-                    "    run {k}: {}-{} ({} calendar d, {} floor d, loud {loud}/{}) med {:.4} Hz",
+                    "    run {k}: {}-{} ({} calendar d, {} floor d, loud {loud}/{}) med {} Hz",
                     fmt_daycell(d0),
                     fmt_daycell(d1),
                     run_len,
                     run.len(),
                     run.len(),
-                    median(&rms_v).unwrap_or(f64::NAN)
+                    absent::number(median(&rms_v), 4)
                 ));
                 if k + 1 < runs.len() {
                     let nd = runs[k + 1].first().unwrap().day;

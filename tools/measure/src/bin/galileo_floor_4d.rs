@@ -2,6 +2,8 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
+use omegaflow::odp::dsn_host;
+use omegaflow_measure::absent;
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -469,10 +471,10 @@ fn envelope_rows(
             let rms_v: Vec<f64> = sub.iter().map(|c| c.rms).collect();
             let loud = sub.iter().filter(|c| c.rms >= LOUD_HZ).count();
             line.push_str(&format!(
-                "{name} {}c/{}d/{:.3}Hz/{loud}l | ",
+                "{name} {}c/{}d/{}Hz/{loud}l | ",
                 sub.len(),
                 days.len(),
-                median(&rms_v).unwrap_or(f64::NAN)
+                absent::number(median(&rms_v), 3)
             ));
         }
         sec.push(line);
@@ -509,10 +511,10 @@ fn envelope_rows(
             let rms_v: Vec<f64> = sub.iter().map(|c| c.rms).collect();
             let loud = sub.iter().filter(|c| c.rms >= LOUD_HZ).count();
             line.push_str(&format!(
-                "{name} {}c/{}d/{:.3}Hz/{loud}l | ",
+                "{name} {}c/{}d/{}Hz/{loud}l | ",
                 sub.len(),
                 days.len(),
-                median(&rms_v).unwrap_or(f64::NAN)
+                absent::number(median(&rms_v), 3)
             ));
         }
         sec.push(line);
@@ -544,9 +546,9 @@ fn envelope_rows(
             } else {
                 let rms_v: Vec<f64> = sub.iter().map(|c| c.rms).collect();
                 line.push_str(&format!(
-                    "{a:.0}-{b:.0}: {}c/{:.3}Hz | ",
+                    "{a:.0}-{b:.0}: {}c/{}Hz | ",
                     sub.len(),
-                    median(&rms_v).unwrap_or(f64::NAN)
+                    absent::number(median(&rms_v), 3)
                 ));
             }
         }
@@ -577,10 +579,10 @@ fn envelope_rows(
         let (y, m) = (mk / 12, mk % 12);
         let name = if *floor { "floor" } else { "strong" };
         sec.push(format!(
-            "  {y:04}-{m:02} {name}: {}c/{}d/med {:.4} Hz/{}l",
+            "  {y:04}-{m:02} {name}: {}c/{}d/med {} Hz/{}l",
             bin.rms.len(),
             bin.days.len(),
-            median(&bin.rms).unwrap_or(f64::NAN),
+            absent::number(median(&bin.rms), 4),
             bin.loud
         ));
     }
@@ -593,12 +595,16 @@ fn main() {
         None => "tmp/galileo_floor_4d_report.txt".to_string(),
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
         }
     }
-    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
+    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key(host);
     let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
@@ -692,7 +698,7 @@ fn main() {
             let t = d as f64 * DAY_S;
             if let (Some(p), Some(e)) = (
                 body_barycenter_position("galileo_daily", t, &eph),
-                body_barycenter_position("earth", t, &eph),
+                body_barycenter_position(host, t, &eph),
             ) {
                 let rp = norm(p) / AU_M;
                 if let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p)) {
@@ -747,10 +753,10 @@ fn main() {
             let rms_v: Vec<f64> = srows.iter().map(|c| c.rms).collect();
             let name = if floor { "floor" } else { "strong" };
             let line = format!(
-                "  {name}: {n_samp} samples, {} (day,station) cells, {} distinct days, {lo_d} .. {hi_d}, loud {loud} cells, median cell RMS {:.3} Hz",
+                "  {name}: {n_samp} samples, {} (day,station) cells, {} distinct days, {lo_d} .. {hi_d}, loud {loud} cells, median cell RMS {} Hz",
                 srows.len(),
                 days.len(),
-                median(&rms_v).unwrap_or(f64::NAN)
+                absent::number(median(&rms_v), 3)
             );
             println!("{line}");
             out.push(line);

@@ -1,6 +1,7 @@
 use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, star_stride};
 use omegaflow::healpix::icrs_to_galactic;
 use omegaflow::json::{JsonVal, parse_json};
+use omegaflow_measure::absent;
 use omegaflow_measure::weberin::deredden::{
     BACKGROUND_PC_MIN, DustMap, StarIndex, WANG_G_FACTOR, WANG_GBP_FACTOR, abs_mag,
     build_star_index, dwarf_color_type, intrinsic_of, type_label,
@@ -209,31 +210,36 @@ fn report_object(
                     type_label(col_type),
                     col_mg
                 );
-                let m_g0 = itr.map(|i| i.m_g0).unwrap_or(f64::NAN);
-                let lum_delta = m_g0 - mg0;
+                let m_g0 = itr.map(|i| i.m_g0);
+                let lum_delta = m_g0.map(|v| v - mg0);
                 println!(
-                    "   DEREDDENED (G0, BP-RP0): G0 {:.3}  BP-RP0 {:.3}  -> dwarf-seq type {} (M_G dwarf expectation {:.2}) | M_G0 measured {:.2} (delta to dwarf {:.2})",
+                    "   DEREDDENED (G0, BP-RP0): G0 {:.3}  BP-RP0 {:.3}  -> dwarf-seq type {} (M_G dwarf expectation {:.2}) | M_G0 measured {} (delta to dwarf {})",
                     g0,
                     bp_rp0,
                     type_label(t0),
                     mg0,
-                    m_g0,
-                    lum_delta
+                    absent::number(m_g0, 2),
+                    absent::number(lum_delta, 2)
                 );
                 let m_g_obs = abs_mag(s.mag, s.plx_mas);
                 println!(
-                    "   reading: without the dust column the star is typed {}; with the {:.3}-mag column removed it is typed {} (dwarf-sequence color) — the identification of the counterpart changes. M_G (uncorrected) {:.2} vs M_G0 {:.2}: the star is {}.",
+                    "   reading: without the dust column the star is typed {}; with the {:.3}-mag column removed it is typed {} (dwarf-sequence color) — the identification of the counterpart changes. M_G (uncorrected) {:.2} vs M_G0 {}: the star is {}.",
                     type_label(col_type),
                     d.av,
                     type_label(t0),
                     m_g_obs,
-                    m_g0,
-                    if lum_delta < -3.0 {
-                        "evolved (a giant/subgiant: far brighter than a dwarf of its intrinsic color)"
-                    } else if lum_delta > 3.0 {
-                        "fainter than a dwarf of its intrinsic color (an unreliable parallax or a subdwarf/white-dwarf blend)"
-                    } else {
-                        "consistent with a dwarf of its intrinsic color (the dwarf-sequence type applies)"
+                    absent::number(m_g0, 2),
+                    match lum_delta {
+                        Some(v) if v < -3.0 => {
+                            "evolved (a giant/subgiant: far brighter than a dwarf of its intrinsic color)"
+                        }
+                        Some(v) if v > 3.0 => {
+                            "fainter than a dwarf of its intrinsic color (an unreliable parallax or a subdwarf/white-dwarf blend)"
+                        }
+                        Some(_) => {
+                            "consistent with a dwarf of its intrinsic color (the dwarf-sequence type applies)"
+                        }
+                        None => "unmeasured without a measured M_G0 (no verdict)",
                     }
                 );
             }

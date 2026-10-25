@@ -4,6 +4,7 @@ use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800};
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use omegaflow_measure::absent;
 
 const GOES_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin";
@@ -361,7 +362,7 @@ struct Row {
     cells_mean: f64,
     best_lag: usize,
     d: f64,
-    thr: f64,
+    thr: Option<f64>,
     pos: usize,
     surr_max: f64,
 }
@@ -377,7 +378,7 @@ fn row_for(
     let windows = window_pairs(cells, events, from, to, half, min_cells);
     let mut surr_max = f64::NEG_INFINITY;
     let mut best: Option<(usize, f64)> = None;
-    let mut best_thr = f64::NAN;
+    let mut best_thr: Option<f64> = None;
     let mut best_pos = 0usize;
     let mut best_tot = 0usize;
     let mut best_cells = f64::NAN;
@@ -401,7 +402,7 @@ fn row_for(
                 surr_max = v;
             }
         }
-        let thr = mean_plus_2sigma(&surr_vals).unwrap_or(f64::NAN);
+        let thr = mean_plus_2sigma(&surr_vals);
         if d.is_finite() {
             if best.map_or(true, |(_, b)| d > b) {
                 best = Some((lag, d));
@@ -431,7 +432,7 @@ fn row_for(
             cells_mean: f64::NAN,
             best_lag: 0,
             d: f64::NAN,
-            thr: f64::NAN,
+            thr: None,
             pos: 0,
             surr_max,
         },
@@ -711,7 +712,7 @@ fn main() {
             "no-statement"
         } else if fam.is_finite() && r.d > fam {
             "ARROW"
-        } else if r.thr.is_finite() && r.d > r.thr {
+        } else if r.thr.is_some_and(|t| r.d > t) {
             "family bound"
         } else {
             "still"
@@ -731,14 +732,14 @@ fn main() {
             String::new()
         };
         println!(
-            "{:>8} -> {:<8} | n_ev {:>4} | {:.1} cells/ev | lag {:>2} h | D {:>10.4e} | thr {:>10.4e} | pos {:>4}/{:>4} | {}{}",
+            "{:>8} -> {:<8} | n_ev {:>4} | {:.1} cells/ev | lag {:>2} h | D {:>10.4e} | thr {:>10} | pos {:>4}/{:>4} | {}{}",
             actors[r.from].name,
             actors[r.to].name,
             r.n_ev,
             r.cells_mean,
             r.best_lag,
             r.d,
-            r.thr,
+            absent::scientific(r.thr, 4),
             r.pos,
             r.n_ev,
             word,

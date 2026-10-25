@@ -2,6 +2,8 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
+use omegaflow::odp::dsn_host;
+use omegaflow_measure::absent;
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -68,7 +70,11 @@ fn jd_date(tdb_s: f64) -> String {
 
 fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -104,7 +110,7 @@ fn main() {
         let t = *d as f64 * DAY_S;
         let (Some(p), Some(e)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(host, t, &eph),
         ) else {
             continue;
         };
@@ -309,9 +315,9 @@ fn main() {
     if !b1_real_rms.is_empty() {
         let s = sorted_nan_last(&b1_real_rms);
         out.push(format!(
-            "  band1 median (real cells, n = {}): {:.3} Hz",
+            "  band1 median (real cells, n = {}): {} Hz",
             b1_real_rms.len(),
-            median_upper(&s).unwrap_or(f64::NAN)
+            absent::number(median_upper(&s), 3)
         ));
     }
 

@@ -2,6 +2,7 @@ use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use omegaflow_measure::absent;
 use std::collections::HashMap;
 
 const F107_CDN: &str =
@@ -43,19 +44,23 @@ fn read_f107(path: &str) -> Vec<(i64, f64)> {
     out
 }
 
+fn asset_body(url: &str) -> Option<String> {
+    omegaflow::archivar::ephemeris::body_of_ephemeris_asset(url)
+}
+
 fn load_ephemerides(args: &[String]) -> HashMap<String, BodyEphemeris> {
     let mut eph = HashMap::new();
-    for (name, url, arg) in [
-        ("jupiter", JUPITER_CDN, "--jupiter-bin"),
-        ("saturn", SATURN_CDN, "--saturn-bin"),
-    ] {
+    for (url, arg) in [(JUPITER_CDN, "--jupiter-bin"), (SATURN_CDN, "--saturn-bin")] {
+        let Some(name) = asset_body(url) else {
+            continue;
+        };
         let bytes = match arg_value(args, arg) {
             Some(p) => std::fs::read(&p).ok(),
             None => fetch_raw_bytes(url),
         };
         if let Some(b) = bytes {
             if let Some(e) = parse_ephemeris_binary(&b) {
-                eph.insert(name.to_string(), e);
+                eph.insert(name, e);
             }
         }
     }
@@ -63,8 +68,10 @@ fn load_ephemerides(args: &[String]) -> HashMap<String, BodyEphemeris> {
 }
 
 fn tidal_at(tdb: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
-    let rj = body_barycenter_position("jupiter", tdb, eph)?;
-    let rs = body_barycenter_position("saturn", tdb, eph)?;
+    let jupiter = asset_body(JUPITER_CDN)?;
+    let saturn = asset_body(SATURN_CDN)?;
+    let rj = body_barycenter_position(&jupiter, tdb, eph)?;
+    let rs = body_barycenter_position(&saturn, tdb, eph)?;
     let dj = (rj[0] * rj[0] + rj[1] * rj[1] + rj[2] * rj[2]).sqrt();
     let ds = (rs[0] * rs[0] + rs[1] * rs[1] + rs[2] * rs[2]).sqrt();
     if dj <= 0.0 || ds <= 0.0 {
@@ -178,8 +185,8 @@ fn main() {
     let mut best: Option<(usize, f64)> = None;
     for lag in 0..=LAG_MAX {
         let seed = SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let tf = transfer_entropy_lag(&f_series, &t_series, lag).unwrap_or(f64::NAN);
-        let ft = transfer_entropy_lag(&t_series, &f_series, lag).unwrap_or(f64::NAN);
+        let tf = transfer_entropy_lag(&f_series, &t_series, lag);
+        let ft = transfer_entropy_lag(&t_series, &f_series, lag);
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         let mut vals = Vec::new();
         for _ in 0..N_SURR {
@@ -191,12 +198,17 @@ fn main() {
                 }
             }
         }
-        if tf > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
-            best = Some((lag, tf));
+        if let Some(v) = tf {
+            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+                best = Some((lag, v));
+            }
         }
         println!(
-            "{:>4} | {:>11.4e} | {:>11.4e} | {:>11.4e}",
-            lag, tf, ft, fam
+            "{:>4} | {:>11} | {:>11} | {:>11.4e}",
+            lag,
+            absent::scientific(tf, 4),
+            absent::scientific(ft, 4),
+            fam
         );
     }
     println!();

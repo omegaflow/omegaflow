@@ -3,6 +3,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::bison_shift::parse_bin as parse_bison;
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{phase_randomized_surrogate, topological_te_phase, transfer_entropy_lag};
+use omegaflow_measure::absent;
 
 const BISON_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bison_shift.bin";
@@ -113,8 +114,8 @@ fn main() {
     let mut best: Option<(usize, f64)> = None;
     for lag in 0..=LAG_MAX {
         let seed = SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let sf = transfer_entropy_lag(&f_series, &s_series, lag).unwrap_or(f64::NAN);
-        let fs = transfer_entropy_lag(&s_series, &f_series, lag).unwrap_or(f64::NAN);
+        let sf = transfer_entropy_lag(&f_series, &s_series, lag);
+        let fs = transfer_entropy_lag(&s_series, &f_series, lag);
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         for _ in 0..N_SURR {
             let ss = phase_randomized_surrogate(&s_series, &mut rng);
@@ -124,12 +125,17 @@ fn main() {
                 }
             }
         }
-        if sf > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
-            best = Some((lag, sf));
+        if let Some(v) = sf {
+            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+                best = Some((lag, v));
+            }
         }
         println!(
-            "{:>4} | {:>11.4e} | {:>11.4e} | {:>11.4e}",
-            lag, sf, fs, fam
+            "{:>4} | {:>11} | {:>11} | {:>11.4e}",
+            lag,
+            absent::scientific(sf, 4),
+            absent::scientific(fs, 4),
+            fam
         );
     }
     println!();

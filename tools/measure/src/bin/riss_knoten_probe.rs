@@ -201,8 +201,8 @@ struct Encounter {
     distance_deg: f64,
     ground_f: f64,
     swarm_f: f64,
-    ground_sigma: f64,
-    swarm_sigma: f64,
+    ground_sigma: Option<f64>,
+    swarm_sigma: Option<f64>,
 }
 
 fn parse_vector_rows(text: &str) -> Vec<Row> {
@@ -381,8 +381,8 @@ fn encounter(
         .filter(|r| (r.t - enc_t).abs() <= SWARM_SIGMA_WINDOW_S)
         .map(|r| r.f)
         .collect();
-    let ground_sigma = std(&g_win).unwrap_or(f64::NAN);
-    let swarm_sigma = std(&s_win).unwrap_or(f64::NAN);
+    let ground_sigma = std(&g_win);
+    let swarm_sigma = std(&s_win);
     Some(Encounter {
         epoch: enc_t,
         distance_deg: dist,
@@ -512,8 +512,8 @@ fn grammar() {
         distance_deg: 0.02,
         ground_f: 53699.2,
         swarm_f: 53700.6,
-        ground_sigma: 0.4,
-        swarm_sigma: 0.6,
+        ground_sigma: Some(0.4),
+        swarm_sigma: Some(0.6),
     };
     println!(
         "{}",
@@ -524,8 +524,8 @@ fn grammar() {
         distance_deg: 0.02,
         ground_f: 53699.2,
         swarm_f: 44510.0,
-        ground_sigma: 0.4,
-        swarm_sigma: 0.6,
+        ground_sigma: Some(0.4),
+        swarm_sigma: Some(0.6),
     };
     println!(
         "{}",
@@ -743,15 +743,11 @@ fn main() {
                     ),
                     Some(e) => {
                         let dev = (e.ground_f - e.swarm_f).abs();
-                        let sigma_tol = if e.ground_sigma.is_finite() && e.swarm_sigma.is_finite() {
-                            Some(
-                                SIGMA_K
-                                    * (e.ground_sigma * e.ground_sigma
-                                        + e.swarm_sigma * e.swarm_sigma)
-                                        .sqrt(),
-                            )
-                        } else {
-                            None
+                        let sigma_tol = match (e.ground_sigma, e.swarm_sigma) {
+                            (Some(g), Some(s)) => {
+                                Some(SIGMA_K * (g * g + s * s).sqrt())
+                            }
+                            _ => None,
                         };
                         let tol = tol_arg.or(sigma_tol);
                         station_ledger_for_match(&station, &e, dev, tol)
@@ -907,8 +903,8 @@ mod tests {
             distance_deg: 0.02,
             ground_f: 53699.2,
             swarm_f: 53700.6,
-            ground_sigma: 0.4,
-            swarm_sigma: 0.6,
+            ground_sigma: Some(0.4),
+            swarm_sigma: Some(0.6),
         };
         let line = station_ledger_for_match("ABK", &enc, 1.4, Some(4.8));
         assert!(line.starts_with("riss knot station-ABK state zwirn lines intermagnet-ground(intermagnet-xyzf-best-avail) + swarm-overflight(swarm-maga_lr-1b-scalar-f)"));

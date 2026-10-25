@@ -257,13 +257,12 @@ fn origin_median(
     lon: f64,
 ) -> Option<f64> {
     let cand = surface_point(lat, lon)?;
-    let mut offsets: Vec<f64> = station_xyz
-        .iter()
-        .zip(arrival.iter())
-        .map(|(xyz, a)| a - p_travel_depth(arc_deg(&cand, xyz), depth_km).unwrap_or(f64::NAN))
-        .collect();
-    if offsets.iter().any(|v| !v.is_finite()) {
-        return None;
+    let mut offsets: Vec<f64> = Vec::with_capacity(arrival.len());
+    for (xyz, a) in station_xyz.iter().zip(arrival.iter()) {
+        let Some(t) = p_travel_depth(arc_deg(&cand, xyz), depth_km) else {
+            return None;
+        };
+        offsets.push(a - t);
     }
     Some(median(&mut offsets))
 }
@@ -297,7 +296,11 @@ fn main() {
             return;
         }
     };
-    let earth_b = match ephemeris_cache_bytes("earth", EARTH_EPH_CDN) {
+    let Some(host) = omegaflow::odp::dsn_host() else {
+        eprintln!("quake location probe: host declaration void — abort");
+        return;
+    };
+    let earth_b = match ephemeris_cache_bytes(host, EARTH_EPH_CDN) {
         Some(b) => b,
         None => {
             eprintln!("quake location probe: earth ephemeris unreadable — abort");
@@ -319,7 +322,7 @@ fn main() {
         }
     };
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-    map.insert("earth".to_string(), eph);
+    map.insert(host.to_string(), eph);
 
     println!(
         "=== quake location — {} BHZ stations, P-wave difference inversion ===",
@@ -362,7 +365,7 @@ fn main() {
             skipped.push(key);
             continue;
         };
-        let Some(xyz) = body_fixed_to_icrs("earth", *lat, *lon, 0.0, t_ref, &map) else {
+        let Some(xyz) = body_fixed_to_icrs(host, *lat, *lon, 0.0, t_ref, &map) else {
             eprintln!("{} worldline absent — skipped", key);
             skipped.push(key);
             continue;
@@ -383,7 +386,7 @@ fn main() {
     }
 
     let surface_point =
-        |lat: f64, lon: f64| body_fixed_to_icrs("earth", lat, lon, 0.0, t_ref, &map);
+        |lat: f64, lon: f64| body_fixed_to_icrs(host, lat, lon, 0.0, t_ref, &map);
 
     let Some((lat_all, lon_all, depth_all, res_all)) =
         locate_depth(&surface_point, &station_xyz, &arrival)
@@ -469,18 +472,24 @@ fn main() {
     for (idx, key) in keys.iter().enumerate() {
         let a = arc_deg(&cand2, &station_xyz[idx]);
         let residual = match t0 {
-            Some(t) => arrival[idx] - t - p_travel_depth(a, depth2).unwrap_or(f64::NAN),
-            None => f64::NAN,
+            Some(t) => p_travel_depth(a, depth2).map(|tt| arrival[idx] - t - tt),
+            None => None,
         };
         let mark = if rejected.contains(key) {
             "  rejected"
         } else {
             ""
         };
-        println!(
-            "{:>12} {:>15.3} {:>8.2} {:>10.2}{}",
-            key, arrival[idx], a, residual, mark
-        );
+        match residual {
+            Some(r) => println!(
+                "{:>12} {:>15.3} {:>8.2} {:>10.2}{}",
+                key, arrival[idx], a, r, mark
+            ),
+            None => println!(
+                "{:>12} {:>15.3} {:>8.2} {:>10}{}",
+                key, arrival[idx], a, "absent", mark
+            ),
+        }
     }
     for key in skipped.iter() {
         println!("{:>12} skipped (no pick)", key);

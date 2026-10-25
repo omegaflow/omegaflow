@@ -3,6 +3,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::gong_series::parse_bin as parse_gong;
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{phase_randomized_surrogate, topological_te_phase, transfer_entropy_lag};
+use omegaflow_measure::absent;
 use std::collections::HashMap;
 
 const GONG_CDN: &str =
@@ -143,8 +144,8 @@ fn main() {
     let mut best: Option<(usize, f64)> = None;
     for lag in 0..=LAG_MAX {
         let seed = SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let gf = transfer_entropy_lag(&f_series, &g_series, lag).unwrap_or(f64::NAN);
-        let fg = transfer_entropy_lag(&g_series, &f_series, lag).unwrap_or(f64::NAN);
+        let gf = transfer_entropy_lag(&f_series, &g_series, lag);
+        let fg = transfer_entropy_lag(&g_series, &f_series, lag);
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         for _ in 0..N_SURR {
             let gs = phase_randomized_surrogate(&g_series, &mut rng);
@@ -154,12 +155,17 @@ fn main() {
                 }
             }
         }
-        if gf > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
-            best = Some((lag, gf));
+        if let Some(v) = gf {
+            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+                best = Some((lag, v));
+            }
         }
         println!(
-            "{:>4} | {:>11.4e} | {:>11.4e} | {:>11.4e}",
-            lag, gf, fg, fam
+            "{:>4} | {:>11} | {:>11} | {:>11.4e}",
+            lag,
+            absent::scientific(gf, 4),
+            absent::scientific(fg, 4),
+            fam
         );
     }
     println!();

@@ -16,10 +16,10 @@ struct Row {
     from: usize,
     to: usize,
     n_ev: usize,
-    cells: f64,
+    cells: Option<f64>,
     lag: Option<usize>,
-    d: f64,
-    thr: f64,
+    d: Option<f64>,
+    thr: Option<f64>,
     pos: usize,
 }
 
@@ -28,10 +28,6 @@ struct Report {
     corpus: Option<String>,
     rows: Vec<Row>,
     surr_max: Option<f64>,
-}
-
-fn parse_f64(token: &str) -> f64 {
-    token.parse().unwrap_or(f64::NAN)
 }
 
 fn parse_report(path: &std::path::Path) -> Report {
@@ -78,25 +74,17 @@ fn parse_report(path: &std::path::Path) -> Report {
                     from,
                     to,
                     n_ev,
-                    cells: if cells_s == "-" {
-                        f64::NAN
-                    } else {
-                        parse_f64(cells_s)
-                    },
+                    cells: cells_s.parse().ok(),
                     lag: lag_s.parse().ok(),
-                    d: if d_s == "-" { f64::NAN } else { parse_f64(d_s) },
-                    thr: if thr_s == "-" {
-                        f64::NAN
-                    } else {
-                        parse_f64(thr_s)
-                    },
+                    d: d_s.parse().ok(),
+                    thr: thr_s.parse().ok(),
                     pos,
                 });
             }
             Some("SURRM_MAX") => {
                 let t = parts.next().unwrap_or("-");
                 if t != "-" {
-                    surr_max = Some(parse_f64(t)).filter(|v| v.is_finite());
+                    surr_max = t.parse::<f64>().ok().filter(|v| v.is_finite());
                 }
             }
             _ => {}
@@ -110,11 +98,10 @@ fn parse_report(path: &std::path::Path) -> Report {
     }
 }
 
-fn sig_s(v: f64) -> String {
-    if v.is_finite() {
-        format!("{:+.4e}", v)
-    } else {
-        "-".to_string()
+fn sig_s(v: Option<f64>) -> String {
+    match v {
+        Some(x) if x.is_finite() => format!("{:+.4e}", x),
+        _ => "-".to_string(),
     }
 }
 
@@ -137,11 +124,14 @@ fn block_label(from_kind: &str, to_kind: &str) -> &'static str {
 }
 
 fn verdict_of(r: &Row, fam: f64) -> &'static str {
-    if r.n_ev < MIN_EVENTS_FLOOR || !r.d.is_finite() {
+    let Some(d) = r.d else {
+        return "no-statement";
+    };
+    if r.n_ev < MIN_EVENTS_FLOOR {
         "no-statement"
-    } else if fam.is_finite() && r.d > fam {
+    } else if fam.is_finite() && d > fam {
         "ARROW"
-    } else if r.thr.is_finite() && r.d > r.thr {
+    } else if r.thr.is_some_and(|t| d > t) {
         "family bound"
     } else {
         "still"
@@ -182,7 +172,7 @@ fn main() {
                     "sonde report {}: {} rows, surr_max {}",
                     name,
                     r.rows.len(),
-                    r.surr_max.map_or("-".to_string(), sig_s)
+                    r.surr_max.map_or("-".to_string(), |v| sig_s(Some(v)))
                 );
                 reports.push(r);
             }
@@ -316,7 +306,7 @@ fn main() {
             last_block = Some(block);
         }
         let cell_s = if r.n_ev > 0 {
-            format!("{:.1}", r.cells)
+            r.cells.map_or("-".to_string(), |c| format!("{c:.1}"))
         } else {
             "-".to_string()
         };
@@ -384,7 +374,7 @@ fn main() {
     sheet.push('\n');
     let arrows: Vec<&&Row> = sorted
         .iter()
-        .filter(|r| r.d > fam && r.n_ev >= MIN_EVENTS_FLOOR)
+        .filter(|r| r.d.is_some_and(|d| d > fam) && r.n_ev >= MIN_EVENTS_FLOOR)
         .collect();
     if arrows.is_empty() {
         sheet.push_str(
@@ -395,13 +385,16 @@ fn main() {
             let Some(lag) = r.lag else {
                 continue;
             };
+            let Some(d) = r.d else {
+                continue;
+            };
             sheet.push_str(&format!(
                 "{} -> {} (lag {} cells = {} s, D {:.4e} > fam {:.4e}, {} events, pos {}/{})\n",
                 NAMES[r.from],
                 NAMES[r.to],
                 lag,
                 lag * 24,
-                r.d,
+                d,
                 fam,
                 r.n_ev,
                 r.pos,
@@ -466,7 +459,7 @@ mod tests {
         assert_eq!(r.rows[0].from, 0);
         assert_eq!(r.rows[0].to, 1);
         assert_eq!(r.rows[0].n_ev, 150);
-        assert_eq!(r.rows[0].d, 1.0e-3);
+        assert_eq!(r.rows[0].d, Some(1.0e-3));
         assert_eq!(r.surr_max, Some(1.2e-3));
         std::fs::remove_dir_all(&d).ok();
     }

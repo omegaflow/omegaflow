@@ -110,9 +110,10 @@ fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
 
 fn elongation_deg(dj: i64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
     let t = dj as f64 * DAY_S;
+    let host = omegaflow::odp::dsn_host()?;
     match (
         body_barycenter_position("galileo_daily", t, eph),
-        body_barycenter_position("earth", t, eph),
+        body_barycenter_position(host, t, eph),
     ) {
         (Some(p), Some(e)) => ang(sub([0.0, 0.0, 0.0], e), sub(p, e)),
         _ => None,
@@ -144,7 +145,10 @@ fn build_driver_arrays(
             Some(e) if e.is_finite() => elong.push(e as f32),
             _ => elong.push(f32::NAN),
         }
-        step.push(receiver_step(d).unwrap_or(f64::NAN) as f32);
+        step.push(match receiver_step(d) {
+            Some(s) => s as f32,
+            None => f32::NAN,
+        });
         era.push(match month_index(d) {
             Some(m) => m as f32,
             None => f32::NAN,
@@ -216,9 +220,12 @@ fn analyze(
         return;
     }
     let (elong, step, era) = build_driver_arrays(days, eph);
-    if !elong.iter().all(|v| v.is_finite()) {
+    if !elong.iter().all(|v| v.is_finite())
+        || !step.iter().all(|v| v.is_finite())
+        || !era.iter().all(|v| v.is_finite())
+    {
         out.push(format!(
-            "== {label}: elongation void on some days -> no verdict"
+            "== {label}: elongation, receiver step or month index void on some days -> no verdict"
         ));
         return;
     }
@@ -297,7 +304,11 @@ fn main() {
     };
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    let geom_ok = load_eph("galileo_daily", &mut eph) && load_eph("earth", &mut eph);
+    let Some(host) = omegaflow::odp::dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body");
+        return;
+    };
+    let geom_ok = load_eph("galileo_daily", &mut eph) && load_eph(host, &mut eph);
 
     let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");

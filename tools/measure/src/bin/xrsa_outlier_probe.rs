@@ -1,4 +1,5 @@
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
+use omegaflow_measure::absent;
 
 const AIA_MAGIC: [u8; 4] = *b"AIA1";
 const DT: f64 = 24.0;
@@ -568,17 +569,17 @@ fn main() {
     let (n25, s35_25) = (median(&xrsa_335_25), mean_sd(&xrsa_335_25).1);
     let (n50, s35_50) = (median(&xrsa_335_50), mean_sd(&xrsa_335_50).1);
     println!(
-        "XRSA-94A  lead: 25% {:>7.0} s (sd {:>5.0}) | 50% {:>7.0} s (sd {:>5.0})",
-        m25.unwrap_or(f64::NAN),
+        "XRSA-94A  lead: 25% {:>7} s (sd {:>5.0}) | 50% {:>7} s (sd {:>5.0})",
+        absent::number(m25, 0),
         s25,
-        m50.unwrap_or(f64::NAN),
+        absent::number(m50, 0),
         s50
     );
     println!(
-        "XRSA-335A lead: 25% {:>7.0} s (sd {:>5.0}) | 50% {:>7.0} s (sd {:>5.0})",
-        n25.unwrap_or(f64::NAN),
+        "XRSA-335A lead: 25% {:>7} s (sd {:>5.0}) | 50% {:>7} s (sd {:>5.0})",
+        absent::number(n25, 0),
         s35_25,
-        n50.unwrap_or(f64::NAN),
+        absent::number(n50, 0),
         s35_50
     );
 

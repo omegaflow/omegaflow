@@ -2,6 +2,7 @@ use omegaflow::archivar::f107;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::te::{surrogate_stats, surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow_measure::absent;
 
 const GOES_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin";
@@ -119,7 +120,7 @@ struct Arrow {
     n: usize,
     te: f64,
     threshold: f64,
-    naive_threshold: f64,
+    naive_threshold: Option<f64>,
 }
 
 fn main() {
@@ -256,7 +257,7 @@ fn main() {
                 n: xs.len(),
                 te: t,
                 threshold: thr,
-                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                naive_threshold: naive.map(|(_, _, t)| t),
             });
         }
     }
@@ -267,13 +268,13 @@ fn main() {
     );
     for p in &arrows {
         println!(
-            "{:>6} → {:<6} | n {:>5} | TE {:.4e} | threshold {:.4e} | threshold-naive {:.4e} | {}",
+            "{:>6} → {:<6} | n {:>5} | TE {:.4e} | threshold {:.4e} | threshold-naive {} | {}",
             p.from,
             p.to,
             p.n,
             p.te,
             p.threshold,
-            p.naive_threshold,
+            absent::scientific(p.naive_threshold, 4),
             if p.te > p.threshold {
                 "arrow"
             } else {
@@ -289,10 +290,10 @@ fn main() {
     println!();
     println!("=== null control: naive vs. phase-randomized threshold (lag 0) ===");
     for p in &arrows {
-        let naiv = if p.te > p.naive_threshold {
-            "breaks"
-        } else {
-            "holds"
+        let naiv = match p.naive_threshold {
+            Some(t) if p.te > t => "breaks",
+            Some(_) => "holds",
+            None => "absent",
         };
         let phase = if p.te > p.threshold {
             "breaks"
@@ -300,8 +301,15 @@ fn main() {
             "holds"
         };
         println!(
-            "{:>6} → {:<6} | n {:>5} | TE {:.4e} | threshold-naive {:.4e} ({}) | threshold-phase {:.4e} ({})",
-            p.from, p.to, p.n, p.te, p.naive_threshold, naiv, p.threshold, phase
+            "{:>6} → {:<6} | n {:>5} | TE {:.4e} | threshold-naive {} ({}) | threshold-phase {:.4e} ({})",
+            p.from,
+            p.to,
+            p.n,
+            p.te,
+            absent::scientific(p.naive_threshold, 4),
+            naiv,
+            p.threshold,
+            phase
         );
     }
 

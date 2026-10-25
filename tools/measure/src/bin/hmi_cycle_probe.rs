@@ -3,6 +3,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::hmi_polar::parse_bin as parse_hmi;
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{phase_randomized_surrogate, topological_te_phase, transfer_entropy_lag};
+use omegaflow_measure::absent;
 
 const HMI_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/hmi_polar.bin";
@@ -119,8 +120,8 @@ fn main() {
     let mut best: Option<(usize, f64)> = None;
     for lag in 0..=LAG_MAX {
         let seed = SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let pf = transfer_entropy_lag(&f_series, &p_series, lag).unwrap_or(f64::NAN);
-        let fp = transfer_entropy_lag(&p_series, &f_series, lag).unwrap_or(f64::NAN);
+        let pf = transfer_entropy_lag(&f_series, &p_series, lag);
+        let fp = transfer_entropy_lag(&p_series, &f_series, lag);
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         for _ in 0..N_SURR {
             let ps = phase_randomized_surrogate(&p_series, &mut rng);
@@ -130,12 +131,17 @@ fn main() {
                 }
             }
         }
-        if pf > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
-            best = Some((lag, pf));
+        if let Some(v) = pf {
+            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+                best = Some((lag, v));
+            }
         }
         println!(
-            "{:>4} | {:>11.4e} | {:>11.4e} | {:>11.4e}",
-            lag, pf, fp, fam
+            "{:>4} | {:>11} | {:>11} | {:>11.4e}",
+            lag,
+            absent::scientific(pf, 4),
+            absent::scientific(fp, 4),
+            fam
         );
     }
     println!();

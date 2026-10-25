@@ -4,6 +4,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800};
 use omegaflow::te::{gaussian, phase_randomized_surrogate, silverman, transfer_entropy_lag};
+use omegaflow_measure::absent;
 
 const GOES_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin";
@@ -224,8 +225,8 @@ struct PairVerdict {
     to: &'static str,
     n: usize,
     best_lag: usize,
-    te: f64,
-    thr: f64,
+    te: Option<f64>,
+    thr: Option<f64>,
     arrow: bool,
     family_bound: bool,
 }
@@ -235,7 +236,7 @@ fn verdict_word(v: &PairVerdict) -> &'static str {
         "ARROW"
     } else if v.family_bound {
         "family bound"
-    } else if v.te.is_nan() {
+    } else if v.te.is_none() {
         "no statement"
     } else {
         "still"
@@ -257,15 +258,15 @@ fn run_bandwidth(
                 to,
                 n: xs.len(),
                 best_lag: 0,
-                te: f64::NAN,
-                thr: f64::NAN,
+                te: None,
+                thr: None,
                 arrow: false,
                 family_bound: false,
             });
             continue;
         }
         let mut best: Option<(usize, f64)> = None;
-        let mut best_thr = f64::NAN;
+        let mut best_thr: Option<f64> = None;
         for &lag in LAGS.iter() {
             let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
             let surr = surrogate_te_values_bw(&xs, &ys, lag, seed, factor);
@@ -277,7 +278,7 @@ fn run_bandwidth(
             if let Some(te) = te_bandwidth(&xs, &ys, lag, factor) {
                 if best.map_or(true, |(_, b)| te > b) {
                     best = Some((lag, te));
-                    best_thr = mean_plus_2sigma(&surr).unwrap_or(f64::NAN);
+                    best_thr = mean_plus_2sigma(&surr);
                 }
             }
         }
@@ -289,8 +290,8 @@ fn run_bandwidth(
                     to,
                     n: xs.len(),
                     best_lag: 0,
-                    te: f64::NAN,
-                    thr: f64::NAN,
+                    te: None,
+                    thr: None,
                     arrow: false,
                     family_bound: false,
                 });
@@ -298,13 +299,13 @@ fn run_bandwidth(
             }
         };
         let arrow = te > fam;
-        let family_bound = !arrow && te > best_thr;
+        let family_bound = !arrow && best_thr.is_some_and(|t| te > t);
         verdicts.push(PairVerdict {
             from,
             to,
             n: xs.len(),
             best_lag,
-            te,
+            te: Some(te),
             thr: best_thr,
             arrow,
             family_bound,
@@ -487,13 +488,13 @@ fn main() {
             println!("--- bandwidth h × {:.1} | fam = {:.4e} ---", factor, fam_f);
             for v in verdicts_f {
                 println!(
-                    "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10.4e} | thr {:>10.4e} | {}",
+                    "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10} | thr {:>10} | {}",
                     v.from,
                     v.to,
                     v.n,
                     v.best_lag,
-                    v.te,
-                    v.thr,
+                    absent::scientific(v.te, 4),
+                    absent::scientific(v.thr, 4),
                     verdict_word(v)
                 );
             }
@@ -541,15 +542,15 @@ fn main() {
                 to,
                 n: xs.len(),
                 best_lag: 0,
-                te: f64::NAN,
-                thr: f64::NAN,
+                te: None,
+                thr: None,
                 arrow: false,
                 family_bound: false,
             });
             continue;
         }
         let mut best: Option<(usize, f64)> = None;
-        let mut best_thr = f64::NAN;
+        let mut best_thr: Option<f64> = None;
         for &lag in LAGS.iter() {
             let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
             let surr = surrogate_te_values(&xs, &ys, lag, seed);
@@ -561,7 +562,7 @@ fn main() {
             if let Some(te) = transfer_entropy_lag(&xs, &ys, lag) {
                 if best.map_or(true, |(_, b)| te > b) {
                     best = Some((lag, te));
-                    best_thr = mean_plus_2sigma(&surr).unwrap_or(f64::NAN);
+                    best_thr = mean_plus_2sigma(&surr);
                 }
             }
         }
@@ -571,21 +572,21 @@ fn main() {
                 to,
                 n: xs.len(),
                 best_lag: 0,
-                te: f64::NAN,
-                thr: f64::NAN,
+                te: None,
+                thr: None,
                 arrow: false,
                 family_bound: false,
             });
             continue;
         };
         let arrow = te > fam;
-        let family_bound = !arrow && te > best_thr;
+        let family_bound = !arrow && best_thr.is_some_and(|t| te > t);
         verdicts.push(PairVerdict {
             from,
             to,
             n: xs.len(),
             best_lag,
-            te,
+            te: Some(te),
             thr: best_thr,
             arrow,
             family_bound,
@@ -618,14 +619,21 @@ fn main() {
             "PFEIL"
         } else if v.family_bound {
             "family bound"
-        } else if v.te.is_nan() {
+        } else if v.te.is_none() {
             "no statement"
         } else {
             "still"
         };
         println!(
-            "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10.4e} | thr {:>10.4e} | fam {:>10.4e} | {}",
-            v.from, v.to, v.n, v.best_lag, v.te, v.thr, fam, word
+            "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10} | thr {:>10} | fam {:>10.4e} | {}",
+            v.from,
+            v.to,
+            v.n,
+            v.best_lag,
+            absent::scientific(v.te, 4),
+            absent::scientific(v.thr, 4),
+            fam,
+            word
         );
     }
 
@@ -636,7 +644,7 @@ fn main() {
             "Verdict per factor against the surrogate threshold computed per factor; fam itself is not recomputed (fam(h/2)/fam(2h) would each be its own full round)."
         );
         for v in &verdicts {
-            if !(v.family_bound || v.te > 0.6 * fam) {
+            if !(v.family_bound || v.te.is_some_and(|t| t > 0.6 * fam)) {
                 continue;
             }
             let Some(fi) = series.iter().position(|(n, _)| *n == v.from) else {
@@ -660,18 +668,18 @@ fn main() {
                 _ => "void",
             };
             println!(
-                "{:>6} → {:<6} | lag {} d | h/2: TE {:>9.4e} thr {:>9.4e} ({}) | h: TE {:>9.4e} thr {:>9.4e} ({}) | 2h: TE {:>9.4e} thr {:>9.4e} ({})",
+                "{:>6} → {:<6} | lag {} d | h/2: TE {:>9} thr {:>9} ({}) | h: TE {:>9} thr {:>9} ({}) | 2h: TE {:>9} thr {:>9} ({})",
                 v.from,
                 v.to,
                 v.best_lag,
-                half_te.unwrap_or(f64::NAN),
-                half_thr.unwrap_or(f64::NAN),
+                absent::scientific(half_te, 4),
+                absent::scientific(half_thr, 4),
                 word(half_te, half_thr),
-                v.te,
-                v.thr,
-                word(Some(v.te), Some(v.thr)),
-                two_te.unwrap_or(f64::NAN),
-                two_thr.unwrap_or(f64::NAN),
+                absent::scientific(v.te, 4),
+                absent::scientific(v.thr, 4),
+                word(v.te, v.thr),
+                absent::scientific(two_te, 4),
+                absent::scientific(two_thr, 4),
                 word(two_te, two_thr),
             );
         }
@@ -690,8 +698,12 @@ fn main() {
     } else {
         for a in &arrows {
             println!(
-                "{} → {} (lag {} d, TE {:.4e} > fam {:.4e})",
-                a.from, a.to, a.best_lag, a.te, fam
+                "{} → {} (lag {} d, TE {} > fam {:.4e})",
+                a.from,
+                a.to,
+                a.best_lag,
+                absent::scientific(a.te, 4),
+                fam
             );
         }
     }

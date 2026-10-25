@@ -2,6 +2,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
+use omegaflow::odp::dsn_host;
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -87,12 +88,16 @@ fn bucket_tag(b: u8) -> &'static str {
 
 fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo: host declaration void — no receiver body");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
         }
     }
-    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
+    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key(host);
 
     let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
@@ -151,7 +156,7 @@ fn main() {
             let t = day as f64 * DAY_S;
             if let (Some(p), Some(e)) = (
                 body_barycenter_position("galileo_daily", t, &eph),
-                body_barycenter_position("earth", t, &eph),
+                body_barycenter_position(host, t, &eph),
             ) {
                 let el = ang(sub([0.0, 0.0, 0.0], e), sub(p, e));
                 if el.is_finite() {
@@ -293,7 +298,10 @@ fn main() {
         if m == 2 {
             out.push("  per-day detail (mode 2): date eps | st14 floor/strong | st43 floor/strong | st63 floor/strong as med_hz(n_cell)".to_string());
             for day in &wdays {
-                let el = elong_of.get(day).copied().unwrap_or(f64::NAN);
+                let el = match elong_of.get(day).copied() {
+                    Some(v) => format!("{v:4.1}"),
+                    None => "-".to_string(),
+                };
                 let mut daypart = Vec::new();
                 for st in STATIONS {
                     let mut sp = Vec::new();
@@ -311,7 +319,7 @@ fn main() {
                     daypart.push(sp.join("/"));
                 }
                 out.push(format!(
-                    "    {} eps {el:4.1} | {} | {} | {}",
+                    "    {} eps {el} | {} | {} | {}",
                     date_str(*day),
                     daypart[0],
                     daypart[1],

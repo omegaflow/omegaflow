@@ -281,7 +281,7 @@ struct Row {
     cells_mean: f64,
     best_lag: usize,
     d: f64,
-    thr: f64,
+    thr: Option<f64>,
     pos: usize,
     surr_max: f64,
 }
@@ -365,7 +365,7 @@ fn row_for(
     };
     let mut surr_max = f64::NEG_INFINITY;
     let mut best: Option<(usize, f64)> = None;
-    let mut best_thr = f64::NAN;
+    let mut best_thr: Option<f64> = None;
     let mut best_pos = 0usize;
     let mut best_tot = 0usize;
     let mut best_cells = f64::NAN;
@@ -384,7 +384,7 @@ fn row_for(
                 surr_max = v;
             }
         }
-        let thr = mean_plus_2sigma(&surr_vals).unwrap_or(f64::NAN);
+        let thr = mean_plus_2sigma(&surr_vals);
         if d.is_finite() {
             if best.map_or(true, |(_, b)| d > b) {
                 best = Some((lag, d));
@@ -414,7 +414,7 @@ fn row_for(
             cells_mean: f64::NAN,
             best_lag: 0,
             d: f64::NAN,
-            thr: f64::NAN,
+            thr: None,
             pos: 0,
             surr_max,
         },
@@ -440,22 +440,24 @@ fn block_label(from_kind: &str, to_kind: &str) -> &'static str {
 }
 
 fn verdict_of(r: &Row, min_events: usize, fam: f64) -> &'static str {
-    if r.n_ev < min_events || !r.d.is_finite() {
+    let Some(d) = r.d.is_finite().then_some(r.d) else {
+        return "no-statement";
+    };
+    if r.n_ev < min_events {
         "no-statement"
-    } else if fam.is_finite() && r.d > fam {
+    } else if fam.is_finite() && d > fam {
         "ARROW"
-    } else if r.thr.is_finite() && r.d > r.thr {
+    } else if r.thr.is_some_and(|t| d > t) {
         "family bound"
     } else {
         "still"
     }
 }
 
-fn sig_s(v: f64) -> String {
-    if v.is_finite() {
-        format!("{:+.4e}", v)
-    } else {
-        "-".to_string()
+fn sig_s(v: Option<f64>) -> String {
+    match v {
+        Some(x) if x.is_finite() => format!("{:+.4e}", x),
+        _ => "-".to_string(),
     }
 }
 
@@ -737,12 +739,12 @@ fn main() {
                 r.n_ev,
                 cell_s,
                 lag_s,
-                sig_s(r.d),
+                sig_s(Some(r.d)),
                 sig_s(r.thr),
                 r.pos
             );
         }
-        println!("SURRM_MAX {}", sig_s(sm));
+        println!("SURRM_MAX {}", sig_s(Some(sm)));
         eprintln!(
             "sonde complete: pairs {}..={} of {}",
             von,
@@ -797,7 +799,7 @@ fn main() {
             r.n_ev,
             cell_s,
             lag_s,
-            sig_s(r.d),
+            sig_s(Some(r.d)),
             sig_s(r.thr),
             r.pos,
             r.n_ev,
@@ -840,7 +842,7 @@ fn main() {
 
     let arrows: Vec<&Row> = rows
         .iter()
-        .filter(|r| r.d > fam && r.n_ev >= min_events)
+        .filter(|r| r.d.is_finite() && r.d > fam && r.n_ev >= min_events)
         .collect();
     if arrows.is_empty() {
         println!(

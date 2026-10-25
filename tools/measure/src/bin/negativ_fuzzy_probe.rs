@@ -1,4 +1,5 @@
 use omegaflow::te::{ols_residual, surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow_measure::absent;
 use std::collections::BTreeMap;
 
 const DEFAULT_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -284,16 +285,16 @@ fn run_probe(run: &Run, out_path: &str) -> Result<String, String> {
         "negativ_fuzzy_probe — the formal negative-fuzzy instrument (Bio/Techno exclusion)\n",
     );
     out.push_str(&format!(
-        "candidate: {} ({n} samples, RMS {:.3e})\n",
+        "candidate: {} ({n} samples, RMS {})\n",
         run.candidate.name,
-        rms(&run.candidate.values).unwrap_or(f64::NAN)
+        absent::scientific(rms(&run.candidate.values), 3)
     ));
     for w in &run.witnesses {
         out.push_str(&format!(
-            "witness:   {} ({} samples, RMS {:.3e})\n",
+            "witness:   {} ({} samples, RMS {})\n",
             w.name,
             w.values.len(),
-            rms(&w.values).unwrap_or(f64::NAN)
+            absent::scientific(rms(&w.values), 3)
         ));
     }
     out.push_str(&format!(
@@ -317,18 +318,18 @@ fn run_probe(run: &Run, out_path: &str) -> Result<String, String> {
 
     out.push_str("stage-1 extraction (candidate regressed on each witness, sequential OLS):\n");
     out.push_str(&format!(
-        "  candidate RMS {:.3e} -> residue RMS {:.3e}\n",
-        rms(&run.candidate.values).unwrap_or(f64::NAN),
-        rms(&resid).unwrap_or(f64::NAN)
+        "  candidate RMS {} -> residue RMS {}\n",
+        absent::scientific(rms(&run.candidate.values), 3),
+        absent::scientific(rms(&resid), 3)
     ));
     for r in &stage1 {
         match r.r2 {
             Some(r2) => out.push_str(&format!(
-                "  {:<24} removed {:.4} of running residual variance (RMS {:.3e} -> {:.3e})\n",
+                "  {:<24} removed {:.4} of running residual variance (RMS {} -> {})\n",
                 r.witness,
                 r2,
-                r.rms_before.unwrap_or(f64::NAN),
-                r.rms_after.unwrap_or(f64::NAN)
+                absent::scientific(r.rms_before, 3),
+                absent::scientific(r.rms_after, 3)
             )),
             None => out.push_str(&format!(
                 "  {:<24} no OLS dimension — not a regressor\n",

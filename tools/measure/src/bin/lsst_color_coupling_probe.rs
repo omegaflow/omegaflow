@@ -3,6 +3,7 @@ use omegaflow::te::{
     ols_residual, phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag,
     transfer_entropy_lag_h,
 };
+use omegaflow_measure::absent;
 use std::process::Command;
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
@@ -480,12 +481,12 @@ fn probe_color_brightness(
         ra, dec
     );
     println!(
-        "    color series n={} RMS {:.3e} | brightness ({} band residual) n={} RMS {:.3e}",
+        "    color series n={} RMS {} | brightness ({} band residual) n={} RMS {}",
         n,
-        rms_f32(color).unwrap_or(f64::NAN),
+        absent::scientific(rms_f32(color), 3),
         pair.split('/').next().unwrap_or(""),
         brightness.len(),
-        rms_f32(brightness).unwrap_or(f64::NAN)
+        absent::scientific(rms_f32(brightness), 3)
     );
 
     let sdw = sd_f32(brightness);
@@ -503,8 +504,8 @@ fn probe_color_brightness(
                 let rss1 = r.iter().map(|&x| (x as f64).powi(2)).sum::<f64>();
                 let v = if rss0 > 0.0 { 1.0 - rss1 / rss0 } else { 0.0 };
                 println!(
-                    "    stage-1 extraction (ols_residual: color on brightness): removed {v:.4} of the color variance (linear law) — resid RMS {:.3e}",
-                    rms_f32(&r).unwrap_or(f64::NAN)
+                    "    stage-1 extraction (ols_residual: color on brightness): removed {v:.4} of the color variance (linear law) — resid RMS {}",
+                    absent::scientific(rms_f32(&r), 3)
                 );
                 resid = r;
             }
@@ -1062,14 +1063,14 @@ fn main() {
             "not carried".to_string()
         };
         println!(
-            "  {who} {pair} | {} periodic | strongest TE {:.3e} vs run fam {:.3e} | {coupl_word}",
+            "  {who} {pair} | {} periodic | strongest TE {} vs run fam {} | {coupl_word}",
             if *achr {
                 "achromatic-dip"
             } else {
                 "chromatic-dip"
             },
-            best_te.unwrap_or(f64::NAN),
-            fam_obj.unwrap_or(f64::NAN),
+            absent::scientific(*best_te, 3),
+            absent::scientific(*fam_obj, 3),
         );
     }
     println!();

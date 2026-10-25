@@ -2,6 +2,7 @@ use omegaflow::te::{
     LaggedCond, binned_n_eff, kde_n_eff, topological_te_estimate, transfer_entropy_binned,
     transfer_entropy_ksg_conditional_n, transfer_entropy_lag,
 };
+use omegaflow_measure::absent;
 
 const TRANSIENT: usize = 1000;
 const COUPLING: f64 = 0.2;
@@ -244,11 +245,13 @@ fn main() {
 
     let ref_fwd: Vec<f64> = reps_data.iter().filter_map(|d| te_fwd(d, REF_N)).collect();
     let ref_rev: Vec<f64> = reps_data.iter().filter_map(|d| te_rev(d, REF_N)).collect();
-    let ref_fwd_mean = mean(&ref_fwd).unwrap_or(f64::NAN);
-    let ref_rev_mean = mean(&ref_rev).unwrap_or(f64::NAN);
+    let ref_fwd_mean = mean(&ref_fwd);
+    let ref_rev_mean = mean(&ref_rev);
     line(&format!(
-        "reference (n = {REF_N}, {} of {reps} replicate(s) measurable): TE(X→Y) mean = {ref_fwd_mean:.4e}, TE(Y→X) mean = {ref_rev_mean:.4e}",
-        ref_fwd.len()
+        "reference (n = {REF_N}, {} of {reps} replicate(s) measurable): TE(X→Y) mean = {}, TE(Y→X) mean = {}",
+        ref_fwd.len(),
+        absent::scientific(ref_fwd_mean, 4),
+        absent::scientific(ref_rev_mean, 4)
     ));
     line("");
 
@@ -288,38 +291,37 @@ fn main() {
             ));
             continue;
         }
-        let mf = mean(&fwd).unwrap_or(f64::NAN);
-        let bias = mf - ref_fwd_mean;
-        let sd = sample_std(&fwd).unwrap_or(f64::NAN);
-        let mr = mean(&rev).unwrap_or(f64::NAN);
-        let ratio = if mr.is_finite() && mr > 0.0 {
-            mf / mr
-        } else {
-            f64::NAN
+        let mf = mean(&fwd);
+        let bias = mf.zip(ref_fwd_mean).map(|(m, r)| m - r);
+        let sd = sample_std(&fwd);
+        let mr = mean(&rev);
+        let ratio = match (mf, mr) {
+            (Some(m), Some(r)) if r.is_finite() && r > 0.0 => Some(m / r),
+            _ => None,
         };
         line(&format!(
-            "{:>7} | {:>13.4e} | {:>13.3e} | {:>13.3e} | {:>13.4e} | {:>8.3} | {:>9}",
+            "{:>7} | {:>13} | {:>13} | {:>13} | {:>13} | {:>8} | {:>9}",
             n,
-            mf,
-            bias,
-            sd,
-            mr,
-            ratio,
+            absent::scientific(mf, 4),
+            absent::scientific(bias, 3),
+            absent::scientific(sd, 3),
+            absent::scientific(mr, 4),
+            absent::number(ratio, 3),
             format!("{dir_ok}/{}", fwd.len())
         ));
-        let neff_mean = mean(&neffs).unwrap_or(f64::NAN);
+        let neff_mean = mean(&neffs);
         line(&format!(
-            "{:>7} | kde_n_eff mean = {:.4e} over {} replicate(s)",
+            "{:>7} | kde_n_eff mean = {} over {} replicate(s)",
             n,
-            neff_mean,
+            absent::scientific(neff_mean, 4),
             neffs.len()
         ));
         if binned {
-            let binned_neff_mean = mean(&binned_neffs).unwrap_or(f64::NAN);
+            let binned_neff_mean = mean(&binned_neffs);
             line(&format!(
-                "{:>7} | binned_n_eff mean = {:.4e} over {} replicate(s)",
+                "{:>7} | binned_n_eff mean = {} over {} replicate(s)",
                 n,
-                binned_neff_mean,
+                absent::scientific(binned_neff_mean, 4),
                 binned_neffs.len()
             ));
         }

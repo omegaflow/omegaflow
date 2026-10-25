@@ -16,7 +16,10 @@ fn tokenize(text: &str) -> Vec<f64> {
                 j += 1;
             }
             let num: String = bytes[i..j].iter().collect();
-            let mant = num.parse::<f64>().unwrap_or(f64::NAN);
+            let Ok(mant) = num.parse::<f64>() else {
+                i = j;
+                continue;
+            };
             let mut exp = 0i32;
             let mut k = j;
             while k < bytes.len() && bytes[k].is_whitespace() {
