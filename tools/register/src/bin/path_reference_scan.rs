@@ -181,6 +181,7 @@ fn is_skipped(rel: &str) -> bool {
 fn is_cross_house(target: &str) -> bool {
     target.starts_with("state/")
         || target.starts_with("data/")
+        || target.starts_with("sources/")
         || target.starts_with("privat/")
         || target.starts_with("~/")
 }
