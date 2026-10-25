@@ -248,12 +248,146 @@ fn host_docs() {
     println!("rows {rows}, mit probe {with_probe}, host_cite: {docs} ergaenzt, {failed} ohne Header");
 }
 
+fn url_id(url: &str) -> Option<String> {
+    let rest = url.split_once("id=")?.1;
+    let end = rest.find('&').unwrap_or(rest.len());
+    let id = &rest[..end];
+    if id.is_empty() {
+        return None;
+    }
+    Some(id.replace("%40", "@").replace("%2F", "/").replace("%2f", "/"))
+}
+
+fn probe_fill() {
+    let reg_text = fs::read_to_string(REG).expect("register");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut rows = blocks(&reg_text);
+    let mut filled = 0usize;
+    let mut failed = 0usize;
+    let mut considered = 0usize;
+    let mut no_row = 0usize;
+    let mut seen = 0usize;
+    for (_, block) in blocks(&phi_text) {
+        let has_fields = block.iter().any(|l| {
+            let p: Vec<&str> = l.split_whitespace().collect();
+            matches!(p.first(), Some(&"field") | Some(&"quantity"))
+        });
+        if !has_fields {
+            continue;
+        }
+        let Some(origin) = field(&block, "origin") else {
+            continue;
+        };
+        let Some(url) = origin.split_whitespace().next() else {
+            continue;
+        };
+        let Some(host) = url
+            .split_once("://")
+            .and_then(|(_, r)| r.split(['/', '?', ':']).next())
+            .map(|h| h.trim_start_matches("www.").to_string())
+        else {
+            continue;
+        };
+        let stem = url.split(['?', '{']).next().unwrap_or(url);
+        let mut best: Option<(usize, usize)> = None;
+        for (i, (_, r)) in rows.iter().enumerate() {
+            if host_of(r).as_deref() != Some(host.as_str()) {
+                continue;
+            }
+            let Some(applies) = field(r, "applies") else {
+                continue;
+            };
+            if !(url.starts_with(&applies) || applies.starts_with(stem)) {
+                continue;
+            }
+            if best.is_none_or(|(_, len)| applies.len() > len) {
+                best = Some((i, applies.len()));
+            }
+        }
+        let Some((i, _)) = best else {
+            no_row += 1;
+            continue;
+        };
+        considered += 1;
+        let covered = rows[i]
+            .1
+            .iter()
+            .filter(|l| l.trim_start().starts_with("probe "))
+            .filter_map(|l| l.split_whitespace().nth(3))
+            .any(|p| {
+                let same_arm = match (url_id(p), url_id(url)) {
+                    (Some(a), Some(b)) => a == b,
+                    _ => true,
+                };
+                same_arm && (p.starts_with(stem) || stem.starts_with(p))
+            });
+        if covered {
+            seen += 1;
+            continue;
+        }
+        let out = Command::new("bin/archive_search")
+            .arg("--probe")
+            .arg(url)
+            .output();
+        let Ok(out) = out else {
+            failed += 1;
+            continue;
+        };
+        let text = String::from_utf8_lossy(&out.stdout);
+        let Some(line) = text.lines().find(|l| l.trim_start().starts_with("probe ")) else {
+            failed += 1;
+            continue;
+        };
+        let at = rows[i]
+            .1
+            .iter()
+            .position(|l| l.starts_with("  applies "))
+            .unwrap_or(rows[i].1.len());
+        rows[i].1.insert(at, format!("  {}", line.trim()));
+        filled += 1;
+    }
+    let mut out = String::new();
+    for (_, b) in &rows {
+        out.push_str(&b.join("\n"));
+        out.push_str("\n\n");
+    }
+    fs::write(REG, out).expect("register write");
+    println!("probe: {filled} ergaenzt, {failed} ohne Antwort, {seen} schon belegt, {no_row} ohne Zeile, {considered} mit Zeile");
+}
+
+fn probe_drop_failed() {
+    let text = fs::read_to_string(REG).expect("register");
+    let mut out = String::new();
+    let mut dropped = 0usize;
+    for (_, b) in blocks(&text) {
+        let mut keep: Vec<String> = Vec::new();
+        for line in b {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            let failed = p.first() == Some(&"probe")
+                && p.get(2)
+                    .and_then(|s| s.parse::<u16>().ok())
+                    .is_some_and(|s| s >= 400);
+            if failed {
+                dropped += 1;
+                continue;
+            }
+            keep.push(line);
+        }
+        out.push_str(&keep.join("\n"));
+        out.push_str("\n\n");
+    }
+    fs::write(REG, out).expect("register write");
+    println!("probe: {dropped} Fehlschlaege entfernt");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         Some("rows") if args.len() >= 4 => merge_rows(&args[2], &args[3]),
         Some("instruments") if args.len() >= 3 => apply_instruments(&args[2]),
         Some("hostdocs") => host_docs(),
+        Some("probe-fill") => probe_fill(),
+        Some("probe-drop-failed") => probe_drop_failed(),
         _ => {
             eprintln!("spec_merge rows <out.φ> <states.φ> | instruments <tsv> | hostdocs");
             std::process::exit(2);

@@ -337,10 +337,6 @@ host vires.services
   probe 2026-10-25T11:08:06Z 200 https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
   probe 2026-10-25T11:08:07Z 200 https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
   probe 2026-10-25T11:08:08Z 200 https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
-  probe 2026-10-25T11:10:55Z 400 https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
-  probe 2026-10-25T11:10:56Z 400 https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
-  probe 2026-10-25T11:10:58Z 400 https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
-  probe 2026-10-25T11:11:09Z 400 https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=Absolute_VTEC&format=json
   applies https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B
   note Einheiten woertlich aus der info-Antwort: N_ion/N_elec cm-3, T_elec K, Vs V; Kadenz PT0.5S
 
@@ -456,80 +452,6 @@ host imag-data.bgs.ac.uk
   probe 2026-10-25T08:55:05Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wic/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
   probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wng/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
   probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ykc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
-  probe 2026-10-25T11:09:30Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aae/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:31Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=abg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:32Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ale/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:33Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ams/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:34Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=api/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:35Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aqu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:37Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bfe/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:39Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bmt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:40Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bng/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:41Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=box/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:45Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=clf/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:49Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cnh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:50Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=czt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:51Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dlr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:52Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dlt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:53Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dmc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:54Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=drv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:55Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dur/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:56Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ebr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:56Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=esk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:58Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gck/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:58Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gln/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:09:59Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gna/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:00Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gui/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:01Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gzh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:04Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=had/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:05Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hbk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:06Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=her/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:06Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hrb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:08Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:09Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ipm/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:10Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=irt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:11Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=isk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:11Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=jai/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:13Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=jco/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:14Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=khb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:15Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kiv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:16Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kmh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:17Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kou/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:17Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ler/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:18Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lnp/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:20Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lov/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:22Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lvv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:23Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lzh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:24Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mbc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:26Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mbo/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:26Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mcq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:28Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mgd/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:29Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mid/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:30Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mlt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:30Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mzl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:31Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nvs/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:32Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=orc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:33Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=paf/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:34Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pbq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:34Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=peg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:35Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pet/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:36Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=phu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:37Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pil/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:38Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ppt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:39Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=qsb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:40Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=res/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:41Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=reu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:42Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sfs/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:42Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=spg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:43Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=spt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:44Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=stt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:47Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:48Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tam/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:48Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tan/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:49Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tik/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:51Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tsu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:52Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wmq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-  probe 2026-10-25T11:10:53Z 400 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=yak/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
   applies https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
   note die Dokumente sind offen und lesbar; die Weitergabe der Daten ist es nicht — bulk distribution verlangt written permission (state/wartend.phi, LOCK rechtlich). Die Zeile belegt die Messung, sie gibt die Daten nicht frei. Die Register-origin traegt keine dataset-id, deshalb deckt eine Zeile den Endpunkt
 
@@ -1209,23 +1131,8 @@ host cdaweb.gsfc.nasa.gov
   instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesP.html#PSP_COHO1HR_MERGED_MAG_PLASMA
   instrument_quote "PSP_COHO1HR_MERGED_MAG_PLASMA: Merged hourly magnetic field, plasma, proton fluxes, and ephermis data of PSP"
   probe 2026-10-25T09:07:41Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min=2022-06-01T00:00:00Z&time.max=2022-06-01T03:00:00Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
-  probe 2026-10-25T11:08:10Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
-  probe 2026-10-25T11:08:11Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
-  probe 2026-10-25T11:08:12Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FPI_FAST_L2_DES-MOMS&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_des_numberdensity_fast,mms1_des_bulkv_gse_fast&format=json
-  probe 2026-10-25T11:08:13Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
-  probe 2026-10-25T11:08:14Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=psp_fld_l2_mag_RTN&format=json
-  probe 2026-10-25T11:08:16Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=np_moment_gd,wp_moment_gd&format=json
-  probe 2026-10-25T11:08:17Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=SN_RMS_E&format=json
-  probe 2026-10-25T11:08:18Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_fgs_btotal,tha_fgs_gse&format=json
-  probe 2026-10-25T11:08:20Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_MOM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_peim_density,tha_peim_velocity_gse&format=json
-  probe 2026-10-25T11:08:21Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
-  probe 2026-10-25T11:08:22Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=tpgpaltitude,ktemp&format=json
-  probe 2026-10-25T11:08:23Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
-  probe 2026-10-25T11:08:24Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H2_MFI&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSM&format=json
-  probe 2026-10-25T11:08:25Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_K0_SWE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=V_GSE,Np&format=json
   probe 2026-10-25T11:08:57Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2017-07-01T00:00:00Z&time.max=2026-08-04T00:00:00Z&parameters=Magnitude,BGSM&format=csv
   probe 2026-10-25T11:09:27Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2017-07-01T00:00:00Z&time.max=2026-10-10T00:00:00Z&parameters=Np,Vp&format=csv
-  probe 2026-10-25T11:09:28Z 400 https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
   probe 2026-10-25T11:12:44Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
   applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA
   note /info 200; BR/BT/BN/B[nT], VR/VT/VN[km/sec], fill -1.0E31; Messung 2022-06-01: 5 Zeilen 00:00..04:00Z, dt 3600 s.
@@ -1770,7 +1677,6 @@ host api.dataplatform.knmi.nl
   api_quote "10-minute-in-situ-meteorological-observations"
   instrument_cite https://english.knmidata.nl/open-data/actuele10mindataknmistations
   instrument_quote "KNMI collects observations from the automatic weather stations situated in the Netherlands and BES islands on locations such as aerodromes and North Sea platforms."
-  probe 2026-10-25T09:59:35Z 401 https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
   applies https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
   note Anbieter schreibt °C fuer ta/t10 ("| ta | Ambient Temperature 1.5m 10 Min Average | °C | 9 |"); der Block deklariert K. Probe 401: EDR verlangt API-Key.
 
@@ -1782,7 +1688,6 @@ host api.dataplatform.knmi.nl
   api_quote "10-minute-in-situ-meteorological-observations"
   instrument_cite https://english.knmidata.nl/open-data/actuele10mindataknmistations
   instrument_quote "The weather stations report every 10 minutes meteorological parameters such as temperature, relative humidity, wind, air pressure, visibility, precipitation and cloud cover."
-  probe 2026-10-25T09:59:35Z 401 https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
   applies https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
   note fx (Windboee) in m/s laut Variablentabelle der Instrumentendoku; 10-Minuten-Intervall. Probe 401 wegen fehlendem API-Key.
 
@@ -1794,7 +1699,6 @@ host api.dataplatform.knmi.nl
   api_quote "10-minute-in-situ-meteorological-observations"
   instrument_cite https://english.knmidata.nl/open-data/actuele10mindataknmistations
   instrument_quote "| ff | Wind Speed at 10m 10 Min Average with MD | m/s | 1 |"
-  probe 2026-10-25T09:59:35Z 401 https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
   applies https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
   note ff (Windgeschwindigkeit 10 m) in m/s; Probe 401 wegen fehlendem API-Key.
 
@@ -1986,7 +1890,6 @@ host data.lpdaac.earthdatacloud.nasa.gov
   api_quote "8. MOD11C3 Monthly CMG LST"
   instrument_cite https://modis.gsfc.nasa.gov/about/
   instrument_quote "MODIS (or Moderate Resolution Imaging Spectroradiometer) is a key instrument aboard the Terra (originally known as EOS AM-1) and Aqua (originally known as EOS PM-1) satellites."
-  probe 2026-10-25T10:01:37Z 401 https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/
   applies https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/
   note MOD11C2 = 8-Tage-CMG-LST (K); Verzeichnis 401 (Earthdata-Login noetig), Produktdoc nennt Kelvin und CMG-Kadenz.
 
@@ -1998,7 +1901,6 @@ host data.lpdaac.earthdatacloud.nasa.gov
   api_quote "The ninth product, MOD11C3, is a monthly composite of LST at the same resolution as MOD11C2."
   instrument_cite https://modis.gsfc.nasa.gov/about/
   instrument_quote "MODIS (or Moderate Resolution Imaging Spectroradiometer) is a key instrument aboard the Terra (originally known as EOS AM-1) and Aqua (originally known as EOS PM-1) satellites."
-  probe 2026-10-25T10:01:40Z 401 https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/
   applies https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/
   note MOD11C3 monatlich (2592000 s), LST in K; Verzeichnis 401.
 
@@ -2010,7 +1912,6 @@ host eeadmz1-downloads-api-appservice.azurewebsites.net
   api_quote "Selected time series will be downloaded as zipped Parquet files that are only accessible by scripting or by use of dedicated web-services."
   instrument_cite https://eeadmz1-downloads-webapp.azurewebsites.net/content/documentation/How_To_Downloads.pdf
   instrument_quote "Air quality Download service page"
-  probe 2026-10-25T10:01:04Z 405 https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
   applies https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
   note Endpunkt antwortet 405 (nur POST); Parquet-Downloaddienst, stündliche Messreihen. Einheit ug/m3 nicht im Zitat.
 
@@ -2048,7 +1949,6 @@ host lgdc.uml.edu
   api_quote "foF2"
   instrument_cite https://giro.uml.edu/
   instrument_quote "In cooperation with the URSI Ionosonde Network Advisory Group (INAG), the LGDC promotes cooperative agreements with the ionosonde observatories of the world to accept and process real-time data of HF radio monitoring of the ionosphere"
-  probe 2026-10-25T10:01:14Z 500 https://lgdc.uml.edu/fastchar/getbest
   applies https://lgdc.uml.edu/fastchar/getbest
   note getbest ohne Pflichtparameter -> 500; foF2 in MHz, Ionosonden-Netz (GIRO).
 
@@ -2469,7 +2369,6 @@ host data.laadsdaac.earthdatacloud.nasa.gov
   api_quote "The v2.0 Day-Night Band (DNB) radiance data format has changed from unsigned integer in version 1.0 (v1.0) to floating-point format to prevent saturation in cases such as extremely bright gas flares with radiance values exceeding 6553.5 nW·cm⁻²·sr⁻¹."
   instrument_cite https://www.earthdata.nasa.gov/data/instruments/viirs
   instrument_quote "The Visible Infrared Imaging Radiometer Suite (VIIRS) is a scanning radiometer that collects visible and infrared imagery and radiometric measurements."
-  probe 2026-10-25T10:01:43Z 401 https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
   applies https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
   note Probe 401 (Earthdata-Login noetig); Produkt ist monatlich (VNP46A3), der Blockwert 86400 s entspricht dem Tages-Produkt VNP46A2, nicht A3.
 
@@ -2529,7 +2428,6 @@ host babamul.caltech.edu
   api_quote "Python client for consuming ZTF/LSST astronomical transient alerts from Babamul Kafka streams."
   instrument_cite https://www.ztf.caltech.edu/
   instrument_quote "ZTF employs a custom-built mosaic CCD camera which utilizes the entire focal plane (~ 47 sq deg) of the P48 telescope at Palomar, providing the largest instantaneous field-of-view of any camera on a telescope of aperture greater than half a meter."
-  probe 2026-10-25T10:01:27Z 401 https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
   applies https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
   note Probe 401: Alert-API verlangt Token. Alert-Photometrie in AB-mag; kein 1-h-Raster belegt.
 
@@ -2675,7 +2573,6 @@ host atmos.nmsu.edu
   api_quote "The Doppler observable (in Hertz) is computed according"
   instrument_cite https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/gravity.html
   instrument_quote "This is a radio science experiment that uses the telecommunications system for sending data back to the deep space net."
-  probe 2026-10-25T10:04:17Z 404 https://atmos.nmsu.edu/PDS/data/<volume>/DATA/ODF/
   applies https://atmos.nmsu.edu/PDS/data/<volume>/DATA/ODF/
   note Block-Origin ist eine Volumen-Vorlage (<volume>); Probe mit Platzhalter liefert 404, konkretes Volume jnogrv_0001 liefert 200 (siehe Block 10337).
 
@@ -2770,7 +2667,6 @@ host atmos.nmsu.edu
   host_cite https://atmos.nmsu.edu/PDS/data/VXRS_1101/ODF/8031031A.LBL
   host_quote "HTTP last-modified: Wed, 18 Dec 2013 15:34:04 GMT"
   probe 2026-10-25T10:16:37Z 206 https://atmos.nmsu.edu/PDS/data/VXRS_1101/ODF/8031031A.LBL
-  probe 2026-10-25T11:11:16Z 404 https://atmos.nmsu.edu/PDS/data/VXRS_1101..VXRS_1104/ODF/
   applies https://atmos.nmsu.edu/PDS/data/VXRS_1101..VXRS_1104/ODF/
   note ODF liegt direkt unter dem Volume (VXRS_1101/ODF), nicht unter DATA/ODF; Label nennt VENUS EXPRESS / RSS. Kadenz ist die je Record gesetzte Integration Time, 604800 s steht nicht im Label.
 
@@ -2870,7 +2766,6 @@ host ceotr.ocean.dal.ca
   api_quote "time flag station antenna_lat antenna_lon institution longitude latitude VELU VELV"
   instrument_cite https://ioos.noaa.gov/project/hf-radar/
   instrument_quote "The U.S. Coast Guard integrated HF radar data into its Search and Rescue system"
-  probe 2026-10-25T09:58:04Z 403 https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
   applies https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
   note CEOTR-ERDDAP antwortet aus dieser Station 403 (nginx/1.14.1, auch /erddap/info/); Format und Feldnamen VELU/VELV aus dem identischen IOOS-CODAR-ERDDAP-Schema belegt. 21600 = Blockwert.
 
@@ -2898,7 +2793,6 @@ host data.pmel.noaa.gov
   instrument_quote "surface currents (in red) and surface wind stress (in black) relative to the daily average at the location of the instrumented buoy"
   host_cite https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv
   host_quote "HTTP last-modified: Sun, 25 Oct 2026 10:34:24 GMT"
-  probe 2026-10-25T09:59:34Z 429 https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv
   applies https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv
   note ISO_6 long_name "20C Isotherm Depth", Einheit m; Tagesmittel (TAO-Datensatz). Probe 429 = Rate-Limit, Pfad existiert.
 
@@ -2912,7 +2806,6 @@ host data.pmel.noaa.gov
   instrument_quote "surface currents (in red) and surface wind stress (in black) relative to the daily average at the location of the instrumented buoy"
   host_cite https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv
   host_quote "HTTP last-modified: Sun, 25 Oct 2026 10:34:24 GMT"
-  probe 2026-10-25T09:59:36Z 429 https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv
   applies https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv
   note WU_422 long_name "Zonal Wind", Einheit m s-1; Tagesmittel. Probe 429 = Rate-Limit.
 
@@ -3082,7 +2975,6 @@ host storage.googleapis.com
   instrument_quote "hydrophone"
   host_cite https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
   host_quote "HTTP cache-control: private, max-age=0"
-  probe 2026-10-25T09:58:13Z 404 https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
   applies https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
   note Praefix-URL liefert 404; GCS verlangt eine Objekt- oder list-type=2-URL. Metadaten nennen hydrophone/Preamplifier/Sampling, keine Kadenz.
 
@@ -3146,7 +3038,6 @@ host noaa-goes16.s3.amazonaws.com
   api_quote "Radiance observations are commonly expressed in spectrally resolved units"
   instrument_cite https://www.goes-r.gov/spacesegment/abi.html
   instrument_quote "an image of the US mainland every five minutes"
-  probe 2026-10-25T09:58:34Z 404 https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/
   applies https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/
   note Praefix liefert 404 (S3 verlangt list-type=2); RadC = CONUS, 5-min-Raster = 300 s. Blockwert 3600.
 
@@ -3186,7 +3077,6 @@ host esaskylegacy.esac.esa.int
   instrument_quote "Hipparcos"
   host_cite http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
   host_quote "HTTP cache-control: no-cache, no-store, max-age=0, must-revalidate"
-  probe 2026-10-25T09:58:41Z 400 http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
   applies http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
   note TAP antwortet 400 auf die Block-Query; Hipparcos-Katalog Einheit mag (Vmag).
 
@@ -3226,7 +3116,6 @@ host open-lidar-data.s3.amazonaws.com
   instrument_quote "airborne LiDAR"
   host_cite https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
   host_quote "HTTP last-modified: Wed, 22 May 2024 13:30:35 GMT"
-  probe 2026-10-25T09:58:08Z 416 https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
   applies https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
   note Praefix-URL liefert 416 (S3 list-type=2 noetig). COPC-Koordinaten in m; statischer Flug, kein Zeitraster.
 
@@ -3280,7 +3169,6 @@ host archives.esac.esa.int
   api_quote "MaRS (Mars Radio Science Experiment)"
   instrument_cite https://www.esa.int/Science_Exploration/Space_Science/Mars_Express/Mars_Express_instruments
   instrument_quote "MaRS (Mars Radio Science Experiment)"
-  probe 2026-10-25T09:59:31Z 404 https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF/
   applies https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF/
   note FTP-Pfad liefert 404; MaRS/ODF sind Radio-Science-Rohdaten, Observable in Hz. api_cite und instrument_cite sind hier notgedrungen dieselbe ESA-Seite.
 
@@ -3306,7 +3194,6 @@ host portal.opentopography.org
   api_quote "Developers/API"
   instrument_cite https://www2.jpl.nasa.gov/srtm/
   instrument_quote "Shuttle Radar Topography Mission"
-  probe 2026-10-25T09:59:44Z 401 https://portal.opentopography.org/API/globaldem?demtype=SRTM15Plus&south=40&north=41&west=-10&east=-9&outputFormat=GTiff&API_Key=demo
   applies https://portal.opentopography.org/API/globaldem?demtype=SRTM15Plus&south=40&north=41&west=-10&east=-9&outputFormat=GTiff&API_Key={OPENTOPOGRAPHY_API_KEY}
   note 401 ohne gueltigen Key; Hoehen in m, statisches DEM ohne Zeitraster.
 
@@ -3384,7 +3271,6 @@ host service.earthscope.org
   api_quote "Data are returned in miniSEED and GeoCSV format."
   instrument_cite https://www.earthscope.org/observatories/gnss/seismology/
   instrument_quote "seismometer"
-  probe 2026-10-25T09:59:56Z 422 https://service.earthscope.org/fdsnws/dataselect/1/query
   applies https://service.earthscope.org/fdsnws/dataselect/1/query
   note Query ohne Pflichtparameter liefert 422; BHZ-Wellenform in m/s, Abtastung 60 s Blockwert.
 
@@ -3424,7 +3310,6 @@ host noaa-oar-hourly-gdp-pds.s3.amazonaws.com
   api_quote "Global Drifter Program"
   instrument_cite https://gdp.ucsd.edu/
   instrument_quote "drifting buoys"
-  probe 2026-10-25T10:00:11Z 404 https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr
   applies https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr
   note Zarr-Pfad liefert 404 (Version/Alias nicht vorhanden); SST in K, 6-min-Raster (360 s Blockwert).
 
@@ -3634,7 +3519,6 @@ host ncdc.noaa.gov
   api_quote "Climate Data Online"
   instrument_cite https://www.ncei.noaa.gov/cdo-web/
   instrument_quote "station"
-  probe 2026-10-25T10:03:45Z 400 https://www.ncdc.noaa.gov/cdo-web/api/v2/data
   applies https://www.ncdc.noaa.gov/cdo-web/api/v2/data
   note API verlangt Token und Datensatz/Datentyp-Parameter, daher 400; Tagesmaximum in C.
 
@@ -4544,7 +4428,6 @@ host ndbc.noaa.gov
   api_quote "WSPD Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly."
   instrument_cite https://www.ndbc.noaa.gov/faq/adjust_wind.shtml
   instrument_quote "Anemometer heights on NDBC buoys vary according to buoy type. Anemometers on 3-meter discus and 6-meter NOMAD buoys are located approximately 5 meters above the waterline."
-  probe 2026-10-25T09:57:11Z 404 https://www.ndbc.noaa.gov/data/realtime2/41001.txt
   applies https://www.ndbc.noaa.gov/data/realtime2/41001.txt
   note Standard-Met-Datei; Zeitstufe aus measdes (Reported Hourly), Mittelungsfenster 8 min. Pfad 404.
 
@@ -5284,7 +5167,6 @@ host ndbc.noaa.gov
   api_quote "WSPD Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly."
   instrument_cite https://www.ndbc.noaa.gov/faq/adjust_wind.shtml
   instrument_quote "Anemometer heights on NDBC buoys vary according to buoy type. Anemometers on 3-meter discus and 6-meter NOMAD buoys are located approximately 5 meters above the waterline."
-  probe 2026-10-25T10:12:21Z 404 https://www.ndbc.noaa.gov/data/historical/stdmet/46002h2024.txt.gz
   applies https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
   note Standard-Met-Datei; Zeitstufe aus measdes (Reported Hourly), Mittelungsfenster 8 min. Pfad 404.
 
@@ -5553,7 +5435,6 @@ host osha.gov
   instrument_quote "Active Sampling is performed by using a pump to draw air through a sampling media."
   host_cite https://www.osha.gov/sites/default/files/healthsamples.zip
   host_quote "cache-control: public, max-age=604800"
-  probe 2026-10-25T09:57:30Z 403 https://www.osha.gov/sites/default/files/healthsamples.zip
   applies https://www.osha.gov/sites/default/files/healthsamples.zip
   note Felddefinitionsseite fuehrt UOM M = mg/m3; dieselbe Seite meldet halbjaehrliche Aktualisierung (Januar und Juli), Karte fuehrt 31536000.
 
@@ -5565,7 +5446,6 @@ host ws-uv.canfar.net
   api_quote "Thus, the presence of bright (> 100 mJy) sources with high S:N sidelobes can sometimes cause the clean algorithm to diverge."
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
-  probe 2026-10-25T09:57:34Z 400 https://ws-uv.canfar.net/youcat/sync
   applies https://ws-uv.canfar.net/youcat/sync
   note Blanker TAP-Endpunkt ohne QUERY liefert 400; Einheit mJy auf der QL-Leitseite belegt, Spaltennamen Total_flux/Peak_flux dort nicht gefuehrt; Karte 604800, VLASS-Epochen liegen Jahre auseinander.
 
@@ -5577,7 +5457,6 @@ host ws-uv.canfar.net
   api_quote "Thus, the presence of bright (> 100 mJy) sources with high S:N sidelobes can sometimes cause the clean algorithm to diverge."
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
-  probe 2026-10-25T09:57:34Z 400 https://ws-uv.canfar.net/youcat/sync
   applies https://ws-uv.canfar.net/youcat/sync
   note Wie 31310; Block nutzt dieselbe blanke Sync-URL.
 
@@ -5601,7 +5480,6 @@ host ws-uv.canfar.net
   api_quote "Thus, the presence of bright (> 100 mJy) sources with high S:N sidelobes can sometimes cause the clean algorithm to diverge."
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
-  probe 2026-10-25T09:57:44Z 400 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
   applies https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
   note Probe 400 mit FORMAT=json auf cirada.VLASS_Component; die csv-Variante derselben Tabelle antwortet 200 (32750).
 
@@ -5613,7 +5491,6 @@ host ws-uv.canfar.net
   api_quote "Thus, the presence of bright (> 100 mJy) sources with high S:N sidelobes can sometimes cause the clean algorithm to diverge."
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
-  probe 2026-10-25T09:57:48Z 400 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   applies https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   note Probe 400 auf cirada.VLASSQL_Source (FORMAT=json).
 
