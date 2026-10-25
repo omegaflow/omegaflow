@@ -536,7 +536,7 @@ fn scan_doc_markers(
                 idx + 1,
                 snippet(line, 160)
             ));
-        } else if open_marker_matches(line) {
+        } else if open_marker_matches(line) || line_is_open_act(&lines, idx) {
             if line_is_open_act(&lines, idx) {
                 open_out.push(format!(
                     "OPEN\t{}:{}\t{}",
@@ -5739,7 +5739,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         .unwrap();
         fs::write(
             base.join("docs/specs/status.md"),
-            format!("{header}# s\n- **Status:** wartend | **Bindung:** eigen\n"),
+            format!("{header}# s\n- **Status:** wartend\n"),
         )
         .unwrap();
         let (acts, terms) = orphan_docs_full(&base);
