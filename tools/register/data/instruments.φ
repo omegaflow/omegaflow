@@ -875,3 +875,291 @@ host spdf.gsfc.nasa.gov
   probe 2026-10-25T09:14:48Z 206 https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/1994/wi_h1_wav_19941110_v01.cdf
   applies https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
   note wav_h1 traegt taegliche CDF-Dateien wi_h1_wav_YYYYMMDD_v01.cdf. Das WAVES-Readme nennt "one file/day" und "3-min averages" nur fuer die Plot-Serien; die CDAWeb-Notes zu WI_H1_WAV geben 24 sec an, die Instrumentenseite 3-min- bis 1-min-Aufloesung — der belegte Wert hier ist die 1-Minuten-Angabe aus data_sources.php.
+host cdaweb.gsfc.nasa.gov
+  instrument SWE Faraday Cup
+  unit /cc
+  cadence 12.034
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://wind.nasa.gov/inst_info.php
+  instrument_quote "The SWE Faraday Cup sub-system was designed to measure solar wind thermal protons and positive ions."
+  probe 2026-10-25T09:08:13Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1998-06-01T00:00:00Z&time.max=1998-06-01T01:00:00Z&parameters=sc_position,el_bulk_vel_magn,el_density&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE
+  note /info 200; el_density[/cc], fill -1.0E31; resourceURL NotesW.html#WI_H0_SWE; Messung 1998-06-01 00:00-01:00Z: 256 Zeilen, median dt 12.034 s (min 9.025, max 105.293); relative Fenster {hour_ago}..{now} liegen hinter stopDate.
+
+host cdaweb.gsfc.nasa.gov
+  instrument GPS-Empfaenger (Zweifrequenz)
+  unit unitless
+  cadence 900
+  api_cite https://data.nasa.gov/dataset/gps-deduced-roti-index-standard-deviation-of-the-rate-of-change-of-the-total-electron-cont
+  api_quote "The ROTI Index is the Standard Deviation of the Rate of Change of the Total Electron Content, TEC, during a 15 min Interval."
+  instrument_cite https://www.haystack.mit.edu/geospace/geospace-projects/using-gnss-to-measure-ionospheric-tec
+  instrument_quote "Data from these dual-frequency receivers, located over the globe, are used to compute the daily GNSS TEC maps."
+  probe 2026-10-25T09:15:21Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/gps/roti15min_jpl/2012/gps_roti15min_jpl_20121201_v01.cdf
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/gps/roti15min_jpl/2012/gps_roti15min_jpl_20121201_v01.cdf
+  note CDF-Datei, probe 206; HAPI GPS_ROTI15MIN_JPL /info 200, params 13, start 2012-11-29T00:00Z stop 2014-03-11T23:45Z, als Einheit nur UTC (ROTI ist ein Index, keine physikalische Einheit); 15-min-Raster aus Produktnamen und Datensatzbeschreibung.
+
+host cdaweb.gsfc.nasa.gov
+  instrument GPS-Empfaenger (IGS-Netz)
+  unit TECU
+  cadence 900
+  api_cite https://www.earthdata.nasa.gov/data/space-geodesy-techniques/gnss/atmospheric-products
+  api_quote "Since 1998, IGS associate analysis centers have provided products containing ionosphere vertical total electron content (TEC) maps and daily GNSS satellite differential code bias (DCB) values derived from the dual-frequency GNSS data."
+  instrument_cite https://www.haystack.mit.edu/geospace/geospace-projects/using-gnss-to-measure-ionospheric-tec
+  instrument_quote "Data from these dual-frequency receivers, located over the globe, are used to compute the daily GNSS TEC maps."
+  probe 2026-10-25T09:15:22Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/
+  note Verzeichnis, probe 206; HAPI GPS_TEC15MIN_IGS /info 200, params 10, Einheiten UTC+TECU, start 1995-05-16T00:00Z stop 2026-10-20T23:45Z; 15-min-Produkt (PT15M in der SPASE-ID des Datensatzes).
+
+host cdaweb.gsfc.nasa.gov
+  instrument Magnetometer (MAG)
+  unit nT
+  cadence 0.1
+  cadence 60
+  api_cite https://www.ncei.noaa.gov/products/goes-r-magnetometer
+  api_quote "Level-2 data are higher order data products and include high-resolution and 1-minute averages of B field vectors in the ECI, EPN, BRF, ACRF, Geocentric Solar Ecliptic (GSE), Geocentric Solar Magnetospheric (GSM), and Dipole Aligned (VDH) coordinate systems."
+  instrument_cite https://www.nesdis.noaa.gov/our-satellites/currently-flying/goes-east-west/magnetometer-mag
+  instrument_quote "The GOES-R Series Magnetometer provides measurements of the space environment magnetic field that controls charged particle dynamics in the outer region of the magnetosphere."
+  probe 2026-10-25T09:15:24Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/goes/goes16/mag_l2_netcdf/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/goes/goes16/mag_l2_netcdf/
+  note netCDF-Verzeichnis, probe 206; L1b 10 Hz (0.1 s), L2 = full resolution + 1-min-Mittel; Aufloesung 0.016 nT laut NESDIS-Seite; kein HAPI-Eintrag (--hapi GOES16_MAG absent).
+
+host cdaweb.gsfc.nasa.gov
+  instrument SEM-2
+  unit #/cm2-s-str-eV
+  cadence 2
+  api_cite https://www.ngdc.noaa.gov/stp/satellite/poes/docs/SEM2Archive.pdf
+  api_quote "The minor frame cadence is one minor frame every 0.1-second, or 40 digital data words every 2-seconds."
+  instrument_cite https://www.ncei.noaa.gov/products/poes-metop-space-environment-monitor
+  instrument_quote "The Space Environment Monitor-2 (SEM-2), which was first launched on the NOAA-15 satellite and flies on the MetOp-A, -B and -C, is an upgraded version of Space Environment Monitor-1 (SEM-1)."
+  probe 2026-10-25T09:15:24Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/noaa/noaa19/sem2_fluxes-2sec/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/noaa/noaa19/sem2_fluxes-2sec/
+  note Verzeichnis, probe 206; HAPI NOAA19_POES-SEM2_FLUXES-2SEC /info 200: Einheiten #/cm2-s-str-eV, mW/m2-str, mW/m2, energy channel, counts; start 2013-01-01T00:00:54Z stop 2025-06-16T13:57:57Z (Datensatz endet, 2-s-Raster).
+
+host cdaweb.gsfc.nasa.gov
+  instrument SSUSI
+  unit count/s/Rayleigh
+  cadence -
+  api_cite https://www.jhuapl.edu/Content/techdigest/pdf/V34-N03/34-03-Paxton.pdf
+  api_quote "Responsivity at 1356 Å 0.30 count/s/Rayleigh"
+  instrument_cite https://docs.dart.ucar.edu/en/latest/observations/obs_converters/SSUSI/convert_f16_edr_dsk.html
+  instrument_quote "The Special Sensor Ultraviolet Spectrographic Imager SSUSI is designed to remotely sense the ionosphere and thermosphere."
+  probe 2026-10-25T09:15:25Z 206 https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/
+  note Verzeichnis, probe 206; kein HAPI-Eintrag (--hapi SSUSI absent, --hapi EDR-AURORA absent); Kadenz nicht gemessen (Schwenkprodukt je Orbit); Einheit aus der Produktdoku (count/s/Rayleigh), CDF-Variablenheader nicht gelesen.
+
+host cdaweb.gsfc.nasa.gov
+  instrument GPS-Empfaenger (IGS-Netz)
+  unit TECU
+  cadence 900
+  api_cite https://www.earthdata.nasa.gov/data/space-geodesy-techniques/gnss/atmospheric-products
+  api_quote "Since 1998, IGS associate analysis centers have provided products containing ionosphere vertical total electron content (TEC) maps and daily GNSS satellite differential code bias (DCB) values derived from the dual-frequency GNSS data."
+  instrument_cite https://www.haystack.mit.edu/geospace/geospace-projects/using-gnss-to-measure-ionospheric-tec
+  instrument_quote "Data from these dual-frequency receivers, located over the globe, are used to compute the daily GNSS TEC maps."
+  probe 2026-10-25T09:15:23Z 200 https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/2024/
+  applies https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/2024/
+  note Jahresverzeichnis 2024, probe 200; HAPI GPS_TEC15MIN_IGS /info 200 deckt 2024 (start 1995-05-16, stop 2026-10-20T23:45Z), Einheiten UTC+TECU, 15-min-Raster.
+
+host cdaweb.gsfc.nasa.gov
+  instrument EDP
+  unit mV/m
+  cadence 0.03125
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://lasp.colorado.edu/mms/sdc/public/datasets/fields/EDP_Data_Products_Guide_v1.3.pdf
+  instrument_quote "The combination of SDP and ADP is referred to as the Electric field Double Probe (EDP) instrument. EDP measures the 3-D electric field with an accuracy of 0.5 mV/m over the frequency range from DC to 100 kHz."
+  probe 2026-10-25T09:07:18Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min=2026-09-12T19:00:00Z&time.max=2026-09-12T19:00:30Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE
+  note /info 200; mms1_edp_dce_gse_fast_l2[mV/m] size 3, fill -1.0E31; Messung 2026-09-12: 64 Zeilen in 2 s, dt 0.03125 s = 32 Sa/s; resourceURL NotesM.html#MMS1_EDP_FAST_L2_DCE.
+
+host cdaweb.gsfc.nasa.gov
+  instrument FPI/DES
+  unit cm^-3
+  cadence 4.5
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://link.springer.com/article/10.1007/s11214-016-0245-4
+  instrument_quote "This paper describes the design of FPI, its ground and in-flight calibration, its operational concept, and its data products."
+  probe 2026-10-25T09:10:00Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FPI_FAST_L2_DES-MOMS&time.min=2020-01-01T00:00:00Z&time.max=2020-01-01T00:00:30Z&parameters=mms1_des_numberdensity_fast,mms1_des_bulkv_gse_fast&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FPI_FAST_L2_DES-MOMS
+  note /info 200; mms1_des_numberdensity_fast[cm^-3], mms1_des_bulkv_gse_fast[km/s], fill -1.0E31; Messung 2020-01-01 00:00-00:30Z: 400 Zeilen, median dt 4.50005 s; Blockfenster 2026-09-18T19:00-20:00Z liefert code 1201 "no data".
+
+host cdaweb.gsfc.nasa.gov
+  instrument OMNI
+  unit nT
+  cadence 3600
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesO.html#OMNI2_H0_MRG1HR
+  instrument_quote "OMNI Combined, Definitive, Hourly IMF and Plasma Data, and Energetic Proton Fluxes, Time-Shifted to the Nose of the Earth's Bow Shock, plus Solar and Magnetic Indices"
+  probe 2026-10-25T09:07:40Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min=2026-09-01T00:00:00Z&time.max=2026-09-01T02:00:00Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR
+  note /info 200; BX_GSE1800[nT] fill 999.9, T1800[Deg K] fill 9999999.0; Messung 2026-09-01: 5 Zeilen 00:30..04:30Z, dt 3600 s (Parameter heissen *1800, die Zeitstempel liegen halbstundenmittig).
+
+host cdaweb.gsfc.nasa.gov
+  instrument PSP merged MAG/Plasma
+  unit nT
+  cadence 3600
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesP.html#PSP_COHO1HR_MERGED_MAG_PLASMA
+  instrument_quote "PSP_COHO1HR_MERGED_MAG_PLASMA: Merged hourly magnetic field, plasma, proton fluxes, and ephermis data of PSP"
+  probe 2026-10-25T09:07:41Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min=2022-06-01T00:00:00Z&time.max=2022-06-01T03:00:00Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA
+  note /info 200; BR/BT/BN/B[nT], VR/VT/VN[km/sec], fill -1.0E31; Messung 2022-06-01: 5 Zeilen 00:00..04:00Z, dt 3600 s.
+
+host cdaweb.gsfc.nasa.gov
+  instrument FIELDS MAG
+  unit nT
+  cadence 0.109227
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://link.springer.com/article/10.1007/s11214-016-0244-5
+  instrument_quote "Magnetic fields are measured using both fluxgate and search-coil (induction) magnetometers mounted on a deployable boom in the spacecraft umbra."
+  probe 2026-10-25T09:07:43Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN&time.min=2026-04-30T19:00:00Z&time.max=2026-04-30T20:00:00Z&parameters=psp_fld_l2_mag_RTN&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN
+  note /info 200; psp_fld_l2_mag_RTN[nT] size 3, fill NaN, stop 2026-04-30T23:59:59Z; Messung 2026-04-30 19:00:00-19:00:05Z: 46 Zeilen, dt 0.109227 s; NotesP nennt "4 samples per cycle cadence".
+
+host cdaweb.gsfc.nasa.gov
+  instrument SWEAP/SPC
+  unit cm^{-3}
+  cadence 1.74762
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://link.springer.com/article/10.1007/s11214-015-0206-3
+  instrument_quote "Solar Wind Electrons Alphas and Protons (SWEAP) Investigation"
+  probe 2026-10-25T09:07:46Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min=2026-05-30T19:00:00Z&time.max=2026-05-30T20:00:00Z&parameters=np_moment_gd,wp_moment_gd&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I
+  note /info 200; np_moment_gd units "(Good Q) cm^{-3}", fill -1.0E31; Messung 2026-05-30 19:00-19:20Z: 53 Zeilen, median dt 1.74762 s (min 1.3039, max 40.72) — Momente sind nicht aequidistant; NotesP: "Parker Solar Probe/SWEAP/SPC level 3 ion data".
+
+host cdaweb.gsfc.nasa.gov
+  instrument RPW/TDS
+  unit V/m
+  cadence 16
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://www.aanda.org/articles/aa/full_html/2020/10/aa36214-19/aa36214-19.html
+  instrument_quote "This instrument is designed to measure in-situ magnetic and electric fields and waves from the continuous to a few hundreds of kHz."
+  probe 2026-10-25T09:07:49Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min=2026-03-24T19:00:00Z&time.max=2026-03-24T20:00:00Z&parameters=SN_RMS_E&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT
+  note /info 200; SN_RMS_E[V/m] fill -1.0E31; Messung 2026-03-24 19:00-19:05Z: 19 Zeilen, dt 16 s (min=max=16).
+
+host cdaweb.gsfc.nasa.gov
+  instrument FGM
+  unit nT
+  cadence 3.107
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite http://ui.adsabs.harvard.edu/abs/2008SSRv..141..235A/abstract
+  instrument_quote "The THEMIS Fluxgate Magnetometer (FGM) measures the background magnetic field and its low frequency fluctuations (up to 64 Hz) in the near-Earth space."
+  probe 2026-10-25T09:07:54Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM%400&time.min=2026-09-01T00:00:00Z&time.max=2026-09-01T01:00:00Z&parameters=tha_fgs_btotal,tha_fgs_gse&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM@0
+  note /info 200 mit %40 in der id; tha_fgs_btotal[nT] fill -1.0E30, tha_fgs_gse[nT GSE]; Messung 2026-09-01 00:00-00:10Z: 193 Zeilen, dt 3.107 s (Spin); resourceURL NotesT.html#THA_L2_FGM.
+
+host cdaweb.gsfc.nasa.gov
+  instrument ESA (MOM)
+  unit cm^-3 (All Qs)
+  cadence 3.107
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://www.researchgate.net/publication/225666485_The_THEMIS_ESA_plasma_instrument_and_in-flight_calibration
+  instrument_quote "The THEMIS Electrostatic Analyzer (ESA) measured the ion and electron distribution functions for each 3 s spin period (McFadden et al., 2008)."
+  probe 2026-10-25T09:07:59Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_MOM%400&time.min=2026-09-01T00:00:00Z&time.max=2026-09-01T01:00:00Z&parameters=tha_peim_density,tha_peim_velocity_gse&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_MOM@0
+  note /info 200; tha_peim_density[cm^-3 (All Qs)] fill NaN; Messung 2026-09-01 00:00-00:10Z: 193 Zeilen, dt 3.107 s; resourceURL NotesT.html#THA_L2_MOM.
+
+host cdaweb.gsfc.nasa.gov
+  instrument GMAG (GBO)
+  unit nT
+  cadence 60
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://themis.igpp.ucla.edu/instrument_gmags.shtml
+  instrument_quote "The THEMIS GMAGs measure the magnetic field with 0.01 nT resolution at 2 samples/second."
+  probe 2026-10-25T09:08:03Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min=2026-10-01T00:00:00Z&time.max=2026-10-01T01:00:00Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK
+  note /info 200; thg_magh_abk/thg_magd_abk/thg_magz_abk[nT] fill -1.0E30; Messung 2026-10-01: 5 Zeilen 00:00..00:04Z, dt 60 s (HAPI liefert 1-min, obwohl der GMAG-Sensor 2 Sa/s kann).
+
+host cdaweb.gsfc.nasa.gov
+  instrument SABER
+  unit K
+  cadence 79.138
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://essopenarchive.org/doi/10.22541/essoar.168500375.52715378
+  instrument_quote "SABER (Sounding of the Atmosphere using Broadband Emission Radiometry) is a 10-channel infrared radiometer that is one of four instruments on the NASA TIMED"
+  probe 2026-10-25T09:08:04Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&time.min=2026-10-16T19:00:00Z&time.max=2026-10-16T20:00:00Z&parameters=tpgpaltitude,ktemp&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER
+  note /info 200; ktemp[K] size 400, fill -999.0; Messung 2026-10-16 19:00-20:00Z: 52 Zeilen, median dt 79.138 s (min 45.95, max 126.57, Scan).
+
+host cdaweb.gsfc.nasa.gov
+  instrument MFI
+  unit nT (1min)
+  cadence 60
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://wind.nasa.gov/inst_info.php
+  instrument_quote "The Wind Magnetic Field Investigation (MFI) is composed of two fluxgate magnetometers located at 2/3 of the way out and at the end of a 12 m boom."
+  probe 2026-10-25T09:08:08Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI%400&time.min=2026-10-09T19:00:00Z&time.max=2026-10-09T20:00:00Z&parameters=BGSE&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0
+  note /info 200 (id mit %40); BGSE[nT (1min)] size 3, fill -1.0E31; Messung 2026-10-09 19:00-19:10Z: 10 Zeilen, dt 60 s; resourceURL NotesW.html#WI_H0_MFI.
+
+host cdaweb.gsfc.nasa.gov
+  instrument MFI
+  unit nT
+  cadence 0.092
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://wind.nasa.gov/inst_info.php
+  instrument_quote "The instrument measures DC vector magnetic fields up to a time resolution of 22 or 11 vectors/sec depending on the telemetry mode of the spacecraft."
+  probe 2026-10-25T09:08:11Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H2_MFI&time.min=2026-10-09T19:00:00Z&time.max=2026-10-09T20:00:00Z&parameters=BGSM&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H2_MFI
+  note /info 200; BGSM[nT] size 3, fill -1.0E31; Messung 2026-10-09 19:00-20:00Z: 38626 Zeilen, median dt 0.092 s (max 24.47 = Datenluecke).
+
+host cdaweb.gsfc.nasa.gov
+  instrument SWE Faraday Cup
+  unit km/s
+  cadence 101.21
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://wind.nasa.gov/inst_info.php
+  instrument_quote "The SWE Faraday Cup sub-system was designed to measure solar wind thermal protons and positive ions."
+  probe 2026-10-25T09:08:12Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_K0_SWE&time.min=2026-10-20T19:00:00Z&time.max=2026-10-20T20:00:00Z&parameters=V_GSE,Np&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_K0_SWE
+  note /info 200; V_GSE[km/s], Np[#/cc], fill -1.0E31; Messung 2026-10-20 19:00-20:00Z: 35 Zeilen, median dt 101.21 s (min 85.91, max 203.03) — Key-Parameter-Raster ist nicht aequidistant.
+
+host cdaweb.gsfc.nasa.gov
+  instrument MAG
+  unit nT
+  cadence 16
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://www.ngdc.noaa.gov/stp/solar/sateenvi.html
+  instrument_quote "The data plotted are verified Level-2 data from the MAG instrument (see Smith et al. 1998)."
+  probe 2026-10-25T09:15:29Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2026-08-01T00:00:00Z&time.max=2026-08-01T01:00:00Z&parameters=Magnitude,BGSM&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI
+  note /info 200; Magnitude[nT], BGSM[nT] size 3, fill -1.0E31; NotesA nennt "ACE Magnetic Field 16-Second Level 2 Data"; das Github-Release-Asset ace_h0_mfi_hourly.json gibt 404.
+
+host cdaweb.gsfc.nasa.gov
+  instrument SWEPAM
+  unit #/cc
+  cadence 300
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://izw1.caltech.edu/ACE/ASC/docs/swepam-ssr-paper.pdf
+  instrument_quote "The Solar Wind Electron Proton Alpha Monitor (SWEPAM) experiment provides the bulk solar wind observations for the Advanced Composition Explorer (ACE)."
+  probe 2026-10-25T09:15:30Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2026-08-01T00:00:00Z&time.max=2026-08-01T01:00:00Z&parameters=Np,Vp&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE
+  note /info 200; Np[#/cc], Vp[km/s], fill -1.0E31; NotesA: "K0 - ACE Solar Wind Experiment 5-Minute Key Parameters" (300 s); das Github-Release-Asset ace_k0_swe_hourly.json gibt 404; Asset fuehrt negative Np (kein Fill).
+
+host cdaweb.gsfc.nasa.gov
+  instrument OMNI
+  unit nT
+  cadence 60
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://omniweb.gsfc.nasa.gov/html/ow_data.html
+  instrument_quote "High Resolution OMNI (HRO) data set include 1-min and 5-min bow-shock-nose-shifted solar wind magnetic field and plasma data from IMP 8, Geotail, Wind and ACE"
+  probe 2026-10-25T09:15:31Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=2026-08-01T00:00:00Z&time.max=2026-08-01T01:00:00Z&parameters=F,flow_speed,proton_density&format=json
+  applies https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN
+  note /info 200; F[nT] fill 9999.99, flow_speed[km/s] fill 99999.9, proton_density[n/cc] fill 999.99; 1-min-Raster; das Github-Release-Asset omni_hro_1min.bin gibt 404.

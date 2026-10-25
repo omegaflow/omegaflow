@@ -300,11 +300,15 @@ fn load_specs(path: &str) -> Vec<Spec> {
     }
     out
 }
-fn url_id(url: &str) -> Option<&str> {
+fn url_id(url: &str) -> Option<String> {
     let rest = url.split_once("id=")?.1;
     let end = rest.find('&').unwrap_or(rest.len());
     let id = &rest[..end];
-    if id.is_empty() { None } else { Some(id) }
+    if id.is_empty() {
+        None
+    } else {
+        Some(id.replace("%40", "@").replace("%2F", "/").replace("%2f", "/"))
+    }
 }
 
 fn spec_for<'a>(specs: &'a [Spec], host: &str, url: &str) -> Option<&'a Spec> {
