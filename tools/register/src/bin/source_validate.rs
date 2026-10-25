@@ -306,6 +306,13 @@ fn load_specs(path: &str) -> Vec<Spec> {
     }
     out
 }
+fn url_id(url: &str) -> Option<&str> {
+    let rest = url.split_once("id=")?.1;
+    let end = rest.find('&').unwrap_or(rest.len());
+    let id = &rest[..end];
+    if id.is_empty() { None } else { Some(id) }
+}
+
 fn spec_for<'a>(specs: &'a [Spec], host: &str, url: &str) -> Option<&'a Spec> {
     specs
         .iter()
@@ -479,7 +486,11 @@ fn main() {
                         .iter()
                         .flat_map(|s| s.probes.iter())
                         .filter(|p| {
-                            p.url.starts_with(stem) || stem.starts_with(&p.url)
+                            let same_arm = match (url_id(&p.url), origin_url.and_then(url_id)) {
+                                (Some(a), Some(b)) => a == b,
+                                _ => true,
+                            };
+                            same_arm && (p.url.starts_with(stem) || stem.starts_with(&p.url))
                         })
                         .collect();
                     if matching.is_empty() {

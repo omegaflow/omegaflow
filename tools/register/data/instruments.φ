@@ -261,3 +261,27 @@ host www.ngdc.noaa.gov
   probe 2026-10-24T23:48:06Z 206 https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/noontime-flux/penticton/pent_noontime-flux_2024.txt
   applies https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/noontime-flux/
   note kadenz 86400 steht im selben PDF ("Daily measurements of the integrated emission"); gemessen wird von NRC Canada, verteilt von NOAA NCEI
+host vires.services
+  instrument VFM
+  unit nT
+  cadence 1
+  api_cite https://vires.services/hapi/info?id=SW_FAST_MAGA_LR_1B
+  api_quote "\"description\": \"Swarm A vector (VFM) and scalar (ASM) magnetic field fast track measurements interpolated at 1Hz rate.\""
+  instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_MAGx_LR_1B
+  instrument_quote "| F | nT | Magnetic field intensity | 1 | CDF_DOUBLE |"
+  probe 2026-10-24T23:59:38Z 200 https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start=2026-10-23T00:00:00Z&stop=2026-10-23T00:05:00Z&parameters=F&format=json
+  applies https://vires.services/hapi/data
+  note 5 Blöcke, vier Instrumente auf einer HAPI-Route: MAG (nT, VFM/ASM), EFI (K, V, cm-3), FAC (uA/m2), TEC (TECU). Die Zeile belegt nur den MAG-Zweig; die anderen Datensätze (SW_FAST_EFIA_LP_1B, SW_FAST_FACATMS_2F, SW_FAST_TECATMS_2F, CH_ME_MAG_LR_3) brauchen je eine eigene Zeile. Ältere Zeitfenster (2010) antworten 400 "time outside valid range"; das Produkt beginnt 2026-04-23.
+
+host erddap.marine.ie
+  instrument CTD
+  unit degree_C
+  cadence 60
+  api_cite https://erddap.marine.ie/erddap/info/smartbay_obs_ctd_sbe16/index.html
+  api_quote "attribute temperature resolution String 0.0001 degrees Celsius"
+  instrument_cite https://vocab.nerc.ac.uk/collection/L22/current/TOOL0870/
+  instrument_quote "The SBE 16plus V2 is a high accuracy conductivity and temperature recorder (pressure optional) with RS232 or RS485 interfaces."
+  probe 2026-10-24T23:37:37Z 200 https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
+  applies https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16
+  note Dieselbe info-Seite trägt die Kadenz wörtlich: "attribute NC_GLOBAL update_interval String PT1M" und die Instrumentzuordnung "attribute salinity sdn_instrument_name String Sea-Bird SBE 16Plus V2 SEACAT C-T Recorder". CTD = Conductivity-Temperature-Depth; der Sensor steht auf 25 m Tiefe (Beschreibung derselben Seite).
+
