@@ -90,6 +90,9 @@ fn main() {
     }
     let lon = (body_fixed[1].atan2(body_fixed[0])).to_degrees();
     let lat = (body_fixed[2] / n).asin().to_degrees();
+    let ra = (to_origin[1].atan2(to_origin[0])).to_degrees() / 15.0;
+    let dec = (to_origin[2] / n).asin().to_degrees();
+    println!("geocentric astrometric RA {ra:.4} h DEC {dec:.4} deg");
     println!("distance {origin_body}-{body} {:.1} km", n / 1000.0);
     if let Some(p) = map.get(&body).and_then(|e| e.props.as_ref()) {
         println!(
