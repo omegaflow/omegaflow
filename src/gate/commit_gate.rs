@@ -309,19 +309,36 @@ fn raw_string_open(b: &[u8], i: usize) -> Option<(usize, usize)> {
     }
 }
 
-fn line_comment_start(line: &str) -> Option<usize> {
-    let b = line.as_bytes();
+fn comment_lines(content: &str) -> Vec<(usize, usize)> {
+    let b = content.as_bytes();
+    let mut out: Vec<(usize, usize)> = Vec::new();
     let mut i = 0usize;
+    let mut line = 0usize;
+    let mut line_start = 0usize;
     while i < b.len() {
+        if b[i] == b'\n' {
+            line += 1;
+            line_start = i + 1;
+            i += 1;
+            continue;
+        }
         if b[i] == b'/' && i + 1 < b.len() && b[i + 1] == b'/' {
-            if i > 0 && b[i - 1] == b':' {
-                i += 2;
+            if i == 0 || b[i - 1] != b':' {
+                out.push((line, i - line_start));
+                while i < b.len() && b[i] != b'\n' {
+                    i += 1;
+                }
                 continue;
             }
-            return Some(i);
+            i += 2;
+            continue;
         }
         if let Some((mut j, hashes)) = raw_string_open(b, i) {
             while j < b.len() {
+                if b[j] == b'\n' {
+                    line += 1;
+                    line_start = j + 1;
+                }
                 if b[j] == b'"' {
                     let end = j + 1 + hashes;
                     if end <= b.len() && b[j + 1..end].iter().all(|&c| c == b'#') {
@@ -339,10 +356,21 @@ fn line_comment_start(line: &str) -> Option<usize> {
                 i += 1;
                 while i < b.len() {
                     match b[i] {
-                        b'\\' => i += 2,
+                        b'\\' => {
+                            if i + 1 < b.len() && b[i + 1] == b'\n' {
+                                line += 1;
+                                line_start = i + 2;
+                            }
+                            i += 2;
+                        }
                         b'"' => {
                             i += 1;
                             break;
+                        }
+                        b'\n' => {
+                            line += 1;
+                            line_start = i + 1;
+                            i += 1;
                         }
                         _ => i += 1,
                     }
@@ -369,7 +397,7 @@ fn line_comment_start(line: &str) -> Option<usize> {
             _ => i += 1,
         }
     }
-    None
+    out
 }
 
 fn brace_delta(line: &str) -> i32 {
@@ -1193,17 +1221,18 @@ impl Gate {
                 });
             }
         }
+        if let Some((line_idx, pos)) = comment_lines(&content).into_iter().next() {
+            let line = content.lines().nth(line_idx).unwrap_or("");
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "comment".to_string(),
+                line: line_idx + 1,
+                feedback: "code is self-documenting — comments are dead. Remove the line."
+                    .to_string(),
+                quote: clip(&line[pos..], 80),
+            });
+        }
         for (line_idx, line) in content.lines().enumerate() {
-            if let Some(pos) = line_comment_start(line) {
-                return Some(Verdict {
-                    severity: Severity::Hard,
-                    rule: "comment".to_string(),
-                    line: line_idx + 1,
-                    feedback: "code is self-documenting — comments are dead. Remove the line."
-                        .to_string(),
-                    quote: clip(&line[pos..], 80),
-                });
-            }
             let t = line.trim_start();
             if t.starts_with("field") {
                 if let Some((force, unit)) = field_line_force_unit(t) {

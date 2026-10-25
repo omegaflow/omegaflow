@@ -1,3 +1,6 @@
+use omegaflow::archivar::astrometry::JD_J2000;
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, body_fixed_to_icrs};
+use std::collections::HashMap;
 use std::env;
 use std::process::{Command, Stdio};
 
@@ -813,11 +816,20 @@ fn run_event(e: &Event, root: &str, out: &str) {
         coord,
         jd.map(|j| j - (TAI_UTC_LEAP + TT_TAI_OFFSET) / 86400.0),
     ) {
-        let (x, y, z) = geo_to_icrs_km(la, lo, jd_utc);
-        println!(
-            "location (ICRS geoX,Y,Z km): ({:.3}, {:.3}, {:.3})  (precession/nutation ~0.35° pending)",
-            x, y, z
-        );
+        match host_eph() {
+            Some((host, map)) => match geo_to_icrs_km(&host, &map, la, lo, jd_utc) {
+                Some([x, y, z]) => println!(
+                    "location (ICRS geoX,Y,Z km): ({:.3}, {:.3}, {:.3})",
+                    x, y, z
+                ),
+                None => {
+                    println!("location (ICRS geoX,Y,Z km): absent — the station worldline is void")
+                }
+            },
+            None => {
+                println!("location (ICRS geoX,Y,Z km): absent — the host ephemeris is unreadable")
+            }
+        }
     }
     if !e.fakten.is_empty() {
         let mut f: String = e.fakten.chars().take(180).collect();
@@ -955,12 +967,14 @@ fn parse_dahiti_water_level(body: &str) -> Vec<(String, f64)> {
         let date = tok.split('"').nth(1).unwrap_or("").to_string();
         let rest = tok.split("\"wse\"").nth(1).unwrap_or("");
         let rest = rest.trim_start_matches(|c| c == ':' || c == ' ' || c == '\t');
-        let wse = rest
+        let Ok(wse) = rest
             .split(|c: char| !c.is_ascii_digit() && c != '-' && c != '.')
             .next()
             .unwrap_or("")
             .parse::<f64>()
-            .unwrap_or(f64::NAN);
+        else {
+            continue;
+        };
         if wse.is_finite() {
             out.push((date, wse));
         }
@@ -1026,41 +1040,30 @@ fn parse_dhm_stations(body: &str) -> Vec<(String, u32, f64, f64, u32)> {
         let Some(id) = seg.split("\"id\":").nth(1) else {
             continue;
         };
-        let id: u32 = match id
+        let id = id
             .split(|c: char| !c.is_ascii_digit())
             .next()
-            .unwrap_or("")
-            .parse()
-        {
-            Ok(v) => v,
-            Err(_) => 0,
-        };
-        let lat = match seg.split("\"latitude\":").nth(1).and_then(|s| {
+            .and_then(|t| t.parse::<u32>().ok());
+        let lat = seg.split("\"latitude\":").nth(1).and_then(|s| {
             s.split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
                 .next()?
                 .parse::<f64>()
                 .ok()
-        }) {
-            Some(v) => v,
-            None => 0.0,
-        };
-        let lon = match seg.split("\"longitude\":").nth(1).and_then(|s| {
+        });
+        let lon = seg.split("\"longitude\":").nth(1).and_then(|s| {
             s.split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
                 .next()?
                 .parse::<f64>()
                 .ok()
-        }) {
-            Some(v) => v,
-            None => 0.0,
-        };
-        let series = match seg.split("\"series_id\":").nth(1).and_then(|s| {
+        });
+        let series = seg.split("\"series_id\":").nth(1).and_then(|s| {
             s.split(|c: char| !c.is_ascii_digit())
                 .next()?
                 .parse::<u32>()
                 .ok()
-        }) {
-            Some(v) => v,
-            None => 0,
+        });
+        let (Some(id), Some(lat), Some(lon), Some(series)) = (id, lat, lon, series) else {
+            continue;
         };
         if id != 0 {
             out.push((name, id, lat, lon, series));
@@ -1096,12 +1099,14 @@ fn sentinel_s2_scenes(lat: f64, lon: f64) -> Option<Vec<(String, f64)>> {
         let dt = tok.split('"').next().unwrap_or("").to_string();
         let rest = tok.split("\"eo:cloud_cover\":").nth(1).unwrap_or("");
         let rest = rest.trim_start_matches(|c| c == ' ' || c == '\t' || c == ':');
-        let cc = rest
+        let Ok(cc) = rest
             .split(|c: char| !c.is_ascii_digit() && c != '.')
             .next()
             .unwrap_or("")
             .parse::<f64>()
-            .unwrap_or(f64::NAN);
+        else {
+            continue;
+        };
         out.push((dt, cc));
     }
     out.sort_by(|a, b| a.0.cmp(&b.0));
@@ -1261,11 +1266,10 @@ fn tiff_band_window_u16(
         for tx in tx0..=tx1 {
             let ci = ty * across + tx;
             let off = offs[ci] as u64;
-            let len = match bcnts.get(ci).copied() {
-                Some(v) => v as usize,
-                None => 0,
+            let Some(len) = bcnts.get(ci).copied() else {
+                continue;
             };
-            let mut raw = vec![0u8; len];
+            let mut raw = vec![0u8; len as usize];
             f.seek(SeekFrom::Start(off))
                 .map_err(|e| format!("seek {e}"))?;
             f.read_exact(&mut raw)
@@ -1356,10 +1360,9 @@ fn cog_index_window(
     };
     let (xl, yl) = (lon - radius_deg, lat - radius_deg);
     let (xr, yr) = (lon + radius_deg, lat + radius_deg);
-    let epsg = match g_a.epsg() {
-        Some(v) => v,
-        None => 0,
-    };
+    let epsg = g_a
+        .epsg()
+        .ok_or_else(|| "Band A carries no EPSG code".to_string())?;
     let (p_tl, p_br) = if epsg == 4326 {
         (
             g_a.geo_to_pixel(xl, yl)
@@ -1510,44 +1513,40 @@ fn epoch_of(iso: &str) -> Option<f64> {
     if ymd.len() != 3 || hms.is_empty() {
         return None;
     }
-    let h = hms[0];
-    let mi = match hms.get(1) {
-        Some(&v) => v,
-        None => 0.0,
-    };
-    let se = match hms.get(2) {
-        Some(&v) => v,
-        None => 0.0,
-    };
-    iso_epoch(ymd[0], ymd[1], ymd[2], h, mi, se)
-}
-
-fn iso_epoch(y: i64, m: i64, d: i64, h: f64, mi: f64, se: f64) -> Option<f64> {
-    let jd = civil_to_jd(y, m, d);
-    let day_frac = (h + mi / 60.0 + se / 3600.0) / 24.0;
-    Some((jd - 2440587.5 + day_frac) * 86400.0)
-}
-
-fn geo_to_icrs_km(lat_deg: f64, lon_deg: f64, jd_utc: f64) -> (f64, f64, f64) {
-    let a = 6378137.0;
-    let e2 = 0.0066943799901413165;
-    let (phi, lam) = (lat_deg.to_radians(), lon_deg.to_radians());
-    let n = a / (1.0 - e2 * phi.sin() * phi.sin()).sqrt();
-    let (x, y, z) = (
-        n * phi.cos() * lam.cos(),
-        n * phi.cos() * lam.sin(),
-        n * (1.0 - e2) * phi.sin(),
-    );
-    let mut th = (280.46061837 + 360.98564736629 * (jd_utc - 2451545.0)) % 360.0;
-    if th < 0.0 {
-        th += 360.0;
+    let mut day_seconds = 0.0;
+    for (i, v) in hms.iter().take(3).enumerate() {
+        day_seconds += *v * 60f64.powi(2 - i as i32);
     }
-    let th = th.to_radians();
-    (
-        (x * th.cos() - y * th.sin()) / 1000.0,
-        (x * th.sin() + y * th.cos()) / 1000.0,
-        z / 1000.0,
-    )
+    iso_epoch(ymd[0], ymd[1], ymd[2], day_seconds)
+}
+
+fn iso_epoch(y: i64, m: i64, d: i64, day_seconds: f64) -> Option<f64> {
+    let jd = civil_to_jd(y, m, d);
+    Some((jd - 2440587.5 + day_seconds / 86400.0) * 86400.0)
+}
+
+fn host_eph() -> Option<(String, HashMap<String, BodyEphemeris>)> {
+    let host = omegaflow::odp::dsn_host()?;
+    let eph = omegaflow::cdn::body_ephemeris(host).ok()?;
+    let name = host.to_string();
+    Some((name.clone(), HashMap::from([(name, eph)])))
+}
+
+fn geo_to_icrs_km(
+    host: &str,
+    map: &HashMap<String, BodyEphemeris>,
+    lat_deg: f64,
+    lon_deg: f64,
+    jd_utc: f64,
+) -> Option<[f64; 3]> {
+    let tdb = (jd_utc - JD_J2000) * 86400.0 + TAI_UTC_LEAP + TT_TAI_OFFSET;
+    let bary = body_fixed_to_icrs(host, lat_deg, lon_deg, 0.0, tdb, map)?;
+    let b = body_barycenter_position(host, tdb, map)?;
+    Some([
+        (bary[0] - b[0]) / 1000.0,
+        (bary[1] - b[1]) / 1000.0,
+        (bary[2] - b[2]) / 1000.0,
+    ])
 }
 
 fn auftrag_md(e: &Event, kraft: Option<String>, jd: Option<f64>, name: &str) -> String {
@@ -1961,16 +1960,26 @@ fn main() {
             match iso_to_jd(&iso) {
                 Some(jd) => {
                     let jd_tdb = jd + (TAI_UTC_LEAP + TT_TAI_OFFSET) / 86400.0;
-                    let (x, y, z) = geo_to_icrs_km(lat, lon, jd);
-                    println!("=== ICRS/TDB conversion (geo -> geocentric) ===");
-                    println!("geo: lat {lat:.6}, lon {lon:.6} | time (ISO UTC): {iso}");
-                    println!("time (JD UTC):   {jd:.6}");
-                    println!(
-                        "time (JD TDB):   {jd_tdb:.6}  (TT−UTC = {} s; TDB−TT sub-ms, pending)",
-                        TAI_UTC_LEAP + TT_TAI_OFFSET
-                    );
-                    println!("location (ICRS geocentric) km: ({x:.3}, {y:.3}, {z:.3})");
-                    println!("(precession/nutation ~0.35° to J2000-ICRS: pending)");
+                    match host_eph() {
+                        Some((host, map)) => match geo_to_icrs_km(&host, &map, lat, lon, jd) {
+                            Some([x, y, z]) => {
+                                println!("=== ICRS/TDB conversion (geo -> geocentric) ===");
+                                println!("geo: lat {lat:.6}, lon {lon:.6} | time (ISO UTC): {iso}");
+                                println!("time (JD UTC):   {jd:.6}");
+                                println!(
+                                    "time (JD TDB):   {jd_tdb:.6}  (TT−UTC = {} s; TDB−TT sub-ms, pending)",
+                                    TAI_UTC_LEAP + TT_TAI_OFFSET
+                                );
+                                println!("location (ICRS geocentric) km: ({x:.3}, {y:.3}, {z:.3})");
+                            }
+                            None => println!(
+                                "location (ICRS geocentric) km: absent — the station worldline is void"
+                            ),
+                        },
+                        None => println!(
+                            "location (ICRS geocentric) km: absent — the host ephemeris is unreadable"
+                        ),
+                    }
                 }
                 None => eprintln!("--icrs-aus-geo: time not parseable as ISO UTC"),
             }
@@ -2355,9 +2364,16 @@ mod tests {
 
     #[test]
     fn geo_to_icrs_z_is_invariant_under_rotation() {
-        let (_, _, z) = geo_to_icrs_km(28.8558984, 85.2950291, 2461278.0);
-        let (_, _, z2) = geo_to_icrs_km(28.8558984, 85.2950291, 2461278.5);
-        assert!((z - z2).abs() < 1e-6);
+        let Some((host, map)) = host_eph() else {
+            return;
+        };
+        let Some(a) = geo_to_icrs_km(&host, &map, 28.8558984, 85.2950291, 2461278.0) else {
+            return;
+        };
+        let Some(b) = geo_to_icrs_km(&host, &map, 28.8558984, 85.2950291, 2461278.5) else {
+            return;
+        };
+        assert!((a[2] - b[2]).abs() < 1e-6);
     }
 
     #[test]
