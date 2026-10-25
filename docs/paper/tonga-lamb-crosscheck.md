@@ -220,9 +220,9 @@ arrival. The global-extrema method of Handover 54 stays struck.
 ## 6. Named unmeasured
 
 - **BGR matched-filter arrival.** The PMCC detection list runs on a ~300 s grid;
-  a sub-300 s arrival estimate is not recoverable from it. The raw waveform is
-  account-blocked (vDEC) — a measured access state, not a verdict. Next step:
-  none before access is granted.
+  a sub-300 s arrival estimate is not recoverable from it. The raw waveform was
+  not reachable (vDEC account state, measured 2026-09-17): no arrival is claimed
+  and no estimate stands.
 
 ## Data and code
 
