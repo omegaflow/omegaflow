@@ -225,7 +225,16 @@ fn host_of(url: &str) -> Option<String> {
     if host.is_empty() {
         return None;
     }
-    Some(host.strip_prefix("www.").unwrap_or(host).to_string())
+    let host = host.strip_prefix("www.").unwrap_or(host);
+    if host == "github.com"
+        && let Some(tag) = rest
+            .strip_prefix("github.com/omegaflow/sources/releases/download/")
+            .and_then(|p| p.split('/').next())
+        && !tag.is_empty()
+    {
+        return Some(tag.to_string());
+    }
+    Some(host.to_string())
 }
 
 fn load_specs(path: &str) -> Vec<Spec> {
