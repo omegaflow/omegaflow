@@ -5,6 +5,7 @@ use omegaflow::archivar::astrometry::{
     fk4_b1950_to_fk5_j2000, frame_bias_fk5_to_icrs, mat3_transpose, mat3_vec, nutation_matrix,
     parallax_geo_to_topo, parallax_topo_to_geo, precession_newcomb_to_b1950, vec3_norm_u,
 };
+use omegaflow::archivar::eop::delta_t_unix;
 use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs,
     light_time_worldline, parse_ephemeris_binary,
@@ -186,7 +187,7 @@ fn parse_hilton(line: &str) -> Option<Obs> {
     };
     let unix = days_from_civil(year, month, day)? as f64 * 86400.0 + hh * 3600.0 + mm * 60.0 + ss;
     let delta_t = if ts == "UT1" {
-        delta_t_espenak_meeus(year_decimal(year, month, day)?)
+        delta_t_unix(unix).unwrap_or(delta_t_espenak_meeus(year_decimal(year, month, day)?))
     } else {
         0.0
     };
@@ -221,7 +222,7 @@ fn parse_urss(line: &str, photo: bool) -> Option<Obs> {
         Frame::AppGeo
     };
     let delta_t = if ts == "UT1" {
-        delta_t_espenak_meeus(year_decimal(year, month, day)?)
+        delta_t_unix(unix).unwrap_or(delta_t_espenak_meeus(year_decimal(year, month, day)?))
     } else {
         0.0
     };

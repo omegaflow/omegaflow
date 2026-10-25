@@ -1,4 +1,5 @@
 use omegaflow::archivar::astrometry::delta_t_espenak_meeus;
+use omegaflow::archivar::eop::delta_t_unix;
 use omegaflow::archivar::{
     BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk,
     fetch_raw_bytes, light_time_worldline, orientation_angles_at, parse_ephemeris_binary,
@@ -275,7 +276,8 @@ fn print_rotation_audit(line: &Line, t_great: f64, pierce_lat: f64) {
         return;
     };
     let jd_tdb = t_great / 86400.0 + 2451545.0;
-    let dt = delta_t_espenak_meeus(jd_year(jd_tdb));
+    let dt = delta_t_unix((jd_tdb - 2440587.5) * 86400.0)
+        .unwrap_or(delta_t_espenak_meeus(jd_year(jd_tdb)));
     let jd_ut1 = jd_tdb - dt / 86400.0;
     let Some((_, _, w_tdb)) = orientation_angles_at(props, jd_tdb) else {
         println!(

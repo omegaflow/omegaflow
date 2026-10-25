@@ -82,6 +82,20 @@ fn sample(r: (f64, f64, f64, f64)) -> EopSample {
 
 pub const EOP_INTERPOLATION_CONVENTION: &str = "UT1-UTC carries the 27 one-second steps of the series, so it is not interpolable across one; the reader interpolates UT1-TAI = UT1-UTC - (TAI-UTC) linearly and adds TAI-UTC back (SOFA eraUtcut1, notes 2 and 5); before 1972-01-01 UTC had no one-second steps and the plain interpolation is the exact operation there; a row pair that spans that boundary has no common scale and stays absent";
 
+pub const DELTA_T_CONVENTION: &str = "Delta T = TT - UT1 = 32.184 s + (TAI-UTC) - (UT1-UTC); TAI-UTC from the embedded leap-second table, UT1-UTC from the EOP kernel; absent where either has no entry (before 1972-01-01, or outside the series), so the caller names the class instead of inheriting a polynomial";
+
+pub fn delta_t_unix(unix: f64) -> Option<f64> {
+    if !unix.is_finite() {
+        return None;
+    }
+    let lsk = crate::archivar::membrane::embedded_lsk()?;
+    let tai_utc = lsk.leap_at(unix)?;
+    let mjd = unix / 86400.0 + 40587.0;
+    let eop = kernel()?.at(mjd)?;
+    let dt = 32.184 + tai_utc - eop.ut1_utc_s;
+    if dt.is_finite() { Some(dt) } else { None }
+}
+
 fn ut1_utc_between(
     a: (f64, f64, f64, f64),
     b: (f64, f64, f64, f64),
@@ -134,6 +148,21 @@ mod tests {
         let s = kernel().expect("eop kernel");
         assert!(s.at(37664.0).is_none());
         assert!(s.at(70000.0).is_none());
+    }
+
+    #[test]
+    fn delta_t_matches_the_usno_series() {
+        let cases = [
+            (946684800.0, 63.8285),
+            (1501545600.0, 68.8373),
+            (1577836800.0, 69.3612),
+            (1785542400.0, 69.1713),
+        ];
+        for (unix, want) in cases {
+            let got = delta_t_unix(unix).expect("delta t");
+            assert!((got - want).abs() < 2.0e-3, "{unix}: {got} vs {want}");
+        }
+        assert!(delta_t_unix(0.0).is_none());
     }
 
     #[test]
