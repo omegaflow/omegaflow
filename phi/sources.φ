@@ -479,6 +479,7 @@ field radiance mtg_li_flash_radiance_mw_m2_sr inverse-square em mW/m2/sr 600 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ergsc.isee.nagoya-u.ac.jp/isee_vlf_ath_2024040405_v01.cdf
 origin https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/2024/04/isee_vlf_ath_2024040405_v01.cdf
+instrument induction
 compiler tools/harvest/src/bin/raw_mirror.rs
 harvest raw_mirror
 sha256 5f93df95358556154ddc38756074f8cc8b58231702f708ed1758ce14b0699757
@@ -860,6 +861,7 @@ field Value eea_aq_pm10_hourly_ug_m3 gaussian-inverse-square diffusion ug/m3 360
 
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
 origin https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+instrument drifter
 terms other-attribution https://www.aoml.noaa.gov/
 ttl 3600
 map table.rows
@@ -869,6 +871,7 @@ field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
 origin https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
+instrument drifter
 terms other-attribution https://www.aoml.noaa.gov/
 ttl 3600
 map table.rows
@@ -2115,6 +2118,7 @@ url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.e
 terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
 format exofop_toi
 origin https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
+instrument TESS
 compiler tools/harvest/src/bin/exofop_compiler.rs
 at sun
 ttl 86400
@@ -33656,6 +33660,7 @@ url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/su
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gsfc_ssi
 origin https://disc.gsfc.nasa.gov/datasets/UARSU3BS_022/summary
+instrument SUSIM
 compiler tools/harvest/src/bin/gsfc_ssi_compiler.rs
 sha256 7ce407bb0363781e92f9d65ca58e3cbcad7d00d9a727c8b91843e0ec4f5bc2ec
 at sun

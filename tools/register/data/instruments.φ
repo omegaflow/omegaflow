@@ -5922,3 +5922,57 @@ host zenodo.org
   note Einheit ist die Bin-Zaehlung (counts); kein Messabstand im Datensatztext, Karte 31536000.
 # ---- Zustandszeilen ----
 
+host disc.gsfc.nasa.gov
+  instrument SUSIM
+  unit w/m2/nm
+  sampling 86400
+  interval 86400
+  api_cite https://catalog.data.gov/dataset/uars-solar-ultraviolet-spectral-irradiance-monitor-susim-level-3bs-v022-uarsu3bs-at-ges-di
+  api_quote "The Solar Ultraviolet Spectral Irradiance Monitor (SUSIM) Level 3BS data product consists of daily, 1 nm resolution, solar spectral irradiances and selected solar parameters."
+  instrument_cite https://earth.gsfc.nasa.gov/climate/projects/solar-irradiance/instruments/susim
+  instrument_quote "SUSIM/ UARS makes measurements over its 115-410 nm wavelength range daily at 1 and 5 nm resolutions and weekly at 0.15 nm resolution."
+  probe 2026-10-25T10:21:01Z 206 https://disc.gsfc.nasa.gov/datasets/UARSU3BS_022/summary
+  applies https://disc.gsfc.nasa.gov/datasets/UARSU3BS_022/summary
+  note Tagesgranulat, 1 nm; sampling = Messtakt (taeglich), interval = 1 Granule/Tag; Einheit W/m2/nm aus dem Blockfeld, Katalogseite nennt "1 nm resolution" ohne Einheit.
+
+host ergsc.isee.nagoya-u.ac.jp
+  instrument induction
+  unit nT^2/Hz
+  sampling 64
+  interval 0.015625
+  api_cite https://www.isee.nagoya-u.ac.jp/doi/10.34515/DATA_GND-0004-0002-0101_v01.html
+  api_quote "The data consist of variations of three-dimensional (H, D, and Z components) geomagnetic field taken with a sampling rate of 64 Hz"
+  instrument_cite https://jaxa.repo.nii.ac.jp/record/1921/files/AA1530026007.pdf
+  instrument_quote "The STEL magnetometer data are obtained by fluxgate magnetometers with 1 second resolution (in operation at black points on the map) and/or induction magnetometers with a sampling rate of 64 Hz (at red points on the map)."
+  probe 2026-10-25T10:10:18Z 206 https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/2024/04/isee_vlf_ath_2024040405_v01.cdf
+  applies https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/2024/04/isee_vlf_ath_2024040405_v01.cdf
+  note Stuendliches CDF; 64-Hz-Rohdaten; Einheit nT^2/Hz aus dem Blockfeld (VLF-PSD), die DOI nennt fuer die Amplitude nT/s.
+
+host exofop.ipac.caltech.edu
+  instrument TESS
+  unit ppm
+  sampling 20
+  sampling 120
+  interval -
+  api_cite https://exoplanetarchive.ipac.caltech.edu/docs/API_TOI_columns.html
+  api_quote "Planet Transit Depth [ppm]"
+  instrument_cite https://heasarc.gsfc.nasa.gov/docs/tess/docs/Guide-to-TESS-for-EM-planning.pdf
+  instrument_quote "In its second extended mission (2022-2025), TESS shortened the FFI cadence to 200 seconds and maintained the 20-second and 2-minute cadence mode for pre-selected targets."
+  probe 2026-10-25T10:20:57Z 200 https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
+  applies https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
+  note TOI-Katalog, Transit-Tiefe in ppm; kein fester Zeitabstand je Zeile (Ereignis-Katalog), daher interval -; TESS-Kadenz 20 s und 120 s.
+
+host erddap.aoml.noaa.gov
+  instrument drifter
+  unit K
+  sampling 3600
+  interval 3600
+  api_cite https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.html
+  api_quote "sst (Kelvin)"
+  instrument_cite https://www.aoml.noaa.gov/phod/gdp/faq.php
+  instrument_quote "All drifters are equipped with a sea surface temperature sensor at the bottom of the surface float, which sits approximately 15cm below the ocean surface."
+  probe 2026-10-25T11:03:58Z 200 https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst
+  applies https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+  applies https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
+  note Stundengitter (1 Hour Interpolated QC); sst in Kelvin; sampling = Meldetakt 3600 s, nicht Sensormesstakt.
+
