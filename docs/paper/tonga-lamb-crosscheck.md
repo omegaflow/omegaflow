@@ -189,8 +189,8 @@ coupling-window water rose (a rising trough is not a physical Lamb response,
 - the antipodal and multi-lap paths do not resolve against the detection list
   (residuals −176.7°, 154.6°, −20.8°)
 - the PMCC product is a detection list on a ~300 s grid: a sub-300 s
-  matched-filter arrival is not recoverable; the raw waveform is vDEC
-  account-blocked (a measured access state)
+  matched-filter arrival is not recoverable; the raw waveform was not reachable
+  (vDEC account state, measured 2026-09-17)
 
 ## 5. The Siegel
 
