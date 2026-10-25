@@ -114,11 +114,8 @@ pub fn tone_hz(tau_ticks: u64) -> f32 {
     1000.0 / (tau_ticks as f32 * LOOP_TICK_MS as f32)
 }
 
-pub fn acoustic_amplitude(omega: &[f32], aperture: &[f32], state: &[TriState]) -> f32 {
-    match channel_intensity(omega, aperture, state) {
-        Some(v) => v.clamp(-PCM_S16_BOUND, PCM_S16_BOUND),
-        None => 0.0,
-    }
+pub fn acoustic_amplitude(omega: &[f32], aperture: &[f32], state: &[TriState]) -> Option<f32> {
+    channel_intensity(omega, aperture, state).map(|v| v.clamp(-PCM_S16_BOUND, PCM_S16_BOUND))
 }
 
 pub fn acoustic_partials(
@@ -608,27 +605,30 @@ mod tests {
         };
         assert_eq!(
             acoustic_amplitude(&one(9.0), &[1.0; 9], &[TriState::Present; 9]),
-            1.0
+            Some(1.0)
         );
         let mut solo = [0.0f32; 9];
         solo[0] = 1.0;
         let solo_state = aperture_state(&solo);
-        assert_eq!(acoustic_amplitude(&one(9.0), &solo, &solo_state), 9.0);
+        assert_eq!(
+            acoustic_amplitude(&one(9.0), &solo, &solo_state),
+            Some(9.0)
+        );
         assert_eq!(
             acoustic_amplitude(&one(1.0e9), &solo, &solo_state),
-            PCM_S16_BOUND
+            Some(PCM_S16_BOUND)
         );
         assert_eq!(
             acoustic_amplitude(&one(-1.0e9), &solo, &solo_state),
-            -PCM_S16_BOUND
+            Some(-PCM_S16_BOUND)
         );
         assert_eq!(
             acoustic_amplitude(&[0.0; 9], &[1.0; 9], &[TriState::Present; 9]),
-            0.0
+            Some(0.0)
         );
         assert_eq!(
             acoustic_amplitude(&one(5.0), &[0.0; 9], &[TriState::Absent; 9]),
-            0.0
+            None
         );
     }
 

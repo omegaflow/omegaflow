@@ -381,24 +381,23 @@ pub fn source_rayparam_s(delta_deg: f64, depth_km: f64, upgoing: bool) -> Option
     let v_source = vp_at(&nodes, r_source);
     let p_min = deepest / nodes[nodes.len() - 1].1 * 1.0001;
     let p_max = r_source / v_source;
-    let dist = |p: f64| match source_legs(p, depth_km) {
-        Some((up_d, _, down_d, _)) => {
-            if upgoing {
-                up_d
-            } else {
-                down_d
-            }
-        }
-        None => 0.0,
+    let dist = |p: f64| -> Option<f64> {
+        source_legs(p, depth_km).map(|(up_d, _, down_d, _)| if upgoing { up_d } else { down_d })
     };
-    if !(delta_rad > 0.0 && delta_rad <= dist(p_min)) {
+    let Some(dist_min) = dist(p_min) else {
+        return None;
+    };
+    if !(delta_rad > 0.0 && delta_rad <= dist_min) {
         return None;
     }
     let mut lo = p_min;
     let mut hi = p_max;
     for _ in 0..64 {
         let mid = 0.5 * (lo + hi);
-        if dist(mid) > delta_rad {
+        let Some(dist_mid) = dist(mid) else {
+            return None;
+        };
+        if dist_mid > delta_rad {
             lo = mid;
         } else {
             hi = mid;

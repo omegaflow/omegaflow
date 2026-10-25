@@ -1934,6 +1934,14 @@ impl OmegaLoop {
                     self.perm_log_gen = self.ring_gen;
                     let aperture: [f32; 9] =
                         std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale);
+                    let amp = match acoustic_amplitude(
+                        &self.probe_omega,
+                        &aperture,
+                        &aperture_state(&aperture),
+                    ) {
+                        Some(v) => format!("{v}"),
+                        None => "absent".to_string(),
+                    };
                     let _ = writeln!(
                         f,
                         "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
@@ -1953,11 +1961,7 @@ impl OmegaLoop {
                         alpha,
                         self.tone_code.load(std::sync::atomic::Ordering::SeqCst),
                         self.tone_scale,
-                        acoustic_amplitude(
-                            &self.probe_omega,
-                            &aperture,
-                            &aperture_state(&aperture)
-                        )
+                        amp
                     );
                 }
             }

@@ -388,14 +388,17 @@ fn unix_of_iso(date: &str) -> Option<f64> {
     let s = s.strip_suffix('Z').unwrap_or(s);
     let (dstr, tstr) = s.split_once('T')?;
     let (y, m, d) = ymd_of(dstr)?;
-    let mut tp = tstr.split(':');
-    let hh: f64 = tp.next()?.parse().ok()?;
-    let mm: f64 = tp.next()?.parse().ok()?;
-    let ss: f64 = match tp.next() {
-        Some(v) => v.parse().ok()?,
-        None => 0.0,
-    };
-    unix_of_civil(y, m, d, hh * 3600.0 + mm * 60.0 + ss)
+    let mut clock = 0.0f64;
+    let mut parts = 0u32;
+    for part in tstr.split(':') {
+        let v: f64 = part.parse().ok()?;
+        clock += v * 60f64.powi(2 - parts as i32);
+        parts += 1;
+    }
+    if parts < 2 {
+        return None;
+    }
+    unix_of_civil(y, m, d, clock)
 }
 
 pub fn parse_dcdb(text: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {

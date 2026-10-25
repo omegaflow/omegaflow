@@ -903,11 +903,13 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     let text = std::fs::read_to_string(path).unwrap();
     let lines: Vec<&str> = text.lines().collect();
     assert_eq!(lines.len(), 1);
-    let fields: Vec<f32> = lines[0]
-        .split(',')
+    let raw: Vec<&str> = lines[0].split(',').collect();
+    assert_eq!(raw.len(), 17);
+    let fields: Vec<f32> = raw[..16]
+        .iter()
         .map(|s| s.parse::<f32>().unwrap())
         .collect();
-    assert_eq!(fields.len(), 17);
+    assert_eq!(fields.len(), 16);
     assert_eq!(fields[0], 1.0);
     assert_eq!(fields[1], sum1);
     assert_eq!(fields[2], g1);
@@ -919,10 +921,11 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     assert_eq!(fields[14], crate::archivar::hrv::TONE_ABSENT as f32);
     assert_eq!(fields[15], app.tone_scale);
     let aperture: [f32; 9] = std::array::from_fn(|i| app.field_permeability[i] * app.tone_scale);
-    assert_eq!(
-        fields[16],
-        acoustic_amplitude(&app.probe_omega, &aperture, &aperture_state(&aperture))
-    );
+    let expected = match acoustic_amplitude(&app.probe_omega, &aperture, &aperture_state(&aperture)) {
+        Some(v) => v.to_string(),
+        None => "absent".to_string(),
+    };
+    assert_eq!(raw[16], expected);
 
     app.last_hud = None;
     app.tick();

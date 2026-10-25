@@ -660,11 +660,11 @@ pub fn cf_time_unix_seconds(units: &str, value: f64) -> Option<f64> {
         return None;
     }
     let day_seconds = crate::lsk::days_from_civil(year, month, day)? as f64 * 86400.0;
-    let clock = match fields.next() {
-        Some(token) => clock_seconds(token)?,
-        None => 0.0,
-    };
-    Some(day_seconds + clock + value * factor)
+    let mut total = day_seconds + value * factor;
+    if let Some(token) = fields.next() {
+        total += clock_seconds(token)?;
+    }
+    Some(total)
 }
 
 fn clock_seconds(token: &str) -> Option<f64> {
