@@ -3,8 +3,9 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    BodyEphemeris, C_LIGHT, body_barycenter_position, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, parse_ephemeris_binary,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, body_fixed_to_icrs,
+    body_fixed_to_icrs_smooth, embedded_lsk, fetch_raw_bytes, light_time_worldline,
+    parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -24,31 +25,32 @@ const SATELLITES: [(&str, i32); 5] = [
     ("miran_j", 705),
 ];
 
-fn station_offset(
+fn station_offset_from_map(
+    map: &HashMap<String, BodyEphemeris>,
+    receiver: &str,
     jd_utc: f64,
     lat_deg: f64,
     lon_deg: f64,
     alt_m: f64,
-    radius_m: f64,
-    flattening: f64,
-    rotation_rad_s: f64,
-    w0_deg: f64,
-    dw_dt_deg_per_day: f64,
-) -> ([f64; 3], [f64; 3]) {
-    let lr = lat_deg.to_radians();
-    let nr = lon_deg.to_radians();
-    let e2 = flattening * (2.0 - flattening);
-    let sl = lr.sin();
-    let n = radius_m / (1.0 - e2 * sl * sl).sqrt();
-    let xb = (n + alt_m) * lr.cos() * nr.cos();
-    let yb = (n + alt_m) * lr.cos() * nr.sin();
-    let zb = (n * (1.0 - e2) + alt_m) * sl;
-    let d = jd_utc - JD_J2000;
-    let g = (w0_deg + dw_dt_deg_per_day * d).to_radians();
-    let (sg, cg) = g.sin_cos();
-    let pos = [xb * cg - yb * sg, xb * sg + yb * cg, zb];
-    let vel = [-pos[1] * rotation_rad_s, pos[0] * rotation_rad_s, 0.0];
-    (pos, vel)
+) -> Option<([f64; 3], [f64; 3])> {
+    let tdb = (jd_utc - JD_J2000) * 86400.0;
+    let dt = 1.0;
+    let at = |t: f64| -> Option<[f64; 3]> {
+        let p = body_fixed_to_icrs(receiver, lat_deg, lon_deg, alt_m, t, map)?;
+        let b = body_barycenter_position(receiver, t, map)?;
+        Some([p[0] - b[0], p[1] - b[1], p[2] - b[2]])
+    };
+    let p0 = at(tdb)?;
+    let pp = body_fixed_to_icrs_smooth(receiver, lat_deg, lon_deg, alt_m, tdb + dt, map)?;
+    let bp = body_barycenter_position(receiver, tdb + dt, map)?;
+    let pm = body_fixed_to_icrs_smooth(receiver, lat_deg, lon_deg, alt_m, tdb - dt, map)?;
+    let bm = body_barycenter_position(receiver, tdb - dt, map)?;
+    let vel = [
+        (pp[0] - bp[0] - pm[0] + bm[0]) / (2.0 * dt),
+        (pp[1] - bp[1] - pm[1] + bm[1]) / (2.0 * dt),
+        (pp[2] - bp[2] - pm[2] + bm[2]) / (2.0 * dt),
+    ];
+    Some((p0, vel))
 }
 
 #[derive(Clone)]
@@ -657,15 +659,14 @@ fn main() {
                     skip_geo += 1;
                     continue;
                 };
-                let Some(props) = map.get(&receiver).and_then(|e| e.props.as_ref()) else {
-                    skip_geo += 1;
-                    continue;
-                };
-                let Some(flattening) = props.flattening else {
-                    skip_geo += 1;
-                    continue;
-                };
-                let Some(rotation_rad_s) = props.omega_g.map(|(w, _)| w) else {
+                let Some((off, v_rot)) = station_offset_from_map(
+                    map,
+                    &receiver,
+                    o.jd_utc,
+                    OBS_LAT_DEG,
+                    OBS_LON_DEG,
+                    OBS_ALT_M,
+                ) else {
                     skip_geo += 1;
                     continue;
                 };
@@ -679,17 +680,6 @@ fn main() {
                     skip_fold += 1;
                     continue;
                 };
-                let (off, v_rot) = station_offset(
-                    o.jd_utc,
-                    OBS_LAT_DEG,
-                    OBS_LON_DEG,
-                    OBS_ALT_M,
-                    props.radius_m,
-                    flattening,
-                    rotation_rad_s,
-                    props.w0_deg,
-                    props.dw_dt_deg_per_day,
-                );
                 let sta = [
                     geocenter[0] + off[0],
                     geocenter[1] + off[1],
