@@ -2114,56 +2114,7 @@ const DROPPED_STATUS_TAGS: &[&str] = &[
     "ausstehend",
 ];
 
-const DROPPED_STOPWORDS: &[&str] = &[
-    "der",
-    "die",
-    "das",
-    "den",
-    "dem",
-    "des",
-    "ein",
-    "eine",
-    "einen",
-    "einem",
-    "eines",
-    "und",
-    "oder",
-    "aber",
-    "ist",
-    "sind",
-    "wird",
-    "werden",
-    "wurde",
-    "nicht",
-    "kein",
-    "keine",
-    "fuer",
-    "mit",
-    "von",
-    "auf",
-    "aus",
-    "als",
-    "auch",
-    "nur",
-    "noch",
-    "the",
-    "and",
-    "for",
-    "with",
-    "from",
-    "that",
-    "this",
-    "into",
-    "over",
-    "after",
-    "punkt",
-    "status",
-    "schritt",
-    "offen",
-    "wartend",
-    "blockiert",
-    "pending",
-];
+const DROPPED_STOPWORDS: &str = include_str!("../data/dropped_stopwords.txt");
 
 struct Handover {
     date: String,
@@ -2589,7 +2540,7 @@ fn distinctive_token(tokens: &[String]) -> Option<String> {
     for word in tokens {
         if !is_meaningful_word(word)
             || word.chars().all(|c| c.is_ascii_digit())
-            || DROPPED_STOPWORDS.contains(&word.as_str())
+            || DROPPED_STOPWORDS.lines().any(|w| w.trim() == word.as_str())
         {
             continue;
         }

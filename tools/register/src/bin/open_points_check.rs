@@ -501,42 +501,15 @@ fn is_open_area_heading(line: &str) -> bool {
     low.starts_with("offen") || low.starts_with("operator-queue") || low.starts_with("queue")
 }
 
-const WORD_STOP: [&str; 34] = [
-    "status",
-    "trigger",
-    "lage",
-    "blockade",
-    "braucht",
-    "bindung",
-    "wort",
-    "eigen",
-    "operator",
-    "gesendet",
-    "geschlossen",
-    "erledigt",
-    "entschieden",
-    "offen",
-    "lock",
-    "termin",
-    "dass",
-    "eine",
-    "dieser",
-    "http",
-    "korrektur",
-    "korrigiert",
-    "abgrenzung",
-    "empfehlung",
-    "frage",
-    "antwort",
-    "nicht",
-    "keine",
-    "kein",
-    "nichts",
-    "oder",
-    "warten",
-    "wartend",
-    "regel",
-];
+const WORD_STOP_TEXT: &str = include_str!("../data/word_stop.txt");
+
+fn word_stop() -> Vec<&'static str> {
+    WORD_STOP_TEXT
+        .lines()
+        .map(str::trim)
+        .filter(|w| !w.is_empty())
+        .collect()
+}
 
 fn first_bold_words(line: &str) -> Vec<String> {
     let Some(start) = line.find("**") else {
@@ -578,6 +551,7 @@ fn word_carried(root: &Path, rel: &str, content: &str) -> Vec<String> {
     if corpus.is_empty() {
         return Vec::new();
     }
+    let stop = word_stop();
     let mut out = Vec::new();
     let mut in_area = false;
     for (idx, line) in content.lines().enumerate() {
@@ -593,7 +567,7 @@ fn word_carried(root: &Path, rel: &str, content: &str) -> Vec<String> {
         }
         let Some(name) = first_bold_words(line)
             .into_iter()
-            .find(|w| w.len() >= 5 && !WORD_STOP.contains(&w.to_lowercase().as_str()))
+            .find(|w| w.len() >= 5 && !stop.contains(&w.to_lowercase().as_str()))
         else {
             continue;
         };
