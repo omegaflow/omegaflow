@@ -415,3 +415,72 @@ host imag-data.bgs.ac.uk
   probe 2026-10-25T08:55:06Z 200 https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ykc/best-avail/PT1M/xyzf&start=2026-10-24T00:00:00Z&stop=2026-10-24T01:00:00Z&format=json
   applies https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
   note die Dokumente sind offen und lesbar; die Weitergabe der Daten ist es nicht — bulk distribution verlangt written permission (state/wartend.phi, LOCK rechtlich). Die Zeile belegt die Messung, sie gibt die Daten nicht frei. Die Register-origin traegt keine dataset-id, deshalb deckt eine Zeile den Endpunkt
+host pds-ppi.igpp.ucla.edu
+  instrument radio
+  unit Hz
+  api_cite https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/DOCUMENT/TRK_2_18.TXT
+  api_quote "The Doppler observable (in Hertz) is computed according to the following equation."
+  instrument_cite https://pds-ppi.igpp.ucla.edu/data/GO-J-RSS-5-ROCC-V1.0/DOCUMENT/RSS.PDF
+  instrument_quote "use as their instrument the dual-frequency radio system on the spacecraft operating in conjunction with various US and German tracking stations on Earth"
+  probe 2026-10-25T09:11:25Z 206 https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/ODF/7265265A.ODF
+  applies https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/ODF/
+  note Block 18392. Keine feste Kadenz: das ODF traegt je Satz eine Kompressionszeit; gemessen 6 ODF3C-Zeilen auf 1920 s (7265265A, START/STOP im LBL) = 320 s und 6 auf 2520 s (7280281A) = 420 s. Einheit Hz woertlich im ODF-SIS (TRK-2-18); das Label selbst nennt fuer die Spalte OBSERVABLE keine UNIT.
+
+host pds-ppi.igpp.ucla.edu
+  instrument transponder
+  unit count
+  cadence 0.0008
+  api_cite https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODR-V1.0/ODR/72130631.LBL
+  api_quote "This ODR data file contains 8-bit samples from the 4 Analog-to-Digital converters.  The sample rate is 1250 samples/second"
+  instrument_cite https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODR-V1.0/CATALOG/INST.CAT
+  instrument_quote of transponders which received and transmitted at both S-band (2.3 GHz, 13 cm wavelength) and X-band (8.4 GHz, 3.6 cm wavelength)
+  probe 2026-10-25T09:11:26Z 206 https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODR-V1.0/ODR/72130631.ODR
+  applies https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODR-V1.0/ODR/
+  note Block 18401. count, weil die ODRs unkalibrierte 8-Bit-A/D-Samples sind; das Label setzt fuer die Sample-Spalten UNIT = "N/A". 1250 samples/s = 0.0008 s.
+
+host pds-ppi.igpp.ucla.edu
+  instrument ROSE
+  unit Hz
+  api_cite https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/document/maven_rose_tnf_v01_r00.pdf
+  api_quote "Uplink frequency value also called Doppler Reference Frequency IEEE Double Hz / 1 mHz"
+  instrument_cite https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/document/maven_sis_ROSE-1.7.pdf
+  instrument_quote "The Radio Occultation Science Experiment (ROSE) is a two way single-frequency (X-band) radio occultation experiment designed to measure electron density in the ionosphere of Mars."
+  probe 2026-10-25T09:11:27Z 206 https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/2016/02/mvn_rse_l0_tnf_20160219T151033_v01_r00.dat
+  applies https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
+  note Bloecke 18413/18423/18433 (gleiche origin). TNF = Tracking and Navigation File im DSN-Format TRK-2-34; die Einheit Hz steht in der Feldtabelle des Formatdokuments. Keine Kadenz belegt: TNF ist ein Tracking-Notebook, die Records tragen eigene Zeitstempel (sec, 0.01 s Aufloesung), kein fester Takt im Dokument.
+
+host pds-ppi.igpp.ucla.edu
+  instrument radio science subsystem
+  unit Hz
+  cadence 10 60 1
+  api_cite https://ode.rsl.wustl.edu/Mars/pagehelp/Content/Missions_Instruments/MESSENGER/RSS/EDR/ODF.htm
+  api_quote "One-way Doppler (Hertz); nearly all files have integration periods of 10 seconds or 60 seconds; during some of the early flybys, some files have 1 second integration periods"
+  instrument_cite https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/document-rs/instrument_rs.txt
+  instrument_quote "Instrument Name                : RADIO SCIENCE SUBSYSTEM Instrument Type                : RADIO SCIENCE"
+  probe 2026-10-25T09:11:28Z 206 https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/2007/mess_rs_07364_365_10s_odf.dat
+  applies https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
+  note Block 18443. api_quote sind zwei Zeilen derselben ODE-Seite (Einheit und Integrationszeit), mit Semikolon verbunden. Die 10 s stehen ausserdem im Dateinamen (_10s_odf). Das ODF-SIS (dsn_trk_2_18_odf_sis.pdf) nennt dieselbe Einheit: "The D-DOD Doppler observables are phase delay rate measurements and have units of Hz."
+
+host pds-ppi.igpp.ucla.edu
+  instrument radio science subsystem
+  unit count
+  cadence 0.1
+  api_cite https://ode.rsl.wustl.edu/Mars/pagehelp/Content/Missions_Instruments/MESSENGER/RSS/EDR/TNF.htm
+  api_quote "The emphasis of the data is on phase of the transmitted and received signals, with 10 phase counts recorded each second."
+  instrument_cite https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/document-rs/instrument_rs.txt
+  instrument_quote "Instrument Name                : RADIO SCIENCE SUBSYSTEM Instrument Type                : RADIO SCIENCE"
+  probe 2026-10-25T09:11:29Z 206 https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-tnf/2007/073641600sc236dss26_tnf.dat
+  applies https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-tnf/
+  note Block 18452. TNF = TRK-2-34-Rohformat des Closed-Loop-Systems; der Traeger ist die Phase (count), 10 Phasenzaehlungen je Sekunde = 0.1 s. Frequenzfelder im selben Format tragen Hz, das ist hier nicht die Hauptgroesse.
+
+host pds-ppi.igpp.ucla.edu
+  instrument solar corona experiment
+  unit Hz
+  cadence 1
+  api_cite https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/CATALOG/ULY_SCE_TDF_DS.CAT
+  api_quote "Data values are reported at rates no higher than 10 per second.  For the Ulysses Jupiter encounter the received frequencies at S-Band and X-band were recorded at a sample time of one per second."
+  instrument_cite https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/CATALOG/ULY_SCE_INST.CAT
+  instrument_quote INSTRUMENT_NAME = "SOLAR CORONA EXPERIMENT"  INSTRUMENT_TYPE = "RADIO SCIENCE"
+  probe 2026-10-25T09:11:30Z 206 https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/2039040A.TDF
+  applies https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/
+  note Bloecke 18470/18479 (gleiche origin). TDF = ATDF (288-Byte-Records, 117 Parameter); Einheit Hz aus dem Detached Label 2039040A.LBL, Spalte XPNDR FREQUENCY: UNIT = "HERTZ". Die 1 s gelten fuer die S-/X-Band-Frequenzen dieses Jupiter-Encounters, nicht fuer jede ATDF-Datei.
