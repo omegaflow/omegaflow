@@ -15,6 +15,7 @@ pub struct PckBody {
     pub j4: Option<f64>,
     pub nut_ra: Option<Vec<[f64; 3]>>,
     pub nut_dec: Option<Vec<[f64; 3]>>,
+    pub nut_pm: Option<Vec<[f64; 3]>>,
 }
 
 impl PckBody {
@@ -33,6 +34,7 @@ impl PckBody {
             j4: None,
             nut_ra: None,
             nut_dec: None,
+            nut_pm: None,
         }
     }
 
@@ -51,6 +53,7 @@ impl PckBody {
             j4: None,
             nut_ra: None,
             nut_dec: None,
+            nut_pm: None,
         }
     }
 
@@ -71,7 +74,11 @@ impl PckBody {
     }
 
     pub fn pm_at(&self, days: f64) -> Option<f64> {
-        Some(self.pm_deg? + self.pm_rate_deg_per_day? * days)
+        let base = self.pm_deg? + self.pm_rate_deg_per_day? * days;
+        match &self.nut_pm {
+            Some(terms) => Some(base + nut_sum(terms, days / 36525.0)),
+            None => Some(base),
+        }
     }
 
     pub fn flattening(&self) -> Option<f64> {
@@ -82,6 +89,48 @@ impl PckBody {
             None
         }
     }
+}
+
+const LUNAR_PCK_ID: i32 = 301;
+
+const LUNAR_E_ARGUMENTS: [(f64, f64); 13] = [
+    (125.045, -0.0529921),
+    (250.089, -0.1059842),
+    (260.008, 13.0120009),
+    (176.625, 13.3407154),
+    (357.529, 0.9856003),
+    (311.589, 26.4057084),
+    (134.963, 13.0649930),
+    (276.617, 0.3287146),
+    (34.226, 1.7484877),
+    (15.134, -0.1589763),
+    (119.743, 0.0036096),
+    (239.961, 0.1643573),
+    (25.053, 12.9590088),
+];
+
+fn lunar_terms(id: i32, amplitudes: &[f64], cosine: bool) -> Option<Vec<[f64; 3]>> {
+    if id != LUNAR_PCK_ID {
+        return None;
+    }
+    let deg = std::f64::consts::PI / 180.0;
+    let terms: Vec<[f64; 3]> = amplitudes
+        .iter()
+        .zip(LUNAR_E_ARGUMENTS.iter())
+        .map(|(amp, &(constant_deg, rate_deg_per_day))| {
+            let phase_deg = if cosine {
+                constant_deg + 90.0
+            } else {
+                constant_deg
+            };
+            [
+                *amp,
+                rate_deg_per_day * 36525.0 * deg,
+                phase_deg * deg,
+            ]
+        })
+        .collect();
+    if terms.is_empty() { None } else { Some(terms) }
 }
 
 fn nut_sum(terms: &[[f64; 3]], t: f64) -> f64 {
@@ -117,11 +166,14 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
                 "CONSTANT_J4" if !values.is_empty() => entry.j4 = Some(values[0]),
                 "J2" if !values.is_empty() => entry.j2 = Some(values[0]),
                 "J4" if !values.is_empty() => entry.j4 = Some(values[0]),
-                "NUT_PREC_RA" if values.len() % 3 == 0 => {
-                    entry.nut_ra = Some(chunk_triples(&values))
+                "NUT_PREC_RA" if !values.is_empty() => {
+                    entry.nut_ra = lunar_terms(id, &values, false)
                 }
-                "NUT_PREC_DEC" if values.len() % 3 == 0 => {
-                    entry.nut_dec = Some(chunk_triples(&values))
+                "NUT_PREC_DEC" if !values.is_empty() => {
+                    entry.nut_dec = lunar_terms(id, &values, true)
+                }
+                "NUT_PREC_PM" if !values.is_empty() => {
+                    entry.nut_pm = lunar_terms(id, &values, false)
                 }
                 _ => {}
             }
@@ -138,9 +190,6 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
     bodies
 }
 
-fn chunk_triples(values: &[f64]) -> Vec<[f64; 3]> {
-    values.as_chunks::<3>().0.to_vec()
-}
 
 fn scan_entries(text: &str) -> HashMap<(i32, String), Vec<f64>> {
     let mut out = HashMap::new();
@@ -246,6 +295,26 @@ fn scan_entries(text: &str) -> HashMap<(i32, String), Vec<f64>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_lunar_e_series_reproduces_the_iau_orientation_at_j2000() {
+        let text = "BODY301_POLE_RA = ( 269.9949 0.0031 0. )
+BODY301_POLE_DEC = ( 66.5392 0.0130 0. )
+BODY301_PM = ( 38.3213 13.17635815 0. )
+BODY301_NUT_PREC_RA = ( -3.8787 -0.1204 0.0700 -0.0172 0.0 0.0072 0.0 0.0 0.0 -0.0052 0.0 0.0 0.0043 )
+BODY301_NUT_PREC_DEC = ( 1.5419 0.0239 -0.0278 0.0068 0.0 -0.0029 0.0009 0.0 0.0 0.0008 0.0 0.0 -0.0009 )
+BODY301_NUT_PREC_PM = ( 3.5610 0.1208 -0.0642 0.0158 0.0252 -0.0066 -0.0047 -0.0046 0.0028 0.0052 0.0040 0.0019 -0.0044 )";
+        let bodies = parse(None, Some(text));
+        let moon = &bodies[&301];
+        let ra = moon.pole_ra_at(0.0).expect("moon pole ra");
+        let dec = moon.pole_dec_at(0.0).expect("moon pole dec");
+        let w = moon.pm_at(0.0).expect("moon prime meridian");
+        assert!((ra - 266.857733).abs() < 1.0e-3, "ra {ra}");
+        assert!((dec - 65.641103).abs() < 1.0e-3, "dec {dec}");
+        assert!((w - 41.195264).abs() < 1.0e-3, "w {w}");
+        let compass = (w - 38.3213) + (ra - 269.9949) * 0.9165;
+        assert!(compass.abs() < 0.05, "the E terms must compensate: {compass}");
+    }
 
     #[test]
     fn scan_parses_gm_and_body_entries() {
