@@ -346,4 +346,63 @@ BODY399_NUT_PREC_RA = ( -0.177596746667 -0.0178254 0.\n 0. 0. 0. )\n";
         let terms = [[1.0, 2.0, 0.0], [0.5, 1.0, std::f64::consts::FRAC_PI_2]];
         assert!((nut_sum(&terms, 0.0) - 0.5).abs() < 1e-12);
     }
+
+    #[test]
+    fn every_model_claiming_function_names_its_reference() {
+        let table = std::fs::read_to_string("src/archivar/kernels/reference_coverage.tsv")
+            .expect("the reference coverage table");
+        let listed: std::collections::HashSet<&str> = table
+            .lines()
+            .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+            .filter_map(|l| l.split('\t').next())
+            .collect();
+        for line in table.lines().filter(|l| !l.starts_with('#')) {
+            let mut cols = line.split('\t');
+            let (Some(_), Some(state), Some(reference)) = (cols.next(), cols.next(), cols.next())
+            else {
+                continue;
+            };
+            if state == "reference" {
+                assert!(
+                    reference.len() > 4 && reference != "no reference test",
+                    "a reference row must name its source: {line}"
+                );
+            }
+        }
+        let claim_tokens = ["iau", "sofa", "erfa", "iers", "tdb", "icrs", "exact", "precise"];
+        let mut missing: Vec<String> = Vec::new();
+        for dir in ["src/archivar", "src/mathematikerin"] {
+            let Ok(entries) = std::fs::read_dir(dir) else {
+                continue;
+            };
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.extension().and_then(|e| e.to_str()) != Some("rs") {
+                    continue;
+                }
+                let Ok(text) = std::fs::read_to_string(&path) else {
+                    continue;
+                };
+                for line in text.lines() {
+                    let Some(rest) = line.trim_start().strip_prefix("pub fn ") else {
+                        continue;
+                    };
+                    let name: String = rest
+                        .chars()
+                        .take_while(|c| c.is_alphanumeric() || *c == '_')
+                        .collect();
+                    let claims = name
+                        .split('_')
+                        .any(|token| claim_tokens.iter().any(|prefix| token.starts_with(prefix)));
+                    if claims && !listed.contains(name.as_str()) {
+                        missing.push(name);
+                    }
+                }
+            }
+        }
+        assert!(
+            missing.is_empty(),
+            "functions claiming a model without a line in reference_coverage.tsv: {missing:?}"
+        );
+    }
 }
