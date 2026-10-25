@@ -22,6 +22,11 @@ pub struct BodyId {
     pub parent: Option<i32>,
 }
 
+pub fn body_of_ephemeris_asset(asset: &str) -> Option<String> {
+    let stem = std::path::Path::new(asset).file_stem()?.to_str()?;
+    Some(stem.strip_prefix("ephemeris_").unwrap_or(stem).to_string())
+}
+
 pub fn body_table() -> HashMap<i32, BodyId> {
     let mut table = HashMap::new();
     for line in NAIF_ID_TABLE.lines() {

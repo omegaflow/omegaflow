@@ -1,12 +1,14 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
+use omegaflow::archivar::ephemeris::body_of_ephemeris_asset;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    BodyEphemeris, C_LIGHT, body_barycenter_position, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, parse_ephemeris_binary,
+    BodyEphemeris, BodyProperties, C_LIGHT, body_barycenter_position, embedded_lsk,
+    fetch_raw_bytes, light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
+use omegaflow::odp::dsn_host;
 
 const OBS_LAT_DEG: f64 = -22.534444444;
 const OBS_LON_DEG: f64 = -45.5825;
@@ -14,9 +16,6 @@ const OBS_ALT_M: f64 = 1810.7;
 const UNIX_JD_OFFSET: f64 = 2440587.5;
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
 const JD_J2000: f64 = 2451545.0;
-const WGS84_A_M: f64 = 6378137.0;
-const WGS84_F: f64 = 1.0 / 298.257223563;
-const EARTH_ROT_RAD_S: f64 = 7.2921150e-5;
 
 struct Obs {
     jd_utc: f64,
@@ -29,6 +28,8 @@ struct Obs {
 struct Line {
     word: &'static str,
     map: Option<HashMap<String, BodyEphemeris>>,
+    host: String,
+    target: String,
 }
 
 struct Row {
@@ -113,24 +114,23 @@ fn fit_rows(rows: &[&Row]) -> Option<[f64; 4]> {
     solve4(fit.ata, fit.atb)
 }
 
-fn station_offset(jd_utc: f64) -> ([f64; 3], [f64; 3]) {
+fn station_offset(jd_utc: f64, props: &BodyProperties) -> Option<([f64; 3], [f64; 3])> {
+    let f = props.flattening?;
     let lr = OBS_LAT_DEG.to_radians();
     let nr = OBS_LON_DEG.to_radians();
-    let e2 = WGS84_F * (2.0 - WGS84_F);
+    let e2 = f * (2.0 - f);
     let sl = lr.sin();
-    let n = WGS84_A_M / (1.0 - e2 * sl * sl).sqrt();
+    let n = props.radius_m / (1.0 - e2 * sl * sl).sqrt();
     let xb = (n + OBS_ALT_M) * lr.cos() * nr.cos();
     let yb = (n + OBS_ALT_M) * lr.cos() * nr.sin();
     let zb = (n * (1.0 - e2) + OBS_ALT_M) * sl;
     let d = jd_utc - JD_J2000;
-    let t = d / 36525.0;
-    let gmst_deg =
-        280.46061837 + 360.98564736629 * d + 0.000387933 * t * t - t * t * t / 38710000.0;
-    let g = gmst_deg.to_radians();
+    let g = (props.w0_deg + props.dw_dt_deg_per_day * d).rem_euclid(360.0).to_radians();
     let (sg, cg) = g.sin_cos();
     let pos = [xb * cg - yb * sg, xb * sg + yb * cg, zb];
-    let vel = [-pos[1] * EARTH_ROT_RAD_S, pos[0] * EARTH_ROT_RAD_S, 0.0];
-    (pos, vel)
+    let rot_rad_s = props.dw_dt_deg_per_day.to_radians() / 86400.0;
+    let vel = [-pos[1] * rot_rad_s, pos[0] * rot_rad_s, 0.0];
+    Some((pos, vel))
 }
 
 fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
@@ -233,20 +233,40 @@ fn load_line(
     uranus_asset: &str,
     eph_dir: &str,
 ) -> Line {
+    let (Some(host), Some(target)) = (dsn_host(), body_of_ephemeris_asset(uranus_asset)) else {
+        return Line {
+            word,
+            map: None,
+            host: String::new(),
+            target: String::new(),
+        };
+    };
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-    for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
+    for (name, asset) in [(host, earth_asset), (target.as_str(), uranus_asset)] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset) else {
-            return Line { word, map: None };
+            return Line {
+                word,
+                map: None,
+                host: String::new(),
+                target: String::new(),
+            };
         };
         let Some(eph) = parse_ephemeris_binary(&bytes) else {
-            return Line { word, map: None };
+            return Line {
+                word,
+                map: None,
+                host: String::new(),
+                target: String::new(),
+            };
         };
         map.insert(name.to_string(), eph);
     }
     Line {
         word,
         map: Some(map),
+        host: host.to_string(),
+        target,
     }
 }
 
@@ -367,7 +387,7 @@ fn main() {
                         }
                     }
                 }
-                let bary = body_barycenter_position("uranus", t, map)?;
+                let bary = body_barycenter_position(&line.target, t, map)?;
                 let rel = spk.state(799, 7, t).ok()?;
                 Some([
                     bary[0] + rel[0] * 1000.0,
@@ -375,7 +395,7 @@ fn main() {
                     bary[2] + rel[2] * 1000.0,
                 ])
             };
-            let Some(geocenter) = body_barycenter_position("earth", tdb, map) else {
+            let Some(geocenter) = body_barycenter_position(&line.host, tdb, map) else {
                 rows.push(None);
                 continue;
             };
@@ -387,7 +407,18 @@ fn main() {
                 rows.push(None);
                 continue;
             };
-            let (off, v_rot) = station_offset(o.jd_utc);
+            let Some(props) = map
+                .get(&line.host)
+                .and_then(|e| e.props.as_ref())
+                .filter(|p| p.flattening.is_some())
+            else {
+                rows.push(None);
+                continue;
+            };
+            let Some((off, v_rot)) = station_offset(o.jd_utc, props) else {
+                rows.push(None);
+                continue;
+            };
             let sta = [
                 geocenter[0] + off[0],
                 geocenter[1] + off[1],

@@ -9,6 +9,7 @@ use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs,
     light_time_worldline, parse_ephemeris_binary,
 };
+use omegaflow::odp::dsn_host;
 
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
 const J2000_UNIX_OFFSET: f64 = 946728000.0;
@@ -480,14 +481,18 @@ fn main() {
         );
         return;
     };
-    let Some(earth) = load("ephemeris_earth.bin") else {
-        eprintln!("neptune-apparent-chain: ephemeris_earth.bin void — the geocenter is absent");
+    let Some(host) = dsn_host() else {
+        eprintln!("neptune-apparent-chain: host declaration void — the observer body is absent");
+        return;
+    };
+    let Some(earth) = load(&format!("ephemeris_{host}.bin")) else {
+        eprintln!("neptune-apparent-chain: ephemeris {host} void — the geocenter is absent");
         return;
     };
     let mut neptune_map = HashMap::new();
     neptune_map.insert("neptune_c".to_string(), neptune_eph);
     let mut earth_map = HashMap::new();
-    earth_map.insert("earth".to_string(), earth);
+    earth_map.insert(host.to_string(), earth);
 
     let obslist_text = match ensure_bin(
         "data/geoazur.fr/apdb_obslist.opt",
@@ -644,7 +649,7 @@ fn main() {
                 continue;
             };
             let tdb = o.unix - J2000_UNIX_OFFSET + o.delta_t_s;
-            let Some(geocenter) = body_barycenter_position("earth", tdb, &earth_map) else {
+            let Some(geocenter) = body_barycenter_position(host, tdb, &earth_map) else {
                 skip += 1;
                 continue;
             };
@@ -661,7 +666,7 @@ fn main() {
                 skip += 1;
                 continue;
             };
-            let Some(v_annual) = body_barycenter_velocity("earth", tdb, &earth_map) else {
+            let Some(v_annual) = body_barycenter_velocity(host, tdb, &earth_map) else {
                 skip += 1;
                 continue;
             };
@@ -674,7 +679,7 @@ fn main() {
                     skip += 1;
                     continue;
                 };
-                let Some(obs_pos) = body_fixed_to_icrs("earth", *lat, *lon, *alt, tdb, &earth_map)
+                let Some(obs_pos) = body_fixed_to_icrs(host, *lat, *lon, *alt, tdb, &earth_map)
                 else {
                     skip += 1;
                     continue;

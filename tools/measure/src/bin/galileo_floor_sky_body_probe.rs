@@ -2,7 +2,11 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
+use omegaflow::archivar::ephemeris::body_of_ephemeris_asset;
+use omegaflow::odp::dsn_host;
 use omegaflow::spectral::civil_from_days;
+
+const TARGET_ASSET: &str = "ephemeris_jupiter.bin";
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -260,7 +264,11 @@ fn main() {
     };
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth", "jupiter"] {
+    let (Some(host), Some(target)) = (dsn_host(), body_of_ephemeris_asset(TARGET_ASSET)) else {
+        eprintln!("galileo: the host or target declaration is void");
+        return;
+    };
+    for b in [host, "galileo_daily", target.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
         }
@@ -380,8 +388,8 @@ fn main() {
     while d <= d1 {
         let t = d as f64 * DAY_S;
         let gp = body_barycenter_position("galileo_daily", t, &eph);
-        let ep = body_barycenter_position("earth", t, &eph);
-        let jp = body_barycenter_position("jupiter", t, &eph);
+        let ep = body_barycenter_position(host, t, &eph);
+        let jp = body_barycenter_position(&target, t, &eph);
         let mut g = DayGeo {
             r_e_au: None,
             jrj: None,
@@ -868,7 +876,7 @@ fn main() {
         let t = sd * DAY_S;
         if let (Some(gp), Some(jp)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("jupiter", t, &eph),
+            body_barycenter_position(&target, t, &eph),
         ) {
             let jrj = norm(sub(gp, jp)) / AU_M * AU_M / R_J_M;
             let is_min = match best {
