@@ -21,6 +21,7 @@ channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 
 url https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
 origin https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
+instrument NORSTAR
 terms attribution https://data.phys.ucalgary.ca/data/how_to_cite.html
 ttl 5
 on earth 58.76 -94.09 0.021
@@ -319,6 +320,7 @@ field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
 origin https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
+instrument ICON
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 ttl 300
 map current

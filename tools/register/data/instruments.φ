@@ -5976,3 +5976,81 @@ host erddap.aoml.noaa.gov
   applies https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
   note Stundengitter (1 Hour Interpolated QC); sst in Kelvin; sampling = Meldetakt 3600 s, nicht Sensormesstakt.
 
+host ads.atmosphere.copernicus.eu
+  instrument CAMS-GLOB-ANT
+  unit kg/m2/s
+  sampling 2592000
+  interval 2592000
+  api_cite https://ads.atmosphere.copernicus.eu/datasets/cams-global-emission-inventories?tab=overview
+  api_quote "Anthropogenic emissions of sulphur dioxide (from 12 different sectors) | kg m-2 s-1"
+  instrument_cite https://essd.copernicus.org/articles/16/2261/2024/
+  instrument_quote "The CAMS-GLOB-ANT_v5.3 inventory provides emissions as monthly averages at a 0.1° × 0.1° spatial resolution in latitude and longitude."
+  probe 2026-10-25T10:18:15Z 202 https://ads.atmosphere.copernicus.eu/api/
+  applies https://ads.atmosphere.copernicus.eu/api/
+  note Emissionsinventar, kein Sensor; Monatsmittel (2592000 s) in kg m-2 s-1; api_cite nennt die Einheit, instrument_cite das Monatsraster.
+
+host api.open-meteo.com
+  instrument ICON
+  unit °C
+  sampling 3600
+  interval 900
+  api_cite https://open-meteo.com/en/docs#current-conditions
+  api_quote "Current conditions are based on 15-minutely weather model data."
+  instrument_cite https://www.dwd.de/EN/ourservices/nwp_forecast_data/nwp_forecast_data.html
+  instrument_quote "The time interval for the forecast period up to +78 hours is one hour"
+  probe 2026-10-25T10:57:55Z 200 https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.405&current=temperature_2m
+  applies https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
+  note ICON-Stundenraster (sampling 3600); current liefert 15-minuetige Modellwerte (interval 900); temperature_2m in °C.
+
+host api.phys.ucalgary.ca
+  instrument NORSTAR
+  unit dB
+  sampling 5
+  interval 5
+  api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
+  api_quote "units | string | **Required** The units for the data values represented by this parameter."
+  instrument_cite https://api.phys.ucalgary.ca/hapi/info?id=NORSTAR_RIOMETER_K2@CHUR
+  instrument_quote "Cosmic noise absorption and raw signal voltage from the NORSTAR single-frequency single-beam riometer at this site, recorded at 5-second cadence."
+  probe 2026-10-25T11:00:47Z 200 https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start=2026-10-18&stop=2026-10-25&format=csv
+  applies https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
+  note HAPI /info: cadence PT5S, absorption in dB, raw_signal in V; Zeitreihe 1989-03-01 bis 2026-10-26.
+
+host cddis.nasa.gov
+  instrument GPS
+  unit TECU
+  sampling 30
+  interval 7200
+  api_cite https://dergipark.org.tr/en/download/article-file/459309
+  api_quote "IONEX – formatted global ionosphere maps are produced in 2-hour intervals."
+  instrument_cite https://igs.org/data-products-overview/
+  instrument_quote "Currently, the IGS network consists of over 500 globally distributed stations, equipped with geodetic-quality receivers that track the GPS satellite constellation"
+  probe 2026-10-25T11:02:43Z 206 https://cddis.nasa.gov/archive/gnss/products/ionex/2026/280/IGS0OPSRAP_20262800000_01D_02H_GIM.INX.gz
+  applies https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
+  note IONEX 2-h-Raster (7200 s) in TECU; IGS nennt 30-s-Datenprodukt (sampling 30) und geodaetische GPS-Empfaenger.
+
+host cdaw.gsfc.nasa.gov
+  instrument LASCO
+  unit km/s
+  sampling 720
+  interval 720
+  api_cite https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/2024_01/univ2024_01.html
+  api_quote "Linear Speed [km/s]"
+  instrument_cite https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Proba-3/Eclipse-maker_How_Proba-3_subtracts_the_Sun
+  instrument_quote "SOHO’s LASCO-C2 usually updates its view only once every 12 minutes"
+  probe 2026-10-25T10:02:55Z 200 https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
+  applies https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
+  note CME-Katalog, eine Zeile je CME; Geschwindigkeit in km/s; LASCO-C2-Bildabstand 12 min (720 s).
+
+host coastwatch.pfeg.noaa.gov
+  instrument ICOADS
+  unit C
+  sampling 2592000
+  interval 2592000
+  api_cite https://www.ncei.noaa.gov/products/extended-reconstructed-sst
+  api_quote "The Extended Reconstructed Sea Surface Temperature (ERSST) dataset is a global monthly analysis of SST data derived from the International Comprehensive Ocean–Atmosphere Dataset (ICOADS)."
+  instrument_cite https://icoads.noaa.gov/
+  instrument_quote "ICOADS provides individual observations and monthly gridded summary data."
+  probe 2026-10-25T10:08:43Z 206 https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5
+  applies https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5
+  note ERSSTv5 Monatsanalyse (2592000 s), 2°×2°-Gitter; Basis sind Schiff-/Boienbeobachtungen aus ICOADS.
+
