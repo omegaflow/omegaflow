@@ -312,7 +312,7 @@ fn run(args: &[String]) -> Result<(), String> {
     println!("compiler {COMPILER}");
     println!("sha256 {}", sha256_hex(&bin));
     println!("at earth");
-    println!("no-cadence");
+    println!("no-sampling");
 
     if ci_mode && !upload_release(NETLOC, &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));

@@ -827,7 +827,7 @@ url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_
 origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
 compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
-no-cadence
+no-sampling
 ";
         let hosts = register_hosts_raw(content);
         assert!(host_known("www2.census.gov", &hosts), "{hosts:?}");
@@ -880,7 +880,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/a.tif
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 00
-no-cadence
+no-sampling
 
 url https://example.com/not-a-cdn.bin
 origin https://example.com/x

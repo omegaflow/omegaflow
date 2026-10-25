@@ -9679,7 +9679,7 @@ fn test_parse_sky1_cdn_asset_block() {
             }
         }
     }
-    let witness = "url https://github.com/VERITAS-Observatory/VERITAS-VTSCat\nwitness s2-direction\nrecord sky1\nforce em\nno-cadence\n";
+    let witness = "url https://github.com/VERITAS-Observatory/VERITAS-VTSCat\nwitness s2-direction\nrecord sky1\nforce em\nno-sampling\n";
     let witness_srcs = super::parse_sources(witness);
     assert_eq!(
         witness_srcs.len(),
@@ -13778,7 +13778,7 @@ rows
 lat_key Lat
 lon_key Lon
 epoch time
-no-cadence
+no-sampling
 field NAI_N gbm_tgf_nai_counts inverse-square em count 31536000 0.0 0.0
 ";
     let mut body = String::from("time,OS_ID,NAI_N,Lon,Lat\n");

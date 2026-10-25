@@ -156,7 +156,7 @@ fn build_sources_block(lines: &[String]) -> Result<Block, String> {
     let mut ttl: Option<u64> = None;
     for line in lines.iter().skip(1) {
         let trimmed = line.trim();
-        if trimmed == "no-cadence" {
+        if trimmed == "no-sampling" {
             ttl = Some(NO_CADENCE);
             break;
         }
@@ -456,11 +456,11 @@ mod tests {
         let text = [
             "url https://example.com/static.bin",
             "format ephemeris_binary",
-            "no-cadence",
+            "no-sampling",
         ]
         .join("\n")
             + "\n";
-        let blocks = split_blocks(&text).expect("no-cadence block parses");
+        let blocks = split_blocks(&text).expect("no-sampling block parses");
         assert_eq!(blocks[0].ttl, Some(NO_CADENCE));
     }
 

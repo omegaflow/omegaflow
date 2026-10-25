@@ -534,7 +534,7 @@ mod tests {
              format ephemeris_binary\n\
              sha256 {sha}\n\
              at juice\n\
-             no-cadence\n"
+             no-sampling\n"
         )
     }
 
@@ -548,7 +548,7 @@ mod tests {
 
     #[test]
     fn register_pin_ignores_other_assets() {
-        let other = "url https://example.com/ephemeris_juice.bin\nterms PD-USGov https://ssd.jpl.nasa.gov/\nformat ephemeris_binary\nsha256 1111111111111111111111111111111111111111111111111111111111111111\nat juice\nno-cadence\n";
+        let other = "url https://example.com/ephemeris_juice.bin\nterms PD-USGov https://ssd.jpl.nasa.gov/\nformat ephemeris_binary\nsha256 1111111111111111111111111111111111111111111111111111111111111111\nat juice\nno-sampling\n";
         assert_eq!(register_pin(other, SEALED_ASSET), None);
     }
 

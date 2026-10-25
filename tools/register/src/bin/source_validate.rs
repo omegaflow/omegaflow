@@ -452,7 +452,7 @@ fn main() {
             }
         }
 
-        let no_cadence = field_of(&block, "no-cadence").is_some();
+        let no_cadence = field_of(&block, "no-sampling").is_some();
         let instrument = field_of(&block, "instrument")
             .and_then(|p| p.get(1).copied().map(str::to_string));
         let origin_url = field_of(&block, "origin")

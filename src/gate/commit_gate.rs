@@ -5273,7 +5273,7 @@ mod tests {
             "witness s2-direction",
             "record sky1",
             "force em",
-            "no-cadence",
+            "no-sampling",
         ];
         assert!(ingest_terms_absent_violations(&reference).is_empty());
     }

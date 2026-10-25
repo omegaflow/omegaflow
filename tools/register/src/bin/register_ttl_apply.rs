@@ -7,8 +7,8 @@ const DEFAULT_REGISTER: &str = "phi/sources.φ";
 fn usage() {
     eprintln!("usage: register_ttl_apply <rules.tsv> [--write] [--path <register>]");
     eprintln!("  TSV columns: MATCH<TAB>VALUE");
-    eprintln!("  MATCH = substring of the block's `url`; VALUE = `no-cadence` or seconds");
-    eprintln!("  first matching rule wins; rewrites the block's ttl/no-cadence line (or adds one)");
+    eprintln!("  MATCH = substring of the block's `url`; VALUE = `no-sampling` or seconds");
+    eprintln!("  first matching rule wins; rewrites the block's ttl/no-sampling line (or adds one)");
     eprintln!(
         "  without --write the register is only reported (source-first cadence verdict stays the owner's)"
     );
@@ -31,14 +31,14 @@ fn apply_block(block: &[String], rules: &[(String, String)]) -> (Vec<String>, bo
     let mut changed = false;
     if let Some(v) = value {
         matched = true;
-        let replacement = if v == "no-cadence" {
-            "no-cadence".to_string()
+        let replacement = if v == "no-sampling" {
+            "no-sampling".to_string()
         } else {
             format!("ttl {v}")
         };
         if let Some(pos) = lines
             .iter()
-            .position(|l| l.starts_with("ttl ") || l == "no-cadence")
+            .position(|l| l.starts_with("ttl ") || l == "no-sampling")
         {
             if lines[pos] != replacement {
                 lines[pos] = replacement;

@@ -376,7 +376,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     );
                 }
             }
-            "no-cadence" => {
+            "no-sampling" => {
                 cur_ttl = NO_CADENCE;
             }
             "harvest" if parts.len() >= 2 => {}
@@ -3288,7 +3288,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                         .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
                 );
             }
-            "no-cadence" => builder.ttl = Some(NO_CADENCE),
+            "no-sampling" => builder.ttl = Some(NO_CADENCE),
             "at" if parts.len() >= 2 => {
                 if parts[1].contains('=') {
                     return Err(format!("line {line_no}: at needs a body before attributes"));
@@ -4304,7 +4304,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn rows_accepts_lat_key_and_lon_key_as_the_named_column_spelling() {
-        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
+        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-sampling\n";
         let sources = parse_sources(declared);
         match &sources[0].extracts[0] {
             Extract::Rows {
@@ -4375,7 +4375,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn no_cadence_keeps_a_static_source_active() {
         let content =
-            "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\nno-cadence\n";
+            "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\nno-sampling\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].ttl, NO_CADENCE);

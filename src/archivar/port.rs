@@ -238,7 +238,7 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
                     ttl = v;
                 }
             }
-            "no-cadence" => {
+            "no-sampling" => {
                 ttl = NO_CADENCE;
             }
             "on" | "at" => frame_line = Some(t.to_string()),
@@ -324,7 +324,7 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
         out.push('\n');
     }
     if ttl == NO_CADENCE {
-        out.push_str("no-cadence\n");
+        out.push_str("no-sampling\n");
     } else if ttl > 0 {
         out.push_str(&format!("ttl {}\n", ttl));
     }
@@ -734,7 +734,7 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
         None => src.ttl,
     };
     if ttl == NO_CADENCE {
-        block.push_str("no-cadence\n");
+        block.push_str("no-sampling\n");
     } else {
         block.push_str(&format!("ttl {}\n", ttl));
     }
@@ -3811,7 +3811,7 @@ pub fn draft_context_mode(path: &str) -> i32 {
                 continue;
             }
             lines.push(l.to_string());
-            if l.starts_with("ttl ") || l == "no-cadence" {
+            if l.starts_with("ttl ") || l == "no-sampling" {
                 lines.push(frame.trim_end().to_string());
             }
         }

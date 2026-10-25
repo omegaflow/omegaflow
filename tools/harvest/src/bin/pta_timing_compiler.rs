@@ -473,7 +473,7 @@ fn fmt_num(v: Option<f64>, prec: usize) -> String {
 
 fn header_comment(pta: &str) -> String {
     format!(
-        "# pta_timing_compiler v1\n# compiler {COMPILER}\n# pta {pta}\n# at sun\n# no-cadence\n# frame SSB\n# tres par TRES, else weighted residual RMS\n"
+        "# pta_timing_compiler v1\n# compiler {COMPILER}\n# pta {pta}\n# at sun\n# no-sampling\n# frame SSB\n# tres par TRES, else weighted residual RMS\n"
     )
 }
 
@@ -673,7 +673,7 @@ fn run(args: &[String]) -> Result<(), String> {
         write_split(&dir, &rows, &pta_label)?;
     }
     eprintln!(
-        "pta_timing_compiler: {} row(s) from {members} member(s) -> {out} (PTA {pta_label}, at sun, no-cadence)",
+        "pta_timing_compiler: {} row(s) from {members} member(s) -> {out} (PTA {pta_label}, at sun, no-sampling)",
         rows.len()
     );
 
@@ -891,7 +891,7 @@ INCLUDE tims/other.tim
             ));
         }
         assert!(text.contains("# at sun"));
-        assert!(text.contains("# no-cadence"));
+        assert!(text.contains("# no-sampling"));
         assert!(text.contains("PPTA DR3,J0437-4715,pks,"));
         assert!(text.ends_with("0.387000\n"));
     }
