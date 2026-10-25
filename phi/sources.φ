@@ -29748,7 +29748,7 @@ url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format sky1
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
-instrument LHAASO
+instrument LHAASO-KM2A
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-sampling
 at sun
@@ -29758,7 +29758,7 @@ url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format sky1
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
-instrument LHAASO
+instrument LHAASO-KM2A
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-sampling
 at sun
@@ -33088,7 +33088,7 @@ instrument interferometer
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
-instrument RAVE
+instrument 6dF
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 no-sampling
 format asu-tsv
@@ -33396,7 +33396,7 @@ url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-gebco
 terms gebco-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
 format gbco_axis_value_text
 origin https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
-instrument Multibeam
+instrument Multibeam-Sonar
 compiler tools/harvest/src/bin/gbco_series_compiler.rs
 at earth
 no-sampling
