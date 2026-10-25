@@ -71,7 +71,7 @@ fn has_observables(block: &[&str]) -> bool {
     block.iter().any(|line| {
         matches!(
             line.split_whitespace().next(),
-            Some("field") | Some("quantity")
+            Some("field") | Some("quantity") | Some("last")
         )
     })
 }
@@ -438,7 +438,7 @@ fn list_open_blocks(content: &str, specs: &[Spec]) {
             {
                 instruments.push((*t).to_string());
             }
-            if fname.is_empty() && matches!(p.first(), Some(&"field") | Some(&"quantity")) {
+            if fname.is_empty() && matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last")) {
                 fname = field_name(&p);
                 if let Some((u, _)) = tail_unit_cadence(&p) {
                     unit = u.to_string();
@@ -471,7 +471,7 @@ fn list_without_fields(content: &str) {
     for (start, block) in blocks(content) {
         let has_fields = block.iter().any(|l| {
             let p: Vec<&str> = l.split_whitespace().collect();
-            matches!(p.first(), Some(&"field") | Some(&"quantity"))
+            matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
         });
         if has_fields {
             continue;
@@ -626,7 +626,7 @@ fn main() {
             .iter()
             .filter_map(|l| {
                 let p: Vec<&str> = l.split_whitespace().collect();
-                matches!(p.first(), Some(&"field") | Some(&"quantity"))
+                matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
                     .then(|| field_name(&p))
             })
             .collect();
@@ -840,7 +840,7 @@ fn main() {
                 Some(h) => *h,
                 None => continue,
             };
-            if head != "field" && head != "quantity" {
+            if head != "field" && head != "quantity" && head != "last" {
                 continue;
             }
             let fname = field_name(&parts);
