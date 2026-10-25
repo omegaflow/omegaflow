@@ -31,6 +31,13 @@ fn blocks(text: &str) -> Vec<(usize, Vec<String>)> {
     out
 }
 
+fn or_empty(v: Option<String>) -> String {
+    match v {
+        Some(s) => s,
+        None => String::new(),
+    }
+}
+
 fn field(block: &[String], name: &str) -> Option<String> {
     block.iter().find_map(|l| {
         let p: Vec<&str> = l.split_whitespace().collect();
@@ -53,7 +60,7 @@ fn product_of(block: &[String]) -> Option<String> {
     if let Some(i) = applies.find("source=") {
         return Some(applies[i + 7..].split('&').next()?.to_string());
     }
-    applies.split_whitespace().next().map(str::to_string)
+    Some(applies.clone())
 }
 
 fn cites(block: &[String]) -> usize {
@@ -503,7 +510,6 @@ fn fill_instruments() {
         else {
             continue;
         };
-        let stem = url.split(['?', '{']).next().unwrap_or(url);
         let mut names: Vec<String> = Vec::new();
         for (_, r) in &rows {
             if host_of(r).as_deref() != Some(host.as_str()) {
@@ -662,7 +668,10 @@ fn backfill_fields() {
     let mut rows = blocks(&reg_text);
     let mut filled = 0usize;
     for (_, row) in rows.iter_mut() {
-        if row.iter().any(|l| l.starts_with("  fields ")) {
+        if row.iter().any(|l| l.starts_with("  fields "))
+            && !field(row, "applies").is_some_and(|a| a.contains("id="))
+            && !field(row, "probe").is_some()
+        {
             continue;
         }
         let Some(applies) = field(row, "applies") else {
@@ -672,7 +681,19 @@ fn backfill_fields() {
             continue;
         };
         let mut keys: Vec<String> = Vec::new();
-        for (_, block) in &phi_blocks {
+        for line in row.iter() {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            if matches!(p.first(), Some(&"field") | Some(&"quantity"))
+                && let Some(k) = p.get(1)
+            {
+                let k = k.trim_matches('"').to_string();
+                if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
+                    keys.push(k);
+                }
+            }
+        }
+        if keys.is_empty() {
+            for (_, block) in &phi_blocks {
             let Some(origin) = field(block, "origin") else {
                 continue;
             };
@@ -705,10 +726,63 @@ fn backfill_fields() {
                 }
             }
         }
+        }
+        if applies.contains("id=")
+            && let Some(idpos) = applies.find("id=")
+            && let Ok(line_no) = applies[idpos + 3..]
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .parse::<usize>()
+            && let Some((_, block)) = phi_blocks.iter().find(|(s, _)| *s == line_no)
+        {
+            keys.clear();
+            for line in block {
+                let p: Vec<&str> = line.split_whitespace().collect();
+                if matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
+                    && let Some(k) = p.get(1)
+                {
+                    let k = k.trim_matches('"').to_string();
+                    if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
+                        keys.push(k);
+                    }
+                }
+            }
+        }
+        if keys.is_empty()
+            && let Some(probe) = field(row, "probe")
+                .and_then(|p| p.split_whitespace().last().map(str::to_string))
+        {
+            let pstem = probe.split(['?', '{']).next().unwrap_or(&probe).to_string();
+            for (_, block) in &phi_blocks {
+                let Some(origin) = field(block, "origin") else {
+                    continue;
+                };
+                let Some(url) = origin.split_whitespace().next() else {
+                    continue;
+                };
+                let ostem = url.split(['?', '{']).next().unwrap_or(url);
+                if !(pstem.starts_with(ostem) || ostem.starts_with(&pstem)) {
+                    continue;
+                }
+                for line in block {
+                    let p: Vec<&str> = line.split_whitespace().collect();
+                    if matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
+                        && let Some(k) = p.get(1)
+                    {
+                        let k = k.trim_matches('"').to_string();
+                        if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
+                            keys.push(k);
+                        }
+                    }
+                }
+            }
+        }
         if keys.is_empty() {
             continue;
         }
         keys.sort();
+        row.retain(|l| !l.starts_with("  fields "));
         let at = row
             .iter()
             .position(|l| l.starts_with("  applies "))
@@ -774,6 +848,411 @@ fn align_instruments() {
     println!("align: {fixed} Blockinstrumente auf die Spec gezogen");
 }
 
+fn apply_fields(path: &str) {
+    let tsv = fs::read_to_string(path).expect("tsv");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
+    let phi_blocks = blocks(&phi_text);
+    let mut ins: Vec<(usize, String)> = Vec::new();
+    let mut skipped = 0usize;
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(url), Some(fline)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let fline = fline.trim();
+        if !(fline.starts_with("field ") || fline.starts_with("quantity ") || fline.starts_with("last ")) {
+            continue;
+        }
+        let Some((start, block)) = phi_blocks
+            .iter()
+            .find(|(_, b)| field(b, "url").as_deref() == Some(url.trim()))
+        else {
+            skipped += 1;
+            continue;
+        };
+        let has = block.iter().any(|l| {
+            l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last ")
+        });
+        if has {
+            continue;
+        }
+        if let Some(pos) = block.iter().position(|l| l.starts_with("at ")) {
+            ins.push((start + pos, fline.to_string()));
+        } else {
+            ins.push((start + block.len(), fline.to_string()));
+        }
+    }
+    for (at, line) in ins.iter().rev() {
+        lines.insert(*at, line.clone());
+    }
+    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    println!("fields: {} Zeilen in Bloecke eingesetzt, {skipped} ohne Block", ins.len());
+}
+
+fn instrumentize(path: &str) {
+    let src = fs::read_to_string(path).expect("rows");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
+    let phi_blocks = blocks(&phi_text);
+    let mut ins: Vec<(usize, String)> = Vec::new();
+    for (_, row) in blocks(&src) {
+        let Some(inst) = field(&row, "instrument") else {
+            continue;
+        };
+        let Some(applies) = field(&row, "applies") else {
+            continue;
+        };
+        let url = applies.split_whitespace().next().unwrap_or("");
+        let Some((start, block)) = phi_blocks
+            .iter()
+            .find(|(_, b)| field(b, "url").as_deref() == Some(url))
+            .or_else(|| {
+                phi_blocks.iter().find(|(_, b)| {
+                    let Some(origin) = field(b, "origin") else {
+                        return false;
+                    };
+                    let Some(ourl) = origin.split_whitespace().next() else {
+                        return false;
+                    };
+                    let stem = ourl.split(['?', '{']).next().unwrap_or(ourl);
+                    url.starts_with(stem) || stem.starts_with(url)
+                })
+            })
+        else {
+            continue;
+        };
+        if block.iter().any(|l| l.starts_with("instrument ")) {
+            continue;
+        }
+        if let Some(pos) = block.iter().position(|l| l.starts_with("origin ")) {
+            ins.push((start + pos, format!("instrument {inst}")));
+        }
+    }
+    for (at, line) in ins.iter().rev() {
+        lines.insert(*at, line.clone());
+    }
+    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    println!("instrument: {} in Bloecke nach url eingesetzt", ins.len());
+}
+
+fn set_instruments(path: &str) {
+    use std::collections::BTreeMap;
+    let tsv = fs::read_to_string(path).expect("tsv");
+    let mut map: BTreeMap<usize, Vec<String>> = BTreeMap::new();
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(n), Some(inst)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let Ok(start) = n.trim().parse::<usize>() else {
+            continue;
+        };
+        let names: Vec<String> = if inst.trim() == "-" {
+            Vec::new()
+        } else {
+            inst.split(',').map(|s| s.trim().to_string()).collect()
+        };
+        map.insert(start, names);
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut done = 0usize;
+    for (start, block) in blocks(&text) {
+        let Some(names) = map.get(&start) else {
+            out.extend(block);
+            out.push(String::new());
+            continue;
+        };
+        done += 1;
+        let mut inserted = false;
+        for l in block {
+            if l.starts_with("instrument ") {
+                continue;
+            }
+            out.push(l.clone());
+            if !inserted && l.starts_with("origin ") {
+                for n in names {
+                    out.push(format!("instrument {n}"));
+                }
+                inserted = true;
+            }
+        }
+        if !inserted {
+            for n in names {
+                out.push(format!("instrument {n}"));
+            }
+        }
+        out.push(String::new());
+    }
+    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    println!("set-instruments: {done} Bloecke gesetzt");
+}
+
+fn apply_instruments_url(path: &str) {
+    let tsv = fs::read_to_string(path).expect("tsv");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
+    let phi_blocks = blocks(&phi_text);
+    let mut ins: Vec<(usize, String)> = Vec::new();
+    let mut open = 0usize;
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(url), Some(inst)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let inst = inst.trim();
+        if inst == "OFFEN" || inst == "-" || inst.is_empty() {
+            open += 1;
+            continue;
+        }
+        let Some((start, block)) = phi_blocks
+            .iter()
+            .find(|(_, b)| field(b, "url").as_deref() == Some(url.trim()))
+            .or_else(|| {
+                phi_blocks.iter().find(|(_, b)| {
+                    let Some(origin) = field(b, "origin") else {
+                        return false;
+                    };
+                    let Some(ourl) = origin.split_whitespace().next() else {
+                        return false;
+                    };
+                    ourl == url.trim()
+                        || ourl.starts_with(url.trim())
+                        || url.trim().starts_with(ourl)
+                })
+            })
+        else {
+            continue;
+        };
+        let existing = block.iter().any(|l| l.starts_with("instrument "));
+        let mut extra = 0usize;
+        for (i, name) in inst.split(',').map(str::trim).filter(|s| !s.is_empty()).enumerate() {
+            if existing {
+                continue;
+            }
+            if let Some(pos) = block.iter().position(|l| l.starts_with("origin ")) {
+                ins.push((start + pos + i, format!("instrument {name}")));
+                extra += 1;
+            }
+        }
+        let _ = extra;
+    }
+    for (at, line) in ins.iter().rev() {
+        lines.insert(*at, line.clone());
+    }
+    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    println!("instrument-url: {} gesetzt, {open} OFFEN uebersprungen", ins.len());
+}
+
+fn aussondern(class: &str, out_path: &str, derived_list: Option<&str>) {
+    use std::collections::BTreeSet;
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut keep: Vec<String> = Vec::new();
+    let mut moved: Vec<String> = Vec::new();
+    let mut count = 0usize;
+    let mut wanted: BTreeSet<usize> = BTreeSet::new();
+    if class == "derived"
+        && let Some(list) = derived_list
+    {
+        let list_text = match fs::read_to_string(list) {
+            Ok(s) => s,
+            Err(_) => String::new(),
+        };
+        for line in list_text.lines() {
+            if line.contains("DERIVED")
+                && let Some(n) = line.split('\t').next()
+                && let Ok(n) = n.trim().parse::<usize>()
+            {
+                wanted.insert(n);
+            }
+        }
+    }
+    for (start, block) in blocks(&text) {
+        let fmt = or_empty(field(&block, "format"));
+        let is = match class {
+            "reference" => fmt == "reference",
+            "ephemeris" => {
+                fmt.starts_with("ephemeris_")
+                    || fmt == "spk"
+                    || fmt == "orbit_bin"
+                    || fmt == "kernel_text"
+            }
+            "derived" => wanted.contains(&start),
+            _ => false,
+        };
+        if !is {
+            keep.extend(block);
+            keep.push(String::new());
+            continue;
+        }
+        let mut stripped: Vec<String> = Vec::new();
+        for l in block {
+            let head = l.split_whitespace().next().unwrap_or("");
+            if matches!(head, "field" | "quantity" | "last" | "instrument") {
+                continue;
+            }
+            if head == "at" || head == "on" || head == "query" {
+                continue;
+            }
+            stripped.push(l);
+        }
+        moved.extend(stripped);
+        moved.push(String::new());
+        count += 1;
+    }
+    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    let mut out = match fs::read_to_string(out_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
+    };
+    if !out.is_empty() && !out.ends_with("\n\n") {
+        out.push_str("\n\n");
+    }
+    out.push_str(&moved.join("\n"));
+    if let Some(parent) = std::path::Path::new(out_path).parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    fs::write(out_path, out).expect("out write");
+    println!("aussondern {class}: {count} Bloecke verschoben");
+}
+
+fn restore_missing(gitref: &str) {
+    use std::collections::BTreeSet;
+    let cur = fs::read_to_string(PHI).expect("phi");
+    let mut have: BTreeSet<String> = BTreeSet::new();
+    for (_, b) in blocks(&cur) {
+        if let Some(u) = field(&b, "url") {
+            have.insert(u);
+        }
+    }
+    let out = Command::new("git")
+        .args(["show", &format!("{gitref}:phi/sources.\u{3c6}")])
+        .output()
+        .expect("git show");
+    let old = String::from_utf8_lossy(&out.stdout).to_string();
+    let mut add: Vec<String> = Vec::new();
+    let mut n = 0usize;
+    for (_, b) in blocks(&old) {
+        let Some(u) = field(&b, "url") else {
+            continue;
+        };
+        if have.contains(&u) {
+            continue;
+        }
+        add.extend(b);
+        add.push(String::new());
+        n += 1;
+    }
+    let mut all = cur;
+    if !all.ends_with("\n\n") {
+        all.push_str("\n\n");
+    }
+    all.push_str(&add.join("\n"));
+    fs::write(PHI, all).expect("phi write");
+    println!("restore: {n} fehlende Bloecke aus {gitref} zurueck");
+}
+
+fn verify_specs() {
+    let text = fs::read_to_string(REG).expect("register");
+    let mut rows = 0usize;
+    let mut quote_missing = 0usize;
+    let mut inst_not_in_quote = 0usize;
+    let mut api_quote_missing = 0usize;
+    let mut cite_missing = 0usize;
+    let mut examples: Vec<String> = Vec::new();
+    for (_, r) in blocks(&text) {
+        let Some(inst) = field(&r, "instrument") else {
+            continue;
+        };
+        rows += 1;
+        let quote = or_empty(field(&r, "instrument_quote"));
+        let api_quote = or_empty(field(&r, "api_quote"));
+        let api_cite = or_empty(field(&r, "api_cite"));
+        let inst_cite = or_empty(field(&r, "instrument_cite"));
+        if quote.trim().is_empty() {
+            quote_missing += 1;
+        } else if !quote.to_lowercase().contains(&inst.to_lowercase()) {
+            inst_not_in_quote += 1;
+            if examples.len() < 20 {
+                examples.push(format!("{inst}\t{}\t{quote}", or_empty(field(&r, "applies"))));
+            }
+        }
+        if api_quote.trim().is_empty() {
+            api_quote_missing += 1;
+        }
+        if api_cite.trim().is_empty() || inst_cite.trim().is_empty() {
+            cite_missing += 1;
+        }
+    }
+    println!("Zeilen: {rows}");
+    println!("instrument_quote leer: {quote_missing}");
+    println!("instrument nicht im instrument_quote: {inst_not_in_quote}");
+    println!("api_quote leer: {api_quote_missing}");
+    println!("api_cite oder instrument_cite leer: {cite_missing}");
+    println!("\nBeispiele (instrument \\t applies \\t quote):");
+    for e in examples {
+        println!("{e}");
+    }
+}
+
+fn sync_fields() {
+    let reg_text = fs::read_to_string(REG).expect("register");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let phi_blocks = blocks(&phi_text);
+    let mut rows = blocks(&reg_text);
+    let mut synced = 0usize;
+    for (_, row) in rows.iter_mut() {
+        let Some(applies) = field(row, "applies") else {
+            continue;
+        };
+        let origin = applies.split_whitespace().next().unwrap_or("");
+        if origin.is_empty() {
+            continue;
+        }
+        let Some((_, block)) = phi_blocks.iter().find(|(_, b)| {
+            let Some(o) = field(b, "origin") else {
+                return false;
+            };
+            let Some(u) = o.split_whitespace().next() else {
+                return false;
+            };
+            u == origin || u.starts_with(origin) || origin.starts_with(u)
+        }) else {
+            continue;
+        };
+        let mut keys: Vec<String> = Vec::new();
+        for line in block {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            if matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
+                && let Some(k) = p.get(1)
+            {
+                let k = k.trim_matches('"').to_string();
+                if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
+                    keys.push(k);
+                }
+            }
+        }
+        if keys.is_empty() {
+            continue;
+        }
+        row.retain(|l| !l.starts_with("  fields "));
+        let at = row
+            .iter()
+            .position(|l| l.starts_with("  applies "))
+            .unwrap_or(row.len());
+        row.insert(at, format!("  fields {}", keys.join(" ")));
+        synced += 1;
+    }
+    let mut out = String::new();
+    for (_, b) in &rows {
+        out.push_str(&b.join("\n"));
+        out.push_str("\n\n");
+    }
+    fs::write(REG, out).expect("register write");
+    println!("sync-fields: {synced} Zeilen an Block-Keys gebunden");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -787,6 +1266,14 @@ fn main() {
         Some("clean") => clean(),
         Some("backfill-fields") => backfill_fields(),
         Some("align-instruments") => align_instruments(),
+        Some("apply-fields") if args.len() >= 3 => apply_fields(&args[2]),
+        Some("instrumentize") if args.len() >= 3 => instrumentize(&args[2]),
+        Some("set-instruments") if args.len() >= 3 => set_instruments(&args[2]),
+        Some("apply-instruments-url") if args.len() >= 3 => apply_instruments_url(&args[2]),
+        Some("aussondern") if args.len() >= 4 => aussondern(&args[2], &args[3], args.get(4).map(String::as_str)),
+        Some("restore-missing") if args.len() >= 3 => restore_missing(&args[2]),
+        Some("verify-specs") => verify_specs(),
+        Some("sync-fields") => sync_fields(),
         Some("repair-instruments") => repair_instruments(),
         _ => {
             eprintln!("spec_merge rows <out.φ> <states.φ> | instruments <tsv> | hostdocs");

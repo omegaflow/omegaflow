@@ -560,7 +560,12 @@ fn main() {
                 eprintln!("commit_check: phi/sources.φ:{line}: unbacked_mirror - {message}");
                 fail = true;
             }
-            for (line, message) in ingest_terms_absent_violations(&added) {
+            let content = match std::fs::read_to_string(path) {
+                Ok(s) => s,
+                Err(_) => String::new(),
+            };
+            let file_lines: Vec<&str> = content.lines().collect();
+            for (line, message) in ingest_terms_absent_violations(&file_lines) {
                 eprintln!("commit_check: phi/sources.φ:{line}: ingest-terms-absent - {message}");
                 fail = true;
             }
