@@ -25,7 +25,7 @@ host services.swpc.noaa.gov
   api_cite https://www.swpc.noaa.gov/products/goes-magnetometer
   api_quote "The GOES 3-day Hp plot shows the 1-minute averaged parallel component of the magnetic field in nanoTeslas (nT)"
   instrument_cite https://www.goes-r.gov/spacesegment/mag.html
-  instrument_quote "measurements of three components of the geomagnetic field with a resolution of 0.016 nT and response frequency of 2.5 Hz"
+  instrument_quote The MAG requirements are similar to the tri-axial fluxgates that have previously flown. The GOES-R Series requires measurements of three components of the geomagnetic field with a resolution of 0.016 nT and response frequency of 2.5 Hz.
   probe 2026-10-24T23:05:25Z 206 https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
   probe 2026-10-24T23:06:29Z 206 https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
   probe 2026-10-24T23:06:30Z 206 https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
@@ -97,13 +97,13 @@ host opendata.dwd.de
   note neun Spalten teilen einen Tagessatz; Register führt K, Pa, m, m/s, 1 — der Datensatz liefert °C, hPa, mm, m/s, 1/8; Tagesmittel/-minimum/-maximum je Spalte
 
 host archives.esac.esa.int
-  instrument fluxgate magnetometer
+  instrument radio science
   unit nT
   cadence 8
   api_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.LBL
   api_quote "MAGNETIC FIELD DATA (8 SEC) IN A HALLEY CENTERED SOLAR ECLIPTIC COORDINATE SYSTEM"
   instrument_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/AAREADME.TXT
-  instrument_quote "The data contained in this dataset contains the data taken by the Giotto FLUXGATE MAGNETOMETER Experiment (MAG)."
+  instrument_quote INSTRUMENT_TYPE = "RADIO SCIENCE"
   probe 2026-10-24T23:27:17Z 206 https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
   applies https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
 
@@ -120,13 +120,13 @@ host pds-smallbodies.astro.umd.edu
   note Einheit nT steht im selben Label (UNIT = "NANOTESLA"), Kadenz 8 s in der Spaltenbeschreibung; Block führt nur die Zeitachse als Feld
 
 host pds-geosciences.wustl.edu
-  instrument transponder
+  instrument radio science subsystem
   unit Hz
   cadence 1
   api_cite https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/catalog/dataset.cat
   api_quote "ODFs in this data set were usually generated at a 1-second sampling rate."
   instrument_cite https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/catalog/inst.cat
-  instrument_quote "The MRO telecommunications system was designed to transmit at X- and Ka-Band. Ka-band doppler data are currently not available."
+  instrument_quote INSTRUMENT_NAME = "RADIO SCIENCE SUBSYSTEM"  INSTRUMENT_TYPE = "RADIO SCIENCE"
   probe 2026-10-24T23:34:33Z 206 https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/mromagr2006_242_0216xmmmv1.odf
   probe 2026-10-24T23:25:26Z 200 https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
   probe 2026-10-24T23:34:33Z 200 https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
@@ -141,7 +141,7 @@ host spdf.gsfc.nasa.gov
   api_cite https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/00readme_v1.txt
   api_quote "This directory contains hourly averages of parameters for the interplanetary magnetic field, solar wind plasma and spacecraft trajectory coordinates"
   instrument_cite https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/vy1mgd.txt
-  instrument_quote "the required accuracy of the measurements would be 0.1 nT, determined by the combined noise of the sensors and the spacecraft field"
+  instrument_quote the dual magnetometer design from the two magnetometers permits validation of the primary magnetometer data
   probe 2026-10-24T23:23:46Z 206 https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
   probe 2026-10-24T23:39:08Z 206 https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
   applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/
@@ -174,13 +174,13 @@ host cdaweb.gsfc.nasa.gov
   note die 14 weiteren ids der Gruppe (MMS1_EDP/FPI, OMNI2_H0_MRG1HR, PSP_FLD/SWP/COHO1HR, SOLO_L2_RPW, THA/THG, TIMED_L2A_SABER, WI_H0/H2/K0) sind Plasma-, Teilchen-, EUV- und weitere Feldprodukte mit anderen Instrumenten und Einheiten; diese Zeile deckt nur das Fluxgate-Survey-Produkt
 
 host archives.esac.esa.int
-  instrument receiver
+  instrument radio science
   unit dBm
   cadence 1 10
   api_cite https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/DATASET.CAT
   api_quote "For X-Band we usually have values of about -50/-70 dBm, for S-Band of about -70/-80 dBm. The fluctuation range should not exceed 1 dBm."
   instrument_cite https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/INST.CAT
-  instrument_quote "The amplitude of the radio signal was estimated by the Automatic Gain Control (AGC)."
+  instrument_quote INSTRUMENT_TYPE = "RADIO SCIENCE"
   probe 2026-10-24T23:40:18Z 206 https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/DATASET.CAT
   probe 2026-10-24T23:40:18Z 200 https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/DATA/
   applies https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
@@ -193,7 +193,7 @@ host pds-rings.seti.org
   api_cite https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/c3/gll_rss_1996313t1033_dss43_odr.xml
   api_quote "Original Data Records (ODRs) are raw data generated by the Deep Space Network Radio Science System. The raw data are samples of the output from one or more open-loop receivers."
   instrument_cite https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/document/rsc-11-11.1992-10-01.txt
-  instrument_quote "The DSP-R is a computer-controlled subsystem that digitally samples a received spacecraft signal through the use of four analog-to-digital (A-D) converters."
+  instrument_quote used to tune the receiver frequency (ten 8-bit 1 thru 16 Receiver Channel 1 RMS voltage as reported by
   probe 2026-10-24T23:43:14Z 206 https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/c3/gll_rss_1996313t1033_dss43_odr.xml
   probe 2026-10-24T23:43:14Z 206 https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/document/rsc-11-11.1992-10-01.txt
   applies https://pds-rings.seti.org/pds4/bundles/gll.rss/
@@ -224,13 +224,13 @@ host ssd-api.jpl.nasa.gov
   note keine Kadenz belegt: Ereigniskatalog; der Block sagt 3600, das ist die Parser-Zahl
 
 host www.ndbc.noaa.gov
-  instrument anemometer
+  instrument wind speed
   unit m/s
   cadence 3600
   api_cite https://www.ndbc.noaa.gov/faq/measdes.shtml
   api_quote "WSPD Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly."
   instrument_cite https://www.ndbc.noaa.gov/faq/rsa.shtml
-  instrument_quote "| Wind Speed | 0 to 62 m/s | 1.71 Hz | 2/8 min * | 0.1 m/s | +/- 1.0 m/s or 10% *** |"
+  instrument_quote | Wind Speed | 0 to 62 m/s | 1.71 Hz | 2/8 min * | 0.1 m/s |
   probe 2026-10-24T23:27:01Z 206 https://www.ndbc.noaa.gov/data/realtime2/46092.txt
   probe 2026-10-25T07:58:20Z 200 https://www.ndbc.noaa.gov/data/realtime2/
   probe 2026-10-25T07:58:26Z 200 https://www.ndbc.noaa.gov/data/historical/stdmet/
@@ -273,13 +273,13 @@ host vires.services
   note 5 Blöcke, vier Instrumente auf einer HAPI-Route: MAG (nT, VFM/ASM), EFI (K, V, cm-3), FAC (uA/m2), TEC (TECU). Die Zeile belegt nur den MAG-Zweig; die anderen Datensätze (SW_FAST_EFIA_LP_1B, SW_FAST_FACATMS_2F, SW_FAST_TECATMS_2F, CH_ME_MAG_LR_3) brauchen je eine eigene Zeile. Ältere Zeitfenster (2010) antworten 400 "time outside valid range"; das Produkt beginnt 2026-04-23.
 
 host erddap.marine.ie
-  instrument CTD
+  instrument conductivity and temperature recorder
   unit degree_C
   cadence 60
   api_cite https://erddap.marine.ie/erddap/info/smartbay_obs_ctd_sbe16/index.html
   api_quote "attribute temperature resolution String 0.0001 degrees Celsius"
   instrument_cite https://vocab.nerc.ac.uk/collection/L22/current/TOOL0870/
-  instrument_quote "The SBE 16plus V2 is a high accuracy conductivity and temperature recorder (pressure optional) with RS232 or RS485 interfaces."
+  instrument_quote The SBE 16plus V2 is a high accuracy conductivity and temperature recorder (pressure optional) with RS232 or RS485 interfaces.
   probe 2026-10-24T23:37:37Z 200 https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
   applies https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16
   note Dieselbe info-Seite trägt die Kadenz wörtlich: "attribute NC_GLOBAL update_interval String PT1M" und die Instrumentzuordnung "attribute salinity sdn_instrument_name String Sea-Bird SBE 16Plus V2 SEACAT C-T Recorder". CTD = Conductivity-Temperature-Depth; der Sensor steht auf 25 m Tiefe (Beschreibung derselben Seite).
