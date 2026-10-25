@@ -3784,16 +3784,27 @@ fn json_compact(v: &Json) -> String {
 }
 
 pub fn shodan_lines(query: &str, token: &str, max: usize) -> Vec<String> {
-    if token.is_empty() {
-        return vec!["pending — SHODAN_API_KEY absent from .secrets.local/.env".to_string()];
-    }
-    if query.split_whitespace().count() != 1 || query.trim().is_empty() {
+    let target = query.trim();
+    if target.is_empty() || target.split_whitespace().count() != 1 {
         return vec![format!(
-            "pending — shodan uses the free-tier host lookup: pass a single ip (got: {})",
+            "pending — shodan has no keyless search; pass a single ip (got: {})",
             query
         )];
     }
-    let target = query.trim();
+    if token.is_empty() {
+        let url = format!("https://internetdb.shodan.io/{}", urlencode(target));
+        return match get(&url, &[], "30") {
+            Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                Some(v) => shodan_internetdb_results(&v, target),
+                None => vec!["pending — the InternetDB response carries no JSON".to_string()],
+            },
+            Some(f) => vec![format!(
+                "pending — InternetDB HTTP {}",
+                f.status_text()
+            )],
+            None => vec!["pending — no network".to_string()],
+        };
+    }
     let url = format!(
         "https://api.shodan.io/shodan/host/{}?key={}",
         urlencode(target),
@@ -3817,6 +3828,29 @@ pub fn shodan_lines(query: &str, token: &str, max: usize) -> Vec<String> {
         )],
         None => vec!["pending — no network".to_string()],
     }
+}
+
+fn shodan_internetdb_results(v: &Json, target: &str) -> Vec<String> {
+    let ip = v.get("ip").and_then(|i| i.as_str()).unwrap_or(target);
+    let list = |k: &str| -> String {
+        match v.get(k).and_then(|x| x.as_arr()) {
+            Some(a) => a
+                .iter()
+                .filter_map(|e| e.as_scalar_string())
+                .collect::<Vec<_>>()
+                .join(","),
+            None => String::new(),
+        }
+    };
+    let ports = list("ports");
+    let hostnames = list("hostnames");
+    let tags = list("tags");
+    if ports.is_empty() && hostnames.is_empty() {
+        return vec![format!("absent — InternetDB carries no host for {target}")];
+    }
+    vec![format!(
+        "url https://www.shodan.io/host/{ip}\ttitle: Shodan host {ip}\tports: {ports}\thostnames: {hostnames}\ttags: {tags}"
+    )]
 }
 
 fn shodan_host_results(v: &Json, max: usize) -> Vec<String> {
@@ -6121,10 +6155,7 @@ fn run_lines_dispatch(
             );
             match token {
                 Secret::Value(t) => shodan_lines(query, &t, max),
-                Secret::Absent(marker) => vec![format!(
-                    "pending — {} absent from .secrets.local/.env",
-                    token_key("SHODAN_API_KEY", marker)
-                )],
+                Secret::Absent(_) => shodan_lines(query, "", max),
             }
         }
         "opencellid" => {
