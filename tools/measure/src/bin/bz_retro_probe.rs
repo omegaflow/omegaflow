@@ -16,6 +16,7 @@ enum NullMode {
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 100;
 const LAG_MAX_H: usize = 6;
+const PERM_FROM_FIRST: usize = 0;
 const KDE_FACTORS: [f64; 6] = [0.5, 0.75, 1.0, 1.5, 2.0, 3.0];
 const STATION_HAPI: &str =
     "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf";
@@ -1354,10 +1355,9 @@ fn main() {
         .and_then(|v| v.parse::<usize>().ok())
         .filter(|&v| v > 0)
         .unwrap_or(10_000);
-    let perm_from = match arg_after(&args, "--perm-from").and_then(|v| v.parse::<usize>().ok()) {
-        Some(v) => v,
-        None => 0,
-    };
+    let perm_from = arg_after(&args, "--perm-from")
+        .and_then(|v| v.parse::<usize>().ok())
+        .map_or(PERM_FROM_FIRST, |v| v);
     let perm_to = arg_after(&args, "--perm-to")
         .and_then(|v| v.parse::<usize>().ok())
         .unwrap_or(n_perm);

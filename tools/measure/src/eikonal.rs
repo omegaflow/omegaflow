@@ -5,7 +5,6 @@ use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
 const G: f64 = 9.80665;
-const EARTH_RADIUS_M: f64 = 6_371_000.0;
 
 #[derive(Clone, Debug)]
 pub struct DepthGrid {
@@ -16,6 +15,7 @@ pub struct DepthGrid {
     pub lat0: f64,
     pub dlon: f64,
     pub dlat: f64,
+    pub radius_m: f64,
 }
 
 #[derive(Clone, Debug)]
@@ -25,6 +25,7 @@ pub enum EikonalNote {
     AbsentZ,
     TypeZ,
     AbsentCoord,
+    AbsentRadius,
     Shape,
     RawZ,
 }
@@ -152,6 +153,7 @@ pub fn unwrap_window(
         lat0: global.lat0 + i0 as f64 * global.dlat,
         dlon: global.dlon,
         dlat: global.dlat,
+        radius_m: global.radius_m,
     })
 }
 
@@ -214,8 +216,8 @@ pub fn edge_seconds(grid: &DepthGrid, a: usize, b: usize) -> Option<f32> {
     let lat_mid = 0.5 * (lat_a + lat_b);
     let dlat = (lat_b - lat_a).to_radians();
     let dlon = (lon_b - lon_a).to_radians();
-    let dy = dlat * EARTH_RADIUS_M;
-    let dx = dlon * lat_mid.to_radians().cos() * EARTH_RADIUS_M;
+    let dy = dlat * grid.radius_m;
+    let dx = dlon * lat_mid.to_radians().cos() * grid.radius_m;
     let arc = (dx * dx + dy * dy).sqrt();
     let d_bar = 0.5 * (da as f64 + db as f64);
     let c = (G * d_bar).sqrt();
@@ -380,14 +382,8 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
     };
     let file = NetcdfFile::parse(data).map_err(|_| EikonalNote::Parse)?;
     let z = file.var("z").ok_or(EikonalNote::AbsentZ)?;
-    let scale = match var_attr(&file, z, "scale_factor") {
-        Some(s) => s,
-        None => 1.0,
-    };
-    let offset = match var_attr(&file, z, "add_offset") {
-        Some(o) => o,
-        None => 0.0,
-    };
+    let scale = var_attr(&file, z, "scale_factor");
+    let offset = var_attr(&file, z, "add_offset");
     let shape = file.var_shape(z).map_err(|_| EikonalNote::Shape)?;
     if shape.len() != 2 {
         return Err(EikonalNote::Shape);
@@ -431,7 +427,14 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
             } else {
                 j * nlat + i
             };
-            let elevation = raw[k] * scale + offset;
+            let scaled = match scale {
+                Some(s) => raw[k] * s,
+                None => raw[k],
+            };
+            let elevation = match offset {
+                Some(o) => scaled + o,
+                None => scaled,
+            };
             depths.push((-elevation) as f32);
         }
     }
@@ -442,6 +445,10 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
     if !(dlon > 0.0 && dlat > 0.0) {
         return Err(EikonalNote::Shape);
     }
+    let host = omegaflow::odp::dsn_host().ok_or(EikonalNote::AbsentRadius)?;
+    let radius_m = omegaflow::cdn::body_mean_radius_km(host)
+        .map_err(|_| EikonalNote::AbsentRadius)?
+        * 1000.0;
     Ok(DepthGrid {
         depths,
         nlon,
@@ -450,12 +457,15 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
         lat0,
         dlon,
         dlat,
+        radius_m,
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const GRID_RADIUS_M: f64 = 6_371_000.0;
 
     fn flat_grid(nlon: usize, nlat: usize, depth: f32) -> DepthGrid {
         DepthGrid {
@@ -466,6 +476,7 @@ mod tests {
             lat0: 0.0,
             dlon: 0.01,
             dlat: 0.01,
+            radius_m: GRID_RADIUS_M,
         }
     }
 
@@ -481,7 +492,7 @@ mod tests {
             let dlat = 0.01f64.to_radians();
             let dlon = 0.01f64.to_radians();
             let arc =
-                EARTH_RADIUS_M * (dlat * dlat + (lat_mid.to_radians().cos() * dlon).powi(2)).sqrt();
+                GRID_RADIUS_M * (dlat * dlat + (lat_mid.to_radians().cos() * dlon).powi(2)).sqrt();
             path += arc / (G * 4000.0).sqrt();
         }
         assert!(
@@ -494,7 +505,7 @@ mod tests {
         let dlam = (0.15f64 - 0.0).to_radians();
         let h = (dphi / 2.0).sin().powi(2)
             + lat_a.to_radians().cos() * lat_b.to_radians().cos() * (dlam / 2.0).sin().powi(2);
-        let great = 2.0 * EARTH_RADIUS_M * h.sqrt().atan2((1.0 - h).sqrt());
+        let great = 2.0 * GRID_RADIUS_M * h.sqrt().atan2((1.0 - h).sqrt());
         let euclid = great / (G * 4000.0).sqrt();
         assert!(
             (t - euclid).abs() / euclid < 1e-2,
@@ -515,6 +526,7 @@ mod tests {
             lat0: 0.0,
             dlon: 0.01,
             dlat: 0.01,
+            radius_m: GRID_RADIUS_M,
         };
         let times = dijkstra_times(&grid, 0);
         let target = 2 * n + 2;
@@ -528,7 +540,7 @@ mod tests {
         }
         let c = (G * 1000.0).sqrt();
         let theta = 0.01f64.to_radians();
-        let formula = (2.0 + 2.0f64.sqrt()) * theta * EARTH_RADIUS_M / c;
+        let formula = (2.0 + 2.0f64.sqrt()) * theta * GRID_RADIUS_M / c;
         assert!(
             (t - named).abs() / named < 1e-3,
             "eikonal {t} s against the named detour {named} s"
@@ -554,6 +566,7 @@ mod tests {
             lat0: 0.0,
             dlon: 0.01,
             dlat: 0.01,
+            radius_m: GRID_RADIUS_M,
         };
         let source = 1usize;
         let target = 4 * n + 1;
@@ -599,6 +612,7 @@ mod tests {
             lat0: 0.0,
             dlon: 1.0,
             dlat: 1.0,
+            radius_m: GRID_RADIUS_M,
         };
         let times = dijkstra_times(&grid, 0);
         assert!(arrival_at(&grid, &times, 1.0, 1.0).is_none());
@@ -622,6 +636,7 @@ mod tests {
             lat0: 0.0,
             dlon: 90.0,
             dlat: 10.0,
+            radius_m: GRID_RADIUS_M,
         };
         let window = unwrap_window(&global, 180.0, 360.0, 0.0, 10.0).unwrap();
         assert_eq!(window.nlon, 3);
@@ -767,7 +782,7 @@ mod tests {
             let lat_mid = (i as f64 + 0.5) * dlat;
             let dlat_rad = dlat.to_radians();
             let dlon_rad = dlon.to_radians();
-            let arc = EARTH_RADIUS_M
+            let arc = GRID_RADIUS_M
                 * (dlat_rad * dlat_rad + (lat_mid.to_radians().cos() * dlon_rad).powi(2)).sqrt();
             expected += arc / (G * depth).sqrt();
         }

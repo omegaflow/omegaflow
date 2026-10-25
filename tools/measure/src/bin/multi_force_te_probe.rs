@@ -10,6 +10,7 @@ use omegaflow::te::{
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_FORCE: usize = 9;
 const BINS: usize = 3;
+const ALPHA_DEFAULT: f64 = 0.05;
 const PLANTED: [(usize, usize); 3] = [(8, 5), (0, 6), (1, 3)];
 
 fn next_rng(rng: &mut u64) -> f64 {
@@ -106,8 +107,8 @@ fn main() {
             .parse()
             .ok()
             .filter(|&x| x > 0.0 && x <= 1.0)
-            .unwrap_or(0.05),
-        None => 0.05,
+            .unwrap_or(ALPHA_DEFAULT),
+        None => ALPHA_DEFAULT,
     };
     let lags: Vec<usize> = match args
         .iter()

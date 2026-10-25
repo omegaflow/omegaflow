@@ -277,7 +277,7 @@ pub fn body_ellipsoid(name: &str) -> Result<(f64, f64), String> {
     }
 }
 
-fn body_props(name: &str) -> Result<crate::archivar::motion::BodyProperties, String> {
+pub fn body_props(name: &str) -> Result<crate::archivar::motion::BodyProperties, String> {
     let url = body_url(name);
     let bytes = crate::archivar::fetch_raw_bytes(&url)
         .ok_or_else(|| format!("{name} ephemeris fetch void ({url})"))?;

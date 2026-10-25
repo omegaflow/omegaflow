@@ -104,8 +104,9 @@ fn jd_date(tdb_s: f64) -> String {
 }
 
 fn elong_deg_at(t: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
+    let host = omegaflow::odp::dsn_host()?;
     let p = body_barycenter_position("galileo_daily", t, eph)?;
-    let e = body_barycenter_position("earth", t, eph)?;
+    let e = body_barycenter_position(host, t, eph)?;
     let sun = [0.0, 0.0, 0.0];
     let re = norm(e);
     let e_to_p = sub(p, e);
@@ -249,7 +250,11 @@ fn main() {
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut geometry_ok = true;
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = omegaflow::odp::dsn_host() else {
+        eprintln!("galileo: host declaration void — geometry sections skipped");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void — geometry sections skipped");
             geometry_ok = false;
@@ -509,18 +514,11 @@ fn main() {
     );
     for mode in [1i64, 2] {
         for station in STATIONS {
-            let samples = match sm_samples.get(&(mode, station)) {
-                Some(&v) => v,
-                None => 0,
-            };
-            let days = match sm_days.get(&(mode, station)) {
-                Some(d) => d.len(),
-                None => 0,
-            };
-            let passes_all = match passmap.get(&(mode, station)) {
-                Some(v) => v.len(),
-                None => 0,
-            };
+            let samples = sm_samples.get(&(mode, station)).copied().map_or(0, |v| v);
+            let days = sm_days
+                .get(&(mode, station))
+                .map_or(0, |d| d.len());
+            let passes_all = passmap.get(&(mode, station)).map_or(0, |v| v.len());
             let day_rms: Vec<f64> = stationday
                 .iter()
                 .filter(|((m, s, _), _)| *m == mode && *s == station)
@@ -609,10 +607,7 @@ fn main() {
                     lo = band * 30,
                     hi = (band + 1) * 30,
                     med = fmt_o(median(v)),
-                    n = match band_days.get(band) {
-                        Some(d) => d.len(),
-                        None => 0,
-                    }
+                    n = band_days.get(band).map_or(0, |d| d.len())
                 ));
             }
         }

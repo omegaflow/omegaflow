@@ -10,6 +10,8 @@ pub const S2_OSC_CAP: u32 = 8192;
 
 pub const S2_CPU_PROBE_CAP: usize = 256;
 
+const NO_BEAM_WIDTH: f32 = 0.0;
+
 pub const S2_TAU_DEFAULT_S: f64 = 262144.0;
 
 pub const S2_PERM_TAU_S: f64 = 32.0;
@@ -213,17 +215,16 @@ pub fn load_witnesses(dir: &std::path::Path) -> Vec<AstroSeries> {
 
 pub fn angular_kernel(cos_gamma: f64, sigma_rad: Option<f64>, lmax: u32) -> f64 {
     let x = cos_gamma.clamp(-1.0, 1.0);
-    let sigma2: f64 = match sigma_rad {
-        Some(s) if s.is_finite() && s > 0.0 => s * s,
-        Some(_) => 0.0,
-        None => 0.0,
+    let sigma2: Option<f64> = match sigma_rad {
+        Some(s) if s.is_finite() && s > 0.0 => Some(s * s),
+        _ => None,
     };
     let band_coef = |l: u32| -> f64 {
-        if sigma2 <= 0.0 {
+        let Some(s2) = sigma2 else {
             return 1.0;
-        }
+        };
         let lf = l as f64;
-        (-0.5 * lf * (lf + 1.0) * sigma2).exp()
+        (-0.5 * lf * (lf + 1.0) * s2).exp()
     };
     let mut acc = 1.0;
     if lmax >= 1 {
@@ -288,8 +289,7 @@ pub fn pack_oscs(oscs: &[S2Osc], cap: u32) -> S2Pack {
         osc[f + 3] = o.weight as f32;
         let sigma = match o.sigma_rad {
             Some(s) if s.is_finite() && s > 0.0 => s as f32,
-            Some(_) => 0.0,
-            None => 0.0,
+            _ => NO_BEAM_WIDTH,
         };
         osc[f + 4] = sigma;
         let p = i * 4;
