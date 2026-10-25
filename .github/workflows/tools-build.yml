@@ -1,8 +1,8 @@
 name: tools-build
 on:
   workflow_dispatch:
-  push:
-    paths: ['tools/**','src/**','bin/**','Cargo.toml','Cargo.lock']
+  schedule:
+    - cron: '*/30 * * * *'
 permissions:
   contents: write
 concurrency:
