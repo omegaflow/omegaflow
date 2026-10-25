@@ -15,6 +15,9 @@ if [ ! -x "$bin" ]; then
     exit 2
 fi
 export OMEGAFLOW_REPO="$root"
+if [ -f "$root/.secrets.local" ]; then
+    export OMEGAFLOW_SECRETS_FILE="${OMEGAFLOW_SECRETS_FILE:-$root/.secrets.local}"
+fi
 . "$root/bin/_roots.sh"
 export OMEGAFLOW_SPILL_DIR="${OMEGAFLOW_SPILL_DIR:-$OMEGAFLOW_WORK/research/tmp/archive_search/search}"
 exec "$bin" "$@"

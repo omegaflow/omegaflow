@@ -572,6 +572,15 @@ impl Mode {
     }
 }
 
+fn secrets_root() -> Option<PathBuf> {
+    find_repo_root().or_else(|| {
+        env::var("OMEGAFLOW_REPO")
+            .ok()
+            .filter(|p| !p.trim().is_empty())
+            .map(PathBuf::from)
+    })
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let mut roots: Vec<String> = Vec::new();
@@ -1403,7 +1412,7 @@ fn main() {
             }
             Mode::Consensus => {
                 let query = keywords.join(" ");
-                let mut env_map = match find_repo_root() {
+                let mut env_map = match secrets_root() {
                     Some(repo) => secrets::load_env(&repo),
                     None => env::vars().collect(),
                 };
@@ -1499,7 +1508,7 @@ fn main() {
             }
             Mode::Fink => {
                 let query = keywords.join(" ");
-                let mut env_map = match find_repo_root() {
+                let mut env_map = match secrets_root() {
                     Some(repo) => secrets::load_env(&repo),
                     None => env::vars().collect(),
                 };
@@ -1578,7 +1587,7 @@ fn main() {
                 sink.emit(&run_stats(), mode.label());
             }
             Mode::Net(name) => {
-                let mut env_map = match find_repo_root() {
+                let mut env_map = match secrets_root() {
                     Some(repo) => secrets::load_env(&repo),
                     None => env::vars().collect(),
                 };
