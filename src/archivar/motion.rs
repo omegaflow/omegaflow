@@ -203,6 +203,42 @@ fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> 
     ])
 }
 
+const RECEIVER_MODELS: &str = include_str!("kernels/receiver_models.tsv");
+
+pub fn receiver_model(name: &str) -> Option<&'static str> {
+    RECEIVER_MODELS
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            Some((p.next()?, p.next()?))
+        })
+        .find(|(body, _)| *body == name)
+        .map(|(_, model)| model)
+}
+
+fn iau_receiver_to_icrs(name: &str, xyz_m: [f64; 3], tdb: f64) -> Option<[f64; 3]> {
+    if receiver_model(name)? != "iau2006-2000a" {
+        return None;
+    }
+    let tdb_jd = tdb / 86400.0 + J2000_EPOCH;
+    let lsk = crate::archivar::embedded_lsk()?;
+    let unix_utc = lsk.tdb_to_unix(tdb)?;
+    let ut1_jd = unix_utc / 86400.0 + 2440587.5;
+    let eop = crate::mathematikerin::receiver::EopSample {
+        ut1_utc_s: 0.0,
+        pm_x_arcsec: 0.0,
+        pm_y_arcsec: 0.0,
+    };
+    let km = [xyz_m[0] / 1000.0, xyz_m[1] / 1000.0, xyz_m[2] / 1000.0];
+    let icrs_km = crate::mathematikerin::receiver::itrf_to_icrs(km, ut1_jd, tdb_jd, &eop)?;
+    Some([
+        icrs_km[0] * 1000.0,
+        icrs_km[1] * 1000.0,
+        icrs_km[2] * 1000.0,
+    ])
+}
+
 fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> Option<[f64; 3]> {
     let (ra, dec, pm) = orientation_angles_at(bp, jd)?;
     let a = (90.0 + ra).to_radians();
@@ -260,6 +296,9 @@ pub fn body_fixed_vector_to_icrs(
     let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
     let [xb, yb, zb] = xyz_body_fixed;
     let jd = tdb / 86400.0 + J2000_EPOCH;
+    if let Some([xi, yi, zi]) = iau_receiver_to_icrs(name, [xb, yb, zb], tdb) {
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
     if !e.rotation_matrices.is_empty() {
         let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
         let mut best: Option<(&[f64; 9], f64)> = None;
@@ -300,6 +339,9 @@ pub fn body_fixed_to_icrs_smooth(
     let bp = e.props.as_ref()?;
     let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
     let [xb, yb, zb] = geodetic_to_body_fixed(bp, lat, lon, alt)?;
+    if let Some([xi, yi, zi]) = iau_receiver_to_icrs(name, [xb, yb, zb], tdb) {
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
     let jd = tdb / 86400.0 + J2000_EPOCH;
     let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)?;
     Some([xi + bx, yi + by, zi + bz])
@@ -768,5 +810,73 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             orbit: None,
             granule_hint: std::sync::Arc::new(AtomicUsize::new(0)),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn earth_props() -> BodyProperties {
+        BodyProperties {
+            α0_deg: 0.0,
+            dα0_dt_deg_per_century: -0.641,
+            δ0_deg: 90.0,
+            dδ0_dt_deg_per_century: -0.557,
+            w0_deg: 190.147,
+            dw_dt_deg_per_day: 360.9856235,
+            radius_m: 6378136.6,
+            flattening: Some(1.0 / 298.25642),
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nutation: None,
+            omega_g: None,
+        }
+    }
+
+    fn zero_eph(props: BodyProperties) -> BodyEphemeris {
+        BodyEphemeris {
+            granules: vec![ChebyshevGranule {
+                t0_jd: 2461041.0,
+                dt_jd: 2000.0,
+                cx: [0.0; CHEBYSHEV_N],
+                cy: [0.0; CHEBYSHEV_N],
+                cz: [0.0; CHEBYSHEV_N],
+            }],
+            rotation_matrices: Vec::new(),
+            props: Some(props),
+            medium: None,
+            orbit: None,
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    }
+
+    #[test]
+    fn the_receiver_model_is_declared_as_data() {
+        assert_eq!(receiver_model("earth"), Some("iau2006-2000a"));
+        assert_eq!(receiver_model("mars"), None);
+    }
+
+    #[test]
+    fn the_declared_receiver_takes_the_iau_path_not_the_linear_pole() {
+        let props = earth_props();
+        let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
+        map.insert("earth".to_string(), zero_eph(props.clone()));
+        let tdb = (2461041.0 - J2000_EPOCH) * 86400.0;
+        let jd = tdb / 86400.0 + J2000_EPOCH;
+        let xyz = [6378136.6, 0.0, 0.0];
+        let iau = body_fixed_vector_to_icrs("earth", xyz, tdb, &map).expect("iau path");
+        let lin = iau_rotate_to_icrs(&props, xyz, jd).expect("linear path");
+        let na = (iau[0] * iau[0] + iau[1] * iau[1] + iau[2] * iau[2]).sqrt();
+        let nb = (lin[0] * lin[0] + lin[1] * lin[1] + lin[2] * lin[2]).sqrt();
+        let cos = (iau[0] * lin[0] + iau[1] * lin[1] + iau[2] * lin[2]) / (na * nb);
+        let sep = cos.clamp(-1.0, 1.0).acos().to_degrees();
+        assert!(
+            (0.2..0.5).contains(&sep),
+            "IAU vs linear pole separation at 2026: {sep} deg"
+        );
     }
 }
