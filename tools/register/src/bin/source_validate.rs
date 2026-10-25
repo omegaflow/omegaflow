@@ -394,6 +394,60 @@ fn spec_for_inst<'a>(
         .expect("exact ist nicht leer"))
 }
 
+fn list_open_blocks(content: &str, specs: &[Spec]) {
+    println!("line\tkind\thost\tinstrument\torigin\tfield\tunit");
+    for (start, block) in blocks(content) {
+        if !has_observables(&block) {
+            continue;
+        }
+        let origin_rest = field_of(&block, "origin").map(|p| p[1..].join(" "));
+        let (host, origin) = match origin_rest.as_deref() {
+            Some(s) => (s.split_whitespace().next().and_then(host_of), s),
+            None => (None, "-"),
+        };
+        let host = match &host {
+            Some(h) => h.as_str(),
+            None => "-",
+        };
+        let mut instruments: Vec<String> = Vec::new();
+        let mut fname = String::new();
+        let mut unit = String::new();
+        for line in &block {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            if p.first() == Some(&"instrument")
+                && let Some(t) = p.get(1)
+                && !instruments.iter().any(|x| x.eq_ignore_ascii_case(t))
+            {
+                instruments.push((*t).to_string());
+            }
+            if fname.is_empty() && matches!(p.first(), Some(&"field") | Some(&"quantity")) {
+                fname = field_name(&p);
+                if let Some((u, _)) = tail_unit_cadence(&p) {
+                    unit = u.to_string();
+                }
+            }
+        }
+        if instruments.is_empty() {
+            println!("{start}\tno_instrument\t{host}\t-\t{origin}\t{fname}\t{unit}");
+            continue;
+        }
+        for inst in &instruments {
+            match spec_for_inst(specs, &host, &origin, inst) {
+                Ok(_) => {}
+                Err(names) if names.is_empty() => {
+                    println!("{start}\tno_spec\t{host}\t{inst}\t{origin}\t{fname}\t{unit}");
+                }
+                Err(names) => {
+                    println!(
+                        "{start}\tmismatch\t{host}\t{inst}\t{origin}\t{}\t{fname}",
+                        names.join(",")
+                    );
+                }
+            }
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
@@ -403,9 +457,11 @@ fn main() {
         warnings: false,
         probe_max_days: 0,
     };
+    let mut list_open = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
+            "--list-open" => list_open = true,
             "--file" => {
                 i += 1;
                 match args.get(i) {
@@ -441,6 +497,11 @@ fn main() {
             exit(2);
         }
     };
+
+    if list_open {
+        list_open_blocks(&content, &specs);
+        return;
+    }
 
     let mut findings: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     let mut hard = 0usize;
