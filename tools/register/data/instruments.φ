@@ -484,3 +484,267 @@ host pds-ppi.igpp.ucla.edu
   probe 2026-10-25T09:11:30Z 206 https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/2039040A.TDF
   applies https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/
   note Bloecke 18470/18479 (gleiche origin). TDF = ATDF (288-Byte-Records, 117 Parameter); Einheit Hz aus dem Detached Label 2039040A.LBL, Spalte XPNDR FREQUENCY: UNIT = "HERTZ". Die 1 s gelten fuer die S-/X-Band-Frequenzen dieses Jupiter-Encounters, nicht fuer jede ATDF-Datei.
+host ncei.noaa.gov
+  instrument XRS
+  unit W m-2
+  cadence 2 3 60
+  api_cite https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs/GOES_1-15_XRS_Science-Quality_Data_Readme.pdf
+  api_quote "The GOES-8 through -12 (GOES I-M series) measurements were at a 3-s cadence, and the GOES 13 through -15 (GOES NOP series) measurements were at a 2-s cadence."
+  instrument_cite https://pdfs.semanticscholar.org/f687/ae630399a15404639a206a282a59f9b4c81a.pdf
+  instrument_quote "XRS for GOES-R: Solid state detectors that capture full dynamic range of solar variability"
+  probe 2026-10-25T09:12:10Z 206 https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs/goes15/gxrs-l2-irrad_science/2015/01/sci_gxrs-l2-irrad_g15_d20150101_v0-1-0.nc
+  applies https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
+  note XRS-A 0.05-0.4 nm, XRS-B 0.1-0.8 nm; Readme deckt GOES-8..15, 1-min-Mittel zusaetzlich.
+
+host ncei.noaa.gov
+  instrument thermometer
+  unit hundredths of a degree Celsius
+  cadence 2592000
+  api_cite https://www.ncei.noaa.gov/pub/data/ghcn/v4/readme.txt
+  api_quote "Temperature values are in hundredths of a degree Celsius, but are expressed as whole integers (e.g. divide by 100.0 to get whole degrees Celsius)."
+  instrument_cite https://repository.library.noaa.gov/view/noaa/47558/noaa_47558_DS1.pdf
+  instrument_quote "The stations are provided with maximum and minimum thermometers and an instrument shelter for housing the thermometers, or a maximum-minimum temperature system (MMTS)."
+  probe 2026-10-25T09:12:10Z 206 https://www.ncei.noaa.gov/pub/data/ghcn/v4/ghcnm.tavg.latest.qcf.tar.gz
+  applies https://www.ncei.noaa.gov/pub/data/ghcn/v4/ghcnm.tavg.latest.qcf.tar.gz
+  note TAVG, monatlich; Werte in Hundertstel Grad Celsius.
+
+host ncei.noaa.gov
+  instrument EUVS
+  unit W m-2
+  cadence 10.24 60
+  api_cite https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs/GOES_13-15_EUVS_Lyman_alpha_Science-Quality_Data_Readme.pdf
+  api_quote "The EUVS detectors accumulate counts for 10.24 s."
+  instrument_cite https://www.nesdis.noaa.gov/our-satellites/currently-flying/goes-east-west/extreme-ultraviolet-and-x-ray-irradiance-sensors-exis
+  instrument_quote "On board EXIS are two main sensors, the Extreme Ultraviolet Sensor (EUVS) and the X-Ray Sensor (XRS)."
+  probe 2026-10-25T09:12:10Z 206 https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs/goes15/geuv-l2-ir10s/2015/01/sci_geuv-l2-ir10s_g15_d20150101_v5-0-0.nc
+  applies https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs
+  note Kanal E (Lyman-alpha), Bandpass 118-127 nm; 10.24-s-Rohdaten und 1-min-Mittel.
+
+host ncei.noaa.gov
+  instrument CTD
+  unit degrees Celsius
+  cadence 2592000 31536000
+  api_cite https://www.ncei.noaa.gov/data/oceans/woa/WOA23/DOCUMENTATION/WOA23_Product_Documentation.pdf
+  api_quote "The time periods are annual, seasonal by three month periods"
+  instrument_cite https://www.ncei.noaa.gov/data/oceans/woa/WOA23/DOCUMENTATION/WOA23_Temperature.pdf
+  instrument_quote "Historical oceanographic temperature profile data from bottle samples (OSD) measured by Reversing thermometers, Mechanical Bathythermographs (MBT), ship deployed Conductivity Temperature Depth packages (CTD)"
+  probe 2026-10-25T09:12:10Z 206 https://www.ncei.noaa.gov/data/oceans/woa/WOA23/
+  applies https://www.ncei.noaa.gov/data/oceans/woa/WOA23/
+  note Klimatologie, keine Zeitreihe; monatliche, saisonale und jaehrliche Mittel auf 102 Standardtiefen.
+
+host ncei.noaa.gov
+  instrument SIM
+  unit W m-2 nm-1
+  cadence 2592000
+  api_cite https://www.ncei.noaa.gov/products/climate-data-records/solar-spectral-irradiance
+  api_quote "The Solar Spectral Irradiance (SSI) Climate Data Record (CDR) tracks the solar energy reaching the top of Earth's atmosphere at different wavelengths, measured in Watts per square meter per nanometer (W m-2 nm-1)"
+  instrument_cite https://lasp.colorado.edu/tsis/data/ssi-data
+  instrument_quote "The TSIS-1 SIM instrument provides measurements of the full-disk Solar Spectral Irradiance (SSI) from 200 nm to 2400 nm"
+  probe 2026-10-25T09:12:10Z 206 https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/standard-resolution/monthly/ssi_v03r00_monthly_s187501_e187512_c20240831.nc
+  applies https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/standard-resolution/monthly/
+  note Monatsmittel der SSI-CDR v03r00; Standardaufloesung, 1-nm-Basis.
+
+host ncei.noaa.gov
+  instrument radiosonde
+  unit degrees C
+  cadence 43200
+  api_cite https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/doc/igra2-data-format.txt
+  api_quote "TEMP is the reported temperature (degrees C to tenths, e.g., 11 = 1.1°C)."
+  instrument_cite https://www.weather.gov/upperair/factsheet
+  instrument_quote "The radiosonde is a small, expendable instrument package ... sensors on the radiosonde transmit pressure, temperature, relative humidity and GPS position data each second."
+  probe 2026-10-25T09:12:10Z 206 https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-por/ACM00078861-data.txt.zip
+  applies https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-por/
+  note Temperatur, Feuchte, Druck; zwei Sondierungen pro Tag (00/12 UTC), stationsabhaengig.
+
+host ncei.noaa.gov
+  instrument radiosonde
+  unit degrees C
+  cadence 43200
+  api_cite https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/doc/igra2-data-format.txt
+  api_quote "TEMP is the reported temperature (degrees C to tenths, e.g., 11 = 1.1°C)."
+  instrument_cite https://www.weather.gov/upperair/factsheet
+  instrument_quote "The radiosonde is a small, expendable instrument package ... sensors on the radiosonde transmit pressure, temperature, relative humidity and GPS position data each second."
+  probe 2026-10-25T09:12:14Z 206 https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/AEM00041217-data-beg2026.txt.zip
+  applies https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/
+  note Jahr-zu-Jahr-Datei je Station; gleiche Felder und Kadenz wie data-por.
+
+host ndbc.noaa.gov
+  instrument bottom pressure recorder
+  unit meters of water
+  cadence 900 60 15
+  api_cite https://www.ndbc.noaa.gov/dart_data_access.shtml
+  api_quote "The data are recorded in pounds per square inch absolute (PSIA), but are displayed in meters of water after applying a constant 670.0 mm of water/PSIA conversion factor."
+  instrument_cite https://www.ndbc.noaa.gov/dart/dart.shtml
+  instrument_quote "DART® systems consist of an anchored seafloor bottom pressure recorder (BPR) and a companion moored surface buoy for real-time communications."
+  probe 2026-10-25T09:12:15Z 206 https://www.ndbc.noaa.gov/data/dart/Sep/21414.txt
+  applies https://www.ndbc.noaa.gov/data/dart/
+  note Standardmodus 15-min-Werte, Eventmodus 15 s und 1 min; Station 21414.
+
+host pds-rings.seti.org
+  instrument Media Calibration Subsystem
+  unit meters at S-band
+  api_cite https://pds-geosciences.wustl.edu/insight/urn-nasa-pds-insight_documents/document_rise/trk-2-23-revc-l5_ion_tro.pdf
+  api_quote "The calibration represents the one-way line-of-sight ionospheric range delay to the spacecraft, in meters at a nominal S-band frequency of 2295 MHz."
+  instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/303/303.pdf
+  instrument_quote "The functional performance and data characteristics of the Deep Space Station (DSS) Media Calibration Subsystem (DMD) are described."
+  probe 2026-10-25T09:12:15Z 200 https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk223_ionocal/gll_rss_1989292t0321_dssmm_ion.txt
+  applies https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk223_ionocal/
+  note TRK-2-23 Ionosphaeren-Kalibrierung als Polynom je Pass; keine feste Zeitkadenz.
+
+host pds-rings.seti.org
+  instrument Galileo Radio Science
+  unit kilosample per second
+  api_cite https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/i31/gll_rss_2001217t2240_dss43_rsr.xml
+  api_quote "Sample Error Rate 44 71 UnsignedMSB2 2 kilosample per second The rate at which samples were collected in this SFDU."
+  instrument_cite https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:context:instrument:go.rss
+  instrument_quote "The Galileo Radio Science investigations combined instruments on the spacecraft and the Deep Space Network (DSN) for telecommunications and radio science."
+  probe 2026-10-25T09:12:15Z 206 https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/i31/gll_rss_2001217t2240_dss43_rsr.dat
+  applies https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/
+  note RSR-Rohdaten; Abtastrate im Label (kilosample/s), keine Zeitkadenz. Blockpfad ist gll.rss (Galileo), nicht cassini_rsr.
+
+host pds-rings.seti.org
+  instrument RADIO SCIENCE SUBSYSTEM
+  unit kilometer
+  api_cite https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2803/S_RINGS/EDITDATA/RS1D1XCI.LBL
+  api_quote "SAMPLING_PARAMETER_UNIT = KILOMETER ... SAMPLING_PARAMETER_INTERVAL = 0.2"
+  instrument_cite https://pds-rings.seti.org/voyager/rss/vg1sinst.html
+  instrument_quote "Instrument Name : RADIO SCIENCE SUBSYSTEM"
+  probe 2026-10-25T09:12:15Z 206 https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2803/S_RINGS/EDITDATA/RS1D1XCI.LBL
+  applies https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2803/S_RINGS/EDITDATA/
+  note Radiale Abtastung 0.2 km, Signal dimensionslos; Voyager 1, X-Band, 1980-11-13.
+host pds-geosciences.wustl.edu
+  instrument Radio Science
+  unit (nicht ausgewiesen)
+  cadence 2 10
+  api_cite https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/document/arch_sis.txt
+  api_quote "The ODFs cover 22 April 1992 to 12 October 1994 at both 2- and 10-second integrations."
+  instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:rss.mgn
+  instrument_quote "The Magellan Radio Science investigations utilized instrumentation with elements on the spacecraft and at the DSN."
+  probe 2026-10-25T09:05:23Z 200 https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/odf/
+  applies https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/odf/
+  note catalog/inst.cat: INSTRUMENT_NAME = "RADIO SCIENCE SUBSYSTEM"; catalog/dataset.cat = MGN-V-RSS-1-TRACKING-V1.0. Einheit der Observablen in der SIS nicht ausgewiesen; Kadenz 2 s und 10 s belegt.
+
+host pds-geosciences.wustl.edu
+  instrument Radio Science
+  unit HERTZ
+  api_cite https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/mors_0201/odf/7223224b.lbl
+  api_quote "The Doppler observable (in Hertz) is computed according to the following equation."
+  instrument_cite https://pds-geosciences.wustl.edu/missions/mgs/catalog/inst_rss.txt
+  instrument_quote "The Mars Global Surveyor (MGS) Radio Science investigations utilized instrumentation with elements on the spacecraft and at the NASA Deep Space Network (DSN)."
+  probe 2026-10-25T09:05:53Z 200 https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/
+  applies https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/
+  note catalog/inst.cat ist nicht utf-8 (Compiler: "is not utf-8"); Instrumentname aus missions/mgs/catalog/inst_rss.txt. ODF-Label nennt UNIT = HERTZ fuer die Doppler-Observable. Kadenz nicht ausgewiesen.
+
+host pds-geosciences.wustl.edu
+  instrument RADIO SCIENCE SUBSYSTEM
+  unit HERTZ
+  api_cite https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/mprs_0001/document/trk_2_18.txt
+  api_quote "The Doppler observable (in Hertz) is computed according to the following equation."
+  instrument_cite https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/mprs_0001/catalog/inst.cat
+  instrument_quote "Much of this was shared equipment, being used for routine telecommunications as well as for Radio Science."
+  probe 2026-10-25T09:05:53Z 200 https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/
+  applies https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/
+  note catalog/dataset.cat = MPF-M-RSS-1-5-RADIOTRACK-V1.0. ODF-SIS nennt Einheit Hertz; Kadenz nicht ausgewiesen.
+
+host pds-geosciences.wustl.edu
+  instrument MOLA
+  unit milliwatts per meter squared per steradian per nanometer
+  cadence 1
+  api_cite https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/label/RAMAPPING.FMT
+  api_quote "Spectral radiance of surface in the detector field of view at 1064 nm wavelength from MOLA channel 1, averaged over the 1 s half-frame."
+  instrument_cite https://pds-geosciences.wustl.edu/missions/mgs/catalog/inst_mola.txt
+  instrument_quote "The MOLA instrument measures the round-trip time of flight of infrared laser pulses transmitted from the MGS spacecraft to the martian surface."
+  probe 2026-10-25T09:05:54Z 206 https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/mapping/ap01xxx/ap01578l.tab
+  applies https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/mapping/ap01xxx/ap01578l.tab
+  note catalog/inst.cat: INSTRUMENT_NAME = "MARS ORBITER LASER ALTIMETER"; catalog/prdrds.cat beschreibt PRDR. Halbbild 1 s; Pulsrate 10 Hz in missions/mgs/catalog/inst_mola.txt.
+
+host pds-geosciences.wustl.edu
+  instrument Mercury Laser Altimeter
+  unit (nicht ausgewiesen)
+  cadence 16 60
+  api_cite https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/document/mla_rdrsis.txt
+  api_quote "Status records are customarily output at intervals of 16 to 60 seconds."
+  instrument_cite https://link.springer.com/article/10.1007/s11214-007-9273-4
+  instrument_quote "The Mercury Laser Altimeter (MLA) is one of the payload science instruments on the MErcury Surface, Space ENvironment, GEochemistry, and Ranging (MESSENGER) mission"
+  probe 2026-10-25T09:05:55Z 206 https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/rdr_radr/2008/jan/mlaradr0801141902.tab
+  applies https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/rdr_radr/2008/jan/mlaradr0801141902.tab
+  note catalog/mlainst.cat: INSTRUMENT_NAME = "MERCURY LASER ALTIMETER"; catalog/cdr_rdr_ds.cat = MESS-E/V/H-MLA-3/4-CDR/RDR-DATA-V1.0. Kadenz gilt fuer Status-CDR, nicht fuer Ranging.
+
+host pds-geosciences.wustl.edu
+  instrument Mini-RF
+  unit beta naught (dimensionslos)
+  cadence 0.048689283086
+  api_cite https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/catalog/mrffr_4_cdr_ds.cat
+  api_quote "with pixel values in beta naught, which have been radiometrically and polarmetrically calibrated"
+  instrument_cite https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/document/mini_rf_instrument.txt
+  instrument_quote "Mini-RF is a side-looking synthetic aperture radar (SAR) instrument that flew on the Chandrayaan-1 spacecraft."
+  probe 2026-10-25T09:05:56Z 206 https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/data/sar/00700_00799/level1/fsb_00720_1cd_xhu_84n209_v1.lbl
+  applies https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/data/sar/00700_00799/level1/fsb_00720_1cd_xhu_84n209_v1.lbl
+  note Block-origin ist ein Level-1-CDR-Label (DATA_SET_ID CH1-ORB-L-MRFFR-4-CDR-V1.0), nicht PDR. Kadenz aus demselben Label: LINE_EXPOSURE_DURATION = 0.048689283086 (Zeile); SCALED_PIXEL_HEIGHT/WIDTH = 75.0.
+
+host pds-geosciences.wustl.edu
+  instrument microwave radiometer (MRM)
+  unit K
+  api_cite https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/document/primary_bundle_documentation.md
+  api_quote "The MRM has 4 channels, centered respectively at 3, 7.8, 19.35, and 37 GHz, with respective bandwidths of 100, 200, 500, and 500 MHz. Nominal radiometric resolution is 0.5 K for all channels."
+  instrument_cite https://ode.rsl.wustl.edu/Mercury/pagehelp/Content/Missions_Instruments/Change/Microwave%20Radiometer/Intro.htm
+  instrument_quote "The microwave radiometer (MRM) is a radiometer that measures energy emitted at one millimeter-to-metre wavelengths (frequencies of 0.3–300 GHz) known as microwaves."
+  probe 2026-10-25T09:05:57Z 206 https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce1_mrm.fits
+  applies https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce1_mrm.fits
+  note FITS-Block; Bundle ur-nasa-pds-chang_e_microwave_processed. Einheit Kelvin, Kanalmitten 3/7.8/19.35/37 GHz. Kadenz nicht ausgewiesen.
+
+host pds-geosciences.wustl.edu
+  instrument microwave radiometer (MRM)
+  unit K
+  api_cite https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/document/primary_bundle_documentation.md
+  api_quote "The MRM has 4 channels, centered respectively at 3, 7.8, 19.35, and 37 GHz, with respective bandwidths of 100, 200, 500, and 500 MHz. Nominal radiometric resolution is 0.5 K for all channels."
+  instrument_cite https://ode.rsl.wustl.edu/Mercury/pagehelp/Content/Missions_Instruments/Change/Microwave%20Radiometer/Intro.htm
+  instrument_quote "The microwave radiometer (MRM) is a radiometer that measures energy emitted at one millimeter-to-metre wavelengths (frequencies of 0.3–300 GHz) known as microwaves."
+  probe 2026-10-25T09:05:58Z 206 https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce2_mrm.fits
+  applies https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce2_mrm.fits
+  note FITS-Block CE-2, gleiches Instrument und gleiche Dokumentation wie CE-1; getrennte Zeile wegen eigenem applies. Kadenz nicht ausgewiesen.
+
+host pds-geosciences.wustl.edu
+  instrument Radio Science Subsystem
+  unit MM/(SEC^2)
+  api_cite https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.lbl
+  api_quote "UNIT                      = \"MM/(SEC^2)\""
+  instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:rss.vo2
+  instrument_quote "Viking Orbiter 2 Radio Science Subsystem"
+  probe 2026-10-25T09:05:59Z 206 https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
+  applies https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
+  note Label: DATA_SET_ID = "VO2-M-RSS-4-LOS-GRAVITY-V1.0", INSTRUMENT_NAME = "VIKING ORBITER RADIOSCIENCE SUBSYSTEM"; Spalte ACCELERATION in MM/(SEC^2), ALTITUDE in KILOMETERS. Kadenz nicht ausgewiesen.
+
+host pds-geosciences.wustl.edu
+  instrument RTLS / GBT
+  unit km
+  cadence 300
+  api_cite https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/document/venus_radar_maps_user_guide.pdf
+  api_quote "Spatial sampling is at 1 km per pixel, or about 106 pixels per degree on Venus."
+  instrument_cite https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/Venus_Radar/RTLS_GBT/Intro.htm
+  instrument_quote "This data set contains complex-valued images of the backscatter from Venus for individual coherent looks five minutes in duration."
+  probe 2026-10-25T09:05:59Z 200 https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
+  applies https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
+  note PDF-Textlayer stark gesperrt; Zitat aus dem Textlayer rekonstruiert (Satz "Spatial sampling is at 1 km per pixel, or about 106 pixels per degree on Venus."). Einzellook 5 min = 300 s, Arecibo-12.6-cm-(2380-MHz)-Sender.
+
+host pds-geosciences.wustl.edu
+  instrument Radiometer
+  unit K
+  api_cite https://pds-geosciences.wustl.edu/venera/mpi-radiometry.txt
+  api_quote "vvv - brightness temperature (K), vertical polarization"
+  instrument_cite https://pds-geosciences.wustl.edu/missions/venera/index.htm
+  instrument_quote "Radar and Radiometer Images"
+  probe 2026-10-25T09:06:00Z 206 https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
+  applies https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
+  note Deskriptor: Mission Venera 15/16, Instrument "Microwave Radiometer", Format BINARY (Datei selbst ASCII-Zeilen); Helligkeitstemperatur in K. Kadenz nicht ausgewiesen.
+
+host pds-geosciences.wustl.edu
+  instrument Radar Altimeter
+  unit km
+  api_cite https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.txt
+  api_quote "rrrr.rrr - planetary radius (km)"
+  instrument_cite http://www.iki.rssi.ru/solar/eng/venera16.htm
+  instrument_quote "The Venera 15 and 16 radar (radio) altimeter systems were identical, and were used to determine the topography of the surface of Venus from the north pole down to about 30°N latitude."
+  probe 2026-10-25T09:06:01Z 206 https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
+  applies https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
+  note Deskriptor: Mission Venera 15/16, Instrument "Radar Altimeter", ASCII; Planetoidenradius in km, along-track footprint 10 km (high-res) bzw. ca. 70 km (low-res). Kadenz nicht ausgewiesen.
