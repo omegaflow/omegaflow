@@ -465,6 +465,17 @@ fn main() {
         let block_host = origin_url.and_then(host_of);
         let mut names: BTreeSet<String> = BTreeSet::new();
 
+        if has_observables(&block) && instrument.is_none() {
+            push(
+                "instrument_missing",
+                format!("{tag}\t{name}"),
+                true,
+                &mut findings,
+                &mut hard,
+                &mut soft,
+            );
+        }
+
         if has_observables(&block) {
             let stem = origin_url.map(origin_stem);
             let host_rows: Vec<&Spec> = match block_host.as_ref() {
