@@ -1679,7 +1679,7 @@ fn cone_scan(
         }
     }
     println!(
-        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as natural dimmers ({excluded_midir_agn} by the AllWISE mid-IR AGN wedge), {post} unclassified dip(s) remain pending the natural-class crossmatch — borrowed-sense round (die Weberin §4): {zwirn} zwirn (agreement), {riss} riss (contradiction, both witnesses named), {borrowed_pending} pending (borrowed sense unconfirmed or unreachable), {broker_silent} with the black box holding no class"
+        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as natural dimmers ({excluded_midir_agn} by the AllWISE mid-IR AGN wedge), {post} unclassified dip(s) remain pending the natural-class crossmatch — borrowed-sense round (the Weberin §4): {zwirn} zwirn (agreement), {riss} riss (contradiction, both witnesses named), {borrowed_pending} pending (borrowed sense unconfirmed or unreachable), {broker_silent} with the black box holding no class"
     );
     ConeVerdict {
         fetched,
@@ -3236,7 +3236,7 @@ fn usage() {
          \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
          \x20   [--dust-map <bayestar.be19> --dust-stars <dr3_stars.bin> [--dust-radius <arcsec=90>]] — type each candidate counterpart from its intrinsic (dereddened) color when it is a background object behind dust\n\
          \x20   [--wise] — mid-IR witness: cone-query the AllWISE catalog (IRSA TAP, 6 arcsec) for each unclassified candidate and exclude it when its W1-W2 color sits in the AGN wedge (>= 0.8 mag, Stern et al. 2012)\n\
-         \x20   natural-class gate (die Weberin §4/§9 step 9): the Fink-ML classifier is the borrowed-sense witness for Gestalt — it never excludes alone; the gate names zwirn (agreement), riss (contradiction, both witnesses named), pending (borrowed sense unreachable); a candidate whose only natural read is the broker class stays visible pending a second independent line\n\
+         \x20   natural-class gate (the Weberin §4/§9 step 9): the Fink-ML classifier is the borrowed-sense witness for Gestalt — it never excludes alone; the gate names zwirn (agreement), riss (contradiction, both witnesses named), pending (borrowed sense unreachable); a candidate whose only natural read is the broker class stays visible pending a second independent line\n\
          Fink/LSST anonymous grid of cone scans, no token (repeated --cone ra,dec,radius_arcsec,min):\n\
          \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
          \x20   [--dust-map <bayestar.be19> --dust-stars <dr3_stars.bin>] — the same intrinsic type read over the grid\n\

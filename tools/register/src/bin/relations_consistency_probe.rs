@@ -312,7 +312,7 @@ fn main() {
         }
     }
     println!("=== relations-driver — C-steepest (one relation class, one tolerance rule) ===");
-    println!("(Toleranz {TOL:e} — dieselbe Kalibrationslinie wie das Nummern-Audit)");
+    println!("(tolerance {TOL:e} — the same calibration line as the number audit)");
     let mut total = 0usize;
     for f in &files {
         let findings = process(f);

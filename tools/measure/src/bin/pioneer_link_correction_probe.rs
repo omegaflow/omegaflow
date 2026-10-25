@@ -1949,7 +1949,7 @@ fn main() {
                             if z.r_diff > 0.5 {
                                 "the residuals share structure — a common unmodeled happening"
                             } else {
-                                "die Residuen tragen getrennte Geschichten — jede Reduktion ihr eigenes Rauschen"
+                                "the residuals carry separate histories — each reduction its own noise"
                             }
                         );
                     }
