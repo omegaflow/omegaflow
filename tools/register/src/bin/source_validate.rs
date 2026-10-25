@@ -494,6 +494,73 @@ fn list_without_fields(content: &str) {
     }
 }
 
+fn dump_blocks(content: &str) {
+    println!("line\turl\tfield_key\torigin\tinstrument\tunit\tinterval");
+    for (start, block) in blocks(content) {
+        let mut keys: Vec<String> = Vec::new();
+        let mut unit = String::new();
+        let mut interval = String::new();
+        let mut inst = String::new();
+        for line in &block {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            match p.first().copied() {
+                Some("field") | Some("quantity") => {
+                    if let Some(k) = p.get(1) {
+                        keys.push((*k).trim_matches('"').to_string());
+                    }
+                    if unit.is_empty()
+                        && let Some((u, c)) = tail_unit_cadence(&p)
+                    {
+                        unit = u.to_string();
+                        if let Some(c) = c {
+                            interval = c.to_string();
+                        }
+                    }
+                }
+                Some("last") => {
+                    if let Some(k) = p.get(2) {
+                        keys.push((*k).to_string());
+                    }
+                    if unit.is_empty()
+                        && let Some((u, c)) = tail_unit_cadence(&p)
+                    {
+                        unit = u.to_string();
+                        if let Some(c) = c {
+                            interval = c.to_string();
+                        }
+                    }
+                }
+                Some("instrument") => {
+                    if inst.is_empty()
+                        && let Some(i) = p.get(1)
+                    {
+                        inst = (*i).to_string();
+                    }
+                }
+                _ => {}
+            }
+        }
+        let get = |name: &str| {
+            block.iter().find_map(|l| {
+                let p: Vec<&str> = l.split_whitespace().collect();
+                (p.first() == Some(&name)).then(|| p[1..].join(" "))
+            })
+        };
+        let url = match get("url") {
+            Some(v) => v,
+            None => String::new(),
+        };
+        let origin = match get("origin") {
+            Some(v) => v,
+            None => String::new(),
+        };
+        println!(
+            "{start}\t{url}\t{}\t{origin}\t{inst}\t{unit}\t{interval}",
+            keys.join(",")
+        );
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
@@ -505,11 +572,13 @@ fn main() {
     };
     let mut list_open = false;
     let mut list_nofield = false;
+    let mut list_blocks = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
             "--list-open" => list_open = true,
             "--list-nofield" => list_nofield = true,
+            "--list-blocks" => list_blocks = true,
             "--file" => {
                 i += 1;
                 match args.get(i) {
@@ -548,6 +617,10 @@ fn main() {
 
     if list_open {
         list_open_blocks(&content, &specs);
+        return;
+    }
+    if list_blocks {
+        dump_blocks(&content);
         return;
     }
     if list_nofield {
