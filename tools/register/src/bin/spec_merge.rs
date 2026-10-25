@@ -53,8 +53,7 @@ fn product_of(block: &[String]) -> Option<String> {
     if let Some(i) = applies.find("source=") {
         return Some(applies[i + 7..].split('&').next()?.to_string());
     }
-    let probe = field(block, "probe")?;
-    Some(probe.split_whitespace().last()?.to_string())
+    applies.split_whitespace().next().map(str::to_string)
 }
 
 fn cites(block: &[String]) -> usize {
@@ -513,7 +512,7 @@ fn fill_instruments() {
             let Some(applies) = field(r, "applies") else {
                 continue;
             };
-            if !(url.starts_with(&applies) || applies.starts_with(stem)) {
+            if !url.starts_with(&applies) {
                 continue;
             }
             if let Some(inst) = field(r, "instrument")
@@ -523,11 +522,11 @@ fn fill_instruments() {
                 names.push(inst);
             }
         }
-        if names.len() != 1 {
-            if names.len() > 1 {
-                ambiguous += 1;
-            }
+        if names.is_empty() {
             continue;
+        }
+        if names.len() > 1 {
+            ambiguous += 1;
         }
         let end = phi_blocks
             .get(idx + 1)
@@ -537,8 +536,10 @@ fn fill_instruments() {
             .iter()
             .position(|l| l.starts_with("origin "))
         {
-            insertions.push((start + pos, format!("instrument {}", names[0])));
-            done += 1;
+            for (i, name) in names.iter().enumerate() {
+                insertions.push((start + pos + i, format!("instrument {name}")));
+                done += 1;
+            }
         }
     }
     for (at, line) in insertions.into_iter().rev() {
@@ -567,6 +568,17 @@ fn clean() {
                 if rest.to_ascii_lowercase().starts_with("6df") {
                     line = "  instrument 6dF".to_string();
                 }
+            }
+            if let Some(rest) = line.strip_prefix("  applies ") {
+                let mut parts: Vec<&str> = rest.split_whitespace().collect();
+                while let Some(last) = parts.last() {
+                    if last.starts_with("id=") && last[3..].chars().all(|c| c.is_ascii_digit()) {
+                        parts.pop();
+                    } else {
+                        break;
+                    }
+                }
+                line = format!("  applies {}", parts.join(" "));
             }
             keep.push(line);
         }
@@ -643,6 +655,125 @@ fn repair_instruments() {
     println!("repair: {} falsche Instrumentzeilen entfernt", drop.len());
 }
 
+fn backfill_fields() {
+    let reg_text = fs::read_to_string(REG).expect("register");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let phi_blocks = blocks(&phi_text);
+    let mut rows = blocks(&reg_text);
+    let mut filled = 0usize;
+    for (_, row) in rows.iter_mut() {
+        if row.iter().any(|l| l.starts_with("  fields ")) {
+            continue;
+        }
+        let Some(applies) = field(row, "applies") else {
+            continue;
+        };
+        let Some(host) = host_of(row) else {
+            continue;
+        };
+        let mut keys: Vec<String> = Vec::new();
+        for (_, block) in &phi_blocks {
+            let Some(origin) = field(block, "origin") else {
+                continue;
+            };
+            let Some(url) = origin.split_whitespace().next() else {
+                continue;
+            };
+            let Some(bh) = url
+                .split_once("://")
+                .and_then(|(_, r)| r.split(['/', '?', ':']).next())
+                .map(|h| h.trim_start_matches("www.").to_string())
+            else {
+                continue;
+            };
+            if bh != host {
+                continue;
+            }
+            let stem = url.split(['?', '{']).next().unwrap_or(url);
+            if !(url.starts_with(&applies) || applies.starts_with(stem)) {
+                continue;
+            }
+            for line in block {
+                let p: Vec<&str> = line.split_whitespace().collect();
+                if matches!(p.first(), Some(&"field") | Some(&"quantity"))
+                    && let Some(k) = p.get(1)
+                {
+                    let k = k.trim_matches('"').to_string();
+                    if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
+                        keys.push(k);
+                    }
+                }
+            }
+        }
+        if keys.is_empty() {
+            continue;
+        }
+        keys.sort();
+        let at = row
+            .iter()
+            .position(|l| l.starts_with("  applies "))
+            .unwrap_or(row.len());
+        row.insert(at, format!("  fields {}", keys.join(" ")));
+        filled += 1;
+    }
+    let mut out = String::new();
+    for (_, b) in &rows {
+        out.push_str(&b.join("\n"));
+        out.push_str("\n\n");
+    }
+    fs::write(REG, out).expect("register write");
+    println!("fields: {filled} Zeilen zugeordnet");
+}
+
+fn align_instruments() {
+    let reg_text = fs::read_to_string(REG).expect("register");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let rows = blocks(&reg_text);
+    let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
+    let mut fixed = 0usize;
+    for (start, block) in blocks(&phi_text) {
+        let insts: Vec<(usize, String)> = block
+            .iter()
+            .enumerate()
+            .filter_map(|(i, l)| l.strip_prefix("instrument ").map(|v| (start + i, v.to_string())))
+            .collect();
+        if insts.len() != 1 {
+            continue;
+        }
+        let keys: Vec<String> = block
+            .iter()
+            .filter_map(|l| {
+                let p: Vec<&str> = l.split_whitespace().collect();
+                matches!(p.first(), Some(&"field") | Some(&"quantity"))
+                    .then(|| p.get(1).map(|k| k.trim_matches('"').to_string()))
+                    .flatten()
+            })
+            .collect();
+        let mut names: Vec<String> = Vec::new();
+        for (_, r) in &rows {
+            let rkeys: Vec<&str> = r
+                .iter()
+                .filter_map(|l| l.strip_prefix("  fields ").map(str::trim))
+                .flat_map(|s| s.split_whitespace())
+                .collect();
+            if !keys.iter().any(|k| rkeys.iter().any(|x| x.eq_ignore_ascii_case(k))) {
+                continue;
+            }
+            if let Some(inst) = field(r, "instrument")
+                && !names.iter().any(|n| n.eq_ignore_ascii_case(&inst))
+            {
+                names.push(inst);
+            }
+        }
+        if names.len() == 1 && !names[0].eq_ignore_ascii_case(&insts[0].1) {
+            lines[insts[0].0 - 1] = format!("instrument {}", names[0]);
+            fixed += 1;
+        }
+    }
+    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    println!("align: {fixed} Blockinstrumente auf die Spec gezogen");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -654,6 +785,8 @@ fn main() {
         Some("probes") if args.len() >= 3 => probes_from_tsv(&args[2]),
         Some("fill-instruments") => fill_instruments(),
         Some("clean") => clean(),
+        Some("backfill-fields") => backfill_fields(),
+        Some("align-instruments") => align_instruments(),
         Some("repair-instruments") => repair_instruments(),
         _ => {
             eprintln!("spec_merge rows <out.φ> <states.φ> | instruments <tsv> | hostdocs");

@@ -155,6 +155,7 @@ struct Spec {
     instrument: String,
     units: BTreeSet<String>,
     source_units: BTreeSet<String>,
+    fields: BTreeSet<String>,
     samplings: BTreeSet<u64>,
     intervals: BTreeSet<u64>,
     api_cite: bool,
@@ -258,6 +259,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
                         instrument: String::new(),
                         units: BTreeSet::new(),
                         source_units: BTreeSet::new(),
+                        fields: BTreeSet::new(),
                         samplings: BTreeSet::new(),
                         intervals: BTreeSet::new(),
                         api_cite: false,
@@ -276,6 +278,11 @@ fn load_specs(path: &str) -> Vec<Spec> {
                     "instrument" => {
                         if let Some(v) = value {
                             entry.instrument = v;
+                        }
+                    }
+                    "fields" => {
+                        for f in &p[1..] {
+                            entry.fields.insert((*f).to_string());
                         }
                     }
                     "unit" => {
@@ -369,11 +376,22 @@ fn spec_for_inst<'a>(
     host: &str,
     url: &str,
     inst: &str,
+    keys: &[String],
 ) -> Result<&'a Spec, Vec<String>> {
-    let cands: Vec<&Spec> = specs
+    let keyed: Vec<&Spec> = specs
         .iter()
-        .filter(|s| s.host == host && (s.applies.is_empty() || applies_len(s, url).is_some()))
+        .filter(|s| {
+            !s.fields.is_empty() && keys.iter().any(|k| s.fields.contains(k))
+        })
         .collect();
+    let cands: Vec<&Spec> = if keyed.is_empty() {
+        specs
+            .iter()
+            .filter(|s| s.host == host && (s.applies.is_empty() || applies_len(s, url).is_some()))
+            .collect()
+    } else {
+        keyed
+    };
     if cands.is_empty() {
         return Err(Vec::new());
     }
@@ -432,7 +450,7 @@ fn list_open_blocks(content: &str, specs: &[Spec]) {
             continue;
         }
         for inst in &instruments {
-            match spec_for_inst(specs, &host, &origin, inst) {
+            match spec_for_inst(specs, &host, &origin, inst, &[]) {
                 Ok(_) => {}
                 Err(names) if names.is_empty() => {
                     println!("{start}\tno_spec\t{host}\t{inst}\t{origin}\t{fname}\t{unit}");
@@ -448,6 +466,34 @@ fn list_open_blocks(content: &str, specs: &[Spec]) {
     }
 }
 
+fn list_without_fields(content: &str) {
+    println!("line\tformat\torigin\tinstrument");
+    for (start, block) in blocks(content) {
+        let has_fields = block.iter().any(|l| {
+            let p: Vec<&str> = l.split_whitespace().collect();
+            matches!(p.first(), Some(&"field") | Some(&"quantity"))
+        });
+        if has_fields {
+            continue;
+        }
+        let get = |name: &str| {
+            block.iter().find_map(|l| {
+                let p: Vec<&str> = l.split_whitespace().collect();
+                (p.first() == Some(&name)).then(|| p[1..].join(" "))
+            })
+        };
+        let fmt = get("format");
+        let origin = get("origin");
+        let inst = get("instrument");
+        println!(
+            "{start}\t{}\t{}\t{}",
+            fmt.as_deref().unwrap_or("-"),
+            origin.as_deref().unwrap_or("-"),
+            inst.as_deref().unwrap_or("-")
+        );
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
@@ -458,10 +504,12 @@ fn main() {
         probe_max_days: 0,
     };
     let mut list_open = false;
+    let mut list_nofield = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
             "--list-open" => list_open = true,
+            "--list-nofield" => list_nofield = true,
             "--file" => {
                 i += 1;
                 match args.get(i) {
@@ -500,6 +548,10 @@ fn main() {
 
     if list_open {
         list_open_blocks(&content, &specs);
+        return;
+    }
+    if list_nofield {
+        list_without_fields(&content);
         return;
     }
 
@@ -570,6 +622,14 @@ fn main() {
             }
         }
 
+        let field_keys: Vec<String> = block
+            .iter()
+            .filter_map(|l| {
+                let p: Vec<&str> = l.split_whitespace().collect();
+                matches!(p.first(), Some(&"field") | Some(&"quantity"))
+                    .then(|| field_name(&p))
+            })
+            .collect();
         let no_cadence = field_of(&block, "no-sampling").is_some();
         let instruments: Vec<String> = {
             let mut v: Vec<String> = Vec::new();
@@ -708,7 +768,7 @@ fn main() {
             && let (Some(h), Some(u)) = (block_host.as_ref(), origin_rest.as_deref().or(origin_url))
         {
             for inst in &instruments {
-                match spec_for_inst(&specs, h, u, inst) {
+                match spec_for_inst(&specs, h, u, inst, &field_keys) {
                     Ok(entry) => matched.push(entry),
                     Err(names) if names.is_empty() => push(
                         "spec_missing_for_host",
