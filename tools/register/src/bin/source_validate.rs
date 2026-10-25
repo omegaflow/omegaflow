@@ -154,7 +154,7 @@ struct Spec {
     applies: Vec<String>,
     instrument: String,
     units: BTreeSet<String>,
-    cadences: BTreeSet<u64>,
+    samplings: BTreeSet<u64>,
     api_cite: bool,
     instrument_cite: bool,
     probes: Vec<Probe>,
@@ -253,7 +253,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
                         applies: Vec::new(),
                         instrument: String::new(),
                         units: BTreeSet::new(),
-                        cadences: BTreeSet::new(),
+                        samplings: BTreeSet::new(),
                         api_cite: false,
                         instrument_cite: false,
                         probes: Vec::new(),
@@ -275,10 +275,10 @@ fn load_specs(path: &str) -> Vec<Spec> {
                             entry.units.insert(u.to_string());
                         }
                     }
-                    "cadence" => {
+                    "sampling" => {
                         for c in &p[1..] {
                             if let Some(v) = parse_f64(c) {
-                                entry.cadences.insert(v as u64);
+                                entry.samplings.insert(v as u64);
                             }
                         }
                     }
@@ -669,10 +669,10 @@ fn main() {
                             );
                         }
                         if let Some(c) = cadence.and_then(parse_f64)
-                            && !entry.cadences.contains(&(c as u64))
+                            && !entry.samplings.contains(&(c as u64))
                         {
                             push(
-                                "combo_cadence",
+                                "combo_sampling",
                                 format!("{tag}\t{name}\t{inst}\t{c}"),
                                 true,
                                 &mut findings,
@@ -690,7 +690,7 @@ fn main() {
                 Some(c) => {
                     if c <= 0.0 {
                         push(
-                            "cadence_bad",
+                            "sampling_bad",
                             format!("{tag}\t{name}\t{fname}\t0"),
                             true,
                             &mut findings,
@@ -705,7 +705,7 @@ fn main() {
                         None => "",
                     };
                     push(
-                        "cadence_bad",
+                        "sampling_bad",
                         format!("{tag}\t{name}\t{fname}\t{raw}"),
                         true,
                         &mut findings,

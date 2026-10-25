@@ -1,7 +1,7 @@
 host imag-data.bgs.ac.uk
   instrument fluxgate
   unit nT
-  cadence 1 60
+  sampling 1 60
   api_cite https://imag-data.bgs.ac.uk/GIN_V1/
   api_quote "samplesPerDay 1440 = Minute; orientation XYZF; HAPI 3.1"
   instrument_cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/
@@ -11,7 +11,7 @@ host imag-data.bgs.ac.uk
 host opendata.fmi.fi
   instrument fluxgate
   unit nT
-  cadence 60
+  sampling 60
   api_cite https://opendata.fmi.fi/wfs
   api_quote "storedquery_id=fmi::observations::magnetometer::simple; CC BY 4.0 (en.ilmatieteenlaitos.fi/open-data-licence)"
   instrument_cite https://www.sgo.fi/Data/Magnetometer/magnDescr.php
@@ -21,7 +21,7 @@ host opendata.fmi.fi
 host services.swpc.noaa.gov
   instrument fluxgate
   unit nT
-  cadence 60
+  sampling 60
   api_cite https://www.swpc.noaa.gov/products/goes-magnetometer
   api_quote "The GOES 3-day Hp plot shows the 1-minute averaged parallel component of the magnetic field in nanoTeslas (nT)"
   instrument_cite https://www.goes-r.gov/spacesegment/mag.html
@@ -46,7 +46,7 @@ host services.swpc.noaa.gov
 host ncei.noaa.gov
   instrument thermometer
   unit degree_C
-  cadence 2 3600
+  sampling 2 3600
   api_cite https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/readme.txt
   api_quote "Average air temperature, in degrees C, for the entire hour."
   instrument_cite https://www.ncei.noaa.gov/access/crn/measurements.html
@@ -58,7 +58,7 @@ host ncei.noaa.gov
 host service.earthscope.org
   instrument microbarometer
   unit Pa
-  cadence 0.05
+  sampling 0.05
   api_cite https://service.earthscope.org/fdsnws/station/1/query?network=IM&station=I03H1&level=channel&format=text
   api_quote "MB3a (Infrasound), 0.01-28 Hz, 0.02 V/Pa-Taurus Fa|9670.25|0.25|PA|20.0"
   instrument_cite https://ds.iris.edu/ds/nodes/dmc/data/formats/seed-channel-naming/
@@ -71,7 +71,7 @@ host service.earthscope.org
 host cdaweb.gsfc.nasa.gov
   instrument electrostatic analyzer
   unit ev/cm2/ster/s
-  cadence 1
+  sampling 1
   api_cite https://cdaweb.gsfc.nasa.gov/misc/NotesD.html
   api_quote "Electron total energy flux integrated over energy (eV/cm2/ster/s). [ELE_TOTAL_ENERGY_FLUX]"
   instrument_cite https://www.ncei.noaa.gov/products/dmsp-j4-precipitating-electron-ion-spectrometer
@@ -87,7 +87,7 @@ host cdaweb.gsfc.nasa.gov
 host opendata.dwd.de
   instrument resistance thermometer
   unit degree_C
-  cadence 86400
+  sampling 86400
   api_cite https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/DESCRIPTION_obsgermany-climate-daily-kl_en.pdf
   api_quote "TXK daily maximum of temperature at 2 m height °C"
   instrument_cite https://www.dwd.de/DE/presse/pressebilder/messtechnik_node.html
@@ -99,7 +99,7 @@ host opendata.dwd.de
 host archives.esac.esa.int
   instrument radio science
   unit nT
-  cadence 8
+  sampling 8
   api_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.LBL
   api_quote "MAGNETIC FIELD DATA (8 SEC) IN A HALLEY CENTERED SOLAR ECLIPTIC COORDINATE SYSTEM"
   instrument_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/AAREADME.TXT
@@ -122,7 +122,7 @@ host pds-smallbodies.astro.umd.edu
 host pds-geosciences.wustl.edu
   instrument radio science subsystem
   unit Hz
-  cadence 1
+  sampling 1
   api_cite https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/catalog/dataset.cat
   api_quote "ODFs in this data set were usually generated at a 1-second sampling rate."
   instrument_cite https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/catalog/inst.cat
@@ -137,7 +137,7 @@ host pds-geosciences.wustl.edu
 host spdf.gsfc.nasa.gov
   instrument magnetometer
   unit nT
-  cadence 3600 86400
+  sampling 3600 86400
   api_cite https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/00readme_v1.txt
   api_quote "This directory contains hourly averages of parameters for the interplanetary magnetic field, solar wind plasma and spacecraft trajectory coordinates"
   instrument_cite https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/vy1mgd.txt
@@ -151,7 +151,7 @@ host spdf.gsfc.nasa.gov
 host hfradar.ioos.us
   instrument hf-radar
   unit cm/s
-  cadence 3600
+  sampling 3600
   api_cite https://hfradar.ioos.us/erddap/info/BML_BML1/index.html
   api_quote "attribute VELO units String cm/s"
   instrument_cite https://ioos.noaa.gov/project/hf-radar/
@@ -164,7 +164,7 @@ host hfradar.ioos.us
 host cdaweb.gsfc.nasa.gov
   instrument fluxgate
   unit nT
-  cadence 8
+  sampling 8
   api_cite https://cdaweb.gsfc.nasa.gov/hapi/info?id=MMS1_FGM_SRVY_L2@0
   api_quote "Magnetic field vector in Geocentric Solar Ecliptic (GSE) cartesian coordinates plus Btotal (8 or 16 S/s), units:nT"
   instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesM.html#MMS1_FGM_SRVY_L2
@@ -176,7 +176,7 @@ host cdaweb.gsfc.nasa.gov
 host archives.esac.esa.int
   instrument radio science
   unit dBm
-  cadence 1 10
+  sampling 1 10
   api_cite https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/DATASET.CAT
   api_quote "For X-Band we usually have values of about -50/-70 dBm, for S-Band of about -70/-80 dBm. The fluctuation range should not exceed 1 dBm."
   instrument_cite https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/INST.CAT
@@ -189,7 +189,7 @@ host archives.esac.esa.int
 host pds-rings.seti.org
   instrument receiver
   unit count
-  cadence 50000 200
+  sampling 50000 200
   api_cite https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/c3/gll_rss_1996313t1033_dss43_odr.xml
   api_quote "Original Data Records (ODRs) are raw data generated by the Deep Space Network Radio Science System. The raw data are samples of the output from one or more open-loop receivers."
   instrument_cite https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/document/rsc-11-11.1992-10-01.txt
@@ -206,7 +206,7 @@ host pds-rings.seti.org
 host pds-ppi.igpp.ucla.edu
   instrument receiver
   unit V
-  cadence 300000 100000
+  sampling 300000 100000
   api_cite https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/CATALOG/VG2_S_RSS_DS.CAT
   api_quote "The output of each S-band receiver was a sinusoidal carrier signal embedded in noise -- a voltage with bandwidth approximately 50 kHz and sampled at 300000 samples per second."
   instrument_cite https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/CATALOG/VG2_RSS_INST.CAT
@@ -230,7 +230,7 @@ host ssd-api.jpl.nasa.gov
 host ndbc.noaa.gov
   instrument wind speed
   unit m/s
-  cadence 3600
+  sampling 3600
   api_cite https://www.ndbc.noaa.gov/faq/measdes.shtml
   api_quote "WSPD Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly."
   instrument_cite https://www.ndbc.noaa.gov/faq/rsa.shtml
@@ -244,7 +244,7 @@ host ndbc.noaa.gov
 host gml.noaa.gov
   instrument crds
   unit ppm
-  cadence 604800
+  sampling 604800
   api_cite https://gml.noaa.gov/ccgg/trends/
   api_quote "The mole fraction is expressed as parts per million (ppm)."
   instrument_cite https://gml.noaa.gov/ccgg/about/co2_measurements.html
@@ -256,7 +256,7 @@ host gml.noaa.gov
 host ngdc.noaa.gov
   instrument radio telescope
   unit sfu
-  cadence 86400
+  sampling 86400
   api_cite https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/noontime-flux/penticton/documentation/dataset-description_penticton.pdf
   api_quote "The flux values are expressed in solar flux units (1 sfu = 10-22 W*m-2*Hz-1 )."
   instrument_cite https://www.spaceweather.gc.ca/solarflux/sx-1-en.php
@@ -267,7 +267,7 @@ host ngdc.noaa.gov
 host vires.services
   instrument VFM
   unit nT
-  cadence 1
+  sampling 1
   api_cite https://vires.services/hapi/info?id=SW_FAST_MAGA_LR_1B
   api_quote "\"description\": \"Swarm A vector (VFM) and scalar (ASM) magnetic field fast track measurements interpolated at 1Hz rate.\""
   instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_MAGx_LR_1B
@@ -279,7 +279,7 @@ host vires.services
 host erddap.marine.ie
   instrument conductivity and temperature recorder
   unit degree_C
-  cadence 60
+  sampling 60
   api_cite https://erddap.marine.ie/erddap/info/smartbay_obs_ctd_sbe16/index.html
   api_quote "attribute temperature resolution String 0.0001 degrees Celsius"
   instrument_cite https://vocab.nerc.ac.uk/collection/L22/current/TOOL0870/
@@ -292,7 +292,7 @@ host erddap.marine.ie
 host vires.services
   instrument langmuir probe
   unit cm-3 K V
-  cadence 0.5
+  sampling 0.5
   api_cite https://vires.services/hapi/info?id=SW_FAST_EFIA_LP_1B
   api_quote "Swarm A plasma fast track data from the Langmuir Probe (LP) at 2Hz rate"
   instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_EFIx_LP_1B
@@ -304,7 +304,7 @@ host vires.services
 host vires.services
   instrument fluxgate
   unit uA/m2
-  cadence 1
+  sampling 1
   api_cite https://vires.services/hapi/info?id=SW_FAST_FACATMS_2F
   api_quote "Time series of field-aligned and radial current densities along the orbit from single satellite measurements. Field-aligned current (FAC) density is derived by the multiplication of the radial current"
   instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_FACxTMS_2F
@@ -316,7 +316,7 @@ host vires.services
 host vires.services
   instrument gnss receiver
   unit TECU
-  cadence 1
+  sampling 1
   api_cite https://vires.services/hapi/info?id=SW_FAST_TECATMS_2F
   api_quote "Absolute_STEC  Absolute slant TEC  units: TECU"
   instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_TECxTMS_2F
@@ -328,7 +328,7 @@ host vires.services
 host imag-data.bgs.ac.uk
   instrument fluxgate
   unit nT
-  cadence 60
+  sampling 60
   api_cite https://imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=abk/best-avail/PT1M/xyzf
   api_quote "\"units\" : [ \"nT\", \"nT\", \"nT\" ]  \"cadence\" : \"PT1M\""
   instrument_cite https://tech-man.intermagnet.org/_/downloads/en/stable/pdf/
@@ -429,7 +429,7 @@ host pds-ppi.igpp.ucla.edu
 host pds-ppi.igpp.ucla.edu
   instrument transponder
   unit count
-  cadence 0.0008
+  sampling 0.0008
   api_cite https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODR-V1.0/ODR/72130631.LBL
   api_quote "This ODR data file contains 8-bit samples from the 4 Analog-to-Digital converters.  The sample rate is 1250 samples/second"
   instrument_cite https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODR-V1.0/CATALOG/INST.CAT
@@ -452,7 +452,7 @@ host pds-ppi.igpp.ucla.edu
 host pds-ppi.igpp.ucla.edu
   instrument radio science subsystem
   unit Hz
-  cadence 10 60 1
+  sampling 10 60 1
   api_cite https://ode.rsl.wustl.edu/Mars/pagehelp/Content/Missions_Instruments/MESSENGER/RSS/EDR/ODF.htm
   api_quote "One-way Doppler (Hertz); nearly all files have integration periods of 10 seconds or 60 seconds; during some of the early flybys, some files have 1 second integration periods"
   instrument_cite https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/document-rs/instrument_rs.txt
@@ -464,7 +464,7 @@ host pds-ppi.igpp.ucla.edu
 host pds-ppi.igpp.ucla.edu
   instrument radio science subsystem
   unit count
-  cadence 0.1
+  sampling 0.1
   api_cite https://ode.rsl.wustl.edu/Mars/pagehelp/Content/Missions_Instruments/MESSENGER/RSS/EDR/TNF.htm
   api_quote "The emphasis of the data is on phase of the transmitted and received signals, with 10 phase counts recorded each second."
   instrument_cite https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/document-rs/instrument_rs.txt
@@ -476,7 +476,7 @@ host pds-ppi.igpp.ucla.edu
 host pds-ppi.igpp.ucla.edu
   instrument solar corona experiment
   unit Hz
-  cadence 1
+  sampling 1
   api_cite https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/CATALOG/ULY_SCE_TDF_DS.CAT
   api_quote "Data values are reported at rates no higher than 10 per second.  For the Ulysses Jupiter encounter the received frequencies at S-Band and X-band were recorded at a sample time of one per second."
   instrument_cite https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/CATALOG/ULY_SCE_INST.CAT
@@ -487,7 +487,7 @@ host pds-ppi.igpp.ucla.edu
 host ncei.noaa.gov
   instrument XRS
   unit W m-2
-  cadence 2 3 60
+  sampling 2 3 60
   api_cite https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs/GOES_1-15_XRS_Science-Quality_Data_Readme.pdf
   api_quote "The GOES-8 through -12 (GOES I-M series) measurements were at a 3-s cadence, and the GOES 13 through -15 (GOES NOP series) measurements were at a 2-s cadence."
   instrument_cite https://pdfs.semanticscholar.org/f687/ae630399a15404639a206a282a59f9b4c81a.pdf
@@ -499,7 +499,7 @@ host ncei.noaa.gov
 host ncei.noaa.gov
   instrument thermometer
   unit hundredths of a degree Celsius
-  cadence 2592000
+  sampling 2592000
   api_cite https://www.ncei.noaa.gov/pub/data/ghcn/v4/readme.txt
   api_quote "Temperature values are in hundredths of a degree Celsius, but are expressed as whole integers (e.g. divide by 100.0 to get whole degrees Celsius)."
   instrument_cite https://repository.library.noaa.gov/view/noaa/47558/noaa_47558_DS1.pdf
@@ -511,7 +511,7 @@ host ncei.noaa.gov
 host ncei.noaa.gov
   instrument EUVS
   unit W m-2
-  cadence 10.24 60
+  sampling 10.24 60
   api_cite https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs/GOES_13-15_EUVS_Lyman_alpha_Science-Quality_Data_Readme.pdf
   api_quote "The EUVS detectors accumulate counts for 10.24 s."
   instrument_cite https://www.nesdis.noaa.gov/our-satellites/currently-flying/goes-east-west/extreme-ultraviolet-and-x-ray-irradiance-sensors-exis
@@ -523,7 +523,7 @@ host ncei.noaa.gov
 host ncei.noaa.gov
   instrument CTD
   unit degrees Celsius
-  cadence 2592000 31536000
+  sampling 2592000 31536000
   api_cite https://www.ncei.noaa.gov/data/oceans/woa/WOA23/DOCUMENTATION/WOA23_Product_Documentation.pdf
   api_quote "The time periods are annual, seasonal by three month periods"
   instrument_cite https://www.ncei.noaa.gov/data/oceans/woa/WOA23/DOCUMENTATION/WOA23_Temperature.pdf
@@ -535,7 +535,7 @@ host ncei.noaa.gov
 host ncei.noaa.gov
   instrument SIM
   unit W m-2 nm-1
-  cadence 2592000
+  sampling 2592000
   api_cite https://www.ncei.noaa.gov/products/climate-data-records/solar-spectral-irradiance
   api_quote "The Solar Spectral Irradiance (SSI) Climate Data Record (CDR) tracks the solar energy reaching the top of Earth's atmosphere at different wavelengths, measured in Watts per square meter per nanometer (W m-2 nm-1)"
   instrument_cite https://lasp.colorado.edu/tsis/data/ssi-data
@@ -547,7 +547,7 @@ host ncei.noaa.gov
 host ncei.noaa.gov
   instrument radiosonde
   unit degrees C
-  cadence 43200
+  sampling 43200
   api_cite https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/doc/igra2-data-format.txt
   api_quote "TEMP is the reported temperature (degrees C to tenths, e.g., 11 = 1.1°C)."
   instrument_cite https://www.weather.gov/upperair/factsheet
@@ -559,7 +559,7 @@ host ncei.noaa.gov
 host ncei.noaa.gov
   instrument radiosonde
   unit degrees C
-  cadence 43200
+  sampling 43200
   api_cite https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/doc/igra2-data-format.txt
   api_quote "TEMP is the reported temperature (degrees C to tenths, e.g., 11 = 1.1°C)."
   instrument_cite https://www.weather.gov/upperair/factsheet
@@ -571,7 +571,7 @@ host ncei.noaa.gov
 host ndbc.noaa.gov
   instrument bottom pressure recorder
   unit meters of water
-  cadence 900 60 15
+  sampling 900 60 15
   api_cite https://www.ndbc.noaa.gov/dart_data_access.shtml
   api_quote "The data are recorded in pounds per square inch absolute (PSIA), but are displayed in meters of water after applying a constant 670.0 mm of water/PSIA conversion factor."
   instrument_cite https://www.ndbc.noaa.gov/dart/dart.shtml
@@ -615,7 +615,7 @@ host pds-rings.seti.org
 host pds-geosciences.wustl.edu
   instrument Radio Science
   unit (nicht ausgewiesen)
-  cadence 2 10
+  sampling 2 10
   api_cite https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/document/arch_sis.txt
   api_quote "The ODFs cover 22 April 1992 to 12 October 1994 at both 2- and 10-second integrations."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:rss.mgn
@@ -649,7 +649,7 @@ host pds-geosciences.wustl.edu
 host pds-geosciences.wustl.edu
   instrument MOLA
   unit milliwatts per meter squared per steradian per nanometer
-  cadence 1
+  sampling 1
   api_cite https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/label/RAMAPPING.FMT
   api_quote "Spectral radiance of surface in the detector field of view at 1064 nm wavelength from MOLA channel 1, averaged over the 1 s half-frame."
   instrument_cite https://pds-geosciences.wustl.edu/missions/mgs/catalog/inst_mola.txt
@@ -661,7 +661,7 @@ host pds-geosciences.wustl.edu
 host pds-geosciences.wustl.edu
   instrument Mercury Laser Altimeter
   unit (nicht ausgewiesen)
-  cadence 16 60
+  sampling 16 60
   api_cite https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/document/mla_rdrsis.txt
   api_quote "Status records are customarily output at intervals of 16 to 60 seconds."
   instrument_cite https://link.springer.com/article/10.1007/s11214-007-9273-4
@@ -673,7 +673,7 @@ host pds-geosciences.wustl.edu
 host pds-geosciences.wustl.edu
   instrument Mini-RF
   unit beta naught (dimensionslos)
-  cadence 0.048689283086
+  sampling 0.048689283086
   api_cite https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/catalog/mrffr_4_cdr_ds.cat
   api_quote "with pixel values in beta naught, which have been radiometrically and polarmetrically calibrated"
   instrument_cite https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/document/mini_rf_instrument.txt
@@ -718,7 +718,7 @@ host pds-geosciences.wustl.edu
 host pds-geosciences.wustl.edu
   instrument RTLS / GBT
   unit km
-  cadence 300
+  sampling 300
   api_cite https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/document/venus_radar_maps_user_guide.pdf
   api_quote "Spatial sampling is at 1 km per pixel, or about 106 pixels per degree on Venus."
   instrument_cite https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/Venus_Radar/RTLS_GBT/Intro.htm
@@ -751,7 +751,7 @@ host pds-geosciences.wustl.edu
 host spdf.gsfc.nasa.gov
   instrument radio science (S/X-band occultation receiver)
   unit samples/s
-  cadence 0.00000625
+  sampling 0.00000625
   api_cite https://nssdc.gsfc.nasa.gov/nmc/datasetDisplay.do?id=PSPA-00316
   api_quote "The sample rate is 160,000 samples/s for both S-band and X-band."
   instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1973-085A-02
@@ -796,7 +796,7 @@ host spdf.gsfc.nasa.gov
 host spdf.gsfc.nasa.gov
   instrument radio science (narrow-band S/X-band occultation receiver)
   unit Hz
-  cadence 0.0016 0.000533333
+  sampling 0.0016 0.000533333
   api_cite https://nssdc.gsfc.nasa.gov/nmc/datasetDisplay.do?id=PSPA-00217
   api_quote "After filtering and decimation, the sampling rates are exactly 625 Hz at S-band and 1875 Hz at X-band."
   instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1977-084A-02
@@ -819,7 +819,7 @@ host spdf.gsfc.nasa.gov
 host spdf.gsfc.nasa.gov
   instrument solar EUV photodiode spectrometer (CELIAS/SEM)
   unit count rate; flux 26-34 nm / 0.1-50 nm
-  cadence 86400
+  sampling 86400
   api_cite https://spdf.gsfc.nasa.gov/pub/data/soho/celias/sem_1day/00readme.txt
   api_quote "This directory contains CDF files with the CELIAS-SEM 1-day data, including Channel 1 through 3 count rates, first order flux (26-34 nm, average of CH1 and CH3), central order flux (0.1 - 50 nm, CH2)"
   instrument_cite https://www.ieap.uni-kiel.de/et/soho/celias/instrument.html
@@ -831,7 +831,7 @@ host spdf.gsfc.nasa.gov
 host spdf.gsfc.nasa.gov
   instrument fluxgate magnetometer
   unit nT
-  cadence 3600
+  sampling 3600
   api_cite https://spdf.gsfc.nasa.gov/pub/data/imp/imp8/mag/1hr_ascii_sw/00readme.txt
   api_quote "This data set has annual files of hourly IMP 8 magnetic field averages, in ASCII format."
   instrument_cite https://www.eoportal.org/satellite-missions/imp-8
@@ -843,7 +843,7 @@ host spdf.gsfc.nasa.gov
 host spdf.gsfc.nasa.gov
   instrument fluxgate magnetometer (E2, merged mit Plasma-Analysator E1)
   unit nanoteslas
-  cadence 86400
+  sampling 86400
   api_cite https://spdf.gsfc.nasa.gov/pub/data/helios/helios1/merged/he1mgd.txt
   api_quote "For the daily resolution data (one file), simple averages were taken over the hourly values."
   instrument_cite https://spase-metadata.org/NASA/NumericalData/Helios1/E2/PT1H.html
@@ -855,7 +855,7 @@ host spdf.gsfc.nasa.gov
 host spdf.gsfc.nasa.gov
   instrument fluxgate magnetometer (E2, merged mit Plasma-Analysator E1)
   unit nanoteslas
-  cadence 86400
+  sampling 86400
   api_cite https://spdf.gsfc.nasa.gov/pub/data/helios/helios2/merged/he2mgd.txt
   api_quote "For the daily resolution data (one file), simple averages were taken over the hourly values."
   instrument_cite https://spase-metadata.org/NASA/NumericalData/Helios2/E2/PT1H.html
@@ -867,7 +867,7 @@ host spdf.gsfc.nasa.gov
 host spdf.gsfc.nasa.gov
   instrument radio receiver (WAVES: TNR, RAD1, RAD2)
   unit normalized receiver voltage
-  cadence 60
+  sampling 60
   api_cite https://wind.nasa.gov/data_sources.php
   api_quote "1 minute resolution normalized receiver voltages from the RAD1, RAD2 and TNR receivers are available from CDAWeb."
   instrument_cite https://solar-radio.gsfc.nasa.gov/wind/instrument.html
@@ -878,7 +878,7 @@ host spdf.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SWE Faraday Cup
   unit /cc
-  cadence 12.034
+  sampling 12.034
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://wind.nasa.gov/inst_info.php
@@ -890,7 +890,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument GPS-Empfaenger (Zweifrequenz)
   unit unitless
-  cadence 900
+  sampling 900
   api_cite https://data.nasa.gov/dataset/gps-deduced-roti-index-standard-deviation-of-the-rate-of-change-of-the-total-electron-cont
   api_quote "The ROTI Index is the Standard Deviation of the Rate of Change of the Total Electron Content, TEC, during a 15 min Interval."
   instrument_cite https://www.haystack.mit.edu/geospace/geospace-projects/using-gnss-to-measure-ionospheric-tec
@@ -902,7 +902,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument GPS-Empfaenger (IGS-Netz)
   unit TECU
-  cadence 900
+  sampling 900
   api_cite https://www.earthdata.nasa.gov/data/space-geodesy-techniques/gnss/atmospheric-products
   api_quote "Since 1998, IGS associate analysis centers have provided products containing ionosphere vertical total electron content (TEC) maps and daily GNSS satellite differential code bias (DCB) values derived from the dual-frequency GNSS data."
   instrument_cite https://www.haystack.mit.edu/geospace/geospace-projects/using-gnss-to-measure-ionospheric-tec
@@ -914,8 +914,8 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument Magnetometer (MAG)
   unit nT
-  cadence 0.1
-  cadence 60
+  sampling 0.1
+  sampling 60
   api_cite https://www.ncei.noaa.gov/products/goes-r-magnetometer
   api_quote "Level-2 data are higher order data products and include high-resolution and 1-minute averages of B field vectors in the ECI, EPN, BRF, ACRF, Geocentric Solar Ecliptic (GSE), Geocentric Solar Magnetospheric (GSM), and Dipole Aligned (VDH) coordinate systems."
   instrument_cite https://www.nesdis.noaa.gov/our-satellites/currently-flying/goes-east-west/magnetometer-mag
@@ -927,7 +927,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SEM-2
   unit #/cm2-s-str-eV
-  cadence 2
+  sampling 2
   api_cite https://www.ngdc.noaa.gov/stp/satellite/poes/docs/SEM2Archive.pdf
   api_quote "The minor frame cadence is one minor frame every 0.1-second, or 40 digital data words every 2-seconds."
   instrument_cite https://www.ncei.noaa.gov/products/poes-metop-space-environment-monitor
@@ -939,7 +939,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SSUSI
   unit count/s/Rayleigh
-  cadence -
+  sampling -
   api_cite https://www.jhuapl.edu/Content/techdigest/pdf/V34-N03/34-03-Paxton.pdf
   api_quote "Responsivity at 1356 Å 0.30 count/s/Rayleigh"
   instrument_cite https://docs.dart.ucar.edu/en/latest/observations/obs_converters/SSUSI/convert_f16_edr_dsk.html
@@ -951,7 +951,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument GPS-Empfaenger (IGS-Netz)
   unit TECU
-  cadence 900
+  sampling 900
   api_cite https://www.earthdata.nasa.gov/data/space-geodesy-techniques/gnss/atmospheric-products
   api_quote "Since 1998, IGS associate analysis centers have provided products containing ionosphere vertical total electron content (TEC) maps and daily GNSS satellite differential code bias (DCB) values derived from the dual-frequency GNSS data."
   instrument_cite https://www.haystack.mit.edu/geospace/geospace-projects/using-gnss-to-measure-ionospheric-tec
@@ -963,7 +963,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument EDP
   unit mV/m
-  cadence 0.03125
+  sampling 0.03125
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://lasp.colorado.edu/mms/sdc/public/datasets/fields/EDP_Data_Products_Guide_v1.3.pdf
@@ -975,7 +975,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument FPI/DES
   unit cm^-3
-  cadence 4.5
+  sampling 4.5
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://link.springer.com/article/10.1007/s11214-016-0245-4
@@ -987,7 +987,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument OMNI
   unit nT
-  cadence 3600
+  sampling 3600
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesO.html#OMNI2_H0_MRG1HR
@@ -999,7 +999,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument PSP merged MAG/Plasma
   unit nT
-  cadence 3600
+  sampling 3600
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://cdaweb.gsfc.nasa.gov/misc/NotesP.html#PSP_COHO1HR_MERGED_MAG_PLASMA
@@ -1011,7 +1011,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument FIELDS MAG
   unit nT
-  cadence 0.109227
+  sampling 0.109227
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://link.springer.com/article/10.1007/s11214-016-0244-5
@@ -1023,7 +1023,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SWEAP/SPC
   unit cm^{-3}
-  cadence 1.74762
+  sampling 1.74762
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://link.springer.com/article/10.1007/s11214-015-0206-3
@@ -1035,7 +1035,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument RPW/TDS
   unit V/m
-  cadence 16
+  sampling 16
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://www.aanda.org/articles/aa/full_html/2020/10/aa36214-19/aa36214-19.html
@@ -1047,7 +1047,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument FGM
   unit nT
-  cadence 3.107
+  sampling 3.107
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite http://ui.adsabs.harvard.edu/abs/2008SSRv..141..235A/abstract
@@ -1059,7 +1059,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument ESA (MOM)
   unit cm^-3 (All Qs)
-  cadence 3.107
+  sampling 3.107
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://www.researchgate.net/publication/225666485_The_THEMIS_ESA_plasma_instrument_and_in-flight_calibration
@@ -1071,7 +1071,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument GMAG (GBO)
   unit nT
-  cadence 60
+  sampling 60
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://themis.igpp.ucla.edu/instrument_gmags.shtml
@@ -1083,7 +1083,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SABER
   unit K
-  cadence 79.138
+  sampling 79.138
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://essopenarchive.org/doi/10.22541/essoar.168500375.52715378
@@ -1095,7 +1095,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument MFI
   unit nT (1min)
-  cadence 60
+  sampling 60
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://wind.nasa.gov/inst_info.php
@@ -1107,7 +1107,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument MFI
   unit nT
-  cadence 0.092
+  sampling 0.092
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://wind.nasa.gov/inst_info.php
@@ -1119,7 +1119,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SWE Faraday Cup
   unit km/s
-  cadence 101.21
+  sampling 101.21
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://wind.nasa.gov/inst_info.php
@@ -1131,7 +1131,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument MAG
   unit nT
-  cadence 16
+  sampling 16
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://www.ngdc.noaa.gov/stp/solar/sateenvi.html
@@ -1143,7 +1143,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument SWEPAM
   unit #/cc
-  cadence 300
+  sampling 300
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://izw1.caltech.edu/ACE/ASC/docs/swepam-ssr-paper.pdf
@@ -1155,7 +1155,7 @@ host cdaweb.gsfc.nasa.gov
 host cdaweb.gsfc.nasa.gov
   instrument OMNI
   unit nT
-  cadence 60
+  sampling 60
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
   instrument_cite https://omniweb.gsfc.nasa.gov/html/ow_data.html
