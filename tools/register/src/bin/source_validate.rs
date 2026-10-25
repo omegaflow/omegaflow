@@ -153,6 +153,7 @@ struct Spec {
     host: String,
     applies: Vec<String>,
     instrument: String,
+    instruments: BTreeSet<String>,
     units: BTreeSet<String>,
     source_units: BTreeSet<String>,
     fields: BTreeSet<String>,
@@ -269,6 +270,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
                         host: norm_host(&token),
                         applies: Vec::new(),
                         instrument: String::new(),
+                        instruments: BTreeSet::new(),
                         units: BTreeSet::new(),
                         source_units: BTreeSet::new(),
                         fields: BTreeSet::new(),
@@ -289,6 +291,7 @@ fn load_specs(path: &str) -> Vec<Spec> {
                 match key {
                     "instrument" => {
                         if let Some(v) = value {
+                            entry.instruments.insert(v.to_lowercase());
                             entry.instrument = v;
                         }
                     }
@@ -410,7 +413,7 @@ fn spec_for_inst<'a>(
     let exact: Vec<&Spec> = cands
         .iter()
         .copied()
-        .filter(|s| s.instrument.eq_ignore_ascii_case(inst))
+        .filter(|s| s.instruments.contains(&inst.to_lowercase()))
         .collect();
     if exact.is_empty() {
         let mut names: Vec<String> = cands.iter().map(|s| s.instrument.clone()).collect();

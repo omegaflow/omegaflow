@@ -2211,6 +2211,70 @@ fn url_cut(path: &str, needle: &str) {
     println!("url-cut: {n} Block/Bloecke entfernt aus {path}");
 }
 
+fn align_many(path: &str) {
+    let list = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut wanted: Vec<(String, Vec<String>)> = Vec::new();
+    for line in list.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 2 {
+            continue;
+        }
+        let url = cols[0].trim().to_string();
+        let instruments: Vec<String> = cols[1]
+            .split('|')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect();
+        if !url.is_empty() && !instruments.is_empty() {
+            wanted.push((url, instruments));
+        }
+    }
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut targets: Vec<(String, String, Vec<String>)> = Vec::new();
+    let mut hit = 0usize;
+    for (_, mut b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        let origin = or_empty(field(&b, "origin"));
+        let found = wanted.iter().find(|(spec, _)| {
+            (!url.is_empty() && url == *spec)
+                || (!origin.is_empty() && origin.split(';').any(|o| o.trim() == spec))
+        });
+        if let Some((_, instruments)) = found {
+            set_instrument_lines(&mut b, instruments);
+            targets.push((url, origin, instruments.clone()));
+            hit += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut reg_out: Vec<String> = Vec::new();
+    let mut rows = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let applies = or_empty(field(&b, "applies"));
+        let target = applies.split_whitespace().next().unwrap_or("").to_string();
+        let found = targets.iter().find(|(url, origin, _)| {
+            (!url.is_empty() && *url == target)
+                || (!origin.is_empty()
+                    && origin.split(';').any(|o| o.trim() == target))
+        });
+        if let Some((_, _, instruments)) = found {
+            set_instrument_lines(&mut b, instruments);
+            rows += 1;
+        }
+        reg_out.extend(b);
+        reg_out.push(String::new());
+    }
+    fs::write(REG, reg_out.join("\n") + "\n").expect("register write");
+    println!("align-many: {hit} Bloecke, {rows} Registerzeilen gesetzt");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -2240,6 +2304,7 @@ fn main() {
         Some("suggest-assets") if args.len() >= 4 => suggest_assets(&args[2], &args[3]),
         Some("apply-specs") if args.len() >= 4 => apply_specs(&args[2], &args[3]),
         Some("url-cut") if args.len() >= 4 => url_cut(&args[2], &args[3]),
+        Some("align-many") if args.len() >= 3 => align_many(&args[2]),
         Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
         Some("fill-sha") => fill_sha(
             args.get(2).map(String::as_str),

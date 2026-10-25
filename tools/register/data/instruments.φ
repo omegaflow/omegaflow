@@ -298,7 +298,7 @@ host gml.noaa.gov
   note cadence 604800 kommt aus dem Produkt selbst (Wochenmittel), nicht aus dem Zitat; der zweite Blockpfad (met_brw_insitu_1_obop_hour) ist Meteorologie mit anderem Sensor
 
 host ngdc.noaa.gov
-  instrument radio telescope
+  instrument radio_telescope
   unit sfu
   sampling 86400
   api_cite https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/noontime-flux/penticton/documentation/dataset-description_penticton.pdf
@@ -872,6 +872,8 @@ host pds-geosciences.wustl.edu
   fields venus_radar_inc_deg mariner10_position_km venus_radar_ocp venus_radar_scp
   applies https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
   note PDF-Textlayer stark gesperrt; Zitat aus dem Textlayer rekonstruiert (Satz "Spatial sampling is at 1 km per pixel, or about 106 pixels per degree on Venus."). Einzellook 5 min = 300 s, Arecibo-12.6-cm-(2380-MHz)-Sender.
+instrument Arecibo_305m
+instrument GBT
 
 host pds-geosciences.wustl.edu
   instrument Radiometer
@@ -4127,6 +4129,7 @@ host web.archive.org
   fields obn_obninsk_depth obn_obninsk_magnitude
   applies https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
   note Obninsk Bulletin (dekadisch, .dat monatlich) fuehrt origin times, coordinates, depth and magnitudes (USGS OFR 02-500, Abschnitt 2.1). Einheit km aus dem Parameter-Katalog derselben Doku. sampling 31536000 nicht belegt: Bulletin alle 10 Tage.
+instrument magnetometer
 
 host web.archive.org
   instrument STS-1
@@ -4141,6 +4144,7 @@ host web.archive.org
   fields obn_obninsk_depth obn_obninsk_magnitude
   applies https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
   note Obninsk Bulletin, Dekade _2 des Monats 2000-01; Parameter und Einheit km wie oben (USGS OFR 02-500). sampling 31536000 nicht belegt.
+instrument SAXES
 
 host web.archive.org
   instrument STS-1
@@ -6112,6 +6116,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note GIC in A belegt, Mittelungsfenster 30 Minuten; Karte fuehrt 1 s.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GICsensor
@@ -6125,6 +6130,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note Knoten 2; GIC in A, 30-Minuten-Fenster.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GICsensor
@@ -6138,6 +6144,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note Knoten 3; GIC in A, 30-Minuten-Fenster.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GICsensor
@@ -6151,6 +6158,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note Knoten 4; GIC in A, 30-Minuten-Fenster.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GICsensor
@@ -6164,6 +6172,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note Knoten 5; GIC in A, 30-Minuten-Fenster.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GICsensor
@@ -6177,6 +6186,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note Knoten 6; GIC in A, 30-Minuten-Fenster.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GICsensor
@@ -6190,6 +6200,7 @@ host zenodo.org
   fields E GIC GIC_QDC
   applies https://zenodo.org/record/4444068
   note Knoten 7; GIC in A, 30-Minuten-Fenster.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument WWLLN
@@ -6553,6 +6564,8 @@ host nispdata.nso.edu
   fields kpvt_polar_north_t kpvt_polar_south_t kpvt_polar_avg_t
   applies https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/
   note Synoptische Karte je Carrington-Rotation (2358720 s); Tagesbeobachtung.
+instrument 512_channel_magnetograph
+instrument spectromagnetograph
 
 host reg.bom.gov.au
   instrument thermometer
@@ -8409,6 +8422,8 @@ host nso.edu
   fields kpvt_polar_north_t kpvt_polar_south_t kpvt_polar_avg_t
   applies https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/
   note Block-Host nispdata antwortet nicht (pending); Verzeichnis nur ueber Wayback (200, m1625f.fits..). Tageskadenz aus NSO: "You can access the KPVT daily data"; synoptische Karte je Carrington-Rotation (2192832 s). VSO belegt Instrument und Zeitraum, nennt keine Rate.
+instrument 512_channel_magnetograph
+instrument spectromagnetograph
 
 host noaa-cors-pds.s3.amazonaws.com
   instrument GNSS
@@ -8694,6 +8709,8 @@ host nso.edu
   fields kpvt_polar_north_t kpvt_polar_south_t kpvt_polar_avg_t
   applies https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/
   note Block-Host nispdata antwortet nicht (probe absent); Verzeichnis nur ueber Wayback (200, m1625f.fits ...), die FITS-Datei selbst ist im Wayback nicht archiviert. Tageskadenz: dieselbe NSO-Seite sagt "You can access the KPVT daily data via Dropbox"; eine Carrington-Rotation = 27,2753 d = 2356586 s (bisherige Zeile fuehrte 2192832 = 25,38 d und war falsch). Einheit T ist Register-Token: weder NSO- noch VSO-Seite nennt eine Einheit, das FITS (BUNIT) war nicht lesbar. VSO belegt Instrument und Zeitraum, nennt keine Rate.
+instrument 512_channel_magnetograph
+instrument spectromagnetograph
 
 host noaa-cors-pds.s3.amazonaws.com
   instrument GNSS
@@ -12782,11 +12799,11 @@ host zenodo.org
   fields Eloss
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=15397
   note Zip-Readme und Spaltenkopf Eloss RIXS err; Energieverlust in eV (Paper: constant energy loss of 0 and -0.25 eV). Spektrum, keine Zeitreihe (interval 0). sampling null.
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
 api_cite https://zenodo.org/records/7286412
 api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
 instrument_cite https://arxiv.org/pdf/2204.08749
 instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument SAXES
@@ -12803,11 +12820,11 @@ host zenodo.org
   fields Eloss
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=33372
   note Zweiter Block auf denselben Zip; gleiche Datendoku und Instrumentendoku (SAXES/ADRESS).
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
 api_cite https://zenodo.org/records/7286412
 api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
 instrument_cite https://arxiv.org/pdf/2204.08749
 instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GBT
@@ -13873,6 +13890,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note Beobachtungsreihe 1868-1925; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. AA* ist die Schwellen-Ableitung der aa-Reihe; Einheit nT und 3-Stunden-Raster stammen aus der aa-Instrumentendoku (BGS), die AA*-Schwelle und die 47847 Sätze aus aastar.lst.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Abinger
@@ -13888,6 +13906,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note Beobachtungsreihe 1926-1956; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. AA* ist die Schwellen-Ableitung der aa-Reihe; Einheit nT und 3-Stunden-Raster stammen aus der aa-Instrumentendoku (BGS), die AA*-Schwelle und die 47847 Sätze aus aastar.lst.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Hartland
@@ -13903,6 +13922,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note Beobachtungsreihe 1957-; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. AA* ist die Schwellen-Ableitung der aa-Reihe; Einheit nT und 3-Stunden-Raster stammen aus der aa-Instrumentendoku (BGS), die AA*-Schwelle und die 47847 Sätze aus aastar.lst.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Melbourne
@@ -13918,6 +13938,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note Beobachtungsreihe 1868-1919; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. AA* ist die Schwellen-Ableitung der aa-Reihe; Einheit nT und 3-Stunden-Raster stammen aus der aa-Instrumentendoku (BGS), die AA*-Schwelle und die 47847 Sätze aus aastar.lst.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Toolangi
@@ -13933,6 +13954,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note Beobachtungsreihe 1920-1979; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. AA* ist die Schwellen-Ableitung der aa-Reihe; Einheit nT und 3-Stunden-Raster stammen aus der aa-Instrumentendoku (BGS), die AA*-Schwelle und die 47847 Sätze aus aastar.lst.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Canberra
@@ -13948,6 +13970,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note Beobachtungsreihe 1980-; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. AA* ist die Schwellen-Ableitung der aa-Reihe; Einheit nT und 3-Stunden-Raster stammen aus der aa-Instrumentendoku (BGS), die AA*-Schwelle und die 47847 Sätze aus aastar.lst.
+instrument magnetometer
 
 host ssd.jpl.nasa.gov
   instrument FASTT
@@ -14353,6 +14376,7 @@ host zeus.wdcb.ru
   fields aa
   applies https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt id=31153
   note Direkter Pfad absent (HTTP 0), Inhalt aus demselben Snapshot per curl gelesen (200, 12.316 B). 248 dreistündige Werte = 10.800 s Takt; Code 18=aa, 2=am. Instrumentendok: Hartland, "Measurements are made at a rate of 1 Hz" (dasselbe Bulletin); aa ist der Mittel der K-Indizes von Hartland und Canberra.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument fluxgate magnetometer
@@ -18253,11 +18277,11 @@ host zenodo.org
   fields Eloss
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=15397
   note Zip-Readme und Spaltenkopf Eloss RIXS err; Energieverlust in eV (Paper: constant energy loss of 0 and -0.25 eV). Spektrum, keine Zeitreihe (interval 0). sampling null. Host: ein Deposit, ttl null.
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
 api_cite https://zenodo.org/records/7286412
 api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
 instrument_cite https://arxiv.org/pdf/2204.08749
 instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument SAXES
@@ -18277,11 +18301,11 @@ host zenodo.org
   fields Eloss
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=33372
   note Zweiter Block auf denselben Zip; gleiche Datendoku und Instrumentendoku. Host: ein Deposit, ttl null.
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
 api_cite https://zenodo.org/records/7286412
 api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
 instrument_cite https://arxiv.org/pdf/2204.08749
 instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument GBT
@@ -19514,6 +19538,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt id=31153
   field aa aa_nt nT 10800
   note aa2001_ima.txt: 248 Drei-Stunden-Werte im Monat, nanoTeslas. Probe 16:07Z 000, 16:11Z 200. Hostdoku fehlt (ISGI JS-Huelle).
+instrument magnetometer
 
 host web.archive.org
   instrument magnetometer observatory (Hartland/Canberra)
@@ -20017,6 +20042,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=31161
   note AA* ist die Schwellen-Ableitung der aa-Reihe; 47847 Sätze, 3-Stunden-Raster (10800 s), Einheit nT aus der aa-Doku (BGS). Fester Bestand (Datei 2002), keine Anbieterkadenz. Instrumentendoku wie aa.doc: Ableitung aus K-Indizes, kein Einzelsensor genannt.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument installation
@@ -21121,6 +21147,7 @@ host zeus.wdcb.ru
   fields H
   applies https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP id=31511
   note Monats-ZIP 11/1998; entpackt eine WDC-Datei mit den Elementen E, H, Z (Sätze "... 1H ... MSKZ ..."), 60 Werte je Stunde. Feld H (Element H, nT), interval 60 aus AF_form. Instrument ist die Station MSK; welches der gelisteten Variometer 1998 lieferte, sagt die Geräteliste nicht (Stations-Token, kein Sammelbegriff). Host: 12 Monatsdateien, Stand 01-Apr-2002, ttl 2592000.
+instrument fluxgate
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (Hartland/Canberra)
@@ -21140,6 +21167,7 @@ host zeus.wdcb.ru
   fields aa
   applies https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt id=31765
   note Monatsdatei Januar 2001 im IMA-Format (Kopf "1 2001 18 31" = Monat, Jahr, Code 18=aa, 31 Tage; 248 Werte à 3 h). Feld aa (Code 18), nT, 10800 s aus AA_IMA.fmt. Host: AA_IMF-Monatsdateien im aa-Verzeichnis, ttl 2592000.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (Hartland/Canberra)
@@ -21178,6 +21206,7 @@ host zeus.wdcb.ru
   fields aa
   applies https://web.archive.org/web/20030926204019id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_month id=30940
   note Monatsmittel des aa-Index: eine Zeile je Monat (Jahr, Monat, Wert), interval 2592000 s (Monat) aus der Dateistruktur. Einheit/Gerät wie 30948. Fester Bestand, no-sampling.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument torsion balance
@@ -23834,12 +23863,11 @@ host wdcb.ru
   fields T
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/1_catal.txt id=24872
   note Pc1-Katalog Borok (1957-1992), Periodenband 0.2-5.0 s; ein Pulsations-Ereignis je Zeile -> intervall 0; Gerätedoku mit Rate fehlt (sampling 0).
-instrument induction magnetograph (Borok)
-instrument terrestrial currents installation (Borok, 1957-1970)
 api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
 api_quote The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval.
 instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
 instrument_quote From 1971 to 1992  the  pulsation  recording  was  made  by  inductive magnitograph.
+instrument induction
 
 host wdcb.ru
   instrument magnetometer
@@ -24008,11 +24036,11 @@ host wdcb.ru
   fields H
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9811.ZIP id=26096
   note Moskau (MSK) November 1998 im WDC-A-Ein-Minuten-Format -> H/nT/60 s.
-instrument magnetometer (Geomagnetic Observatory Moscow, MSK)
 api_cite https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
 api_quote 34520 37310981129H 5MSKZ
 instrument_cite https://esdb.gcras.ru/doi/2016/mag-msk-minute-values.html
 instrument_quote The dataset contains variational minute values of geomagnetic field elements E (East), H (Horizontal), Z (Down) derived at Geomagnetic Observatory Moscow
+instrument fluxgate
 
 host wdcb.ru
   instrument seismograph
@@ -24098,11 +24126,11 @@ host wdcb.ru
   fields aa
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2001_ima.txt id=26362
   note aa 2001 im IMA-Format (Kopfzeile "12001 18 31" = year/18=aa/days); 8 Werte je Tag -> 10800 s.
-instrument magnetometers at Hartland and Canberra observatories
 api_cite https://geomag-hartland.bgs.ac.uk/data_service/data/magnetic_indices/aaindex.html
 api_quote The aa-index is a simple global geomagnetic activity index. It is derived from the K indices from two approximately antipodal observatories and has units of 1 nT.
 instrument_cite https://www.spenvis.oma.be/help/background/indices.html
 instrument_quote The aa index is three hourly index of geomagnetic activity determined from the K-indices scaled at two antipodal subauroral stations, originally Greenwich and Melbourne, but now Canberra, Australia, and Hartland, England.
+instrument magnetometer
 
 host wdcb.ru
   instrument seismograph
@@ -24652,6 +24680,7 @@ host zenodo.org
   fields ALAND E Eloss Energy FreqRange Frequency GIC GIC_QDC H2_dens_mean_BEG03 JADES-GS-z10-0/data_f090w.0.mean JADES-GS-z10-0/data_f115w.0.mean JADES-GS-z10-0/data_f150w.0.mean JADES-GS-z10-0/data_f200w.0.mean JADES-GS-z10-0/data_f277w.0.mean JADES-GS-z10-0/data_f335m.0.mean JADES-GS-z10-0/data_f356w.0.mean JADES-GS-z10-0/data_f410m.0.mean JADES-GS-z10-0/data_f444w.0.mean JADES-GS-z11-0/data_f090w.0.mean JADES-GS-z11-0/data_f115w.0.mean JADES-GS-z11-0/data_f150w.0.mean JADES-GS-z11-0/data_f200w.0.mean JADES-GS-z11-0/data_f277w.0.mean JADES-GS-z11-0/data_f335m.0.mean JADES-GS-z11-0/data_f356w.0.mean JADES-GS-z11-0/data_f410m.0.mean JADES-GS-z11-0/data_f444w.0.mean JADES-GS-z12-0/data_f090w.0.mean JADES-GS-z12-0/data_f115w.0.mean JADES-GS-z12-0/data_f150w.0.mean JADES-GS-z12-0/data_f200w.0.mean JADES-GS-z12-0/data_f277w.0.mean JADES-GS-z12-0/data_f335m.0.mean JADES-GS-z12-0/data_f356w.0.mean JADES-GS-z12-0/data_f410m.0.mean JADES-GS-z12-0/data_f444w.0.mean JADES-GS-z13-0/data_f090w.0.mean JADES-GS-z13-0/data_f115w.0.mean JADES-GS-z13-0/data_f150w.0.mean JADES-GS-z13-0/data_f200w.0.mean JADES-GS-z13-0/data_f277w.0.mean JADES-GS-z13-0/data_f335m.0.mean JADES-GS-z13-0/data_f356w.0.mean JADES-GS-z13-0/data_f410m.0.mean JADES-GS-z13-0/data_f444w.0.mean MU_SH0ES OBSVBL QSO_FREQ SF_ML_amplitude Scientific_Data_R TEC TRES UVave X ampere_fac_uam2 amplitude ant252_x backscatter cdod cedc_catalog_magnitude cmonoc_campaign_velocity cmonoc_continuous_velocity cosz_hi cosz_lo count data_type e1 e2 elevation flux freq1 freq2 freq3 logp_hi logp_lo mag magic_dl3 magnitude mass ra snr streamflow strokes_per_day superdarn_cpcp_pot_drop surface_pressure_hpa t_b temp time_of_flight vs z_50
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt id=28138
   note RIXS-Spektrum (Energieverlust eV gegen Intensität); Energiespalte statt Zeit -> intervall 0.
+instrument Hall_effect_transducer
 
 host zenodo.org
   instrument radar
@@ -24895,11 +24924,11 @@ host caltech.edu
   fields flux masse rade st_teff
   applies https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin id=29459
   note TESS-Lichtkurven, 2-Minuten-Takt (120 s); normierter Fluss, intervall = Takt.
-instrument TESS (Transiting Exoplanet Survey Satellite)
 api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
 api_quote Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files.
 instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
 instrument_quote TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year …
+instrument TESS
 
 host earthscope.org
   instrument seismometer
@@ -26809,6 +26838,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030926204019id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_month id=25478
   field aa aa_month_mean_nt nT 2592000
   note Monatsmittel des aa-Index: eine Zeile je Monat (Jahr, Monat, Wert), interval 2592000 s aus der Dateistruktur. sampling 10800 = 3-Stunden-Raster des zugrunde liegenden aa-Index. Fester Bestand, ttl null.
+instrument magnetometer
 
 host web.archive.org
   instrument GRAF-ASKANIA
@@ -27188,6 +27218,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* ist die Schwellen-Ableitung der aa-Reihe; 47847 Sätze, 3-Stunden-Raster (10800 s). Abinger als Vorläufer der Nordstation. Fester Bestand, ttl null.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument magnetometer
@@ -27206,6 +27237,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note Generische Gerätezeile; AA*-Schwelle und 47847 Sätze aus aastar.lst, 3-Stunden-Raster und Einheit nT aus der aa-Doku. Fester Bestand, ttl null.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Greenwich
@@ -27224,6 +27256,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* der Nordreihe; Greenwich als Vorläufer der Nordstation. 3-Stunden-Raster, Einheit nT. Fester Bestand, ttl null.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Melbourne
@@ -27242,6 +27275,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* der Südreihe; Melbourne als Vorläufer der Südstation. 3-Stunden-Raster, Einheit nT. Fester Bestand, ttl null.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Toolangi
@@ -27260,6 +27294,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* der Südreihe; Toolangi als Vorläufer der Südstation. 3-Stunden-Raster, Einheit nT. Fester Bestand, ttl null.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument intermediate- and long-period seismograph
@@ -27671,6 +27706,7 @@ host zeus.wdcb.ru
   fields T
   applies https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt id=24932
   note Katalog Borok 1957–1992; Tabelle "Data | Begin. | End | T(sec) | t(min) | Ampl. | Type | Notes". Feld T (Periode in s); Amplitude in mnT ist die zweite Messgroesse derselben Tabelle. Geraet: inductive magnitograph (Epoche 1971–1992). Ereignisliste, interval 0; fester Bestand.
+instrument induction
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (Hartland/Canberra)
@@ -28145,6 +28181,7 @@ host zeus.wdcb.ru
   fields H
   applies https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP id=26182
   note Monats-ZIP 11/1998; entpackt eine WDC-Datei mit den Elementen E, H, Z, 60 Werte je Stunde. Feld H (nT), interval 60 aus AF_form. Instrument ist die Station MSK; welches der gelisteten Variometer 1998 lieferte, sagt die Geraeteliste nicht (Stations-Token). Host: 12 Monatsdateien, ttl 2592000.
+instrument fluxgate
 
 host zeus.wdcb.ru
   instrument teleseismic station network
@@ -28307,6 +28344,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26471
   note AA* ist die Schwellen-Ableitung der aa-Reihe (47847 Saetze, 3-Stunden-Raster). Der Block tokent Greenwich (1868–1925); Einheit nT aus der BGS-aa-Doku. Key woertlich `AA*`.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Abinger
@@ -28325,6 +28363,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26471
   note AA*-Reihe, Abschnitt Abinger (1926–1956).
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Melbourne
@@ -28343,6 +28382,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26471
   note AA*-Reihe, Abschnitt Melbourne (1868–1919).
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Toolangi
@@ -28361,6 +28401,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26471
   note AA*-Reihe, Abschnitt Toolangi (1920–1979).
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument Hartland
@@ -28379,6 +28420,7 @@ host zeus.wdcb.ru
   fields aa_star
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26471
   note AA*-Reihe, Abschnitt Hartland (1957–).
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument ISS seismograph network
@@ -28749,11 +28791,11 @@ host zenodo.org
   fields Eloss
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
   note member exp_data/azimuthal_analysis/OD1_0p33_0/sw_spin.txt carries the columns Eloss, weight, err; the CDN path of the block answers 404, so the hash is not measurable; spectral axis, no time cadence (interval null)
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
 api_cite https://zenodo.org/records/7286412
 api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
 instrument_cite https://arxiv.org/pdf/2204.08749
 instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
+instrument Hall_effect_transducer
 
 host jma.go.jp
   instrument seismograph
@@ -30213,11 +30255,11 @@ host zeus.wdcb.ru
   field aa aa_month_mean_nt nT 2592000
   zustand gemessen
   note Aa-Monatsmittel in nT aus derselben Fluxgate-Reihe; magnetic ist die Klassenbezeichnung.
-instrument magnetometers at Hartland and Canberra observatories
 api_cite https://geomag-hartland.bgs.ac.uk/data_service/data/magnetic_indices/aaindex.html
 api_quote The aa-index is a simple global geomagnetic activity index. It is derived from the K indices from two approximately antipodal observatories and has units of 1 nT.
 instrument_cite https://www.spenvis.oma.be/help/background/indices.html
 instrument_quote The aa index is three hourly index of geomagnetic activity determined from the K-indices scaled at two antipodal subauroral stations, originally Greenwich and Melbourne, but now Canberra, Australia, and Hartland, England.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument AMG
@@ -30527,11 +30569,11 @@ host zeus.wdcb.ru
   field aa aa_index nT 10800
   zustand gemessen
   note aa2001_ima.txt: aa-Index 2001 in nT, 10800 s; aa ist der Dateiname, das Geraet ist das Fluxgate.
-instrument magnetometers at Hartland and Canberra observatories
 api_cite https://geomag-hartland.bgs.ac.uk/data_service/data/magnetic_indices/aaindex.html
 api_quote The aa-index is a simple global geomagnetic activity index. It is derived from the K indices from two approximately antipodal observatories and has units of 1 nT.
 instrument_cite https://www.spenvis.oma.be/help/background/indices.html
 instrument_quote The aa index is three hourly index of geomagnetic activity determined from the K-indices scaled at two antipodal subauroral stations, originally Greenwich and Melbourne, but now Canberra, Australia, and Hartland, England.
+instrument magnetometer
 
 host wdcb.ru
   instrument gps
@@ -31054,11 +31096,11 @@ host caltech.edu
   field flux normalized_flux 1 120
   zustand gemessen
   note TESS-Lichtkurven (ExoFOP), normierter Fluss dimensionslos, 120-s-Takt; NIRSpec ist die Fremdzeile aus jwst_spectra_flux_W_m2_Hz.
-instrument TESS (Transiting Exoplanet Survey Satellite)
 api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
 api_quote Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files.
 instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
 instrument_quote TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year …
+instrument TESS
 
 host gml.noaa.gov
   instrument thermometer
@@ -31817,11 +31859,11 @@ host zeus.wdcb.ru
   field aa aa_month_mean_nt nT 2592000
   zustand gemessen
   note Aa-Monatsmittel in nT aus derselben Fluxgate-Reihe; magnetic ist die Klassenbezeichnung.
-instrument magnetometers at Hartland and Canberra observatories
 api_cite https://geomag-hartland.bgs.ac.uk/data_service/data/magnetic_indices/aaindex.html
 api_quote The aa-index is a simple global geomagnetic activity index. It is derived from the K indices from two approximately antipodal observatories and has units of 1 nT.
 instrument_cite https://www.spenvis.oma.be/help/background/indices.html
 instrument_quote The aa index is three hourly index of geomagnetic activity determined from the K-indices scaled at two antipodal subauroral stations, originally Greenwich and Melbourne, but now Canberra, Australia, and Hartland, England.
+instrument magnetometer
 
 host zeus.wdcb.ru
   instrument AMG
@@ -32131,11 +32173,11 @@ host zeus.wdcb.ru
   field aa aa_index nT 10800
   zustand gemessen
   note aa2001_ima.txt: aa-Index 2001 in nT, 10800 s; aa ist der Dateiname, das Geraet ist das Fluxgate.
-instrument magnetometers at Hartland and Canberra observatories
 api_cite https://geomag-hartland.bgs.ac.uk/data_service/data/magnetic_indices/aaindex.html
 api_quote The aa-index is a simple global geomagnetic activity index. It is derived from the K indices from two approximately antipodal observatories and has units of 1 nT.
 instrument_cite https://www.spenvis.oma.be/help/background/indices.html
 instrument_quote The aa index is three hourly index of geomagnetic activity determined from the K-indices scaled at two antipodal subauroral stations, originally Greenwich and Melbourne, but now Canberra, Australia, and Hartland, England.
+instrument magnetometer
 
 host wdcb.ru
   instrument gps
@@ -32658,11 +32700,11 @@ host caltech.edu
   field flux normalized_flux 1 120
   zustand gemessen
   note TESS-Lichtkurven (ExoFOP), normierter Fluss dimensionslos, 120-s-Takt; NIRSpec ist die Fremdzeile aus jwst_spectra_flux_W_m2_Hz.
-instrument TESS (Transiting Exoplanet Survey Satellite)
 api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
 api_quote Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files.
 instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
 instrument_quote TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year …
+instrument TESS
 
 host gml.noaa.gov
   instrument thermometer
@@ -32961,6 +33003,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt line=24932
   zustand gemessen
   note Katalogspalte 4 ist die Pc1-Periode T in Sekunden (Vorwort, Punkt 4). Ereigniskatalog, kein festes Raster (interval 0). Geraet Induktionsmagnetograph Borok; fester Snapshot.
+instrument induction
 
 host web.archive.org
   instrument magnetometer
@@ -33265,6 +33308,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP line=26182
   zustand gemessen
   note ZIP enthaelt MSK9811 (864000 Byte). Je Stunde ein Satz mit Elementcode E/H/Z und 60 Minutenwerten; Spalte H (Horizontalintensitat) in nT, 60-s-Raster. Geraet Fluxgate an der Station Moskau (MSK).
+instrument fluxgate
 
 host web.archive.org
   instrument seismograph
@@ -33360,6 +33404,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=26471 instrument=Abinger
   zustand gemessen
   note AA* ist die 3-stuendige Sternindex-Reihe (10800 s) in nT; Datei nennt 47847 Datensaetze (1868-1998). Ein Block traegt fuenf Geraetestationen; dies ist Abinger (1868-1956). Registerzeile je Station.
+instrument magnetometer
 
 host web.archive.org
   instrument Greenwich
@@ -33379,6 +33424,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=26471 instrument=Greenwich
   zustand gemessen
   note AA*-Reihe, 10800 s, nT; Station Greenwich (1868-1925). Eigene Registerzeile mit applies.
+instrument magnetometer
 
 host web.archive.org
   instrument Melbourne
@@ -33398,6 +33444,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=26471 instrument=Melbourne
   zustand gemessen
   note AA*-Reihe, 10800 s, nT; Station Melbourne (1868-1919). Eigene Registerzeile mit applies.
+instrument magnetometer
 
 host web.archive.org
   instrument Toolangi
@@ -33417,6 +33464,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=26471 instrument=Toolangi
   zustand gemessen
   note AA*-Reihe, 10800 s, nT; Station Toolangi (1920-1979). Eigene Registerzeile mit applies.
+instrument magnetometer
 
 host web.archive.org
   instrument Hartland
@@ -33436,6 +33484,7 @@ host web.archive.org
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst line=26471 instrument=Hartland
   zustand gemessen
   note AA*-Reihe, 10800 s, nT; Station Hartland (ab 1957). Eigene Registerzeile mit applies.
+instrument magnetometer
 
 host web.archive.org
   instrument seismograph

@@ -13413,7 +13413,7 @@ sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
 at sun
 ttl 31536000
 field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0
-instrument Flux Monitors (two automated radio telescopes, DRAO)
+instrument radio_telescope
 
 url https://github.com/omegaflow/sources/releases/download/stac.itslive.cloud/its_live_velocity.bin
 format its_live_velocity
@@ -15287,7 +15287,7 @@ format rixs_spin
 at earth
 field Eloss rixs_spin_energy_loss_ev eV 0
 no-sampling
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
+instrument Hall_effect_transducer
 
 url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
 terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
@@ -15583,8 +15583,8 @@ quantity venus_radar_inc_deg venus_radar_inc_deg inverse-square geometry deg 300
 field mariner10_position_km mariner10_position_km km 42
 field venus_radar_ocp venus_radar_ocp inverse-square em 1 300 0.0 0.0
 field venus_radar_scp venus_radar_scp inverse-square em 1 300 0.0 0.0
-instrument Arecibo 305-m radar
-instrument Robert C. Byrd Green Bank Telescope
+instrument Arecibo_305m
+instrument GBT
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odf.bin
 format galileo_odf
@@ -25174,8 +25174,8 @@ cmap .
 ra ra
 dec dec
 z z
-instrument UK 1.2-m Schmidt telescope (southern)
-instrument Palomar 48-inch Schmidt (northern)
+instrument UK_Schmidt
+instrument Palomar_Schmidt
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/avo_rad.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -25820,8 +25820,7 @@ at earth
 field T pc1_period s 0
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-instrument induction magnetograph (Borok)
-instrument terrestrial currents installation (Borok, 1957-1970)
+instrument induction
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/57-59.txt
 origin https://web.archive.org/web/20030118141636id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/57-59.txt
@@ -26464,7 +26463,7 @@ sha256 986aa5126a6d3da8c374b6a146153a3bf5dd41b3b0a5a73cc9b7895c33c8c7df
 at earth datum=WGS84 coverage=open
 ttl no-sampling
 field aa aa_month_mean_nt nT 2592000
-instrument magnetometers at Hartland and Canberra observatories
+instrument magnetometer
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aa_year
 field aa aa_year_mean_nt nT 31536000
@@ -27149,11 +27148,10 @@ at earth
 field H horizontal_intensity nT 60
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-instrument magnetometer (Geomagnetic Observatory Moscow, MSK)
+instrument fluxgate
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9901.ZIP
 origin https://web.archive.org/web/20030728194137id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9901.ZIP
-instrument MSK
 field H msk_h_nt nT 60
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 21b7665f690a88532363b3c6687f45d0cf9629e24c19f46249b0a232bc77c8e6
@@ -27161,11 +27159,11 @@ sha256 21b7665f690a88532363b3c6687f45d0cf9629e24c19f46249b0a232bc77c8e6
 at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+instrument MSK
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9903.ZIP
 field MPSP obn2000_mpsp_magnitude 1 0
 origin https://web.archive.org/web/20030728194535id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9903.ZIP
-instrument MSK
 field H msk_h_nt nT 60
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 6cd951c3c32a590cebf6dd7c808ca21ea3b68a205dc22f2f08ee310db400fbfc
@@ -27173,6 +27171,7 @@ sha256 6cd951c3c32a590cebf6dd7c808ca21ea3b68a205dc22f2f08ee310db400fbfc
 at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+instrument STS-1
 
 field MPSP obn2000_mpsp_magnitude 1 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9904.ZIP
@@ -27419,7 +27418,7 @@ sha256 1f011a6b5b5dac8b001c7890cf50dfa9e90f0ff2d1f1ad6b44419a35b37098f4
 at earth datum=WGS84 coverage=open
 ttl no-sampling
 field aa aa_index nT 10800
-instrument magnetometers at Hartland and Canberra observatories
+instrument magnetometer
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/aastar.lst
 field aa_star aa_star_nt nT 10800
@@ -27430,11 +27429,10 @@ sha256 778eca3054b8f95f561a496e9eaa814fc505520340b10177b83cfa2ee6ce3a71
 at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-instrument magnetometers at the aa observatories (Greenwich, Melbourne, Hartland, Canberra; Abinger, Toolangi)
+instrument magnetometer
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul199806.dat
 origin https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
-instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 2a473911eb81894a9a88929dbe7e52fb9974c49f582e55d4dbb8c350d5c4c4eb
 sha256 2a473911eb81894a9a88929dbe7e52fb9974c49f582e55d4dbb8c350d5c4c4eb
@@ -27443,10 +27441,10 @@ no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
 quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
+instrument magnetometer
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_2.dat
 origin https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
-instrument STS-1
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 5c6e0a42d4787cccb6e656e380b0ad0b75d0409e13212f785714509b8662bfed
 sha256 5c6e0a42d4787cccb6e656e380b0ad0b75d0409e13212f785714509b8662bfed
@@ -27455,6 +27453,7 @@ no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
 quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
+instrument SAXES
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_3.dat
 origin https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat
@@ -29200,7 +29199,7 @@ no-sampling
 field Eloss rixs_spin_energy_loss_ev eV null
 field weight rixs_spin_weight 1 null
 field err rixs_spin_err 1 null
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
+instrument Hall_effect_transducer
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/s40rts.sph
 terms CC-BY-4.0 https://zenodo.org/records/11212270
@@ -29655,7 +29654,7 @@ rows
 epoch DateTime
 field GIC kellerman_node1_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node1_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/4444068/files/Node_2_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
@@ -29667,7 +29666,7 @@ rows
 epoch DateTime
 field GIC kellerman_node2_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node2_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/4444068/files/Node_3_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
@@ -29679,7 +29678,7 @@ rows
 epoch DateTime
 field GIC kellerman_node3_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node3_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/4444068/files/Node_4_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
@@ -29691,7 +29690,7 @@ rows
 epoch DateTime
 field GIC kellerman_node4_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node4_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/4444068/files/Node_5_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
@@ -29703,7 +29702,7 @@ rows
 epoch DateTime
 field GIC kellerman_node5_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node5_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/4444068/files/Node_6_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
@@ -29715,7 +29714,7 @@ rows
 epoch DateTime
 field GIC kellerman_node6_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node6_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/4444068/files/Node_7_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
@@ -29727,7 +29726,7 @@ rows
 epoch DateTime
 field GIC kellerman_node7_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node7_gic_qdc_a inverse-square electric A 1 0.0 0.0
-instrument Hall-effect transducer (EPRI SUNBURST GIC monitor)
+instrument Hall_effect_transducer
 
 url https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
 origin https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
@@ -29737,7 +29736,7 @@ record rixs
 field Eloss rixs_spin_energy_loss_ev eV 0
 force em
 no-sampling
-instrument SAXES spectrometer (ADRESS beamline, Swiss Light Source)
+instrument Hall_effect_transducer
 
 url https://github.com/omegaflow/sources/releases/download/download1.bayernwolke.de/32605_5282_20_DOM.bin
 terms CC-BY-4.0 https://www.geodaten.bayern.de/odd/m/3/html/nutzungsbedingungen.html
@@ -30031,8 +30030,8 @@ ttl 2592000
 field kpvt_polar_north_t kpvt_polar_north_t inverse-square em T 2592000 0.0 0.0
 field kpvt_polar_south_t kpvt_polar_south_t inverse-square em T 2592000 0.0 0.0
 field kpvt_polar_avg_t kpvt_polar_avg_t inverse-square em T 2592000 0.0 0.0
-instrument 512-channel magnetograph (KPVT)
-instrument spectromagnetograph (KPVT)
+instrument 512_channel_magnetograph
+instrument spectromagnetograph
 
 url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/sbuv_n07.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
@@ -30431,8 +30430,8 @@ sha256 64a62affef017682b8c11f38e04aae32c1d09687b5a640382f14985009e99351
 at sun
 ttl 2592000
 field kpvt_synoptic_value kpvt_synoptic_value inverse-square em 1 2592000 0.0 0.0
-instrument 512-channel magnetograph (KPVT)
-instrument spectromagnetograph (KPVT)
+instrument 512_channel_magnetograph
+instrument spectromagnetograph
 
 url https://github.com/omegaflow/sources/releases/download/sha.stanford.edu/mwo_mag_mp.bin
 terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
@@ -30506,7 +30505,7 @@ sha256 9770cf3f932eda37a346787bdb98fb336295054e889cf1db6d4b59f1370caec6
 at sun datum=IAU coverage=open
 ttl 604800
 field flux normalized_flux 1 120
-instrument TESS (Transiting Exoplanet Survey Satellite)
+instrument TESS
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/npts3d.txt
 terms PD-USGov https://ssd.jpl.nasa.gov/
@@ -30669,38 +30668,34 @@ url https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/c
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 format pc1_catalog
 origin https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-instrument induction magnetograph cite=https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 f78e275e59d6199696e079da4b20fd2ccbadd75d0f664fc6992de4a9c49c8021
 global earth method=borok_observatory datum=WGS84
 no-sampling
 field T pc1_period s 0
+instrument induction
 
 url https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 format wdc_1min
 origin https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
-instrument fluxgate cite=https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 bee7e5e43db6fbe3e01ec7a2f618c6da58981a845e261fa2d64c5198921944e4
 global earth method=msk_observatory datum=WGS84
 no-sampling
 field H horizontal_intensity nT 60
+instrument fluxgate
 
 url https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 format aastar
 origin https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-instrument Abinger cite=https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-instrument Greenwich cite=https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-instrument Melbourne cite=https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-instrument Toolangi cite=https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-instrument Hartland cite=https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 778eca3054b8f95f561a496e9eaa814fc505520340b10177b83cfa2ee6ce3a71
 global earth method=aa_star datum=WGS84
 no-sampling
 field AA* aa_star_nt nT 10800
+instrument magnetometer
 
 url https://web.archive.org/web/20030926203947id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_year
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
