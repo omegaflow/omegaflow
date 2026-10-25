@@ -2,6 +2,7 @@ use omegaflow::archivar::{
     BodyEphemeris, J2000_EPOCH, body_barycenter_position, parse_ephemeris_binary,
 };
 use omegaflow::doppler::parse_bin;
+use omegaflow::odp::dsn_host;
 use std::collections::HashMap;
 
 const JD_UNIX_EPOCH: f64 = 2440587.5;
@@ -58,6 +59,10 @@ fn lin_fit(xs: &[f64], ys: &[f64]) -> (f64, f64) {
 }
 
 fn run(name: &str, eph: &HashMap<String, BodyEphemeris>, clean: bool) {
+    let Some(host) = dsn_host() else {
+        eprintln!("{name}: host declaration void — the receiver body is absent");
+        return;
+    };
     let doppler_path = if clean {
         format!("sources/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin")
     } else {
@@ -72,7 +77,7 @@ fn run(name: &str, eph: &HashMap<String, BodyEphemeris>, clean: bool) {
         return;
     };
     let sc_key = format!("{name}_daily");
-    if !eph.contains_key(&sc_key) || !eph.contains_key("earth") {
+    if !eph.contains_key(&sc_key) || !eph.contains_key(host) {
         eprintln!("{name}: daily/earth bin absent");
         return;
     }
@@ -82,7 +87,7 @@ fn run(name: &str, eph: &HashMap<String, BodyEphemeris>, clean: bool) {
         let tdb = (day as f64 + JD_UNIX_EPOCH - J2000_EPOCH) * DAY;
         let (Some(rs), Some(re)) = (
             body_barycenter_position(&sc_key, tdb, eph),
-            body_barycenter_position("earth", tdb, eph),
+            body_barycenter_position(host, tdb, eph),
         ) else {
             continue;
         };
@@ -162,8 +167,12 @@ fn run(name: &str, eph: &HashMap<String, BodyEphemeris>, clean: bool) {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let clean = args.iter().any(|a| a == "--clean");
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer: host declaration void — the receiver body is absent");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in ["earth", "pioneer10_daily", "pioneer11_daily"] {
+    for body in [host, "pioneer10_daily", "pioneer11_daily"] {
         load_eph(body, &mut eph);
     }
     for name in ["pioneer10", "pioneer11"] {

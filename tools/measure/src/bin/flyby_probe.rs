@@ -5,13 +5,11 @@ use omegaflow::archivar::{
 };
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
+use omegaflow::odp::dsn_host;
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::weberin::{planetary_bodies, woven_major_bodies};
 use std::collections::HashMap;
 use std::process::Command;
-
-const MODEL_BODIES: [&str; 9] = [
-    "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
-];
 const GM_SUN: f64 = omegaflow::kepler::GM_SUN_M3_S2;
 const J2000_EPOCH: f64 = omegaflow::archivar::J2000_EPOCH;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -232,7 +230,8 @@ fn load_flyby_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool 
 
 fn find_perigee(name: &str, jd0: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<(f64, f64)> {
     let arc = eph.get(name)?;
-    let earth = eph.get("earth")?;
+    let host = dsn_host()?;
+    let earth = eph.get(host)?;
     let scan_lo = jd0 - 1.5;
     let scan_hi = jd0 + 1.5;
     let (arc_lo, arc_hi) = coverage(arc);
@@ -251,7 +250,7 @@ fn find_perigee(name: &str, jd0: f64, eph: &HashMap<String, BodyEphemeris>) -> O
             jd += step_jd;
             continue;
         };
-        let Some(q) = body_barycenter_position("earth", tdb, eph) else {
+        let Some(q) = body_barycenter_position(host, tdb, eph) else {
             jd += step_jd;
             continue;
         };
@@ -773,13 +772,17 @@ fn main() {
         }
     };
 
+    let model_bodies = woven_major_bodies();
+    let planet_bodies = planetary_bodies();
     let sources = load_sources();
     let items: Vec<(usize, SourceConfig, String)> = sources
         .iter()
         .enumerate()
         .filter(|(_, s)| {
-            s.format == "ephemeris_binary"
-                && MODEL_BODIES.contains(&s.body.as_deref().unwrap_or(""))
+            let Some(body) = s.body.as_deref() else {
+                return false;
+            };
+            s.format == "ephemeris_binary" && model_bodies.iter().any(|m| m == body)
         })
         .map(|(idx, s)| {
             (
@@ -833,15 +836,21 @@ fn main() {
             None => eprintln!("{name}: bin parse void"),
         }
     }
-    if planets.len() < MODEL_BODIES.len() {
+    if planets.len() < model_bodies.len() {
         eprintln!(
             "model incomplete: {} of {} bodies",
             planets.len(),
-            MODEL_BODIES.len()
+            model_bodies.len()
         );
     }
-    let earth_j2 = planets.iter().find(|p| p.name == "earth").map(|p| p.j2);
-    let moon_in = planets.iter().any(|p| p.name == "moon");
+    let Some(host) = dsn_host() else {
+        eprintln!("host declaration void — the flyby reference body is absent");
+        return;
+    };
+    let earth_j2 = planets.iter().find(|p| p.name == host).map(|p| p.j2);
+    let moon_in = planets
+        .iter()
+        .any(|p| !planet_bodies.contains(&p.name));
     match earth_j2 {
         Some(earth_j2) => println!(
             "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2} (from the ephemeris-bins), Leapfrog {MODEL_DT_S:.0} s"

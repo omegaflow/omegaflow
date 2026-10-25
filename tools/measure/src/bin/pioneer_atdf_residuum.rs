@@ -3,6 +3,7 @@ use omegaflow::archivar::{
     parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_bin;
+use omegaflow::odp::dsn_host;
 use std::collections::HashMap;
 
 const JD_UNIX_EPOCH: f64 = 2440587.5;
@@ -66,6 +67,10 @@ fn span_date(d: i64) -> String {
 }
 
 fn run(eph: &HashMap<String, BodyEphemeris>) {
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer10: host declaration void — the receiver body is absent");
+        return;
+    };
     let path = "sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
@@ -75,7 +80,7 @@ fn run(eph: &HashMap<String, BodyEphemeris>) {
         eprintln!("pioneer10: skyfreq bin parse void");
         return;
     };
-    if !eph.contains_key("pioneer10_daily") || !eph.contains_key("earth") {
+    if !eph.contains_key("pioneer10_daily") || !eph.contains_key(host) {
         eprintln!("pioneer10: daily/earth bin absent");
         return;
     }
@@ -85,9 +90,9 @@ fn run(eph: &HashMap<String, BodyEphemeris>) {
         let tdb = (day as f64 + JD_UNIX_EPOCH - J2000_EPOCH) * DAY;
         let (Some(rs), Some(re), Some(vs), Some(ve)) = (
             body_barycenter_position("pioneer10_daily", tdb, eph),
-            body_barycenter_position("earth", tdb, eph),
+            body_barycenter_position(host, tdb, eph),
             body_barycenter_velocity("pioneer10_daily", tdb, eph),
-            body_barycenter_velocity("earth", tdb, eph),
+            body_barycenter_velocity(host, tdb, eph),
         ) else {
             continue;
         };
@@ -175,8 +180,12 @@ fn run(eph: &HashMap<String, BodyEphemeris>) {
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer10: host declaration void — the receiver body is absent");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in ["earth", "pioneer10_daily"] {
+    for body in [host, "pioneer10_daily"] {
         load_eph(body, &mut eph);
     }
     run(&eph);
