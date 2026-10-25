@@ -8370,20 +8370,18 @@ fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
 }
 
 #[test]
-fn test_anchor_bodies_have_ephemeris_sources() {
+fn test_phi_register_carries_measurements_not_ephemerides() {
     let content = std::fs::read_to_string("phi/sources.φ").unwrap();
     let sources = super::parse_sources(&content);
-    let uses = super::anchor_uses(&sources);
-    let eph_bodies: std::collections::HashSet<String> = sources
+    let leaks: Vec<&str> = sources
         .iter()
         .filter(|s| s.format == "ephemeris_binary" || s.format == "orbit_bin")
-        .filter_map(|s| s.body.clone())
+        .map(|s| s.url.as_str())
         .collect();
-    let absent: Vec<&String> = uses.keys().filter(|b| !eph_bodies.contains(*b)).collect();
     assert!(
-        absent.is_empty(),
-        "anchor bodies without an ephemeris source would starve the load gate: {:?}",
-        absent
+        leaks.is_empty(),
+        "ephemerides belong to the work register research/sources/ephemerides.φ, not to phi: {:?}",
+        leaks
     );
 }
 
