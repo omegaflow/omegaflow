@@ -2,6 +2,8 @@ use omegaflow::archivar::{
     BodyEphemeris, C_LIGHT, body_barycenter_position, embedded_lsk, parse_ephemeris_binary,
 };
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
+use omegaflow::odp::dsn_host;
+use omegaflow::weberin::frame_origin_name;
 use std::collections::HashMap;
 
 const AIA_MAGIC: [u8; 4] = *b"AIA1";
@@ -257,10 +259,14 @@ fn light_time_emission(
     t_arr_tdb: f64,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<(f64, [f64; 3], [f64; 3], f64)> {
-    let earth = body_barycenter_position("earth", t_arr_tdb, eph)?;
+    let Some(origin) = frame_origin_name() else {
+        return None;
+    };
+    let host = dsn_host()?;
+    let earth = body_barycenter_position(&host, t_arr_tdb, eph)?;
     let mut t_e = t_arr_tdb;
     for _ in 0..16 {
-        let sun = body_barycenter_position("sun", t_e, eph)?;
+        let sun = body_barycenter_position(&origin, t_e, eph)?;
         let d = ((sun[0] - earth[0]).powi(2)
             + (sun[1] - earth[1]).powi(2)
             + (sun[2] - earth[2]).powi(2))
@@ -551,11 +557,17 @@ fn main() {
             .unwrap_or("void".to_string())
     );
 
+    let (Some(origin), Some(host)) = (frame_origin_name(), dsn_host()) else {
+        eprintln!(
+            "the frame origin or host declaration is void — the light-time basis stays unmeasured"
+        );
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     match std::fs::read(&sun_eph_path) {
         Ok(bytes) => match parse_ephemeris_binary(&bytes) {
             Some(e) => {
-                eph.insert("sun".to_string(), e);
+                eph.insert(origin, e);
             }
             None => eprintln!("{} carries no ephemeris contract", sun_eph_path),
         },
@@ -564,7 +576,7 @@ fn main() {
     match std::fs::read(&earth_eph_path) {
         Ok(bytes) => match parse_ephemeris_binary(&bytes) {
             Some(e) => {
-                eph.insert("earth".to_string(), e);
+                eph.insert(host.to_string(), e);
             }
             None => eprintln!("{} carries no ephemeris contract", earth_eph_path),
         },

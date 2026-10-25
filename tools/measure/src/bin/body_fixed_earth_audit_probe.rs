@@ -4,6 +4,7 @@ use omegaflow::archivar::{
     BodyEphemeris, J2000_EPOCH, body_barycenter_position, body_fixed_to_icrs,
     parse_ephemeris_binary,
 };
+use omegaflow::odp::dsn_host;
 
 const LAT_DEG: f64 = -22.534444444;
 const LON_DEG: f64 = -45.5825;
@@ -92,8 +93,12 @@ fn main() {
             println!("{word}: no granule coverage");
             continue;
         }
+        let Some(host) = dsn_host() else {
+            println!("{word}: host declaration void — the body-fixed audit stays unmeasured");
+            continue;
+        };
         let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-        map.insert("earth".to_string(), eph);
+        map.insert(host.to_string(), eph);
         let mut own = 0usize;
         let mut absent = 0usize;
         let mut geo_absent = 0usize;
@@ -101,11 +106,11 @@ fn main() {
             let frac = k as f64 / (SAMPLES - 1) as f64;
             let jd = lo + frac * (hi - lo);
             let tdb = (jd - J2000_EPOCH) * 86400.0;
-            if body_barycenter_position("earth", tdb, &map).is_none() {
+            if body_barycenter_position(host, tdb, &map).is_none() {
                 geo_absent += 1;
                 continue;
             }
-            if body_fixed_to_icrs("earth", LAT_DEG, LON_DEG, ALT_M, tdb, &map).is_some() {
+            if body_fixed_to_icrs(host, LAT_DEG, LON_DEG, ALT_M, tdb, &map).is_some() {
                 own += 1;
             } else {
                 absent += 1;

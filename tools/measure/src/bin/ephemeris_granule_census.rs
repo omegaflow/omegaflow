@@ -6,6 +6,7 @@ use omegaflow::archivar::{
     chebyshev_evaluate, parse_ephemeris_binary,
 };
 use omegaflow::lsk::days_from_civil;
+use omegaflow::odp::dsn_host;
 use std::collections::HashMap;
 
 const DEFAULT_DE: &str = "sources/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
@@ -36,7 +37,7 @@ fn load(path: &str) -> Option<HashMap<String, BodyEphemeris>> {
     let bytes = std::fs::read(path).ok()?;
     let e = parse_ephemeris_binary(&bytes)?;
     let mut m = HashMap::new();
-    m.insert("earth".to_string(), e);
+    m.insert(dsn_host()?.to_string(), e);
     Some(m)
 }
 
@@ -160,7 +161,9 @@ fn series(center_jd: f64, half_days: f64) {
     for k in 0..=n {
         let jd = center_jd - half_days + k as f64 * step;
         let tdb = (jd - J2000_EPOCH) * DAY;
-        let p = |m: &HashMap<String, BodyEphemeris>| body_barycenter_position("earth", tdb, m);
+        let p = |m: &HashMap<String, BodyEphemeris>| {
+            body_barycenter_position(dsn_host()?, tdb, m)
+        };
         let (Some(a), Some(b), Some(c)) = (p(&de), p(&inpop), p(&epm)) else {
             continue;
         };
@@ -169,7 +172,9 @@ fn series(center_jd: f64, half_days: f64) {
         let jd_prev = jd - step;
         let straddles = (0..3).any(|i| {
             let m = [&de, &inpop, &epm][i];
-            let e = &m["earth"];
+            let Some(e) = m.values().next() else {
+                return false;
+            };
             e.granules.iter().any(|g| {
                 let lo = g.t0_jd - g.dt_jd;
                 let hi = g.t0_jd + g.dt_jd;
@@ -197,7 +202,9 @@ fn series(center_jd: f64, half_days: f64) {
         );
     }
     for (word, m) in [("de", &de), ("inpop", &inpop), ("epm", &epm)] {
-        let e = &m["earth"];
+        let Some(e) = m.values().next() else {
+            continue;
+        };
         let mut bs: Vec<f64> = Vec::new();
         for g in &e.granules {
             for b in [g.t0_jd - g.dt_jd, g.t0_jd + g.dt_jd] {
