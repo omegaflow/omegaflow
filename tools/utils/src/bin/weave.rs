@@ -301,7 +301,7 @@ fn run(args: &[String]) -> Result<(), String> {
     if !excluded.is_empty() {
         for (f, t) in &excluded {
             eprintln!(
-                "weave: WARNUNG {f} — terms '{t}' ist nicht admitiert (gemergt, aber markiert)"
+                "weave: WARNING {f} — terms '{t}' is not admitted (merged, but marked)"
             );
         }
     }
