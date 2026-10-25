@@ -65,7 +65,7 @@ impl EopSeries {
         }
         let t = (mjd - a.0) / (b.0 - a.0);
         Some(EopSample {
-            ut1_utc_s: a.1 + (b.1 - a.1) * t,
+            ut1_utc_s: ut1_utc_between(a, b, mjd, t)?,
             pm_x_arcsec: a.2 + (b.2 - a.2) * t,
             pm_y_arcsec: a.3 + (b.3 - a.3) * t,
         })
@@ -77,6 +77,27 @@ fn sample(r: (f64, f64, f64, f64)) -> EopSample {
         ut1_utc_s: r.1,
         pm_x_arcsec: r.2,
         pm_y_arcsec: r.3,
+    }
+}
+
+pub const EOP_INTERPOLATION_CONVENTION: &str = "UT1-UTC carries the 27 one-second steps of the series, so it is not interpolable across one; the reader interpolates UT1-TAI = UT1-UTC - (TAI-UTC) linearly and adds TAI-UTC back (SOFA eraUtcut1, notes 2 and 5); before 1972-01-01 UTC had no one-second steps and the plain interpolation is the exact operation there; a row pair that spans that boundary has no common scale and stays absent";
+
+fn ut1_utc_between(
+    a: (f64, f64, f64, f64),
+    b: (f64, f64, f64, f64),
+    mjd: f64,
+    t: f64,
+) -> Option<f64> {
+    let lsk = crate::archivar::membrane::embedded_lsk()?;
+    let leap = |m: f64| lsk.leap_at((m - 40587.0) * 86400.0);
+    match (leap(a.0), leap(b.0), leap(mjd)) {
+        (Some(la), Some(lb), Some(le)) => {
+            let a_tai = a.1 - la;
+            let b_tai = b.1 - lb;
+            Some(a_tai + (b_tai - a_tai) * t + le)
+        }
+        (None, None, None) => Some(a.1 + (b.1 - a.1) * t),
+        _ => None,
     }
 }
 
@@ -113,5 +134,16 @@ mod tests {
         let s = kernel().expect("eop kernel");
         assert!(s.at(37664.0).is_none());
         assert!(s.at(70000.0).is_none());
+    }
+
+    #[test]
+    fn the_leap_second_edge_is_not_ramped() {
+        let s = kernel().expect("eop kernel");
+        let e = s.at(57753.5).expect("midpoint of the leap day");
+        let a_tai = -0.4077697 - 36.0;
+        let b_tai = 0.5912870 - 37.0;
+        let want = (a_tai + b_tai) / 2.0 + 36.0;
+        assert!((e.ut1_utc_s - want).abs() < 1.0e-9, "{} vs {want}", e.ut1_utc_s);
+        assert!(e.ut1_utc_s < 0.0, "the ramp came back: {}", e.ut1_utc_s);
     }
 }

@@ -1,4 +1,6 @@
 # EOP (IERS C04, ITRF2020) — mjd, UT1-UTC s, x_p arcsec, y_p arcsec
+# source: IERS C04 (ITRF2020); retrieval date unrecorded; values identical to the public C04 mirror on the 1962–2025 overlap
+# rows: 23592 — MJD 37665..61256
 37665	0.0326338	-0.0127	0.2130
 37666	0.0320547	-0.0159	0.2141
 37667	0.0315526	-0.0190	0.2152

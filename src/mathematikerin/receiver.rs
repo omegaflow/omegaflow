@@ -307,7 +307,7 @@ pub fn itrf_to_cirs(r_itrf_km: [f64; 3], ut1_jd: f64, eop: &EopSample) -> Option
     )
 }
 
-pub const CIRS_TO_GCRS_CONVENTION: &str = "CIRS -> GCRS = R(t)^T * V(CIRS), SOFA iauC2i06a/iauPnm06a; R(t) = P(t) * N(t); P(t) = Rx(-eps_a) * Rz(-psi_b) * Rx(phi_b) * Rz(gamma_b), the IAU 2006 Fukushima-Williams angles (SOFA iauPfw06/iauFw2m), closed-form, no table; P maps GCRS -> mean equator/equinox of date, so its transpose carries CIRS -> GCRS; R1(t)=[[1,0,0],[0,cos t,sin t],[0,-sin t,cos t]], R2(t)=[[cos t,0,-sin t],[0,1,0],[sin t,0,cos t]], R3(t)=[[cos t,sin t,0],[-sin t,cos t,0],[0,0,1]]; N(t) = Rx(-(eps_a + deps)) * Rz(-dpsi) * Rx(eps_a), the IAU 2006/2000A nutation matrix (SOFA iauNum06a): dpsi/deps are the full 1365-term MHB2000 series (678 luni-solar + 687 planetary, SOFA iauNut00a) with the IAU 2006 precession-model adjustment of SOFA iauNut06a, eps_a = IAU 2006 mean obliquity (SOFA iauObl06); N maps mean -> true equator/equinox of date; the series constants are the data tables NUT_LS/NUT_PL; non-finite input or angle is absent -> None; this is cirs_to_gcrs (classical Fukushima-Williams CIRS/GCRS), never the CIO-based cirs_to_icrs";
+pub const CIRS_TO_GCRS_CONVENTION: &str = "CIRS -> GCRS = R(t)^T * V(CIRS), SOFA iauC2i06a/iauPnm06a; R(t) = P(t) * N(t); P(t) = Rx(-eps_a) * Rz(-psi_b) * Rx(phi_b) * Rz(gamma_b), the IAU 2006 Fukushima-Williams angles (SOFA iauPfw06/iauFw2m), closed-form, no table; P maps GCRS -> mean equator/equinox of date, so its transpose carries CIRS -> GCRS; R1(t)=[[1,0,0],[0,cos t,sin t],[0,-sin t,cos t]], R2(t)=[[cos t,0,-sin t],[0,1,0],[sin t,0,cos t]], R3(t)=[[cos t,sin t,0],[-sin t,cos t,0],[0,0,1]]; N(t) = Rx(-(eps_a + deps)) * Rz(-dpsi) * Rx(eps_a), the IAU 2006/2000A nutation matrix (SOFA iauNum06a): dpsi/deps are the full 1365-term MHB2000 series (678 luni-solar + 687 planetary, SOFA iauNut00a) with the IAU 2006 precession-model adjustment of SOFA iauNut06a, eps_a = IAU 2006 mean obliquity (SOFA iauObl06); N maps mean -> true equator/equinox of date; the series constants are the data tables NUT_LS/NUT_PL; non-finite input or angle is absent -> None; the intermediate frame is CIRS (CIO-based), so the equinox-based R(t) is applied only after the equation of the origins EO: CIRS -> TETE = R3(EO), EO from Wallace & Capitaine (2006) eq. 16 (SOFA iauEors) with the CIO locator s from iauS06 (33+3+25+4+1 terms), then TETE -> GCRS = R(t)^T; without that rotation the chain is off by EO, which reaches 250 arcsec in 2006 and about 1100 arcsec in 2026";
 
 type Mat3 = [[f64; 3]; 3];
 
@@ -349,17 +349,19 @@ fn mat_transpose(m: &Mat3) -> Mat3 {
     out
 }
 
-fn precession_matrix_fw06(tdb_jd: f64) -> Option<Mat3> {
-    if !tdb_jd.is_finite() {
-        return None;
-    }
-    let t = (tdb_jd - 2451545.0) / 36525.0;
+fn fw06_angles(t: f64) -> [f64; 4] {
     let gamb = (-0.052928
         + (10.556378
             + (0.4932044 + (-0.00031238 + (-0.000002788 + 0.0000000260 * t) * t) * t) * t)
             * t)
         * ARCSEC_TO_RAD;
-    let phib = (84381.448 + (-46.815758 + (-0.000590 + 0.001813 * t) * t) * t) * ARCSEC_TO_RAD;
+    let phib = (84381.412819
+        + (-46.811016
+            + (0.0511268
+                + (0.00053289 + (-0.000000440 + (-0.0000000176) * t) * t) * t)
+                * t)
+            * t)
+        * ARCSEC_TO_RAD;
     let psib = (-0.041775
         + (5038.481484
             + (1.5584175 + (-0.00018522 + (-0.000026452 + (-0.0000000148) * t) * t) * t) * t)
@@ -370,12 +372,22 @@ fn precession_matrix_fw06(tdb_jd: f64) -> Option<Mat3> {
             + (-0.0001831 + (0.00200340 + (-0.000000576 + (-0.0000000434) * t) * t) * t) * t)
             * t)
         * ARCSEC_TO_RAD;
+    [gamb, phib, psib, epsa]
+}
+
+fn bias_precession_nutation(tdb_jd: f64) -> Option<Mat3> {
+    if !tdb_jd.is_finite() {
+        return None;
+    }
+    let t = (tdb_jd - 2451545.0) / 36525.0;
+    let [gamb, phib, psib, epsa] = fw06_angles(t);
+    let (dpsi, deps) = nutation_angles_06a(tdb_jd)?;
     if !gamb.is_finite() || !phib.is_finite() || !psib.is_finite() || !epsa.is_finite() {
         return None;
     }
     let p = mat_mul(
-        &rx(-epsa),
-        &mat_mul(&rz(-psib), &mat_mul(&rx(phib), &rz(gamb))),
+        &rx(-(epsa + deps)),
+        &mat_mul(&rz(-(psib + dpsi)), &mat_mul(&rx(phib), &rz(gamb))),
     );
     if p.iter().all(|row| row.iter().all(|c| c.is_finite())) {
         Some(p)
@@ -1861,23 +1873,29 @@ fn mean_obliquity_06_rad(t: f64) -> f64 {
     (84381.406 + inner4 * t) * ARCSEC_TO_RAD
 }
 
+fn luni_solar_arguments(t: f64) -> [f64; 5] {
+    [
+        mean_anomaly_moon(t),
+        (1287104.79305
+            + t * (129596581.0481 + t * (-0.5532 + t * (0.000136 + t * (-0.00001149)))))
+            % TURNAS
+            * ARCSEC_TO_RAD,
+        moon_mean_argument_of_latitude(t),
+        (1072260.70369
+            + t * (1602961601.2090 + t * (-6.3706 + t * (0.006593 + t * (-0.00003169)))))
+            % TURNAS
+            * ARCSEC_TO_RAD,
+        moon_mean_longitude_ascending_node(t),
+    ]
+}
+
 pub fn nutation_angles_2000a(jd_tt: f64) -> Option<(f64, f64)> {
     if !jd_tt.is_finite() {
         return None;
     }
     let t = (jd_tt - 2451545.0) / 36525.0;
 
-    let el = mean_anomaly_moon(t);
-    let elp = (1287104.79305
-        + t * (129596581.0481 + t * (-0.5532 + t * (0.000136 + t * (-0.00001149)))))
-        % TURNAS
-        * ARCSEC_TO_RAD;
-    let f = moon_mean_argument_of_latitude(t);
-    let d = (1072260.70369
-        + t * (1602961601.2090 + t * (-6.3706 + t * (0.006593 + t * (-0.00003169)))))
-        % TURNAS
-        * ARCSEC_TO_RAD;
-    let om = moon_mean_longitude_ascending_node(t);
+    let [el, elp, f, d, om] = luni_solar_arguments(t);
 
     let mut dp = 0.0_f64;
     let mut de = 0.0_f64;
@@ -1969,14 +1987,163 @@ pub fn nutation_matrix_n06a(jd_tt: f64) -> Option<Mat3> {
     }
 }
 
+type S06Term = (i8, i8, i8, i8, i8, i8, i8, i8, f64, f64);
+
+const S06_POLY: [f64; 6] = [
+    94.00e-6,
+    3808.65e-6,
+    -122.68e-6,
+    -72574.11e-6,
+    27.98e-6,
+    15.62e-6,
+];
+
+const S06_T0: [S06Term; 33] = [
+    (0, 0, 0, 0, 1, 0, 0, 0, -2640.73e-6, 0.39e-6),
+    (0, 0, 0, 0, 2, 0, 0, 0, -63.53e-6, 0.02e-6),
+    (0, 0, 2, -2, 3, 0, 0, 0, -11.75e-6, -0.01e-6),
+    (0, 0, 2, -2, 1, 0, 0, 0, -11.21e-6, -0.01e-6),
+    (0, 0, 2, -2, 2, 0, 0, 0, 4.57e-6, 0.00e-6),
+    (0, 0, 2, 0, 3, 0, 0, 0, -2.02e-6, 0.00e-6),
+    (0, 0, 2, 0, 1, 0, 0, 0, -1.98e-6, 0.00e-6),
+    (0, 0, 0, 0, 3, 0, 0, 0, 1.72e-6, 0.00e-6),
+    (0, 1, 0, 0, 1, 0, 0, 0, 1.41e-6, 0.01e-6),
+    (0, 1, 0, 0, -1, 0, 0, 0, 1.26e-6, 0.01e-6),
+    (1, 0, 0, 0, -1, 0, 0, 0, 0.63e-6, 0.00e-6),
+    (1, 0, 0, 0, 1, 0, 0, 0, 0.63e-6, 0.00e-6),
+    (0, 1, 2, -2, 3, 0, 0, 0, -0.46e-6, 0.00e-6),
+    (0, 1, 2, -2, 1, 0, 0, 0, -0.45e-6, 0.00e-6),
+    (0, 0, 4, -4, 4, 0, 0, 0, -0.36e-6, 0.00e-6),
+    (0, 0, 1, -1, 1, -8, 12, 0, 0.24e-6, 0.12e-6),
+    (0, 0, 2, 0, 0, 0, 0, 0, -0.32e-6, 0.00e-6),
+    (0, 0, 2, 0, 2, 0, 0, 0, -0.28e-6, 0.00e-6),
+    (1, 0, 2, 0, 3, 0, 0, 0, -0.27e-6, 0.00e-6),
+    (1, 0, 2, 0, 1, 0, 0, 0, -0.26e-6, 0.00e-6),
+    (0, 0, 2, -2, 0, 0, 0, 0, 0.21e-6, 0.00e-6),
+    (0, 1, -2, 2, -3, 0, 0, 0, -0.19e-6, 0.00e-6),
+    (0, 1, -2, 2, -1, 0, 0, 0, -0.18e-6, 0.00e-6),
+    (0, 0, 0, 0, 0, 8, -13, -1, 0.10e-6, -0.05e-6),
+    (0, 0, 0, 2, 0, 0, 0, 0, -0.15e-6, 0.00e-6),
+    (2, 0, -2, 0, -1, 0, 0, 0, 0.14e-6, 0.00e-6),
+    (0, 1, 2, -2, 2, 0, 0, 0, 0.14e-6, 0.00e-6),
+    (1, 0, 0, -2, 1, 0, 0, 0, -0.14e-6, 0.00e-6),
+    (1, 0, 0, -2, -1, 0, 0, 0, -0.14e-6, 0.00e-6),
+    (0, 0, 4, -2, 4, 0, 0, 0, -0.13e-6, 0.00e-6),
+    (0, 0, 2, -2, 4, 0, 0, 0, 0.11e-6, 0.00e-6),
+    (1, 0, -2, 0, -3, 0, 0, 0, -0.11e-6, 0.00e-6),
+    (1, 0, -2, 0, -1, 0, 0, 0, -0.11e-6, 0.00e-6),
+];
+
+const S06_T1: [S06Term; 3] = [
+    (0, 0, 0, 0, 2, 0, 0, 0, -0.07e-6, 3.57e-6),
+    (0, 0, 0, 0, 1, 0, 0, 0, 1.73e-6, -0.03e-6),
+    (0, 0, 2, -2, 3, 0, 0, 0, 0.00e-6, 0.48e-6),
+];
+
+const S06_T2: [S06Term; 25] = [
+    (0, 0, 0, 0, 1, 0, 0, 0, 743.52e-6, -0.17e-6),
+    (0, 0, 2, -2, 2, 0, 0, 0, 56.91e-6, 0.06e-6),
+    (0, 0, 2, 0, 2, 0, 0, 0, 9.84e-6, -0.01e-6),
+    (0, 0, 0, 0, 2, 0, 0, 0, -8.85e-6, 0.01e-6),
+    (0, 1, 0, 0, 0, 0, 0, 0, -6.38e-6, -0.05e-6),
+    (1, 0, 0, 0, 0, 0, 0, 0, -3.07e-6, 0.00e-6),
+    (0, 1, 2, -2, 2, 0, 0, 0, 2.23e-6, 0.00e-6),
+    (0, 0, 2, 0, 1, 0, 0, 0, 1.67e-6, 0.00e-6),
+    (1, 0, 2, 0, 2, 0, 0, 0, 1.30e-6, 0.00e-6),
+    (0, 1, -2, 2, -2, 0, 0, 0, 0.93e-6, 0.00e-6),
+    (1, 0, 0, -2, 0, 0, 0, 0, 0.68e-6, 0.00e-6),
+    (0, 0, 2, -2, 1, 0, 0, 0, -0.55e-6, 0.00e-6),
+    (1, 0, -2, 0, -2, 0, 0, 0, 0.53e-6, 0.00e-6),
+    (0, 0, 0, 2, 0, 0, 0, 0, -0.27e-6, 0.00e-6),
+    (1, 0, 0, 0, 1, 0, 0, 0, -0.27e-6, 0.00e-6),
+    (1, 0, -2, -2, -2, 0, 0, 0, -0.26e-6, 0.00e-6),
+    (1, 0, 0, 0, -1, 0, 0, 0, -0.25e-6, 0.00e-6),
+    (1, 0, 2, 0, 1, 0, 0, 0, 0.22e-6, 0.00e-6),
+    (2, 0, 0, -2, 0, 0, 0, 0, -0.21e-6, 0.00e-6),
+    (2, 0, -2, 0, -1, 0, 0, 0, 0.20e-6, 0.00e-6),
+    (0, 0, 2, 2, 2, 0, 0, 0, 0.17e-6, 0.00e-6),
+    (2, 0, 2, 0, 2, 0, 0, 0, 0.13e-6, 0.00e-6),
+    (2, 0, 0, 0, 0, 0, 0, 0, -0.13e-6, 0.00e-6),
+    (1, 0, 2, -2, 2, 0, 0, 0, -0.12e-6, 0.00e-6),
+    (0, 0, 2, 0, 0, 0, 0, 0, -0.11e-6, 0.00e-6),
+];
+
+const S06_T3: [S06Term; 4] = [
+    (0, 0, 0, 0, 1, 0, 0, 0, 0.30e-6, -23.42e-6),
+    (0, 0, 2, -2, 2, 0, 0, 0, -0.03e-6, -1.46e-6),
+    (0, 0, 2, 0, 2, 0, 0, 0, -0.01e-6, -0.25e-6),
+    (0, 0, 0, 0, 2, 0, 0, 0, 0.00e-6, 0.23e-6),
+];
+
+const S06_T4: [S06Term; 1] = [(0, 0, 0, 0, 1, 0, 0, 0, -0.26e-6, -0.01e-6)];
+
+fn s06_arguments(t: f64) -> [f64; 8] {
+    let a = luni_solar_arguments(t);
+    [
+        a[0],
+        a[1],
+        a[2],
+        a[3],
+        a[4],
+        anp(3.176146697 + 1021.3285546211 * t),
+        anp(1.753470314 + 628.3075849991 * t),
+        (0.024381750 + 0.00000538691 * t) * t,
+    ]
+}
+
+fn s06_series(terms: &[S06Term], fa: &[f64; 8]) -> f64 {
+    let mut w = 0.0_f64;
+    for &(n0, n1, n2, n3, n4, n5, n6, n7, s, c) in terms.iter().rev() {
+        let a = f64::from(n0) * fa[0]
+            + f64::from(n1) * fa[1]
+            + f64::from(n2) * fa[2]
+            + f64::from(n3) * fa[3]
+            + f64::from(n4) * fa[4]
+            + f64::from(n5) * fa[5]
+            + f64::from(n6) * fa[6]
+            + f64::from(n7) * fa[7];
+        w += s * a.sin() + c * a.cos();
+    }
+    w
+}
+
+fn cio_locator_s06(jd_tt: f64, x: f64, y: f64) -> Option<f64> {
+    if !jd_tt.is_finite() || !x.is_finite() || !y.is_finite() {
+        return None;
+    }
+    let t = (jd_tt - 2451545.0) / 36525.0;
+    let fa = s06_arguments(t);
+    let w0 = S06_POLY[0] + s06_series(&S06_T0, &fa);
+    let w1 = S06_POLY[1] + s06_series(&S06_T1, &fa);
+    let w2 = S06_POLY[2] + s06_series(&S06_T2, &fa);
+    let w3 = S06_POLY[3] + s06_series(&S06_T3, &fa);
+    let w4 = S06_POLY[4] + s06_series(&S06_T4, &fa);
+    let w5 = S06_POLY[5];
+    let s = (w0 + (w1 + (w2 + (w3 + (w4 + w5 * t) * t) * t) * t) * t) * ARCSEC_TO_RAD
+        - x * y / 2.0;
+    if s.is_finite() { Some(s) } else { None }
+}
+
+fn equation_of_origins(rnpb: &Mat3, jd_tt: f64) -> Option<f64> {
+    let (x, y, z) = (rnpb[2][0], rnpb[2][1], rnpb[2][2]);
+    let s = cio_locator_s06(jd_tt, x, y)?;
+    let ax = x / (1.0 + z);
+    let xs = 1.0 - ax * x;
+    let ys = -ax * y;
+    let zs = -x;
+    let p = rnpb[0][0] * xs + rnpb[0][1] * ys + rnpb[0][2] * zs;
+    let q = rnpb[1][0] * xs + rnpb[1][1] * ys + rnpb[1][2] * zs;
+    let eo = if p != 0.0 || q != 0.0 { s - q.atan2(p) } else { s };
+    if eo.is_finite() { Some(eo) } else { None }
+}
+
 pub fn cirs_to_gcrs(r_cirs_km: [f64; 3], tdb_jd: f64) -> Option<[f64; 3]> {
     if !finite3(r_cirs_km) {
         return None;
     }
-    let p = precession_matrix_fw06(tdb_jd)?;
-    let n = nutation_matrix_n06a(tdb_jd)?;
-    let r = mat_mul(&p, &n);
-    let out = mat_apply(&mat_transpose(&r), r_cirs_km);
+    let p = bias_precession_nutation(tdb_jd)?;
+    let eo = equation_of_origins(&p, tdb_jd)?;
+    let out = mat_apply(&mat_transpose(&p), mat_apply(&rz(eo), r_cirs_km));
     if finite3(out) { Some(out) } else { None }
 }
 
@@ -2317,8 +2484,8 @@ mod tests {
     }
 
     #[test]
-    fn precession_matrix_is_orthogonal() {
-        let p = precession_matrix_fw06(2460000.5).unwrap();
+    fn bias_precession_nutation_is_orthogonal() {
+        let p = bias_precession_nutation(2460000.5).unwrap();
         let should_be_identity = mat_mul(&mat_transpose(&p), &p);
         for (i, row) in should_be_identity.iter().enumerate() {
             for (j, c) in row.iter().enumerate() {
@@ -2326,6 +2493,99 @@ mod tests {
                 assert!((c - want).abs() < 1.0e-12, "P^T P [{i}][{j}] = {c}");
             }
         }
+    }
+
+    #[test]
+    fn precession_angles_match_the_erfa_pfw06_reference() {
+        let t = (2450124.4999 - 2451545.0) / 36525.0;
+        let [gamb, phib, psib, epsa] = fw06_angles(t);
+        assert!(
+            (gamb - (-0.2243387670997995690e-5)).abs() < 1.0e-16,
+            "gamb {gamb}"
+        );
+        assert!(
+            (phib - 0.4091014602391312808).abs() < 1.0e-12,
+            "phib {phib}"
+        );
+        assert!(
+            (psib - (-0.9501954178013031895e-3)).abs() < 1.0e-14,
+            "psib {psib}"
+        );
+        assert!(
+            (epsa - 0.4091014316587367491).abs() < 1.0e-12,
+            "epsa {epsa}"
+        );
+    }
+
+    #[test]
+    fn the_chain_matches_the_erfa_c2t06a_reference() {
+        const ARCSEC_PER_RAD: f64 = 648000.0 / std::f64::consts::PI;
+        let eop = EopSample {
+            ut1_utc_s: 0.0,
+            pm_x_arcsec: 2.55060238e-7 * ARCSEC_PER_RAD,
+            pm_y_arcsec: 1.860359247e-6 * ARCSEC_PER_RAD,
+        };
+        let rc2t = [
+            [
+                -0.181_033_212_830_589_728_2,
+                0.983_476_980_693_859_229_6,
+                0.655_555_096_299_843_650_5e-4,
+            ],
+            [
+                -0.983_476_813_413_621_489_7,
+                -0.181_033_220_364_913_083_2,
+                0.574_980_084_490_559_411_0e-3,
+            ],
+            [
+                0.577_347_402_474_854_587_8e-3,
+                0.396_181_682_963_269_058_1e-4,
+                0.999_999_832_550_174_778_5,
+            ],
+        ];
+        let station = [6378.137, 1000.0, -2000.0];
+        let out = itrf_to_icrs(station, 2453736.5, 2453736.5, &eop).unwrap();
+        let mut want = [0.0_f64; 3];
+        for (i, w) in want.iter_mut().enumerate() {
+            *w = (0..3).map(|k| rc2t[k][i] * station[k]).sum();
+        }
+        let (a, b) = (norm(out), norm(want));
+        for i in 0..3 {
+            let got = out[i] / a;
+            let expected = want[i] / b;
+            assert!(
+                (got - expected).abs() < 1.0e-9,
+                "component {i}: {got} vs {expected}"
+            );
+        }
+    }
+
+    #[test]
+    fn bias_precession_nutation_matches_the_erfa_pnm06a_reference() {
+        let p = bias_precession_nutation(2450124.4999).unwrap();
+        let rnpb = p;
+        let want = [
+            [0.999_999_583_279_420_5, 0.837_238_277_263_096_2e-3, 0.363_968_477_114_062_3e-3],
+            [-0.837_253_374_474_368_4e-3, 0.999_999_648_649_286_2, 0.413_290_594_461_101_9e-4],
+            [-0.363_933_746_962_946_5e-3, -0.416_337_760_591_066_4e-4, 0.999_999_932_909_426_0],
+        ];
+        for (i, row) in rnpb.iter().enumerate() {
+            for (j, c) in row.iter().enumerate() {
+                assert!((c - want[i][j]).abs() < 1.0e-12, "rnpb[{i}][{j}] = {c}");
+            }
+        }
+    }
+
+    #[test]
+    fn cio_locator_matches_the_erfa_s06_reference() {
+        let s = cio_locator_s06(2453736.5, 0.5791308486706011e-3, 0.4020579816732961e-4).unwrap();
+        assert!((s - (-0.1220032213076463117e-7)).abs() < 1.0e-18, "s {s}");
+    }
+
+    #[test]
+    fn equation_of_origins_matches_the_erfa_eo06a_reference() {
+        let p = bias_precession_nutation(2453736.5).unwrap();
+        let eo = equation_of_origins(&p, 2453736.5).unwrap();
+        assert!((eo - (-0.1332882371941833644e-2)).abs() < 1.0e-15, "eo {eo}");
     }
 
     #[test]
