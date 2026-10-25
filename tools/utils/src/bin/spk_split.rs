@@ -50,7 +50,7 @@ impl XorShift64 {
     }
 }
 
-fn die(msg: String) -> ! {
+fn fail(msg: String) -> ! {
     eprintln!("spk_split: {}", msg);
     std::process::exit(1);
 }
@@ -61,11 +61,11 @@ fn read_record(src: &mut dyn Read, buf: &mut [u8; RECORD_BYTES], rec_no: u32) ->
         match src.read(&mut buf[filled..]) {
             Ok(0) => break,
             Ok(n) => filled += n,
-            Err(e) => die(format!("reading record {}: {}", rec_no, e)),
+            Err(e) => fail(format!("reading record {}: {}", rec_no, e)),
         }
     }
     if filled < RECORD_BYTES {
-        die(format!(
+        fail(format!(
             "stream ended inside record {}: {} of {} bytes arrived",
             rec_no, filled, RECORD_BYTES
         ));
@@ -79,14 +79,14 @@ fn read_record_soft(src: &mut dyn Read, buf: &mut [u8; RECORD_BYTES], rec_no: u3
         match src.read(&mut buf[filled..]) {
             Ok(0) => break,
             Ok(n) => filled += n,
-            Err(e) => die(format!("reading record {}: {}", rec_no, e)),
+            Err(e) => fail(format!("reading record {}: {}", rec_no, e)),
         }
     }
     if filled == 0 {
         return None;
     }
     if filled < RECORD_BYTES {
-        die(format!(
+        fail(format!(
             "stream ended inside record {}: {} of {} bytes arrived",
             rec_no, filled, RECORD_BYTES
         ));
@@ -97,14 +97,14 @@ fn read_record_soft(src: &mut dyn Read, buf: &mut [u8; RECORD_BYTES], rec_no: u3
 fn parse_file_record(file_record: &[u8; RECORD_BYTES]) -> (usize, usize, u32) {
     let idword = &file_record[0..8];
     if !idword.starts_with(b"DAF/") {
-        die(format!(
+        fail(format!(
             "the stream's first record carries the identifier {:?}",
             idword
         ));
     }
     let locfmt = &file_record[88..96];
     if locfmt != b"LTL-IEEE" {
-        die(format!(
+        fail(format!(
             "the stream's first record carries the format {:?}",
             locfmt
         ));
@@ -128,7 +128,7 @@ fn parse_summary_record(bytes: &[u8; RECORD_BYTES], nd: usize, ni: usize) -> Sum
     for i in 0..nsum {
         let off = 24 + i * ss * 8;
         if off + ss * 8 > RECORD_BYTES {
-            die(format!(
+            fail(format!(
                 "summary record carries {} summaries past the record edge",
                 nsum
             ));
@@ -158,7 +158,7 @@ fn parse_name_record(bytes: &[u8; RECORD_BYTES], name_chars: usize, nsum: usize)
     for i in 0..nsum {
         let off = i * name_chars;
         if off + name_chars > RECORD_BYTES {
-            die("name record carries names past the record edge".to_string());
+            fail("name record carries names past the record edge".to_string());
         }
         let name = std::str::from_utf8(&bytes[off..off + name_chars])
             .unwrap_or("")
@@ -288,7 +288,7 @@ fn eval_bin_at(granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)], jd: f64) -
 fn load_gm_catalog(path: &str) -> HashMap<i32, f64> {
     let text = match std::fs::read_to_string(path) {
         Ok(t) => t,
-        Err(e) => die(format!("reading GM catalog {}: {}", path, e)),
+        Err(e) => fail(format!("reading GM catalog {}: {}", path, e)),
     };
     let mut map = HashMap::new();
     for line in text.lines() {
@@ -298,31 +298,31 @@ fn load_gm_catalog(path: &str) -> HashMap<i32, f64> {
         }
         let (id_s, gm_s) = match t.split_once('|') {
             Some(p) => p,
-            None => die(format!("GM catalog line carries no separator: {:?}", t)),
+            None => fail(format!("GM catalog line carries no separator: {:?}", t)),
         };
         let id: i32 = match id_s.trim().parse() {
             Ok(id) => id,
-            Err(_) => die(format!("GM catalog line carries no id: {:?}", t)),
+            Err(_) => fail(format!("GM catalog line carries no id: {:?}", t)),
         };
         if !(1_000_000..10_000_000).contains(&id) {
-            die(format!("GM catalog id {} is not seven-digit", id));
+            fail(format!("GM catalog id {} is not seven-digit", id));
         }
         let gm: f64 = match gm_s.trim().parse() {
             Ok(g) => g,
-            Err(_) => die(format!("GM catalog line carries no gm: {:?}", t)),
+            Err(_) => fail(format!("GM catalog line carries no gm: {:?}", t)),
         };
         if !gm.is_finite() || gm <= 0.0 {
-            die(format!(
+            fail(format!(
                 "GM catalog id {} carries gm {} outside the positive reals",
                 id, gm
             ));
         }
         if map.insert(id, gm).is_some() {
-            die(format!("GM catalog id {} appears twice", id));
+            fail(format!("GM catalog id {} appears twice", id));
         }
     }
     if map.len() != 373 {
-        die(format!(
+        fail(format!(
             "GM catalog carries {} lines — the IOM table carries 373",
             map.len()
         ));
@@ -331,13 +331,13 @@ fn load_gm_catalog(path: &str) -> HashMap<i32, f64> {
     let vesta = map[&2_000_004];
     let rel = |a: f64, b: f64| ((a - b) / b).abs();
     if rel(ceres, CERES_GM_REF) > 1e-3 {
-        die(format!(
+        fail(format!(
             "GM catalog ceres {} does not match the IOM crosscheck {}",
             ceres, CERES_GM_REF
         ));
     }
     if rel(vesta, VESTA_GM_REF) > 1e-3 {
-        die(format!(
+        fail(format!(
             "GM catalog vesta {} does not match the IOM crosscheck {}",
             vesta, VESTA_GM_REF
         ));
@@ -381,13 +381,13 @@ impl Splitter {
             return;
         }
         if seg.data_type != 2 {
-            die(format!(
+            fail(format!(
                 "target {} carries a type-{} segment — the split reads type 2 only",
                 seg.target, seg.data_type
             ));
         }
         if seg.center != 10 {
-            die(format!(
+            fail(format!(
                 "target {} carries a segment centered on {} — the split reads center 10",
                 seg.target, seg.center
             ));
@@ -396,7 +396,7 @@ impl Splitter {
         {
             let list = self.pending.entry(target).or_default();
             if list.len() >= SEGMENTS_PER_BODY {
-                die(format!("target {} carries a fifth segment", target));
+                fail(format!("target {} carries a fifth segment", target));
             }
             list.push(seg);
         }
@@ -440,7 +440,7 @@ impl Splitter {
         }
         for s in list {
             if s.end_addr <= self.last_addr && !records_cover(&self.records, s) {
-                die(format!(
+                fail(format!(
                     "target {}: segment data begins before address {} — the segment's summary arrived after its data",
                     target, s.start_addr
                 ));
@@ -493,7 +493,7 @@ impl Splitter {
     fn extract(&mut self, target: i32, mut segs: Vec<SegInfo>) {
         segs.sort_by_key(|s| s.start_addr);
         if segs.len() != SEGMENTS_PER_BODY {
-            die(format!(
+            fail(format!(
                 "target {}: {} segments arrived, the stream carries {}",
                 target,
                 segs.len(),
@@ -506,7 +506,7 @@ impl Splitter {
         for seg in &segs {
             let bytes = match read_words(&self.records, seg.start_addr, seg.end_addr) {
                 Some(b) => b,
-                None => die(format!(
+                None => fail(format!(
                     "target {}: segment [{},{}] is not in the buffer",
                     target, seg.start_addr, seg.end_addr
                 )),
@@ -527,7 +527,7 @@ impl Splitter {
             segs.iter().map(|s| s.end_et).fold(f64::MIN, f64::max),
         );
         if min_et != ET_MIN || max_et != ET_MAX {
-            die(format!(
+            fail(format!(
                 "target {}: segment window [{:.3}, {:.3}] s does not equal the longbow window [{:.3}, {:.3}]",
                 target, min_et, max_et, ET_MIN, ET_MAX
             ));
@@ -535,14 +535,14 @@ impl Splitter {
         let table = body_table();
         let body_name = match table.get(&target) {
             Some(b) => b.name.clone(),
-            None => die(format!(
+            None => fail(format!(
                 "target {} carries no row in naif_body_ids.tsv",
                 target
             )),
         };
         let gm = match self.gm_map.get(&target) {
             Some(g) => *g,
-            None => die(format!("target {} carries no GM line", target)),
+            None => fail(format!("target {} carries no GM line", target)),
         };
         eprintln!(
             "target {} ({}): span [{},{}] ({} B), segments: {}",
@@ -556,18 +556,18 @@ impl Splitter {
         let daf_bytes = build_body_daf(&self.file_record, self.ss, &out_segs, &span);
         let daf = match DafFile::from_data(daf_bytes) {
             Ok(d) => d,
-            Err(e) => die(format!("target {}: DAF-in-RAM refused: {}", target, e)),
+            Err(e) => fail(format!("target {}: DAF-in-RAM refused: {}", target, e)),
         };
         let body_spk = match SpkFile::from_daf(daf) {
             Ok(s) => s,
-            Err(e) => die(format!("target {}: SPK refused: {}", target, e)),
+            Err(e) => fail(format!("target {}: SPK refused: {}", target, e)),
         };
         let all_kernels = vec![body_spk.clone(), self.carrier.clone()];
         let gm_text = format!("BODY{}_GM = ( {:.17e} )", target, gm / 1.0e9);
         let pck_bodies = omegaflow::pck::parse(Some(&gm_text), None);
         let wgccre = match pck_bodies.get(&target) {
             Some(w) => w.clone(),
-            None => die(format!("target {}: the GM line built no PCK body", target)),
+            None => fail(format!("target {}: the GM line built no PCK body", target)),
         };
         let fk = FkFile::parse("");
         let (mut granules, rotations, nutation) = extract_granules(
@@ -580,7 +580,7 @@ impl Splitter {
             ASTEROID_GRANULE_DAYS,
         );
         if granules.is_empty() {
-            die(format!("target {}: no granules fit", target));
+            fail(format!("target {}: no granules fit", target));
         }
         granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         let path = if self.dest.is_empty() {
@@ -591,7 +591,7 @@ impl Splitter {
         if !write_binary(
             &path, &body_name, &granules, &rotations, &nutation, &wgccre, None,
         ) {
-            die(format!("target {}: {} returned void", target, path));
+            fail(format!("target {}: {} returned void", target, path));
         }
         let mut rng = XorShift64(0x5eed_2026_0821_0219 ^ target as u64);
         let lo = ET_MIN + 86400.0;
@@ -608,7 +608,7 @@ impl Splitter {
             covered += 1;
             let spk_pos = match state_ssb_multi(&all_kernels, target, et) {
                 Some(s) => [s[0] * 1000.0, s[1] * 1000.0, s[2] * 1000.0],
-                None => die(format!("target {}: no SPK state at et {}", target, et)),
+                None => fail(format!("target {}: no SPK state at et {}", target, et)),
             };
             let d = (0..3)
                 .map(|k| (bin_pos[k] - spk_pos[k]).powi(2))
@@ -631,7 +631,7 @@ impl Splitter {
             }
         }
         if covered == 0 {
-            die(format!(
+            fail(format!(
                 "target {}: no granule covers a roundtrip epoch",
                 target
             ));
@@ -641,7 +641,7 @@ impl Splitter {
             body_name, covered, worst
         );
         if worst > ROUNDTRIP_LIMIT_M {
-            die(format!(
+            fail(format!(
                 "target {}: roundtrip {} m passes the {} m gate",
                 target, worst, ROUNDTRIP_LIMIT_M
             ));
@@ -652,14 +652,14 @@ impl Splitter {
                 body_name, covered, worst_compare
             );
             if worst_compare > COMPARE_LIMIT_M {
-                die(format!(
+                fail(format!(
                     "target {}: compare-input {} m does not match the original file",
                     target, worst_compare
                 ));
             }
         }
         if self.ci_mode && !upload_release("ssd.jpl.nasa.gov-spk", &path) {
-            die(format!("target {}: {} did not reach the CDN", target, path));
+            fail(format!("target {}: {} did not reach the CDN", target, path));
         }
         self.processed.insert(target);
     }
@@ -672,7 +672,7 @@ impl Splitter {
             .copied()
             .collect();
         if !absent.is_empty() {
-            die(format!(
+            fail(format!(
                 "targets without a segment in the stream: {:?}",
                 absent
             ));
@@ -692,7 +692,7 @@ fn read_record_partial(src: &mut dyn Read, buf: &mut [u8; RECORD_BYTES], rec_no:
         match src.read(&mut buf[filled..]) {
             Ok(0) => break,
             Ok(n) => filled += n,
-            Err(e) => die(format!("reading record {}: {}", rec_no, e)),
+            Err(e) => fail(format!("reading record {}: {}", rec_no, e)),
         }
     }
     filled
@@ -702,7 +702,7 @@ fn run_list(src: &mut dyn Read) {
     let mut reader = BufReader::with_capacity(1 << 20, src);
     let mut rec = [0u8; RECORD_BYTES];
     if read_record_partial(&mut reader, &mut rec, 1) < RECORD_BYTES {
-        die("the stream carries no full first record".to_string());
+        fail("the stream carries no full first record".to_string());
     }
     let (nd, ni, fward) = parse_file_record(&rec);
     let ss = nd + ni.div_ceil(2);
@@ -775,7 +775,7 @@ fn run_list(src: &mut dyn Read) {
                 continue;
             }
             if summary.next <= rec_no {
-                die(format!(
+                fail(format!(
                     "summary chain pointer {} does not rise past record {}",
                     summary.next, rec_no
                 ));
@@ -909,7 +909,7 @@ fn main() {
         if let Some(path) = &input {
             let file = match File::open(path) {
                 Ok(f) => f,
-                Err(e) => die(format!("opening {}: {}", path, e)),
+                Err(e) => fail(format!("opening {}: {}", path, e)),
             };
             let mut boxed: Box<dyn Read> = Box::new(file);
             run_list(&mut *boxed);
@@ -922,31 +922,32 @@ fn main() {
     }
     let target_ids: HashSet<i32> = match &bodies {
         Some(b) => {
+            omegaflow::archivar::cdn::require_ci();
             let mut set = HashSet::new();
             for tok in b.split(',') {
                 match tok.trim().parse() {
                     Ok(id) => {
                         if !(1_000_000..10_000_000).contains(&id) {
-                            die(format!("--bodies {} is not seven-digit", tok));
+                            fail(format!("--bodies {} is not seven-digit", tok));
                         }
                         set.insert(id);
                     }
-                    Err(_) => die(format!("--bodies token {} is no NAIF id", tok)),
+                    Err(_) => fail(format!("--bodies token {} is no NAIF id", tok)),
                 }
             }
             if set.is_empty() {
-                die("--bodies carries no id".to_string());
+                fail("--bodies carries no id".to_string());
             }
             set
         }
-        None => die("--bodies absent — the split has no target list".to_string()),
+        None => fail("--bodies absent — the split has no target list".to_string()),
     };
     let gm_map: HashMap<i32, f64> = match (&gm_catalog, &gm_pck) {
         (Some(c), None) => load_gm_catalog(c),
         (None, Some(p)) => {
             let text = match std::fs::read_to_string(p) {
                 Ok(t) => t,
-                Err(e) => die(format!("reading {}: {}", p, e)),
+                Err(e) => fail(format!("reading {}: {}", p, e)),
             };
             let pck = omegaflow::pck::parse(Some(&text), None);
             let mut map = HashMap::new();
@@ -956,17 +957,17 @@ fn main() {
                 }
             }
             if map.is_empty() {
-                die(format!("{} carries no GM line", p));
+                fail(format!("{} carries no GM line", p));
             }
             eprintln!("gm pck: {} carries {} GM lines", p, map.len());
             map
         }
-        (None, None) => die("no GM source given (--gm-catalog or --gm-pck)".to_string()),
-        (Some(_), Some(_)) => die("--gm-catalog and --gm-pck exclude each other".to_string()),
+        (None, None) => fail("no GM source given (--gm-catalog or --gm-pck)".to_string()),
+        (Some(_), Some(_)) => fail("--gm-catalog and --gm-pck exclude each other".to_string()),
     };
     for id in &target_ids {
         if !gm_map.contains_key(id) {
-            die(format!(
+            fail(format!(
                 "target {} carries no GM line in the given source",
                 id
             ));
@@ -974,16 +975,16 @@ fn main() {
     }
     let carrier_path = match carrier_path {
         Some(p) => p,
-        None => die("--carrier absent — the sun's SSB state has no carrier".to_string()),
+        None => fail("--carrier absent — the sun's SSB state has no carrier".to_string()),
     };
     let carrier = match SpkFile::open(&carrier_path) {
         Ok(s) => s,
-        Err(e) => die(format!("opening {}: {}", carrier_path, e)),
+        Err(e) => fail(format!("opening {}: {}", carrier_path, e)),
     };
     let compare = match &compare_input {
         Some(p) => match SpkFile::open(p) {
             Ok(s) => Some(s),
-            Err(e) => die(format!("opening {}: {}", p, e)),
+            Err(e) => fail(format!("opening {}: {}", p, e)),
         },
         None => None,
     };
@@ -1008,7 +1009,7 @@ fn main() {
     let mut source: Box<dyn Read> = match &input {
         Some(path) => match File::open(path) {
             Ok(f) => Box::new(f),
-            Err(e) => die(format!("opening {}: {}", path, e)),
+            Err(e) => fail(format!("opening {}: {}", path, e)),
         },
         None => {
             let stdin = std::io::stdin();
@@ -1055,7 +1056,7 @@ fn main() {
                 continue;
             }
             if summary.next <= rec_no {
-                die(format!(
+                fail(format!(
                     "summary chain pointer {} does not rise past record {}",
                     summary.next, rec_no
                 ));
@@ -1077,7 +1078,7 @@ fn main() {
             "pending at stream end: {:?}",
             splitter.pending.keys().collect::<Vec<_>>()
         );
-        die("the stream ended with a buffered target unextracted".to_string());
+        fail("the stream ended with a buffered target unextracted".to_string());
     }
     splitter.finish();
 }
