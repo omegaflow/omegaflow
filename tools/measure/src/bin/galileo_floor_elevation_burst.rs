@@ -1,6 +1,8 @@
 use std::collections::{BTreeMap, HashMap};
 
-use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
+use omegaflow::archivar::{
+    BodyEphemeris, body_barycenter_position, body_fixed_to_icrs, parse_ephemeris_binary,
+};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::odp::{dsn_host, dsn_station};
 
@@ -33,23 +35,21 @@ fn tdb_day_lo(day: i64) -> f64 {
 
 fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
     let host = dsn_host()?;
-    let (lat_deg, lon_deg, _alt) = dsn_station(station)?;
+    let (lat_deg, lon_deg, alt_m) = dsn_station(station)?;
     let p = body_barycenter_position("galileo_daily", t, eph)?;
     let e = body_barycenter_position(host, t, eph)?;
-    let v = sub(p, e);
+    let st = body_fixed_to_icrs(host, lat_deg, lon_deg, alt_m, t, eph)?;
+    let up = norm(sub(st, e));
+    if up <= 0.0 || !up.is_finite() {
+        return None;
+    }
+    let v = sub(p, st);
     let r = norm(v);
     if r <= 0.0 || !r.is_finite() {
         return None;
     }
-    let dec = (v[2] / r).clamp(-1.0, 1.0).asin();
-    let ra = v[1].atan2(v[0]);
-    let jd = t / DAY_S + 2451545.0;
-    let props = eph.get(host)?.props.as_ref()?;
-    let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
-    let lst = (gmst + lon_deg).rem_euclid(360.0).to_radians();
-    let ha = lst - ra;
-    let phi = lat_deg.to_radians();
-    let sin_el = phi.sin() * dec.sin() + phi.cos() * dec.cos() * ha.cos();
+    let d = sub(st, e);
+    let sin_el = (v[0] * d[0] + v[1] * d[1] + v[2] * d[2]) / (r * up);
     Some(sin_el.clamp(-1.0, 1.0).asin().to_degrees())
 }
 
@@ -351,7 +351,7 @@ fn main() {
     out.push("galileo floor elevation and burst-duration probe (Richtung E2)".to_string());
     out.push("binding: floor sample = signal_strength exactly -2560 (AGC clamp), station 14/43/63, ground mode 1..3, |resid| <= 1000 Hz (lock cut separated).".to_string());
     out.push("day cell = floor samples of one TDB day (round-jd register convention); loud = cell RMS about the cell mean >= 1 Hz; robust cell = n >= 30 samples.".to_string());
-    out.push("elevation proxy = textbook-GMST topocentric elevation of the probe above the station horizon (dsn_station geodetics; IAU 1982 GMST, tdb~UT1, equinox drift <= ~0.5 deg); probe direction = galileo_daily - earth barycenter.".to_string());
+    out.push("elevation = the library's station worldline (body_fixed_to_icrs: host pole, prime meridian and nutation from the ephemeris); probe direction = galileo_daily — station position, horizon = 0 deg.".to_string());
 
     let mut mode_acc: BTreeMap<(i64, i64, i64), Acc> = BTreeMap::new();
     let mut day_acc: BTreeMap<(i64, i64), Acc> = BTreeMap::new();
