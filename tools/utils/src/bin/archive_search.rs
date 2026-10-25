@@ -3087,7 +3087,7 @@ fn usage_full() {
         "  --antares   <ztf|ant id|key=value|free text>   (ANTARES ZTF broker, api.antares.noirlab.edu/v2/loci, keyless; the open twin of the blocked Fink arm; url + title/description from locus_id/ztf_object_id/ra/dec/alerts)"
     );
     eprintln!(
-        "  --4get      <query>   (4get keyless metasearch, api/v1/web with JSON; the open twin of the paid keyword arms — Brave/Exa/Tavily/SerpAPI/SearchAPI/Google CSE; falls through its open scrapers, OMEGAFLOW_4GET names other instances comma-separated)"
+        "  --4get      <query>   (4get keyless metasearch, api/v1/web with JSON; the open twin of the paid keyword arms — Brave/Exa/Tavily/Google CSE; falls through its open scrapers, OMEGAFLOW_4GET names other instances comma-separated)"
     );
     eprintln!(
         "  --lpf       <start> <end> [hdu]   (LISA Pathfinder DRS availability from the HEASARC selector, start/end as MJD or ISO; default hdu=SCI_SCIENCE_1Hz; binary body is measured, never printed)"
