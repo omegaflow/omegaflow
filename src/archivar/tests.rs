@@ -14466,7 +14466,7 @@ compiler tools/harvest/src/bin/waldo_ab_compiler.rs\n\
 ttl 300\n\
 at earth\n\
 rows\n\
-field amplitude em 1 300\n";
+field amplitude amplitude inverse-square em db 300 0.0 0.0\n";
     let sources = parse_sources(block);
     assert_eq!(sources.len(), 1);
     assert_eq!(sources[0].format, "csv");
