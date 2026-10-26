@@ -301,6 +301,11 @@ pub fn body_fixed_vector_to_icrs(
     if receiver_model(name).is_some() {
         return None;
     }
+    if bp.nutation.is_some()
+        && let Some([xi, yi, zi]) = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)
+    {
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
     if !e.rotation_matrices.is_empty() {
         let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
         let mut best: Option<(&[f64; 9], f64)> = None;

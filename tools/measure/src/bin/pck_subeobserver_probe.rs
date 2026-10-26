@@ -111,6 +111,14 @@ fn main() {
             let jd = tdb / 86400.0 + 2451545.0;
             if let Some((ra, dec, w)) = omegaflow::archivar::orientation_angles_at(p, jd) {
                 println!("code orientation at jd {jd:.5}: ra {ra:.4} dec {dec:.4} w {w:.4}");
+                let m = omegaflow::archivar::ephemeris::rotation_matrix_from_angles(ra, dec, w);
+                let mut worst = 0.0_f64;
+                for row in 0..3 {
+                    for col in 0..3 {
+                        worst = worst.max((rot[row][col] - m[row * 3 + col]).abs());
+                    }
+                }
+                println!("matrix from the bin vs matrix from the angles: {worst:.3e} per element");
             }
         }
     }
