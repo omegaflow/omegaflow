@@ -25,6 +25,14 @@ jobs:
               --title "ftp.iaaras.ru" \
               --notes "raw EPM ephemeris bins compiled for omegaflow measure tools (CDN tag = netloc)"
           fi
+      - name: Fetch the DE440 lunar orientation kernel and its frame kernel
+        run: |
+          curl -sfL -o moon_pa_de440.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de440_200625.bpc \
+            && curl -sfL -o moon_de440.tf https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/moon_de440_250416.tf \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "epm-cdn: the lunar orientation kernel returned void" \
+                 "curl on naif.jpl.nasa.gov did not reach the lunar kernels. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
       - name: Compile the EPM2021 bins (with body-fixed orientation) and upload
         run: |
           curl -sfL -o epm2021.bsp https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp \
@@ -34,4 +42,4 @@ jobs:
                  health; exit 1; }
           echo "epm2021.bsp sha256: $(sha256sum epm2021.bsp | cut -d' ' -f1)"
           echo "epm2021.bsp bytes: $(stat -c%s epm2021.bsp)"
-          cargo run -p omegaflow-harvest --release --bin epm_compiler -- epm2021.bsp --ci-mode
+          cargo run -p omegaflow-harvest --release --bin epm_compiler -- epm2021.bsp --bpc moon_pa_de440.bpc --fk moon_de440.tf --ci-mode

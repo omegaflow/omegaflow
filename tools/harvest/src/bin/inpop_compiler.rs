@@ -133,7 +133,7 @@ fn main() {
     omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: inpop_compiler <bsp|spice.tar.gz>... [--pck <body.tpc>]... [--ci-mode]");
+        eprintln!("usage: inpop_compiler <bsp|spice.tar.gz>... [--pck <body.tpc>]... [--bpc <satellite.bpc>]... [--fk <frame.tf>]... [--ci-mode]");
         eprintln!("  emits data/ftp.imcce.fr/ephemeris_inpop_<body>.bin");
         eprintln!(
             "  --pck passes a NAIF body PCK text (POLE/RADII); absent, pck00010+pck00011 are fetched"
@@ -146,6 +146,8 @@ fn main() {
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let mut pck_local: Vec<String> = Vec::new();
+    let mut bpc_local: Vec<String> = Vec::new();
+    let mut fk_local: Vec<String> = Vec::new();
     let mut rest: Vec<String> = Vec::new();
     let mut skip_next = false;
     for (i, a) in args.iter().enumerate() {
@@ -156,6 +158,20 @@ fn main() {
         if a == "--pck" {
             if let Some(f) = args.get(i + 1) {
                 pck_local.push(f.clone());
+                skip_next = true;
+            }
+            continue;
+        }
+        if a == "--bpc" {
+            if let Some(f) = args.get(i + 1) {
+                bpc_local.push(f.clone());
+                skip_next = true;
+            }
+            continue;
+        }
+        if a == "--fk" {
+            if let Some(f) = args.get(i + 1) {
+                fk_local.push(f.clone());
                 skip_next = true;
             }
             continue;
@@ -198,6 +214,31 @@ fn main() {
         tpc_text(&tpc).as_deref(),
         body_pck_text(&pck_local).as_deref(),
     );
+    let mut bpc_files: Vec<omegaflow::bpc::BpcFile> = Vec::new();
+    for p in &bpc_local {
+        match omegaflow::bpc::BpcFile::open(p) {
+            Ok(b) => bpc_files.push(b),
+            Err(e) => {
+                eprintln!("inpop: bpc {}: {}", p, e);
+                std::process::exit(1);
+            }
+        }
+    }
+    let mut fk = FkFile::parse("");
+    for p in &fk_local {
+        match FkFile::open(p) {
+            Ok(f) => fk.insert_file(f),
+            Err(e) => {
+                eprintln!("inpop: fk {}: {}", p, e);
+                std::process::exit(1);
+            }
+        }
+    }
+    if bpc_files.is_empty() || fk.frames.is_empty() {
+        eprintln!(
+            "inpop: no binary orientation supplied — every body resolves through the iau tpc"
+        );
+    }
     let woven = omegaflow::weberin::woven_major_bodies();
     let origin = omegaflow::weberin::frame_origin_name();
     let in_scope = |name: &str| origin.as_deref() == Some(name) || woven.iter().any(|w| w == name);
@@ -219,7 +260,6 @@ fn main() {
             Some(w) => w.clone(),
             None => PckBody::minimal(target),
         };
-        let fk = FkFile::parse("");
         let mut granules = Vec::new();
         let mut rotations = Vec::new();
         let mut nutation = Vec::new();
@@ -229,7 +269,7 @@ fn main() {
                 continue;
             }
             let (g, r, n) =
-                extract_granules(spk, &spk_files, target, &wgccre, &[], &fk, GRANULE_DAYS);
+                extract_granules(spk, &spk_files, target, &wgccre, &bpc_files, &fk, GRANULE_DAYS);
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);
