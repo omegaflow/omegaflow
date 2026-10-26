@@ -231,11 +231,7 @@ fn registered_netlocs() -> &'static HashSet<String> {
 }
 
 pub fn require_ci() {
-    let env_is = |name: &str, value: &str| {
-        std::env::var(name)
-            .map(|v| v == value)
-            .unwrap_or(false)
-    };
+    let env_is = |name: &str, value: &str| std::env::var(name).map(|v| v == value).unwrap_or(false);
     if !(env_is("OMEGAFLOW_CI", "1") || env_is("GITHUB_ACTIONS", "true")) {
         eprintln!("this compiler runs only in CI — dispatch the CDN workflow");
         std::process::exit(2);
@@ -270,7 +266,7 @@ pub fn body_ellipsoid(name: &str) -> Result<(f64, f64), String> {
         Some(v) => v,
         None => (a - b) / a,
     };
-    if a.is_finite() && a > 0.0 && f.is_finite() && f >= 0.0 && f < 1.0 {
+    if a.is_finite() && a > 0.0 && f.is_finite() && (0.0..1.0).contains(&f) {
         Ok((a, f))
     } else {
         Err(format!("{name} body properties carry no usable ellipsoid"))
@@ -742,12 +738,13 @@ mod tests {
         let unjudged: Vec<&str> = tokens
             .iter()
             .map(String::as_str)
-            .filter(|token| {
-                !licences().iter().any(|(term, _)| term.as_str() == *token)
-            })
+            .filter(|token| !licences().iter().any(|(term, _)| term.as_str() == *token))
             .collect();
         for token in &unjudged {
-            assert!(!admitted_terms(token), "{token} is not judged and must not be admitted");
+            assert!(
+                !admitted_terms(token),
+                "{token} is not judged and must not be admitted"
+            );
         }
     }
 
