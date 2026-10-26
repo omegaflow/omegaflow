@@ -2029,27 +2029,39 @@ fn suggest_assets(path: &str, out_path: &str) {
     );
 }
 
+fn block_indent(block: &[String]) -> &'static str {
+    match block.first() {
+        Some(l) if l.starts_with(' ') => "  ",
+        _ => "",
+    }
+}
+
 fn set_row_key(block: &mut Vec<String>, key: &str, value: &str) {
     let prefix = format!("{key} ");
-    if let Some(pos) = block.iter().position(|l| l.starts_with(&prefix)) {
-        block[pos] = format!("{key} {value}");
+    let indent = block_indent(block);
+    if let Some(pos) = block
+        .iter()
+        .position(|l| l.trim_start().starts_with(&prefix))
+    {
+        block[pos] = format!("{indent}{key} {value}");
         return;
     }
     let pos = block
         .iter()
-        .position(|l| l.starts_with("applies "))
+        .position(|l| l.trim_start().starts_with("applies "))
         .unwrap_or(block.len());
-    block.insert(pos, format!("{key} {value}"));
+    block.insert(pos, format!("{indent}{key} {value}"));
 }
 
 fn set_instrument_lines(block: &mut Vec<String>, instruments: &[String]) {
-    block.retain(|l| !l.starts_with("instrument "));
+    let indent = block_indent(block);
+    block.retain(|l| !l.trim_start().starts_with("instrument "));
     let pos = block
         .iter()
-        .position(|l| l.starts_with("applies "))
+        .position(|l| l.trim_start().starts_with("applies "))
         .unwrap_or(block.len());
     for (i, name) in instruments.iter().enumerate() {
-        block.insert(pos + i, format!("instrument {name}"));
+        block.insert(pos + i, format!("{indent}instrument {name}"));
     }
 }
 
@@ -2480,38 +2492,20 @@ fn audit_blocks() {
 }
 
 fn secrets() -> BTreeMap<String, String> {
-    let mut out: BTreeMap<String, String> = BTreeMap::new();
-    let candidates = [
-        or_empty(std::env::var("OMEGAFLOW_SECRETS_FILE").ok()),
-        format!("{}/.secrets.local", or_empty(std::env::var("HOME").ok())),
-        ".secrets.local".to_string(),
-    ];
-    for path in candidates {
-        if path.is_empty() {
-            continue;
-        }
-        let Ok(text) = fs::read_to_string(&path) else {
-            continue;
-        };
-        for line in text.lines() {
-            let Some((k, v)) = line.split_once('=') else {
-                continue;
-            };
-            let k = k.trim();
-            if k.is_empty() || k.starts_with('#') {
-                continue;
-            }
-            out.insert(k.to_string(), v.trim().trim_matches('"').to_string());
-        }
-        if !out.is_empty() {
-            break;
-        }
-    }
-    out
+    omegaflow::archivar::fetch::load_env().into_iter().collect()
 }
 
+#[allow(dead_code)]
 fn auth_candidates(host: &str, env: &BTreeMap<String, String>) -> Vec<Vec<String>> {
     let mut out: Vec<Vec<String>> = vec![Vec::new()];
+    if host.contains("frost") {
+        if let (Some(id), Some(secret)) = (env.get("FROST_CLIENT_ID"), env.get("FROST_CLIENT_SECRET")) {
+            if !id.is_empty() && !secret.is_empty() {
+                out.push(vec!["-u".to_string(), format!("{id}:{secret}")]);
+                return out;
+            }
+        }
+    }
     let key = if host.contains("lasair") {
         "LASAIR_TOKEN"
     } else if host.contains("openaq") {
@@ -2524,6 +2518,8 @@ fn auth_candidates(host: &str, env: &BTreeMap<String, String>) -> Vec<Vec<String
         "FROST_BASIC_AUTH"
     } else if host.contains("tns") {
         "TNS_API_KEY"
+    } else if host.contains("ncdc") || host.contains("noaa") {
+        "NOAA_CDO_TOKEN"
     } else if host.contains("oceannetworks") {
         "OCEANNETWORKS_TOKEN"
     } else if host.contains("zenodo") {
@@ -2537,13 +2533,22 @@ fn auth_candidates(host: &str, env: &BTreeMap<String, String>) -> Vec<Vec<String
         return out;
     }
     if let Some(v) = env.get(key) {
-        if !v.is_empty() {
-            out.push(vec![
-                "-H".to_string(),
-                format!("Authorization: Bearer {v}"),
-            ]);
-            out.push(vec!["-H".to_string(), format!("X-API-Key: {v}")]);
-            out.push(vec!["-H".to_string(), format!("api_key: {v}")]);
+        if v.is_empty() {
+            return out;
+        }
+        let header = if host.contains("openaq") {
+            format!("X-API-Key: {v}")
+        } else if host.contains("ncdc") || host.contains("noaa") {
+            format!("token: {v}")
+        } else if host.contains("tns") {
+            format!("api_key: {v}")
+        } else if host.contains("earthdata") || host.contains("gesdisc") || host.contains("podaac") {
+            format!("Authorization: Bearer {v}")
+        } else {
+            String::new()
+        };
+        if !header.is_empty() {
+            out.push(vec!["-H".to_string(), header]);
         }
     }
     out
@@ -2579,6 +2584,20 @@ fn render_url(url: &str, anchor: &str, env: &BTreeMap<String, String>, today: &s
     {
         s = s.replace("{week_ago}", w.trim());
     }
+    if let Some(d) = Command::new("date")
+        .args(["-u", "-d", "3 days ago", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+    {
+        s = s.replace("{jd_start}", d.trim());
+    }
+    s = s.replace("{jd_end}", today);
+    if let Ok(st) = std::env::var("OMEGAFLOW_STATION") {
+        if !st.is_empty() {
+            s = s.replace("{station}", &st);
+        }
+    }
     for part in anchor.split_whitespace() {
         if let Some((k, v)) = part.split_once('=')
             && !k.is_empty()
@@ -2588,6 +2607,28 @@ fn render_url(url: &str, anchor: &str, env: &BTreeMap<String, String>, today: &s
         }
     }
     s
+}
+
+fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
+    let y = if m <= 2 { y - 1 } else { y };
+    let era = if y >= 0 { y } else { y - 399 } / 400;
+    let yoe = y - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    era * 146097 + doe - 719468
+}
+
+fn probe_age_days(date: &str, today: &str) -> Option<i64> {
+    let p = |s: &str| -> Option<(i64, i64, i64)> {
+        let y = s.get(0..4)?.parse::<i64>().ok()?;
+        let m = s.get(5..7)?.parse::<i64>().ok()?;
+        let d = s.get(8..10)?.parse::<i64>().ok()?;
+        Some((y, m, d))
+    };
+    let (ay, am, ad) = p(date)?;
+    let (by, bm, bd) = p(today)?;
+    Some(days_from_civil(ay, am, ad) - days_from_civil(by, bm, bd))
 }
 
 fn reprobe(report: &str) {
@@ -2606,9 +2647,17 @@ fn reprobe(report: &str) {
     let lines: Vec<String> = text.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
     let mut report_lines: Vec<String> = Vec::new();
-    let (mut fixed, mut failed) = (0usize, 0usize);
+    let (mut fixed, mut failed, mut skipped) = (0usize, 0usize, 0usize);
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut headers_by_block: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for (_, b) in blocks(&phi_text) {
+        let u = or_empty(field(&b, "url"));
+        if u.is_empty() { continue; }
+        let hs: Vec<String> = b.iter().filter(|l| l.trim_start().starts_with("header ")).map(|l| l.trim_start().to_string()).collect();
+        if !hs.is_empty() { headers_by_block.insert(u, hs); }
+    }
     for (start, block) in blocks(&text) {
-        let Some(pos) = block.iter().position(|l| l.starts_with("probe ")) else {
+        let Some(pos) = block.iter().position(|l| l.trim_start().starts_with("probe ")) else {
             continue;
         };
         let p: Vec<&str> = block[pos].split_whitespace().collect();
@@ -2618,6 +2667,19 @@ fn reprobe(report: &str) {
         let status = p[2];
         if matches!(status, "200" | "206" | "204" | "202" | "201") {
             continue;
+        }
+        let force = std::env::var("OMEGAFLOW_PROBE_FORCE").ok().as_deref() == Some("1");
+        let ttl = match or_empty(field(&block, "ttl")).parse::<u64>() {
+            Ok(v) => v,
+            Err(_) => 0,
+        };
+        if ttl > 0 && !force {
+            if let Some(age) = probe_age_days(p[1], &today) {
+                if age >= 0 && (age as u64) * 86400 < ttl {
+                    skipped += 1;
+                    continue;
+                }
+            }
         }
         let raw_url = p[3..].join(" ");
         let anchor = or_empty(field(&block, "at"));
@@ -2635,39 +2697,98 @@ fn reprobe(report: &str) {
             .next()
             .unwrap_or("")
             .to_string();
+        let skip = match std::env::var("OMEGAFLOW_PROBE_SKIP") {
+            Ok(v) => v,
+            Err(_) => String::new(),
+        };
+        if !skip.is_empty() && skip.split(',').any(|h| !h.trim().is_empty() && host.contains(h.trim())) {
+            skipped += 1;
+            continue;
+        }
         let mut final_status = String::new();
-        for attempt in 0..4 {
-            for hdr in auth_candidates(&host, &env) {
-                let mut args: Vec<String> = vec![
-                    "-sSL".to_string(),
-                    "-o".to_string(),
-                    "/dev/null".to_string(),
-                    "-w".to_string(),
-                    "%{http_code}".to_string(),
-                    "--max-time".to_string(),
-                    "30".to_string(),
-                ];
-                args.extend(hdr.clone());
-                args.push(url.clone());
-                let out = Command::new("curl").args(&args).output();
-                let code = match out
-                    .ok()
-                    .and_then(|o| String::from_utf8(o.stdout).ok())
-                    .map(|s| s.trim().to_string())
-                {
-                    Some(v) => v,
-                    None => String::new(),
-                };
-                final_status = code.clone();
-                if matches!(code.as_str(), "200" | "206" | "204" | "202" | "201") {
-                    break;
+        if host.contains("tns") {
+            if let (Some(ua), Some(k)) = (env.get("TNS_UA"), env.get("TNS_API_KEY")) {
+                if !ua.is_empty() && !k.is_empty() {
+                    let out = Command::new("curl")
+                        .args([
+                            "-sSL",
+                            "-o",
+                            "/dev/null",
+                            "-w",
+                            "%{http_code}",
+                            "--max-time",
+                            "30",
+                            "-A",
+                            ua,
+                            "-X",
+                            "POST",
+                            "--data-urlencode",
+                            &format!("api_key={k}"),
+                            "--data-urlencode",
+                            "data={\"name\":\"SN 2024a\"}",
+                            &url,
+                        ])
+                        .output();
+                    final_status = match out
+                        .ok()
+                        .and_then(|o| String::from_utf8(o.stdout).ok())
+                        .map(|s| s.trim().to_string())
+                    {
+                        Some(v) => v,
+                        None => String::new(),
+                    };
                 }
             }
+        }
+        for attempt in 0..1 {
+            if !final_status.is_empty() {
+                break;
+            }
+            let mut args: Vec<String> = vec![
+                "-sSL".to_string(),
+                "-o".to_string(),
+                "/dev/null".to_string(),
+                "-w".to_string(),
+                "%{http_code}".to_string(),
+                "--max-time".to_string(),
+                "15".to_string(),
+            ];
+            let applies = or_empty(field(&block, "applies"));
+            let first = applies.split_whitespace().next().unwrap_or("");
+            if let Some(headers) = headers_by_block.get(first) {
+                for line in headers {
+                    let rest = line.trim_start_matches("header ");
+                    if let Some((name, val)) = rest.split_once(' ') {
+                        let mut value = val.trim().to_string();
+                        for (k, v) in &env {
+                            value = value.replace(&format!("{{{k}}}"), v);
+                        }
+                        args.push("-H".to_string());
+                        args.push(format!("{name}: {value}"));
+                    }
+                }
+            }
+            if let Ok(ca) = std::env::var("OMEGAFLOW_CA_FILE") {
+                if std::path::Path::new(&ca).exists() {
+                    args.push("--cacert".to_string());
+                    args.push(ca);
+                }
+            }
+            args.push(url.clone());
+            let out = Command::new("curl").args(&args).output();
+            final_status = match out
+                .ok()
+                .and_then(|o| String::from_utf8(o.stdout).ok())
+                .map(|s| s.trim().to_string())
+            {
+                Some(v) => v,
+                None => String::new(),
+            };
             if matches!(final_status.as_str(), "200" | "206" | "204" | "202" | "201") {
                 break;
             }
             if matches!(final_status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
-                std::thread::sleep(std::time::Duration::from_secs(2u64.pow(attempt)));
+                std::thread::sleep(std::time::Duration::from_secs(1u64 << attempt));
                 continue;
             }
             break;
@@ -2827,6 +2948,390 @@ fn refs_audit(path: &str) {
     println!("refs-audit: {checked} Bloecke gefunden");
 }
 
+
+fn probe_terms(host_filter: &str) {
+    let env = secrets();
+    let today = match Command::new("date")
+        .args(["-u", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+    {
+        Some(v) => v,
+        None => String::new(),
+    };
+    let phi = fs::read_to_string(PHI).expect("phi");
+    let mut terms_by_block: BTreeMap<String, String> = BTreeMap::new();
+    for (_, b) in blocks(&phi) {
+        let origin = or_empty(field(&b, "origin"));
+        if !origin.contains(host_filter) {
+            continue;
+        }
+        let url = or_empty(field(&b, "url"));
+        let terms = or_empty(field(&b, "terms"));
+        if let Some(t) = terms.split_whitespace().find(|t| t.starts_with("http")) {
+            if !url.is_empty() {
+                terms_by_block.insert(url, t.to_string());
+            }
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let lines: Vec<String> = reg.lines().map(str::to_string).collect();
+    let mut repl: BTreeMap<usize, String> = BTreeMap::new();
+    let (mut fixed, mut failed, mut skipped) = (0usize, 0usize, 0usize);
+    for (start, block) in blocks(&reg) {
+        let applies = or_empty(field(&block, "applies"));
+        let first = applies.split_whitespace().next().unwrap_or("");
+        let Some(term_url) = terms_by_block.get(first) else {
+            skipped += 1;
+            continue;
+        };
+        let Some(pos) = block
+            .iter()
+            .position(|l| l.trim_start().starts_with("probe "))
+        else {
+            skipped += 1;
+            continue;
+        };
+        let url = render_url(term_url, "", &env, &today);
+        if url.contains('{') {
+            skipped += 1;
+            continue;
+        }
+        let mut status = String::new();
+        for attempt in 0..3 {
+            let out = Command::new("curl")
+                .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "30", &url])
+                .output();
+            status = match out
+                .ok()
+                .and_then(|o| String::from_utf8(o.stdout).ok())
+                .map(|s| s.trim().to_string())
+            {
+                Some(v) => v,
+                None => String::new(),
+            };
+            if matches!(status.as_str(), "200" | "206" | "204" | "202") {
+                break;
+            }
+            if matches!(status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
+                std::thread::sleep(std::time::Duration::from_secs(1u64 << attempt));
+                continue;
+            }
+            break;
+        }
+        let abs = start - 1 + pos;
+        if matches!(status.as_str(), "200" | "206" | "204" | "202") {
+            repl.insert(abs, format!("  probe {today}T00:00:00Z {status} {term_url}"));
+            fixed += 1;
+        } else {
+            failed += 1;
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    for (i, l) in lines.iter().enumerate() {
+        out.push(match repl.get(&i) {
+            Some(n) => n.clone(),
+            None => l.clone(),
+        });
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("probe-terms: {fixed} gesetzt, {failed} ohne 2xx, {skipped} ohne Zuordnung");
+}
+
+fn probe_map(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let env = secrets();
+    let today = match Command::new("date")
+        .args(["-u", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+    {
+        Some(v) => v,
+        None => String::new(),
+    };
+    let mut pairs: Vec<(String, String)> = Vec::new();
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(key), Some(target)) = (it.next(), it.next()) else {
+            continue;
+        };
+        if key.trim().is_empty() || target.trim().is_empty() {
+            continue;
+        }
+        pairs.push((key.trim().to_string(), target.trim().to_string()));
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let lines: Vec<String> = reg.lines().map(str::to_string).collect();
+    let mut repl: BTreeMap<usize, String> = BTreeMap::new();
+    let (mut fixed, mut failed, mut skipped) = (0usize, 0usize, 0usize);
+    for (start, block) in blocks(&reg) {
+        let Some(pos) = block
+            .iter()
+            .position(|l| l.trim_start().starts_with("probe "))
+        else {
+            continue;
+        };
+        let p: Vec<&str> = block[pos].split_whitespace().collect();
+        if p.len() < 4 {
+            continue;
+        }
+        let cur = p[3..].join(" ");
+        let Some((_, target)) = pairs
+            .iter()
+            .find(|(key, _)| !key.is_empty() && cur.contains(key.as_str()))
+        else {
+            continue;
+        };
+        let mut url = render_url(target, "", &env, &today);
+        if url.contains('{') {
+            failed += 1;
+            continue;
+        }
+        let mut status = String::new();
+        for attempt in 0..3 {
+            let out = Command::new("curl")
+                .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "30", &url])
+                .output();
+            status = match out
+                .ok()
+                .and_then(|o| String::from_utf8(o.stdout).ok())
+                .map(|s| s.trim().to_string())
+            {
+                Some(v) => v,
+                None => String::new(),
+            };
+            if matches!(status.as_str(), "200" | "206" | "204" | "202") {
+                break;
+            }
+            if matches!(status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
+                std::thread::sleep(std::time::Duration::from_secs(1u64 << attempt));
+                continue;
+            }
+            break;
+        }
+        let abs = start - 1 + pos;
+        if matches!(status.as_str(), "200" | "206" | "204" | "202") {
+            repl.insert(abs, format!("  probe {today}T00:00:00Z {status} {target}"));
+            fixed += 1;
+        } else {
+            failed += 1;
+        }
+        let _ = &mut url;
+    }
+    let mut out: Vec<String> = Vec::new();
+    for (i, l) in lines.iter().enumerate() {
+        out.push(match repl.get(&i) {
+            Some(n) => n.clone(),
+            None => l.clone(),
+        });
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("probe-map: {fixed} gesetzt, {failed} ohne 2xx");
+}
+
+fn dataset_id(block: &[String]) -> Option<String> {
+    for line in block {
+        let bytes = line.as_bytes();
+        let mut i = 0;
+        while i + 2 < bytes.len() {
+            if bytes[i] == b'd' && bytes[i + 1] == b's' && bytes[i + 2].is_ascii_digit() {
+                let mut j = i + 2;
+                while j < bytes.len() && bytes[j].is_ascii_digit() {
+                    j += 1;
+                }
+                if j - (i + 2) >= 5 {
+                    return Some(line[i..j].to_string());
+                }
+                i = j;
+            } else {
+                i += 1;
+            }
+        }
+    }
+    None
+}
+
+fn probe_openneuro() {
+    let today = match Command::new("date")
+        .args(["-u", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+    {
+        Some(v) => v,
+        None => String::new(),
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let lines: Vec<String> = reg.lines().map(str::to_string).collect();
+    let mut repl: BTreeMap<usize, String> = BTreeMap::new();
+    let (mut fixed, mut without_id, mut failed) = (0usize, 0usize, 0usize);
+    for (start, block) in blocks(&reg) {
+        let Some(pos) = block
+            .iter()
+            .position(|l| l.trim_start().starts_with("probe "))
+        else {
+            continue;
+        };
+        let p: Vec<&str> = block[pos].split_whitespace().collect();
+        if p.len() < 4 || !p[3..].join(" ").contains("openneuro.org/crn/graphql") {
+            continue;
+        }
+        let Some(id) = dataset_id(&block) else {
+            without_id += 1;
+            continue;
+        };
+        let target = format!("https://openneuro.org/datasets/{id}");
+        let out = Command::new("curl")
+            .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "30", &target])
+            .output();
+        let status = match out
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())
+            .map(|s| s.trim().to_string())
+        {
+            Some(v) => v,
+            None => String::new(),
+        };
+        let abs = start - 1 + pos;
+        if matches!(status.as_str(), "200" | "206" | "204" | "202") {
+            repl.insert(abs, format!("  probe {today}T00:00:00Z {status} {target}"));
+            fixed += 1;
+        } else {
+            failed += 1;
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    for (i, l) in lines.iter().enumerate() {
+        out.push(match repl.get(&i) {
+            Some(n) => n.clone(),
+            None => l.clone(),
+        });
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("probe-openneuro: {fixed} gesetzt, {failed} ohne 2xx, {without_id} ohne Datensatz-ID");
+}
+
+fn untangle_probes() {
+    let reg = fs::read_to_string(REG).expect("register");
+    let lines: Vec<String> = reg.lines().map(str::to_string).collect();
+    let mut repl: BTreeMap<usize, String> = BTreeMap::new();
+    let mut fixed = 0usize;
+    let today = match Command::new("date")
+        .args(["-u", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+    {
+        Some(v) => v,
+        None => String::new(),
+    };
+    for (start, block) in blocks(&reg) {
+        let Some(pos) = block
+            .iter()
+            .position(|l| l.trim_start().starts_with("probe "))
+        else {
+            continue;
+        };
+        let p: Vec<&str> = block[pos].split_whitespace().collect();
+        if p.len() < 5 {
+            continue;
+        }
+        let mut idx = 3usize;
+        while idx + 1 < p.len() && p[idx].chars().all(|c| c.is_ascii_digit()) {
+            idx += 1;
+        }
+        if idx == 3 {
+            continue;
+        }
+        let url = p[idx..].join(" ");
+        if !url.starts_with("http") {
+            continue;
+        }
+        let out = Command::new("curl")
+            .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "10", &url])
+            .output();
+        let status = match out
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())
+            .map(|s| s.trim().to_string())
+        {
+            Some(v) => v,
+            None => String::new(),
+        };
+        let abs = start - 1 + pos;
+        if matches!(status.as_str(), "200" | "206" | "204" | "202") {
+            repl.insert(abs, format!("  probe {today}T00:00:00Z {status} {url}"));
+            fixed += 1;
+        } else {
+            repl.insert(abs, format!("  probe {today}T00:00:00Z {status} {url}"));
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    for (i, l) in lines.iter().enumerate() {
+        out.push(match repl.get(&i) {
+            Some(n) => n.clone(),
+            None => l.clone(),
+        });
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("untangle-probes: {fixed} auf 2xx, {} Zeilen entwirrt", repl.len());
+}
+
+fn set_header(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut groups: Vec<Vec<String>> = Vec::new();
+    for (_, b) in blocks(&text) {
+        groups.push(b);
+    }
+    let mut changed = 0usize;
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(url), Some(hdr)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let hdr = hdr.trim();
+        if !hdr.starts_with("header ") {
+            continue;
+        }
+        let base = url.trim().rsplit('/').next().unwrap_or(url.trim());
+        let Some(b) = groups.iter_mut().find(|b| {
+            field(b, "url")
+                .map(|u| u == url.trim() || u.ends_with(&format!("/{base}")))
+                .unwrap_or(false)
+        }) else {
+            continue;
+        };
+        b.retain(|l| !l.trim_start().starts_with("header "));
+        let pos = b
+            .iter()
+            .position(|l| l.trim_start().starts_with("format "))
+            .map(|i| i + 1)
+            .unwrap_or(b.len());
+        b.insert(pos, hdr.to_string());
+        changed += 1;
+    }
+    let mut out: Vec<String> = Vec::new();
+    for b in groups {
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("set-header: {changed} Bloecke gesetzt");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -2864,6 +3369,11 @@ fn main() {
         Some("normalize") => normalize_blocks(),
         Some("add-line") if args.len() >= 3 => add_line(&args[2]),
         Some("refs-audit") if args.len() >= 3 => refs_audit(&args[2]),
+        Some("probe-terms") if args.len() >= 3 => probe_terms(&args[2]),
+        Some("probe-map") if args.len() >= 3 => probe_map(&args[2]),
+        Some("probe-openneuro") => probe_openneuro(),
+        Some("untangle-probes") => untangle_probes(),
+        Some("set-header") if args.len() >= 3 => set_header(&args[2]),
         Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
         Some("fill-sha") => fill_sha(
             args.get(2).map(String::as_str),

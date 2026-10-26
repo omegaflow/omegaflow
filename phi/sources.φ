@@ -1462,6 +1462,7 @@ quantity lastvalue hydrosphere_sealevel_m inverse-square geometry m 3600 0.0 0.0
 url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format json
+header token {NOAA_CDO_TOKEN}
 origin https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
 compiler tools/harvest/src/bin/noaa_ghcn_compiler.rs
 at earth datum=WGS84 coverage=open
@@ -1504,6 +1505,7 @@ instrument magnetometer
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 terms CC-BY-4.0 https://docs.openaq.org/resources/licenses
 format openaq
+header X-API-Key {OPENAQ_API_KEY}
 origin https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 compiler tools/harvest/src/bin/openaq_compiler.rs
 at earth datum=WGS84 coverage=open
@@ -1600,7 +1602,7 @@ instrument GPS
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
 format rinex
-header Authorization {EARTHDATA_EDL_TOKEN}
+header Authorization Bearer {EARTHDATA_EDL_TOKEN}
 at earth
 field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
 
@@ -2006,7 +2008,7 @@ url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
 format ionex
-header Authorization {EARTHDATA_EDL_TOKEN}
+header Authorization Bearer {EARTHDATA_EDL_TOKEN}
 origin https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
 instrument GPS
 at earth
@@ -2086,11 +2088,11 @@ field result_in_si radnet_activity_bq_l inverse-square em Bq/L 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format black_marble_vnp46a3_nightlight
+header Authorization Bearer {EARTHDATA_EDL_TOKEN}
 origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
 instrument VIIRS
 compiler tools/harvest/src/bin/vnp46a3_compiler.rs
 sha256 6fe3405baeca28c14c9c854dbc7bfac21bcc8b9c9dbab55afc04e234803e9c62
-header Authorization {EARTHDATA_EDL_TOKEN}
 ttl 86400
 field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
 
@@ -2289,6 +2291,7 @@ field ascat_wind_direction_deg ascat_wind_direction_deg patch-levy advective deg
 url https://github.com/omegaflow/sources/releases/download/ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format noaa_cdo_ghcnd_tmax
+header token {NOAA_CDO_TOKEN}
 origin https://www.ncdc.noaa.gov/cdo-web/api/v2/data
 instrument station
 compiler tools/harvest/src/bin/noaa_cdo_compiler.rs
@@ -12749,7 +12752,7 @@ field nighttime_lst_8day_k nighttime_lst_8day_k gaussian-inverse-square thermal 
 url https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format tar_gz_yaml
-header Authorization {EARTHDATA_EDL_TOKEN}
+header Authorization Bearer {EARTHDATA_EDL_TOKEN}
 origin https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
 compiler none
 at earth datum=WGS84 coverage=open
