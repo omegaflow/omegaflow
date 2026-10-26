@@ -770,12 +770,17 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         _ => continue,
                     },
                 };
-                let Ok(tau) = parts[4].parse::<f64>() else {
-                    continue;
+                let (tau, tau_src) = if parts[4] == "null" {
+                    (0.0, crate::archivar::types::TauSource::Pending)
+                } else {
+                    let Ok(tau) = parts[4].parse::<f64>() else {
+                        continue;
+                    };
+                    if !tau.is_finite() || tau < 0.0 {
+                        continue;
+                    }
+                    (tau, crate::archivar::types::TauSource::Measured)
                 };
-                if !tau.is_finite() || tau < 0.0 {
-                    continue;
-                }
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
@@ -783,7 +788,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel,
                     channel_ref,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src,
                     absorption: SLOT_ABSENT,
                     advection: SLOT_ABSENT,
                     unit: parts[3].to_string(),
