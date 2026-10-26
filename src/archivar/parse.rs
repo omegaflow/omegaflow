@@ -796,7 +796,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     "first" => cur_extracts.push(Extract::First(fc, None)),
                     "last" => cur_extracts.push(Extract::Last(fc, None)),
                     "lastrow" => cur_extracts.push(Extract::LastRow(fc)),
-                    _ => cur_extracts.push(Extract::Field(fc)),
+                    _ => push_field(&mut cur_extracts, fc),
                 }
             }
             "first" if parts.len() >= 7 => {

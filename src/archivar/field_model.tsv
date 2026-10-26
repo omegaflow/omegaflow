@@ -1570,3 +1570,4 @@ Y_WAVE	inverse-square	em
 z	inverse-linear	em
 Z_WAVE	inverse-square	electric
 Z_WAVE	inverse-square	em
+amplitude	inverse-square	em
