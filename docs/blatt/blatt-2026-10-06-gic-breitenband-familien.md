@@ -4,7 +4,7 @@
   date: 2026-10-06
   sha256: ebe03720eb1122cfde602f34f5570462681d8c77a3483256f38b98f754cf9342
   status: unsealed
-  see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
+  see-also: docs/paper/gic-causal-driver.md docs/blatt/blatt-2026-10-01-fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
 
 # BLATT — GIC-Breitenband-Familien: die Vorregistrierung
