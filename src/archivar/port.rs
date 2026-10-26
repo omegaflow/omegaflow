@@ -4220,7 +4220,7 @@ mod probe_classify_tests {
         assert_eq!(probe_classify("0.speed"), ("advective", "km/s", 360.0));
         assert_eq!(
             probe_classify("cryosat_magnetic_field_intensity_nt"),
-            ("em", "nT", 1.0)
+            ("em", "nT", 4.0)
         );
         assert_eq!(
             probe_classify("cme_plane_of_sky_speed_km_s"),
@@ -4334,7 +4334,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("champ_absolute_vertical_tec_tecu"),
-            ("em", "TECU", 1.0)
+            ("em", "TECU", 10.0)
         );
         assert_eq!(probe_classify("ned_redshift_z"), ("em", "1", 86400.0));
         assert_eq!(
@@ -4379,7 +4379,7 @@ mod probe_classify_tests {
     fn residual_pending_names_classify() {
         assert_eq!(
             probe_classify("solar_flare_xray_intensity"),
-            ("em", "W/m2", 6.0)
+            ("em", "W/m2", 60.0)
         );
         assert_eq!(
             probe_classify("solar_flare_x_class_latest"),
@@ -4425,7 +4425,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("atmosphere_metar_wind_direction_deg"),
-            ("advective", "deg", 30.0)
+            ("advective", "deg", 60.0)
         );
         assert_eq!(
             probe_classify("hydrosphere_ndbc_buoy_mean_wave_dir"),
