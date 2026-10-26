@@ -27162,7 +27162,6 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 instrument MSK
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9903.ZIP
-field MPSP obn2000_mpsp_magnitude 1 0
 origin https://web.archive.org/web/20030728194535id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9903.ZIP
 field H msk_h_nt nT 60
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -27171,7 +27170,7 @@ sha256 6cd951c3c32a590cebf6dd7c808ca21ea3b68a205dc22f2f08ee310db400fbfc
 at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-instrument STS-1
+instrument MSK
 
 field MPSP obn2000_mpsp_magnitude 1 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9904.ZIP
@@ -31004,13 +31003,4 @@ sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574
 at earth frame=body datum=ICRS
 no-sampling
 field flux normalized_flux 1 0
-
-url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
-terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
-origin https://cdsarc.cds.unistra.fr/
-format catalog_ossos
-compiler tools/harvest/src/bin/ossos_compiler.rs
-at sun
-field rmag ossos_tno_rmag mag 0
-no-sampling
 

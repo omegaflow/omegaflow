@@ -33819,3 +33819,57 @@ api_quote S/X-band coordinates for 4536 sources of the ICRF3.
 instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/644/A159/ReadMe
 instrument_quote The new frame, referred to as ICRF3, is based on nearly 40 years of data acquired by very long baseline interferometry at the standard geodetic and astrometric radio frequencies (8.4 and 2.3GHz), supplemented with data collected at higher radio frequencies (24GHz and dual-frequency 32 and 8.4GHz) over the past 15 years.
 
+host tapvizier.cds.unistra.fr
+  instrument UK_Schmidt
+  unit mag
+  sampling null
+  interval null
+  api_cite https://cdsarc.cds.unistra.fr/ftp/VII/110A/ReadMe
+  api_quote "This is an all-sky catalog of 4073 rich clusters of galaxies, each having at least 30 members within the magnitude range m_3_ to m_3_ + 2"
+  instrument_cite https://ui.adsabs.harvard.edu/abs/1989ApJS...70....1A/abstract
+  instrument_quote "The southern data have been collected from a survey of UK 1.2 m Schmidt telescope IIIa-J plates and films and have been reduced to the systems defined by the northern data previously published by G.O. Abell."
+  host_cite https://cdsarc.cds.unistra.fr/ftp/VII/110A/ReadMe
+  host_quote "VII/110A Rich Clusters of Galaxies (Abell+ 1989)"
+  ttl 604800
+  probe 2026-10-26T09:44:29Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22VII/110A/table3%22
+  fields teff gmag
+  applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync tables=VII/110A/table3,VII/110A/table4
+  field m10 abell_cluster_m10_mag mag 0.0
+  zustand gemessen
+
+host tapvizier.cds.unistra.fr
+  instrument Palomar_Schmidt
+  unit mag
+  sampling null
+  interval null
+  api_cite https://cdsarc.cds.unistra.fr/ftp/VII/110A/ReadMe
+  api_quote "A revised northern catalog, including Bautz-Morgan types and redshifts where known, is also included."
+  instrument_cite https://ui.adsabs.harvard.edu/abs/1989ApJS...70....1A/abstract
+  instrument_quote "table3.dat 148 2712 Revised northern Abell Catalog, Palomar Sky Survey prints (x coordinate)"
+  host_cite https://cdsarc.cds.unistra.fr/ftp/VII/110A/ReadMe
+  host_quote "VII/110A Rich Clusters of Galaxies (Abell+ 1989)"
+  ttl 604800
+  probe 2026-10-26T09:44:29Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22VII/110A/table3%22
+  fields teff gmag
+  applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync tables=VII/110A/table3,VII/110A/table4
+  field m10 abell_cluster_m10_mag mag 0.0
+  zustand gemessen
+
+host exoplanetarchive.ipac.caltech.edu
+  instrument TESS
+  unit 1
+  sampling null
+  interval 120
+  api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
+  api_quote "Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files."
+  instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
+  instrument_quote "TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year"
+  host_cite https://exofop.ipac.caltech.edu/tess/pcp.php
+  host_quote "TESS Follow-up Observing Program"
+  ttl 604800
+  probe 2026-10-26T09:44:58Z 200 https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1+pl_name+from+ps
+  fields st_teff
+  applies https://exoplanetarchive.ipac.caltech.edu/TAP/sync + https://mast.stsci.edu/api/v0/invoke
+  field flux normalized_flux 1 120
+  zustand gemessen
+
