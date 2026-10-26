@@ -5,6 +5,7 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
+use omegaflow::bpc::BpcFile;
 use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
@@ -115,7 +116,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--gm <gm.tpc>]... --bodies <name,...> [--ci-mode]"
+            "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--gm <gm.tpc>]... [--bpc <satellite.bpc>]... [--fk <frame.tf>]... --bodies <name,...> [--ci-mode]"
         );
         eprintln!(
             "  --bodies names the extracted bodies (comma-separated) — the scope is declared, never defaulted"
@@ -123,6 +124,12 @@ fn main() {
         eprintln!("  --label is the JPL DE edition word (the data lineage), e.g. de440");
         eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov-de");
         eprintln!("  --pck passes a NAIF body PCK text; absent, pck00010+pck00011 are fetched");
+        eprintln!(
+            "  --bpc passes a binary satellite PCK (e.g. moon_pa_de440) — its segments carry the DE orientation, which the IAU TPC only approximates"
+        );
+        eprintln!(
+            "  --fk passes a NAIF frame kernel naming the PCK frames; without it the body orientation falls back to the IAU TPC and says so"
+        );
         eprintln!(
             "  --gm passes a NAIF GM kernel text; absent, gm_<label>.tpc is fetched for mask bit 11"
         );
@@ -151,6 +158,8 @@ fn main() {
     let out_dir = format!("data/{netloc}");
     let mut pck_local: Vec<String> = Vec::new();
     let mut gm_local: Vec<String> = Vec::new();
+    let mut bpc_local: Vec<String> = Vec::new();
+    let mut fk_local: Vec<String> = Vec::new();
     let mut rest: Vec<String> = Vec::new();
     let mut skip_next = false;
     for (i, a) in args.iter().enumerate() {
@@ -172,6 +181,20 @@ fn main() {
         if a == "--gm" {
             if let Some(f) = args.get(i + 1) {
                 gm_local.push(f.clone());
+                skip_next = true;
+            }
+            continue;
+        }
+        if a == "--bpc" {
+            if let Some(f) = args.get(i + 1) {
+                bpc_local.push(f.clone());
+                skip_next = true;
+            }
+            continue;
+        }
+        if a == "--fk" {
+            if let Some(f) = args.get(i + 1) {
+                fk_local.push(f.clone());
                 skip_next = true;
             }
             continue;
@@ -224,6 +247,39 @@ fn main() {
         gm_pck_text(&gm_local, &label).as_deref(),
         body_pck_text(&pck_local).as_deref(),
     );
+    let mut bpc_files: Vec<BpcFile> = Vec::new();
+    for p in &bpc_local {
+        match BpcFile::open(p) {
+            Ok(b) => bpc_files.push(b),
+            Err(e) => {
+                eprintln!("de: bpc {}: {}", p, e);
+                std::process::exit(1);
+            }
+        }
+    }
+    let mut fk = FkFile::parse("");
+    for p in &fk_local {
+        match FkFile::open(p) {
+            Ok(f) => fk.insert_file(f),
+            Err(e) => {
+                eprintln!("de: fk {}: {}", p, e);
+                std::process::exit(1);
+            }
+        }
+    }
+    if bpc_files.is_empty() || fk.frames.is_empty() {
+        eprintln!(
+            "de: no binary orientation supplied ({} bpc file(s), {} fk frame(s)) — every body resolves through the IAU TPC",
+            bpc_files.len(),
+            fk.frames.len()
+        );
+    } else {
+        eprintln!(
+            "de: {} bpc file(s), {} fk frame(s) — the pck-class frames carry the DE orientation",
+            bpc_files.len(),
+            fk.frames.len()
+        );
+    }
     let in_scope = |name: &str| bodies.iter().any(|b| b == name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
@@ -243,7 +299,6 @@ fn main() {
             Some(w) => w.clone(),
             None => PckBody::minimal(target),
         };
-        let fk = FkFile::parse("");
         let mut granules = Vec::new();
         let mut rotations = Vec::new();
         let mut nutation = Vec::new();
@@ -253,7 +308,7 @@ fn main() {
                 continue;
             }
             let (g, r, n) =
-                extract_granules(spk, &spk_files, target, &wgccre, &[], &fk, GRANULE_DAYS);
+                extract_granules(spk, &spk_files, target, &wgccre, &bpc_files, &fk, GRANULE_DAYS);
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);

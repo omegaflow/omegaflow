@@ -237,8 +237,8 @@ pub fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f
     matmul(&rz_a, &matmul(&rx_d, &rz_w))
 }
 
-pub fn libration_matrix(phi_deg: f64, theta_rad: f64, psi_rad: f64) -> [f64; 9] {
-    let (sp, cp) = phi_deg.to_radians().sin_cos();
+pub fn libration_matrix(phi_rad: f64, theta_rad: f64, psi_rad: f64) -> [f64; 9] {
+    let (sp, cp) = phi_rad.sin_cos();
     let (st, ct) = theta_rad.sin_cos();
     let (ss, cs) = psi_rad.sin_cos();
     let r3p = [cp, sp, 0.0, -sp, cp, 0.0, 0.0, 0.0, 1.0];
@@ -295,13 +295,17 @@ pub fn full_orientation(
                 },
                 None => m_pa,
             };
-            let (mut ra2, mut dec2, mut w2) = iau_angles_from_matrix(m_me);
+            let (ra2, dec2, w2) = iau_angles_from_matrix(m_me);
             if let Some((_, lin_dec, _)) = linear_orientation(wgccre, jd)
                 && (dec2 - lin_dec).abs() > 90.0
             {
-                ra2 += 180.0;
-                dec2 = -dec2;
-                w2 += 180.0;
+                eprintln!(
+                    "orientation: body {} frame {} lands {:.1} deg from the iau pole — the chain is rejected, the iau series stands",
+                    body_id,
+                    pa_frame.name,
+                    dec2 - lin_dec
+                );
+                continue;
             }
             return Some((ra2, dec2, w2));
         }
@@ -780,5 +784,25 @@ mod tests {
                 (pa[k] - pb[k]).abs()
             );
         }
+    }
+
+    #[test]
+    fn libration_matrix_reads_the_pck_angles_in_radians() {
+        let phi = (-3.102403_f64).to_radians();
+        let theta = 24.342427_f64.to_radians();
+        let psi = 146_921.186_402_f64.to_radians();
+        let (ra, dec, w) = iau_angles_from_matrix(libration_matrix(phi, theta, psi));
+        assert!(
+            (ra - (-93.1024)).abs() < 2e-3,
+            "phi - 90 deg is the pole right ascension, was {ra}"
+        );
+        assert!(
+            (dec - 65.6576).abs() < 2e-3,
+            "90 - theta is the pole declination, was {dec}"
+        );
+        assert!(
+            (w - 41.1864).abs() < 2e-3,
+            "psi is the prime meridian, was {w}"
+        );
     }
 }

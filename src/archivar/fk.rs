@@ -315,7 +315,10 @@ impl FkFile {
         let m1 = r(axes[0], angles[0]);
         let m2 = r(axes[1], angles[1]);
         let m3 = r(axes[2], angles[2]);
-        let rot = matmul(&matmul(&m3, &m2), &m1);
+        let built = matmul(&matmul(&m3, &m2), &m1);
+        let rot = [
+            built[0], built[3], built[6], built[1], built[4], built[7], built[2], built[5], built[8],
+        ];
         Some((rot, format!("ANGLES via {}", relative_name)))
     }
 }
@@ -383,17 +386,29 @@ TKFRAME_31009_UNITS           = 'ARCSECONDS'\n";
         assert!((rot[0] - 1.0).abs() < 1e-4);
         assert!((rot[4] - 1.0).abs() < 1e-4);
         assert!((rot[8] - 1.0).abs() < 1e-4);
-        assert!((rot[1] - a1).abs() < 1e-4);
-        assert!((rot[2] + a2).abs() < 1e-4);
-        assert!((rot[3] + a1).abs() < 1e-4);
-        assert!((rot[5] - a3).abs() < 1e-4);
-        assert!((rot[6] - a2).abs() < 1e-4);
-        assert!((rot[7] + a3).abs() < 1e-4);
+        assert!((rot[1] + a1).abs() < 1e-4);
+        assert!((rot[2] - a2).abs() < 1e-4);
+        assert!((rot[3] - a1).abs() < 1e-4);
+        assert!((rot[5] + a3).abs() < 1e-4);
+        assert!((rot[6] + a2).abs() < 1e-4);
+        assert!((rot[7] - a3).abs() < 1e-4);
     }
 
     #[test]
     fn matrix_to_class4_chain_unresolved() {
         let fk = FkFile::parse(MOON_TF);
         assert!(fk.tkframe_rotation(31001).is_none());
+    }
+
+    #[test]
+    fn me_pa_rotation_angle_matches_the_kernel_documentation() {
+        let fk = FkFile::parse(MOON_TF);
+        let (rot, _) = fk.tkframe_rotation(31009).unwrap();
+        let trace = rot[0] + rot[4] + rot[8];
+        let angle = ((trace - 1.0) / 2.0).clamp(-1.0, 1.0).acos().to_degrees();
+        assert!(
+            (angle - 0.02886).abs() < 1e-4,
+            "the pa->me rotation is documented at 0.02886 deg, was {angle}"
+        );
     }
 }
