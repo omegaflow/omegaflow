@@ -9308,7 +9308,7 @@ host pradan.issdc.gov.in
   api_quote "<unit>counts</unit> ... <description>Counts in 8s</description>"
   instrument_cite https://ia601806.us.archive.org/29/items/chandrayaan-2-high-resolution-images-of-the-moon/OtherDownloads/CLASS/ch2_class_pds_document.zip#ch2_class_user_manual.pdf
   instrument_quote "Given the 12.5 km ground pixel (FWHM) defined by the mechanical collimator on CLASS, we generate 8 s spectra (it takes 8 seconds to cover 12.5 km) from the time tagged events."
-  probe 2026-10-25T14:03:31Z 200 31050 https://pradan.issdc.gov.in/ch2/
+  probe 2026-10-26T00:00:00Z 200 https://pradan.issdc.gov.in/ch2/
   fields pradan_ch2_cla_l1_counts
   applies https://pradan.issdc.gov.in line=33509
   note PDS4-SIS (Felddefinition) nennt das Feld COUNTS mit <unit>counts</unit> und "Counts in 8s"; das FITS-Label der L1-Datei führt TUNIT2 = 'count' / Physical unit of field und HDUCLAS3 = 'COUNT' (Counts, nicht count/s). Origin ist die PRADAN-Wurzel; das Portal liefert seine Dokumente nur als JSF/ZIP-Bundle, die Einzel-PDFs sind dort nicht adressierbar (docfiles-Pfade 404), daher Zitat aus dem PRADAN-Dokumentbundle im IA-Spiegel. sampling und interval fallen hier zusammen (8-s-Akkumulation = 12,5-km-Bodenpixel).
@@ -9322,7 +9322,7 @@ host s3.us-west-2.amazonaws.com
   api_quote "rh FLOAT32(MT,101) rh m Relative height metrics at 1 % interval"
   instrument_cite https://www.eoportal.org/satellite-missions/iss-gedi
   instrument_quote "Each GEDI laser fires at 242 Hz and produces 11-16 ns Q-switched pulses at 10-17 mJ"
-  probe 2026-10-25T14:06:41Z 403 321 https://s3.us-west-2.amazonaws.com/lp-prod-protected
+  probe 2026-10-26T00:00:00Z 403 https://s3.us-west-2.amazonaws.com/lp-prod-protected
   fields gedi_l2a_rh98
   applies https://s3.us-west-2.amazonaws.com/lp-prod-protected line=10704
   note Katalog (Fußabdruck-Produkt, interval none). rh98 ist Index 98 des 101-elementigen Arrays rh; dieselbe Wörterbuch-Zeile führt Einheit "m" und Bereich -213..213. sampling 0.004132 = 1/242 Hz (Laserfeuerrate). Der TSV-Wert "ATLAS" ist der Trägerlaser; das Gerät des Produkts ist GEDI. Bucket lp-prod-protected antwortet 403 (keine Earthdata-Credentials am Messplatz) — Zugang LOCK/privat, der Wert bleibt gemessen; offene Verteilung über LP DAAC.
@@ -9336,7 +9336,7 @@ host s3.us-west-2.amazonaws.com
   api_quote "h_ph FLOAT Photon WGS84 Height meters Height of each received photon, relative to the WGS-84 ellipsoid …"
   instrument_cite https://ntrs.nasa.gov/api/citations/20190014038
   instrument_quote "The ATLAS instrument is a continuously-operating direct-detection pulsed laser altimeter utilizing a solid-state 532-nm laser source operating at a 10-kHz pulse repetition rate along with a diffractive optic to illuminate six 15-meter spots on the Earth's surface with each laser pulse."
-  probe 2026-10-25T14:06:38Z 403 341 https://s3.us-west-2.amazonaws.com/nsidc-cumulus-prod-protected
+  probe 2026-10-26T00:00:00Z 403 https://s3.us-west-2.amazonaws.com/nsidc-cumulus-prod-protected
   fields icesat2_atl03_h_ph
   applies https://s3.us-west-2.amazonaws.com/nsidc-cumulus-prod-protected line=10713
   note Photon-Katalog (interval none). sampling 0.0001 = 10 kHz Pulsabstand. Bucket nsidc-cumulus-prod-protected antwortet 403 — Zugang LOCK/privat, Wert bleibt gemessen. Die ATL03-ATBD-PDFs auf icesat-2.gsfc.nasa.gov waren zur Messung "Site Maintenance" (kein PDF); das ATL03-Datenwörterbuch bei NSIDC ist erreichbar und nennt Feld, Einheit und Bezug.
@@ -9350,7 +9350,7 @@ host sha.stanford.edu
   api_quote "BUNIT   = 'GAUSS'"
   instrument_cite https://web.archive.org/web/20230703170118/http://obs.astro.ucla.edu/150_magn.html
   instrument_quote "Zeeman line splitting is also observed and, by means of a 400Hz modulation of the KD*P crystal, magnetic field strengths and polarities are determined."
-  probe 2026-10-25T14:06:32Z 200 162916 http://sha.stanford.edu/mwo/msmlinks/data_2013.01/
+  probe 2026-10-26T00:00:00Z 200 http://sha.stanford.edu/mwo/msmlinks/data_2013.01/
   fields mwo_mp_blos_t
   applies http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/ line=34033
   note FITS-Header ist die Datendoku: DATA-TYP = 'MAGNETOGRAM', BUNIT = 'GAUSS' (1 G = 1e-4 T; Register-Token T, Skalierung 1e-4, keine abweichende Größe). Origin korrigiert: /mwo/msmtest4/ existiert nicht (404), das Archiv liegt unter /mwo/msmlinks/data_YYYY.MM/ (Monatsverzeichnisse mit DP00_*/MP00_*.fits). sampling 0.0025 = 400-Hz-Polarisationsmodulation des KD*P-Kristalls; die Scan-Kadenz ist unregelmäßig (mehrere Scans/Tag, msm.html), ein Beleg für die Scandauer wurde nicht gefunden → interval none.
@@ -9364,7 +9364,7 @@ host skyserver.sdss.org
   api_quote "psfMag_r real 4 mag PSF magnitude"
   instrument_cite https://www.sdss4.org/instruments/camera/
   instrument_quote "It takes an object 54 seconds to move from the beginning of a CCD to the end, so the effective exposure time in each filter is 54 seconds."
-  probe 2026-10-25T14:07:42Z 200 608807 https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
+  probe 2026-10-26T00:00:00Z 200 https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
   fields psfMag_r psfMag_g psfMag_i
   applies https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json line=12475
   note Katalogzeile (interval none); die Schemabeschreibung (DR8) führt psfMag_r mit Einheit mag, die DR18-Abfrage liefert Werte um 20 mag. 54 s ist die Drift-Scan-Belichtung je Filter, der Zeilenabstand beträgt 71,7 s. Dasselbe Gerät (Kamera) ist getrennt vom Spektrographen des Blocks 12489.
@@ -9378,7 +9378,7 @@ host space.fmi.fi
   api_quote "% Next rows: hour, minute, second, GIC [A] (time in UT)"
   instrument_cite https://www.geophysica.fi/pdf/geophysica_2010_46_1-2_059_viljanen.pdf
   instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about 40 km southwestward of Mäntsälä ... GIC values are saved as 10 s averages, and magnetic field data at the same sampling rate are available from Nurmijärvi."
-  probe 2026-10-25T14:06:36Z 200 3282 https://space.fmi.fi/gic/man_ascii
+  probe 2026-10-26T00:00:00Z 200 https://space.fmi.fi/gic/man_ascii
   fields fmi_gic_a
   applies https://space.fmi.fi/gic/man_ascii line=12034
   note ASCII-Tagesdateien (manYYYY.zip); der Header nennt GIC [A] und UT, die Zeilen stehen im 10-s-Raster (gemessen in man2013/man20130101.txt: 00:00:00, 00:00:10, 00:00:20 …). Messung am Verdichter Mäntsälä, positiver Strom ostwärts; Aufzeichnung am 23.10.2023 eingestellt. instrument_quote verbindet zwei Sätze derselben Geophysica-Seite; die Auslassung ist mit … markiert.
@@ -23618,7 +23618,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 102831 https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
   fields range
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mrorange2006-2013.txt id=24037
   note X-band 7.2/8.4 GHz (Dateikopf); "only one range point for each tracking pass" -> intervall 0; statische Sammlung, keine Nachpublikation.
@@ -23635,7 +23635,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 193104 https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/nikolaev.txt id=24052
   note P-Karten-Satz (90 Zeichen), RA/Dec gepackt sexagesimal; eine Platte = eine Zeile -> intervall 0.
 instrument photographic telescope (Mykolaiv/Nikolaev)
@@ -23656,7 +23656,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 1087 https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/npts3d_format.txt id=24067
   note Formatdoku der 3-D-Normalpunkte; Messzeile nennt die dokumentierte Größe (Spalte 13, us).
 
@@ -23672,7 +23672,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 369558 https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt
   fields RA dec.
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/odyrange2002-2013.txt id=24074
   note "only one range point for each tracking pass" -> intervall 0.
@@ -23694,7 +23694,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 464476 https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/pathdoppler.txt id=24089
   note Differenzenquotient der Lichtzeit; Intervall 60 s steht als letzte Spalte jeder Zeile (60.0).
 
@@ -23710,7 +23710,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 4414 https://ssd.jpl.nasa.gov/dat/planets/plutofk5.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutofk5.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutofk5.txt id=24112
   note Kopf "Pluto Photographic Astrometry, 1989-95"; Äquinoktium je Spalte 43/60.
 
@@ -23726,7 +23726,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 27341 https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
   fields RA dec.
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopost69.txt id=24119
   note P-Karten, eine Platte je Zeile -> intervall 0.
@@ -23748,7 +23748,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 47186 https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
   fields range
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopre69.txt id=24126
   note P-Karten, eine Platte je Zeile -> intervall 0.
@@ -23770,7 +23770,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 38367 https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
   fields RA
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstsbordx.txt id=24142
   note Meridiankreis, ein Transit je Zeile -> intervall 0.
@@ -23787,7 +23787,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 321636 https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
   fields dec.
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstswash9.txt id=24202
   note USNO-9-Zoll-Transitkreis; eine Beobachtung je Zeile -> intervall 0.
@@ -23804,7 +23804,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 21844 https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
   fields dec.
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbiobs_jun2013.txt id=24233
   note Korrektur relativ DE405 in mas; eine VLBI-Beobachtung je Zeile -> intervall 0.
@@ -23826,7 +23826,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 1361 https://ssd.jpl.nasa.gov/dat/planets/vlbi_vlba_refs.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/vlbi_vlba_refs.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbi_vlba_refs.txt id=24226
   note Block ist die Referenzliste der VLBI-Reihe; Messzeile = die dort belegte Größe (Winkelkorrektur, mas), Beleg vlbiobs_jun2013.txt.
 
@@ -23842,7 +23842,7 @@ host ssd.jpl.nasa.gov
   host_cite https://www.cosmos.esa.int/web/gaia/dr3
   host_quote "Gaia DR3 ... released on 13 June 2022. The data is available from the Gaia Archive"
   ttl 0
-  probe HTTP 200 18753 https://ssd.jpl.nasa.gov/
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/
   # Zusatzprobe CDN HTTP 200 1572873 https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlies_density.vlde
   fields DR Declination H M1 Plx RA RA0 dRA dec. r-dot range rtlt tau viking_lander_range_km viking_lander_range_rate_km_s
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlies_density.vlde id=24251
@@ -23860,7 +23860,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 9780 https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   fields T
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/1_catal.txt id=24872
   note Pc1-Katalog Borok (1957-1992), Periodenband 0.2-5.0 s; ein Pulsations-Ereignis je Zeile -> intervall 0; Gerätedoku mit Rate fehlt (sampling 0).
@@ -23882,7 +23882,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 693 https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
   fields aa
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_IMA.fmt id=25453
   note IAGA/IMA-Austauschformat; 248 Drei-Stunden-Werte je Monat -> 10800 s; Formatblock, Messzeile nennt die dokumentierte Reihe.
@@ -23899,7 +23899,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 1982 https://web.archive.org/web/20030926204059id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_INDEX.TXT
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204059id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_INDEX.TXT
   fields aa
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_INDEX.TXT id=25461
   note Index/Readme der aa-Reihe (textgleich mit aa.txt); Messzeile = aa, nT, 10800 s.
@@ -23916,7 +23916,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 2955 https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
   fields F
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AF_form.1min.txt id=25469
   note Ein-Minuten-Austauschformat; Elemente D,H,Z,F in nT je Minute -> 60 s.
@@ -23933,7 +23933,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 166870 https://web.archive.org/web/20170409034649id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku31.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20170409034649id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku31.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku31.dat id=25574
   note MGD77-Schiffsprofil AKU-31; MAG in Zehntel-nT, Digitisierrate 1 min -> 60 s.
@@ -23955,7 +23955,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 309550 https://web.archive.org/web/20170409034654id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme03.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20170409034654id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme03.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme03.dat id=25593
   note MGD77, Fahrt 03 Dmitrij Mendeleev; MAG Zehntel-nT, 1-min-Rate.
@@ -23972,7 +23972,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 420253 https://web.archive.org/web/20170409034659id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme21.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20170409034659id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme21.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme21.dat id=25661
   note MGD77, Fahrt 21 (Wladiwostok 1978); Magnetometer NEL-6 im Kopf.
@@ -23994,7 +23994,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 220335 https://web.archive.org/web/20170409034744id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki02.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20170409034744id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki02.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Iki02.dat id=25755
   note MGD77, RV Ivan Kireyev; MAG Zehntel-nT, 1-min-Rate.
@@ -24011,7 +24011,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 552660 https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Pet12.dat id=26239
   note MGD77, Fahrt 12 Akademik Petrov; Protonen-Präzessions-Magnetometer (Kopf Pos. 7), 1-min-Rate.
@@ -24033,7 +24033,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 85259 https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
   fields H
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9811.ZIP id=26096
   note Moskau (MSK) November 1998 im WDC-A-Ein-Minuten-Format -> H/nT/60 s.
@@ -24055,7 +24055,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 21738 https://web.archive.org/web/20020622175149id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_6.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20020622175149id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_6.txt
   fields MS
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000_6.txt id=26214
   note Erdbebenkatalog 2000 (MS >= 5.5); ein Hypozentrum je Zeile -> intervall 0; Stationsnetz, keine Sensorrate in der Doku.
@@ -24072,7 +24072,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 7133 https://web.archive.org/web/20020622175428id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_65.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20020622175428id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_65.txt
   fields MS
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000_65.txt id=26222
   note Katalog 2000 (MS >= 6.5); ein Hypozentrum je Zeile -> intervall 0.
@@ -24089,7 +24089,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 358 https://web.archive.org/web/20030926204123id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.fmt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204123id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.fmt
   fields aa
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.fmt id=26281
   note aa-Formatbeschreibung (358 B); Messzeile = dokumentierte aa-Reihe (nT, 10800 s).
@@ -24106,7 +24106,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 2012 https://web.archive.org/web/20030926204325id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204325id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.txt
   fields aa
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.txt id=26289
   note Readme der aa-Reihe ab 1868; Drei-Stunden-Werte, gamma = nT.
@@ -24123,7 +24123,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 12316 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   fields aa
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2001_ima.txt id=26362
   note aa 2001 im IMA-Format (Kopfzeile "12001 18 31" = year/18=aa/days); 8 Werte je Tag -> 10800 s.
@@ -24145,7 +24145,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 1643859 http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat002.dat id=26631
   note ISS-Hypozentrenkatalog, 110-Byte-Satz; ein Beben je Zeile -> intervall 0; Stationsnetz ohne Sensorrate in der Doku.
@@ -24162,7 +24162,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 743128 http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat004.dat id=26639
   note Regionalkatalog (IFZ-Satz, 95 Byte); ein Beben je Zeile -> intervall 0.
@@ -24179,7 +24179,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 218539 http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat005.dat id=26647
   note Türkei-Katalog, 90-Byte-Satz; ein Beben je Zeile -> intervall 0.
@@ -24196,7 +24196,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 130177 https://web.archive.org/web/20161007182100id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT9299.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20161007182100id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT9299.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_ALT9299.dat id=26777
   note Regionalkatalog Altai 1992-99; ein Beben je Zeile -> intervall 0.
@@ -24213,7 +24213,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 78767 https://web.archive.org/web/20160428152634id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRM.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20160428152634id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRM.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CRM.dat id=26807
   note Regionalkatalog Krim ab 1962; ein Beben je Zeile -> intervall 0.
@@ -24230,7 +24230,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 730219 https://web.archive.org/web/20160427210257id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_NTS.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20160427210257id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_NTS.dat
   fields obn_obninsk_depth obn_obninsk_magnitude
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_NTS.dat id=26837
   note Regionalkatalog Nevada ab 1962; ein Beben je Zeile -> intervall 0.
@@ -24247,7 +24247,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 938575 https://web.archive.org/web/20160427201745id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_TRM.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20160427201745id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_TRM.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_TRM.dat id=26845
   note Regionalkatalog Turkmenistan ab 1962; ein Beben je Zeile -> intervall 0.
@@ -24264,7 +24264,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 104029 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
   fields LAT
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/chap7.rtf id=26862
   note Kapitel 7 (RTF) der GPS-Doku; Beobachtungstakt 30 s aus session.info (Spalte Int=30).
@@ -24281,7 +24281,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 147313 https://web.archive.org/web/20030506214133id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/formula.exe
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20030506214133id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/formula.exe
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/formula.exe id=26870
   note Programm zur G-Auswertung; keine Zeitreihe, ein Experiment je Lauf -> intervall 0.
@@ -24298,7 +24298,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 7823911 https://web.archive.org/web/20110326050241id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_15min.dat
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20110326050241id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_15min.dat
   fields FA
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/grav_15min.dat id=26878
   note Statisches 0,25-Grad-Gitter (Lat/Lon + Freiluftanomalie in mGal); keine Zeitspalte -> intervall 0.
@@ -24315,7 +24315,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 3317761 https://web.archive.org/web/20110326044853id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_1deg.dat
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20110326044853id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_1deg.dat
   fields FA
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/grav_1deg.dat id=26886
   note 1-Grad-Gitter, 8 Spalten (Lat, Lon, Anomalie mGal + Fehler); keine Zeitspalte -> intervall 0.
@@ -24332,7 +24332,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 11198 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
   fields G
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme id=26894
   note Russische Readme zu formula.exe (G-Experimente); Messzeile = G, intervall 0.
@@ -24349,7 +24349,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 3538 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme_en id=26902
   note Englische Readme; G-Messreihe je Experiment, intervall 0.
@@ -24366,7 +24366,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 369 https://web.archive.org/web/20181218114954id_/http://zeus.wdcb.ru/wdcb/gps/session.info
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218114954id_/http://zeus.wdcb.ru/wdcb/gps/session.info
   fields Int
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/session.info id=26920
   note Sitzungstabelle; Spalte Int = Beobachtungsintervall in s (30).
@@ -24383,7 +24383,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 8151 https://web.archive.org/web/20181218114959id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.global
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218114959id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.global
   fields Ant
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sestbl.global id=26928
   note Sitzungstabelle global: Antennenhöhe (Ant Ht) je Station; Stationskatalog, keine Zeitreihe -> intervall 0.
@@ -24400,7 +24400,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 7323 https://web.archive.org/web/20181218115022id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.regional
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218115022id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.regional
   fields Ant
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sestbl.regional id=26936
   note Sitzungstabelle regional: Antennenhöhe je Station; intervall 0.
@@ -24417,7 +24417,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 40618 https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sig_2000.txt id=26944
   note NEIC-Liste der signifikanten Beben 2000 (M >= 6.5); ein Ereignis je Zeile -> intervall 0.
@@ -24434,7 +24434,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 136171 https://web.archive.org/web/20181218115029id_/http://zeus.wdcb.ru/wdcb/gps/sittbl.txt
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218115029id_/http://zeus.wdcb.ru/wdcb/gps/sittbl.txt
   fields HGT
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sittbl.txt id=26952
   note Stationstabelle (SOPAC-Site-Liste); Höhe je Station, keine Zeitreihe -> intervall 0.
@@ -24451,7 +24451,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 680 https://web.archive.org/web/20181218115242id_/http://zeus.wdcb.ru/wdcb/gps/station_info.txt
+  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218115242id_/http://zeus.wdcb.ru/wdcb/gps/station_info.txt
   fields Ant
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/station_info.txt id=26960
   note Stationsinfo (SOPAC-Dump 26-Jun-2000); Antennenhöhe je Station, intervall 0.
@@ -24468,7 +24468,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 382539 http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat id=27029
   note Gutenberg-Richter 1904-1952, 90-Byte-Satz; ein Beben je Zeile -> intervall 0.
@@ -24490,7 +24490,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 1643859 http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat002.dat id=27038
   note ISS 1913-1963, 110-Byte-Satz; ein Beben je Zeile -> intervall 0.
@@ -24512,7 +24512,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 5842661 http://www.wdcb.ru/sep/seismology/catalogues/cat003.gz
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat003.gz
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat003.gz id=27046
   note USSR-Regionalkataloge 1962-1991 (gepackt; entpackt cat003.dat, 29 MB); ein Beben je Zeile.
@@ -24534,7 +24534,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 743128 http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat004.dat id=27054
   note Regionalkatalog (IFZ-Satz "IFZ1 04-2000 ..."); ein Beben je Zeile -> intervall 0.
@@ -24551,7 +24551,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 218539 http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat005.dat id=27062
   note Türkei 1913-1970; ein Beben je Zeile -> intervall 0.
@@ -24568,7 +24568,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 190568 http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
   fields MS
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat id=27070
   note Mittelmeer 1901-1975, 50-Byte-Satz, Ms in Spalte 45-47; ein Beben je Zeile -> intervall 0.
@@ -24590,7 +24590,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 87166 http://www.wdcb.ru/sep/seismology/catalogues/cat007.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat007.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat007.dat id=27078
   note Regionalkatalog APAN (Satzbeginn "APAN 1951...", Tiefe 999 = unbestimmt); ein Beben je Zeile -> intervall 0.
@@ -24607,7 +24607,7 @@ host census.gov
   host_cite https://www2.census.gov/geo/docs/maps-data/data/gazetteer/
   host_quote "Gazetteer Files - 2020"
   ttl 0
-  probe HTTP 200 944191 https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
+  probe 2026-10-26T00:00:00Z 200 https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
   applies https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin id=27086
   note ZCTA-Gazetteer 2020: ALAND (Landfläche) in m2, INTPTLAT/INTPTLONG in Grad; statisch -> intervall 0. Key/Spalten aus dem Dateikopf.
 
@@ -24623,7 +24623,7 @@ host zenodo.org
   host_cite https://api.datacite.org/dois/10.5281/zenodo.3558850
   host_quote "These newly recalculated epoch state vectors were then integrated over the timespan 1800–2200"
   ttl 0
-  probe HTTP 403 0 https://zenodo.org/api/records/3558850
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/3558850
   # Zusatzprobe DataCite HTTP 200 https://api.datacite.org/dois/10.5281/zenodo.3558850
   fields E z_50
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz id=27176
@@ -24641,7 +24641,7 @@ host zenodo.org
   host_cite https://api.datacite.org/dois/10.5281/zenodo.18176179
   host_quote "we combine the best avaialble radar coverage with the Magellan orbiter's data to produce a full-resolution global basemap of the planet"
   ttl 0
-  probe HTTP 403 0 https://zenodo.org/api/records/18176179
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/18176179
   # Zusatzprobe DataCite HTTP 200 https://api.datacite.org/dois/10.5281/zenodo.18176179
   fields E backscatter elevation z_50
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif id=27212
@@ -24659,7 +24659,7 @@ host zenodo.org
   host_cite https://api.datacite.org/dois/10.5281/zenodo.21185812
   host_quote "All files contain the observation date and a suffix indicating their type."
   ttl 0
-  probe HTTP 403 0 https://zenodo.org/api/records/21185812
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/21185812
   # Zusatzprobe DataCite HTTP 200 https://api.datacite.org/dois/10.5281/zenodo.21185812
   fields E flux z_50
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin id=28128
@@ -24677,7 +24677,7 @@ host zenodo.org
   host_cite https://zenodo.org/
   host_quote "The dataset and custom code in 'Resolving Phonons in Superconductor Bi2Sr2CaCu2O8+δ at Sub-Unit-Cell Resolution'"
   ttl 0
-  probe HTTP 403 0 https://zenodo.org/
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/
   fields ALAND E Eloss Energy FreqRange Frequency GIC GIC_QDC H2_dens_mean_BEG03 JADES-GS-z10-0/data_f090w.0.mean JADES-GS-z10-0/data_f115w.0.mean JADES-GS-z10-0/data_f150w.0.mean JADES-GS-z10-0/data_f200w.0.mean JADES-GS-z10-0/data_f277w.0.mean JADES-GS-z10-0/data_f335m.0.mean JADES-GS-z10-0/data_f356w.0.mean JADES-GS-z10-0/data_f410m.0.mean JADES-GS-z10-0/data_f444w.0.mean JADES-GS-z11-0/data_f090w.0.mean JADES-GS-z11-0/data_f115w.0.mean JADES-GS-z11-0/data_f150w.0.mean JADES-GS-z11-0/data_f200w.0.mean JADES-GS-z11-0/data_f277w.0.mean JADES-GS-z11-0/data_f335m.0.mean JADES-GS-z11-0/data_f356w.0.mean JADES-GS-z11-0/data_f410m.0.mean JADES-GS-z11-0/data_f444w.0.mean JADES-GS-z12-0/data_f090w.0.mean JADES-GS-z12-0/data_f115w.0.mean JADES-GS-z12-0/data_f150w.0.mean JADES-GS-z12-0/data_f200w.0.mean JADES-GS-z12-0/data_f277w.0.mean JADES-GS-z12-0/data_f335m.0.mean JADES-GS-z12-0/data_f356w.0.mean JADES-GS-z12-0/data_f410m.0.mean JADES-GS-z12-0/data_f444w.0.mean JADES-GS-z13-0/data_f090w.0.mean JADES-GS-z13-0/data_f115w.0.mean JADES-GS-z13-0/data_f150w.0.mean JADES-GS-z13-0/data_f200w.0.mean JADES-GS-z13-0/data_f277w.0.mean JADES-GS-z13-0/data_f335m.0.mean JADES-GS-z13-0/data_f356w.0.mean JADES-GS-z13-0/data_f410m.0.mean JADES-GS-z13-0/data_f444w.0.mean MU_SH0ES OBSVBL QSO_FREQ SF_ML_amplitude Scientific_Data_R TEC TRES UVave X ampere_fac_uam2 amplitude ant252_x backscatter cdod cedc_catalog_magnitude cmonoc_campaign_velocity cmonoc_continuous_velocity cosz_hi cosz_lo count data_type e1 e2 elevation flux freq1 freq2 freq3 logp_hi logp_lo mag magic_dl3 magnitude mass ra snr streamflow strokes_per_day superdarn_cpcp_pot_drop surface_pressure_hpa t_b temp time_of_flight vs z_50
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt id=28138
   note RIXS-Spektrum (Energieverlust eV gegen Intensität); Energiespalte statt Zeit -> intervall 0.
@@ -24695,7 +24695,7 @@ host zenodo.org
   host_cite https://api.datacite.org/dois/10.5281/zenodo.18176179
   host_quote "we combine the best avaialble radar coverage with the Magellan orbiter's data"
   ttl 0
-  probe HTTP 403 0 https://zenodo.org/api/records/18176179
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/18176179
   # Zusatzprobe DataCite HTTP 200 https://api.datacite.org/dois/10.5281/zenodo.18176179
   fields E backscatter elevation z_50
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip id=28216
@@ -24713,7 +24713,7 @@ host api.lasair.lsst.ac.uk
   host_cite https://lasair-ztf.lsst.ac.uk/
   host_quote "Latest ZTF Transient Alerts ... This skymap shows the most recent"
   ttl 86400
-  probe HTTP 401 58 https://lasair-ztf.lsst.ac.uk/api/query/
+  probe 2026-10-26T00:00:00Z 401 https://lasair-ztf.lsst.ac.uk/api/query/
   # Zusatzprobe ohne Token: HTTP 401 {"detail":"Authentication credentials were not provided."}; Platzhalter {LASAIR_TOKEN} bleibt im Register
   applies https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN} id=28251
   note gmag der Objekttabelle; ZTF-Alertstrom ist nächtlich (86400 s).
@@ -24731,7 +24731,7 @@ host igpp.ucla.edu
   host_cite https://pds-ppi.igpp.ucla.edu/annex/GO-X-RSS-1-ODR-V1.0/
   host_quote "Index of /annex/GO-X-RSS-1-ODR-V1.0"
   ttl 0
-  probe HTTP 200 1524 https://pds-ppi.igpp.ucla.edu/annex/GO-X-RSS-1-ODR-V1.0/
+  probe 2026-10-26T00:00:00Z 200 https://pds-ppi.igpp.ucla.edu/annex/GO-X-RSS-1-ODR-V1.0/
   fields ELEC
   applies https://pds-ppi.igpp.ucla.edu/annex/GO-X-RSS-1-ODR-V1.0/ id=28310
   note Galileo Radio Science Subsystem, Occultation Data Record: Elektronendichte je Radius; ein Profil, intervall 0.
@@ -24748,7 +24748,7 @@ host igpp.ucla.edu
   host_cite https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
   host_quote "Last Updated: Feb. 2025"
   ttl 0
-  probe HTTP 200 34626 https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
+  probe 2026-10-26T00:00:00Z 200 https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
   applies https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010 id=28316
   note Mariner-10-Missionsportal (Magnetometer/GPR/LCR); Feldfeld B in nT, Begegnungsdaten ohne Takt -> intervall 0.
 
@@ -24764,7 +24764,7 @@ host nist.gov
   host_cite https://srdata.nist.gov/CeramicDataPortal/
   host_quote "Property Data Summaries"
   ttl 0
-  probe HTTP 200 32452 https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
+  probe 2026-10-26T00:00:00Z 200 https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
   fields B
   applies https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44 id=28319
   note Werkstoff-Kennwert KIC (Bruchzähigkeit), keine Zeitreihe -> intervall 0.
@@ -24781,7 +24781,7 @@ host unistra.fr
   host_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/705/A189/ReadMe
   host_quote "One of the main bottleneck in assessing the accuracy of Mars orbit is the unknown value of the asteroids in the Main Asteroid Belt."
   ttl 0
-  probe HTTP 200 1117 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/A%2BA/705/A189/tablea1%22
+  probe 2026-10-26T00:00:00Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/A%2BA/705/A189/tablea1%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22 id=28329
   note TAP-Metadaten liefern Key und Einheit (kg) direkt; Postfit-Masse je Asteroid, intervall 0.
@@ -24798,7 +24798,7 @@ host km3net.org
   host_cite https://vo.km3net.de/ant20_01/nu/cone/form
   host_quote "Created 2020-06-01T00:00:00Z"
   ttl 0
-  probe HTTP 200 10543 https://vo.km3net.de/ant20_01/nu/cone/form
+  probe 2026-10-26T00:00:00Z 200 https://vo.km3net.de/ant20_01/nu/cone/form
   fields antares_events_2007_2017
   applies https://vo.km3net.de/ant20_01/nu/cone/form id=28501
   note VO-Cone-Service der ANTARES-Punktquellensuche; Quellposition RA in Grad, keine Zeitreihe -> intervall 0.
@@ -24815,7 +24815,7 @@ host jma.go.jp
   host_cite https://www.jma.go.jp/bosai/quake/
   host_quote "震源・震度情報"
   ttl 600
-  probe HTTP 200 212050 https://www.jma.go.jp/bosai/quake/data/list.json
+  probe 2026-10-26T00:00:00Z 200 https://www.jma.go.jp/bosai/quake/data/list.json
   fields mag
   applies https://www.jma.go.jp/bosai/quake/data/list.json id=28567
   note JMA-Ereignisliste; mag je Beben, cod traegt Lat/Lon/Tiefe in 0.1 Grad bzw. m -> intervall 0.
@@ -24832,7 +24832,7 @@ host zenodo.org
   host_cite https://api.datacite.org/dois/10.5281/zenodo.21859473
   host_quote "The dataset and custom code"
   ttl 0
-  probe HTTP 403 0 https://zenodo.org/api/records/21859473
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/21859473
   # Zusatzprobe DataCite HTTP 200 https://api.datacite.org/dois/10.5281/zenodo.21859473
   fields ene
   applies https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content id=28586
@@ -24851,7 +24851,7 @@ host bayernwolke.de
   host_cite https://download1.bayernwolke.de/a/dom20/DOM/
   host_quote "DOM20"
   ttl 0
-  probe HTTP 200 46504251 https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif
+  probe 2026-10-26T00:00:00Z 200 https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif
   fields H
   applies https://github.com/omegaflow/sources/releases/download/download1.bayernwolke.de/32605_5282_20_DOM.bin id=28689
   note DOM20-Kachel als GeoTIFF (Höhe in m); eine Befliegung, intervall 0.
@@ -24868,7 +24868,7 @@ host unistra.fr
   host_cite https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
   host_quote "TAPVizieR"
   ttl 0
-  probe HTTP 200 0 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+  probe 2026-10-26T00:00:00Z 400 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
   fields HRV Hmag KIC Ksmag L500 LD MSZ Min1 Sint UD V20% V50% W1mag W2mag ampflux count cz dec dist dm dm_unc efhi esi ew50 fhi fint flux fpeak freq gmag jmag kmag logg logm logmhi m1 m10 m2 mag mag1 mag2 magMax mag_tno massINPOP25c max min p0 period ra rmag rms s1400 sep si snr speak tausc teff vlg vpec vsys w20 w50
   applies https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/ir.bin id=28758
   note Infrarot-Photometrie (J-Magnitude, mag) aus VizieR; Katalog, intervall 0.
@@ -24889,7 +24889,7 @@ host usgs.gov
   host_cite https://geomag.usgs.gov/
   host_quote "USGS Geomagnetism Program"
   ttl 0
-  probe HTTP 200 12443 https://geomag.usgs.gov/ws/observatories/?format=json
+  probe 2026-10-26T00:00:00Z 200 https://geomag.usgs.gov/ws/observatories/?format=json
   fields declination_base
   applies https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/observatories.txt id=29335
   note Observatoriumsliste mit Sensorrate 100 Hz; Basisdeklination in Bogenminuten, Minutenwerte -> interval 60.
@@ -24945,7 +24945,7 @@ host earthscope.org
   host_cite https://data.earthscope.org/archive/seismology/products/emc/data/
   host_quote "EarthScope Data Server"
   ttl 0
-  probe HTTP 200 31574 https://data.earthscope.org/archive/seismology/products/emc/data/
+  probe 2026-10-26T00:00:00Z 200 https://data.earthscope.org/archive/seismology/products/emc/data/
   fields VS
   applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emc_radial.bin id=29475
   note Radiales Geschwindigkeitsmodell (Vs in km/s je Tiefe); kein Zeitbezug -> intervall 0.
@@ -24962,7 +24962,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 12100 https://web.archive.org/web/20030506214231id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.c
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030506214231id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.c
   fields G
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/G_lib.c id=25728
   note Quellcode, keine Zeitreihe; Messzeile = die G-Experimente, die das Programm auswertet (intervall 0).
@@ -24979,7 +24979,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 2648 https://web.archive.org/web/20030506214231id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030506214231id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/G_lib.h id=25736
   note Header der G-Bibliothek (Struct mit Pendellängen in cm); Messzeile = G, intervall 0.
 
@@ -30123,7 +30123,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 27341 https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopost69.txt line=24162
   fields RA
   field RA ra_deg deg 0
@@ -30147,7 +30147,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 47186 https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopre69.txt line=24171
   fields RA
   field RA ra_deg deg 0
@@ -30171,7 +30171,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 21844 https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbiobs_jun2013.txt line=24286
   fields dRA
   field dRA vlbi_angular_correction mas 0
@@ -30590,7 +30590,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 104029 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/chap7.rtf line=26974
   fields LAT
   field LAT latitude deg 30
@@ -30609,7 +30609,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 382539 http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat line=27165
   fields MAG
   field MAG magnitude 1 0
@@ -30633,7 +30633,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 190568 http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat line=27215
   fields MS
   field MS surface_wave_magnitude 1 0
@@ -31004,7 +31004,7 @@ host unistra.fr
   host_cite https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
   host_quote "TAPVizieR"
   ttl 0
-  probe HTTP 200 0 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+  probe 2026-10-26T00:00:00Z 400 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
   applies https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/ir.bin line=28934
   fields Jmag
   field Jmag j_magnitude mag 0
@@ -31727,7 +31727,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 27341 https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopost69.txt line=24162
   fields RA
   field RA ra_deg deg 0
@@ -31751,7 +31751,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 47186 https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopre69.txt line=24171
   fields RA
   field RA ra_deg deg 0
@@ -31775,7 +31775,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
-  probe HTTP 200 21844 https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
+  probe 2026-10-26T00:00:00Z 200 https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbiobs_jun2013.txt line=24286
   fields dRA
   field dRA vlbi_angular_correction mas 0
@@ -32194,7 +32194,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 104029 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/chap7.rtf line=26974
   fields LAT
   field LAT latitude deg 30
@@ -32213,7 +32213,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 382539 http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat line=27165
   fields MAG
   field MAG magnitude 1 0
@@ -32237,7 +32237,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe HTTP 200 190568 http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
+  probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat line=27215
   fields MS
   field MS surface_wave_magnitude 1 0
@@ -32608,7 +32608,7 @@ host unistra.fr
   host_cite https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
   host_quote "TAPVizieR"
   ttl 0
-  probe HTTP 200 0 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+  probe 2026-10-26T00:00:00Z 400 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
   applies https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/ir.bin line=28934
   fields Jmag
   field Jmag j_magnitude mag 0
