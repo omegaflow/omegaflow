@@ -21,14 +21,13 @@ pub struct ScalarTeGpu {
 impl ScalarTeGpu {
     pub fn new(n_lags: usize) -> Option<ScalarTeGpu> {
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-        let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        let adapter = block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
             power_preference: wgpu::PowerPreference::None,
             compatible_surface: None,
             force_fallback_adapter: false,
         }))?;
         let (device, queue) =
-            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None))
-                .ok()?;
+            block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)).ok()?;
         let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(SCALAR_TE_WGSL.into()),

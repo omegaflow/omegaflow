@@ -5,6 +5,45 @@ use std::io::Write;
 #[cfg(not(target_arch = "wasm32"))]
 use std::sync::atomic::AtomicU8;
 
+#[cfg(not(target_arch = "wasm32"))]
+pub fn block_on<F: std::future::Future>(future: F) -> F::Output {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::task::{Context, Poll, Wake, Waker};
+
+    struct ThreadWaker {
+        thread: std::thread::Thread,
+        notified: AtomicBool,
+    }
+
+    impl Wake for ThreadWaker {
+        fn wake(self: std::sync::Arc<Self>) {
+            self.notified.store(true, Ordering::SeqCst);
+            self.thread.unpark();
+        }
+
+        fn wake_by_ref(self: &std::sync::Arc<Self>) {
+            self.notified.store(true, Ordering::SeqCst);
+            self.thread.unpark();
+        }
+    }
+
+    let state = std::sync::Arc::new(ThreadWaker {
+        thread: std::thread::current(),
+        notified: AtomicBool::new(false),
+    });
+    let waker = Waker::from(state.clone());
+    let mut cx = Context::from_waker(&waker);
+    let mut future = std::pin::pin!(future);
+    loop {
+        if let Poll::Ready(value) = future.as_mut().poll(&mut cx) {
+            return value;
+        }
+        while !state.notified.swap(false, Ordering::SeqCst) {
+            std::thread::park();
+        }
+    }
+}
+
 pub const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
 
 pub const C: f64 = crate::archivar::types::C_LIGHT;
@@ -1420,32 +1459,29 @@ impl OmegaLoop {
             return;
         }
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-        let adapter =
-            match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::None,
-                compatible_surface: None,
-                force_fallback_adapter: false,
-            })) {
-                Some(a) => a,
-                None => {
-                    eprintln!("adapter request returned void");
-                    return;
-                }
-            };
+        let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::None,
+            compatible_surface: None,
+            force_fallback_adapter: false,
+        })) {
+            Some(a) => a,
+            None => {
+                eprintln!("adapter request returned void");
+                return;
+            }
+        };
         let info = adapter.get_info();
         eprintln!(
             "adapter: {} | {:?} | {:?} | {}",
             info.name, info.backend, info.device_type, info.driver_info
         );
-        let (device, queue) = match pollster::block_on(
-            adapter.request_device(
-                &wgpu::DeviceDescriptor {
-                    required_limits: adapter.limits(),
-                    ..Default::default()
-                },
-                None,
-            ),
-        ) {
+        let (device, queue) = match block_on(adapter.request_device(
+            &wgpu::DeviceDescriptor {
+                required_limits: adapter.limits(),
+                ..Default::default()
+            },
+            None,
+        )) {
             Ok(dq) => dq,
             Err(e) => {
                 eprintln!("device request returned: {}", e);

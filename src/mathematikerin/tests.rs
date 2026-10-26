@@ -2,13 +2,13 @@ use super::*;
 
 #[test]
 fn field_wgsl_validates_offline() {
-    let module = match naga::front::wgsl::parse_str(FIELD_WGSL) {
+    let module = match wgpu::naga::front::wgsl::parse_str(FIELD_WGSL) {
         Ok(m) => m,
         Err(e) => panic!("wgsl parse: {}", e.emit_to_string(FIELD_WGSL)),
     };
-    let mut validator = naga::valid::Validator::new(
-        naga::valid::ValidationFlags::all(),
-        naga::valid::Capabilities::all(),
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
     );
     if let Err(e) = validator.validate(&module) {
         panic!("wgsl validate: {}", e.emit_to_string(FIELD_WGSL));
@@ -31,13 +31,13 @@ fn browser_field_shader() -> String {
 fn browser_fieldshader_validates_and_carries_the_measured_branch() {
     let wgsl = browser_field_shader();
 
-    let module = match naga::front::wgsl::parse_str(&wgsl) {
+    let module = match wgpu::naga::front::wgsl::parse_str(&wgsl) {
         Ok(m) => m,
         Err(e) => panic!("browser fieldShader parse: {}", e.emit_to_string(&wgsl)),
     };
-    let mut validator = naga::valid::Validator::new(
-        naga::valid::ValidationFlags::all(),
-        naga::valid::Capabilities::all(),
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
     );
     if let Err(e) = validator.validate(&module) {
         panic!("browser fieldShader validate: {}", e.emit_to_string(&wgsl));
@@ -59,13 +59,13 @@ fn browser_fieldshader_validates_and_carries_the_measured_branch() {
 
 #[test]
 fn te_wgsl_validates_offline() {
-    let module = match naga::front::wgsl::parse_str(TE_WGSL) {
+    let module = match wgpu::naga::front::wgsl::parse_str(TE_WGSL) {
         Ok(m) => m,
         Err(e) => panic!("wgsl parse: {}", e.emit_to_string(TE_WGSL)),
     };
-    let mut validator = naga::valid::Validator::new(
-        naga::valid::ValidationFlags::all(),
-        naga::valid::Capabilities::all(),
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
     );
     if let Err(e) = validator.validate(&module) {
         panic!("wgsl validate: {}", e.emit_to_string(TE_WGSL));
@@ -74,13 +74,13 @@ fn te_wgsl_validates_offline() {
 
 #[test]
 fn scalar_te_wgsl_validates_offline() {
-    let module = match naga::front::wgsl::parse_str(SCALAR_TE_WGSL) {
+    let module = match wgpu::naga::front::wgsl::parse_str(SCALAR_TE_WGSL) {
         Ok(m) => m,
         Err(e) => panic!("wgsl parse: {}", e.emit_to_string(SCALAR_TE_WGSL)),
     };
-    let mut validator = naga::valid::Validator::new(
-        naga::valid::ValidationFlags::all(),
-        naga::valid::Capabilities::all(),
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
     );
     if let Err(e) = validator.validate(&module) {
         panic!("wgsl validate: {}", e.emit_to_string(SCALAR_TE_WGSL));
@@ -89,13 +89,13 @@ fn scalar_te_wgsl_validates_offline() {
 
 #[test]
 fn s2_wgsl_validates_offline() {
-    let module = match naga::front::wgsl::parse_str(S2_WGSL) {
+    let module = match wgpu::naga::front::wgsl::parse_str(S2_WGSL) {
         Ok(m) => m,
         Err(e) => panic!("wgsl parse: {}", e.emit_to_string(S2_WGSL)),
     };
-    let mut validator = naga::valid::Validator::new(
-        naga::valid::ValidationFlags::all(),
-        naga::valid::Capabilities::all(),
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
     );
     if let Err(e) = validator.validate(&module) {
         panic!("wgsl validate: {}", e.emit_to_string(S2_WGSL));
@@ -105,7 +105,7 @@ fn s2_wgsl_validates_offline() {
 #[test]
 fn te_gpu_crosscheck_against_cpu_reference() {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::None,
         compatible_surface: None,
         force_fallback_adapter: false,
@@ -121,7 +121,7 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         "adapter: {} | {:?} | {:?} | {}",
         info.name, info.backend, info.device_type, info.driver_info
     );
-    let (device, queue) = match pollster::block_on(
+    let (device, queue) = match block_on(
         adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
     ) {
         Ok(dq) => dq,
@@ -1026,7 +1026,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
     let expect = crate::s2::shell_field(&oscs, crate::s2::S2_LMAX);
     let pack = crate::s2::pack_oscs(&oscs, crate::s2::S2_OSC_CAP);
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::None,
         compatible_surface: None,
         force_fallback_adapter: false,
@@ -1037,7 +1037,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
             return;
         }
     };
-    let (device, queue) = match pollster::block_on(
+    let (device, queue) = match block_on(
         adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
     ) {
         Ok(dq) => dq,
@@ -2171,7 +2171,7 @@ fn scalar_gpu_parity_surrogate_slots_match_cpu() {
 fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
     let wgsl = browser_field_shader();
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::None,
         compatible_surface: None,
         force_fallback_adapter: false,
@@ -2182,7 +2182,7 @@ fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
             return;
         }
     };
-    let (device, queue) = match pollster::block_on(
+    let (device, queue) = match block_on(
         adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
     ) {
         Ok(dq) => dq,
@@ -2773,7 +2773,7 @@ fn fold_crosscheck(@builtin(global_invocation_id) gid: vec3<u32>) {
     let rows = expected.len();
 
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::None,
         compatible_surface: None,
         force_fallback_adapter: false,
@@ -2784,7 +2784,7 @@ fn fold_crosscheck(@builtin(global_invocation_id) gid: vec3<u32>) {
             return;
         }
     };
-    let (device, queue) = match pollster::block_on(
+    let (device, queue) = match block_on(
         adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
     ) {
         Ok(dq) => dq,
@@ -3071,7 +3071,7 @@ fn coupling_injection_wgsl_matches_the_cpu_exchange() {
 
     let wgsl = coupling_wgsl_from_field_shader();
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
-    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::None,
         compatible_surface: None,
         force_fallback_adapter: false,
@@ -3082,7 +3082,7 @@ fn coupling_injection_wgsl_matches_the_cpu_exchange() {
             return;
         }
     };
-    let (device, queue) = match pollster::block_on(
+    let (device, queue) = match block_on(
         adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
     ) {
         Ok(dq) => dq,

@@ -295,6 +295,7 @@ pub mod pattern;
 pub mod port;
 #[cfg(feature = "browser_relay")]
 pub mod relay;
+pub mod refusal;
 pub mod render;
 pub mod skymap;
 pub mod sniff;
@@ -330,6 +331,7 @@ pub use naming::*;
 pub use parse::*;
 pub use pattern::*;
 pub use port::*;
+pub use refusal::*;
 pub use render::*;
 pub use rinex::*;
 pub use spatial::*;

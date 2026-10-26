@@ -1371,8 +1371,8 @@ fn cog_index_window(
                 .ok_or_else(|| "geo_to_pixel BR".to_string())?,
         )
     } else {
-        let (uy1, ux1, _) = utm::to_utm_wgs84_no_zone(yl, xl);
-        let (uy2, ux2, _) = utm::to_utm_wgs84_no_zone(yr, xr);
+        let (uy1, ux1, _) = omegaflow_gate::utm::to_utm_wgs84_no_zone(yl, xl);
+        let (uy2, ux2, _) = omegaflow_gate::utm::to_utm_wgs84_no_zone(yr, xr);
         (
             g_a.geo_to_pixel(ux1, uy1)
                 .ok_or_else(|| "geo_to_pixel TL".to_string())?,

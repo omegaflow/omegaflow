@@ -7834,6 +7834,7 @@ mod tests {
 
     #[test]
     fn gate_wgsl_horizon_and_ksg_parity_against_cpu_reference() {
+        use crate::mathematikerin::block_on;
         use std::sync::Arc;
         use std::sync::atomic::{AtomicBool, Ordering};
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
@@ -7842,14 +7843,14 @@ mod tests {
             compatible_surface: None,
             force_fallback_adapter: false,
         };
-        let adapter = match pollster::block_on(instance.request_adapter(&adapter_options)) {
+        let adapter = match block_on(instance.request_adapter(&adapter_options)) {
             Some(a) => a,
             None => {
                 eprintln!("compute-only device request returned void — wgsl ksg parity skipped");
                 return;
             }
         };
-        let (device, queue) = match pollster::block_on(
+        let (device, queue) = match block_on(
             adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
         ) {
             Ok(dq) => dq,

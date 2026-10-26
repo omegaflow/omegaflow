@@ -10,7 +10,6 @@ omegaflow = { path = "../..", features = ["commit_gate"] }
 
 geotiff-reader = { version = "0.8", default-features = false, features = ["local"] }
 miniz_oxide = "0.8"
-utm = "0.1"
 
 [dev-dependencies]
 geotiff-writer = "0.8"

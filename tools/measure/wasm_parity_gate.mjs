@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 
 const args = process.argv.slice(2);
 const arg = (name, def) => {
@@ -15,8 +15,11 @@ const now = Number(arg("--now", "8.443618e8"));
 const scratch = process.env.TMPDIR || "scratch";
 const nativeDump = arg("--native", path.join(scratch, "native_after.bin"));
 
-const require = createRequire(import.meta.url);
-const wasm = require(path.resolve(pkgDir, "omegaflow.js"));
+const wasm = await import(pathToFileURL(path.resolve(pkgDir, "omegaflow.js")).href);
+const wasmBytes = fs.readFileSync(path.resolve(pkgDir, "omegaflow_bg.wasm"));
+wasm.initSync(
+  wasmBytes.buffer.slice(wasmBytes.byteOffset, wasmBytes.byteOffset + wasmBytes.byteLength),
+);
 const starBytes = fs.readFileSync(stars);
 const lookup = new wasm.MembraneLookup(starBytes, epoch);
 const wasmFlat = lookup.query(0, 0, 0, now, 1, 0, 0);

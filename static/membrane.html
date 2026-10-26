@@ -31,7 +31,8 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
 // Assets staged same-origin by pages-deploy.yml:
 //   /dr3_stars.bin  (ssd.jpl.nasa.gov-gaia, catalog_epoch 2000.0)
 // The WASM web bundle (pkg/omegaflow.js + pkg/omegaflow_bg.wasm) is built by CI
-// with `wasm-pack build --target web --release` and copied next to this page.
+// with `cargo build --target wasm32-unknown-unknown --release --lib` and copied
+// next to this page as omegaflow_bg.wasm.
 // Loaded dynamically so a missing bundle stays an honest black, not a blank page.
 
 const CATALOG_EPOCH_YR = 2016.0;       // Gaia DR3 reference epoch (dr3_stars.bin).
