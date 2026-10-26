@@ -1,3 +1,4 @@
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use crate::archivar::{Buffer, CurveSet, PARSEC_M, SampleRecord};
 #[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use crate::archivar::{LeapSeconds, MembraneCtx, Radiator, sense_membrane, system_now};
@@ -50,8 +51,13 @@ pub use s2::*;
 pub use scalar_te_gpu::*;
 pub use shaders::*;
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use crate::force::kernel_id_for_force;
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::sync::atomic::{AtomicBool, Ordering};
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::sync::{Arc, mpsc};
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::sync::{Mutex, RwLock};
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::thread;

@@ -344,11 +344,11 @@ pub(crate) use crate::dastcom::{RECORD_STRIDE, hill_radius_m, parse_record, stat
 pub(crate) use crate::force::default_kernel_for;
 pub(crate) use crate::inflate::gunzip;
 pub(crate) use crate::netcdf::NetcdfFile;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use crate::pck::PckBody;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::io::IsTerminal;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::sync::atomic::{AtomicBool, Ordering};
 pub(crate) use std::sync::{Mutex, mpsc};
 pub(crate) use std::thread;
