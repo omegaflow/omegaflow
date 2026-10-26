@@ -81,7 +81,7 @@ fn main() {
     let mut total_rows = 0usize;
     let mut total_emitted = 0usize;
     for (name, number_mp) in tno_table() {
-        let adql = observation_adql(*number_mp);
+        let adql = observation_adql(number_mp);
         let Some((code, body)) = tap_csv(&adql) else {
             println!(
                 "gaia_sso {name} ({number_mp}): the TAP query did not answer (measured stall) — the harvest stays pending"

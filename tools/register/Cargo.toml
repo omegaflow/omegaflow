@@ -6,4 +6,4 @@ license-file = "../../LICENSE"
 description = "register and repository verification"
 
 [dependencies]
-omegaflow = { path = "../..", features = ["commit_gate"] }
+omegaflow = { path = "../..", default-features = false, features = ["commit_gate"] }

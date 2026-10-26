@@ -19,7 +19,7 @@ pub struct PackedWindow {
     pub count: u32,
 }
 
-pub const CHANNEL_CAP: usize = 16;
+pub use super::channel::CHANNEL_CAP;
 
 #[derive(Clone, Copy)]
 pub struct PresenceFrame {

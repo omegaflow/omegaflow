@@ -285,7 +285,7 @@ pub mod extract;
 pub mod fetch;
 pub mod frames;
 pub mod ingress;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub mod main_flow;
 pub mod membrane;
 pub mod motion;
@@ -323,7 +323,7 @@ pub use fetch::*;
 pub use fit::*;
 pub use frames::*;
 pub use ingress::*;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub use main_flow::*;
 pub use membrane::*;
 pub use motion::*;

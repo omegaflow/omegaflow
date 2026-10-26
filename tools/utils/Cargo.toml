@@ -6,4 +6,4 @@ license-file = "../../LICENSE"
 description = "readers and generic utilities"
 
 [dependencies]
-omegaflow = { path = "../.." }
+omegaflow = { path = "../..", default-features = false }

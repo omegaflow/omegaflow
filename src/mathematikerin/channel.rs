@@ -1,7 +1,7 @@
-use super::actuators::CHANNEL_CAP;
 use super::media::MediumParams;
 use std::collections::HashMap;
 
+pub const CHANNEL_CAP: usize = 16;
 pub const VACUUM_SPEED_M_S: f64 = 299_792_458.0;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

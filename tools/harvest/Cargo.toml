@@ -6,5 +6,5 @@ license-file = "../../LICENSE"
 description = "source compilers and harvesters"
 
 [dependencies]
-omegaflow = { path = "../.." }
+omegaflow = { path = "../..", default-features = false }
 zstd = "0.13"
