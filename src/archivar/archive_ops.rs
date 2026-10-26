@@ -318,3 +318,116 @@ pub fn ephemeris_edition_body(url: &str, format: &str) -> Option<String> {
     }
 }
 
+
+pub fn load_ephemeris_cache(
+    fetch_tx: &mpsc::Sender<FetchResult>,
+    source_idx: usize,
+    src: &SourceConfig,
+    tmp_path: &str,
+    now: f64,
+    lsk: &LeapSeconds,
+    presences: &[PresenceSample],
+) {
+    if let ExtractResult::WithEphemeris(_, eph) = extract(src, tmp_path, now, lsk) {
+        let Some(body) = src.body.as_deref() else {
+            return;
+        };
+        let mut one: HashMap<String, BodyEphemeris> = HashMap::new();
+        one.insert(body.to_string(), *eph);
+        let admitted = {
+            let Some(entry) = one.get(body) else {
+                return;
+            };
+            let Some(t_r) = body_record_epoch(entry) else {
+                return;
+            };
+            let Some(props) = entry.props.as_ref() else {
+                return;
+            };
+            match body_barycenter_position(body, t_r, &one) {
+                Some(pos) => body_in_enclosure(presences, props, pos, t_r, now),
+                None => false,
+            }
+        };
+        if !admitted {
+            return;
+        }
+        let Some(eph) = one.remove(body) else {
+            return;
+        };
+        let _ = fetch_tx.send(FetchResult {
+            source_idx,
+            channels: Vec::new(),
+            eph_update: Some((body.to_string(), eph)),
+            asteroid_samples: Vec::new(),
+            star_samples: Vec::new(),
+            curves: None,
+            spectral: None,
+            fetch_ok: true,
+            sample_ttl_override: None,
+        });
+    }
+}
+
+pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
+    if items.is_empty() {
+        return;
+    }
+    let parts: Vec<String> = items
+        .iter()
+        .map(|(_, _, p)| format!("{}.part", p))
+        .collect();
+    let mut pending: Vec<(usize, String, String)> = Vec::new();
+    for (i, (_, s, tmp_path)) in items.iter().enumerate() {
+        if let Ok(data) = std::fs::read(&parts[i]) {
+            let valid = if s.format == "orbit_bin" {
+                crate::wind_orbit::parse_bin(&data).is_some()
+            } else {
+                parse_ephemeris_binary(&data).is_some()
+            };
+            if valid {
+                let _ = std::fs::rename(&parts[i], tmp_path);
+                continue;
+            }
+        }
+        let _ = std::fs::remove_file(&parts[i]);
+        pending.push((i, parts[i].clone(), tmp_path.clone()));
+    }
+    if pending.is_empty() {
+        return;
+    }
+    let mut cmd = curl_base(RetryPolicy::Transient, TRANSFER_BOUND_S, 8);
+    for (i, part, _) in &pending {
+        cmd.arg("-o").arg(part).arg(&items[*i].1.url);
+    }
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => {
+            eprintln!("ephemeris batch ({} files): curl void", pending.len());
+            for (_, part, _) in &pending {
+                let _ = std::fs::remove_file(part);
+            }
+            return;
+        }
+    };
+    if output.status.success() {
+        for (i, part, tmp_path) in &pending {
+            if std::fs::rename(part, tmp_path).is_err() {
+                let _ = std::fs::remove_file(part);
+            } else {
+                write_cdn_stamp(tmp_path, &items[*i].1.url);
+            }
+        }
+    } else {
+        eprintln!(
+            "ephemeris batch ({} files): curl returned {}: {}",
+            pending.len(),
+            output.status,
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+        for (_, part, _) in &pending {
+            let _ = std::fs::remove_file(part);
+        }
+    }
+}
+

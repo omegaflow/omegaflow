@@ -1405,7 +1405,7 @@ fn load_dbdt_across_sources(
     if samples.is_empty() {
         return Ok(None);
     }
-    let peaks = omegaflow::archivar::main_flow::series_dbdt(&samples, 60.0);
+    let peaks = omegaflow::archivar::series_dbdt(&samples, 60.0);
     if peaks.is_empty() {
         return Ok(None);
     }

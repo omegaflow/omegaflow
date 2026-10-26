@@ -844,6 +844,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "omegaflow-app"
+version = "1.0.0"
+dependencies = [
+ "omegaflow",
+]
+
+[[package]]
 name = "omegaflow-gate"
 version = "1.0.0"
 dependencies = [
