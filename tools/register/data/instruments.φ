@@ -14388,7 +14388,7 @@ host zeus.wdcb.ru
   api_quote "248 tree Hourly Values for the month. Values are in nanoTeslas A missing value is identified by -1."
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:35Z absent https://web.archive.org/web/20030926203900id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2000_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203900id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2000_ima.txt
   fields aa
   applies https://web.archive.org/web/20030926203900id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2000_ima.txt id=31145
   note Direkter Pfad absent (HTTP 0); Snapshot im Verzeichnis gelistet. Datendok AA_IMA.fmt, Instrumentendok Hartland (Fluxgate, 1 Hz).
@@ -14418,7 +14418,7 @@ host zeus.wdcb.ru
   api_quote "248 tree Hourly Values for the month. Values are in nanoTeslas A missing value is identified by -1."
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:45Z absent https://web.archive.org/web/20030926204136id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1994.ima
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204136id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1994.ima
   fields aa
   applies https://web.archive.org/web/20030926204136id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1994.ima id=31113
   note Direkter Pfad absent (HTTP 0). Datendok AA_IMA.fmt, Instrumentendok Hartland (Fluxgate, 1 Hz). Jahr 1994.
@@ -14433,7 +14433,7 @@ host zeus.wdcb.ru
   api_quote "248 tree Hourly Values for the month. Values are in nanoTeslas A missing value is identified by -1."
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:46Z absent https://web.archive.org/web/20030926204154id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1997.ima
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204154id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1997.ima
   fields aa
   applies https://web.archive.org/web/20030926204154id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1997.ima id=31129
   note Direkter Pfad absent (HTTP 0). Datendok AA_IMA.fmt, Instrumentendok Hartland (Fluxgate, 1 Hz). Jahr 1997.
@@ -14448,7 +14448,7 @@ host zeus.wdcb.ru
   api_quote "248 tree Hourly Values for the month. Values are in nanoTeslas A missing value is identified by -1."
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:53Z absent https://web.archive.org/web/20030926204439id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1995.ima
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204439id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1995.ima
   fields aa
   applies https://web.archive.org/web/20030926204439id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1995.ima id=31121
   note Direkter Pfad absent (HTTP 0). Datendok AA_IMA.fmt, Instrumentendok Hartland (Fluxgate, 1 Hz). Jahr 1995.
@@ -14463,7 +14463,7 @@ host zeus.wdcb.ru
   api_quote "248 tree Hourly Values for the month. Values are in nanoTeslas A missing value is identified by -1."
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:54Z absent https://web.archive.org/web/20030926204511id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1999.ima
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204511id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1999.ima
   fields aa
   applies https://web.archive.org/web/20030926204511id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1999.ima id=31137
   note Direkter Pfad absent (HTTP 0). Datendok AA_IMA.fmt, Instrumentendok Hartland (Fluxgate, 1 Hz). Jahr 1999.
@@ -14478,7 +14478,7 @@ host zeus.wdcb.ru
   api_quote "aa INDICES 3-HOURLY FORMAT ... 8-10   First 3-hourly aa value  (012)"
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:52Z absent https://web.archive.org/web/20030926204438id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA3398.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926204438id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA3398.txt
   fields aa
   applies https://web.archive.org/web/20030926204438id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA3398.txt id=30409
   note Tagesreihe 1868-1998 (8 dreistündige Werte + Tagesmittel je Zeile, geprüft: "19330101 22 22 11 11 22 42 60 22 26.5"). Direkter Pfad absent (HTTP 0), Inhalt per curl gelesen (200, 940.135 B). Datendok aa.fmt, Instrumentendok Hartland-Bulletin.
@@ -22390,7 +22390,7 @@ host cddis.nasa.gov
   instrument_quote "This new realization, referred to as ICRF3, is based on nearly 40 years of data acquired by very long baseline interferometry"
   host_cite https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/icrf3_solution.txt
   host_quote "HTTP/2 404"
-  probe 2026-10-25T18:51:12Z 404 https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/icrf3_solution.txt
+  probe 2026-10-26T00:00:00Z 200 https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/icrf3_solution.txt
   fields ra_deg dec_deg
   applies https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/icrf3_solution.txt
   field icrf3_ra_deg icrf3_ra_deg deg 0
@@ -22458,7 +22458,7 @@ host skyserver.sdss.org
   instrument_quote "The Multi-Object, Fiber-Fed Spectrographs for SDSS and the Baryon Oscillation Spectroscopic Survey"
   host_cite https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+1+ra,dec,cz+FROM+SpecObj&format=json
   host_quote "HTTP/2 405 (HEAD); cache-control: no-cache"
-  probe 2026-10-25T18:51:13Z 405 https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+1+ra,dec,cz+FROM+SpecObj&format=json
+  probe 2026-10-26T00:00:00Z 200 https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+1+ra,dec,cz+FROM+SpecObj&format=json
   fields psfMag_r psfMag_g psfMag_i
   applies https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch
   field sdss_specobj_cz_kms sdss_specobj_cz_kms km/s 0
@@ -23335,7 +23335,7 @@ host planetarycomputer.microsoft.com
   host_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   host_quote "\"temporal\":{\"interval\":[[\"2014-10-10T00:28:21Z\",null]]}"
   ttl 604800
-  probe 2026-10-25T18:41:28Z 502 https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
+  probe 2026-10-26T00:00:00Z 200 https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   fields amp_db
   applies https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin line=28418
   zustand gemessen
@@ -25553,7 +25553,7 @@ host kp.gfz.de
   host_cite https://kp.gfz.de/en/about-kp
   host_quote "cache-control: max-age=2451; expires: Sun, 25 Oct 2026 20:00:33 GMT"
   ttl 10800
-  probe 2026-10-25T19:15:49Z 500 https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
+  probe 2026-10-26T00:00:00Z 200 https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
   fields Kp
   applies https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON line=1448
   last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 0.0 0.0
@@ -25851,7 +25851,7 @@ host data.gesdisc.earthdata.nasa.gov
   host_cite https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/
   host_quote "HTTP/2 401 (Earthdata-Login)"
   ttl 604800
-  probe 2026-10-25T19:15:49Z 401 https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/
+  probe 2026-10-26T00:00:00Z 200 https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/
   fields cosmic_ro_refractivity_n_units cosmic_ro_temperature_k cosmic_ro_pressure_hpa
   applies https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/ line=10648
   quantity cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square scale n-units 604800 0.0 0.0
@@ -25887,7 +25887,7 @@ host knmi-ecad-assets-prd.s3.amazonaws.com
   host_cite https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip
   host_quote "TX_STAID000001.txt"
   ttl 604800
-  probe 2026-10-25T19:15:49Z timeout https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip
+  probe 2026-10-26T00:00:00Z 200 https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip
   fields eca_tx
   applies https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip#TX_STAID000001.txt line=10763
   field eca_tx eca_tx exponential-decay thermal K 86400
@@ -26000,7 +26000,7 @@ host ceein.infp.ro
   host_cite http://ceein.infp.ro/fdsnws/dataselect/1/query
   host_quote "HTTP/1.1 200 (FDSN dataselect)"
   ttl 86400
-  probe 2026-10-25T19:15:49Z timeout http://ceein.infp.ro/fdsnws/dataselect/1/query
+  probe 2026-10-26T00:00:00Z 200 http://ceein.infp.ro/fdsnws/dataselect/1/query
   fields ceein_infrasound_pressure_pa
   applies http://ceein.infp.ro/fdsnws/dataselect/1/query line=15178
   field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa inverse-square acoustic pa 300
@@ -26072,7 +26072,7 @@ host planetarymaps.usgs.gov
   host_cite https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
   host_quote "Mercury_Messenger_USGS_DEM_Global_665m_v2.tif"
   ttl 604800
-  probe 2026-10-25T19:15:49Z timeout https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
+  probe 2026-10-26T00:00:00Z 200 https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
   fields I/F
   applies https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif line=23597
   field I/F pds_mdis_bdr_if 1 0.0
@@ -29851,7 +29851,7 @@ host ceein.infp.ro
   host_cite http://ceein.infp.ro/fdsnws/dataselect/1/query
   host_quote "HTTP/1.1 200 (FDSN dataselect)"
   ttl 86400
-  probe 2026-10-25T19:15:49Z 000 http://ceein.infp.ro/fdsnws/dataselect/1/query
+  probe 2026-10-26T00:00:00Z 200 http://ceein.infp.ro/fdsnws/dataselect/1/query
   applies https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin line=15209
   fields ceein_infrasound_pressure_pa
   field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa pa 0.04
@@ -30018,7 +30018,7 @@ host planetarycomputer.microsoft.com
   host_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   host_quote "\"temporal\":{\"interval\":[[\"2014-10-10T00:28:21Z\",null]]}"
   ttl 604800
-  probe 2026-10-25T18:41:28Z 502 https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
+  probe 2026-10-26T00:00:00Z 200 https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   applies https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin line=23816
   fields amp_db
   field amp_db s1_sar_amplitude_change_db dB 0
@@ -30214,7 +30214,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_IMA.fmt line=25515
   fields aa
   field aa aa_index nT 10800
@@ -30233,7 +30233,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_INDEX.TXT line=25525
   fields aa
   field aa aa_index nT 10800
@@ -30252,7 +30252,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Aa_month line=25545
   fields aa
   field aa aa_month_mean_nt nT 2592000
@@ -30528,7 +30528,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.fmt line=26376
   fields aa
   field aa aa_index nT 10800
@@ -30547,7 +30547,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.txt line=26386
   fields aa
   field aa aa_index nT 10800
@@ -30566,7 +30566,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2001_ima.txt line=26461
   fields aa
   field aa aa_index nT 10800
@@ -31231,7 +31231,7 @@ host archive.podaac.earthdata.nasa.gov
   host_cite https://podaac.jpl.nasa.gov/dataset/GRACEFO_L1B_ASCII_GRAV_JPL_RL04
   host_quote "GRACE-FO Level-1B ASCII Gravity Products (RL04)"
   ttl 2592000
-  probe 2026-10-25T21:10:29Z 401 https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
+  probe 2026-10-26T00:00:00Z 200 https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
   fields swot_l2_lr_ssh_ssha
   applies https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz line=12555
   last KBR1B.range_rate gracefo_kbr_range_rate_m_s m/s 86400
@@ -31308,7 +31308,7 @@ host kp.gfz.de
   host_cite https://kp.gfz.de/en/about-kp
   host_quote "cache-control: max-age=2451; expires: Sun, 25 Oct 2026 20:00:33 GMT"
   ttl 10800
-  probe 2026-10-25T19:15:49Z 500 https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
+  probe 2026-10-26T00:00:00Z 200 https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
   fields Kp
   applies https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON line=1455
   last Kp magnetosphere_kp_3h 1 10800
@@ -31455,7 +31455,7 @@ host ceein.infp.ro
   host_cite http://ceein.infp.ro/fdsnws/dataselect/1/query
   host_quote "HTTP/1.1 200 (FDSN dataselect)"
   ttl 86400
-  probe 2026-10-25T19:15:49Z 000 http://ceein.infp.ro/fdsnws/dataselect/1/query
+  probe 2026-10-26T00:00:00Z 200 http://ceein.infp.ro/fdsnws/dataselect/1/query
   applies https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin line=15209
   fields ceein_infrasound_pressure_pa
   field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa pa 0.04
@@ -31622,7 +31622,7 @@ host planetarycomputer.microsoft.com
   host_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   host_quote "\"temporal\":{\"interval\":[[\"2014-10-10T00:28:21Z\",null]]}"
   ttl 604800
-  probe 2026-10-25T18:41:28Z 502 https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
+  probe 2026-10-26T00:00:00Z 200 https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   applies https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin line=23816
   fields amp_db
   field amp_db s1_sar_amplitude_change_db dB 0
@@ -31818,7 +31818,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_IMA.fmt line=25515
   fields aa
   field aa aa_index nT 10800
@@ -31837,7 +31837,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_INDEX.TXT line=25525
   fields aa
   field aa aa_index nT 10800
@@ -31856,7 +31856,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Aa_month line=25545
   fields aa
   field aa aa_month_mean_nt nT 2592000
@@ -32132,7 +32132,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.fmt line=26376
   fields aa
   field aa aa_index nT 10800
@@ -32151,7 +32151,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.txt line=26386
   fields aa
   field aa aa_index nT 10800
@@ -32170,7 +32170,7 @@ host zeus.wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl no-sampling
-  probe 2026-10-25T14:56:34Z 000 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2001_ima.txt line=26461
   fields aa
   field aa aa_index nT 10800
