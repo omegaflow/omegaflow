@@ -865,7 +865,8 @@ mod tests {
     }
 
     #[test]
-    fn libration_matrix_reads_the_pck_angles_in_radians() {        let phi = (-3.102403_f64).to_radians();
+    fn libration_matrix_reads_the_pck_angles_in_radians() {
+        let phi = (-3.102403_f64).to_radians();
         let theta = 24.342427_f64.to_radians();
         let psi = 146_921.186_402_f64.to_radians();
         let (ra, dec, w) = iau_angles_from_matrix(libration_matrix(phi, theta, psi));
