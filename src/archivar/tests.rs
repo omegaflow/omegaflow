@@ -7,7 +7,7 @@ static ANOMALY_TEST_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 #[test]
 fn beat_source_precedence_is_total() {
-    use crate::archivar::main_flow::{BeatSource, select_beat_source};
+    use crate::archivar::archive_ops::{BeatSource, select_beat_source};
     assert_eq!(
         select_beat_source(true, Some("AA:BB"), Some("/f")),
         BeatSource::Serial
@@ -27,7 +27,7 @@ fn beat_source_precedence_is_total() {
 
 #[test]
 fn jwst_spectrum_without_parallax_keeps_a_declared_anchor() {
-    use crate::archivar::main_flow::jwst_spectrum_motion;
+    use crate::archivar::archive_ops::jwst_spectrum_motion;
     let rec = Arc::new(StarRec {
         ra_deg: 53.0,
         dec_deg: -27.8,

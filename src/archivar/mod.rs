@@ -19,6 +19,7 @@ pub mod ampere_fac;
 pub mod arpansa;
 pub mod asset_path;
 pub mod astrometry;
+pub mod archive_ops;
 pub mod astrometry_series;
 pub mod atdf;
 pub mod auger;
@@ -314,6 +315,7 @@ pub mod wdc_ae;
 pub mod wqp_result;
 pub mod zcta;
 
+pub use archive_ops::*;
 pub use astrometry::*;
 #[cfg(unix)]
 pub use ble::*;
