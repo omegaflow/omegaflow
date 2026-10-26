@@ -787,8 +787,61 @@ mod tests {
     }
 
     #[test]
-    fn libration_matrix_reads_the_pck_angles_in_radians() {
-        let phi = (-3.102403_f64).to_radians();
+    fn every_woven_body_declares_its_orientation_model() {
+        let declaration = include_str!("kernels/body_models.tsv");
+        let woven = crate::weberin::woven_major_bodies();
+        assert!(!woven.is_empty(), "the weave declares no body");
+        let mut seen: Vec<String> = Vec::new();
+        for line in declaration.lines().skip(1).filter(|l| !l.trim().is_empty()) {
+            let cols: Vec<&str> = line.split('\t').collect();
+            assert_eq!(cols.len(), 8, "body_models row is not eight columns: {line}");
+            let (body, naif, pck, model, kernel, frame_kernel, coverage, fallback) = (
+                cols[0], cols[1], cols[2], cols[3], cols[4], cols[5], cols[6], cols[7],
+            );
+            assert!(
+                matches!(model, "iau-tpc" | "de440-pa" | "iers-c04"),
+                "{body} names an unknown orientation model: {model}"
+            );
+            let naif: i32 = naif.parse().unwrap_or_else(|_| panic!("{body}: naif id"));
+            assert_eq!(
+                pck_id_of(naif),
+                pck.parse::<i32>().unwrap_or_else(|_| panic!("{body}: pck id")),
+                "{body}: the pck id does not follow from the naif id"
+            );
+            let listed = body_table()
+                .get(&naif)
+                .map(|b| b.name.clone())
+                .unwrap_or_default();
+            assert_eq!(listed, body, "{body}: the naif id names a different body");
+            match model {
+                "de440-pa" => {
+                    assert!(kernel.ends_with(".bpc"), "{body}: a binary pck is required");
+                    assert!(
+                        frame_kernel.ends_with(".tf"),
+                        "{body}: the pck needs its frame kernel"
+                    );
+                    assert!(
+                        coverage.contains(".."),
+                        "{body}: the bpc interval must be named"
+                    );
+                    assert!(fallback != "absent", "{body}: a fallback must be named");
+                }
+                "iau-tpc" => assert!(kernel.ends_with(".tpc"), "{body}: an iau tpc is required"),
+                _ => assert!(kernel.ends_with(".tsv"), "{body}: the eop kernel is the table"),
+            }
+            assert!(!seen.contains(&body.to_string()), "{body} is declared twice");
+            seen.push(body.to_string());
+        }
+        for body in &woven {
+            assert!(
+                seen.contains(body),
+                "{body} is woven but declares no orientation model"
+            );
+        }
+    }
+
+    #[test]
+    fn libration_matrix_reads_the_pck_angles_in_radians() {        let phi = (-3.102403_f64).to_radians();
         let theta = 24.342427_f64.to_radians();
         let psi = 146_921.186_402_f64.to_radians();
         let (ra, dec, w) = iau_angles_from_matrix(libration_matrix(phi, theta, psi));
