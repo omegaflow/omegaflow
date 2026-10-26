@@ -6,7 +6,8 @@ license-file = "../LICENSE"
 description = "the loop: pull measurement, run the field, write the archive"
 
 [dependencies]
-omegaflow = { path = "../..", default-features = false, features = ["membrane"] }
+omegaflow = { path = "../.." }
+omegaflow-membrane = { path = "../membrane" }
 
 [[bin]]
 name = "omegaflow"

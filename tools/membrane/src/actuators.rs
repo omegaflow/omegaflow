@@ -330,7 +330,7 @@ pub fn color_emission(field: &[f32], meta: &[f32]) -> [f32; 4] {
             continue;
         }
         let ci = meta[j * 16 + 10] as f64;
-        let c = crate::spectral::color_for_ci(ci);
+        let c = omegaflow::spectral::color_for_ci(ci);
         acc[0] += c[0] * w;
         acc[1] += c[1] * w;
         acc[2] += c[2] * w;
@@ -422,7 +422,7 @@ pub struct SenseReq {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::mathematikerin::channel::live_schema_hash;
+    use omegaflow::mathematikerin::channel::live_schema_hash;
 
     fn cap9(v: [f32; 9]) -> [f32; CHANNEL_CAP] {
         let mut out = [0.0f32; CHANNEL_CAP];

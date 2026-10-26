@@ -179,9 +179,9 @@ pub struct NameMeta {
 }
 
 pub type FrameBundle = (
-    crate::archivar::Frame,
-    Option<crate::archivar::ModelKind>,
-    Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
+    omegaflow::archivar::Frame,
+    Option<omegaflow::archivar::ModelKind>,
+    Vec<(omegaflow::archivar::Channel, omegaflow::archivar::FieldConfig)>,
 );
 pub type FrameRx = mpsc::Receiver<FrameBundle>;
 
@@ -193,7 +193,7 @@ pub struct MatrixMachine {
     pub results: HashMap<String, PairResult>,
     pub line: MatrixLine,
     pub last_presence: Option<[f64; 3]>,
-    pub last_field: Option<Arc<crate::archivar::Buffer>>,
+    pub last_field: Option<Arc<omegaflow::archivar::Buffer>>,
     pub last_rebuild: Option<std::time::Instant>,
     pub last_state_save: Option<std::time::Instant>,
     pub state_path: String,
@@ -613,12 +613,12 @@ impl MatrixMachine {
 
     pub fn record(
         &mut self,
-        frame: &crate::archivar::Frame,
-        model_kind: Option<crate::archivar::ModelKind>,
-        channels: Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
+        frame: &omegaflow::archivar::Frame,
+        model_kind: Option<omegaflow::archivar::ModelKind>,
+        channels: Vec<(omegaflow::archivar::Channel, omegaflow::archivar::FieldConfig)>,
     ) {
         let frame_anchor = match frame {
-            crate::archivar::Frame::Surface {
+            omegaflow::archivar::Frame::Surface {
                 body_name,
                 lat,
                 lon,
@@ -629,21 +629,21 @@ impl MatrixMachine {
                 lon: *lon,
                 alt,
             }),
-            crate::archivar::Frame::Barycenter { body_name, scale } => {
+            omegaflow::archivar::Frame::Barycenter { body_name, scale } => {
                 Some(MetaAnchor::Barycenter {
                     body_name: body_name.clone(),
                     scale: *scale,
                 })
             }
-            crate::archivar::Frame::Manifest => None,
+            omegaflow::archivar::Frame::Manifest => None,
         };
         for (channel, sensor) in channels {
-            if model_kind == Some(crate::archivar::ModelKind::Static) || !channel.epoch.is_finite()
+            if model_kind == Some(omegaflow::archivar::ModelKind::Static) || !channel.epoch.is_finite()
             {
                 continue;
             }
             let anchor = match &channel.position {
-                crate::archivar::Position::Surface {
+                omegaflow::archivar::Position::Surface {
                     body_name,
                     lat,
                     lon,
@@ -717,9 +717,9 @@ impl MatrixMachine {
         let mut point_anchor: Option<MetaAnchor> = None;
         for (name, meta) in &self.metas {
             let (motion, body_props, body_medium): (
-                crate::archivar::Motion,
-                Option<&crate::archivar::BodyProperties>,
-                Option<&crate::media::MediumParams>,
+                omegaflow::archivar::Motion,
+                Option<&omegaflow::archivar::BodyProperties>,
+                Option<&omegaflow::media::MediumParams>,
             ) = match &meta.anchor {
                 MetaAnchor::Surface {
                     body_name,
@@ -729,7 +729,7 @@ impl MatrixMachine {
                 } => {
                     let e = field.eph.get(body_name.as_str());
                     (
-                        crate::archivar::Motion::Surface {
+                        omegaflow::archivar::Motion::Surface {
                             body_name: body_name.clone(),
                             lat: *lat,
                             lon: *lon,
@@ -752,7 +752,7 @@ impl MatrixMachine {
                 + (p[2] - presence[2]).powi(2);
             let age = (t_presence - meta.epoch).abs();
             let Some(extent) =
-                crate::archivar::medium_reach(meta.channel_ref, age, body_medium, meta.advection)
+                omegaflow::archivar::medium_reach(meta.channel_ref, age, body_medium, meta.advection)
             else {
                 continue;
             };
@@ -801,7 +801,7 @@ impl MatrixMachine {
             else {
                 return;
             };
-            let motion = crate::archivar::Motion::Surface {
+            let motion = omegaflow::archivar::Motion::Surface {
                 body_name,
                 lat,
                 lon,
@@ -813,7 +813,7 @@ impl MatrixMachine {
                 let mut lon_cos: Vec<(f64, f32)> = Vec::new();
                 let gm = eph.props.as_ref().and_then(|p| p.gm);
                 for &t in &epochs {
-                    let Some(pb) = crate::archivar::body_barycenter_position(body, t, &field.eph)
+                    let Some(pb) = omegaflow::archivar::body_barycenter_position(body, t, &field.eph)
                     else {
                         continue;
                     };
@@ -832,9 +832,9 @@ impl MatrixMachine {
                     {
                         series.push((t, (gm / r2) as f32));
                     }
-                    let t_jd = t / 86400.0 + crate::archivar::J2000_EPOCH;
+                    let t_jd = t / 86400.0 + omegaflow::archivar::J2000_EPOCH;
                     let Some([bx, by, ..]) =
-                        crate::archivar::rotate_icrs_to_body_frame(anchor_bp, [rx, ry, rz], t_jd)
+                        omegaflow::archivar::rotate_icrs_to_body_frame(anchor_bp, [rx, ry, rz], t_jd)
                     else {
                         continue;
                     };
@@ -898,7 +898,7 @@ impl MatrixMachine {
         let verdict = te_read_verdict(read_buf);
         let label = self.cell_label(a, b, cell_idx);
         let (scale_idx, dir, shift_days) = matrix_cell_desc(cell_idx);
-        let Some(v) = crate::te::topological_verdict_from_gpu(&verdict) else {
+        let Some(v) = omegaflow::te::topological_verdict_from_gpu(&verdict) else {
             self.say(format!(
                 "{} n {} state {}",
                 label,
@@ -913,7 +913,7 @@ impl MatrixMachine {
         let accum = &mut result.accum;
         if scale_idx == 0 {
             accum.m += 1;
-            for s in 2..crate::te::TE_SERIES_COUNT {
+            for s in 2..omegaflow::te::TE_SERIES_COUNT {
                 if verdict[s * 6 + 4] == 1.0 {
                     let st = verdict[s * 6 + 1] as f64;
                     if !accum.fam_any || st > accum.fam {
@@ -1032,17 +1032,17 @@ impl MatrixMachine {
             return;
         };
         let m = xs.len();
-        let mut data = vec![0f32; crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
+        let mut data = vec![0f32; omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
         data[0..m].copy_from_slice(&xs);
         data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(&ys);
         let mut rng = self.rng.wrapping_add(0x9e3779b97f4a7c15);
-        for s in 0..crate::te::TE_SURR_FLOOR {
-            let surr = crate::te::phase_randomized_surrogate(&ys, &mut rng);
+        for s in 0..omegaflow::te::TE_SURR_FLOOR {
+            let surr = omegaflow::te::phase_randomized_surrogate(&ys, &mut rng);
             let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
-        let max_lag = (m as f64 / Φ) as u32;
+        let max_lag = (m as f64 / PHI) as u32;
         let param = [m as u32, max_lag, h_scale.to_bits(), TE_KSG_K_PROD];
         let mut pb = [0u8; 16];
         for (i, x) in param.iter().enumerate() {
@@ -1054,7 +1054,7 @@ impl MatrixMachine {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(pipe);
             pass.set_bind_group(0, bind, &[]);
-            pass.dispatch_workgroups((crate::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+            pass.dispatch_workgroups((omegaflow::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
         }
         enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
         queue.submit(std::iter::once(enc.finish()));
@@ -1143,7 +1143,7 @@ impl MatrixMachine {
 
     pub fn tick(
         &mut self,
-        field: Option<Arc<crate::archivar::Buffer>>,
+        field: Option<Arc<omegaflow::archivar::Buffer>>,
         presence: [f64; 3],
         t_presence: f64,
         ring_gen: u64,

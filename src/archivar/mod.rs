@@ -344,7 +344,6 @@ pub(crate) use crate::dastcom::{RECORD_STRIDE, hill_radius_m, parse_record, stat
 pub(crate) use crate::force::default_kernel_for;
 pub(crate) use crate::inflate::gunzip;
 pub(crate) use crate::netcdf::NetcdfFile;
-#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::sync::{Mutex, mpsc};
 pub(crate) use std::thread;
 pub(crate) use std::time::{SystemTime, UNIX_EPOCH};

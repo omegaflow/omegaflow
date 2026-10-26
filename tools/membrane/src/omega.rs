@@ -1,6 +1,6 @@
 #[cfg(not(target_arch = "wasm32"))]
-pub use crate::archivar::JUMP_GRID;
-pub use crate::archivar::{DiodeState, PresenceState};
+pub use omegaflow::archivar::JUMP_GRID;
+pub use omegaflow::archivar::{DiodeState, PresenceState};
 use super::*;
 #[cfg(not(target_arch = "wasm32"))]
 use std::io::Write;
@@ -46,9 +46,9 @@ pub fn block_on<F: std::future::Future>(future: F) -> F::Output {
     }
 }
 
-pub const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
+pub const PHI: f64 = std::f64::consts::GOLDEN_RATIO;
 
-pub const C: f64 = crate::archivar::types::C_LIGHT;
+pub const C: f64 = omegaflow::archivar::types::C_LIGHT;
 
 pub const GRID_INIT: f64 = 2147483648.0;
 
@@ -124,9 +124,9 @@ pub fn storage_entry(
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn coupling_descriptor_rows(
-    layer: Option<&crate::archivar::parse::ChannelCouplingLayer>,
+    layer: Option<&omegaflow::archivar::parse::ChannelCouplingLayer>,
 ) -> Vec<f32> {
-    use crate::mathematikerin::channel::DensityKind;
+    use omegaflow::mathematikerin::channel::DensityKind;
     let Some(layer) = layer else {
         return Vec::new();
     };
@@ -169,7 +169,7 @@ pub struct OmegaLoop {
     pub silent: bool,
     pub presence: Arc<RwLock<PresenceState>>,
     pub diode: Arc<RwLock<DiodeState>>,
-    pub verdicts: Arc<RwLock<Vec<crate::archivar::VerdictLine>>>,
+    pub verdicts: Arc<RwLock<Vec<omegaflow::archivar::VerdictLine>>>,
 
     pub device: Option<wgpu::Device>,
     pub queue: Option<wgpu::Queue>,
@@ -239,7 +239,7 @@ pub struct OmegaLoop {
     pub probe_omega: [f32; 9],
     pub prev_probe_omega: [f32; 9],
     pub channels: Option<super::channel::ChannelRegistry>,
-    pub couplings: Option<crate::archivar::parse::ChannelCouplingLayer>,
+    pub couplings: Option<omegaflow::archivar::parse::ChannelCouplingLayer>,
     pub probe_flow: [f32; 3],
     pub probe_r: [f32; CHANNEL_CAP],
     pub probe_u: [f32; CHANNEL_CAP],
@@ -536,7 +536,7 @@ impl OmegaLoop {
             return;
         };
         let now = system_now(&self.time);
-        let riss = crate::archivar::riss_bodies(&v);
+        let riss = omegaflow::archivar::riss_bodies(&v);
         let named: String = riss
             .iter()
             .map(|l| {
@@ -545,7 +545,7 @@ impl OmegaLoop {
                     .iter()
                     .filter_map(|k| k.as_ref().map(|b| b.word()))
                     .collect();
-                if crate::archivar::is_stale(l, now) {
+                if omegaflow::archivar::is_stale(l, now) {
                     format!("stale riss {} ({})", l.name, knots.join(" × "))
                 } else {
                     format!("riss {} ({})", l.name, knots.join(" × "))
@@ -566,7 +566,7 @@ impl OmegaLoop {
                 Some(b) => b.word(),
                 None => "",
             };
-            if crate::archivar::is_stale(l, now) {
+            if omegaflow::archivar::is_stale(l, now) {
                 eprintln!("stale riss {} ({} × {})", l.name, knot_a, knot_b);
             } else {
                 eprintln!("riss {} ({} × {})", l.name, knot_a, knot_b);
@@ -576,12 +576,12 @@ impl OmegaLoop {
 
     pub fn verdict_direction_only(&mut self) -> usize {
         match self.verdicts.write() {
-            Ok(mut verdicts) => crate::archivar::astrometry_series::merge_direction_only(
+            Ok(mut verdicts) => omegaflow::archivar::astrometry_series::merge_direction_only(
                 &mut verdicts,
                 &self.sky.witnesses,
                 self.t_presence,
             ),
-            Err(poisoned) => crate::archivar::astrometry_series::merge_direction_only(
+            Err(poisoned) => omegaflow::archivar::astrometry_series::merge_direction_only(
                 &mut poisoned.into_inner(),
                 &self.sky.witnesses,
                 self.t_presence,
@@ -594,8 +594,8 @@ impl OmegaLoop {
         xs: &[f32],
         ys: &[f32],
         m: usize,
-    ) -> Option<crate::te::TopologicalVerdict> {
-        self.te_cpu = crate::te::topological_te_phase(
+    ) -> Option<omegaflow::te::TopologicalVerdict> {
+        self.te_cpu = omegaflow::te::topological_te_phase(
             xs,
             ys,
             3,
@@ -604,12 +604,12 @@ impl OmegaLoop {
         )
         .map(|v| (v.tau_c, v.tau_y, Some(v.te), Some(v.threshold)));
         let device = self.device.clone()?;
-        let mut carry: Option<crate::te::TopologicalVerdict> = None;
+        let mut carry: Option<omegaflow::te::TopologicalVerdict> = None;
         if let Some(prev) = self.te_map.take() {
             if prev.load(Ordering::SeqCst) {
                 let read_buf = self.te_read_buf.as_ref()?;
                 let verdict = te_read_verdict(read_buf);
-                carry = crate::te::topological_verdict_from_gpu(&verdict);
+                carry = omegaflow::te::topological_verdict_from_gpu(&verdict);
             } else {
                 self.te_map = Some(prev);
                 self.te_say("readback pending");
@@ -623,17 +623,17 @@ impl OmegaLoop {
         let param_buf = self.te_param_buf.as_ref()?;
         let out_buf = self.te_out_buf.as_ref()?;
         let read_buf = self.te_read_buf.as_ref()?;
-        let mut data = vec![0f32; crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
+        let mut data = vec![0f32; omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
         data[0..m].copy_from_slice(xs);
         data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(ys);
         let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
-        for s in 0..crate::te::TE_SURR_FLOOR {
-            let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
+        for s in 0..omegaflow::te::TE_SURR_FLOOR {
+            let surr = omegaflow::te::phase_randomized_surrogate(ys, &mut rng);
             let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
-        let max_lag = (m as f64 / Φ) as u32;
+        let max_lag = (m as f64 / PHI) as u32;
         let param = [m as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K_PROD];
         let mut pb = [0u8; 16];
         for (i, x) in param.iter().enumerate() {
@@ -645,7 +645,7 @@ impl OmegaLoop {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(pipe);
             pass.set_bind_group(0, bind, &[]);
-            pass.dispatch_workgroups((crate::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+            pass.dispatch_workgroups((omegaflow::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
         }
         enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
         queue.submit(std::iter::once(enc.finish()));
@@ -669,7 +669,7 @@ impl OmegaLoop {
             return carry;
         }
         let verdict = te_read_verdict(read_buf);
-        let v = crate::te::topological_verdict_from_gpu(&verdict);
+        let v = omegaflow::te::topological_verdict_from_gpu(&verdict);
         let final_v = v.or(carry);
         if final_v.is_some() {
             self.te_say("verdict present");
@@ -686,7 +686,7 @@ impl OmegaLoop {
         let center = self.pos();
         let t = self.t_presence;
         let pad = self.range;
-        let cache_interval = (self.grid_step / 30000.0).clamp(Φ, Φ * 10.0);
+        let cache_interval = (self.grid_step / 30000.0).clamp(PHI, PHI * 10.0);
         let (_, _, forward) = self.frame();
         let _ = self.req_tx.try_send(SenseReq {
             field,
@@ -889,7 +889,7 @@ impl OmegaLoop {
         self.rebuild_binds();
     }
 
-    pub fn ensure_volumes(&mut self, volumes: &[crate::archivar::volume::Volume]) {
+    pub fn ensure_volumes(&mut self, volumes: &[omegaflow::archivar::volume::Volume]) {
         let fp = (
             volumes.len(),
             volumes.iter().map(|v| v.data.len()).sum::<usize>(),
@@ -986,7 +986,7 @@ impl OmegaLoop {
         let (depth, lat, lon, valid) = match body {
             Some(body) => {
                 let p = self.pos();
-                match crate::archivar::icrs_to_body_geodetic(
+                match omegaflow::archivar::icrs_to_body_geodetic(
                     p[0],
                     p[1],
                     p[2],
@@ -1177,7 +1177,7 @@ impl OmegaLoop {
     }
 
     pub fn vlies_reload(&mut self) {
-        let path = crate::archivar::vlies::vlies_asset_path();
+        let path = omegaflow::archivar::vlies::vlies_asset_path();
         let meta = match std::fs::metadata(&path) {
             Ok(m) => m,
             Err(_) => {
@@ -1201,7 +1201,7 @@ impl OmegaLoop {
             return;
         }
         self.vlies_fingerprint = Some(fp);
-        match crate::archivar::vlies::load_asset(&path) {
+        match omegaflow::archivar::vlies::load_asset(&path) {
             Some(field) => {
                 self.sky.vlies = Some(field);
                 self.sky_say("vlies census held — the density rests in the S² layer state");
@@ -1217,8 +1217,8 @@ impl OmegaLoop {
         self.vlies_reload();
         let t = self.t_presence;
         let riss = match self.verdicts.read() {
-            Ok(v) => crate::archivar::riss_names(&v, Some(t)),
-            Err(poisoned) => crate::archivar::riss_names(&poisoned.into_inner(), Some(t)),
+            Ok(v) => omegaflow::archivar::riss_names(&v, Some(t)),
+            Err(poisoned) => omegaflow::archivar::riss_names(&poisoned.into_inner(), Some(t)),
         };
         let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
         oscs.extend(direction_witness_window(
@@ -1589,7 +1589,7 @@ impl OmegaLoop {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
-        let shelf_rows = crate::mathematikerin::dispersion::shelf_rows_for_gpu();
+        let shelf_rows = omegaflow::mathematikerin::dispersion::shelf_rows_for_gpu();
         let shelf_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
             size: (shelf_rows.len() * 4).max(4) as u64,
@@ -1828,7 +1828,7 @@ impl OmegaLoop {
         let now_i = std::time::Instant::now();
         let raw = match self.last_tick {
             Some(prev) => now_i.duration_since(prev).as_secs_f64() * 1000.0,
-            None => Φ,
+            None => PHI,
         };
         self.last_tick = Some(now_i);
         self.expose_offset += (EXPOSE_OFFSET_BASE - self.expose_offset) * OFFSET_RELAX;
@@ -1974,7 +1974,7 @@ impl OmegaLoop {
                 }
             }
             let tone_target = if self.tone_code.load(std::sync::atomic::Ordering::SeqCst)
-                == crate::archivar::hrv::TONE_STRESSED
+                == omegaflow::archivar::hrv::TONE_STRESSED
             {
                 TONE_FLOOR_SCALE
             } else {
@@ -2114,7 +2114,7 @@ pub struct LoopCtx {
     pub machine_rx: crate::machines::FrameRx,
     pub presence: Arc<RwLock<PresenceState>>,
     pub diode: Arc<RwLock<DiodeState>>,
-    pub verdicts: Arc<RwLock<Vec<crate::archivar::VerdictLine>>>,
+    pub verdicts: Arc<RwLock<Vec<omegaflow::archivar::VerdictLine>>>,
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -2128,7 +2128,7 @@ pub fn run_loop(
 ) {
     let mut loop_ = OmegaLoop::new(rx, req_tx, res_rx, shutdown.clone(), ctx);
     loop_.channels = Some(channels);
-    loop_.couplings = Some(crate::archivar::parse::load_channel_coupling_layer());
+    loop_.couplings = Some(omegaflow::archivar::parse::load_channel_coupling_layer());
     loop_.init_gpu();
     while !shutdown.load(Ordering::SeqCst) {
         let t0 = std::time::Instant::now();
@@ -2207,7 +2207,7 @@ impl LoopRadiator {
                         if r.22 <= 0.0 {
                             return true;
                         }
-                        crate::spectral::band_overlap(r.22, r.23, lo, hi)
+                        omegaflow::spectral::band_overlap(r.22, r.23, lo, hi)
                     });
                 }
                 let packed = pack_window(&records, center);

@@ -425,7 +425,7 @@ impl SolarMachine {
         &mut self,
         label: &str,
         n: usize,
-        verdict: Option<&crate::te::TopologicalVerdict>,
+        verdict: Option<&omegaflow::te::TopologicalVerdict>,
         state: &str,
     ) {
         let line = match verdict {
@@ -489,7 +489,7 @@ impl SolarMachine {
             return;
         };
         let verdict = te_read_verdict(read_buf);
-        let v = crate::te::topological_verdict_from_gpu(&verdict);
+        let v = omegaflow::te::topological_verdict_from_gpu(&verdict);
         if let Some((l, n)) = self.pending.take() {
             match v {
                 Some(vv) => {
@@ -530,17 +530,17 @@ impl SolarMachine {
         let Some(read_buf) = self.te_read_buf.as_ref() else {
             return;
         };
-        let mut data = vec![0f32; crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
+        let mut data = vec![0f32; omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
         data[0..m].copy_from_slice(xs);
         data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(ys);
         let mut rng = self.rng.wrapping_add(0x9e3779b97f4a7c15);
-        for s in 0..crate::te::TE_SURR_FLOOR {
-            let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
+        for s in 0..omegaflow::te::TE_SURR_FLOOR {
+            let surr = omegaflow::te::phase_randomized_surrogate(ys, &mut rng);
             let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
-        let max_lag = (m as f64 / Φ) as u32;
+        let max_lag = (m as f64 / PHI) as u32;
         let param = [m as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K_PROD];
         let mut pb = [0u8; 16];
         for (i, x) in param.iter().enumerate() {
@@ -552,7 +552,7 @@ impl SolarMachine {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(pipe);
             pass.set_bind_group(0, bind, &[]);
-            pass.dispatch_workgroups((crate::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+            pass.dispatch_workgroups((omegaflow::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
         }
         enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
         queue.submit(std::iter::once(enc.finish()));
@@ -573,7 +573,7 @@ impl SolarMachine {
             return;
         }
         let verdict = te_read_verdict(read_buf);
-        match crate::te::topological_verdict_from_gpu(&verdict) {
+        match omegaflow::te::topological_verdict_from_gpu(&verdict) {
             Some(v) => {
                 let state = if v.te > v.threshold {
                     "arrow"

@@ -3,7 +3,7 @@ use omegaflow::archivar::{
     load_sources, parse_json, scalar_of, ymd_to_days,
 };
 use omegaflow::lsk::LeapSeconds;
-use omegaflow::mathematikerin::omega::perm_target;
+use omegaflow_membrane::omega::perm_target;
 use omegaflow::sha256::sha256_hex;
 use omegaflow::te::phase_randomized_surrogate;
 use std::collections::HashMap;

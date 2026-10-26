@@ -44,7 +44,7 @@ impl AxisKind {
         }
     }
 
-    pub(crate) fn to_u8(self) -> u8 {
+    pub fn to_u8(self) -> u8 {
         match self {
             AxisKind::Uniform => KIND_UNIFORM,
             AxisKind::Explicit => KIND_EXPLICIT,

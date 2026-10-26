@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod matrix_machine_tests {
-    use crate::mathematikerin::machines::*;
+    use crate::machines::*;
 
     #[test]
     fn shift_pair_pairs_driver_bins_with_target_offset() {
@@ -68,7 +68,7 @@ mod matrix_machine_tests {
 
 #[cfg(test)]
 mod rows_series_tests {
-    use crate::archivar::{ExtractResult, embedded_lsk, extract, load_sources_from};
+    use omegaflow::archivar::{ExtractResult, embedded_lsk, extract, load_sources_from};
 
     const BUOY_BLOCK: &str = "
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
@@ -146,8 +146,8 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 
 #[cfg(test)]
 mod matrix_record_tests {
-    use crate::archivar::{Channel, FieldConfig, Position};
-    use crate::mathematikerin::machines::*;
+    use omegaflow::archivar::{Channel, FieldConfig, Position};
+    use crate::machines::*;
 
     fn mk_channel(name: &str, epoch: f64, val: f64) -> (Channel, FieldConfig) {
         (
@@ -173,20 +173,20 @@ mod matrix_record_tests {
                 kernel: 0,
                 channel_ref: Some(4),
                 tau: 21600.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
+                tau_src: omegaflow::archivar::types::TauSource::Measured,
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "m/s".to_string(),
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
-                aperture: crate::archivar::Aperture::None,
+                aperture: omegaflow::archivar::Aperture::None,
             },
         )
     }
 
-    fn frame_earth() -> crate::archivar::Frame {
-        crate::archivar::Frame::Surface {
+    fn frame_earth() -> omegaflow::archivar::Frame {
+        omegaflow::archivar::Frame::Surface {
             body_name: "earth".to_string(),
             lat: 34.7,
             lon: -72.4,
@@ -317,10 +317,10 @@ mod matrix_record_tests {
 
 #[cfg(test)]
 mod matrix_rebuild_tests {
-    use crate::archivar::{
+    use omegaflow::archivar::{
         BodyEphemeris, BodyProperties, Buffer, ChebyshevGranule, body_fixed_to_icrs,
     };
-    use crate::mathematikerin::machines::*;
+    use crate::machines::*;
     use std::collections::HashMap;
     use std::sync::Arc;
 
@@ -342,14 +342,14 @@ mod matrix_rebuild_tests {
             nutation: None,
             omega_g: None,
         };
-        let mut cx = [0.0_f64; crate::archivar::CHEBYSHEV_N];
+        let mut cx = [0.0_f64; omegaflow::archivar::CHEBYSHEV_N];
         cx[0] = x_m;
         let granule = ChebyshevGranule {
-            t0_jd: crate::archivar::J2000_EPOCH,
+            t0_jd: omegaflow::archivar::J2000_EPOCH,
             dt_jd: 64.0,
             cx,
-            cy: [0.0; crate::archivar::CHEBYSHEV_N],
-            cz: [0.0; crate::archivar::CHEBYSHEV_N],
+            cy: [0.0; omegaflow::archivar::CHEBYSHEV_N],
+            cz: [0.0; omegaflow::archivar::CHEBYSHEV_N],
         };
         BodyEphemeris {
             granules: vec![granule],
@@ -361,8 +361,8 @@ mod matrix_rebuild_tests {
         }
     }
 
-    fn frame_earth() -> crate::archivar::Frame {
-        crate::archivar::Frame::Surface {
+    fn frame_earth() -> omegaflow::archivar::Frame {
+        omegaflow::archivar::Frame::Surface {
             body_name: "earth".to_string(),
             lat: 34.7,
             lon: -72.4,
@@ -374,15 +374,15 @@ mod matrix_rebuild_tests {
         name: &str,
         epoch: f64,
         val: f64,
-    ) -> (crate::archivar::Channel, crate::archivar::FieldConfig) {
+    ) -> (omegaflow::archivar::Channel, omegaflow::archivar::FieldConfig) {
         (
-            crate::archivar::Channel {
+            omegaflow::archivar::Channel {
                 z: 0.0,
                 freq: 0.0,
                 bin_width: 0.0,
                 epoch,
                 station_code: None,
-                position: crate::archivar::Position::Surface {
+                position: omegaflow::archivar::Position::Surface {
                     body_name: "earth".to_string(),
                     lat: 0.0,
                     lon: 0.0,
@@ -391,21 +391,21 @@ mod matrix_rebuild_tests {
                 name: name.to_string(),
                 value: val,
             },
-            crate::archivar::FieldConfig {
+            omegaflow::archivar::FieldConfig {
                 key: "TMP".to_string(),
                 name: name.to_string(),
                 band_id: None,
                 kernel: 0,
                 channel_ref: Some(2),
                 tau: 21600.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
+                tau_src: omegaflow::archivar::types::TauSource::Measured,
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "K".to_string(),
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
-                aperture: crate::archivar::Aperture::None,
+                aperture: omegaflow::archivar::Aperture::None,
             },
         )
     }
@@ -416,7 +416,7 @@ mod matrix_rebuild_tests {
         eph.insert("earth".to_string(), body(0.0, Some(3.986004418e14)));
         eph.insert("moon".to_string(), body(3.844e8, None));
         let buf = Buffer {
-            cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+            cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
             eph: Arc::new(eph),
             curves: None,
             spectral: Vec::new(),
@@ -426,7 +426,7 @@ mod matrix_rebuild_tests {
         let (_tx, rx) = mpsc::channel();
         let mut m = MatrixMachine::new(rx);
         m.state_path = "/tmp/omegaflow_matrix_test_state.bin".to_string();
-        let frame = crate::archivar::Frame::Surface {
+        let frame = omegaflow::archivar::Frame::Surface {
             body_name: "earth".to_string(),
             lat: 0.0,
             lon: 0.0,
@@ -498,7 +498,7 @@ mod matrix_rebuild_tests {
         m.state_path = "/tmp/omegaflow_matrix_static_epoch_state.bin".to_string();
         m.record(
             &frame_earth(),
-            Some(crate::archivar::ModelKind::Static),
+            Some(omegaflow::archivar::ModelKind::Static),
             vec![mk_channel("gfc_c", 0.0, 1.0)],
         );
         assert!(
@@ -507,7 +507,7 @@ mod matrix_rebuild_tests {
         );
         m.record(
             &frame_earth(),
-            Some(crate::archivar::ModelKind::TimeVariable),
+            Some(omegaflow::archivar::ModelKind::TimeVariable),
             vec![mk_channel("gfct_c", 0.0, 2.0)],
         );
         assert!(

@@ -1,4 +1,5 @@
 use omegaflow::archivar::PHI;
+use omegaflow_membrane::{actuators::*, omega::*};
 use omegaflow::archivar::inflate::gunzip;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::collections::{HashMap, HashSet};
@@ -375,11 +376,11 @@ pub fn main_flow() {
         }
     };
     let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(embedded_lsk()));
-    let (solar_tx, solar_rx) = mpsc::channel::<omegaflow::machines::SolarCell>();
-    let (machine_tx, machine_rx) = mpsc::channel::<omegaflow::machines::FrameBundle>();
+    let (solar_tx, solar_rx) = mpsc::channel::<omegaflow_membrane::machines::SolarCell>();
+    let (machine_tx, machine_rx) = mpsc::channel::<omegaflow_membrane::machines::FrameBundle>();
     let solar_sources = loaded.clone();
     let solar_time = time.clone();
-    thread::spawn(move || omegaflow::machines::solar_harvest(solar_tx, solar_sources, solar_time));
+    thread::spawn(move || omegaflow_membrane::machines::solar_harvest(solar_tx, solar_sources, solar_time));
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
@@ -429,25 +430,25 @@ pub fn main_flow() {
     #[cfg(feature = "browser_relay")]
     let presence_relay_tx = presence_tx.clone();
     let hidden = std::env::var("OMEGAFLOW_HIDDEN").is_ok();
-    let presence_slot: std::sync::Arc<std::sync::RwLock<omegaflow::mathematikerin::PresenceState>> =
+    let presence_slot: std::sync::Arc<std::sync::RwLock<PresenceState>> =
         std::sync::Arc::new(std::sync::RwLock::new(
-            omegaflow::mathematikerin::PresenceState::rest(),
+            PresenceState::rest(),
         ));
-    let diode: std::sync::Arc<std::sync::RwLock<omegaflow::mathematikerin::DiodeState>> =
-        std::sync::Arc::new(std::sync::RwLock::new(omegaflow::mathematikerin::DiodeState {
+    let diode: std::sync::Arc<std::sync::RwLock<DiodeState>> =
+        std::sync::Arc::new(std::sync::RwLock::new(DiodeState {
             force_ref: [0.0; 9],
-            expose_offset: omegaflow::mathematikerin::EXPOSE_OFFSET_BASE,
+            expose_offset: EXPOSE_OFFSET_BASE,
             em_color: [0.0; 4],
         }));
-    let (acoustic_tx, acoustic_rx) = mpsc::channel::<omegaflow::mathematikerin::PresenceFrame>();
-    let (seismic_tx, seismic_rx) = mpsc::channel::<omegaflow::mathematikerin::PresenceFrame>();
+    let (acoustic_tx, acoustic_rx) = mpsc::channel::<PresenceFrame>();
+    let (seismic_tx, seismic_rx) = mpsc::channel::<PresenceFrame>();
     #[cfg(feature = "browser_relay")]
     let (relay_kinetic_tx, relay_kinetic_rx) =
-        mpsc::channel::<omegaflow::mathematikerin::PresenceFrame>();
+        mpsc::channel::<PresenceFrame>();
     if !hidden {
-        let mut kinetic: Vec<Box<dyn omegaflow::mathematikerin::KineticRadiator>> = Vec::new();
+        let mut kinetic: Vec<Box<dyn KineticRadiator>> = Vec::new();
         if let Some(stdin) = serial_bridge.as_mut().and_then(|child| child.stdin.take()) {
-            kinetic.push(Box::new(omegaflow::mathematikerin::SeismicOscillator::new(
+            kinetic.push(Box::new(SeismicOscillator::new(
                 Box::new(stdin),
             )));
         }
@@ -464,7 +465,7 @@ pub fn main_flow() {
         .ok()
         .and_then(|l| l.as_ref().and_then(|l| l.system_now_tdb()));
     if let Some(pt) = boot_pt {
-        let rest = omegaflow::mathematikerin::PresenceState::rest();
+        let rest = PresenceState::rest();
         if let Ok(mut slot) = presence_slot.write() {
             *slot = rest;
         }
@@ -502,8 +503,8 @@ pub fn main_flow() {
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
-        let em = omegaflow::mathematikerin::LoopRadiator::new(
-            omegaflow::mathematikerin::LoopCtx {
+        let em = LoopRadiator::new(
+            LoopCtx {
                 time: time.clone(),
                 consent: consent.clone(),
                 tone_code: tone_code.clone(),
@@ -558,7 +559,7 @@ pub fn main_flow() {
     }
     if !hidden {
         let _acoustic =
-            omegaflow::mathematikerin::AcousticOscillator::new(acoustic_rx, acoustic_sink());
+            AcousticOscillator::new(acoustic_rx, acoustic_sink());
     }
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),

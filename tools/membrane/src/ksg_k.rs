@@ -1,7 +1,7 @@
 #![cfg(test)]
 
-use crate::mathematikerin::machines::TE_KSG_K_PROD;
-use crate::mathematikerin::te::{
+use crate::machines::TE_KSG_K_PROD;
+use omegaflow::te::{
     TE_KSG_K, TE_SURR_FLOOR, embed_series, find_cross_mi_lag, find_mi_lag,
     phase_randomized_surrogate, topological_te_phase, transfer_entropy_embedded_ksg,
 };

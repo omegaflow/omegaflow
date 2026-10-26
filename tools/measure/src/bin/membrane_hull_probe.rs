@@ -8,7 +8,7 @@ use omegaflow::archivar::{
     cache_fresh_cdn, catalog_sample_in_enclosure, content_cache, embedded_lsk, enclosure_presences,
     parse_ephemeris_binary, parse_sources, query_hash,
 };
-use omegaflow::mathematikerin::PresenceState;
+use omegaflow::archivar::PresenceState;
 
 const DEFAULT_DASTCOM_TTL: u64 = 86400;
 

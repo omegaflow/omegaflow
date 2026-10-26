@@ -839,15 +839,13 @@ dependencies = [
 [[package]]
 name = "omegaflow"
 version = "1.0.0"
-dependencies = [
- "wgpu",
-]
 
 [[package]]
 name = "omegaflow-app"
 version = "1.0.0"
 dependencies = [
  "omegaflow",
+ "omegaflow-membrane",
 ]
 
 [[package]]
@@ -874,7 +872,16 @@ name = "omegaflow-measure"
 version = "1.0.0"
 dependencies = [
  "omegaflow",
+ "omegaflow-membrane",
  "zstd",
+]
+
+[[package]]
+name = "omegaflow-membrane"
+version = "1.0.0"
+dependencies = [
+ "omegaflow",
+ "wgpu",
 ]
 
 [[package]]

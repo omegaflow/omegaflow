@@ -14,6 +14,7 @@ members = [
     "tools/gate",
     "tools/harvest",
     "tools/measure",
+    "tools/membrane",
     "tools/register",
     "tools/science",
     "tools/service",
@@ -25,10 +26,8 @@ default-members = ["."]
 crate-type = ["rlib", "cdylib"]
 
 [features]
-default = ["membrane"]
+default = []
 browser_relay = []
 commit_gate = []
-membrane = ["dep:wgpu"]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-wgpu = { version = "24", optional = true }

@@ -4,8 +4,8 @@ pub(crate) use std::sync::mpsc;
 pub(crate) use std::sync::{Arc, Mutex};
 pub(crate) use std::thread;
 
-pub(crate) use crate::archivar::{
-    Extract, LeapSeconds, SourceConfig, extract_series, fetch_raw, Φ,
+pub(crate) use omegaflow::archivar::{
+    Extract, LeapSeconds, SourceConfig, extract_series, fetch_raw, PHI,
 };
 
 pub mod matrix;

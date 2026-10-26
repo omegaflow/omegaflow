@@ -3713,7 +3713,7 @@ fn test_hidden_run_rest_presence_carries_stars() {
         "no presence at all drops the star — the hidden-run state the verdict fixes"
     );
     let slot = std::sync::Arc::new(std::sync::RwLock::new(
-        crate::mathematikerin::PresenceState::rest(),
+        crate::archivar::PresenceState::rest(),
     ));
     let presences = super::enclosure_presences(&HashMap::new(), &slot, now);
     assert_eq!(
@@ -3741,7 +3741,7 @@ fn test_raw_presence_gate_admits_within_reach_and_refuses_fieldless_source() {
     let ledger = std::sync::Mutex::new(super::RefusalLedger::new(ledger_path.to_str().unwrap()));
     let now = 8.0e8;
     let slot = std::sync::Arc::new(std::sync::RwLock::new(
-        crate::mathematikerin::PresenceState::rest(),
+        crate::archivar::PresenceState::rest(),
     ));
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
     cx[0] = 0.0;
@@ -4908,9 +4908,9 @@ fn test_load_gate_clips_records_outside_enclosure() {
         0.0,
         0.0,
         0.0,
-        crate::mathematikerin::JUMP_GRID,
+        crate::archivar::JUMP_GRID,
     )];
-    let snap = super::Φ * crate::mathematikerin::JUMP_GRID;
+    let snap = super::Φ * crate::archivar::JUMP_GRID;
     assert!(
         super::record_in_enclosure(
             &jump,

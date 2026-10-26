@@ -1,5 +1,5 @@
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
-use omegaflow::scalar_te_gpu::ScalarTeGpu;
+use omegaflow_membrane::scalar_te_gpu::ScalarTeGpu;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 use std::sync::Mutex;
 

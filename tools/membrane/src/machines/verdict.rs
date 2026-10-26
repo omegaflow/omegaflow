@@ -1,9 +1,9 @@
 pub(crate) const TE_SERIES_STRIDE: usize = 1024;
 
-pub(crate) const TE_SERIES_BYTES: u64 = (crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE * 4) as u64;
+pub(crate) const TE_SERIES_BYTES: u64 = (omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE * 4) as u64;
 
-pub(crate) const TE_VERDICT_SLOTS: usize = crate::te::TE_SERIES_COUNT * 6;
-pub(crate) const TE_KSG_SLOTS: usize = crate::te::TE_SERIES_COUNT * 2;
+pub(crate) const TE_VERDICT_SLOTS: usize = omegaflow::te::TE_SERIES_COUNT * 6;
+pub(crate) const TE_KSG_SLOTS: usize = omegaflow::te::TE_SERIES_COUNT * 2;
 
 pub(crate) const fn te_verdict_bytes(k: u32) -> u64 {
     ((TE_VERDICT_SLOTS + if k > 0 { TE_KSG_SLOTS } else { 0 }) * 4) as u64

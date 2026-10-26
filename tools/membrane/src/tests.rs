@@ -1,4 +1,10 @@
-use super::*;
+use std::collections::{HashMap, HashSet};
+use std::sync::{Arc, Mutex, RwLock, mpsc};
+use crate::{actuators::*, machines::*, omega::*, scalar_te_gpu::*};
+use omegaflow::archivar::PHI;
+use omegaflow::archivar::*;
+use omegaflow::mathematikerin::*;
+use omegaflow::te::*;
 
 #[test]
 fn field_wgsl_validates_offline() {
@@ -224,17 +230,17 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
     }
     let seed = 42u64;
-    let mut data = vec![0f32; crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
+    let mut data = vec![0f32; omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
     data[0..n].copy_from_slice(&x);
     data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + n].copy_from_slice(&y);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for s in 0..crate::te::TE_SURR_FLOOR {
-        let surr = crate::te::phase_randomized_surrogate(&y, &mut rng);
+    for s in 0..omegaflow::te::TE_SURR_FLOOR {
+        let surr = omegaflow::te::phase_randomized_surrogate(&y, &mut rng);
         let off = (2 + s) * TE_SERIES_STRIDE;
         data[off..off + n].copy_from_slice(&surr);
     }
     queue.write_buffer(&series_buf, 0, &le_bytes_f32(&data));
-    let max_lag = (n as f64 / Φ) as u32;
+    let max_lag = (n as f64 / PHI) as u32;
     let param = [n as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K_PROD];
     let mut pb = [0u8; 16];
     for (i, p) in param.iter().enumerate() {
@@ -247,7 +253,7 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
         pass.set_pipeline(&te_pipe);
         pass.set_bind_group(0, &te_bind, &[]);
-        pass.dispatch_workgroups((crate::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+        pass.dispatch_workgroups((omegaflow::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
     }
     enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
     queue.submit(std::iter::once(enc.finish()));
@@ -275,8 +281,8 @@ fn te_gpu_crosscheck_against_cpu_reference() {
     }
     drop(mapped_data);
     read_buf.unmap();
-    let gpu = crate::te::topological_verdict_from_gpu(&verdict);
-    let cpu = crate::te::topological_te_phase(&x, &y, 3, 3, seed);
+    let gpu = omegaflow::te::topological_verdict_from_gpu(&verdict);
+    let cpu = omegaflow::te::topological_te_phase(&x, &y, 3, 3, seed);
     eprintln!("te crosscheck elapsed {:?}", elapsed);
     eprintln!(
         "gpu: {:?}",
@@ -326,10 +332,10 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         gpu_v.surrogates_used,
         cpu_v.surrogates_used
     );
-    let emb_x = crate::te::embed_series(&xf, gpu_v.tau_c, 3);
-    let emb_y = crate::te::embed_series(&yf, gpu_v.tau_y, 3);
+    let emb_x = omegaflow::te::embed_series(&xf, gpu_v.tau_c, 3);
+    let emb_y = omegaflow::te::embed_series(&yf, gpu_v.tau_y, 3);
     let kde_cpu =
-        crate::te::transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, gpu_v.tau_c, gpu_v.tau_y)
+        omegaflow::te::transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, gpu_v.tau_c, gpu_v.tau_y)
             .expect("the KDE reference carries a TE at the GPU lags");
     let te_rel = ((gpu_v.te - kde_cpu) / kde_cpu.abs()).abs();
     assert!(
@@ -389,7 +395,7 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         }
         drop(mapped_data);
         read_buf.unmap();
-        let scaled = match crate::te::topological_verdict_from_gpu(&verdict) {
+        let scaled = match omegaflow::te::topological_verdict_from_gpu(&verdict) {
             Some(v) => v,
             None => panic!("te verdict invalid at bandwidth scale {}", h_scale),
         };
@@ -399,66 +405,6 @@ fn te_gpu_crosscheck_against_cpu_reference() {
             h_scale,
             scaled.te
         );
-    }
-}
-
-#[test]
-fn golden_pack_slots_against_wgsl_access() {
-    let presence = [1.0e3, 2.0e3, 3.0e3];
-    let r: Record = (
-        7001.0, 7002.0, 7003.0, 7004.0, 7005.0, 7006.0, 7007.0, 7008.0, 7009.0, 7010.0, 7011.0,
-        7012.0, 7013.0, 7014.0, 7015.0, 7016.0, 7017.0, 7018.0, 7019.0, 7020.0, 7021.0, 7022.0,
-        7023.0, 7024.0, 7025.0, 7026.0,
-    );
-    let packed = pack_window(&[r], presence);
-    assert_eq!(packed.count, 1);
-    let f = &packed.field;
-    assert_eq!(f[0], 6001.0);
-    assert_eq!(f[1], 5002.0);
-    assert_eq!(f[2], 4003.0);
-    assert_eq!(f[3], 7004.0);
-    assert_eq!(f[4], 7005.0);
-    assert_eq!(f[5], 7006.0);
-    assert_eq!(f[6], 7010.0);
-    assert_eq!(f[7], 7011.0);
-    assert_eq!(f[8], 7012.0);
-    assert_eq!(f[9], 7013.0);
-    assert_eq!(f[10], 7014.0);
-    assert_eq!(f[11], 7015.0);
-    let m = &packed.meta;
-    assert_eq!(m[0], 7008.0);
-    assert_eq!(m[1], 7007.0);
-    assert_eq!(m[2], 7009.0);
-    assert_eq!(m[3], 0.0);
-    assert_eq!(m[4], 7016.0);
-    assert_eq!(m[5], 7017.0);
-    assert_eq!(m[6], 7018.0);
-    assert_eq!(m[7], 7019.0);
-    assert_eq!(m[8], 7020.0);
-    assert_eq!(m[9], 7021.0);
-    assert_eq!(m[10], 7022.0);
-    assert_eq!(m[11], 7023.0);
-    assert_eq!(m[12], 7024.0);
-    assert_eq!(m[13], 7025.0);
-    assert_eq!(m[14], 7026.0);
-    assert_eq!(m[15], 0.0);
-}
-
-#[test]
-fn force_ref_medians_routes_forces_and_honors_zero() {
-    let mut field = vec![0.0f32; 48];
-    field[3] = 4.0;
-    field[15] = 4.0;
-    field[27] = -2.0;
-    field[30] = 2.0;
-    field[39] = 0.0;
-    field[42] = 8.0;
-    let meds = force_ref_medians(&field, &[0.0; 48]);
-    assert_eq!(meds[0].unwrap(), 4.0);
-    assert_eq!(meds[1], None);
-    assert_eq!(meds[2].unwrap(), 2.0);
-    for m in &meds[3..9] {
-        assert!(m.is_none());
     }
 }
 
@@ -475,7 +421,7 @@ fn force_ref_medians_holds_reference_on_absence() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -503,19 +449,6 @@ fn force_ref_medians_holds_reference_on_absence() {
 }
 
 #[test]
-fn force_ref_medians_skips_length_annotations() {
-    let mut field = vec![0.0f32; 24];
-    let mut meta = vec![0.0f32; 32];
-    field[3] = 2.0f32.powi(20);
-    field[6] = 1.0;
-    meta[0] = 2.0f32.powi(20);
-    field[15] = 2.0f32.powi(45);
-    field[18] = 1.0;
-    let meds = force_ref_medians(&field, &meta);
-    assert_eq!(meds[1].unwrap(), 2.0f32.powi(45));
-}
-
-#[test]
 fn force_ref_snaps_on_first_sight() {
     let mut app = OmegaLoop {
         force_ref: [0.0; 9],
@@ -528,7 +461,7 @@ fn force_ref_snaps_on_first_sight() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -566,7 +499,7 @@ fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -593,7 +526,7 @@ fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
 #[test]
 fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
     let tone_code = Arc::new(std::sync::atomic::AtomicU8::new(
-        crate::archivar::hrv::TONE_STRESSED,
+        omegaflow::archivar::hrv::TONE_STRESSED,
     ));
     let mut app = OmegaLoop {
         field_permeability: [0.8; 9],
@@ -640,7 +573,7 @@ fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
     );
 
     tone_code.store(
-        crate::archivar::hrv::TONE_CALM,
+        omegaflow::archivar::hrv::TONE_CALM,
         std::sync::atomic::Ordering::SeqCst,
     );
     app.last_hud = None;
@@ -666,7 +599,7 @@ fn te_probe_keeps_the_cpu_topology_on_a_coupled_pair() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -713,7 +646,7 @@ fn te_probe_keeps_the_cpu_topology_absent_on_a_short_series() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -748,7 +681,7 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -812,7 +745,7 @@ fn the_no_te_tick_hears_each_oscillator_not_the_sum() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -860,7 +793,7 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -918,7 +851,7 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
         assert_eq!(fields[4 + i], app.field_permeability[i]);
     }
     assert_eq!(fields[13], alpha1);
-    assert_eq!(fields[14], crate::archivar::hrv::TONE_ABSENT as f32);
+    assert_eq!(fields[14], omegaflow::archivar::hrv::TONE_ABSENT as f32);
     assert_eq!(fields[15], app.tone_scale);
     let aperture: [f32; 9] = std::array::from_fn(|i| app.field_permeability[i] * app.tone_scale);
     let expected = match acoustic_amplitude(&app.probe_omega, &aperture, &aperture_state(&aperture)) {
@@ -957,50 +890,8 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
 }
 
 #[test]
-fn the_aim_law_maps_thrust_to_pan_tilt_pulse_widths() {
-    assert_eq!(aim_pulse_ms([0.0, 0.0, 0.0]), (None, None));
-    let (pan, tilt) = aim_pulse_ms([1.0, 0.0, 0.0]);
-    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
-    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
-    let (pan, tilt) = aim_pulse_ms([0.0, 1.0, 0.0]);
-    assert!((pan.unwrap() - 2.0).abs() < 1e-6);
-    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
-    let (pan, tilt) = aim_pulse_ms([0.0, 0.0, 1.0]);
-    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
-    assert!((tilt.unwrap() - 2.0).abs() < 1e-6);
-    assert_eq!(aim_pulse_ms([THRUST_AIM_MIN * 0.5, 0.0, 0.0]), (None, None));
-}
-
-#[test]
-fn aberration_shifts_toward_apex_and_stays_unit() {
-    fn aberr(u: [f64; 3], beta: [f64; 3]) -> [f64; 3] {
-        let b2 = beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2];
-        let gamma = 1.0 / (1.0 - b2).sqrt();
-        let ud = u[0] * beta[0] + u[1] * beta[1] + u[2] * beta[2];
-        let inv = 1.0 / (1.0 + ud);
-        let k = gamma / (gamma + 1.0) * ud;
-        [
-            (u[0] / gamma + beta[0] + k * beta[0]) * inv,
-            (u[1] / gamma + beta[1] + k * beta[1]) * inv,
-            (u[2] / gamma + beta[2] + k * beta[2]) * inv,
-        ]
-    }
-    let beta = [0.5, 0.0, 0.0];
-    let ahead = aberr([1.0, 0.0, 0.0], beta);
-    assert!((ahead[0] - 1.0).abs() < 1e-9);
-    assert!(ahead[1].abs() < 1e-9 && ahead[2].abs() < 1e-9);
-    let side = aberr([0.0, 1.0, 0.0], beta);
-    assert!(side[0] > 0.0, "transverse star shifts toward the apex");
-    let n = (side[0] * side[0] + side[1] * side[1] + side[2] * side[2]).sqrt();
-    assert!((n - 1.0).abs() < 1e-9);
-    let rest = aberr([0.3, 0.4, 0.916515139], [0.0, 0.0, 0.0]);
-    assert!((rest[0] - 0.3).abs() < 1e-9);
-    assert!((rest[1] - 0.4).abs() < 1e-9);
-}
-
-#[test]
 fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
-    use crate::archivar::skydirection::{SkyBandSeries, SkyDirection, SkySample};
+    use omegaflow::archivar::skydirection::{SkyBandSeries, SkyDirection, SkySample};
     let dir = |name: &str, ra: f64, dec: f64| SkyDirection {
         name: name.to_string(),
         ra_deg: ra,
@@ -1274,7 +1165,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
 
 #[test]
 fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
-    use crate::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
+    use omegaflow::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
     let evt = |ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>| S2EventRecord {
         ra_deg: ra as f32,
         dec_deg: dec as f32,
@@ -1295,7 +1186,7 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -1336,8 +1227,8 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
 
 #[test]
 fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_riss() {
-    use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
-    use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};
+    use omegaflow::archivar::astrometry_series::{AstroSample, AstroSeries};
+    use omegaflow::archivar::weberin_verdicts::{VerdictLine, VerdictWord};
     let t = 8.3e8;
     let sample = || AstroSample {
         tdb: t,
@@ -1356,7 +1247,7 @@ fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_ris
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -1408,7 +1299,7 @@ fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_ris
 
 #[test]
 fn sky_tick_folds_bodies_by_name_and_stations_last() {
-    use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
+    use omegaflow::archivar::{BodyEphemeris, BodyProperties, Buffer};
     use crate::machines::{MetaAnchor, NameMeta};
     let t = 8.3e8;
     let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
@@ -1451,7 +1342,7 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
     );
     eph.insert("zeta".to_string(), orbit_body([0.0, 1.0e9, 0.0], None));
     let buf = Buffer {
-        cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+        cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
         eph: std::sync::Arc::new(eph),
         curves: None,
         spectral: Vec::new(),
@@ -1468,7 +1359,7 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -1539,9 +1430,9 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
 
 #[test]
 fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
-    use crate::archivar::{BodyEphemeris, Buffer, VerdictLine, VerdictWord};
+    use omegaflow::archivar::{BodyEphemeris, Buffer, VerdictLine, VerdictWord};
     use crate::machines::{MetaAnchor, NameMeta};
-    use crate::weberin::{BodyLine, StationLine, WitnessLine};
+    use omegaflow::weberin::{BodyLine, StationLine, WitnessLine};
     let t = 8.3e8;
     let orbit_body = |pos: [f64; 3]| -> BodyEphemeris {
         let rec = crate::wind_orbit::orbit_rec(&[
@@ -1562,7 +1453,7 @@ fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
     eph.insert("alpha".to_string(), orbit_body([1.0e9, 0.0, 0.0]));
     eph.insert("earth".to_string(), orbit_body([0.0, 0.0, 1.0e9]));
     let buf = Buffer {
-        cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+        cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
         eph: std::sync::Arc::new(eph),
         curves: None,
         spectral: Vec::new(),
@@ -1601,7 +1492,7 @@ fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -1656,8 +1547,8 @@ fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
 
 #[test]
 fn volume_probe_parity_masked_corner_and_plain() {
-    use crate::archivar::volume::{Axis, AxisKind, Volume};
-    use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
+    use omegaflow::archivar::volume::{Axis, AxisKind, Volume};
+    use omegaflow::archivar::{BodyEphemeris, BodyProperties, Buffer};
     let t = 8.3e8;
     let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
         let rec = crate::wind_orbit::orbit_rec(&[
@@ -1707,7 +1598,7 @@ fn volume_probe_parity_masked_corner_and_plain() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -1736,7 +1627,7 @@ fn volume_probe_parity_masked_corner_and_plain() {
         return;
     }
     let probe_pos = app.pos();
-    let Some((lat, lon, depth)) = crate::archivar::icrs_to_body_geodetic(
+    let Some((lat, lon, depth)) = omegaflow::archivar::icrs_to_body_geodetic(
         probe_pos[0],
         probe_pos[1],
         probe_pos[2],
@@ -1787,7 +1678,7 @@ fn volume_probe_parity_masked_corner_and_plain() {
         "the masked corner makes the whole probe absent on the cpu"
     );
     let buf_of = |v: Volume| Buffer {
-        cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+        cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
         eph: std::sync::Arc::new(eph.clone()),
         curves: None,
         spectral: Vec::new(),
@@ -1827,7 +1718,7 @@ fn em_aperture_flux_bit_scales_and_kernel_proxy_does_not() {
                 time: Arc::new(Mutex::new(None)),
                 consent: Arc::new(AtomicBool::new(false)),
                 tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
-                    crate::archivar::hrv::TONE_ABSENT,
+                    omegaflow::archivar::hrv::TONE_ABSENT,
                 )),
                 acoustic_tx: mpsc::channel().0,
                 seismic_tx: mpsc::channel().0,
@@ -1870,7 +1761,7 @@ fn em_aperture_flux_bit_scales_and_kernel_proxy_does_not() {
         app.probe_omega[0]
     };
 
-    let flux_bit = crate::archivar::PRESENCE_FLAG_FLUX;
+    let flux_bit = omegaflow::archivar::PRESENCE_FLAG_FLUX;
     let scaled = probe_em(&mut app, 1.0, flux_bit);
     let proxy_riss = probe_em(&mut app, 1.0, 0.0);
     let plain = probe_em(&mut app, 0.0, 0.0);
@@ -1930,240 +1821,10 @@ fn sg_parity_agree(
     lag: usize,
     seed: u64,
 ) -> Option<(bool, bool, f64, f64)> {
-    let cpu_te = crate::te::transfer_entropy_lag(x, y, lag)?;
-    let (_, _, thr) = crate::te::surrogate_stats_phase(x, y, lag, seed)?;
+    let cpu_te = omegaflow::te::transfer_entropy_lag(x, y, lag)?;
+    let (_, _, thr) = omegaflow::te::surrogate_stats_phase(x, y, lag, seed)?;
     let (gf, _) = sg_fr(gpu, x, y, lag)?;
     Some((cpu_te > thr, gf > thr, cpu_te, gf))
-}
-
-#[test]
-fn scalar_gpu_parity_fp_decision() {
-    let Some(mut gpu) = ScalarTeGpu::new(1) else {
-        eprintln!("scalar gpu fp gate skipped: no adapter");
-        return;
-    };
-    let mut rng = 0x9E37_79B9_7F4A_7C15u64;
-    let mut gpu_fp = 0usize;
-    let mut gpu_meas = 0usize;
-    let mut agree = 0usize;
-    let mut agree_tot = 0usize;
-    let mut floor_viol = 0usize;
-    for t in 0..30 {
-        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
-        let x = sg_gate_ar1(300, 0.7, &mut rng);
-        let y = sg_gate_ar1(300, 0.7, &mut rng);
-        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &x, &y, 0, seed)
-        else {
-            continue;
-        };
-        gpu_meas += 1;
-        if gpu_ab {
-            gpu_fp += 1;
-        }
-        agree_tot += 1;
-        if cpu_ab == gpu_ab {
-            agree += 1;
-        }
-        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
-            floor_viol += 1;
-        }
-    }
-    assert!(
-        gpu_meas >= 20,
-        "scalar gpu FP gate: {} of 30 measurable — the machine stays silent too often",
-        gpu_meas
-    );
-    assert!(
-        gpu_fp <= 8,
-        "scalar gpu FP gate: {} of {} above the threshold — the null does not hold on the GPU",
-        gpu_fp,
-        gpu_meas
-    );
-    assert!(
-        agree * 100 >= agree_tot * 95,
-        "scalar gpu FP gate: CPU/GPU classification agrees in {}/{}",
-        agree,
-        agree_tot
-    );
-    assert_eq!(
-        floor_viol, 0,
-        "scalar gpu FP gate: {} numeric-floor violations",
-        floor_viol
-    );
-}
-
-#[test]
-fn scalar_gpu_parity_fn_decision() {
-    let Some(mut gpu) = ScalarTeGpu::new(1) else {
-        eprintln!("scalar gpu fn gate skipped: no adapter");
-        return;
-    };
-    let mut rng = 0x517C_C1B7_2722_0A95u64;
-    let mut found = 0usize;
-    let mut meas = 0usize;
-    let mut agree = 0usize;
-    let mut floor_viol = 0usize;
-    for t in 0..20 {
-        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let a: Vec<f32> = (0..300)
-            .map(|_| (sg_gate_rng(&mut rng) * 2.0 - 1.0) as f32)
-            .collect();
-        let b: Vec<f32> = (0..a.len())
-            .map(|i| {
-                if i == 0 {
-                    sg_gate_rng(&mut rng) as f32
-                } else {
-                    (0.9 * a[i - 1] as f64 + (sg_gate_rng(&mut rng) * 0.2 - 0.1)) as f32
-                }
-            })
-            .collect();
-        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &b, &a, 0, seed)
-        else {
-            continue;
-        };
-        meas += 1;
-        if cpu_ab && gpu_ab {
-            found += 1;
-        }
-        if cpu_ab == gpu_ab {
-            agree += 1;
-        }
-        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
-            floor_viol += 1;
-        }
-    }
-    if meas == 0 {
-        panic!("scalar gpu FN gate: no coupling measurement succeeded in 20 trials");
-    }
-    assert!(
-        found as f64 / meas as f64 > 0.5,
-        "scalar gpu FN gate: {} of {} true couplings found on the GPU",
-        found,
-        meas
-    );
-    assert!(
-        agree * 100 >= meas * 95,
-        "scalar gpu FN gate: CPU/GPU classification agrees in {}/{}",
-        agree,
-        meas
-    );
-    assert_eq!(
-        floor_viol, 0,
-        "scalar gpu FN gate: {} numeric-floor violations",
-        floor_viol
-    );
-}
-
-#[test]
-fn scalar_gpu_parity_symmetry() {
-    let Some(mut gpu) = ScalarTeGpu::new(1) else {
-        eprintln!("scalar gpu symmetry gate skipped: no adapter");
-        return;
-    };
-    let mut rng = 0x2722_0A95_517C_C1B7u64;
-    let a = sg_gate_ar1(300, 0.7, &mut rng);
-    let Some((f, r)) = sg_fr(&mut gpu, &a, &a, 0) else {
-        return;
-    };
-    assert!(
-        (f - r).abs() < 1e-3,
-        "scalar gpu symmetry: a=a measures unequal, {} vs {}",
-        f,
-        r
-    );
-}
-
-#[test]
-fn scalar_gpu_parity_n_floor() {
-    let Some(mut gpu) = ScalarTeGpu::new(13) else {
-        eprintln!("scalar gpu n-floor gate skipped: no adapter");
-        return;
-    };
-    let x = sg_gate_ar1(300, 0.7, &mut 0x9E37_79B9_7F4A_7C15u64);
-    let constant = vec![1.0f32; 300];
-    let gpu_te = crate::te::transfer_entropy_lag(&x, &constant, 0);
-    assert!(
-        gpu_te.is_none(),
-        "scalar CPU constant series must stay absent"
-    );
-    let grid = gpu.run(&x, &constant, &[]);
-    if !grid.is_empty() {
-        let valid = grid[1];
-        assert_eq!(valid, 0.0, "scalar GPU constant series must stay absent");
-    }
-}
-
-#[test]
-fn scalar_gpu_parity_surrogate_slots_match_cpu() {
-    let Some(mut gpu) = ScalarTeGpu::new(13) else {
-        eprintln!("scalar gpu surrogate-slot gate skipped: no adapter");
-        return;
-    };
-    let mut rng = 0x0FEB_11D1_B2D1_9C93u64;
-    let x = sg_gate_ar1(300, 0.7, &mut rng);
-    let y = sg_gate_ar1(300, 0.7, &mut rng);
-    let mut surrs: Vec<Vec<f32>> = Vec::new();
-    for _ in 0..10 {
-        surrs.push(crate::te::phase_randomized_surrogate(&y, &mut rng));
-    }
-    let grid = gpu.run(&x, &y, &surrs);
-    if grid.is_empty() {
-        return;
-    }
-    let series_at = |k: usize| -> &[f32] { if k == 0 { &y } else { &surrs[k - 1] } };
-    let mut viol = 0usize;
-    let mut meas = 0usize;
-    for dir in 0..2 {
-        for k in 0..11 {
-            for lag in 0..13 {
-                let idx = ((dir * 11 + k) * 13 + lag) * 2;
-                let gpu_te = grid[idx];
-                let gpu_valid = grid[idx + 1];
-                let cpu_te = if dir == 0 {
-                    crate::te::transfer_entropy_lag(&x, series_at(k), lag)
-                } else {
-                    crate::te::transfer_entropy_lag(series_at(k), &x, lag)
-                };
-                match (gpu_valid > 0.0, cpu_te) {
-                    (true, Some(c)) => {
-                        meas += 1;
-                        if (gpu_te as f64 - c).abs() > SCALAR_PARITY_TOL * (c.abs() + 1e-3) {
-                            viol += 1;
-                            eprintln!(
-                                "surrogate slot: dir {} k {} lag {} gpu {} cpu {}",
-                                dir, k, lag, gpu_te, c
-                            );
-                        }
-                    }
-                    (false, None) => {}
-                    (true, None) => {
-                        viol += 1;
-                        eprintln!(
-                            "surrogate slot: dir {} k {} lag {} gpu valid, cpu absent",
-                            dir, k, lag
-                        );
-                    }
-                    (false, Some(c)) => {
-                        viol += 1;
-                        eprintln!(
-                            "surrogate slot: dir {} k {} lag {} gpu absent, cpu {}",
-                            dir, k, lag, c
-                        );
-                    }
-                }
-            }
-        }
-    }
-    assert!(
-        meas >= 200,
-        "scalar gpu surrogate-slot gate: only {} of 286 grid slots measurable",
-        meas
-    );
-    assert_eq!(
-        viol, 0,
-        "scalar gpu surrogate-slot gate: {} grid mismatches",
-        viol
-    );
 }
 
 #[test]
@@ -2549,77 +2210,6 @@ fn r_struct(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorption: f
 }
 
 #[test]
-fn r_struct_is_finite_and_positive_for_every_kernel_form() {
-    let extent = 1.0;
-    let global_scale = 1e-2;
-    let absorption = 0.5;
-    for kernel_id in [0u8, 1, 3, 4, 5, 6] {
-        for d in [2.0_f64, 4.0, 8.0] {
-            let r = r_struct(kernel_id, d, extent, global_scale, absorption)
-                .expect("R_struct is defined for d > 0");
-            assert!(
-                r.is_finite() && r > 0.0,
-                "kernel {} R_struct({}) = {} is not finite-positive",
-                kernel_id,
-                d,
-                r
-            );
-        }
-    }
-}
-
-#[test]
-fn r_struct_inverse_square_grows_linearly_in_the_tail() {
-    let extent = 1.0;
-    let global_scale = 1e-2;
-    let mut prev = 0.0;
-    for d in [8.0_f64, 16.0, 32.0, 64.0] {
-        let r = r_struct(0, d, extent, global_scale, 0.0).expect("defined for d > 0");
-        assert!(
-            r > prev,
-            "inverse-square R_struct did not grow with d: {} then {}",
-            prev,
-            r
-        );
-        let analytic = F32_EPS_REF * d / 2.0;
-        let rel = (r - analytic).abs() / analytic;
-        assert!(
-            rel < 0.02,
-            "inverse-square R_struct({}) = {} diverges from F32_EPS·d/2 = {}",
-            d,
-            r,
-            analytic
-        );
-        prev = r;
-    }
-}
-
-#[test]
-fn multipole_error_cluster_vs_barycenter() {
-    let r = 1.0;
-    let val = 1.0;
-    let point = |d: f64| val / (d * d);
-    let cluster = |d: f64| 0.5 * point(d - r) + 0.5 * point(d + r);
-    let barycenter = |d: f64| kernel_omega(0, d, r, 0.0, 0.0);
-
-    let d_far = 2e4;
-    let err_far = (cluster(d_far) - barycenter(d_far)).abs() / cluster(d_far).abs();
-    assert!(
-        err_far < F32_EPS_REF,
-        "far-field multipole error {} is above F32_EPS",
-        err_far
-    );
-
-    let d_near = 2.0 * r;
-    let err_near = (cluster(d_near) - barycenter(d_near)).abs() / cluster(d_near).abs();
-    assert!(
-        err_near > F32_EPS_REF,
-        "near-field multipole error {} is below F32_EPS (cluster collapsed to a monopole)",
-        err_near
-    );
-}
-
-#[test]
 fn field_spatial_fold_wgsl_cpu_parity() {
     const FOLD_WGSL: &str = r#"
 fn erfc(x: f32) -> f32 {
@@ -2966,7 +2556,7 @@ fn coupling_injection_wgsl_matches_the_cpu_exchange() {
         CouplingKind, CouplingRegistry, DensityKind, DensityRef, Domain, FluxKind, Medium, PdeType,
         Quantity, QuantityRole, TransportOp,
     };
-    use crate::archivar::parse::ChannelCouplingLayer;
+    use omegaflow::archivar::parse::ChannelCouplingLayer;
 
     let mk = |medium: Medium, unit: &'static str| {
         ChannelDescriptor::new(
@@ -3213,3 +2803,743 @@ fn coupling_injection_wgsl_matches_the_cpu_exchange() {
     );
     eprintln!("coupling injection parity: 16 channels agree, rho-weighted friction net {net}");
 }
+    #[test]
+    fn gate_wgsl_horizon_and_ksg_parity_against_cpu_reference() {
+        use crate::omega::block_on;
+        use std::sync::Arc;
+        use std::sync::atomic::{AtomicBool, Ordering};
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+        let adapter_options = wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::None,
+            compatible_surface: None,
+            force_fallback_adapter: false,
+        };
+        let adapter = match block_on(instance.request_adapter(&adapter_options)) {
+            Some(a) => a,
+            None => {
+                eprintln!("compute-only device request returned void — wgsl ksg parity skipped");
+                return;
+            }
+        };
+        let (device, queue) = match block_on(
+            adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+        ) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(omegaflow::mathematikerin::TE_WGSL.into()),
+        });
+        let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e =
+                        crate::omega::storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e =
+                        crate::omega::storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 2;
+                    e
+                },
+            ],
+        });
+        let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&te_layout],
+            push_constant_ranges: &[],
+        });
+        let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&te_pipe_layout),
+            module: &module,
+            entry_point: Some("te_compute"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: crate::machines::TE_SERIES_BYTES,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        let n = 200usize;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for (t, slot) in y.iter_mut().enumerate() {
+            *slot = (t as f32 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let seed = 42u64;
+        let mut data = vec![0f32; TE_SERIES_COUNT * crate::machines::TE_SERIES_STRIDE];
+        data[0..n].copy_from_slice(&x);
+        data[crate::machines::TE_SERIES_STRIDE..crate::machines::TE_SERIES_STRIDE + n]
+            .copy_from_slice(&y);
+        let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+        let mut surrogates: Vec<Vec<f32>> = Vec::with_capacity(TE_SURR_FLOOR);
+        for s in 0..TE_SURR_FLOOR {
+            let surr = phase_randomized_surrogate(&y, &mut rng);
+            let off = (2 + s) * crate::machines::TE_SERIES_STRIDE;
+            data[off..off + n].copy_from_slice(&surr);
+            surrogates.push(surr);
+        }
+        queue.write_buffer(&series_buf, 0, &crate::machines::le_bytes_f32(&data));
+        let max_lag = (n as f64 / PHI) as u32;
+        let param = [n as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K as u32];
+        let mut pb = [0u8; 16];
+        for (i, p) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+        }
+        queue.write_buffer(&param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(&te_pipe);
+            pass.set_bind_group(0, &te_bind, &[]);
+            pass.dispatch_workgroups((TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+        }
+        enc.copy_buffer_to_buffer(
+            &out_buf,
+            0,
+            &read_buf,
+            0,
+            crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+        );
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        assert!(
+            mapped.load(Ordering::SeqCst),
+            "wgsl ksg parity readback returned void"
+        );
+        let mapped_data = slice.get_mapped_range();
+        assert!(
+            crate::machines::te_verdict_bytes(TE_KSG_K as u32)
+                > crate::machines::te_verdict_bytes(0),
+            "the K>0 verdict readback must carry the KSG columns"
+        );
+        assert_eq!(
+            mapped_data.len(),
+            crate::machines::te_verdict_bytes(TE_KSG_K as u32) as usize,
+            "the readback size must follow te_verdict_bytes"
+        );
+        let mut verdict =
+            [0f32; crate::machines::te_verdict_bytes(TE_KSG_K as u32) as usize / 4];
+        for k in 0..verdict.len() {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+            verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(mapped_data);
+        read_buf.unmap();
+        assert_eq!(
+            verdict[10], 1.0,
+            "the kde real-pair slot must stay valid alongside the ksg mirror"
+        );
+        assert_eq!(
+            verdict[TE_SERIES_COUNT * 6 + 3],
+            1.0,
+            "the wgsl ksg real-pair slot is absent at k={}",
+            TE_KSG_K
+        );
+        let tau_c = verdict[0] as usize;
+        let tau_y = verdict[6] as usize;
+        let gpu_te = verdict[TE_SERIES_COUNT * 6 + 2];
+        let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+        let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+        let cpu_tau_y = find_mi_lag(&yf).expect("the cpu driver carries an MI lag");
+        assert_eq!(
+            tau_y, cpu_tau_y,
+            "the gpu driver lag diverges from the cpu reference"
+        );
+        let cpu_tau_c =
+            find_cross_mi_lag(&xf, &yf, cpu_tau_y).expect("the cpu carries a cross horizon");
+        assert_eq!(
+            tau_c, cpu_tau_c,
+            "the gpu cross horizon diverges from the cpu reference"
+        );
+        let emb_x = embed_series(&xf, tau_c, 3);
+        let emb_y = embed_series(&yf, tau_y, 3);
+        let cpu_opt = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, TE_KSG_K);
+        let cpu_te = cpu_opt.expect("the KSG reference carries a TE at the GPU lags");
+        let gap = (gpu_te as f64 - cpu_te).abs();
+        assert!(
+            gap < 0.05 + 0.05 * cpu_te.abs(),
+            "wgsl ksg parity: gpu {} cpu {} gap {}",
+            gpu_te,
+            cpu_te,
+            gap
+        );
+        let mut ksg_surrogates = 0usize;
+        for s in 2..TE_SERIES_COUNT {
+            if verdict[TE_SERIES_COUNT * 6 + 2 * s + 1] != 1.0 {
+                continue;
+            }
+            let tau_s = verdict[s * 6] as usize;
+            let gpu_s = verdict[TE_SERIES_COUNT * 6 + 2 * s];
+            let ysf: Vec<f64> = surrogates[s - 2].iter().map(|&v| v as f64).collect();
+            let tau_c_s = find_cross_mi_lag(&xf, &ysf, tau_s)
+                .expect("the cpu carries a surrogate cross horizon");
+            let emb_x_s = embed_series(&xf, tau_c_s, 3);
+            let emb_s = embed_series(&ysf, tau_s, 3);
+            let cpu_s_opt =
+                transfer_entropy_embedded_ksg(&xf, &emb_x_s, &emb_s, tau_c_s, tau_s, TE_KSG_K);
+            let cpu_s = cpu_s_opt.expect("the KSG reference carries a surrogate TE at GPU lags");
+            let gap_s = (gpu_s as f64 - cpu_s).abs();
+            assert!(
+                gap_s < 0.05 + 0.05 * cpu_s.abs(),
+                "wgsl ksg surrogate {s} parity: gpu {} cpu {} gap {}",
+                gpu_s,
+                cpu_s,
+                gap_s
+            );
+            ksg_surrogates += 1;
+        }
+        assert!(
+            ksg_surrogates >= 2,
+            "wgsl ksg surrogate parity holds on {ksg_surrogates} series — the null mirror needs at least two"
+        );
+
+        let mut flat_data = vec![0f32; TE_SERIES_COUNT * crate::machines::TE_SERIES_STRIDE];
+        flat_data[0..n].copy_from_slice(&x);
+        queue.write_buffer(
+            &series_buf,
+            0,
+            &crate::machines::le_bytes_f32(&flat_data),
+        );
+        let mut enc2 = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc2.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(&te_pipe);
+            pass.set_bind_group(0, &te_bind, &[]);
+            pass.dispatch_workgroups((TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+        }
+        enc2.copy_buffer_to_buffer(
+            &out_buf,
+            0,
+            &read_buf,
+            0,
+            crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+        );
+        queue.submit(std::iter::once(enc2.finish()));
+        let mapped2 = Arc::new(AtomicBool::new(false));
+        let m3 = mapped2.clone();
+        let slice2 = read_buf.slice(..);
+        slice2.map_async(wgpu::MapMode::Read, move |r| {
+            m3.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline2 = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped2.load(Ordering::SeqCst) && std::time::Instant::now() < deadline2 {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        assert!(
+            mapped2.load(Ordering::SeqCst),
+            "wgsl horizon no-tau readback returned void"
+        );
+        let flat_mapped = slice2.get_mapped_range();
+        let mut flat_verdict =
+            [0f32; crate::machines::te_verdict_bytes(TE_KSG_K as u32) as usize / 4];
+        for k in 0..flat_verdict.len() {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&flat_mapped[k * 4..k * 4 + 4]);
+            flat_verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(flat_mapped);
+        read_buf.unmap();
+        assert_eq!(
+            flat_verdict[0], 0.0,
+            "no tau: the horizon slot stays absent for a flat driver"
+        );
+        assert_eq!(flat_verdict[10], 0.0, "no tau: the real pair carries no TE");
+        assert_eq!(
+            flat_verdict[7], 0.0,
+            "no tau: the real-pair TE slot stays absent"
+        );
+        assert_eq!(
+            flat_verdict[TE_SERIES_COUNT * 6 + 3],
+            0.0,
+            "no tau: the ksg mirror stays absent too"
+        );
+    }
+
+use super::*;
+
+#[test]
+fn golden_pack_slots_against_wgsl_access() {
+    let presence = [1.0e3, 2.0e3, 3.0e3];
+    let r: Record = (
+        7001.0, 7002.0, 7003.0, 7004.0, 7005.0, 7006.0, 7007.0, 7008.0, 7009.0, 7010.0, 7011.0,
+        7012.0, 7013.0, 7014.0, 7015.0, 7016.0, 7017.0, 7018.0, 7019.0, 7020.0, 7021.0, 7022.0,
+        7023.0, 7024.0, 7025.0, 7026.0,
+    );
+    let packed = pack_window(&[r], presence);
+    assert_eq!(packed.count, 1);
+    let f = &packed.field;
+    assert_eq!(f[0], 6001.0);
+    assert_eq!(f[1], 5002.0);
+    assert_eq!(f[2], 4003.0);
+    assert_eq!(f[3], 7004.0);
+    assert_eq!(f[4], 7005.0);
+    assert_eq!(f[5], 7006.0);
+    assert_eq!(f[6], 7010.0);
+    assert_eq!(f[7], 7011.0);
+    assert_eq!(f[8], 7012.0);
+    assert_eq!(f[9], 7013.0);
+    assert_eq!(f[10], 7014.0);
+    assert_eq!(f[11], 7015.0);
+    let m = &packed.meta;
+    assert_eq!(m[0], 7008.0);
+    assert_eq!(m[1], 7007.0);
+    assert_eq!(m[2], 7009.0);
+    assert_eq!(m[3], 0.0);
+    assert_eq!(m[4], 7016.0);
+    assert_eq!(m[5], 7017.0);
+    assert_eq!(m[6], 7018.0);
+    assert_eq!(m[7], 7019.0);
+    assert_eq!(m[8], 7020.0);
+    assert_eq!(m[9], 7021.0);
+    assert_eq!(m[10], 7022.0);
+    assert_eq!(m[11], 7023.0);
+    assert_eq!(m[12], 7024.0);
+    assert_eq!(m[13], 7025.0);
+    assert_eq!(m[14], 7026.0);
+    assert_eq!(m[15], 0.0);
+}
+
+#[test]
+fn force_ref_medians_routes_forces_and_honors_zero() {
+    let mut field = vec![0.0f32; 48];
+    field[3] = 4.0;
+    field[15] = 4.0;
+    field[27] = -2.0;
+    field[30] = 2.0;
+    field[39] = 0.0;
+    field[42] = 8.0;
+    let meds = force_ref_medians(&field, &[0.0; 48]);
+    assert_eq!(meds[0].unwrap(), 4.0);
+    assert_eq!(meds[1], None);
+    assert_eq!(meds[2].unwrap(), 2.0);
+    for m in &meds[3..9] {
+        assert!(m.is_none());
+    }
+}
+
+#[test]
+fn force_ref_medians_skips_length_annotations() {
+    let mut field = vec![0.0f32; 24];
+    let mut meta = vec![0.0f32; 32];
+    field[3] = 2.0f32.powi(20);
+    field[6] = 1.0;
+    meta[0] = 2.0f32.powi(20);
+    field[15] = 2.0f32.powi(45);
+    field[18] = 1.0;
+    let meds = force_ref_medians(&field, &meta);
+    assert_eq!(meds[1].unwrap(), 2.0f32.powi(45));
+}
+
+#[test]
+fn the_aim_law_maps_thrust_to_pan_tilt_pulse_widths() {
+    assert_eq!(aim_pulse_ms([0.0, 0.0, 0.0]), (None, None));
+    let (pan, tilt) = aim_pulse_ms([1.0, 0.0, 0.0]);
+    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
+    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
+    let (pan, tilt) = aim_pulse_ms([0.0, 1.0, 0.0]);
+    assert!((pan.unwrap() - 2.0).abs() < 1e-6);
+    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
+    let (pan, tilt) = aim_pulse_ms([0.0, 0.0, 1.0]);
+    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
+    assert!((tilt.unwrap() - 2.0).abs() < 1e-6);
+    assert_eq!(aim_pulse_ms([THRUST_AIM_MIN * 0.5, 0.0, 0.0]), (None, None));
+}
+
+#[test]
+fn aberration_shifts_toward_apex_and_stays_unit() {
+    fn aberr(u: [f64; 3], beta: [f64; 3]) -> [f64; 3] {
+        let b2 = beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2];
+        let gamma = 1.0 / (1.0 - b2).sqrt();
+        let ud = u[0] * beta[0] + u[1] * beta[1] + u[2] * beta[2];
+        let inv = 1.0 / (1.0 + ud);
+        let k = gamma / (gamma + 1.0) * ud;
+        [
+            (u[0] / gamma + beta[0] + k * beta[0]) * inv,
+            (u[1] / gamma + beta[1] + k * beta[1]) * inv,
+            (u[2] / gamma + beta[2] + k * beta[2]) * inv,
+        ]
+    }
+    let beta = [0.5, 0.0, 0.0];
+    let ahead = aberr([1.0, 0.0, 0.0], beta);
+    assert!((ahead[0] - 1.0).abs() < 1e-9);
+    assert!(ahead[1].abs() < 1e-9 && ahead[2].abs() < 1e-9);
+    let side = aberr([0.0, 1.0, 0.0], beta);
+    assert!(side[0] > 0.0, "transverse star shifts toward the apex");
+    let n = (side[0] * side[0] + side[1] * side[1] + side[2] * side[2]).sqrt();
+    assert!((n - 1.0).abs() < 1e-9);
+    let rest = aberr([0.3, 0.4, 0.916515139], [0.0, 0.0, 0.0]);
+    assert!((rest[0] - 0.3).abs() < 1e-9);
+    assert!((rest[1] - 0.4).abs() < 1e-9);
+}
+
+#[test]
+fn scalar_gpu_parity_fp_decision() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu fp gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+    let mut gpu_fp = 0usize;
+    let mut gpu_meas = 0usize;
+    let mut agree = 0usize;
+    let mut agree_tot = 0usize;
+    let mut floor_viol = 0usize;
+    for t in 0..30 {
+        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let x = sg_gate_ar1(300, 0.7, &mut rng);
+        let y = sg_gate_ar1(300, 0.7, &mut rng);
+        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &x, &y, 0, seed)
+        else {
+            continue;
+        };
+        gpu_meas += 1;
+        if gpu_ab {
+            gpu_fp += 1;
+        }
+        agree_tot += 1;
+        if cpu_ab == gpu_ab {
+            agree += 1;
+        }
+        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
+            floor_viol += 1;
+        }
+    }
+    assert!(
+        gpu_meas >= 20,
+        "scalar gpu FP gate: {} of 30 measurable — the machine stays silent too often",
+        gpu_meas
+    );
+    assert!(
+        gpu_fp <= 8,
+        "scalar gpu FP gate: {} of {} above the threshold — the null does not hold on the GPU",
+        gpu_fp,
+        gpu_meas
+    );
+    assert!(
+        agree * 100 >= agree_tot * 95,
+        "scalar gpu FP gate: CPU/GPU classification agrees in {}/{}",
+        agree,
+        agree_tot
+    );
+    assert_eq!(
+        floor_viol, 0,
+        "scalar gpu FP gate: {} numeric-floor violations",
+        floor_viol
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_fn_decision() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu fn gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x517C_C1B7_2722_0A95u64;
+    let mut found = 0usize;
+    let mut meas = 0usize;
+    let mut agree = 0usize;
+    let mut floor_viol = 0usize;
+    for t in 0..20 {
+        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+        let a: Vec<f32> = (0..300)
+            .map(|_| (sg_gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+            .collect();
+        let b: Vec<f32> = (0..a.len())
+            .map(|i| {
+                if i == 0 {
+                    sg_gate_rng(&mut rng) as f32
+                } else {
+                    (0.9 * a[i - 1] as f64 + (sg_gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                }
+            })
+            .collect();
+        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &b, &a, 0, seed)
+        else {
+            continue;
+        };
+        meas += 1;
+        if cpu_ab && gpu_ab {
+            found += 1;
+        }
+        if cpu_ab == gpu_ab {
+            agree += 1;
+        }
+        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
+            floor_viol += 1;
+        }
+    }
+    if meas == 0 {
+        panic!("scalar gpu FN gate: no coupling measurement succeeded in 20 trials");
+    }
+    assert!(
+        found as f64 / meas as f64 > 0.5,
+        "scalar gpu FN gate: {} of {} true couplings found on the GPU",
+        found,
+        meas
+    );
+    assert!(
+        agree * 100 >= meas * 95,
+        "scalar gpu FN gate: CPU/GPU classification agrees in {}/{}",
+        agree,
+        meas
+    );
+    assert_eq!(
+        floor_viol, 0,
+        "scalar gpu FN gate: {} numeric-floor violations",
+        floor_viol
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_symmetry() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu symmetry gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x2722_0A95_517C_C1B7u64;
+    let a = sg_gate_ar1(300, 0.7, &mut rng);
+    let Some((f, r)) = sg_fr(&mut gpu, &a, &a, 0) else {
+        return;
+    };
+    assert!(
+        (f - r).abs() < 1e-3,
+        "scalar gpu symmetry: a=a measures unequal, {} vs {}",
+        f,
+        r
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_n_floor() {
+    let Some(mut gpu) = ScalarTeGpu::new(13) else {
+        eprintln!("scalar gpu n-floor gate skipped: no adapter");
+        return;
+    };
+    let x = sg_gate_ar1(300, 0.7, &mut 0x9E37_79B9_7F4A_7C15u64);
+    let constant = vec![1.0f32; 300];
+    let gpu_te = crate::te::transfer_entropy_lag(&x, &constant, 0);
+    assert!(
+        gpu_te.is_none(),
+        "scalar CPU constant series must stay absent"
+    );
+    let grid = gpu.run(&x, &constant, &[]);
+    if !grid.is_empty() {
+        let valid = grid[1];
+        assert_eq!(valid, 0.0, "scalar GPU constant series must stay absent");
+    }
+}
+
+#[test]
+fn scalar_gpu_parity_surrogate_slots_match_cpu() {
+    let Some(mut gpu) = ScalarTeGpu::new(13) else {
+        eprintln!("scalar gpu surrogate-slot gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x0FEB_11D1_B2D1_9C93u64;
+    let x = sg_gate_ar1(300, 0.7, &mut rng);
+    let y = sg_gate_ar1(300, 0.7, &mut rng);
+    let mut surrs: Vec<Vec<f32>> = Vec::new();
+    for _ in 0..10 {
+        surrs.push(crate::te::phase_randomized_surrogate(&y, &mut rng));
+    }
+    let grid = gpu.run(&x, &y, &surrs);
+    if grid.is_empty() {
+        return;
+    }
+    let series_at = |k: usize| -> &[f32] { if k == 0 { &y } else { &surrs[k - 1] } };
+    let mut viol = 0usize;
+    let mut meas = 0usize;
+    for dir in 0..2 {
+        for k in 0..11 {
+            for lag in 0..13 {
+                let idx = ((dir * 11 + k) * 13 + lag) * 2;
+                let gpu_te = grid[idx];
+                let gpu_valid = grid[idx + 1];
+                let cpu_te = if dir == 0 {
+                    crate::te::transfer_entropy_lag(&x, series_at(k), lag)
+                } else {
+                    crate::te::transfer_entropy_lag(series_at(k), &x, lag)
+                };
+                match (gpu_valid > 0.0, cpu_te) {
+                    (true, Some(c)) => {
+                        meas += 1;
+                        if (gpu_te as f64 - c).abs() > SCALAR_PARITY_TOL * (c.abs() + 1e-3) {
+                            viol += 1;
+                            eprintln!(
+                                "surrogate slot: dir {} k {} lag {} gpu {} cpu {}",
+                                dir, k, lag, gpu_te, c
+                            );
+                        }
+                    }
+                    (false, None) => {}
+                    (true, None) => {
+                        viol += 1;
+                        eprintln!(
+                            "surrogate slot: dir {} k {} lag {} gpu valid, cpu absent",
+                            dir, k, lag
+                        );
+                    }
+                    (false, Some(c)) => {
+                        viol += 1;
+                        eprintln!(
+                            "surrogate slot: dir {} k {} lag {} gpu absent, cpu {}",
+                            dir, k, lag, c
+                        );
+                    }
+                }
+            }
+        }
+    }
+    assert!(
+        meas >= 200,
+        "scalar gpu surrogate-slot gate: only {} of 286 grid slots measurable",
+        meas
+    );
+    assert_eq!(
+        viol, 0,
+        "scalar gpu surrogate-slot gate: {} grid mismatches",
+        viol
+    );
+}
+
+#[test]
+fn r_struct_is_finite_and_positive_for_every_kernel_form() {
+    let extent = 1.0;
+    let global_scale = 1e-2;
+    let absorption = 0.5;
+    for kernel_id in [0u8, 1, 3, 4, 5, 6] {
+        for d in [2.0_f64, 4.0, 8.0] {
+            let r = r_struct(kernel_id, d, extent, global_scale, absorption)
+                .expect("R_struct is defined for d > 0");
+            assert!(
+                r.is_finite() && r > 0.0,
+                "kernel {} R_struct({}) = {} is not finite-positive",
+                kernel_id,
+                d,
+                r
+            );
+        }
+    }
+}
+
+#[test]
+fn r_struct_inverse_square_grows_linearly_in_the_tail() {
+    let extent = 1.0;
+    let global_scale = 1e-2;
+    let mut prev = 0.0;
+    for d in [8.0_f64, 16.0, 32.0, 64.0] {
+        let r = r_struct(0, d, extent, global_scale, 0.0).expect("defined for d > 0");
+        assert!(
+            r > prev,
+            "inverse-square R_struct did not grow with d: {} then {}",
+            prev,
+            r
+        );
+        let analytic = F32_EPS_REF * d / 2.0;
+        let rel = (r - analytic).abs() / analytic;
+        assert!(
+            rel < 0.02,
+            "inverse-square R_struct({}) = {} diverges from F32_EPS·d/2 = {}",
+            d,
+            r,
+            analytic
+        );
+        prev = r;
+    }
+}
+
+#[test]
+fn multipole_error_cluster_vs_barycenter() {
+    let r = 1.0;
+    let val = 1.0;
+    let point = |d: f64| val / (d * d);
+    let cluster = |d: f64| 0.5 * point(d - r) + 0.5 * point(d + r);
+    let barycenter = |d: f64| kernel_omega(0, d, r, 0.0, 0.0);
+
+    let d_far = 2e4;
+    let err_far = (cluster(d_far) - barycenter(d_far)).abs() / cluster(d_far).abs();
+    assert!(
+        err_far < F32_EPS_REF,
+        "far-field multipole error {} is above F32_EPS",
+        err_far
+    );
+
+    let d_near = 2.0 * r;
+    let err_near = (cluster(d_near) - barycenter(d_near)).abs() / cluster(d_near).abs();
+    assert!(
+        err_near > F32_EPS_REF,
+        "near-field multipole error {} is below F32_EPS (cluster collapsed to a monopole)",
+        err_near
+    );
+}
+
