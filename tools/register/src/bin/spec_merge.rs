@@ -2359,6 +2359,11 @@ fn set_fields(path: &str) {
         if !(fline.starts_with("field ") || fline.starts_with("quantity ") || fline.starts_with("last ")) {
             continue;
         }
+        let head: Vec<&str> = fline.split_whitespace().take(5).collect();
+        if head.len() < 5 {
+            continue;
+        }
+        let fline = head.join(" ");
         let mut idx: Option<usize> = None;
         for (i, b) in groups.iter().enumerate() {
             if field(b, "url").as_deref() == Some(url.trim()) {
@@ -3332,6 +3337,303 @@ fn set_header(path: &str) {
     println!("set-header: {changed} Bloecke gesetzt");
 }
 
+fn list_missing(key: &str) {
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    for (_, b) in blocks(&reg) {
+        let has = b.iter().any(|l| l.trim_start().starts_with(&format!("{key} ")));
+        if has {
+            continue;
+        }
+        let host = or_empty(field(&b, "host"));
+        if host.is_empty() {
+            continue;
+        }
+        *counts.entry(host).or_insert(0) += 1;
+    }
+    let mut rows: Vec<(String, usize)> = counts.into_iter().collect();
+    rows.sort_by(|a, b| b.1.cmp(&a.1));
+    for (h, n) in &rows {
+        println!("{n}\t{h}");
+    }
+    println!("list-missing {key}: {} Hosts, {} Zeilen", rows.len(), rows.iter().map(|r| r.1).sum::<usize>());
+}
+
+fn set_host_doc(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let mut docs: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for line in tsv.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 3 {
+            continue;
+        }
+        let host = cols[0].trim();
+        let url = cols[1].trim();
+        let quote = cols[2].trim();
+        if host.is_empty() || url.is_empty() || url == "-" {
+            continue;
+        }
+        docs.insert(host.to_string(), (url.to_string(), quote.to_string()));
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut rows = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let host = or_empty(field(&b, "host"));
+        if let Some((url, quote)) = docs.get(&host) {
+            set_row_key(&mut b, "host_cite", url);
+            if !quote.is_empty() {
+                set_row_key(&mut b, "host_quote", &format!("\"{quote}\""));
+            }
+            rows += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("set-host-doc: {rows} Zeilen mit {} Hostdokumenten", docs.len());
+}
+
+fn list_missing_rows(key: &str) {
+    let reg = fs::read_to_string(REG).expect("register");
+    for (_, b) in blocks(&reg) {
+        let has = b
+            .iter()
+            .any(|l| l.trim_start().starts_with(&format!("{key} ")));
+        if has {
+            continue;
+        }
+        let host = or_empty(field(&b, "host"));
+        let applies = or_empty(field(&b, "applies"));
+        let status = or_empty(field(&b, "status"));
+        println!("{host}\t{status}\t{applies}");
+    }
+}
+
+fn strip_markup(s: &str) -> String {
+    let mut out = String::new();
+    let mut in_tag = false;
+    for c in s.chars() {
+        match c {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ if !in_tag => out.push(c),
+            _ => {}
+        }
+    }
+    out.replace("&amp;", "&")
+        .replace("&#177;", "±")
+        .replace("&plusmn;", "±")
+        .replace("&nbsp;", " ")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+}
+
+fn verify_cites(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let (mut ok, mut bad_http, mut bad_quote, mut empty) = (0usize, 0usize, 0usize, 0usize);
+    for line in tsv.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 7 {
+            continue;
+        }
+        let pairs = [
+            (cols[2].trim(), cols[3].trim(), "instrument"),
+            (cols[4].trim(), cols[5].trim(), "data"),
+        ];
+        for (url, quote, kind) in pairs {
+            if url.is_empty() || url == "-" || !url.starts_with("http") {
+                empty += 1;
+                continue;
+            }
+            let out = Command::new("curl")
+                .args(["-sSL", "--max-time", "30", url])
+                .output();
+            let body = match out {
+                Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+                Err(_) => String::new(),
+            };
+            if body.is_empty() {
+                bad_http += 1;
+                println!("HTTP\t{kind}\t{url}");
+                continue;
+            }
+            let needle: String = quote
+                .trim_matches('"')
+                .split_whitespace()
+                .take(8)
+                .collect::<Vec<_>>()
+                .join(" ");
+            let mut text = body;
+            if text.contains('<') {
+                text = strip_markup(&text);
+            }
+            if text.starts_with("%PDF") || url.to_lowercase().ends_with(".pdf") {
+                let tmp = std::env::temp_dir().join(format!("cite-{}", std::process::id()));
+                let _ = fs::write(&tmp, text.as_bytes());
+                if let Ok(o) = Command::new("pdftotext")
+                    .args(["-layout", &tmp.to_string_lossy(), "-"])
+                    .output()
+                {
+                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                }
+                let _ = fs::remove_file(&tmp);
+            }
+            let hay: String = text.split_whitespace().collect::<Vec<_>>().join(" ");
+            if needle.is_empty() || hay.contains(&needle) {
+                ok += 1;
+            } else {
+                let reader = format!("https://r.jina.ai/{url}");
+                let rbody = match Command::new("curl")
+                    .args(["-sSL", "--max-time", "40", &reader])
+                    .output()
+                {
+                    Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+                    Err(_) => String::new(),
+                };
+                let rhay: String = rbody.split_whitespace().collect::<Vec<_>>().join(" ");
+                if !needle.is_empty() && rhay.contains(&needle) {
+                    ok += 1;
+                } else {
+                    bad_quote += 1;
+                    println!("ZITAT\t{kind}\t{url}\t{needle}");
+                }
+            }
+        }
+    }
+    println!("verify-cites {path}: ok={ok} http={bad_http} zitat={bad_quote} leer={empty}");
+}
+
+fn set_doc_quote(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut rows = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let api_cite = or_empty(field(&b, "api_cite"));
+        let inst_cite = or_empty(field(&b, "instrument_cite"));
+        let mut hit: Option<(String, String, String)> = None;
+        for line in tsv.lines() {
+            let cols: Vec<&str> = line.split('\t').collect();
+            if cols.len() < 3 {
+                continue;
+            }
+            let doc = cols[0].trim();
+            let kind = cols[1].trim().to_string();
+            let matches = if kind == "instrument" {
+                inst_cite == doc
+            } else {
+                api_cite == doc
+            };
+            if matches {
+                let beleg = match cols.get(3) {
+                    Some(s) => s.trim().to_string(),
+                    None => String::new(),
+                };
+                hit = Some((kind, cols[2].trim().to_string(), beleg));
+                break;
+            }
+        }
+        if let Some((kind, quote, beleg)) = hit {
+            let (cite_key, quote_key) = if kind == "instrument" {
+                ("instrument_cite", "instrument_quote")
+            } else {
+                ("api_cite", "api_quote")
+            };
+            if !beleg.is_empty() && beleg.starts_with("http") {
+                set_row_key(&mut b, cite_key, &beleg);
+            }
+            let q = quote.trim_matches('"');
+            set_row_key(&mut b, quote_key, &format!("\"{q}\""));
+            rows += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("set-doc-quote: {rows} Zeilen gesetzt");
+}
+
+fn verify_register(filter_path: &str) {
+    use std::collections::BTreeSet;
+    let filter = match fs::read_to_string(filter_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
+    };
+    let mut docs: BTreeSet<String> = BTreeSet::new();
+    for line in filter.lines() {
+        if let Some(u) = line.split('\t').next() {
+            let u = u.trim();
+            if u.starts_with("http") {
+                docs.insert(u.to_string());
+            }
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let (mut ok, mut bad, mut http) = (0usize, 0usize, 0usize);
+    for (_, b) in blocks(&reg) {
+        let pairs = [
+            (or_empty(field(&b, "instrument_cite")), or_empty(field(&b, "instrument_quote")), "instrument"),
+            (or_empty(field(&b, "api_cite")), or_empty(field(&b, "api_quote")), "data"),
+        ];
+        for (url, quote, kind) in pairs {
+            if url.is_empty() || quote.is_empty() || !docs.contains(&url) {
+                continue;
+            }
+            let out = Command::new("curl")
+                .args(["-sSL", "--max-time", "30", &url])
+                .output();
+            let mut text = match out {
+                Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+                Err(_) => String::new(),
+            };
+            if text.is_empty() {
+                http += 1;
+                println!("HTTP\t{kind}\t{url}");
+                continue;
+            }
+            if text.starts_with("%PDF") || url.to_lowercase().ends_with(".pdf") {
+                let tmp = std::env::temp_dir().join(format!("reg-{}", std::process::id()));
+                let _ = fs::write(&tmp, text.as_bytes());
+                if let Ok(o) = Command::new("pdftotext")
+                    .args(["-layout", &tmp.to_string_lossy(), "-"])
+                    .output()
+                {
+                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                }
+                let _ = fs::remove_file(&tmp);
+            }
+            if text.contains('<') {
+                text = strip_markup(&text);
+            }
+            let needle: String = quote
+                .trim_matches('"')
+                .split_whitespace()
+                .take(8)
+                .collect::<Vec<_>>()
+                .join(" ");
+            let hay: String = text.split_whitespace().collect::<Vec<_>>().join(" ");
+            if !needle.is_empty() && hay.contains(&needle) {
+                ok += 1;
+            } else {
+                bad += 1;
+                println!("ZITAT\t{kind}\t{url}\t{needle}");
+            }
+        }
+    }
+    println!("verify-register: ok={ok} zitat={bad} http={http}");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -3374,6 +3676,12 @@ fn main() {
         Some("probe-openneuro") => probe_openneuro(),
         Some("untangle-probes") => untangle_probes(),
         Some("set-header") if args.len() >= 3 => set_header(&args[2]),
+        Some("list-missing") if args.len() >= 3 => list_missing(&args[2]),
+        Some("list-missing-rows") if args.len() >= 3 => list_missing_rows(&args[2]),
+        Some("set-host-doc") if args.len() >= 3 => set_host_doc(&args[2]),
+        Some("set-doc-quote") if args.len() >= 3 => set_doc_quote(&args[2]),
+        Some("verify-register") if args.len() >= 3 => verify_register(&args[2]),
+        Some("verify-cites") if args.len() >= 3 => verify_cites(&args[2]),
         Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
         Some("fill-sha") => fill_sha(
             args.get(2).map(String::as_str),

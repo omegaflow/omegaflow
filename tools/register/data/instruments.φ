@@ -6982,8 +6982,8 @@ host datacentral.org.au
   interval 604800
   api_cite https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
   api_quote "quantity teff galah_dr3_effective_temp_k erfc source-parameter K 604800 0.0 0.0"
-  instrument_cite https://www.galah-survey.org/details/facilities/
-  instrument_quote "The GALAH survey uses the Two-Degree Field (2dF) fibre positioner with the HERMES spectrograph at the Anglo-Australian Telescope."
+instrument_cite https://www.galah-survey.org/details/facilities/
+instrument_quote "GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer."
   probe 2026-10-25T11:54:56Z 200 https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+galah_dr3.main_star
   fields teff
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
@@ -8516,8 +8516,8 @@ host datacentral.org.au
   interval 3600
   api_cite https://ar5iv.labs.arxiv.org/html/2011.02505
   api_quote "teff K Spectroscopic effective temperature (used for fitting) float"
-  instrument_cite https://www.galah-survey.org/details/facilities/
-  instrument_quote "GALAH observes using the HERMES spectrograph (Sheinis et al. 2015) at the Anglo-Australian Telescope."
+instrument_cite https://www.galah-survey.org/details/facilities/
+instrument_quote "GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer."
   probe 2026-10-25T13:05:54Z 200 https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+teff+FROM+galah_dr3.main_star
   fields teff
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
@@ -20589,8 +20589,8 @@ host alasky.cds.unistra.fr
   unit 1
   sampling null
   interval null
-  api_cite https://alasky.cds.unistra.fr/Pan-STARRS/DR1/color-i-r-g/properties
-  api_quote "obs_title = PanSTARRS DR1 color (i, r, g)"
+api_cite https://alasky.cds.unistra.fr/Pan-STARRS/DR1/color-i-r-g/properties
+api_quote "hipsgen_params_2     = out=/asd-volumes/sc1-asd-volume7/CDS_P_PanSTARRS_DR1_color-i-r-g color=true method=mean tree"
   instrument_cite https://en.wikipedia.org/wiki/Pan-STARRS
   instrument_quote "The Panoramic Survey Telescope and Rapid Response System located at Haleakala Observatory, Hawaii, US, consists of astronomical cameras, telescopes and a computing facility that is surveying the sky for moving or variable objects on a continual basis"
   host_cite https://alasky.cds.unistra.fr/Pan-STARRS/DR1/color-i-r-g/properties
@@ -21294,8 +21294,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "42-44 i 3 Depth in kilometers. ... 65-68 f4.2 Magnitude. ... 69-70 a2 Magnitude scale, \"UK\" - unknown scale."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Catalogue compiled on the data from the International Seismological Summaries (ISS), for the period from 1913 to 1963 in the International Seismological Centre."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   host_quote "The Catalogue is a part of the Global Hypocenter Database, prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
   ttl no-sampling
@@ -24140,8 +24140,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "Length of logical record - 110 byte ... 65-68 f4.2 Magnitude ... 69-70 a2 Magnitude scale, "UK" - unknown scale."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
+instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24157,8 +24157,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "Length of logical recor - 95 byte ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24174,8 +24174,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
   api_quote "Length of logical record - 90 byte ... 34-38 f5.2 Latitude in degrees ("&ndash;" - south)"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
+instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24191,8 +24191,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24208,8 +24208,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24225,8 +24225,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24242,8 +24242,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24463,8 +24463,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   api_quote "Catalogue compiled by B.Gutenberg and C.Richter includes information on 4158 world earthquakes for the period from 1904 to 1952. ... 65-68 f4.2 Magnitude"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24485,8 +24485,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "Catalogue includes information on 17868 earthquakes in the world. Size of datafile is 2.0 MB. ... 42-44 i 3 Depth in kilometers"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
+instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24507,8 +24507,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "Earthquakes in the USSR from 1962 to 1991 ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24529,8 +24529,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
+instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24546,8 +24546,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
   api_quote "Catalogue of earthquakes includes information on 2698 events for the territory of Turkey for the period from 1913 to 1970. ... Length of logical record - 90 byte."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
+instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24563,8 +24563,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   api_quote "45-47 f3.1 Surface magnitude M s ... Length of logical record - 50 byte."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24585,8 +24585,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
+instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -27096,8 +27096,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aa.doc ... 16-Aug-1999 09:52     1k ... aastar/ ... 01-Nov-2002 16:31"
   ttl null
@@ -27142,8 +27142,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aa.doc ... 16-Aug-1999 09:52     1k ... aastar/ ... 01-Nov-2002 16:31"
   ttl null
@@ -27165,8 +27165,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aa.doc ... 16-Aug-1999 09:52     1k ... aastar/ ... 01-Nov-2002 16:31"
   ttl null
@@ -27188,8 +27188,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aa.doc ... 16-Aug-1999 09:52     1k ... aastar/ ... 01-Nov-2002 16:31"
   ttl null
@@ -27211,8 +27211,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aastar/ ... 01-Nov-2002 16:31 ... aaindex ... 01-Nov-2002 16:32   1.8M"
   ttl null
@@ -27249,8 +27249,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aastar/ ... 01-Nov-2002 16:31 ... aaindex ... 01-Nov-2002 16:32   1.8M"
   ttl null
@@ -27268,8 +27268,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aastar/ ... 01-Nov-2002 16:31 ... aaindex ... 01-Nov-2002 16:32   1.8M"
   ttl null
@@ -27287,8 +27287,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
-  instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
-  instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger and Greenwich) in the UK are the two observatories used to determine the aa antipodal activity index"
+instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
+instrument_quote "Canberra (and its predecessors Toolangi and Melbourne) and Hartland (and its predecessors Abinger"
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "aastar/ ... 01-Nov-2002 16:31 ... aaindex ... 01-Nov-2002 16:32   1.8M"
   ttl null
@@ -28432,8 +28432,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "42-44 i 3 Depth in kilometers. ... 65-68 f4.2 Magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Catalogue compiled on the data from the International Seismological Summaries (ISS), for the period from 1913 to 1963"
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   host_quote "The Catalogue is a part of the Global Hypocenter Database, prepared in the National Earthquake Information Center"
   ttl no-sampling
@@ -30604,8 +30604,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   api_quote "Catalogue compiled by B.Gutenberg and C.Richter includes information on 4158 world earthquakes for the period from 1904 to 1952. ... 65-68 f4.2 Magnitude"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -30628,8 +30628,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   api_quote "45-47 f3.1 Surface magnitude M s ... Length of logical record - 50 byte."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -32208,8 +32208,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   api_quote "Catalogue compiled by B.Gutenberg and C.Richter includes information on 4158 world earthquakes for the period from 1904 to 1952. ... 65-68 f4.2 Magnitude"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -32232,8 +32232,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   api_quote "45-47 f3.1 Surface magnitude M s ... Length of logical record - 50 byte."
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "The Catalogue is a part of the Global Hypocenter Database , prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
+instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+instrument_quote "Hypocenter Data in the International Seismological Summaries"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
