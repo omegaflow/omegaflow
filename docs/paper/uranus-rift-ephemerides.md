@@ -4,7 +4,6 @@
   date: 2026-09-12
   sha256: 0c07f7e6d56da265aded22c5edad400d9c47b360b3ebeda83db5e84514f674ca
   status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-uranus-riss-kontur.md docs/handover/archiv/handover-2026-09-08-uranus-riss-diurnal-reduktion.md
 -->
 # The Uranus rift — ephemeris divergence at the planet centre
 

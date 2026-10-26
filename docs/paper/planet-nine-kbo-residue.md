@@ -4,7 +4,6 @@
   date: 2026-08-22
   sha256: a11659927d7d253a6bc15e7cf55e41ec48d038f31b494f12373357fa46bf7f94
   fam-machine: pre-fix
-  see-also: docs/surveys/survey-raetsel-bestand.md docs/handover/archiv/handover-2026-10-03-sensory-folge224.md
   status: live
 -->
 

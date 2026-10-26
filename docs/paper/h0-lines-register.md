@@ -4,7 +4,6 @@
   date: 2026-09-12
   sha256: 59c8caca38e7c1bd3123865b1cf1fb66959c488deb2684178cc1f1bf76b659bb
   status: live
-  see-also: docs/blatt/archiv/blatt-h0-linien-register.md
 -->
 # The H₀ lines register — roots instead of witnesses
 

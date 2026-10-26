@@ -4,7 +4,6 @@
   date: 2026-10-02
   sha256: 6408361df09fdb84ae9cc98869ea29f669ae47aede75162e957e64b9c50dddae
   status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
 
 # The eclipse clock — greatest eclipse from five ephemeris worldlines

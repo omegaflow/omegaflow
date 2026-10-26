@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: adbb543bb24622ddcbe09d8d8af7e829e4be2439cef7e95ad2c8ad45a70d0721
   status: live
-  see-also: kybernetische-astrophysik docs/handover/archiv/handover-2026-09-09-mechanische-reste.md tools/measure/src/bin/lsst_anomaly_probe.rs tools/measure/src/bin/ztf_anomaly_probe.rs
+  see-also: kybernetische-astrophysik tools/measure/src/bin/lsst_anomaly_probe.rs tools/measure/src/bin/ztf_anomaly_probe.rs
 -->
 # The fresh-area achromatic dip scan over forced photometry (Nadel V)
 

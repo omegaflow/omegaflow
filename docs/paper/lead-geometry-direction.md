@@ -4,7 +4,6 @@
   date: 2026-08-24
   sha256: b616c6b7beeeed9fb348172f2ec9fa452ba9d4b47ddba09c1cdaf1b55668be05
   status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md
 -->
 # The lead geometry carries direction: TE asymmetry in the MIT-BIH ECG
 

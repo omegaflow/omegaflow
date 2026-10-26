@@ -5,7 +5,7 @@
   version: 3
   sha256: 3bbd366dfc3b54ab5fcc0e258653ffb2e201d5141d91f1c799b0248be7f0eaa5
   status: live
-  see-also: docs/paper/pioneer-anomaly-lrr-2010-4.txt, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
+  see-also: docs/paper/pioneer-anomaly-lrr-2010-4.txt, (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
 
 # The text as data — the Pioneer review's numbers against the Doppler series
