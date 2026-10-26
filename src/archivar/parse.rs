@@ -2542,7 +2542,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
             }
             "header" if parts.len() >= 3 => {
-                cur_headers.push((parts[1].to_string(), parts[2].to_string()));
+                cur_headers.push((parts[1].to_string(), parts[2..].join(" ")));
             }
             "post_body" if parts.len() >= 2 => cur_post_body = Some(parts[1].to_string()),
             "target" if parts.len() >= 2 => cur_target = Some(parts[1].to_string()),

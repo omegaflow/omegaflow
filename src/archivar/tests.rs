@@ -8432,7 +8432,7 @@ fn test_gracefo_l1b_tar_gz_yaml_source_parses() {
     assert!(
         src.headers
             .iter()
-            .any(|(k, v)| k == "Authorization" && v == "{EARTHDATA_EDL_TOKEN}"),
+            .any(|(k, v)| k == "Authorization" && v == "Bearer {EARTHDATA_EDL_TOKEN}"),
         "the Earthdata bearer header carries the token marker"
     );
     let keys: Vec<String> = src
