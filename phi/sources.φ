@@ -63,7 +63,7 @@ origin https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T0
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 10
-field crosswind champ_thermosphere_crosswind_ms kg/m3 10
+field crosswind champ_thermosphere_crosswind_ms m/s 10
 at earth
 hapi crosswind=champ_thermosphere_crosswind_ms
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s)

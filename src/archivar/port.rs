@@ -1396,7 +1396,7 @@ pub fn register_hapi_units_of(sources: &[SourceConfig]) -> HashMap<(String, Stri
         for (short, long) in short_to_long {
             for ext in &src.extracts {
                 if let Extract::Field(fc) = ext
-                    && fc.key == long
+                    && (fc.key == long || fc.name == long)
                 {
                     out.insert((id.clone(), short.clone()), fc.unit.clone());
                 }
