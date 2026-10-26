@@ -1,0 +1,42 @@
+name: lola-rdr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  lola_rdr:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s00.csv","args":"--series lro_es_01 --shard 0 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s01.csv","args":"--series lro_es_01 --shard 1 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s02.csv","args":"--series lro_es_01 --shard 2 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s03.csv","args":"--series lro_es_01 --shard 3 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s04.csv","args":"--series lro_es_01 --shard 4 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s05.csv","args":"--series lro_es_01 --shard 5 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s06.csv","args":"--series lro_es_01 --shard 6 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s07.csv","args":"--series lro_es_01 --shard 7 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s08.csv","args":"--series lro_es_01 --shard 8 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s09.csv","args":"--series lro_es_01 --shard 9 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s10.csv","args":"--series lro_es_01 --shard 10 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s11.csv","args":"--series lro_es_01 --shard 11 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s12.csv","args":"--series lro_es_01 --shard 12 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s13.csv","args":"--series lro_es_01 --shard 13 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s14.csv","args":"--series lro_es_01 --shard 14 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s15.csv","args":"--series lro_es_01 --shard 15 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s16.csv","args":"--series lro_es_01 --shard 16 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s17.csv","args":"--series lro_es_01 --shard 17 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s18.csv","args":"--series lro_es_01 --shard 18 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s19.csv","args":"--series lro_es_01 --shard 19 --shard-size 16","timeout":360},
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s20.csv","args":"--series lro_es_01 --shard 20 --shard-size 16","timeout":360}
+        ]
