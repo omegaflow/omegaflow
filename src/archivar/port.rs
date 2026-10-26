@@ -1,5 +1,5 @@
 use super::*;
-use crate::force::{quantity_kind_id, quantity_kind_of};
+use crate::force::quantity_kind_of;
 
 pub fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     let r1 = lat1.to_radians();
