@@ -3471,23 +3471,23 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         let (dip_b, sig_b, t_b) = deepest_dip_at(&b_res);
         let ratio = dip_depth_ratio(dip_a, dip_b);
         let sig_gate = sig_a.min(sig_b).abs() >= DIP_SIG && dip_a < 0.0 && dip_b < 0.0;
-        let achromatisch = match ratio {
+        let achromatic = match ratio {
             Some(r) => sig_gate && (1.0 / ACHROMATIC_RATIO..=ACHROMATIC_RATIO).contains(&r),
             None => false,
         };
         let fap = lomb_scargle_fap(&tj, &a_j);
-        let nicht_periodisch = match fap {
+        let not_periodic = match fap {
             Some((_, f)) => f >= FAP_GATE,
             None => false,
         };
         let rho = spearman(&a_j, &b_j);
         let dt_dip_s = (t_a - t_b).abs();
         scanned += 1;
-        if achromatisch && nicht_periodisch {
+        if achromatic && not_periodic {
             kandidaten += 1;
             cand_coords.push((g.ra, g.dec));
         }
-        let word = if achromatisch && nicht_periodisch {
+        let word = if achromatic && not_periodic {
             "CANDIDATE (pre-exclusion)"
         } else {
             "still"
@@ -3501,7 +3501,7 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
             None => "FAP not computable — absent".to_string(),
         };
         let dip_kind = match ratio {
-            Some(_) if achromatisch => "achromatic",
+            Some(_) if achromatic => "achromatic",
             Some(_) => "chromatic",
             None => "achromaticity not measurable — ratio absent",
         };

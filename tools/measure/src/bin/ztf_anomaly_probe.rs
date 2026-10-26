@@ -323,10 +323,10 @@ fn main() {
             f64::INFINITY
         };
         let dip_times_dig = sig_g.min(sig_r) >= DIP_SIG && dip_g < 0.0 && dip_r < 0.0;
-        let achromatisch =
+        let achromatic =
             dip_times_dig && (1.0 / ACHROMATIC_RATIO..=ACHROMATIC_RATIO).contains(&ratio);
         let (_, fap) = lomb_scargle_fap(&tj, &gv);
-        let nicht_periodisch = fap >= FAP_GATE;
+        let not_periodic = fap >= FAP_GATE;
         let Some((te, thr, desc)) = arrow_te(&gv, &rv, &mut fam) else {
             println!(
                 "  ra {:9.4} dec {:9.4}: still — the arrow does not measure (0 honored)",
@@ -340,7 +340,7 @@ fn main() {
         };
         let word = if te > fam {
             "CANDIDATE (fam-bearing)"
-        } else if te > thr && achromatisch && nicht_periodisch {
+        } else if te > thr && achromatic && not_periodic {
             "CANDIDATE"
         } else {
             "still"
@@ -352,7 +352,7 @@ fn main() {
             "  ra {:9.4} dec {:9.4} {word}: TE {te:.3e} (thr {thr:.3e}) {desc} | {rho_word} | dip g {dip_g:.3} ({sig_g:.1}σ) r {dip_r:.3} ({sig_r:.1}σ) ratio {ratio:.2} | FAP {fap:.2e} {}",
             g.ra,
             g.dec,
-            if achromatisch {
+            if achromatic {
                 "achromatic"
             } else {
                 "chromatic"

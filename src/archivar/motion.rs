@@ -205,7 +205,7 @@ fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> 
 
 const RECEIVER_MODELS: &str = include_str!("kernels/receiver_models.tsv");
 
-pub const RECEIVER_ABSENCE_CONVENTION: &str = "a declared IAU receiver without an EOP row for its epoch is absent, not zero: the series is produced continuously, so a missing row is pending/nicht_gemessen (bindend/messzustaende-v3.md, rule 2), never 0.0; body_fixed_to_icrs returns None and the caller decides whether the class may exist at all";
+pub const RECEIVER_ABSENCE_CONVENTION: &str = "a declared IAU receiver without an EOP row for its epoch is absent, not zero: the series is produced continuously, so a missing row is pending, not measured (bindend/messzustaende-v3.md, rule 2), never 0.0; body_fixed_to_icrs returns None and the caller decides whether the class may exist at all";
 
 pub fn receiver_model(name: &str) -> Option<&'static str> {
     RECEIVER_MODELS
