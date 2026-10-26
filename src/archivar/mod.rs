@@ -286,7 +286,7 @@ pub mod extract;
 pub mod fetch;
 pub mod frames;
 pub mod ingress;
-#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
+#[cfg(not(target_arch = "wasm32"))]
 pub mod membrane;
 pub mod motion;
 pub mod naming;
@@ -324,7 +324,7 @@ pub use fetch::*;
 pub use fit::*;
 pub use frames::*;
 pub use ingress::*;
-#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
+#[cfg(not(target_arch = "wasm32"))]
 pub use membrane::*;
 pub use motion::*;
 pub use naming::*;
@@ -344,9 +344,6 @@ pub(crate) use crate::dastcom::{RECORD_STRIDE, hill_radius_m, parse_record, stat
 pub(crate) use crate::force::default_kernel_for;
 pub(crate) use crate::inflate::gunzip;
 pub(crate) use crate::netcdf::NetcdfFile;
-#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
-pub(crate) use crate::pck::PckBody;
-#[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 #[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use std::sync::{Mutex, mpsc};
 pub(crate) use std::thread;

@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use crate::pck::PckBody;
+pub const JUMP_GRID: f64 = 268435456.0;
 use super::*;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BeatSource {
@@ -85,7 +89,7 @@ impl Radiator for StderrRadiator {
 
 pub fn enclosure_presences(
     presence: &HashMap<String, PresenceSample>,
-    slot: &std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>>,
+    slot: &std::sync::Arc<std::sync::RwLock<PresenceState>>,
     now: f64,
 ) -> Vec<PresenceSample> {
     if !presence.is_empty() {
@@ -117,7 +121,7 @@ pub fn source_name(url: &str) -> &str {
 }
 
 pub struct PresenceGateCtx<'a> {
-    pub slot: &'a std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>>,
+    pub slot: &'a std::sync::Arc<std::sync::RwLock<PresenceState>>,
     pub body_ephemerides: &'a HashMap<String, BodyEphemeris>,
     pub now: f64,
     pub median_fetch: Option<f64>,
@@ -232,7 +236,7 @@ pub fn jump_residual_breached(
         let q = [p_new[0] - a[0], p_new[1] - a[1], p_new[2] - a[2]];
         (q[0] * q[0] + q[1] * q[1] + q[2] * q[2]).sqrt()
     };
-    residual >= Φ * crate::mathematikerin::JUMP_GRID
+    residual >= Φ * JUMP_GRID
 }
 
 pub struct Archive {
@@ -431,3 +435,33 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     }
 }
 
+
+#[derive(Clone, Copy)]
+pub struct DiodeState {
+    pub force_ref: [f32; 9],
+    pub expose_offset: f32,
+    pub em_color: [f32; 4],
+}
+
+#[derive(Clone, Copy)]
+pub struct PresenceState {
+    pub p: [f64; 3],
+    pub v: [f64; 3],
+    pub grid_step: f64,
+    pub range: f64,
+    pub t_thrust: f64,
+    pub band: Option<(f64, f64)>,
+}
+
+impl PresenceState {
+    pub fn rest() -> Self {
+        PresenceState {
+            p: [0.0, 0.0, 0.0],
+            v: [0.0, 0.0, 0.0],
+            grid_step: 2147483648.0,
+            range: 1280.0 * 2147483648.0 * 2.0,
+            t_thrust: 0.0,
+            band: None,
+        }
+    }
+}

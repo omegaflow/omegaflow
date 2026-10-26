@@ -1,4 +1,6 @@
 #[cfg(not(target_arch = "wasm32"))]
+pub use crate::archivar::JUMP_GRID;
+pub use crate::archivar::{DiodeState, PresenceState};
 use super::*;
 #[cfg(not(target_arch = "wasm32"))]
 use std::io::Write;
@@ -50,7 +52,6 @@ pub const C: f64 = crate::archivar::types::C_LIGHT;
 
 pub const GRID_INIT: f64 = 2147483648.0;
 
-pub const JUMP_GRID: f64 = 268435456.0;
 
 pub const PERM_GROUND: f32 = f32::EPSILON;
 
@@ -152,35 +153,6 @@ pub fn coupling_descriptor_rows(
     rows
 }
 
-#[derive(Clone, Copy)]
-pub struct DiodeState {
-    pub force_ref: [f32; 9],
-    pub expose_offset: f32,
-    pub em_color: [f32; 4],
-}
-
-#[derive(Clone, Copy)]
-pub struct PresenceState {
-    pub p: [f64; 3],
-    pub v: [f64; 3],
-    pub grid_step: f64,
-    pub range: f64,
-    pub t_thrust: f64,
-    pub band: Option<(f64, f64)>,
-}
-
-impl PresenceState {
-    pub fn rest() -> Self {
-        PresenceState {
-            p: [0.0, 0.0, 0.0],
-            v: [0.0, 0.0, 0.0],
-            grid_step: GRID_INIT,
-            range: 1280.0 * GRID_INIT * 2.0,
-            t_thrust: 0.0,
-            band: None,
-        }
-    }
-}
 
 #[cfg(not(target_arch = "wasm32"))]
 pub struct OmegaLoop {
