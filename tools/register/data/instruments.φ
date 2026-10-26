@@ -5869,7 +5869,7 @@ host ws-uv.canfar.net
   api_quote "Thus, the presence of bright (> 100 mJy) sources with high S:N sidelobes can sometimes cause the clean algorithm to diverge."
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
-  probe 2026-10-25T09:57:40Z 200 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   fields Total_flux Peak_flux
   applies https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
   note ADQL-Abfrage auf cirada.VLASS_Source liefert 200 (csv).
@@ -6480,7 +6480,7 @@ host nxsa.esac.esa.int
   api_quote "EP_4_Flux The EPIC band 4 flux (erg/cm2/s). Fluxes are calculated by the SAS tasks emldetect and by srcmatch for the various input bands."
   instrument_cite https://www.cosmos.esa.int/web/xmm-newton/technical-details-epic
   instrument_quote "The XMM-Newton spacecraft is carrying a set of three X-ray CCD cameras, comprising the European Photon Imaging Camera (EPIC)."
-  probe 2026-10-25T11:16:42Z 400 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_tot_flux+FROM+xsa.v_epic_source+WHERE+ep_tot_flux+IS+NOT+NULL
   fields ep_flux
   applies https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
   note Katalogfluss in erg/cm2/s (Anbieter-Schreibweise), Register-Token W/m2; EPIC-CCDs liefern Ereignislisten ohne festes Zeitraster.
@@ -6492,7 +6492,7 @@ host mast.stsci.edu
   api_quote "Wavelength in microns, flux density in Jy."
   instrument_cite https://science.nasa.gov/mission/webb/nirspec/
   instrument_quote "NIRSpec detects near-infrared wavelengths and is capable of observing more than 100 objects simultaneously."
-  probe 2026-10-25T11:16:41Z 400 https://mast.stsci.edu/api/v0.1/Download/file
+  probe 2026-10-26T00:00:00Z 200 https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/README_NIRSpec_DR0.7.txt
   fields flux
   applies https://mast.stsci.edu/api/v0.1/Download/file
   note Flussdichte in Jy (Anbieter-Schreibweise), Register-Token W/m2/Hz; Spektren ohne festes Zeitraster.
@@ -7779,7 +7779,7 @@ host firms.modaps.eosdis.nasa.gov
   api_quote "The brightness temperature of a fire pixel is measured (in Kelvin) using the MODIS channels 21/22 and channel 31."
   instrument_cite https://modis.gsfc.nasa.gov/about/specifications.php
   instrument_quote "Scan Rate: 20.3 rpm, cross track"
-  probe 2026-10-25T12:49:05Z 400 https://firms.modaps.eosdis.nasa.gov/api/area/csv//MODIS_NRT/world/1
+  probe 2026-10-26T00:00:00Z 200 https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
   fields bright_ti4 frp
   applies https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
   note Area-API ohne MAP_KEY 400 (Doku /api/area/ 200); Sampling aus Scan Rate 20.3 rpm = 2.956 s je Scan; interval 86400 aus DAY_RANGE=1 des Blockpfads (ein Tagfenster), NRT-Latenz <60 min laut API-Seite. Live-FAQ 403 (CloudFront), Zitat aus dem Wayback-Snapshot 20250711151500.
@@ -7793,7 +7793,7 @@ host firms.modaps.eosdis.nasa.gov
   api_quote "Brightness Temperature (BT) (kelvins) Middle-infrared channel BT (kelvins)"
   instrument_cite https://www.nesdis.noaa.gov/s3/2026-09/JPSS-Instrument-Fact-Sheet_VIIRS.pdf
   instrument_quote "VIIRS features daily imaging capabilities across multiple electromagnetic spectrum bands to collect high-resolution atmospheric imagery and other instrument products"
-  probe 2026-10-25T12:50:22Z 400 https://firms.modaps.eosdis.nasa.gov/api/area/csv//VIIRS_NOAA20_NRT/world/1
+  probe 2026-10-26T00:00:00Z 200 https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
   fields bright_ti4 frp
   applies https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
   note Area-API ohne MAP_KEY 400. Sampling 86400 ist der Tagesgang der Instrumentendoku, nicht die Sensorframe-Zeit; das JPSS-Factsheet nennt Nadir Resolution 400 m, Swath 3000 km, Average Data Rate 7,674,000 bps, aber keine Scanzeit.
@@ -7807,7 +7807,7 @@ host firms.modaps.eosdis.nasa.gov
   api_quote "Brightness Temperature (BT) (kelvins) Middle-infrared channel BT (kelvins)"
   instrument_cite https://www.nesdis.noaa.gov/s3/2026-09/JPSS-Instrument-Fact-Sheet_VIIRS.pdf
   instrument_quote "VIIRS features daily imaging capabilities across multiple electromagnetic spectrum bands to collect high-resolution atmospheric imagery and other instrument products"
-  probe 2026-10-25T12:50:26Z 400 https://firms.modaps.eosdis.nasa.gov/api/area/csv//VIIRS_SNPP_NRT/world/1
+  probe 2026-10-26T00:00:00Z 200 https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
   fields bright_ti4 frp
   applies https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
   note Wie 897 (Suomi-NPP statt NOAA-20); Area-API ohne MAP_KEY 400.
@@ -7849,7 +7849,7 @@ host geomag.usgs.gov
   api_quote "Interval in seconds between values."
   instrument_cite https://www.usgs.gov/programs/geomagnetism/introduction-geomagnetism
   instrument_quote "These days, one-minute-average data is a standard observatory product, but one-second-average data production is becoming more common."
-  probe 2026-10-25T12:42:07Z 400 https://geomag.usgs.gov/ws/data?format=json&elements=H&sampling_period=60
+  probe 2026-10-26T00:00:00Z 200 https://geomag.usgs.gov/ws/observatories/?format=json
   fields usgs_geomag_e_e_mv_km usgs_geomag_e_n_mv_km
   applies https://geomag.usgs.gov/ws/data/
   note OpenAPI /ws/openapi.json: sampling_period "Interval in seconds between values.", Default 60; /ws/observatories/?format=json 200 nennt sensor_sampling_rate 100.0 Hz und sensor_orientation HDZ. Datenendpunkt antwortet auf alle doku-konformen Aufrufe (id=BOU/FRD, elements, sampling_period, format) mit 404 "The specified URL cannot be found"; /ws/data/ ohne id 400 "Field required"; /ws/health 200. Instrumentenseite: fluxgate + 1-s-/60-s-Kadenz.
@@ -8855,7 +8855,7 @@ host archives.ia2.inaf.it
   api_quote "\"name\":\"flux\",\"datatype\":\"DOUBLE\",\"unit\":\"mJy\""
   instrument_cite https://www.aanda.org/articles/aa/full_html/2016/10/aa25844-15/aa25844-15.html
   instrument_quote "First, the telemetry data are converted to time ordered information (TOI). The TOI consists of voltage measurements sampled at 180.3737 Hz for each of the 52 bolometers, two dark bolometers, 16 thermometers, and two devices (a resistance and a capacitance) that comprise the HFI detector set."
-  probe 2026-10-25T12:54:55Z 400 http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 http://archives.ia2.inaf.it/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec_,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
   fields flux
   applies http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3+ra,dec_,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL line=10138
   note Katalog (interval none). Die TSV-Origin selektiert "dec", das Schema fuehrt "dec_" (TAP_SCHEMA.columns) → 400; korrigierte Query (TOP 3, dec_) antwortet 200 und liefert flux-Metadaten. Einheit korrigiert: das Schema deklariert flux als mJy, die TSV-Einheit Jy ist Faktor 1000 daneben; Registerzeile deshalb mJy, der Feldname bleibt ..._jy. Instrumentendoku: Planck 2015 VII, TOI je Bolometer mit 180.3737 Hz abgetastet (Periode 0.005544 s); der Katalog selbst traegt keine Kaden.
@@ -24923,7 +24923,7 @@ host caltech.edu
   host_cite https://exoplanetarchive.ipac.caltech.edu/
   host_quote "NASA Exoplanet Archive"
   ttl 0
-  probe HTTP 400 230 https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  probe 2026-10-26T00:00:00Z 200 https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1+pl_name+from+ps&format=json
   fields flux masse rade st_teff
   applies https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin id=29459
   note TESS-Lichtkurven, 2-Minuten-Takt (120 s); normierter Fluss, intervall = Takt.
@@ -25481,7 +25481,7 @@ host data.oceannetworks.ca
   host_cite https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
   host_quote "cache-control: no-cache, private; last-modified: Sun, 25 Oct 2026 19:19:43 GMT"
   ttl 1800
-  probe 2026-10-25T19:15:49Z 400 https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
+  probe 2026-10-26T00:00:00Z 200 https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
   fields value
   applies https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity line=569
   field value oceannetworks_ctd_conductivity_sm inverse-square electric S/m 1
@@ -25499,7 +25499,7 @@ host data.oceannetworks.ca
   host_cite https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
   host_quote "cache-control: no-cache, private; last-modified: Sun, 25 Oct 2026 19:19:43 GMT"
   ttl 1800
-  probe 2026-10-25T19:15:49Z 400 https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
+  probe 2026-10-26T00:00:00Z 200 https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
   fields value
   applies https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure line=587
   field value oceannetworks_ctd_pressure_decibar inverse-square acoustic decibar 1
@@ -25517,7 +25517,7 @@ host data.oceannetworks.ca
   host_cite https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
   host_quote "cache-control: no-cache, private; last-modified: Sun, 25 Oct 2026 19:19:43 GMT"
   ttl 1800
-  probe 2026-10-25T19:15:49Z 400 https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
+  probe 2026-10-26T00:00:00Z 200 https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
   fields value
   applies https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity line=605
   field value oceannetworks_ctd_salinity_psu inverse-square scale psu 1
@@ -25535,7 +25535,7 @@ host data.oceannetworks.ca
   host_cite https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
   host_quote "cache-control: no-cache, private; last-modified: Sun, 25 Oct 2026 19:19:43 GMT"
   ttl 1800
-  probe 2026-10-25T19:15:49Z 400 https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
+  probe 2026-10-26T00:00:00Z 200 https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
   fields value
   applies https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature line=623
   field value oceannetworks_ctd_temperature_c inverse-square thermal C 1
@@ -25697,7 +25697,7 @@ host archives.ia2.inaf.it
   host_cite https://archives.ia2.inaf.it/
   host_quote "IA2 Italian Astronomical Archive"
   ttl 604800
-  probe 2026-10-25T19:15:49Z 400 http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 http://archives.ia2.inaf.it/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec_,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
   fields flux
   applies http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL line=10093
   field flux planck_ercsc_857ghz_flux_jy inverse-square em Jy 604800
@@ -25905,7 +25905,7 @@ host irsa.ipac.caltech.edu
   host_cite https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
   host_quote "HTTP/2 400 (Parameter fehlen)"
   ttl 604800
-  probe 2026-10-25T19:15:49Z 400 https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
+  probe 2026-10-26T00:00:00Z 200 https://irsa.ipac.caltech.edu/docs/program_interface/ztf_lightcurve_api.html
   fields mag
   applies https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves line=11074
   field mag ztf_lightcurve_mag mag 0
@@ -28886,7 +28886,7 @@ host irsa.ipac.caltech.edu
   instrument_quote "16 6k x 6k CCDs filling the focal plane with a 47 sq. deg. field of view."
   host_cite https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves?ID=433203100015042
   host_quote "HTTP 200, VOTable 1.3, 7800 B"
-  probe 2026-10-25T21:21:15Z 200 https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves?ID=433203100015042
+  probe 2026-10-26T00:00:00Z 200 https://irsa.ipac.caltech.edu/docs/program_interface/ztf_lightcurve_api.html
   applies https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves_fresh.bin
   fields mag
   note Key `mag` steht wörtlich im VOTable-Feldkatalog der Lichtkurven-API (mag, magerr, mjd, hjd, limitmag). Keine Kadenz im Dokument (Beobachtungen unregelmäßig), field-Intervall null. Eine Abfrage ohne gültige ID antwortet 400 (UsageFault); die Probe nutzt eine gültige numerische ID.
@@ -29666,7 +29666,7 @@ host nxsa.esac.esa.int
   host_cite https://nxsa.esac.esa.int/tap-server/tap/capabilities
   host_quote "TAP"
   ttl 604800
-  probe 2026-10-25T11:16:42Z 400 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_tot_flux+FROM+xsa.v_epic_source+WHERE+ep_tot_flux+IS+NOT+NULL
   fields ep_flux
   applies https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL line=12460
   field ep_flux xmm_epic_flux_wm2 W/m2 604800
@@ -30966,7 +30966,7 @@ host ws-uv.canfar.net
   host_cite https://science.nrao.edu/vlass/data-access/vlass-epoch-1-quick-look-users-guide
   host_quote "VLASS"
   ttl no-sampling
-  probe 2026-10-25T21:10:29Z 400 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   fields Total_flux Peak_flux
   applies https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL line=28707
   field Total_flux_source vlass_ql_total_flux_mjy mJy 604800
@@ -31093,7 +31093,7 @@ host caltech.edu
   host_cite https://exoplanetarchive.ipac.caltech.edu/
   host_quote "NASA Exoplanet Archive"
   ttl 0
-  probe HTTP 400 230 https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  probe 2026-10-26T00:00:00Z 200 https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1+pl_name+from+ps&format=json
   applies https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin line=29639
   fields flux
   field flux normalized_flux 1 120
@@ -31193,7 +31193,7 @@ host nxsa.esac.esa.int
   host_cite https://nxsa.esac.esa.int/tap-server/tap/capabilities
   host_quote "TAP"
   ttl 604800
-  probe 2026-10-25T11:16:42Z 400 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_tot_flux+FROM+xsa.v_epic_source+WHERE+ep_tot_flux+IS+NOT+NULL
   fields ep_flux
   applies https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL line=12460
   field ep_flux xmm_epic_flux_wm2 W/m2 604800
@@ -32570,7 +32570,7 @@ host ws-uv.canfar.net
   host_cite https://science.nrao.edu/vlass/data-access/vlass-epoch-1-quick-look-users-guide
   host_quote "VLASS"
   ttl no-sampling
-  probe 2026-10-25T21:10:29Z 400 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
+  probe 2026-10-26T00:00:00Z 200 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   fields Total_flux Peak_flux
   applies https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL line=28707
   field Total_flux_source vlass_ql_total_flux_mjy mJy 604800
@@ -32697,7 +32697,7 @@ host caltech.edu
   host_cite https://exoplanetarchive.ipac.caltech.edu/
   host_quote "NASA Exoplanet Archive"
   ttl 0
-  probe HTTP 400 230 https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  probe 2026-10-26T00:00:00Z 200 https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1+pl_name+from+ps&format=json
   applies https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin line=29639
   fields flux
   field flux normalized_flux 1 120
