@@ -119,7 +119,7 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
 #[test]
 fn pds3_label_column_joins_the_field_line_by_source_key() {
     use crate::archivar::extract::series_named;
-    use crate::archivar::main_flow::{field_line_matches, series_field_name};
+    use crate::archivar::extract::{field_line_matches, series_field_name};
     use crate::archivar::pds3_table::{self, Pds3Table, TableColumn, TableRow};
 
     let column = |name: &str| TableColumn {

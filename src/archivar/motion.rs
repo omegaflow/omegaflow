@@ -902,3 +902,10 @@ mod tests {
         );
     }
 }
+pub fn load_gestalt_surface_threads(path: &str, body_name: &str) -> Option<Vec<Motion>> {
+    let bytes = std::fs::read(path).ok()?;
+    let recs = crate::geo::parse_gbco(&bytes)?;
+    Some(gestalt_surface_threads(&recs, body_name))
+}
+
+
