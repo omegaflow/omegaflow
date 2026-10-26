@@ -6556,9 +6556,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     let Frame::Surface { alt, .. } = &src.frame() else {
                         return None;
                     };
-                    let Some(alt) = *alt else {
-                        return None;
-                    };
+                    let alt = (*alt)?;
                     Some(Position::Surface {
                         body_name: frame_body_name(&src.frame()),
                         lat,

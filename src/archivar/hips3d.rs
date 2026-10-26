@@ -132,7 +132,7 @@ pub fn decode_sfmoc_ranges(
         }
         for f in freq.chunks_exact(2) {
             let (f0, f1) = degrade_range(f[0], f[1], freq_shift, freq_bound)?;
-            for s in space.chunks_exact(2) {
+            for s in space.as_chunks::<2>().0 {
                 let (s0, s1) = degrade_range(s[0], s[1], space_shift, space_bound)?;
                 for npix in s0..=s1 {
                     for npix_axis2 in f0..=f1 {
