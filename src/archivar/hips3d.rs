@@ -130,7 +130,7 @@ pub fn decode_sfmoc_ranges(
         if !freq.len().is_multiple_of(2) || !space.len().is_multiple_of(2) {
             return None;
         }
-        for f in freq.chunks_exact(2) {
+        for f in freq.as_chunks::<2>().0 {
             let (f0, f1) = degrade_range(f[0], f[1], freq_shift, freq_bound)?;
             for s in space.as_chunks::<2>().0 {
                 let (s0, s1) = degrade_range(s[0], s[1], space_shift, space_bound)?;

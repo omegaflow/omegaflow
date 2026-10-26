@@ -243,10 +243,7 @@ fn detect_delimiter(lines: &[&str]) -> Option<char> {
             best = Some(candidate);
         }
     }
-    match best {
-        Some((d, _, _, _)) => Some(d),
-        None => None,
-    }
+    best.map(|(d, _, _, _)| d)
 }
 
 fn count_delim(line: &str, d: char) -> usize {
@@ -332,10 +329,7 @@ fn parse_number(field: &str) -> Option<f64> {
     if t.is_empty() {
         return None;
     }
-    match t.parse::<f64>() {
-        Ok(v) => Some(v),
-        Err(_) => None,
-    }
+    t.parse::<f64>().ok()
 }
 
 fn fixed_layout(lines: &[&str]) -> Option<usize> {
@@ -400,10 +394,7 @@ fn time_in_header(header: &[String]) -> Option<usize> {
             _ => Some((rank, i)),
         };
     }
-    match best {
-        Some((_, i)) => Some(i),
-        None => None,
-    }
+    best.map(|(_, i)| i)
 }
 
 fn time_name_rank(name: &str) -> Option<u8> {
@@ -412,7 +403,7 @@ fn time_name_rank(name: &str) -> Option<u8> {
         .split(|c: char| !c.is_ascii_alphanumeric())
         .filter(|t| !t.is_empty())
         .collect();
-    if tokens.iter().any(|t| *t == "ut1") {
+    if tokens.contains(&"ut1") {
         return None;
     }
     if tokens
@@ -421,16 +412,16 @@ fn time_name_rank(name: &str) -> Option<u8> {
     {
         return Some(0);
     }
-    if tokens.iter().any(|t| *t == "epoch") {
+    if tokens.contains(&"epoch") {
         return Some(1);
     }
-    if tokens.iter().any(|t| *t == "mjd") {
+    if tokens.contains(&"mjd") {
         return Some(2);
     }
     if tokens.iter().any(|t| *t == "jd" || *t == "julian") {
         return Some(3);
     }
-    if tokens.iter().any(|t| *t == "time") {
+    if tokens.contains(&"time") {
         return Some(4);
     }
     if tokens

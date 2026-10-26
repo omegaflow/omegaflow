@@ -1721,12 +1721,11 @@ pub fn probe_classify_for_block<'a>(
         }
     }
     let (force, unit, tau) = raw;
-    if key.chars().count() <= 4 {
-        if let Some(bf) = block_force
-            && bf != force
-        {
-            return ("UNCERTAIN", "", 0.0);
-        }
+    if key.chars().count() <= 4
+        && let Some(bf) = block_force
+        && bf != force
+    {
+        return ("UNCERTAIN", "", 0.0);
     }
     if force == "DROP" || force == "UNCERTAIN" {
         return (force, unit, tau);
