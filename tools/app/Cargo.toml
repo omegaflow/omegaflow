@@ -1,0 +1,13 @@
+[package]
+name = "omegaflow-app"
+version = "1.0.0"
+edition = "2024"
+license-file = "../LICENSE"
+description = "the loop: pull measurement, run the field, write the archive"
+
+[dependencies]
+omegaflow = { path = "../..", default-features = false, features = ["membrane"] }
+
+[[bin]]
+name = "omegaflow"
+path = "src/main.rs"

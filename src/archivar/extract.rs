@@ -9226,7 +9226,7 @@ pub fn field_line_matches(fc: &FieldConfig, name: &str) -> bool {
     fc.name == name || fc.key == name
 }
 
-pub(crate) fn ambiguous_field_names(sources: &[SourceConfig]) -> HashSet<(String, Option<String>)> {
+pub fn ambiguous_field_names(sources: &[SourceConfig]) -> HashSet<(String, Option<String>)> {
     let mut keys: HashMap<(String, Option<String>), HashSet<String>> = HashMap::new();
     for src in sources {
         for e in &src.extracts {
@@ -9242,7 +9242,7 @@ pub(crate) fn ambiguous_field_names(sources: &[SourceConfig]) -> HashSet<(String
         .collect()
 }
 
-pub(crate) fn series_channel_name(
+pub fn series_channel_name(
     field_name: &str,
     field_key: &str,
     station_code: Option<&str>,

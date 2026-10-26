@@ -526,7 +526,7 @@ pub fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> O
     }
 }
 
-pub(crate) type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
+pub type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
 
 pub fn presence_gate(
     presences: &[PresenceSample],

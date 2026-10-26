@@ -1,5 +1,12 @@
-use super::*;
-use crate::archivar::extract::{ambiguous_field_names, series_channel_name};
+use omegaflow::archivar::inflate::gunzip;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::collections::{HashMap, HashSet};
+use std::io::IsTerminal;
+use std::sync::{Arc, Mutex, RwLock, mpsc};
+use std::thread;
+
+use omegaflow::archivar::*;
+use omegaflow::archivar::extract::{ambiguous_field_names, series_channel_name};
 
 pub fn spawn_ephemeris_bootstrap(
     sources: &[SourceConfig],
@@ -153,7 +160,7 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     for (i, (_, s, tmp_path)) in items.iter().enumerate() {
         if let Ok(data) = std::fs::read(&parts[i]) {
             let valid = if s.format == "orbit_bin" {
-                crate::wind_orbit::parse_bin(&data).is_some()
+                omegaflow::wind_orbit::parse_bin(&data).is_some()
             } else {
                 parse_ephemeris_binary(&data).is_some()
             };
@@ -452,7 +459,7 @@ pub fn main_flow() {
     #[cfg(feature = "browser_relay")]
     let port: u16 = match std::env::var("PORT").ok().and_then(|s| s.parse().ok()) {
         Some(p) => p,
-        None => crate::relay::PORT_CONST,
+        None => omegaflow::relay::PORT_CONST,
     };
     let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
     #[cfg(feature = "browser_relay")]
@@ -479,11 +486,11 @@ pub fn main_flow() {
         }
     };
     let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(embedded_lsk()));
-    let (solar_tx, solar_rx) = mpsc::channel::<crate::machines::SolarCell>();
-    let (machine_tx, machine_rx) = mpsc::channel::<crate::machines::FrameBundle>();
+    let (solar_tx, solar_rx) = mpsc::channel::<omegaflow::machines::SolarCell>();
+    let (machine_tx, machine_rx) = mpsc::channel::<omegaflow::machines::FrameBundle>();
     let solar_sources = loaded.clone();
     let solar_time = time.clone();
-    thread::spawn(move || crate::machines::solar_harvest(solar_tx, solar_sources, solar_time));
+    thread::spawn(move || omegaflow::machines::solar_harvest(solar_tx, solar_sources, solar_time));
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
@@ -533,25 +540,25 @@ pub fn main_flow() {
     #[cfg(feature = "browser_relay")]
     let presence_relay_tx = presence_tx.clone();
     let hidden = std::env::var("OMEGAFLOW_HIDDEN").is_ok();
-    let presence_slot: std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>> =
+    let presence_slot: std::sync::Arc<std::sync::RwLock<omegaflow::mathematikerin::PresenceState>> =
         std::sync::Arc::new(std::sync::RwLock::new(
-            crate::mathematikerin::PresenceState::rest(),
+            omegaflow::mathematikerin::PresenceState::rest(),
         ));
-    let diode: std::sync::Arc<std::sync::RwLock<crate::mathematikerin::DiodeState>> =
-        std::sync::Arc::new(std::sync::RwLock::new(crate::mathematikerin::DiodeState {
+    let diode: std::sync::Arc<std::sync::RwLock<omegaflow::mathematikerin::DiodeState>> =
+        std::sync::Arc::new(std::sync::RwLock::new(omegaflow::mathematikerin::DiodeState {
             force_ref: [0.0; 9],
-            expose_offset: crate::mathematikerin::EXPOSE_OFFSET_BASE,
+            expose_offset: omegaflow::mathematikerin::EXPOSE_OFFSET_BASE,
             em_color: [0.0; 4],
         }));
-    let (acoustic_tx, acoustic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
-    let (seismic_tx, seismic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
+    let (acoustic_tx, acoustic_rx) = mpsc::channel::<omegaflow::mathematikerin::PresenceFrame>();
+    let (seismic_tx, seismic_rx) = mpsc::channel::<omegaflow::mathematikerin::PresenceFrame>();
     #[cfg(feature = "browser_relay")]
     let (relay_kinetic_tx, relay_kinetic_rx) =
-        mpsc::channel::<crate::mathematikerin::PresenceFrame>();
+        mpsc::channel::<omegaflow::mathematikerin::PresenceFrame>();
     if !hidden {
-        let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
+        let mut kinetic: Vec<Box<dyn omegaflow::mathematikerin::KineticRadiator>> = Vec::new();
         if let Some(stdin) = serial_bridge.as_mut().and_then(|child| child.stdin.take()) {
-            kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
+            kinetic.push(Box::new(omegaflow::mathematikerin::SeismicOscillator::new(
                 Box::new(stdin),
             )));
         }
@@ -568,7 +575,7 @@ pub fn main_flow() {
         .ok()
         .and_then(|l| l.as_ref().and_then(|l| l.system_now_tdb()));
     if let Some(pt) = boot_pt {
-        let rest = crate::mathematikerin::PresenceState::rest();
+        let rest = omegaflow::mathematikerin::PresenceState::rest();
         if let Ok(mut slot) = presence_slot.write() {
             *slot = rest;
         }
@@ -587,7 +594,7 @@ pub fn main_flow() {
         ));
     }
     let tone_code = std::sync::Arc::new(std::sync::atomic::AtomicU8::new(
-        crate::archivar::hrv::TONE_ABSENT,
+        omegaflow::archivar::hrv::TONE_ABSENT,
     ));
     let verdicts_path = match std::env::var("OMEGAFLOW_WEBERIN_VERDICTS") {
         Ok(path) => path,
@@ -606,8 +613,8 @@ pub fn main_flow() {
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
-        let em = crate::mathematikerin::LoopRadiator::new(
-            crate::mathematikerin::LoopCtx {
+        let em = omegaflow::mathematikerin::LoopRadiator::new(
+            omegaflow::mathematikerin::LoopCtx {
                 time: time.clone(),
                 consent: consent.clone(),
                 tone_code: tone_code.clone(),
@@ -629,7 +636,7 @@ pub fn main_flow() {
                 diode: diode.clone(),
                 verdicts: verdicts_shared.clone(),
             },
-            crate::mathematikerin::channel::channel_registry_from_sources(&archive.sources),
+            omegaflow::mathematikerin::channel::channel_registry_from_sources(&archive.sources),
         );
         let em_shutdown = em.shutdown_flag();
         radiators.push(Box::new(em));
@@ -642,7 +649,7 @@ pub fn main_flow() {
                 Ok(v) => Arc::new((*v).clone()),
                 Err(_) => Arc::new(Vec::new()),
             };
-            let sr = crate::relay::TcpRadiator::new(
+            let sr = omegaflow::relay::TcpRadiator::new(
                 port,
                 body_names.clone(),
                 archive.field.clone(),
@@ -662,7 +669,7 @@ pub fn main_flow() {
     }
     if !hidden {
         let _acoustic =
-            crate::mathematikerin::AcousticOscillator::new(acoustic_rx, acoustic_sink());
+            omegaflow::mathematikerin::AcousticOscillator::new(acoustic_rx, acoustic_sink());
     }
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
@@ -687,7 +694,7 @@ pub fn main_flow() {
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
     let ambiguous_series = Arc::new(ambiguous_field_names(&archive.sources));
-    let mut vagus = crate::archivar::hrv::VagusTone::new();
+    let mut vagus = omegaflow::archivar::hrv::VagusTone::new();
     let mut nn_buf: Vec<f64> = Vec::new();
     loop {
         tick += 1;
@@ -762,7 +769,7 @@ pub fn main_flow() {
                     });
                 }
                 "naif0012" => {
-                    if let Some(l) = crate::lsk::parse(&text)
+                    if let Some(l) = omegaflow::lsk::parse(&text)
                         && let Ok(mut guard) = archive.time.lock()
                     {
                         *guard = Some(l);
@@ -770,7 +777,7 @@ pub fn main_flow() {
                 }
                 _ => {}
             }
-            archive.pck_bodies = crate::pck::parse(gm_text.as_deref(), pck_text.as_deref());
+            archive.pck_bodies = omegaflow::pck::parse(gm_text.as_deref(), pck_text.as_deref());
         }
         let lsk = match leap_seconds(&archive.time) {
             Some(l) => l,
@@ -831,7 +838,7 @@ pub fn main_flow() {
         {
             let mut still_pending: Vec<(Channel, FieldConfig, u32)> = Vec::new();
             for (channel, sensor, idx) in archive.pending_channels.drain(..) {
-                if sensor.tau_src == crate::archivar::types::TauSource::Pending {
+                if sensor.tau_src == omegaflow::archivar::types::TauSource::Pending {
                     continue;
                 }
                 let src = &archive.sources[idx as usize];
@@ -943,7 +950,7 @@ pub fn main_flow() {
                         Position::StateVector { .. } => false,
                         Position::Electrode { .. } => false,
                     };
-                    if eph_missing && sensor.tau_src != crate::archivar::types::TauSource::Pending {
+                    if eph_missing && sensor.tau_src != omegaflow::archivar::types::TauSource::Pending {
                         dropped_channels.push((
                             channel.clone(),
                             sensor.clone(),
@@ -998,7 +1005,7 @@ pub fn main_flow() {
                     kernel: bs.kernel,
                     channel_ref: Some(bs.channel_ref),
                     tau: effective_tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: omegaflow::archivar::types::TauSource::Measured,
                     absorption: 0.0,
                     advection: 0.0,
                     unit: bs.unit.clone(),
@@ -1848,7 +1855,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let (epoch, bins) = match crate::spectral::parse_spectral_bin(&bytes) {
+                    let (epoch, bins) = match omegaflow::spectral::parse_spectral_bin(&bytes) {
                         Some(x) => x,
                         None => {
                             eprintln!(
@@ -2000,7 +2007,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let (epoch, stars) = match crate::spectral::parse_xp_spectra_bin(&bytes) {
+                    let (epoch, stars) = match omegaflow::spectral::parse_xp_spectra_bin(&bytes) {
                         Some(x) => x,
                         None => {
                             eprintln!(
@@ -2139,7 +2146,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let bin = match crate::archivar::emtf::parse_bin(&bytes) {
+                    let bin = match omegaflow::archivar::emtf::parse_bin(&bytes) {
                         Some(b) => b,
                         None => {
                             eprintln!(
@@ -2214,8 +2221,8 @@ pub fn main_flow() {
                         return;
                     }
                     let mut sent = 0usize;
-                    for comp in 0..crate::archivar::emtf::COMPONENT_COUNT {
-                        let Some(component) = crate::archivar::emtf::component_name(comp as u32)
+                    for comp in 0..omegaflow::archivar::emtf::COMPONENT_COUNT {
+                        let Some(component) = omegaflow::archivar::emtf::component_name(comp as u32)
                         else {
                             continue;
                         };
@@ -2232,7 +2239,7 @@ pub fn main_flow() {
                                 continue;
                             }
                         };
-                        let bins = crate::archivar::emtf::component_bins(&bin, comp);
+                        let bins = omegaflow::archivar::emtf::component_bins(&bin, comp);
                         if bins.is_empty() {
                             continue;
                         }
@@ -2327,7 +2334,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let specs = match crate::jwst::parse_jwst_bin(&bytes) {
+                    let specs = match omegaflow::jwst::parse_jwst_bin(&bytes) {
                         Some(s) => s,
                         None => {
                             eprintln!(
@@ -2606,7 +2613,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let events = match crate::bl_narrowband::parse_bin(&bytes) {
+                    let events = match omegaflow::bl_narrowband::parse_bin(&bytes) {
                         Some(e) => e,
                         None => {
                             eprintln!(
@@ -2997,7 +3004,7 @@ pub fn main_flow() {
                         }
                     };
                     if fmt == "openneuro_snirf" {
-                        let Some(bin) = crate::snirf::parse_bin(&bytes) else {
+                        let Some(bin) = omegaflow::snirf::parse_bin(&bytes) else {
                             eprintln!(
                                 "{} {}: bin reads void — {} B carry no SNIR contract",
                                 fmt,
@@ -3017,7 +3024,7 @@ pub fn main_flow() {
                         );
                         let _ = ftx.send(empty(true));
                     } else {
-                        let Some(bin) = crate::archivar::openneuro_eeg::parse_bin(&bytes) else {
+                        let Some(bin) = omegaflow::archivar::openneuro_eeg::parse_bin(&bytes) else {
                             eprintln!(
                                 "{} {}: bin reads void — {} B carry no EEGB contract",
                                 fmt,
@@ -3056,12 +3063,12 @@ pub fn main_flow() {
                             },
                             Frame::Manifest => Position::Source,
                         };
-                        let channels = crate::archivar::openneuro_eeg::emit_channels(
+                        let channels = omegaflow::archivar::openneuro_eeg::emit_channels(
                             &bin,
                             &position,
                             now,
                             src_ttl as f64,
-                            crate::archivar::openneuro_eeg::EEG_CHANNEL_CAP,
+                            omegaflow::archivar::openneuro_eeg::EEG_CHANNEL_CAP,
                         );
                         eprintln!(
                             "\r\x1b[K{} {}: {} electrodes × {} samples × {} trials — {} channels emitted at the source anchor (cap {}/electrode; read epoch, no recorded start time)",
@@ -3071,7 +3078,7 @@ pub fn main_flow() {
                             bin.pnts,
                             bin.trials,
                             channels.len(),
-                            crate::archivar::openneuro_eeg::EEG_CHANNEL_CAP
+                            omegaflow::archivar::openneuro_eeg::EEG_CHANNEL_CAP
                         );
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
@@ -3136,7 +3143,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let Some(header) = crate::archivar::edf::parse_edf(&bytes) else {
+                    let Some(header) = omegaflow::archivar::edf::parse_edf(&bytes) else {
                         eprintln!(
                             "{} {}: {} B carry no EDF/EDF+ header",
                             fmt,
@@ -3175,12 +3182,12 @@ pub fn main_flow() {
                         },
                         Frame::Manifest => Position::Source,
                     };
-                    let channels = crate::archivar::extract::edf_emit_channels(
+                    let channels = omegaflow::archivar::extract::edf_emit_channels(
                         &bytes,
                         &position,
                         now,
                         src_ttl as f64,
-                        crate::archivar::extract::EDF_CHANNEL_CAP,
+                        omegaflow::archivar::extract::EDF_CHANNEL_CAP,
                     );
                     eprintln!(
                         "\r\x1b[K{} {}: {} signals × {:.3} s records — {} channels emitted at the source anchor (cap {}/signal; voltages → electric/V, other units skipped by name)",
@@ -3189,7 +3196,7 @@ pub fn main_flow() {
                         header.signals.len(),
                         header.record_duration_s,
                         channels.len(),
-                        crate::archivar::extract::EDF_CHANNEL_CAP
+                        omegaflow::archivar::extract::EDF_CHANNEL_CAP
                     );
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -3331,7 +3338,7 @@ pub fn main_flow() {
                     match astrometry_series::parse_bin(&bytes) {
                         Some(series) => {
                             let samples: usize = series.iter().map(|s| s.samples.len()).sum();
-                            let wdir = crate::mathematikerin::s2::astrometry_witness_dir();
+                            let wdir = omegaflow::mathematikerin::s2::astrometry_witness_dir();
                             let mut key = String::with_capacity(name.len());
                             for ch in name.chars() {
                                 if ch.is_ascii_alphanumeric() || ch == '.' || ch == '-' || ch == '_'
@@ -3427,38 +3434,38 @@ pub fn main_flow() {
                             return;
                         }
                     }
-                    let Ok(spk) = crate::bsp_reader::spk::SpkFile::open(&tmp_path) else {
+                    let Ok(spk) = omegaflow::bsp_reader::spk::SpkFile::open(&tmp_path) else {
                         eprintln!("spk {}: kernel reads void — retry in ttl/Φ", url);
                         let _ = ftx.send(empty(true));
                         return;
                     };
-                    let table = crate::ephemeris::body_table();
-                    let fk = crate::fk::FkFile::parse("");
+                    let table = omegaflow::ephemeris::body_table();
+                    let fk = omegaflow::fk::FkFile::parse("");
                     let mut bodies = 0usize;
                     for seg in spk.segments() {
                         let Some(body) = table.get(&seg.target) else {
                             continue;
                         };
-                        let wgccre = match pck_bodies.get(&crate::ephemeris::pck_id_of(seg.target))
+                        let wgccre = match pck_bodies.get(&omegaflow::ephemeris::pck_id_of(seg.target))
                         {
                             Some(b) => b.clone(),
                             None => continue,
                         };
-                        let (granules, rotations, nutation) = crate::ephemeris::extract_granules(
+                        let (granules, rotations, nutation) = omegaflow::ephemeris::extract_granules(
                             &spk,
                             std::slice::from_ref(&spk),
                             seg.target,
                             &wgccre,
                             &[],
                             &fk,
-                            crate::ephemeris::GRANULE_DAYS,
+                            omegaflow::ephemeris::GRANULE_DAYS,
                         );
                         if granules.is_empty() {
                             continue;
                         }
                         let eph_path =
                             content_cache(&format!("omegaflow_eph_{}_spk.bin", body.name));
-                        if !crate::ephemeris::write_binary(
+                        if !omegaflow::ephemeris::write_binary(
                             &eph_path, &body.name, &granules, &rotations, &nutation, &wgccre, None,
                         ) {
                             continue;
@@ -3539,7 +3546,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let recs = match crate::geo::parse_gbco(&bytes) {
+                    let recs = match omegaflow::geo::parse_gbco(&bytes) {
                         Some(r) => r,
                         None => {
                             eprintln!(
@@ -3631,7 +3638,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let recs = match crate::geo::parse_slab2(&bytes) {
+                    let recs = match omegaflow::geo::parse_slab2(&bytes) {
                         Some(r) => r,
                         None => {
                             eprintln!(
@@ -3723,7 +3730,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let recs = match crate::geo::parse_gmr(&bytes) {
+                    let recs = match omegaflow::geo::parse_gmr(&bytes) {
                         Some(r) => r,
                         None => {
                             eprintln!(
@@ -3816,7 +3823,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let Some(map) = crate::archivar::bayestar::load_map(&bytes) else {
+                    let Some(map) = omegaflow::archivar::bayestar::load_map(&bytes) else {
                         eprintln!(
                             "{} {}: bayestar-bin reads void — {} B carry no map contract",
                             fmt,
@@ -3881,7 +3888,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let Some(mut volume) = crate::archivar::volume::Volume::read_bin(&bytes) else {
+                    let Some(mut volume) = omegaflow::archivar::volume::Volume::read_bin(&bytes) else {
                         eprintln!(
                             "{} {}: volume-bin reads void — {} B carry no grid contract",
                             fmt,
@@ -3952,7 +3959,7 @@ pub fn main_flow() {
                         }
                     };
                     let Some((name, volume)) =
-                        crate::archivar::channels::build_netcdf4_volume(&src, &bytes)
+                        omegaflow::archivar::channels::build_netcdf4_volume(&src, &bytes)
                     else {
                         eprintln!(
                             "{} {}: netcdf4 volume reads void — {} B carry no grid contract",
@@ -4239,7 +4246,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let records = match crate::wind::parse_bin(&bytes) {
+                    let records = match omegaflow::wind::parse_bin(&bytes) {
                         Some(r) => r,
                         None => {
                             eprintln!(
@@ -4276,7 +4283,7 @@ pub fn main_flow() {
                     for (t, freq, binw, val, recv) in records {
                         let name = format!(
                             "wind_waves_{}",
-                            crate::wind::receiver_name(recv).to_lowercase()
+                            omegaflow::wind::receiver_name(recv).to_lowercase()
                         );
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
                             continue;
@@ -4387,7 +4394,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let modes = match crate::gong::parse_bin(&bytes) {
+                    let modes = match omegaflow::gong::parse_bin(&bytes) {
                         Some(m) => m,
                         None => {
                             eprintln!(
@@ -4770,7 +4777,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let shards = crate::archivar::coverage_manifest::parse_coverage_manifest(&text);
+                    let shards = omegaflow::archivar::coverage_manifest::parse_coverage_manifest(&text);
                     let fields: Vec<FieldConfig> = src
                         .extracts
                         .iter()
@@ -4806,7 +4813,7 @@ pub fn main_flow() {
                     };
                     let mut selected = 0usize;
                     for shard in &shards {
-                        let resolved = crate::archivar::coverage_manifest::resolve_placement(
+                        let resolved = omegaflow::archivar::coverage_manifest::resolve_placement(
                             &shard.placement,
                             shard.crs,
                             shard.epoch,
@@ -4814,7 +4821,7 @@ pub fn main_flow() {
                             epoch,
                             &eph_arc,
                         );
-                        if !crate::archivar::coverage_manifest::shard_intersects_hull(
+                        if !omegaflow::archivar::coverage_manifest::shard_intersects_hull(
                             &resolved, &presences, &field, &env,
                         ) {
                             continue;
@@ -5538,11 +5545,11 @@ pub fn main_flow() {
                     {
                         headers.push((
                             "Content-Type".to_string(),
-                            crate::archivar::eea::EEA_AQ_CONTENT_TYPE.to_string(),
+                            omegaflow::archivar::eea::EEA_AQ_CONTENT_TYPE.to_string(),
                         ));
                     }
                     let files =
-                        match crate::archivar::eea::fetch_eea_aq(&url, body.as_str(), &headers) {
+                        match omegaflow::archivar::eea::fetch_eea_aq(&url, body.as_str(), &headers) {
                             Some(f) => f,
                             None => {
                                 eprintln!(
@@ -5571,7 +5578,7 @@ pub fn main_flow() {
                     }
                     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
                     for (file_url, file_bytes) in files {
-                        let Some(cols) = crate::archivar::parquet::parse_parquet(&file_bytes)
+                        let Some(cols) = omegaflow::archivar::parquet::parse_parquet(&file_bytes)
                         else {
                             eprintln!(
                                 "eea_aq_parquet {}: {} B carry no parquet contract",
@@ -5580,7 +5587,7 @@ pub fn main_flow() {
                             );
                             continue;
                         };
-                        let Some(m) = crate::archivar::eea::latest_measurement(&cols) else {
+                        let Some(m) = omegaflow::archivar::eea::latest_measurement(&cols) else {
                             eprintln!(
                                 "eea_aq_parquet {}: no measured value row — nothing manifests",
                                 file_url
@@ -6072,7 +6079,7 @@ mod series_field_name_tests {
         );
         assert_eq!(series_field_name("pds3_fixed_width", 5, &names), None);
         assert_eq!(
-            series_field_name("rpw_efield", crate::rpw::COMP_EY, &[]),
+            series_field_name("rpw_efield", omegaflow::rpw::COMP_EY, &[]),
             Some("rpw_e_y")
         );
         assert_eq!(series_field_name("rpw_efield", 99, &[]), None);
@@ -6113,7 +6120,7 @@ mod series_field_name_tests {
 
     #[test]
     fn one_name_per_station_stays_key_free() {
-        let sources = crate::archivar::parse_sources(
+        let sources = omegaflow::archivar::parse_sources(
             "url https://example.com/abk1h\nttl 3600\nstation ABK\nfield abk_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0\n\
              url https://example.com/sod1h\nttl 3600\nstation SOD\nfield sod_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0\n",
         );
@@ -6126,7 +6133,7 @@ mod series_field_name_tests {
 
     #[test]
     fn two_resolutions_of_one_name_are_ambiguous_per_station() {
-        let sources = crate::archivar::parse_sources(
+        let sources = omegaflow::archivar::parse_sources(
             "url https://example.com/abk1h\nttl 3600\nstation ABK\nfield abk_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0\n\
              url https://example.com/abk1m\nttl 3600\nstation ABK\nfield abk_dbdt_pt1m intermagnet_dbdt inverse-square em nT 60 0.0 0.0\n",
         );
@@ -6201,22 +6208,22 @@ fn feed_beat_to_hrv(
     name: &str,
     value: f64,
     nn_buf: &mut Vec<f64>,
-    vagus: &mut crate::archivar::hrv::VagusTone,
+    vagus: &mut omegaflow::archivar::hrv::VagusTone,
     tone_code: &std::sync::atomic::AtomicU8,
 ) {
     if !matches!(name, "nn" | "rr" | "ibi") || !value.is_finite() {
         return;
     }
     nn_buf.push(value);
-    if nn_buf.len() > crate::archivar::hrv::NN_WINDOW {
+    if nn_buf.len() > omegaflow::archivar::hrv::NN_WINDOW {
         nn_buf.remove(0);
     }
     if nn_buf.len() >= 3
-        && let Some(r) = crate::archivar::hrv::rmssd(nn_buf.as_slice())
+        && let Some(r) = omegaflow::archivar::hrv::rmssd(nn_buf.as_slice())
         && let Some(tone) = vagus.feed(r)
     {
         tone_code.store(
-            crate::archivar::hrv::tone_code(Some(tone)),
+            omegaflow::archivar::hrv::tone_code(Some(tone)),
             std::sync::atomic::Ordering::SeqCst,
         );
     }

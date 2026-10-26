@@ -1,10 +1,12 @@
+mod main_flow;
+
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     {
         if let Ok(path) = std::env::var("OMEGAFLOW_FIT_SAMPLE") {
             fit_sample_dump(&path);
         }
-        omegaflow::archivar::main_flow()
+        crate::main_flow::main_flow()
     }
 }
 

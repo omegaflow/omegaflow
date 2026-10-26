@@ -7,10 +7,10 @@ license-file = "LICENSE"
 description = "φ(x,y,z,t)"
 repository = "https://github.com/omegaflow/omegaflow"
 homepage = "https://omegaflow.space"
-default-run = "omegaflow"
 
 [workspace]
 members = [
+    "tools/app",
     "tools/gate",
     "tools/harvest",
     "tools/measure",
