@@ -533,6 +533,8 @@ pub fn allowed_units_for_quantity(kind: u8) -> &'static [&'static str] {
         5 => &["nt"],
         6 => &["ohm"],
         7 => &["relative", "1", "dn", "count", "%"],
+        8 => &["arcsec", "deg", "rad", "m", "km", "s", "d", "cycle"],
+        9 => &["mag", "1", "%", "relative", "dn", "count"],
         _ => &[],
     }
 }

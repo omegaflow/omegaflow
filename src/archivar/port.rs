@@ -1,4 +1,5 @@
 use super::*;
+use crate::force::{quantity_kind_id, quantity_kind_of};
 
 pub fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     let r1 = lat1.to_radians();
@@ -1720,12 +1721,23 @@ pub fn probe_classify_for_block<'a>(
         }
     }
     let (force, unit, tau) = raw;
+    if key.chars().count() <= 4 {
+        if let Some(bf) = block_force
+            && bf != force
+        {
+            return ("UNCERTAIN", "", 0.0);
+        }
+    }
     if force == "DROP" || force == "UNCERTAIN" {
         return (force, unit, tau);
     }
     let allowed = match force_id_of(force) {
         Some(fid) => allowed_units_for_force(fid).contains(&normalize_unit(unit).as_str()),
-        None => false,
+        None => match quantity_kind_of(force) {
+            Some(kind) => allowed_units_for_quantity(crate::force::quantity_kind_id(kind))
+                .contains(&normalize_unit(unit).as_str()),
+            None => false,
+        },
     };
     if allowed {
         (force, unit, tau)
@@ -1819,6 +1831,34 @@ fn register_maps() -> &'static RegisterMaps {
             let Some(head) = p.first().copied() else {
                 continue;
             };
+            if p.len() == 5 {
+                let Ok(tau) = p[4].parse::<f64>() else {
+                    continue;
+                };
+                if !tau.is_finite() || tau <= 0.0 {
+                    continue;
+                }
+                let Some((_, force)) = crate::archivar::parse::field_model()
+                    .get(p[1])
+                    .copied()
+                    .or_else(|| crate::archivar::parse::field_model().get(p[2]).copied())
+                else {
+                    continue;
+                };
+                let entry = (force, p[3], tau);
+                match head {
+                    "field" | "first" | "last" | "lastrow" => {
+                        field_names.entry(p[2].to_string()).or_insert(entry);
+                        field_columns.insert(p[1].to_string(), entry);
+                    }
+                    "quantity" => {
+                        quantities.entry(p[1].to_string()).or_insert(entry);
+                        quantities.entry(p[2].to_string()).or_insert(entry);
+                    }
+                    _ => {}
+                }
+                continue;
+            }
             if p.len() < 7 {
                 continue;
             }
@@ -2180,6 +2220,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.contains("color_index")
     {
         ("DROP", "", 0.0)
+    } else if kl == "sep" || kl == "separation" {
+        ("geometry", "arcsec", 604800.0)
     } else if kl.contains("frp") || kl.contains("radiative_power_mw") {
         ("thermal", "MW", 3600.0)
     } else if kl.contains("proton_flux") {
@@ -2516,13 +2558,13 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
     {
         ("em", "1", 86400.0)
     } else if kl.contains("extinction_ebv") {
-        ("em", "mag", 604800.0)
+        ("source-parameter", "mag", 604800.0)
     } else if kl.contains("extinction") {
-        ("em", "1", 604800.0)
+        ("source-parameter", "1", 604800.0)
     } else if kl.contains("_dm_") || kl.contains("dispersion") || kl.ends_with("_dm_pccm3") {
         ("em", "pc/cm3", 604800.0)
     } else if kl.contains("separation") {
-        ("em", "arcsec", 604800.0)
+        ("geometry", "arcsec", 604800.0)
     } else if kl.ends_with("scatter_ms") {
         ("em", "ms", 604800.0)
     } else if kl.contains("period_s") {
@@ -2598,8 +2640,14 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.starts_with("antares")
     {
         ("em", "1", 31536000.0)
-    } else if kl == "mag" || kl == "magnitude" || kl.contains("quake") || kl.ends_with("_mw") {
+    } else if kl.contains("quake") {
+        ("source-parameter", "Mw", 360.0)
+    } else if kl == "mag" || kl == "magnitude" || kl.ends_with("_mw") {
         ("seismic-body", "Mw", 3600.0)
+    } else if kl.starts_with("wds_") || kl.starts_with("wd_") || kl.starts_with("comet_h_") {
+        ("source-parameter", "mag", 604800.0)
+    } else if kl.contains("magpsf") {
+        ("source-parameter", "mag", 3600.0)
     } else if kl.ends_with("mag")
         || kl.ends_with("mag1")
         || kl.ends_with("mag2")
@@ -4341,7 +4389,7 @@ mod probe_classify_tests {
             probe_classify("magnetosphere_kp_a_running"),
             ("em", "1", 3600.0)
         );
-        assert_eq!(probe_classify("magnetosphere_kp_3h"), ("em", "1", 86400.0));
+        assert_eq!(probe_classify("magnetosphere_kp_3h"), ("em", "1", 10800.0));
         assert_eq!(probe_classify("safecast_cpm"), ("em", "cpm", 3600.0));
         assert_eq!(
             probe_classify("oulu_neutron_corr_for_eff"),

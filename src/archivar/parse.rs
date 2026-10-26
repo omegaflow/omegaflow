@@ -85,6 +85,22 @@ pub fn load_sources() -> Vec<SourceConfig> {
     refuse_shard_overlaps(parse_sources(&content))
 }
 
+pub(crate) fn field_model() -> &'static std::collections::HashMap<&'static str, (&'static str, &'static str)> {
+    static MODEL: std::sync::OnceLock<
+        std::collections::HashMap<&'static str, (&'static str, &'static str)>,
+    > = std::sync::OnceLock::new();
+    MODEL.get_or_init(|| {
+        let mut m = std::collections::HashMap::new();
+        for line in include_str!("field_model.tsv").lines() {
+            let p: Vec<&str> = line.split('\t').collect();
+            if p.len() == 3 {
+                m.entry(p[0]).or_insert((p[1], p[2]));
+            }
+        }
+        m
+    })
+}
+
 pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut sources = Vec::new();
 
@@ -734,6 +750,53 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             parts.get(1).copied().unwrap_or("?")
                         );
                     }
+                }
+            }
+            "field" | "first" | "last" | "lastrow" | "quantity" if parts.len() == 5 => {
+                let Some((kernel_s, force_s)) = field_model()
+                    .get(parts[1])
+                    .copied()
+                    .or_else(|| field_model().get(parts[2]).copied())
+                else {
+                    continue;
+                };
+                let Some(kernel) = kernel_id_of(kernel_s) else {
+                    continue;
+                };
+                let channel_ref = match force_id_of(force_s) {
+                    Some(f) => Some(f),
+                    None => match quantity_kind_of(force_s) {
+                        Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => None,
+                        _ => continue,
+                    },
+                };
+                let Ok(tau) = parts[4].parse::<f64>() else {
+                    continue;
+                };
+                if !tau.is_finite() || tau < 0.0 {
+                    continue;
+                }
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel,
+                    channel_ref,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: SLOT_ABSENT,
+                    advection: SLOT_ABSENT,
+                    unit: parts[3].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                match parts[0] {
+                    "first" => cur_extracts.push(Extract::First(fc, None)),
+                    "last" => cur_extracts.push(Extract::Last(fc, None)),
+                    "lastrow" => cur_extracts.push(Extract::LastRow(fc)),
+                    _ => cur_extracts.push(Extract::Field(fc)),
                 }
             }
             "first" if parts.len() >= 7 => {

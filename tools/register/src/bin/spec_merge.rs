@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use std::fs;
 use std::process::Command;
 
@@ -134,7 +135,7 @@ fn merge_rows(out_path: &str, state_path: &str) {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     if !states.is_empty() {
         let mut old = match fs::read_to_string(state_path) {
             Ok(s) => s,
@@ -144,7 +145,7 @@ fn merge_rows(out_path: &str, state_path: &str) {
             old.push_str("\n\n");
         }
         old.push_str(&states);
-        fs::write(state_path, old).expect("states write");
+        write_out(state_path, old, "states");
     }
     println!("rows: +{added} neu, {replaced} ersetzt, {} gesamt", rows.len());
 }
@@ -192,7 +193,7 @@ fn apply_instruments(tsv_path: &str) {
         lines.insert(at, line);
         added += 1;
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("instrument: {added} eingesetzt");
 }
 
@@ -259,7 +260,7 @@ fn host_docs() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("rows {rows}, mit probe {with_probe}, host_cite: {docs} ergaenzt, {failed} ohne Header");
 }
 
@@ -366,7 +367,7 @@ fn probe_fill() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("probe: {filled} ergaenzt, {failed} ohne Antwort, {seen} schon belegt, {no_row} ohne Zeile, {considered} mit Zeile");
 }
 
@@ -391,7 +392,7 @@ fn probe_drop_failed() {
         out.push_str(&keep.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("probe: {dropped} Fehlschlaege entfernt");
 }
 
@@ -476,7 +477,7 @@ fn probes_from_tsv(path: &str) {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("probes: {added} uebernommen, {missed} ohne Zeile");
 }
 
@@ -551,7 +552,7 @@ fn fill_instruments() {
     for (at, line) in insertions.into_iter().rev() {
         lines.insert(at, line);
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("instrument: {done} eindeutig eingesetzt, {ambiguous} mehrdeutig");
 }
 
@@ -591,7 +592,7 @@ fn clean() {
         out.push_str(&keep.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("clean: {removed} none-Zeilen entfernt");
 }
 
@@ -657,7 +658,7 @@ fn repair_instruments() {
     for ln in drop.iter().rev() {
         lines.remove(ln - 1);
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("repair: {} falsche Instrumentzeilen entfernt", drop.len());
 }
 
@@ -795,7 +796,7 @@ fn backfill_fields() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("fields: {filled} Zeilen zugeordnet");
 }
 
@@ -844,7 +845,7 @@ fn align_instruments() {
             fixed += 1;
         }
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("align: {fixed} Blockinstrumente auf die Spec gezogen");
 }
 
@@ -894,7 +895,7 @@ fn apply_fields(path: &str) {
     for (at, line) in ins.iter().rev() {
         lines.insert(*at, line.clone());
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("fields: {} Zeilen in Bloecke eingesetzt, {skipped} ohne Block", ins.len());
 }
 
@@ -940,7 +941,7 @@ fn instrumentize(path: &str) {
     for (at, line) in ins.iter().rev() {
         lines.insert(*at, line.clone());
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("instrument: {} in Bloecke nach url eingesetzt", ins.len());
 }
 
@@ -993,7 +994,7 @@ fn set_instruments(path: &str) {
         }
         out.push(String::new());
     }
-    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    write_out(PHI, out.join("\n") + "\n", "phi");
     println!("set-instruments: {done} Bloecke gesetzt");
 }
 
@@ -1057,7 +1058,7 @@ fn apply_instruments_url(path: &str) {
     for (at, line) in ins.iter().rev() {
         lines.insert(*at, line.clone());
     }
-    fs::write(PHI, lines.join("\n") + "\n").expect("phi write");
+    write_out(PHI, lines.join("\n") + "\n", "phi");
     println!("instrument-url: {} gesetzt, {open} OFFEN uebersprungen", ins.len());
 }
 
@@ -1117,7 +1118,7 @@ fn aussondern(class: &str, out_path: &str, derived_list: Option<&str>) {
         moved.push(String::new());
         count += 1;
     }
-    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    write_out(PHI, keep.join("\n") + "\n", "phi");
     let mut out = match fs::read_to_string(out_path) {
         Ok(s) => s,
         Err(_) => String::new(),
@@ -1129,7 +1130,7 @@ fn aussondern(class: &str, out_path: &str, derived_list: Option<&str>) {
     if let Some(parent) = std::path::Path::new(out_path).parent() {
         let _ = fs::create_dir_all(parent);
     }
-    fs::write(out_path, out).expect("out write");
+    write_out(out_path, out, "out");
     println!("aussondern {class}: {count} Bloecke verschoben");
 }
 
@@ -1165,7 +1166,7 @@ fn restore_missing(gitref: &str) {
         all.push_str("\n\n");
     }
     all.push_str(&add.join("\n"));
-    fs::write(PHI, all).expect("phi write");
+    write_out(PHI, all, "phi");
     println!("restore: {n} fehlende Bloecke aus {gitref} zurueck");
 }
 
@@ -1265,7 +1266,7 @@ fn sync_fields() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    fs::write(REG, out).expect("register write");
+    write_out(REG, out, "register");
     println!("sync-fields: {synced} Zeilen an Block-Keys gebunden");
 }
 
@@ -1323,7 +1324,7 @@ fn set_instruments_by_asset(path: &str) {
         }
         out.push(String::new());
     }
-    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    write_out(PHI, out.join("\n") + "\n", "phi");
     println!("set-instruments-by-asset: {done} Bloecke gesetzt");
 }
 
@@ -1354,7 +1355,7 @@ fn append_derived(out_path: &str, moved: &[String]) {
     if let Some(parent) = std::path::Path::new(out_path).parent() {
         let _ = fs::create_dir_all(parent);
     }
-    fs::write(out_path, out).expect("out write");
+    write_out(out_path, out, "out");
 }
 
 fn aussondern_format(format_value: &str, out_path: &str) {
@@ -1372,7 +1373,7 @@ fn aussondern_format(format_value: &str, out_path: &str) {
         keep.extend(block);
         keep.push(String::new());
     }
-    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    write_out(PHI, keep.join("\n") + "\n", "phi");
     append_derived(out_path, &moved);
     println!("aussondern-format {format_value}: {count} Bloecke verschoben");
 }
@@ -1448,7 +1449,7 @@ fn aussondern_assets(list_path: &str, out_path: &str) {
         moved.push(String::new());
         count += 1;
     }
-    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    write_out(PHI, keep.join("\n") + "\n", "phi");
     append_derived(out_path, &moved);
     println!("aussondern-assets: {count} Bloecke verschoben");
     for key in wanted.keys() {
@@ -1489,7 +1490,7 @@ fn replace_blocks(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    write_out(PHI, out.join("\n") + "\n", "phi");
     println!("replace-blocks: {replaced} ersetzt, {added} neu angehaengt");
 }
 
@@ -1551,7 +1552,7 @@ fn derived_dedup(path: &str) {
             out.push(String::new());
         }
     }
-    fs::write(path, out.join("\n") + "\n").expect("derived write");
+    write_out(path, out.join("\n") + "\n", "derived");
     println!(
         "derived-dedup: {total} gelesen, {} eindeutig, {} Dubletten entfernt",
         order.len(),
@@ -1727,12 +1728,12 @@ fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
             report.push(format!("{url}\t{tag}\t{asset}\tkORRIGIERT\t{existing}->{hash}"));
         }
     }
-    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    write_out(PHI, out.join("\n") + "\n", "phi");
     if let Some(p) = report_path {
         if let Some(parent) = std::path::Path::new(p).parent() {
             let _ = fs::create_dir_all(parent);
         }
-        fs::write(p, report.join("\n") + "\n").expect("report write");
+        write_out(p, report.join("\n") + "\n", "report");
     }
     println!(
         "fill-sha: {done} Hashes geprueft/gesetzt ({downloaded} per Download, {corrected} korrigiert), {skipped} nicht aufloesbar, {api_calls} API-Aufrufe"
@@ -1767,8 +1768,8 @@ fn split_field(path: &str, with_path: &str, without_path: &str) {
     if let Some(p) = std::path::Path::new(with_path).parent() {
         let _ = fs::create_dir_all(p);
     }
-    fs::write(with_path, with.join("\n") + "\n").expect("with write");
-    fs::write(without_path, without.join("\n") + "\n").expect("without write");
+    write_out(with_path, with.join("\n") + "\n", "with");
+    write_out(without_path, without.join("\n") + "\n", "without");
     println!("split-field: {nw} mit Messzeile, {no} ohne Messzeile");
 }
 
@@ -1787,7 +1788,7 @@ fn derived_clean(path: &str) {
         keep.extend(b);
         keep.push(String::new());
     }
-    fs::write(path, keep.join("\n") + "\n").expect("derived write");
+    write_out(path, keep.join("\n") + "\n", "derived");
     println!("derived-clean: {} Messbloecke entfernt", removed.len());
     for u in removed {
         println!("  raus: {u}");
@@ -1835,7 +1836,7 @@ fn merge_rebuild(blocks_path: &str, derived_path: &str) {
         out.push(String::new());
         appended += 1;
     }
-    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    write_out(PHI, out.join("\n") + "\n", "phi");
 
     let mut derived: Vec<String> = Vec::new();
     let mut ref_count = 0usize;
@@ -1885,7 +1886,7 @@ fn filter_rows(rows_path: &str, blocks_path: &str, out_path: &str) {
     if let Some(p) = std::path::Path::new(out_path).parent() {
         let _ = fs::create_dir_all(p);
     }
-    fs::write(out_path, out.join("\n") + "\n").expect("out write");
+    write_out(out_path, out.join("\n") + "\n", "out");
     println!("filter-rows: {kept} behalten, {dropped} verworfen");
 }
 
@@ -2000,7 +2001,7 @@ fn suggest_assets(path: &str, out_path: &str) {
     if let Some(p) = std::path::Path::new(out_path).parent() {
         let _ = fs::create_dir_all(p);
     }
-    fs::write(out_path, out.join("\n") + "\n").expect("suggest write");
+    write_out(out_path, out.join("\n") + "\n", "suggest");
     let with = out.iter().filter(|l| !l.ends_with("\t0\t")).count();
     println!(
         "suggest-assets: {} Zeilen, {with} mit Vorschlag, {} Tags abgefragt",
@@ -2141,7 +2142,7 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         reg_out.extend(b);
         reg_out.push(String::new());
     }
-    fs::write(REG, reg_out.join("\n") + "\n").expect("register write");
+    write_out(REG, reg_out.join("\n") + "\n", "register");
 
     let mut keep: Vec<String> = Vec::new();
     let mut moved: Vec<String> = Vec::new();
@@ -2181,7 +2182,7 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         keep.push(String::new());
         blocks_touched += 1;
     }
-    fs::write(PHI, keep.join("\n") + "\n").expect("phi write");
+    write_out(PHI, keep.join("\n") + "\n", "phi");
     if !moved.is_empty() {
         append_derived(derived_path, &moved);
     }
@@ -2207,7 +2208,7 @@ fn url_cut(path: &str, needle: &str) {
         keep.extend(b);
         keep.push(String::new());
     }
-    fs::write(path, keep.join("\n") + "\n").expect("url-cut write");
+    write_out(path, keep.join("\n") + "\n", "url-cut");
     println!("url-cut: {n} Block/Bloecke entfernt aus {path}");
 }
 
@@ -2251,7 +2252,7 @@ fn align_many(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    fs::write(PHI, out.join("\n") + "\n").expect("phi write");
+    write_out(PHI, out.join("\n") + "\n", "phi");
 
     let reg = fs::read_to_string(REG).expect("register");
     let mut reg_out: Vec<String> = Vec::new();
@@ -2271,8 +2272,496 @@ fn align_many(path: &str) {
         reg_out.extend(b);
         reg_out.push(String::new());
     }
-    fs::write(REG, reg_out.join("\n") + "\n").expect("register write");
+    write_out(REG, reg_out.join("\n") + "\n", "register");
     println!("align-many: {hit} Bloecke, {rows} Registerzeilen gesetzt");
+}
+
+fn stitch_orphans() {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut groups: Vec<Vec<String>> = Vec::new();
+    for (_, b) in blocks(&text) {
+        groups.push(b);
+    }
+    let mut stitched = 0usize;
+    for i in 1..groups.len() {
+        let orphan = groups[i].clone();
+        let has_url = orphan.iter().any(|l| l.starts_with("url "));
+        let has_measure = orphan.iter().any(|l| {
+            l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last ")
+        });
+        if !has_url && has_measure && groups[i - 1].iter().any(|l| l.starts_with("url ")) {
+            groups[i - 1].extend(orphan);
+            groups[i].clear();
+            stitched += 1;
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    for b in groups {
+        if b.is_empty() {
+            continue;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("stitch-orphans: {stitched} Waisenzeilen an den vorigen Block genaeht");
+}
+
+fn set_fields(path: &str) {
+    let tsv = fs::read_to_string(path).expect("tsv");
+    let phi_text = fs::read_to_string(PHI).expect("phi");
+    let mut groups: Vec<Vec<String>> = Vec::new();
+    for (_, b) in blocks(&phi_text) {
+        groups.push(b);
+    }
+    let mut changed = 0usize;
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(url), Some(fline)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let fline = fline.trim();
+        if !(fline.starts_with("field ") || fline.starts_with("quantity ") || fline.starts_with("last ")) {
+            continue;
+        }
+        let mut idx: Option<usize> = None;
+        for (i, b) in groups.iter().enumerate() {
+            if field(b, "url").as_deref() == Some(url.trim()) {
+                idx = Some(i);
+                break;
+            }
+        }
+        if idx.is_none() {
+            for (i, b) in groups.iter().enumerate() {
+                if field(b, "url")
+                    .map(|u| u.ends_with(&format!("/{}", url.trim())))
+                    .unwrap_or(false)
+                {
+                    idx = Some(i);
+                    break;
+                }
+            }
+        }
+        let Some(i) = idx else {
+            continue;
+        };
+        let b = &mut groups[i];
+        b.retain(|l| {
+            !(l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last "))
+        });
+        let pos = b
+            .iter()
+            .position(|l| l.starts_with("at "))
+            .unwrap_or(b.len());
+        b.insert(pos, fline.to_string());
+        changed += 1;
+    }
+    let mut out: Vec<String> = Vec::new();
+    for b in groups {
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("set-fields: {changed} Messzeilen ersetzt");
+}
+
+fn audit_blocks() {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut foreign_fields = 0usize;
+    let mut dup_sha = 0usize;
+    let mut mixed = 0usize;
+    let mut bad_format = 0usize;
+    let mut host_mismatch = 0usize;
+    let mut samples: Vec<String> = Vec::new();
+    for (start, b) in blocks(&text) {
+        let url = or_empty(field(&b, "url"));
+        let compiler = or_empty(field(&b, "compiler"));
+        let src = if compiler.is_empty() || compiler == "none" {
+            String::new()
+        } else {
+            match fs::read_to_string(&compiler) {
+                Ok(s) => s,
+                Err(_) => String::new(),
+            }
+        };
+        let sha_n = b.iter().filter(|l| l.starts_with("sha256 ")).count();
+        if sha_n > 1 {
+            dup_sha += 1;
+            if samples.len() < 20 {
+                samples.push(format!("dup_sha\t{start}\t{url}"));
+            }
+        }
+        let has_field = b.iter().any(|l| l.starts_with("field "));
+        let has_quantity = b.iter().any(|l| l.starts_with("quantity "));
+        let has_last = b.iter().any(|l| l.starts_with("last "));
+        if [has_field, has_quantity, has_last].iter().filter(|x| **x).count() > 1 {
+            mixed += 1;
+            if samples.len() < 20 {
+                samples.push(format!("mixed\t{start}\t{url}"));
+            }
+        }
+        if !src.is_empty() {
+            for l in &b {
+                let p: Vec<&str> = l.split_whitespace().collect();
+                if !matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last")) {
+                    continue;
+                }
+                let name = p.get(2).copied().unwrap_or("");
+                if name.len() < 4 {
+                    continue;
+                }
+                if !src.contains(name) {
+                    foreign_fields += 1;
+                    if samples.len() < 40 {
+                        samples.push(format!("foreign_field\t{start}\t{url}\t{name}\t{compiler}"));
+                    }
+                }
+            }
+        }
+        let fmt = or_empty(field(&b, "format"));
+        if !fmt.is_empty() && !compiler.is_empty() && compiler != "none" {
+            let stem = compiler
+                .rsplit('/')
+                .next()
+                .unwrap_or("")
+                .trim_end_matches("_compiler.rs");
+            let ok = fmt.contains(stem) || stem.contains(&fmt) || fmt == "ephemeris_binary";
+            if !ok {
+                bad_format += 1;
+                if samples.len() < 60 {
+                    samples.push(format!("format_compiler\t{start}\t{url}\t{fmt}\t{stem}"));
+                }
+            }
+        }
+        let origin = or_empty(field(&b, "origin"));
+        if let Some(tag) = url
+            .split("/releases/download/")
+            .nth(1)
+            .and_then(|r| r.split('/').next())
+            && let Some(oh) = origin.split("://").nth(1).and_then(|r| r.split(['/', ' ', '?']).next())
+            && !tag.is_empty()
+            && !oh.is_empty()
+            && !tag.starts_with(oh)
+            && !oh.starts_with(&tag.replace('-', "."))
+        {
+            host_mismatch += 1;
+            if samples.len() < 80 {
+                samples.push(format!("host\t{start}\t{url}\t{tag}\t{oh}"));
+            }
+        }
+    }
+    println!("audit: foreign_field={foreign_fields} dup_sha={dup_sha} mixed_lines={mixed} format_compiler={bad_format} host_mismatch={host_mismatch}");
+    for s in samples {
+        println!("{s}");
+    }
+}
+
+fn secrets() -> BTreeMap<String, String> {
+    let mut out: BTreeMap<String, String> = BTreeMap::new();
+    let candidates = [
+        or_empty(std::env::var("OMEGAFLOW_SECRETS_FILE").ok()),
+        format!("{}/.secrets.local", or_empty(std::env::var("HOME").ok())),
+        ".secrets.local".to_string(),
+    ];
+    for path in candidates {
+        if path.is_empty() {
+            continue;
+        }
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        for line in text.lines() {
+            let Some((k, v)) = line.split_once('=') else {
+                continue;
+            };
+            let k = k.trim();
+            if k.is_empty() || k.starts_with('#') {
+                continue;
+            }
+            out.insert(k.to_string(), v.trim().trim_matches('"').to_string());
+        }
+        if !out.is_empty() {
+            break;
+        }
+    }
+    out
+}
+
+fn auth_candidates(host: &str, env: &BTreeMap<String, String>) -> Vec<Vec<String>> {
+    let mut out: Vec<Vec<String>> = vec![Vec::new()];
+    let key = if host.contains("lasair") {
+        "LASAIR_TOKEN"
+    } else if host.contains("openaq") {
+        "OPENAQ_API_KEY"
+    } else if host.contains("entsoe") {
+        "ENTSOE_API_TOKEN"
+    } else if host.contains("earthdata") || host.contains("gesdisc") || host.contains("podaac") {
+        "EARTHDATA_EDL_TOKEN"
+    } else if host.contains("frost") {
+        "FROST_BASIC_AUTH"
+    } else if host.contains("tns") {
+        "TNS_API_KEY"
+    } else if host.contains("oceannetworks") {
+        "OCEANNETWORKS_TOKEN"
+    } else if host.contains("zenodo") {
+        "ZENODO_TOKEN"
+    } else if host.contains("copernicus") || host.contains("cmems") {
+        "CMEMS_PASS"
+    } else {
+        ""
+    };
+    if key.is_empty() {
+        return out;
+    }
+    if let Some(v) = env.get(key) {
+        if !v.is_empty() {
+            out.push(vec![
+                "-H".to_string(),
+                format!("Authorization: Bearer {v}"),
+            ]);
+            out.push(vec!["-H".to_string(), format!("X-API-Key: {v}")]);
+            out.push(vec!["-H".to_string(), format!("api_key: {v}")]);
+        }
+    }
+    out
+}
+
+fn render_url(url: &str, anchor: &str, env: &BTreeMap<String, String>, today: &str) -> String {
+    let mut s = url.to_string();
+    for (k, v) in env {
+        s = s.replace(&format!("{{{k}}}"), v);
+    }
+    s = s.replace("{today}", today);
+    if let Some(y) = Command::new("date")
+        .args(["-u", "-d", "yesterday", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+    {
+        s = s.replace("{yesterday}", y.trim());
+    }
+    if let Some(t) = Command::new("date")
+        .args(["-u", "-d", "tomorrow", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+    {
+        s = s.replace("{tomorrow}", t.trim());
+    }
+    if let Some(w) = Command::new("date")
+        .args(["-u", "-d", "7 days ago", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+    {
+        s = s.replace("{week_ago}", w.trim());
+    }
+    for part in anchor.split_whitespace() {
+        if let Some((k, v)) = part.split_once('=')
+            && !k.is_empty()
+            && !v.is_empty()
+        {
+            s = s.replace(&format!("{{{k}}}"), v);
+        }
+    }
+    s
+}
+
+fn reprobe(report: &str) {
+    let env = secrets();
+    let today = match Command::new("date")
+        .args(["-u", "+%Y-%m-%d"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+    {
+        Some(v) => v,
+        None => String::new(),
+    };
+    let text = fs::read_to_string(REG).expect("register");
+    let lines: Vec<String> = text.lines().map(str::to_string).collect();
+    let mut repl: BTreeMap<usize, String> = BTreeMap::new();
+    let mut report_lines: Vec<String> = Vec::new();
+    let (mut fixed, mut failed) = (0usize, 0usize);
+    for (start, block) in blocks(&text) {
+        let Some(pos) = block.iter().position(|l| l.starts_with("probe ")) else {
+            continue;
+        };
+        let p: Vec<&str> = block[pos].split_whitespace().collect();
+        if p.len() < 4 {
+            continue;
+        }
+        let status = p[2];
+        if matches!(status, "200" | "206" | "204" | "202" | "201") {
+            continue;
+        }
+        let raw_url = p[3..].join(" ");
+        let anchor = or_empty(field(&block, "at"));
+        let mut url = render_url(&raw_url, &anchor, &env, &today);
+        if url.contains('{') {
+            report_lines.push(format!("{status}\t{raw_url}\tUNGERENDERT"));
+            failed += 1;
+            continue;
+        }
+        let host = url
+            .split_once("://")
+            .map(|(_, r)| r)
+            .unwrap_or("")
+            .split(['/', '?'])
+            .next()
+            .unwrap_or("")
+            .to_string();
+        let mut final_status = String::new();
+        for attempt in 0..4 {
+            for hdr in auth_candidates(&host, &env) {
+                let mut args: Vec<String> = vec![
+                    "-sSL".to_string(),
+                    "-o".to_string(),
+                    "/dev/null".to_string(),
+                    "-w".to_string(),
+                    "%{http_code}".to_string(),
+                    "--max-time".to_string(),
+                    "30".to_string(),
+                ];
+                args.extend(hdr.clone());
+                args.push(url.clone());
+                let out = Command::new("curl").args(&args).output();
+                let code = match out
+                    .ok()
+                    .and_then(|o| String::from_utf8(o.stdout).ok())
+                    .map(|s| s.trim().to_string())
+                {
+                    Some(v) => v,
+                    None => String::new(),
+                };
+                final_status = code.clone();
+                if matches!(code.as_str(), "200" | "206" | "204" | "202" | "201") {
+                    break;
+                }
+            }
+            if matches!(final_status.as_str(), "200" | "206" | "204" | "202" | "201") {
+                break;
+            }
+            if matches!(final_status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
+                std::thread::sleep(std::time::Duration::from_secs(2u64.pow(attempt)));
+                continue;
+            }
+            break;
+        }
+        let abs = start - 1 + pos;
+        if matches!(final_status.as_str(), "200" | "206" | "204" | "202" | "201") {
+            repl.insert(abs, format!("  probe {today}T00:00:00Z {final_status} {raw_url}"));
+            fixed += 1;
+        } else {
+            report_lines.push(format!("{status}->{final_status}\t{url}\tOFFEN"));
+            failed += 1;
+        }
+    }
+    let mut out: Vec<String> = Vec::new();
+    for (i, l) in lines.iter().enumerate() {
+        out.push(match repl.get(&i) {
+            Some(n) => n.clone(),
+            None => l.clone(),
+        });
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(report, report_lines.join("\n") + "\n", "report");
+    println!("reprobe: {fixed} auf 2xx gebracht, {failed} offen (siehe {report})");
+}
+
+fn normalize_blocks() {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut removed = 0usize;
+    let mut fixed = 0usize;
+    for (_, b) in blocks(&text) {
+        let mut seen: BTreeSet<String> = BTreeSet::new();
+        let mut nb: Vec<String> = Vec::new();
+        let mut changed = false;
+        for l in b {
+            let key = l.split_whitespace().next().unwrap_or("").to_string();
+            let singleton = matches!(
+                key.as_str(),
+                "url" | "terms" | "format" | "origin" | "compiler" | "sha256" | "ttl" | "witness"
+                    | "record" | "zustand"
+            );
+            if singleton && !seen.insert(key) {
+                removed += 1;
+                changed = true;
+                continue;
+            }
+            nb.push(l);
+        }
+        if changed {
+            fixed += 1;
+        }
+        out.extend(nb);
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("normalize: {fixed} Bloecke, {removed} doppelte Zeilen entfernt");
+}
+
+fn write_out(path: &str, content: String, what: &str) {
+    if std::env::var("OMEGAFLOW_DRY").ok().as_deref() == Some("1") {
+        println!(
+            "dry-run: {what} -> {path}: {} Zeilen, nicht geschrieben",
+            content.lines().count()
+        );
+        return;
+    }
+    fs::write(path, content).expect("write");
+}
+
+fn add_line(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut groups: Vec<Vec<String>> = Vec::new();
+    for (_, b) in blocks(&text) {
+        groups.push(b);
+    }
+    let mut added = 0usize;
+    let mut skipped = 0usize;
+    for line in tsv.lines() {
+        let mut it = line.split('\t');
+        let (Some(url), Some(newline)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let newline = newline.trim();
+        if newline.is_empty() {
+            continue;
+        }
+        let Some(b) = groups.iter_mut().find(|b| {
+            field(b, "url")
+                .map(|u| u == url.trim() || u.ends_with(&format!("/{}", url.trim())))
+                .unwrap_or(false)
+        }) else {
+            skipped += 1;
+            continue;
+        };
+        if b.iter().any(|l| l.trim() == newline) {
+            skipped += 1;
+            continue;
+        }
+        let pos = b
+            .iter()
+            .position(|l| l.starts_with("format "))
+            .map(|i| i + 1)
+            .unwrap_or(b.len());
+        b.insert(pos, newline.to_string());
+        added += 1;
+    }
+    let mut out: Vec<String> = Vec::new();
+    for b in groups {
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("add-line: {added} Zeilen eingefuegt, {skipped} uebersprungen");
 }
 
 fn main() {
@@ -2305,6 +2794,12 @@ fn main() {
         Some("apply-specs") if args.len() >= 4 => apply_specs(&args[2], &args[3]),
         Some("url-cut") if args.len() >= 4 => url_cut(&args[2], &args[3]),
         Some("align-many") if args.len() >= 3 => align_many(&args[2]),
+        Some("stitch-orphans") => stitch_orphans(),
+        Some("set-fields") if args.len() >= 3 => set_fields(&args[2]),
+        Some("audit-blocks") => audit_blocks(),
+        Some("reprobe") if args.len() >= 3 => reprobe(&args[2]),
+        Some("normalize") => normalize_blocks(),
+        Some("add-line") if args.len() >= 3 => add_line(&args[2]),
         Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
         Some("fill-sha") => fill_sha(
             args.get(2).map(String::as_str),
