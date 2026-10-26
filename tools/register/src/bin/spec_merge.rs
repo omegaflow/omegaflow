@@ -873,7 +873,7 @@ fn apply_fields(path: &str) {
                     let Some(u) = field(b, "url") else {
                         return false;
                     };
-                    u.ends_with(&format!("/{}", url.trim()))
+                    u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim())))
                 })
             })
         else {
@@ -1023,7 +1023,7 @@ fn apply_instruments_url(path: &str) {
                     let Some(u) = field(b, "url") else {
                         return false;
                     };
-                    u.ends_with(&format!("/{}", url.trim()))
+                    u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim())))
                 })
             })
             .or_else(|| {
@@ -1417,6 +1417,17 @@ fn aussondern_assets(list_path: &str, out_path: &str) {
         }
     }
     let text = fs::read_to_string(PHI).expect("phi");
+    let all_blocks = blocks(&text);
+    let url_owner: BTreeSet<String> = wanted
+        .keys()
+        .filter(|a| {
+            all_blocks.iter().any(|(_, b)| {
+                let u = or_empty(field(b, "url"));
+                !u.is_empty() && url_matches(a, &u)
+            })
+        })
+        .cloned()
+        .collect();
     let mut keep: Vec<String> = Vec::new();
     let mut moved: Vec<String> = Vec::new();
     let mut count = 0usize;
@@ -1426,14 +1437,22 @@ fn aussondern_assets(list_path: &str, out_path: &str) {
             None => String::new(),
         };
         let origin = or_empty(field(&block, "origin"));
-        let hit_key = wanted
+        let url_hit = wanted
             .iter()
-            .find(|(a, _)| {
-                url_matches(a, &url)
-                    || (!origin.is_empty()
-                        && origin.split(';').any(|o| url_matches(a, o.trim())))
-            })
+            .find(|(a, _)| url_matches(a, &url))
             .map(|(a, _)| a.clone());
+        let hit_key = match url_hit {
+            Some(k) => Some(k),
+            None => wanted
+                .iter()
+                .find(|(a, _)| {
+                    !url_owner.contains(*a)
+                        && !origin.is_empty()
+                        && (url_matches(a, &origin)
+                            || origin.split(';').any(|o| url_matches(a, o.trim())))
+                })
+                .map(|(a, _)| a.clone()),
+        };
         let Some(key) = hit_key else {
             keep.extend(block);
             keep.push(String::new());
@@ -2334,7 +2353,7 @@ fn set_fields(path: &str) {
         if idx.is_none() {
             for (i, b) in groups.iter().enumerate() {
                 if field(b, "url")
-                    .map(|u| u.ends_with(&format!("/{}", url.trim())))
+                    .map(|u| u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim()))))
                     .unwrap_or(false)
                 {
                     idx = Some(i);
@@ -2598,7 +2617,7 @@ fn reprobe(report: &str) {
         }
         let raw_url = p[3..].join(" ");
         let anchor = or_empty(field(&block, "at"));
-        let mut url = render_url(&raw_url, &anchor, &env, &today);
+        let url = render_url(&raw_url, &anchor, &env, &today);
         if url.contains('{') {
             report_lines.push(format!("{status}\t{raw_url}\tUNGERENDERT"));
             failed += 1;
@@ -2737,7 +2756,7 @@ fn add_line(path: &str) {
         }
         let Some(b) = groups.iter_mut().find(|b| {
             field(b, "url")
-                .map(|u| u == url.trim() || u.ends_with(&format!("/{}", url.trim())))
+                .map(|u| u == url.trim() || u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim()))))
                 .unwrap_or(false)
         }) else {
             skipped += 1;
@@ -2762,6 +2781,46 @@ fn add_line(path: &str) {
     }
     write_out(PHI, out.join("\n") + "\n", "phi");
     println!("add-line: {added} Zeilen eingefuegt, {skipped} uebersprungen");
+}
+
+fn refs_audit(path: &str) {
+    let list = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut checked = 0usize;
+    for line in list.lines() {
+        if !line.contains("REFERENZ") {
+            continue;
+        }
+        let url = line.split('\t').next().unwrap_or("").trim();
+        if url.is_empty() {
+            continue;
+        }
+        let Some(b) = blocks(&text).into_iter().map(|(_, b)| b).find(|b| {
+            let u = or_empty(field(b, "url"));
+            let o = or_empty(field(b, "origin"));
+            u == url
+                || u.ends_with(&format!("/{url}"))
+                || o.split(';').any(|s| s.trim() == url)
+        }) else {
+            println!("FEHLT\t{url}");
+            continue;
+        };
+        checked += 1;
+        let measure = b.iter().any(|l| {
+            l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last ")
+        });
+        let instr = or_empty(field(&b, "instrument"));
+        println!(
+            "{}\t{}\t{}\t{url}",
+            if measure { "MESSZEILE" } else { "ohne" },
+            if instr.is_empty() { "-" } else { instr.as_str() },
+            or_empty(field(&b, "format"))
+        );
+    }
+    println!("refs-audit: {checked} Bloecke gefunden");
 }
 
 fn main() {
@@ -2800,6 +2859,7 @@ fn main() {
         Some("reprobe") if args.len() >= 3 => reprobe(&args[2]),
         Some("normalize") => normalize_blocks(),
         Some("add-line") if args.len() >= 3 => add_line(&args[2]),
+        Some("refs-audit") if args.len() >= 3 => refs_audit(&args[2]),
         Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
         Some("fill-sha") => fill_sha(
             args.get(2).map(String::as_str),
