@@ -3252,7 +3252,7 @@ mod tests {
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0][TNF_ROW_FORMAT], 16.0);
         assert!(
-            (rows[0][TNF_ROW_TDB] - 509_180_757.684).abs() < 1e-6,
+            (rows[0][TNF_ROW_TDB] - 509_180_757.685_197).abs() < 1e-6,
             "DT16 tdb {} is not the SFDU time-tag tdb",
             rows[0][TNF_ROW_TDB]
         );

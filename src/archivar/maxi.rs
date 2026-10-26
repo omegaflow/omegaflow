@@ -193,7 +193,10 @@ mod tests {
             deltas: vec![(0.0, -1e12)],
         };
         let tdb = mjd_to_tdb(MJD_UNIX_EPOCH, &lsk).unwrap();
-        assert_eq!(tdb, 32.184 + 0.0 - 946728000.0);
+        assert_eq!(
+            tdb,
+            32.184 + 0.0 - 946728000.0 + crate::archivar::lsk::tdb_minus_tt_seconds(0.0)
+        );
     }
 
     #[test]

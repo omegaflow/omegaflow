@@ -15,7 +15,7 @@ pub struct LeapSeconds {
     pub deltas: Vec<(f64, f64)>,
 }
 
-fn tdb_minus_tt_seconds(unix: f64) -> f64 {
+pub(crate) fn tdb_minus_tt_seconds(unix: f64) -> f64 {
     let d = unix / 86400.0 + 40587.0 - 51544.5;
     let g = (357.53 + 0.9856003 * d) * std::f64::consts::PI / 180.0;
     let lm = (246.11 + 0.9025179 * d) * std::f64::consts::PI / 180.0;
