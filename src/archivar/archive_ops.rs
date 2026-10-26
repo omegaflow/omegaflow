@@ -381,6 +381,8 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     }
 }
 
+pub const EXPOSE_OFFSET_BASE: f32 = 4.0;
+
 #[derive(Clone, Copy)]
 pub struct DiodeState {
     pub force_ref: [f32; 9],

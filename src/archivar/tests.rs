@@ -8197,8 +8197,17 @@ fn local_http_head_get(
     (format!("http://127.0.0.1:{}", port), handle)
 }
 
+static CDN_ENV: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+fn cdn_env_guard() -> std::sync::MutexGuard<'static, ()> {
+    CDN_ENV
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
 #[test]
 fn test_fetch_one_serves_stale_cdn_asset_when_live_voids() {
+    let _env = cdn_env_guard();
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
@@ -8226,6 +8235,7 @@ fn test_fetch_one_serves_stale_cdn_asset_when_live_voids() {
 
 #[test]
 fn test_live_only_source_skips_the_cdn_fallback_when_live_voids() {
+    let _env = cdn_env_guard();
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
@@ -8286,6 +8296,7 @@ fn test_url_has_fixed_window_distinguishes_static_from_live() {
 
 #[test]
 fn test_fetch_one_with_age_carries_the_cdn_age_on_fallback() {
+    let _env = cdn_env_guard();
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()

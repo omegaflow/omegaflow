@@ -19,8 +19,11 @@ fn field_wgsl_validates_offline() {
 }
 
 fn browser_field_shader() -> String {
-    let html = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../static/index.html"))
-        .expect("static/index.html carries the browser fieldShader");
+    let html = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../static/index.html"
+    ))
+    .expect("static/index.html carries the browser fieldShader");
     let marker = "const fieldShader = `";
     let start = html.find(marker).expect("fieldShader marker absent") + marker.len();
     let end = html[start..]

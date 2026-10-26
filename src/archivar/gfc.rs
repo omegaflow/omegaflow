@@ -966,19 +966,19 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
         let p = fully_normalized_legendre(nmax, 0.0);
         let mut worst_rel = 0.0f64;
         let mut worst_n = 0usize;
-        for n in 0..=nmax {
-            let sum = p[n][0] * p[n][0];
+        for (n, row) in p.iter().enumerate() {
+            let sum = row[0] * row[0];
             let expected = (2 * n + 1) as f64;
             let rel = (sum - expected).abs() / expected;
             if rel > worst_rel {
                 worst_rel = rel;
                 worst_n = n;
             }
-            for m in 1..=n {
+            for (i, &p_nm) in row[1..=n].iter().enumerate() {
+                let m = i + 1;
                 assert_eq!(
-                    p[n][m], 0.0,
-                    "P[{n}][{m}] at the pole must be exactly zero, got {}",
-                    p[n][m]
+                    p_nm, 0.0,
+                    "P[{n}][{m}] at the pole must be exactly zero, got {p_nm}"
                 );
             }
         }

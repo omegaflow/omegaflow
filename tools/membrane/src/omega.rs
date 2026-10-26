@@ -80,7 +80,7 @@ pub const FORCE_NAME: [&str; 9] = [
 
 pub const FORCE_SI_UNIT: [&str; 9] = ["W/m2", "m/s2", "Pa", "m", "m", "K", "kg/m3", "m/s", "V/m"];
 
-pub const EXPOSE_OFFSET_BASE: f32 = 4.0;
+pub use omegaflow::archivar::EXPOSE_OFFSET_BASE;
 
 pub const OFFSET_RELAX: f32 = 0.03125;
 

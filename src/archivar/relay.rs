@@ -1259,7 +1259,7 @@ mod tests {
             consent: Arc::new(AtomicBool::new(false)),
             diode: Arc::new(RwLock::new(DiodeState {
                 force_ref: [0.0; 9],
-                expose_offset: crate::mathematikerin::EXPOSE_OFFSET_BASE,
+                expose_offset: crate::archivar::EXPOSE_OFFSET_BASE,
                 em_color: [0.0; 4],
             })),
             sources: Arc::new(Vec::new()),
