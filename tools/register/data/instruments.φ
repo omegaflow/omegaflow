@@ -1833,7 +1833,7 @@ host data.hawc-observatory.org
   api_quote "# Fluxes are reported at 7 TeV and are in TeV-1 cm-2 s-1."
   instrument_cite https://www.hawc-observatory.org/observatory/tanks.php
   instrument_quote "The water Cherenkov detectors in HAWC are corrugated steel tanks 4 meters high and 7.3 meters in diameter (see figure at left)."
-  probe 2026-10-25T09:59:37Z absent https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
+  probe 2026-10-26T00:00:00Z 200 https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
   fields hawc_2hwc
   applies https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
   note Probe absent (HEAD/Direktzugriff), Inhalt ueber jina gelesen; YAML-Kopf nennt TeV-1 cm-2 s-1 bei 7 TeV. Katalog, keine Zeitreihe.
@@ -1846,7 +1846,7 @@ host data.hawc-observatory.org
   api_quote "# Fluxes are reported at 7 TeV and are in TeV-1 cm-2 s-1."
   instrument_cite https://www.hawc-observatory.org/observatory/tanks.php
   instrument_quote "The water Cherenkov detectors in HAWC are corrugated steel tanks 4 meters high and 7.3 meters in diameter (see figure at left)."
-  probe 2026-10-25T09:59:38Z absent https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
+  probe 2026-10-26T00:00:00Z 200 https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
   fields hawc_3hwc
   applies https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
   note Wie 2HWC; 3HWC-Katalogseite verweist auf das yaml, Direktprobe absent.
@@ -14372,7 +14372,7 @@ host zeus.wdcb.ru
   api_quote "248 tree Hourly Values for the month. Values are in nanoTeslas A missing value is identified by -1."
   instrument_cite https://nora.nerc.ac.uk/id/eprint/8084/1/had_aug09.pdf
   instrument_quote "A tri-axial linear-core fluxgate magnetometer, manufactured by the Danish Meteorological Institute, is used to measure the variations in the horizontal (H) and vertical (Z) components of the field."
-  probe 2026-10-25T14:56:34Z absent https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
   fields aa
   applies https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt id=31153
   note Direkter Pfad absent (HTTP 0), Inhalt aus demselben Snapshot per curl gelesen (200, 12.316 B). 248 dreistündige Werte = 10.800 s Takt; Code 18=aa, 2=am. Instrumentendok: Hartland, "Measurements are made at a rate of 1 Hz" (dasselbe Bulletin); aa ist der Mittel der K-Indizes von Hartland und Canberra.
@@ -24264,7 +24264,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
   fields LAT
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/chap7.rtf id=26862
   note Kapitel 7 (RTF) der GPS-Doku; Beobachtungstakt 30 s aus session.info (Spalte Int=30).
@@ -24281,7 +24281,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20030506214133id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/formula.exe
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030506214133id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/formula.exe
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/formula.exe id=26870
   note Programm zur G-Auswertung; keine Zeitreihe, ein Experiment je Lauf -> intervall 0.
@@ -24298,7 +24298,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20110326050241id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_15min.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20110326050241id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_15min.dat
   fields FA
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/grav_15min.dat id=26878
   note Statisches 0,25-Grad-Gitter (Lat/Lon + Freiluftanomalie in mGal); keine Zeitspalte -> intervall 0.
@@ -24315,7 +24315,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20110326044853id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_1deg.dat
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20110326044853id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_1deg.dat
   fields FA
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/grav_1deg.dat id=26886
   note 1-Grad-Gitter, 8 Spalten (Lat, Lon, Anomalie mGal + Fehler); keine Zeitspalte -> intervall 0.
@@ -24332,7 +24332,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
   fields G
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme id=26894
   note Russische Readme zu formula.exe (G-Experimente); Messzeile = G, intervall 0.
@@ -24349,7 +24349,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme_en id=26902
   note Englische Readme; G-Messreihe je Experiment, intervall 0.
@@ -24366,7 +24366,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218114954id_/http://zeus.wdcb.ru/wdcb/gps/session.info
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20181218114954id_/http://zeus.wdcb.ru/wdcb/gps/session.info
   fields Int
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/session.info id=26920
   note Sitzungstabelle; Spalte Int = Beobachtungsintervall in s (30).
@@ -24383,7 +24383,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218114959id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.global
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20181218114959id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.global
   fields Ant
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sestbl.global id=26928
   note Sitzungstabelle global: Antennenhöhe (Ant Ht) je Station; Stationskatalog, keine Zeitreihe -> intervall 0.
@@ -24400,7 +24400,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218115022id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.regional
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20181218115022id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.regional
   fields Ant
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sestbl.regional id=26936
   note Sitzungstabelle regional: Antennenhöhe je Station; intervall 0.
@@ -24417,7 +24417,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sig_2000.txt id=26944
   note NEIC-Liste der signifikanten Beben 2000 (M >= 6.5); ein Ereignis je Zeile -> intervall 0.
@@ -24434,7 +24434,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218115029id_/http://zeus.wdcb.ru/wdcb/gps/sittbl.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20181218115029id_/http://zeus.wdcb.ru/wdcb/gps/sittbl.txt
   fields HGT
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/sittbl.txt id=26952
   note Stationstabelle (SOPAC-Site-Liste); Höhe je Station, keine Zeitreihe -> intervall 0.
@@ -24451,7 +24451,7 @@ host wdcb.ru
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
-  probe 2026-10-26T00:00:00Z 000 https://web.archive.org/web/20181218115242id_/http://zeus.wdcb.ru/wdcb/gps/station_info.txt
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20181218115242id_/http://zeus.wdcb.ru/wdcb/gps/station_info.txt
   fields Ant
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/station_info.txt id=26960
   note Stationsinfo (SOPAC-Dump 26-Jun-2000); Antennenhöhe je Station, intervall 0.
@@ -25761,7 +25761,7 @@ host api.sedoo.fr
   host_cite https://bgi.obs-mip.fr/gravity-databases/
   host_quote "AGrav—The New International Absolute Gravity Database of BGI and BKG"
   ttl 604800
-  probe 2026-10-25T19:15:49Z timeout https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
+  probe 2026-10-26T00:00:00Z 200 https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
   fields gravity
   applies https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid= line=10361
   field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0
@@ -29628,7 +29628,7 @@ host api.sedoo.fr
   host_cite https://bgi.obs-mip.fr/gravity-databases/
   host_quote "AGrav—The New International Absolute Gravity Database of BGI and BKG"
   ttl 604800
-  probe 2026-10-25T19:15:49Z 000 https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
+  probe 2026-10-26T00:00:00Z 200 https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
   applies https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin line=10377
   fields gravity
   field gravity agrav_gravity_ms2 m/s2 604800
@@ -31155,7 +31155,7 @@ host api.sedoo.fr
   host_cite https://bgi.obs-mip.fr/gravity-databases/
   host_quote "AGrav—The New International Absolute Gravity Database of BGI and BKG"
   ttl 604800
-  probe 2026-10-25T19:15:49Z 000 https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
+  probe 2026-10-26T00:00:00Z 200 https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
   applies https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin line=10377
   fields gravity
   field gravity agrav_gravity_ms2 m/s2 604800
