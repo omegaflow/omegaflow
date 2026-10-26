@@ -20167,7 +20167,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field rtlt juno_round_trip_light_time_s s 0.0
   probe 2026-10-25T18:33:51Z 206 https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
-  fields rtlt
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt line=29427
   note Dateikopf juno_range.txt: Spalte rtlt = "Round trip light time", Format F17.10, Einheit sec; DSN-Sender/Empfänger je Zeile. Keine Kadenz in der Datendoku, field-Intervall 0.0. Instrumentendoku: Juno-Gravity-Science mit X/Ka-Transpondern und DSN-Doppler.
 
@@ -20185,7 +20185,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field range mariner9_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:33:54Z 206 https://ssd.jpl.nasa.gov/dat/planets/mariner9obs.txt
-  fields range
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mariner9obs.txt line=29434
   note Dateikopf mariner9obs.txt: Spalte 5 = "adjusted round-trip light time in microseconds"; DSN-Station als Messquelle; Beobachtung je Zeile, keine Kadenz, field-Intervall 0.0. key range = Dateibegriff "range measurements" (kein Spaltenlabel).
 
@@ -20203,7 +20203,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field range messenger_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:33:56Z 206 https://ssd.jpl.nasa.gov/dat/planets/messenger.txt
-  fields range
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/messenger.txt line=29441
   note Dateikopf messenger.txt: Spalte 8 = adjusted round-trip light time in microseconds; X-Band 7,2/8,4 GHz; DSN-Station je Zeile. Instrumentendoku nennt 60-s-Integration (sampling 60); Datenreihe ohne feste Kadenz, field-Intervall 0.0.
 
@@ -20221,7 +20221,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field r-dot magellan_radial_velocity_km_s km/s 0.0
   probe 2026-10-25T18:33:58Z 206 https://ssd.jpl.nasa.gov/dat/planets/mgndoppler.txt
-  fields r-dot
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mgndoppler.txt line=29448
   note Dateikopf mgndoppler.txt: Spalte r-dot [km/sec] = instantane geozentrische Radialgeschwindigkeit der Venus. Beobachtung je Zeile, keine Kadenz, field-Intervall 0.0. Instrument = Magellan-High-Gain-Antenna/DSN (Doppler).
 
@@ -20239,7 +20239,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field range mgs_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:33:59Z 206 https://ssd.jpl.nasa.gov/dat/planets/mgsrange1999-2006.txt
-  fields range
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mgsrange1999-2006.txt line=29455
   note Dateikopf mgsrange1999-2006.txt: Spalte 8 = adjusted round-trip light time in microseconds; X-Band 7,2/8,4 GHz; Transponder- und Stationsdelay kalibriert. Instrumentendoku nennt den Ultrastable Oscillator (0,1 s Integration) und den MGS-Transmitter. Keine Datenkadenz, field-Intervall 0.0.
 
@@ -20257,7 +20257,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field range mro_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:34:01Z 206 https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
-  fields range
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt line=29469
   note Dateikopf mrorange2006-2013.txt: "round-trip light time for range measurements" je Trackinpass, X-Band 7,2/8,4 GHz; Einheit Mikrosekunden über das gemeinsame Format npts3d_format.txt (Spalte 13). Keine Kadenz, field-Intervall 0.0. Instrument = MRO-Radiosignal/DSN; Instrumentendoku nennt MRO und Doppler.
 
@@ -20275,7 +20275,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field range ody_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:34:03Z 206 https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt
-  fields range
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt line=29504
   note Dateikopf odyrange2002-2013.txt: "round-trip light time for range measurements" je Trackinpass; Einheit Mikrosekunden über npts3d_format.txt (Spalte 13). Instrumentendoku: X-Band-SDSTs der 2001 Mars Odyssey. Keine Kadenz, field-Intervall 0.0.
 
@@ -20293,7 +20293,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field tau pathfinder_differenced_range_km_s km/s 60.0
   probe 2026-10-25T18:34:04Z 206 https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
-  fields tau
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt line=29518
   note mscdop_format.txt: Spalte 31-46 "Differenced Range measurement [km/sec]", Spalte 56-60 "interval [seconds] of differenced range"; die Datei führt 60.0 in Spalte 56-60, daher field-Intervall 60.0. key tau = Formelzeichen des Dateikopfs. Instrumentendoku: Pathfinder-X-Band-SSPA.
 
@@ -20311,7 +20311,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field range pathfinder_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:34:06Z 206 https://ssd.jpl.nasa.gov/dat/planets/pathrange.txt
-  fields range
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/pathrange.txt line=29525
   note Dateikopf pathrange.txt: Spalte 8 = adjusted round-trip light time in microseconds, X-Band 7,2/8,4 GHz, Transponderdelay ~420 nicht entfernt. Keine Kadenz, field-Intervall 0.0.
 
@@ -20329,7 +20329,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. ssd_ccd_mcd_dec_deg deg 0.0
   probe 2026-10-25T18:34:07Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt line=29383
   note ccd_mcd Kopf: "# McDonald Observatory, University of Texas"; optical_format Sp. 51-59 = Deklination ddmmss, Einheit Grad. Keine Kadenz, field-Intervall 0.0.
 
@@ -20347,7 +20347,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. ssd_ccd_tmo_dec_deg deg 0.0
   probe 2026-10-25T18:34:09Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt line=29406
   note ccd_tmo Kopf dokumentiert das Spaltenformat; Instrument = 0,6-m-RC der TMO (Wikipedia). Keine Kadenz, field-Intervall 0.0.
 
@@ -20365,7 +20365,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. nikolaev_dec_deg deg 0.0
   probe 2026-10-25T18:34:14Z 206 https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt line=29483
   note nikolaev.txt: fotografische Astrometrie, Quellcode "1962NIKO"; optical_format Sp. 51-59 = Deklination. Instrument = Carl-Zeiss-Jena-Zonenastrograph des Nikolaev-Observatoriums (UNESCO-Inventar). Keine Kadenz, field-Intervall 0.0.
 
@@ -20383,7 +20383,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. bordeaux_meridian_dec_deg deg 0.0
   probe 2026-10-25T18:34:15Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt line=29569
   note trnstsbordx Kopf: "# Meridian Circle Observations, Bordeaux Observatory"; optical_format Sp. 51-59. Keine Kadenz, field-Intervall 0.0.
 
@@ -20401,7 +20401,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. herstmonceux_transit_dec_deg deg 0.0
   probe 2026-10-25T18:34:17Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt line=29576
   note trnstsherst Kopf: "# Meridian Circle Observations, RGO, Herstmonceux"; optical_format Code 0011. Instrument = Cooke Reversible Transit Circle (RGO-Herstmonceux). Keine Kadenz, field-Intervall 0.0.
 
@@ -20419,7 +20419,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. lapalma_meridian_dec_deg deg 0.0
   probe 2026-10-25T18:34:18Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt line=29583
   note trnstslplma Kopf: "# Meridian Circle Observations, La Palma Observatory, RGO"; optical_format Code 9001 (RGO - La Palma). Instrument = Carlsberg Meridian Telescope. Keine Kadenz, field-Intervall 0.0.
 
@@ -20437,7 +20437,7 @@ host ssd.jpl.nasa.gov
   ttl no-cadence
   field dec. usno_nine_inch_dec_deg deg 0.0
   probe 2026-10-25T18:34:20Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
-  fields dec.
+  fields RA0
   applies https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt line=29626
   note trnstswash9 Kopf: "# Meridian Circle Observations, US Naval Observatory, 9\" transit"; optical_format Code 7869. Keine Kadenz, field-Intervall 0.0.
 
@@ -20656,7 +20656,7 @@ host api.bas.ac.uk
   field v superdarn_los_velocity_ms m/s null
   note Spiegel-API fuer SuperDARN-FitACF-Dateien; Feld v (LOS-Geschwindigkeit) und Einheit m/s aus der RST-Formatdoku. Die Mirror-API dokumentiert nur Routen, keine Kadenz -> interval null.
 
-host lasair-ztf.lsst.ac.uk
+host api.lasair.lsst.ac.uk
   instrument ZTF
   unit mag
   sampling null
@@ -20672,6 +20672,7 @@ host lasair-ztf.lsst.ac.uk
   applies https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN} line=33637
   field gmag lasair_object_gmag mag null
   note Probe 401: LASAIR_TOKEN nicht gesetzt -> zugang LOCK privat; Feld/Einheit aus der Lasair-Doku (Selected Columns: gmag = "g or r magnitude for the most recent alert"). Kein Zeitraster je Objekt (interval null); Host liefert Alerts "within minutes".
+instrument ZTF
 
 host api.opentopodata.org
   instrument multibeam echosounder
@@ -22186,7 +22187,7 @@ host ssd.jpl.nasa.gov
   host_cite https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
   host_quote "last-modified: Sun, 25 Oct 2026 14:14:39 GMT"
   probe 2026-10-25T18:50:58Z 200 https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
-  fields tycho_parallax_mas
+  fields Plx H M1
   applies https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
   field tycho_parallax_mas tycho_parallax_mas mas 0
   note Der Block ist falsch zusammengesetzt: dcom5_le.dat ist JPL-DASTCOM5 (Kometen-/Kleinplanetenelemente) und traegt keine Parallaxe. Die Messzeile tycho_parallax_mas gehoert zum Hipparcos/Tycho-Katalog; dort Plx in mas (CDS I/239, Spalte 80-86, F7.2 mas). Geraet: Hipparcos-Satellit (ESA, 1989-1993).
@@ -24700,7 +24701,7 @@ host zenodo.org
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip id=28216
   note Processed-Archiv derselben Venus-Radar-Sammlung; Höhenraster, intervall 0.
 
-host lasair.lsst.ac.uk
+host api.lasair.lsst.ac.uk
   instrument ztf
   unit mag
   sampling 86400
@@ -24716,6 +24717,7 @@ host lasair.lsst.ac.uk
   # Zusatzprobe ohne Token: HTTP 401 {"detail":"Authentication credentials were not provided."}; Platzhalter {LASAIR_TOKEN} bleibt im Register
   applies https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN} id=28251
   note gmag der Objekttabelle; ZTF-Alertstrom ist nächtlich (86400 s).
+instrument ZTF
 
 host igpp.ucla.edu
   instrument rss
@@ -24832,9 +24834,10 @@ host zenodo.org
   ttl 0
   probe HTTP 403 0 https://zenodo.org/api/records/21859473
   # Zusatzprobe DataCite HTTP 200 https://api.datacite.org/dois/10.5281/zenodo.21859473
-  fields UVave
+  fields ene
   applies https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content id=28586
   note EELS-Spektrum (Energieverlust eV), Fig. 4; keine Zeitachse -> intervall 0.
+instrument AGS-AGM
 
 host bayernwolke.de
   instrument lidar
@@ -25056,7 +25059,7 @@ host frost.met.no
   instrument_quote "\"example\" : \"air_temperature\" … \"example\" : \"degC\""
   host_cite https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default
   host_quote "\"code\" : 401, \"message\" : \"Unauthorized\", \"reason\" : \"Missing authentication token\""
-  fields value
+  fields air_temperature
   applies https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default line=944
   field value frost_air_temperature_c C 3600
   note Key `value` ist der Payload-Pfad data.0.observations.value (bestehende Blockzeile `first`), Einheit degC aus dem Swagger-Beispiel. Intervall 3600 aus timeResolution PT1H des Konzeptbeispiels; die Doku nennt PT1H als Beispiel, nicht als Default — deshalb hier ausgewiesen. Host: ohne Token 401 gelesen.

@@ -29218,13 +29218,13 @@ instrument AGS-AGM spectrometer
 
 url https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
 origin https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
-instrument AGS-AGM spectrometer
 terms CC-BY-4.0 https://zenodo.org/records/21859473
 witness substance
 record eels
 force em
 no-sampling
 field ene eels_energy_loss_mev meV 0
+instrument AGS-AGM
 
 field E energy_loss eV 0
 url https://zenodo.org/api/records/4444068/files/Node_1_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content

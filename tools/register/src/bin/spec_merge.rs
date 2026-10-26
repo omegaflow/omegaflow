@@ -2236,7 +2236,7 @@ fn align_many(path: &str) {
         Ok(s) => s,
         Err(_) => return,
     };
-    let mut wanted: Vec<(String, Vec<String>)> = Vec::new();
+    let mut wanted: Vec<(String, Vec<String>, Option<String>)> = Vec::new();
     for line in list.lines() {
         let cols: Vec<&str> = line.split('\t').collect();
         if cols.len() < 2 {
@@ -2248,24 +2248,25 @@ fn align_many(path: &str) {
             .map(|s| s.trim().to_string())
             .filter(|s| !s.is_empty())
             .collect();
+        let host = cols.get(2).map(|s| s.trim().to_string()).filter(|s| !s.is_empty());
         if !url.is_empty() && !instruments.is_empty() {
-            wanted.push((url, instruments));
+            wanted.push((url, instruments, host));
         }
     }
     let text = fs::read_to_string(PHI).expect("phi");
     let mut out: Vec<String> = Vec::new();
-    let mut targets: Vec<(String, String, Vec<String>)> = Vec::new();
+    let mut targets: Vec<(String, String, Vec<String>, Option<String>)> = Vec::new();
     let mut hit = 0usize;
     for (_, mut b) in blocks(&text) {
         let url = or_empty(field(&b, "url"));
         let origin = or_empty(field(&b, "origin"));
-        let found = wanted.iter().find(|(spec, _)| {
+        let found = wanted.iter().find(|(spec, _, _)| {
             (!url.is_empty() && url == *spec)
                 || (!origin.is_empty() && origin.split(';').any(|o| o.trim() == spec))
         });
-        if let Some((_, instruments)) = found {
+        if let Some((_, instruments, row_host)) = found {
             set_instrument_lines(&mut b, instruments);
-            targets.push((url, origin, instruments.clone()));
+            targets.push((url, origin, instruments.clone(), row_host.clone()));
             hit += 1;
         }
         out.extend(b);
@@ -2279,13 +2280,16 @@ fn align_many(path: &str) {
     for (_, mut b) in blocks(&reg) {
         let applies = or_empty(field(&b, "applies"));
         let target = applies.split_whitespace().next().unwrap_or("").to_string();
-        let found = targets.iter().find(|(url, origin, _)| {
+        let found = targets.iter().find(|(url, origin, _, _)| {
             (!url.is_empty() && *url == target)
                 || (!origin.is_empty()
                     && origin.split(';').any(|o| o.trim() == target))
         });
-        if let Some((_, _, instruments)) = found {
+        if let Some((_, _, instruments, row_host)) = found {
             set_instrument_lines(&mut b, instruments);
+            if let Some(h) = row_host {
+                set_row_key(&mut b, "host", h);
+            }
             rows += 1;
         }
         reg_out.extend(b);
