@@ -29,8 +29,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "43 */6 * * *"
 
 permissions:
   contents: write
