@@ -1,8 +1,9 @@
+use omegaflow::archivar::PHI;
 use omegaflow::archivar::inflate::gunzip;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::collections::{HashMap, HashSet};
 use std::io::IsTerminal;
-use std::sync::{Arc, Mutex, RwLock, mpsc};
+use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 
 use omegaflow::archivar::*;
@@ -707,7 +708,7 @@ pub fn main_flow() {
                 break;
             }
             if let Some(ttl) = missing_ttl
-                && now - last_bootstrap >= ttl / (Φ * Φ)
+                && now - last_bootstrap >= ttl / (PHI * PHI)
             {
                 last_bootstrap = now;
                 let presences: Vec<PresenceSample> =
@@ -1074,7 +1075,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("ephemeris {}: fetch void — retry in ttl/Φ·2ⁿ", body);
+                                eprintln!("ephemeris {}: fetch void — retry in ttl/PHI·2ⁿ", body);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -1090,7 +1091,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path_c, &bytes).is_err() {
-                            eprintln!("ephemeris {}: write void — retry in ttl/Φ", body);
+                            eprintln!("ephemeris {}: write void — retry in ttl/PHI", body);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1162,7 +1163,7 @@ pub fn main_flow() {
                     }
                     if !fetched {
                         eprintln!(
-                            "catalog {}: fetch void — the catalog stays absent, retry in ttl/Φ·2ⁿ",
+                            "catalog {}: fetch void — the catalog stays absent, retry in ttl/PHI·2ⁿ",
                             url
                         );
                         let _ = ftx.send(FetchResult {
@@ -1181,7 +1182,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("catalog {}: read void — retry in ttl/Φ", url);
+                            eprintln!("catalog {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1268,7 +1269,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt_c, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt_c, url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -1284,7 +1285,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt_c, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt_c, url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1302,7 +1303,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt_c, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt_c, url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1402,7 +1403,7 @@ pub fn main_flow() {
                     let dds = match fetch_raw(&dds_url, None, &[]) {
                         Some(b) => b,
                         None => {
-                            eprintln!("opendap {}: dds fetch void — retry in ttl/Φ·2ⁿ", dds_url);
+                            eprintln!("opendap {}: dds fetch void — retry in ttl/PHI·2ⁿ", dds_url);
                             let _ = ftx.send(empty(false));
                             return;
                         }
@@ -1411,7 +1412,7 @@ pub fn main_flow() {
                         Some(b) => b,
                         None => {
                             eprintln!(
-                                "opendap {}: das_doc fetch void — retry in ttl/Φ·2ⁿ",
+                                "opendap {}: das_doc fetch void — retry in ttl/PHI·2ⁿ",
                                 das_url
                             );
                             let _ = ftx.send(empty(false));
@@ -1421,7 +1422,7 @@ pub fn main_flow() {
                     let dods = match fetch_raw_bytes(&dods_url) {
                         Some(b) => b,
                         None => {
-                            eprintln!("opendap {}: dods fetch void — retry in ttl/Φ·2ⁿ", dods_url);
+                            eprintln!("opendap {}: dods fetch void — retry in ttl/PHI·2ⁿ", dods_url);
                             let _ = ftx.send(empty(false));
                             return;
                         }
@@ -1521,7 +1522,7 @@ pub fn main_flow() {
                     let (used_url, mut bytes) = match fetched {
                         Some((u, b)) => (u, b),
                         None => {
-                            eprintln!("{} {:?}: fetch void — retry in ttl/Φ·2ⁿ", fmt, urls);
+                            eprintln!("{} {:?}: fetch void — retry in ttl/PHI·2ⁿ", fmt, urls);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1614,7 +1615,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("catalog_tycho {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("catalog_tycho {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -1630,7 +1631,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("catalog_tycho {}: write void — retry in ttl/Φ", url);
+                            eprintln!("catalog_tycho {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1648,7 +1649,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("catalog_tycho {}: read void — retry in ttl/Φ", url);
+                            eprintln!("catalog_tycho {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1724,13 +1725,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("spectral {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("spectral {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("spectral {}: write void — retry in ttl/Φ", url);
+                            eprintln!("spectral {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -1738,7 +1739,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("spectral {}: read void — retry in ttl/Φ", url);
+                            eprintln!("spectral {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -1876,13 +1877,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("xp_spectra {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("xp_spectra {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("xp_spectra {}: write void — retry in ttl/Φ", url);
+                            eprintln!("xp_spectra {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -1890,7 +1891,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("xp_spectra {}: read void — retry in ttl/Φ", url);
+                            eprintln!("xp_spectra {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2015,13 +2016,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("emtf_impedance {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("emtf_impedance {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("emtf_impedance {}: write void — retry in ttl/Φ", url);
+                            eprintln!("emtf_impedance {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2029,7 +2030,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("emtf_impedance {}: read void — retry in ttl/Φ", url);
+                            eprintln!("emtf_impedance {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2203,13 +2204,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("jwst_spectra {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("jwst_spectra {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("jwst_spectra {}: write void — retry in ttl/Φ", url);
+                            eprintln!("jwst_spectra {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2217,7 +2218,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("jwst_spectra {}: read void — retry in ttl/Φ", url);
+                            eprintln!("jwst_spectra {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2371,7 +2372,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("lightcurve {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("lightcurve {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -2387,7 +2388,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("lightcurve {}: write void — retry in ttl/Φ", url);
+                            eprintln!("lightcurve {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -2405,7 +2406,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("lightcurve {}: read void — retry in ttl/Φ", url);
+                            eprintln!("lightcurve {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -2482,13 +2483,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2496,7 +2497,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2712,13 +2713,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2726,7 +2727,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2872,13 +2873,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -2886,7 +2887,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3012,13 +3013,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3026,7 +3027,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3137,13 +3138,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3151,7 +3152,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3202,7 +3203,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "astrometry_series {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "astrometry_series {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     url
                                 );
                                 let _ = ftx.send(empty(false));
@@ -3210,7 +3211,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("astrometry_series {}: write void — retry in ttl/Φ", url);
+                            eprintln!("astrometry_series {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3218,7 +3219,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("astrometry_series {}: read void — retry in ttl/Φ", url);
+                            eprintln!("astrometry_series {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3311,19 +3312,19 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("spk {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("spk {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("spk {}: write void — retry in ttl/Φ", url);
+                            eprintln!("spk {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
                     }
                     let Ok(spk) = omegaflow::bsp_reader::spk::SpkFile::open(&tmp_path) else {
-                        eprintln!("spk {}: kernel reads void — retry in ttl/Φ", url);
+                        eprintln!("spk {}: kernel reads void — retry in ttl/PHI", url);
                         let _ = ftx.send(empty(true));
                         return;
                     };
@@ -3414,13 +3415,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3429,7 +3430,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3506,13 +3507,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3521,7 +3522,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3598,13 +3599,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3613,7 +3614,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3691,13 +3692,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3706,7 +3707,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3756,13 +3757,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3771,7 +3772,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3826,13 +3827,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3841,7 +3842,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3947,13 +3948,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -3962,7 +3963,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4115,13 +4116,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                eprintln!("{} {}: fetch void — retry in ttl/PHI·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: write void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4129,7 +4130,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            eprintln!("{} {}: read void — retry in ttl/PHI", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4263,13 +4264,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("gong {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("gong {}: fetch void — retry in ttl/PHI·2ⁿ", url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("gong {}: write void — retry in ttl/Φ", url);
+                            eprintln!("gong {}: write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4277,7 +4278,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("gong {}: read void — retry in ttl/Φ", url);
+                            eprintln!("gong {}: read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4366,7 +4367,7 @@ pub fn main_flow() {
                         Some(u) => u,
                         None => {
                             eprintln!(
-                                "{} {}: url render void — retry in ttl/Φ",
+                                "{} {}: url render void — retry in ttl/PHI",
                                 src_clone.format, src_idx
                             );
                             let _ = ftx.send(FetchResult {
@@ -4404,7 +4405,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "{} {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "{} {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     src_clone.format, src_idx
                                 );
                                 let _ = ftx.send(FetchResult {
@@ -4423,7 +4424,7 @@ pub fn main_flow() {
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
                             eprintln!(
-                                "{} {}: write void — retry in ttl/Φ",
+                                "{} {}: write void — retry in ttl/PHI",
                                 src_clone.format, src_idx
                             );
                             let _ = ftx.send(FetchResult {
@@ -4456,7 +4457,7 @@ pub fn main_flow() {
                         });
                     } else {
                         eprintln!(
-                            "{} {}: extract void — retry in ttl/Φ",
+                            "{} {}: extract void — retry in ttl/PHI",
                             src_clone.format, src_idx
                         );
                         let _ = ftx.send(FetchResult {
@@ -4509,7 +4510,7 @@ pub fn main_flow() {
                     ) {
                         Some(u) => u,
                         None => {
-                            eprintln!("csv_gz {}: url render void — retry in ttl/Φ", src_idx);
+                            eprintln!("csv_gz {}: url render void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4520,13 +4521,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes_headers(&url, &headers) {
                             Some(b) => b,
                             None => {
-                                eprintln!("csv_gz {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("csv_gz {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("csv_gz {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("csv_gz {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4546,7 +4547,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("csv_gz {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("csv_gz {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -4575,13 +4576,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("sky1 {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("sky1 {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("sky1 {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("sky1 {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4601,7 +4602,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("sky1 {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("sky1 {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -4644,7 +4645,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "coverage {}: manifest fetch void — retry in ttl/Φ·2ⁿ",
+                                    "coverage {}: manifest fetch void — retry in ttl/PHI·2ⁿ",
                                     url
                                 );
                                 let _ = ftx.send(empty(false));
@@ -4652,7 +4653,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("coverage {}: manifest write void — retry in ttl/Φ", url);
+                            eprintln!("coverage {}: manifest write void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4660,7 +4661,7 @@ pub fn main_flow() {
                     let text = match std::fs::read_to_string(&tmp_path) {
                         Ok(t) => t,
                         Err(_) => {
-                            eprintln!("coverage {}: manifest read void — retry in ttl/Φ", url);
+                            eprintln!("coverage {}: manifest read void — retry in ttl/PHI", url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4765,13 +4766,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("decaps_dr2 {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("decaps_dr2 {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("decaps_dr2 {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("decaps_dr2 {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4791,7 +4792,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("decaps_dr2 {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("decaps_dr2 {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -4821,7 +4822,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "catalog_allwise_psd {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "catalog_allwise_psd {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     src_idx
                                 );
                                 let _ = ftx.send(empty(false));
@@ -4830,7 +4831,7 @@ pub fn main_flow() {
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
                             eprintln!(
-                                "catalog_allwise_psd {}: write void — retry in ttl/Φ",
+                                "catalog_allwise_psd {}: write void — retry in ttl/PHI",
                                 src_idx
                             );
                             let _ = ftx.send(empty(true));
@@ -4853,7 +4854,7 @@ pub fn main_flow() {
                         });
                     } else {
                         eprintln!(
-                            "catalog_allwise_psd {}: extract void — retry in ttl/Φ",
+                            "catalog_allwise_psd {}: extract void — retry in ttl/PHI",
                             src_idx
                         );
                         let _ = ftx.send(empty(true));
@@ -4885,7 +4886,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "twomass_psc {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "twomass_psc {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     src_idx
                                 );
                                 let _ = ftx.send(empty(false));
@@ -4893,7 +4894,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("twomass_psc {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("twomass_psc {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4913,7 +4914,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("twomass_psc {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("twomass_psc {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -4942,13 +4943,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("swarm_tec {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("swarm_tec {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("swarm_tec {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("swarm_tec {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4968,7 +4969,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("swarm_tec {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("swarm_tec {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -5001,13 +5002,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{fmt} {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("{fmt} {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{fmt} {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("{fmt} {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -5027,7 +5028,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("{fmt} {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("{fmt} {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -5057,7 +5058,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "catalog_charm2 {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "catalog_charm2 {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     src_idx
                                 );
                                 let _ = ftx.send(empty(false));
@@ -5065,7 +5066,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("catalog_charm2 {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("catalog_charm2 {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -5085,7 +5086,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("catalog_charm2 {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("catalog_charm2 {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -5114,13 +5115,13 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("ndk {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("ndk {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("ndk {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("ndk {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -5140,7 +5141,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("ndk {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("ndk {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -5170,7 +5171,7 @@ pub fn main_flow() {
                     ) {
                         Some(u) => u,
                         None => {
-                            eprintln!("fits {}: url render void — retry in ttl/Φ", src_idx);
+                            eprintln!("fits {}: url render void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -5191,7 +5192,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes_headers(&url, &headers) {
                             Some(b) => b,
                             None => {
-                                eprintln!("fits {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("fits {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -5207,7 +5208,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("fits {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("fits {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -5237,7 +5238,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("fits {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("fits {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -5277,7 +5278,7 @@ pub fn main_flow() {
                     ) {
                         Some(u) => u,
                         None => {
-                            eprintln!("tar_gz_yaml {}: url render void — retry in ttl/Φ", src_idx);
+                            eprintln!("tar_gz_yaml {}: url render void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -5299,7 +5300,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "tar_gz_yaml {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "tar_gz_yaml {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     src_idx
                                 );
                                 let _ = ftx.send(FetchResult {
@@ -5317,7 +5318,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("tar_gz_yaml {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("tar_gz_yaml {}: write void — retry in ttl/PHI", src_idx);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -5347,7 +5348,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("tar_gz_yaml {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("tar_gz_yaml {}: extract void — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -5399,7 +5400,7 @@ pub fn main_flow() {
                         Some(u) => u,
                         None => {
                             eprintln!(
-                                "eea_aq_parquet {}: url render void — retry in ttl/Φ",
+                                "eea_aq_parquet {}: url render void — retry in ttl/PHI",
                                 src_idx
                             );
                             let _ = ftx.send(empty(true));
@@ -5420,7 +5421,7 @@ pub fn main_flow() {
                     );
                     let Some(body) = body else {
                         eprintln!(
-                            "eea_aq_parquet {}: post_body absent — refused, retry in ttl/Φ",
+                            "eea_aq_parquet {}: post_body absent — refused, retry in ttl/PHI",
                             src_idx
                         );
                         let _ = ftx.send(empty(true));
@@ -5441,7 +5442,7 @@ pub fn main_flow() {
                             Some(f) => f,
                             None => {
                                 eprintln!(
-                                    "eea_aq_parquet {}: two-stage fetch void — retry in ttl/Φ·2ⁿ",
+                                    "eea_aq_parquet {}: two-stage fetch void — retry in ttl/PHI·2ⁿ",
                                     src_idx
                                 );
                                 let _ = ftx.send(empty(false));
@@ -5551,7 +5552,7 @@ pub fn main_flow() {
                             Some(b) => b,
                             None => {
                                 eprintln!(
-                                    "{} {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    "{} {}: fetch void — retry in ttl/PHI·2ⁿ",
                                     src_clone.format, src_idx
                                 );
                                 let _ = ftx.send(empty(false));
@@ -5560,7 +5561,7 @@ pub fn main_flow() {
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
                             eprintln!(
-                                "{} {}: write void — retry in ttl/Φ",
+                                "{} {}: write void — retry in ttl/PHI",
                                 src_clone.format, src_idx
                             );
                             let _ = ftx.send(empty(true));
@@ -5583,7 +5584,7 @@ pub fn main_flow() {
                         });
                     } else {
                         eprintln!(
-                            "{} {}: extract void — retry in ttl/Φ",
+                            "{} {}: extract void — retry in ttl/PHI",
                             src_clone.format, src_idx
                         );
                         let _ = ftx.send(empty(true));
@@ -5598,7 +5599,7 @@ pub fn main_flow() {
             let Some(r) = dispatch_reach(&fields, archive.sources[i].ttl as f64) else {
                 if fields.is_empty() {
                     eprintln!(
-                        "source {} [{}]: carries no field lines — refused, retry in ttl/Φ",
+                        "source {} [{}]: carries no field lines — refused, retry in ttl/PHI",
                         i, archive.sources[i].format
                     );
                     if let Ok(mut ledger) = refusal_ledger.lock() {
@@ -5606,7 +5607,7 @@ pub fn main_flow() {
                     }
                 } else {
                     eprintln!(
-                        "source {} [{}]: no field carries a propagation law — refused, retry in ttl/Φ",
+                        "source {} [{}]: no field carries a propagation law — refused, retry in ttl/PHI",
                         i, archive.sources[i].format
                     );
                     if let Ok(mut ledger) = refusal_ledger.lock() {
@@ -5704,7 +5705,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("fanout {}: stations_url absent — retry in ttl/Φ", src_idx);
+                        eprintln!("fanout {}: stations_url absent — retry in ttl/PHI", src_idx);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -5734,7 +5735,7 @@ pub fn main_flow() {
                 ) {
                     Some(u) => u,
                     None => {
-                        eprintln!("source {}: url render void — retry in ttl/Φ", src_idx);
+                        eprintln!("source {}: url render void — retry in ttl/PHI", src_idx);
                         if let Ok(mut ledger) = rl.lock() {
                             ledger.register(&src_clone.url, "url-render-void");
                         }
@@ -5809,7 +5810,7 @@ pub fn main_flow() {
                         }
                     },
                     None => {
-                        eprintln!("source {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                        eprintln!("source {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
                         if let Ok(mut ledger) = rl.lock() {
                             ledger.register(&src_clone.url, "fetch-void");
                         }

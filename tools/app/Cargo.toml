@@ -11,3 +11,6 @@ omegaflow = { path = "../..", default-features = false, features = ["membrane"] 
 [[bin]]
 name = "omegaflow"
 path = "src/main.rs"
+
+[features]
+browser_relay = []

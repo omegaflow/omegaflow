@@ -347,9 +347,7 @@ pub(crate) use crate::netcdf::NetcdfFile;
 #[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
 pub(crate) use crate::pck::PckBody;
 #[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
-pub(crate) use std::io::IsTerminal;
 #[cfg(all(not(target_arch = "wasm32"), feature = "membrane"))]
-pub(crate) use std::sync::atomic::{AtomicBool, Ordering};
 pub(crate) use std::sync::{Mutex, mpsc};
 pub(crate) use std::thread;
 pub(crate) use std::time::{SystemTime, UNIX_EPOCH};

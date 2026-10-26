@@ -8,6 +8,7 @@ pub trait Radiator: Send + Sync {
 }
 
 pub const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
+pub const PHI: f64 = Φ;
 
 #[derive(Clone)]
 pub enum Motion {
