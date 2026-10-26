@@ -697,8 +697,8 @@ mod tests {
         let tai_j2000 = (mjd_tai - 40587.0) * 86400.0 - 946728000.0;
         let offset = tdb - tai_j2000;
         assert!(
-            (offset - 32.184).abs() < 1e-6,
-            "TDB − TAI must be the documented 32.184 s, was {offset}"
+            (offset - 32.184).abs() <= 1.7e-3,
+            "TDB − TAI is the 32.184 s mean plus the periodic TDB−TT term (≤1.7 ms), was {offset}"
         );
     }
 
@@ -708,8 +708,8 @@ mod tests {
         let tdb = fink_mjd_tai_to_tdb(&lsk, 60000.0).expect("post-1972 mjd folds to tdb");
         let expected = 730555232.184;
         assert!(
-            (tdb - expected).abs() < 1e-6,
-            "MJD 60000.0 TAI maps to {expected} s on the J2000-relative TDB clock, was {tdb}"
+            (tdb - expected).abs() <= 1.7e-3,
+            "MJD 60000.0 TAI maps to {expected} s plus the periodic TDB−TT term (≤1.7 ms), was {tdb}"
         );
     }
 
