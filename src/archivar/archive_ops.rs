@@ -1,6 +1,7 @@
+use crate::mathematikerin::channel::{CHANNEL_CAP, TriState};
+use crate::pck::PckBody;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use crate::pck::PckBody;
 pub const JUMP_GRID: f64 = 268435456.0;
 use super::*;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -32,58 +33,6 @@ pub fn jwst_spectrum_motion(rec: Arc<StarRec>, anchor: Option<&Motion>) -> Optio
         Some(Motion::Spherical { rec })
     } else {
         anchor.cloned()
-    }
-}
-
-pub struct StderrRadiator {
-    pub last_line: String,
-    pub interactive: bool,
-}
-
-impl Radiator for StderrRadiator {
-    fn accept(&mut self, field: Arc<Buffer>) {
-        let mut body_samples = 0usize;
-        let mut api_samples = 0usize;
-        let mut sensor_samples = 0usize;
-        let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
-        let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
-        for cell in field
-            .cache
-            .cells
-            .values()
-            .chain(field.cache.star_cells.values())
-        {
-            for sample in cell {
-                match sample.source {
-                    SampleSource::Sensor => sensor_samples += 1,
-                    SampleSource::Source(idx) => {
-                        api_samples += 1;
-                        api_src.insert(idx);
-                    }
-                    SampleSource::Ephemeris => {
-                        body_samples += 1;
-                        body_src.insert(sample.name.split('.').next().unwrap_or("").to_string());
-                    }
-                }
-            }
-        }
-        let line = format!(
-            "omegaflow v{} | φ v8 | body: {} sources, {} samples | api: {} sources, {} samples | sensor: {} samples",
-            env!("CARGO_PKG_VERSION"),
-            body_src.len(),
-            body_samples,
-            api_src.len(),
-            api_samples,
-            sensor_samples,
-        );
-        let prev_len = self.last_line.chars().count();
-        if self.interactive {
-            let pad = " ".repeat(prev_len.saturating_sub(line.chars().count()));
-            eprint!("\r{}{}", line, pad);
-        } else if line != self.last_line {
-            eprintln!("{}", line);
-        }
-        self.last_line = line;
     }
 }
 
@@ -322,7 +271,6 @@ pub fn ephemeris_edition_body(url: &str, format: &str) -> Option<String> {
     }
 }
 
-
 pub fn load_ephemeris_cache(
     fetch_tx: &mpsc::Sender<FetchResult>,
     source_idx: usize,
@@ -435,7 +383,6 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     }
 }
 
-
 #[derive(Clone, Copy)]
 pub struct DiodeState {
     pub force_ref: [f32; 9],
@@ -464,4 +411,83 @@ impl PresenceState {
             band: None,
         }
     }
+}
+pub fn emit_curves(
+    cset: &CurveSet,
+    center: [f64; 3],
+    t: f64,
+    pad: f64,
+    records: &mut Vec<SampleRecord>,
+) {
+    let Some(kernel) = kernel_id_for_force(0) else {
+        return;
+    };
+    for star in &cset.stars {
+        if !star.plx_mas.is_finite() || star.plx_mas <= 0.0 || star.samples.len() < 2 {
+            continue;
+        }
+        let d_m = (1000.0 / star.plx_mas) * PARSEC_M;
+        let ra = star.ra_deg.to_radians();
+        let dec = star.dec_deg.to_radians();
+        let (sa, ca) = ra.sin_cos();
+        let (sd, cd) = dec.sin_cos();
+        let p = [cd * ca * d_m, cd * sa * d_m, sd * d_m];
+        let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+        let dist = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
+        if dist > pad {
+            continue;
+        }
+        let idx = star.samples.partition_point(|s| s.0 <= t);
+        if idx == 0 || idx >= star.samples.len() {
+            continue;
+        }
+        let (t_a, f_a) = star.samples[idx - 1];
+        let (t_b, f_b) = star.samples[idx];
+        let (t_s, f_s) = if (t - t_a).abs() <= (t_b - t).abs() {
+            (t_a, f_a)
+        } else {
+            (t_b, f_b)
+        };
+        records.push((
+            p[0],
+            p[1],
+            p[2],
+            f_s as f64,
+            t_s,
+            star.cadence,
+            star.cadence,
+            0.0,
+            kernel as f64,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            star.freq,
+            star.bin_width,
+            0.0,
+            0.0,
+        ));
+    }
+}
+#[derive(Clone, Copy)]
+pub struct PresenceFrame {
+    pub n: u16,
+    pub schema_hash: u32,
+    pub omega: [f32; CHANNEL_CAP],
+    pub aperture: [f32; CHANNEL_CAP],
+    pub state: [TriState; CHANNEL_CAP],
+    pub partials_hz: [f32; CHANNEL_CAP],
+    pub delay_rad: [f32; CHANNEL_CAP],
+    pub pan_ms: Option<f32>,
+    pub tilt_ms: Option<f32>,
+    pub tau_ticks: u64,
 }

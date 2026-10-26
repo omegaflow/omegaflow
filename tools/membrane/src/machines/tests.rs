@@ -146,8 +146,8 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 
 #[cfg(test)]
 mod matrix_record_tests {
-    use omegaflow::archivar::{Channel, FieldConfig, Position};
     use crate::machines::*;
+    use omegaflow::archivar::{Channel, FieldConfig, Position};
 
     fn mk_channel(name: &str, epoch: f64, val: f64) -> (Channel, FieldConfig) {
         (
@@ -317,10 +317,10 @@ mod matrix_record_tests {
 
 #[cfg(test)]
 mod matrix_rebuild_tests {
+    use crate::machines::*;
     use omegaflow::archivar::{
         BodyEphemeris, BodyProperties, Buffer, ChebyshevGranule, body_fixed_to_icrs,
     };
-    use crate::machines::*;
     use std::collections::HashMap;
     use std::sync::Arc;
 
@@ -374,7 +374,10 @@ mod matrix_rebuild_tests {
         name: &str,
         epoch: f64,
         val: f64,
-    ) -> (omegaflow::archivar::Channel, omegaflow::archivar::FieldConfig) {
+    ) -> (
+        omegaflow::archivar::Channel,
+        omegaflow::archivar::FieldConfig,
+    ) {
         (
             omegaflow::archivar::Channel {
                 z: 0.0,

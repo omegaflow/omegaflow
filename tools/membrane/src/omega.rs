@@ -1,7 +1,7 @@
+use super::*;
 #[cfg(not(target_arch = "wasm32"))]
 pub use omegaflow::archivar::JUMP_GRID;
 pub use omegaflow::archivar::{DiodeState, PresenceState};
-use super::*;
 #[cfg(not(target_arch = "wasm32"))]
 use std::io::Write;
 #[cfg(not(target_arch = "wasm32"))]
@@ -51,7 +51,6 @@ pub const PHI: f64 = std::f64::consts::GOLDEN_RATIO;
 pub const C: f64 = omegaflow::archivar::types::C_LIGHT;
 
 pub const GRID_INIT: f64 = 2147483648.0;
-
 
 pub const PERM_GROUND: f32 = f32::EPSILON;
 
@@ -152,7 +151,6 @@ pub fn coupling_descriptor_rows(
     }
     rows
 }
-
 
 #[cfg(not(target_arch = "wasm32"))]
 pub struct OmegaLoop {

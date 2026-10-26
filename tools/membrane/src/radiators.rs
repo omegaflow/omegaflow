@@ -1,5 +1,6 @@
 use super::channel::{TriState, channel_reduce};
 use super::*;
+pub use omegaflow::archivar::PresenceFrame;
 
 const FRAME_TAG: u8 = 0x02;
 const MASK_INTENSITY: u8 = 0x01;
@@ -20,20 +21,6 @@ pub struct PackedWindow {
 }
 
 pub use super::channel::CHANNEL_CAP;
-
-#[derive(Clone, Copy)]
-pub struct PresenceFrame {
-    pub n: u16,
-    pub schema_hash: u32,
-    pub omega: [f32; CHANNEL_CAP],
-    pub aperture: [f32; CHANNEL_CAP],
-    pub state: [TriState; CHANNEL_CAP],
-    pub partials_hz: [f32; CHANNEL_CAP],
-    pub delay_rad: [f32; CHANNEL_CAP],
-    pub pan_ms: Option<f32>,
-    pub tilt_ms: Option<f32>,
-    pub tau_ticks: u64,
-}
 
 pub trait KineticRadiator: Send + 'static {
     fn vibrate(&mut self, frame: &PresenceFrame);
@@ -339,73 +326,6 @@ pub fn color_emission(field: &[f32], meta: &[f32]) -> [f32; 4] {
     acc
 }
 
-pub fn emit_curves(
-    cset: &CurveSet,
-    center: [f64; 3],
-    t: f64,
-    pad: f64,
-    records: &mut Vec<SampleRecord>,
-) {
-    let Some(kernel) = kernel_id_for_force(0) else {
-        return;
-    };
-    for star in &cset.stars {
-        if !star.plx_mas.is_finite() || star.plx_mas <= 0.0 || star.samples.len() < 2 {
-            continue;
-        }
-        let d_m = (1000.0 / star.plx_mas) * PARSEC_M;
-        let ra = star.ra_deg.to_radians();
-        let dec = star.dec_deg.to_radians();
-        let (sa, ca) = ra.sin_cos();
-        let (sd, cd) = dec.sin_cos();
-        let p = [cd * ca * d_m, cd * sa * d_m, sd * d_m];
-        let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
-        let dist = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
-        if dist > pad {
-            continue;
-        }
-        let idx = star.samples.partition_point(|s| s.0 <= t);
-        if idx == 0 || idx >= star.samples.len() {
-            continue;
-        }
-        let (t_a, f_a) = star.samples[idx - 1];
-        let (t_b, f_b) = star.samples[idx];
-        let (t_s, f_s) = if (t - t_a).abs() <= (t_b - t).abs() {
-            (t_a, f_a)
-        } else {
-            (t_b, f_b)
-        };
-        records.push((
-            p[0],
-            p[1],
-            p[2],
-            f_s as f64,
-            t_s,
-            star.cadence,
-            star.cadence,
-            0.0,
-            kernel as f64,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            star.freq,
-            star.bin_width,
-            0.0,
-            0.0,
-        ));
-    }
-}
-
 pub struct SenseReq {
     pub field: Arc<Buffer>,
     pub center: [f64; 3],
@@ -610,10 +530,7 @@ mod tests {
         let mut solo = [0.0f32; 9];
         solo[0] = 1.0;
         let solo_state = aperture_state(&solo);
-        assert_eq!(
-            acoustic_amplitude(&one(9.0), &solo, &solo_state),
-            Some(9.0)
-        );
+        assert_eq!(acoustic_amplitude(&one(9.0), &solo, &solo_state), Some(9.0));
         assert_eq!(
             acoustic_amplitude(&one(1.0e9), &solo, &solo_state),
             Some(PCM_S16_BOUND)

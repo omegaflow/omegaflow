@@ -1,7 +1,7 @@
 use crate::archivar::SampleRecord;
 use crate::archivar::*;
+use crate::archivar::{DiodeState, PresenceFrame};
 use crate::mathematikerin::channel::TriState;
-use crate::mathematikerin::{DiodeState, PresenceFrame};
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -826,7 +826,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     &mut records,
                 );
                 if let Some(cset) = &field.curves {
-                    crate::mathematikerin::emit_curves(cset, center, t0, extent, &mut records);
+                    crate::archivar::emit_curves(cset, center, t0, extent, &mut records);
                 }
                 response_epoch = t0;
             } else {

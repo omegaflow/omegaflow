@@ -1,14 +1,14 @@
 use omegaflow::archivar::PHI;
-use omegaflow_membrane::{actuators::*, omega::*};
 use omegaflow::archivar::inflate::gunzip;
-use std::sync::atomic::{AtomicBool, Ordering};
+use omegaflow_membrane::{omega::*, radiators::*};
 use std::collections::{HashMap, HashSet};
 use std::io::IsTerminal;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 
-use omegaflow::archivar::*;
 use omegaflow::archivar::extract::{ambiguous_field_names, series_channel_name};
+use omegaflow::archivar::*;
 
 pub fn spawn_ephemeris_bootstrap(
     sources: &[SourceConfig],
@@ -313,7 +313,11 @@ pub fn main_flow() {
     thread::spawn(move || battery_ingress(battery_tx));
     let want_serial =
         std::env::var("OMEGAFLOW_SERIAL_BRIDGE").is_ok() || !serial_ports().is_empty();
-    let mut serial_bridge = if want_serial { spawn_serial_bridge() } else { None };
+    let mut serial_bridge = if want_serial {
+        spawn_serial_bridge()
+    } else {
+        None
+    };
     let serial_present = serial_bridge.is_some();
     let ble_mac = std::env::var("OMEGAFLOW_BLE_HR").ok();
     let fit_dir = std::env::var("FIT_DIR").ok();
@@ -380,7 +384,9 @@ pub fn main_flow() {
     let (machine_tx, machine_rx) = mpsc::channel::<omegaflow_membrane::machines::FrameBundle>();
     let solar_sources = loaded.clone();
     let solar_time = time.clone();
-    thread::spawn(move || omegaflow_membrane::machines::solar_harvest(solar_tx, solar_sources, solar_time));
+    thread::spawn(move || {
+        omegaflow_membrane::machines::solar_harvest(solar_tx, solar_sources, solar_time)
+    });
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
@@ -431,9 +437,7 @@ pub fn main_flow() {
     let presence_relay_tx = presence_tx.clone();
     let hidden = std::env::var("OMEGAFLOW_HIDDEN").is_ok();
     let presence_slot: std::sync::Arc<std::sync::RwLock<PresenceState>> =
-        std::sync::Arc::new(std::sync::RwLock::new(
-            PresenceState::rest(),
-        ));
+        std::sync::Arc::new(std::sync::RwLock::new(PresenceState::rest()));
     let diode: std::sync::Arc<std::sync::RwLock<DiodeState>> =
         std::sync::Arc::new(std::sync::RwLock::new(DiodeState {
             force_ref: [0.0; 9],
@@ -443,14 +447,11 @@ pub fn main_flow() {
     let (acoustic_tx, acoustic_rx) = mpsc::channel::<PresenceFrame>();
     let (seismic_tx, seismic_rx) = mpsc::channel::<PresenceFrame>();
     #[cfg(feature = "browser_relay")]
-    let (relay_kinetic_tx, relay_kinetic_rx) =
-        mpsc::channel::<PresenceFrame>();
+    let (relay_kinetic_tx, relay_kinetic_rx) = mpsc::channel::<PresenceFrame>();
     if !hidden {
         let mut kinetic: Vec<Box<dyn KineticRadiator>> = Vec::new();
         if let Some(stdin) = serial_bridge.as_mut().and_then(|child| child.stdin.take()) {
-            kinetic.push(Box::new(SeismicOscillator::new(
-                Box::new(stdin),
-            )));
+            kinetic.push(Box::new(SeismicOscillator::new(Box::new(stdin))));
         }
         thread::spawn(move || {
             while let Ok(frame) = seismic_rx.recv() {
@@ -558,8 +559,7 @@ pub fn main_flow() {
         }
     }
     if !hidden {
-        let _acoustic =
-            AcousticOscillator::new(acoustic_rx, acoustic_sink());
+        let _acoustic = AcousticOscillator::new(acoustic_rx, acoustic_sink());
     }
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
@@ -840,7 +840,9 @@ pub fn main_flow() {
                         Position::StateVector { .. } => false,
                         Position::Electrode { .. } => false,
                     };
-                    if eph_missing && sensor.tau_src != omegaflow::archivar::types::TauSource::Pending {
+                    if eph_missing
+                        && sensor.tau_src != omegaflow::archivar::types::TauSource::Pending
+                    {
                         dropped_channels.push((
                             channel.clone(),
                             sensor.clone(),
@@ -1423,7 +1425,10 @@ pub fn main_flow() {
                     let dods = match fetch_raw_bytes(&dods_url) {
                         Some(b) => b,
                         None => {
-                            eprintln!("opendap {}: dods fetch void — retry in ttl/PHI·2ⁿ", dods_url);
+                            eprintln!(
+                                "opendap {}: dods fetch void — retry in ttl/PHI·2ⁿ",
+                                dods_url
+                            );
                             let _ = ftx.send(empty(false));
                             return;
                         }
@@ -1616,7 +1621,10 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("catalog_tycho {}: fetch void — retry in ttl/PHI·2ⁿ", url);
+                                eprintln!(
+                                    "catalog_tycho {}: fetch void — retry in ttl/PHI·2ⁿ",
+                                    url
+                                );
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -2017,7 +2025,10 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("emtf_impedance {}: fetch void — retry in ttl/PHI·2ⁿ", url);
+                                eprintln!(
+                                    "emtf_impedance {}: fetch void — retry in ttl/PHI·2ⁿ",
+                                    url
+                                );
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
@@ -2112,7 +2123,8 @@ pub fn main_flow() {
                     }
                     let mut sent = 0usize;
                     for comp in 0..omegaflow::archivar::emtf::COMPONENT_COUNT {
-                        let Some(component) = omegaflow::archivar::emtf::component_name(comp as u32)
+                        let Some(component) =
+                            omegaflow::archivar::emtf::component_name(comp as u32)
                         else {
                             continue;
                         };
@@ -2914,7 +2926,8 @@ pub fn main_flow() {
                         );
                         let _ = ftx.send(empty(true));
                     } else {
-                        let Some(bin) = omegaflow::archivar::openneuro_eeg::parse_bin(&bytes) else {
+                        let Some(bin) = omegaflow::archivar::openneuro_eeg::parse_bin(&bytes)
+                        else {
                             eprintln!(
                                 "{} {}: bin reads void — {} B carry no EEGB contract",
                                 fmt,
@@ -3336,20 +3349,21 @@ pub fn main_flow() {
                         let Some(body) = table.get(&seg.target) else {
                             continue;
                         };
-                        let wgccre = match pck_bodies.get(&omegaflow::ephemeris::pck_id_of(seg.target))
-                        {
-                            Some(b) => b.clone(),
-                            None => continue,
-                        };
-                        let (granules, rotations, nutation) = omegaflow::ephemeris::extract_granules(
-                            &spk,
-                            std::slice::from_ref(&spk),
-                            seg.target,
-                            &wgccre,
-                            &[],
-                            &fk,
-                            omegaflow::ephemeris::GRANULE_DAYS,
-                        );
+                        let wgccre =
+                            match pck_bodies.get(&omegaflow::ephemeris::pck_id_of(seg.target)) {
+                                Some(b) => b.clone(),
+                                None => continue,
+                            };
+                        let (granules, rotations, nutation) =
+                            omegaflow::ephemeris::extract_granules(
+                                &spk,
+                                std::slice::from_ref(&spk),
+                                seg.target,
+                                &wgccre,
+                                &[],
+                                &fk,
+                                omegaflow::ephemeris::GRANULE_DAYS,
+                            );
                         if granules.is_empty() {
                             continue;
                         }
@@ -3778,7 +3792,8 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let Some(mut volume) = omegaflow::archivar::volume::Volume::read_bin(&bytes) else {
+                    let Some(mut volume) = omegaflow::archivar::volume::Volume::read_bin(&bytes)
+                    else {
                         eprintln!(
                             "{} {}: volume-bin reads void — {} B carry no grid contract",
                             fmt,
@@ -4667,7 +4682,8 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let shards = omegaflow::archivar::coverage_manifest::parse_coverage_manifest(&text);
+                    let shards =
+                        omegaflow::archivar::coverage_manifest::parse_coverage_manifest(&text);
                     let fields: Vec<FieldConfig> = src
                         .extracts
                         .iter()
@@ -4767,7 +4783,10 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("decaps_dr2 {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
+                                eprintln!(
+                                    "decaps_dr2 {}: fetch void — retry in ttl/PHI·2ⁿ",
+                                    src_idx
+                                );
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
@@ -4944,7 +4963,10 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("swarm_tec {}: fetch void — retry in ttl/PHI·2ⁿ", src_idx);
+                                eprintln!(
+                                    "swarm_tec {}: fetch void — retry in ttl/PHI·2ⁿ",
+                                    src_idx
+                                );
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
@@ -5087,7 +5109,10 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("catalog_charm2 {}: extract void — retry in ttl/PHI", src_idx);
+                        eprintln!(
+                            "catalog_charm2 {}: extract void — retry in ttl/PHI",
+                            src_idx
+                        );
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -5279,7 +5304,10 @@ pub fn main_flow() {
                     ) {
                         Some(u) => u,
                         None => {
-                            eprintln!("tar_gz_yaml {}: url render void — retry in ttl/PHI", src_idx);
+                            eprintln!(
+                                "tar_gz_yaml {}: url render void — retry in ttl/PHI",
+                                src_idx
+                            );
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -5439,7 +5467,8 @@ pub fn main_flow() {
                         ));
                     }
                     let files =
-                        match omegaflow::archivar::eea::fetch_eea_aq(&url, body.as_str(), &headers) {
+                        match omegaflow::archivar::eea::fetch_eea_aq(&url, body.as_str(), &headers)
+                        {
                             Some(f) => f,
                             None => {
                                 eprintln!(
@@ -6093,7 +6122,6 @@ fn acoustic_sink() -> Option<Box<dyn std::io::Write + Send>> {
         .map(|stdin| Box::new(stdin) as Box<dyn std::io::Write + Send>)
 }
 
-
 fn feed_beat_to_hrv(
     name: &str,
     value: f64,
@@ -6118,8 +6146,6 @@ fn feed_beat_to_hrv(
         );
     }
 }
-
-
 
 fn spawn_acoustic_player(program: &str, args: &[String]) -> Option<std::process::ChildStdin> {
     let mut child = std::process::Command::new(program)
@@ -6150,8 +6176,6 @@ fn live_acoustic_sinks() -> Vec<String> {
     }
 }
 
-
-
 struct AcousticFanout(Vec<std::process::ChildStdin>);
 
 impl std::io::Write for AcousticFanout {
@@ -6179,4 +6203,54 @@ impl std::io::Write for AcousticFanout {
     }
 }
 
+pub struct StderrRadiator {
+    pub last_line: String,
+    pub interactive: bool,
+}
 
+impl Radiator for StderrRadiator {
+    fn accept(&mut self, field: Arc<Buffer>) {
+        let mut body_samples = 0usize;
+        let mut api_samples = 0usize;
+        let mut sensor_samples = 0usize;
+        let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
+        for cell in field
+            .cache
+            .cells
+            .values()
+            .chain(field.cache.star_cells.values())
+        {
+            for sample in cell {
+                match sample.source {
+                    SampleSource::Sensor => sensor_samples += 1,
+                    SampleSource::Source(idx) => {
+                        api_samples += 1;
+                        api_src.insert(idx);
+                    }
+                    SampleSource::Ephemeris => {
+                        body_samples += 1;
+                        body_src.insert(sample.name.split('.').next().unwrap_or("").to_string());
+                    }
+                }
+            }
+        }
+        let line = format!(
+            "omegaflow v{} | φ v8 | body: {} sources, {} samples | api: {} sources, {} samples | sensor: {} samples",
+            env!("CARGO_PKG_VERSION"),
+            body_src.len(),
+            body_samples,
+            api_src.len(),
+            api_samples,
+            sensor_samples,
+        );
+        let prev_len = self.last_line.chars().count();
+        if self.interactive {
+            let pad = " ".repeat(prev_len.saturating_sub(line.chars().count()));
+            eprint!("\r{}{}", line, pad);
+        } else if line != self.last_line {
+            eprintln!("{}", line);
+        }
+        self.last_line = line;
+    }
+}

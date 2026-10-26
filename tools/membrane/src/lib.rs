@@ -4,15 +4,14 @@ pub(crate) use std::thread;
 
 pub(crate) use omegaflow::archivar::*;
 pub(crate) use omegaflow::mathematikerin::*;
-pub(crate) use omegaflow::mathematikerin::force::kernel_id_for_force;
 
-pub(crate) use crate::actuators::*;
 pub(crate) use crate::machines::*;
 pub(crate) use crate::omega::*;
+pub(crate) use crate::radiators::*;
 
-pub mod actuators;
 pub mod machines;
 pub mod omega;
+pub mod radiators;
 pub mod scalar_te_gpu;
 
 #[cfg(test)]

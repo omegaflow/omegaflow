@@ -1,6 +1,7 @@
 pub(crate) const TE_SERIES_STRIDE: usize = 1024;
 
-pub(crate) const TE_SERIES_BYTES: u64 = (omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE * 4) as u64;
+pub(crate) const TE_SERIES_BYTES: u64 =
+    (omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE * 4) as u64;
 
 pub(crate) const TE_VERDICT_SLOTS: usize = omegaflow::te::TE_SERIES_COUNT * 6;
 pub(crate) const TE_KSG_SLOTS: usize = omegaflow::te::TE_SERIES_COUNT * 2;

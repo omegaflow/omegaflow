@@ -181,7 +181,10 @@ pub struct NameMeta {
 pub type FrameBundle = (
     omegaflow::archivar::Frame,
     Option<omegaflow::archivar::ModelKind>,
-    Vec<(omegaflow::archivar::Channel, omegaflow::archivar::FieldConfig)>,
+    Vec<(
+        omegaflow::archivar::Channel,
+        omegaflow::archivar::FieldConfig,
+    )>,
 );
 pub type FrameRx = mpsc::Receiver<FrameBundle>;
 
@@ -615,7 +618,10 @@ impl MatrixMachine {
         &mut self,
         frame: &omegaflow::archivar::Frame,
         model_kind: Option<omegaflow::archivar::ModelKind>,
-        channels: Vec<(omegaflow::archivar::Channel, omegaflow::archivar::FieldConfig)>,
+        channels: Vec<(
+            omegaflow::archivar::Channel,
+            omegaflow::archivar::FieldConfig,
+        )>,
     ) {
         let frame_anchor = match frame {
             omegaflow::archivar::Frame::Surface {
@@ -638,7 +644,8 @@ impl MatrixMachine {
             omegaflow::archivar::Frame::Manifest => None,
         };
         for (channel, sensor) in channels {
-            if model_kind == Some(omegaflow::archivar::ModelKind::Static) || !channel.epoch.is_finite()
+            if model_kind == Some(omegaflow::archivar::ModelKind::Static)
+                || !channel.epoch.is_finite()
             {
                 continue;
             }
@@ -751,9 +758,12 @@ impl MatrixMachine {
                 + (p[1] - presence[1]).powi(2)
                 + (p[2] - presence[2]).powi(2);
             let age = (t_presence - meta.epoch).abs();
-            let Some(extent) =
-                omegaflow::archivar::medium_reach(meta.channel_ref, age, body_medium, meta.advection)
-            else {
+            let Some(extent) = omegaflow::archivar::medium_reach(
+                meta.channel_ref,
+                age,
+                body_medium,
+                meta.advection,
+            ) else {
                 continue;
             };
             if d2 > (extent + MATRIX_PAD_M).powi(2) {
@@ -813,7 +823,8 @@ impl MatrixMachine {
                 let mut lon_cos: Vec<(f64, f32)> = Vec::new();
                 let gm = eph.props.as_ref().and_then(|p| p.gm);
                 for &t in &epochs {
-                    let Some(pb) = omegaflow::archivar::body_barycenter_position(body, t, &field.eph)
+                    let Some(pb) =
+                        omegaflow::archivar::body_barycenter_position(body, t, &field.eph)
                     else {
                         continue;
                     };
@@ -833,9 +844,11 @@ impl MatrixMachine {
                         series.push((t, (gm / r2) as f32));
                     }
                     let t_jd = t / 86400.0 + omegaflow::archivar::J2000_EPOCH;
-                    let Some([bx, by, ..]) =
-                        omegaflow::archivar::rotate_icrs_to_body_frame(anchor_bp, [rx, ry, rz], t_jd)
-                    else {
+                    let Some([bx, by, ..]) = omegaflow::archivar::rotate_icrs_to_body_frame(
+                        anchor_bp,
+                        [rx, ry, rz],
+                        t_jd,
+                    ) else {
                         continue;
                     };
                     let lon = by.atan2(bx);
