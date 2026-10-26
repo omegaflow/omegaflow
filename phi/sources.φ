@@ -8,16 +8,16 @@ sha256 01516b2b85374afe65c7769eed6e89a22840956811e4f879e7ddf274c4974543
 sha256 01516b2b85374afe65c7769eed6e89a22840956811e4f879e7ddf274c4974543
 on earth -42.5911 148.2256 0
 ttl 1
-field aodn_temperature aodn_temperature exponential-decay thermal K 1 0.0 0.0
+field aodn_temperature aodn_temperature degC 1
 
 url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
 origin https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 4
+field F cryosat_magnetic_field_intensity_nt nT 4
 at earth
 hapi F=cryosat_magnetic_field_intensity_nt
-field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 1 0.0 0.0
 channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 
 url https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
@@ -34,20 +34,19 @@ origin https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T2
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 5
+field Distance gracefo_kbr_inter_satellite_distance_m m 5
 at earth
 hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
-quantity gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distance_m inverse-square geometry m 1 0.0 0.0
 channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2
-field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 1 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
 origin https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 10
+field density champ_thermosphere_density_kgm3 kg/m3 10
 at earth
 hapi density=champ_thermosphere_density_kgm3
-field champ_thermosphere_density_kgm3 champ_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 1 0.0 0.0
 channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3
 
 url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
@@ -55,18 +54,18 @@ origin https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T2
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 10
+field Absolute_VTEC champ_absolute_vertical_tec_tecu TECU 10
 at earth
 hapi Absolute_VTEC=champ_absolute_vertical_tec_tecu
-field champ_absolute_vertical_tec_tecu champ_absolute_vertical_tec_tecu inverse-square em TECU 1 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
 origin https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 10
+field crosswind champ_thermosphere_crosswind_ms kg/m3 10
 at earth
 hapi crosswind=champ_thermosphere_crosswind_ms
-field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 1 0.0 0.0
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s)
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
@@ -74,29 +73,29 @@ origin https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T2
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 10
+field density grace_thermosphere_density_kgm3 kg/m3 10
 at earth
 hapi density=grace_thermosphere_density_kgm3
-field grace_thermosphere_density_kgm3 grace_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 1 0.0 0.0
 
 url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
 origin https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
 instrument VFM
 terms vires-esa-attribution https://vires.services/
 ttl 16
+field F goce_magnetic_field_intensity_nt nT 16
 at earth
 hapi F=goce_magnetic_field_intensity_nt
-field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-square em nT 1 0.0 0.0
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 origin https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 instrument seismometer
 terms CC-BY-4.0 https://www.p2pquake.net/secondary_use/
 ttl 60
+field earthquake.hypocenter.depth hypocenter_depth_km km null
 at earth
 map .
 lat earthquake.hypocenter.latitude
 lon earthquake.hypocenter.longitude
-quantity earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://api.vedur.is/quakes/events
@@ -104,11 +103,11 @@ origin https://api.vedur.is/quakes/events
 instrument seismometer
 terms free-open https://en.vedur.is/about-imo/the-web/conditions
 ttl 60
+field properties.depth vedur_quake_depth_km null null
 at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-quantity properties.depth vedur_quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url https://api.geonet.org.nz/quake?MMI=4
 origin https://api.geonet.org.nz/quake?MMI=4
@@ -119,7 +118,7 @@ map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 alt geometry.coordinates.2
-quantity properties.magnitude geonet_quake_magnitude gaussian-inverse-square source-parameter Mw 60.0 0.0 0.0
+field properties.magnitude geonet_quake_magnitude 1 null
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 origin https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
@@ -130,8 +129,7 @@ map features
 mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-quantity geometry.coordinates.2 geosphere_quake_depth_km erfc geometry km 6.0 0.0 0.0
-quantity properties.mag geosphere_quake_magnitude erfc source-parameter Mw 6.0 0.0 0.0
+field geometry.coordinates.2 geosphere_quake_depth_km km null
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
@@ -141,12 +139,8 @@ compiler none
 instrument seismometer
 query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=geometry.coordinates.2 time_key=properties.time datum=WGS84 time_scale=UTC
 ttl 60
-field geometry.coordinates.2 usgs_event_depth km null
-field mag usgs_event_magnitude 1 null
-
-field mag seismic_magnitude_mw 1 0
-field mag seismic_magnitude_mw 1 0
 field depth usgs_event_depth_km km null
+
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true
 origin https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true
 instrument seismometer
@@ -154,6 +148,7 @@ terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyri
 ttl 60
 format quakeml
 quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
+field mag usgs_event_magnitude 1 null
 
 url https://github.com/omegaflow/sources/releases/download/data.impc.dlr.de/impc_roti.bin
 terms dlr-license https://data.impc.dlr.de/service/license-agreement
@@ -172,13 +167,12 @@ origin https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime
 instrument seismometer
 format json
 ttl 60
+field geometry.coordinates.2 geosphere_quake_depth_km km null
 at earth
 map features
 mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-quantity geometry.coordinates.2 geosphere_quake_depth_km erfc geometry km 6.0 0.0 0.0
-quantity properties.mag geosphere_quake_magnitude erfc source-parameter Mw 6.0 0.0 0.0
 sha256 6d40e72697c6b6984cd8573ee46377fc74ed0aea18809bb4613f31a7bb25e8b7
 
 url https://github.com/omegaflow/sources/releases/download/eyes.nasa.gov/dsn_snapshot.bin
@@ -189,14 +183,9 @@ instrument DSN
 compiler tools/harvest/src/bin/dsn_compiler.rs
 sha256 c6a8758f7b5ee83f54159544e5051746b1144c6e07f9f5d67bc7d2cf7f66780e
 sha256 c6a8758f7b5ee83f54159544e5051746b1144c6e07f9f5d67bc7d2cf7f66780e
+field dsn_s_down_power dsn_s_down_power null null
 at earth
 ttl 60
-field dsn_s_down_power dsn_s_down_power inverse-square em dBm 60.0 0.0 0.0
-field dsn_x_down_power dsn_x_down_power inverse-square em dBm 60.0 0.0 0.0
-field dsn_k_down_power dsn_k_down_power inverse-square em dBm 60.0 0.0 0.0
-field dsn_ka_down_power dsn_ka_down_power inverse-square em dBm 60.0 0.0 0.0
-field dsn_s_up_power dsn_s_up_power inverse-square em kW 60.0 0.0 0.0
-field dsn_x_up_power dsn_x_up_power inverse-square em kW 60.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/geofon.gfz-potsdam.de/fdsn_waveform.bin
 terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
@@ -205,9 +194,9 @@ origin https://geofon.gfz-potsdam.de/fdsnws/dataselect/1/query
 instrument STS-2
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
 sha256 b465a87ec3e14fc7640c0581c2b67e6b7a0e9fdc06e3d41ec1613b9cc1373316
+field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms m/s 0.05
 at earth
 ttl 60
-field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/usgs_geomag_efield_BOU.bin
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
@@ -219,9 +208,8 @@ sha256 8aa433b27c41c4fccebe6eed8d81e21d3414dc948ee43d7b54f63e73a9048328
 sha256 8aa433b27c41c4fccebe6eed8d81e21d3414dc948ee43d7b54f63e73a9048328
 on earth 40.137 -105.237 1682
 ttl 60
-field usgs_geomag_e_e_mv_km usgs_geomag_e_e_mv_km inverse-square electric mV/km 60 0.0 0.0
-field usgs_geomag_e_n_mv_km usgs_geomag_e_n_mv_km inverse-square electric mV/km 60 0.0 0.0
 channel energy:primary:maxwell:elliptic:vacuum:unspecified:none V/m
+field usgs_geomag_e_e_mv_km usgs_geomag_e_e_mv_km mV/km 60
 
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
@@ -262,7 +250,7 @@ instrument SEISS
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth 0.0 -75.2 35786023
-last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 0.0 0.0
+field flux radiation_proton_flux_differential pfu/kev 300
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 origin https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
@@ -270,7 +258,7 @@ instrument SEISS
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth 0.0 -75.2 35786023
-last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 0.0 0.0
+field flux radiation_electron_flux_2mev pfu 300
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 origin https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
@@ -278,7 +266,7 @@ instrument SEISS
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth 0.0 -75.2 35786023
-last flux radiation_proton_flux_integral inverse-square em pfu 6.0 0.0 0.0
+field flux radiation_proton_flux_integral pfu 300
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 origin https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
@@ -286,9 +274,7 @@ instrument MAG
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth 0.0 -75.2 35786023
-last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
-last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
-last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
+field Hp magnetosphere_hp_nt nT 60
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
 origin https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
@@ -296,7 +282,7 @@ instrument EXIS
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth 0.0 -75.2 35786023
-last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
+field max_xrlong solar_flare_xray_intensity W/m2 60
 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 origin https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
@@ -304,19 +290,18 @@ instrument EXIS
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth 0.0 -137.2 35786023
-last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
-last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
+field flux noaa_goes_xray_flux_w_m2 wm2 60
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 origin https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 instrument seismometer
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
 ttl 60
+field properties.depth event_depth_km km 0
 at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-quantity properties.depth quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
 origin http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
@@ -328,7 +313,7 @@ rows .
 epoch 1
 lat 2
 lon 3
-quantity 4 sed_quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
+field 5 event_depth_km km 0
 
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
 origin http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
@@ -338,10 +323,8 @@ ttl 300
 map observations.data
 lat lat
 lon lon
-field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
 channel energy:primary:flux-fourier:parabolic:fluid:unspecified:none K
-field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
-field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
+field air_temp air_temp_c C 1800
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
 origin https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
@@ -349,23 +332,19 @@ instrument ICON
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 ttl 300
 map current
-field temperature_2m open_meteo_air_temp_c gaussian-inverse-square thermal C 30.0 0.0 0.0
-field relative_humidity_2m open_meteo_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
-field dew_point_2m open_meteo_dewpoint_c gaussian-inverse-square thermal C 30.0 0.0 0.0
-field surface_pressure open_meteo_pressure_hpa gaussian-inverse-square advective hPa 30.0 0.0 0.0
-field wind_speed_10m open_meteo_wind_speed_kmh gaussian-inverse-square advective km/h 30.0 0.0 0.0
+field temperature_2m temperature_2m_c C 900
 
 url https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
 origin https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
 instrument bGeigie
 terms CC0-1.0 https://safecast.org/about/licenses-we-use/
 ttl 300
+field value safecast_measurement_cpm cpm null
 at earth
 map .
 lat latitude
 lon longitude
 epoch captured_at
-last value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
 
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 origin https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
@@ -375,12 +354,8 @@ ttl 300
 map .
 lat lat
 lon lon
-field temp atmosphere_metar_temp_c gaussian-inverse-square thermal C 30.0 0.0 0.0
-field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square thermal C 30.0 0.0 0.0
-field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
 channel energy:primary:wave:hyperbolic:fluid:unspecified:none Pa
-field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square advective kt 30.0 0.0 0.0
-field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square advective deg 30.0 0.0 0.0
+field temp metar_temp_c C —
 
 url https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
 origin https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
@@ -390,8 +365,7 @@ ttl 300
 map .
 lat location.latitude
 lon location.longitude
-field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
-field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
+field sensordatavalues.0.value pm10_ug_m3 ug/m3 300
 
 url https://github.com/omegaflow/sources/releases/download/ndbc.noaa.gov/ndbc_46092.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -399,19 +373,10 @@ origin https://www.ndbc.noaa.gov/data/realtime2/46092.txt
 instrument wind
 format csv
 ttl 300
+field WSPD wspd_ms m/s 3600
 at earth
 rows
 epoch YY MM DD hh mm
-field WSPD ndbc_46092_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field GST ndbc_46092_gust_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field WDIR ndbc_46092_wind_dir_deg gaussian-inverse-square advective deg 3600 0.0 0.0
-field WVHT ndbc_46092_wave_height_m gaussian-inverse-square acoustic m 3600 0.0 0.0
-field DPD ndbc_46092_dominant_period_s gaussian-inverse-square acoustic s 3600 0.0 0.0
-field APD ndbc_46092_average_period_s gaussian-inverse-square acoustic s 3600 0.0 0.0
-field MWD ndbc_46092_mean_wave_dir_deg gaussian-inverse-square acoustic deg 3600 0.0 0.0
-field PRES ndbc_46092_pressure_hpa gaussian-inverse-square advective hPa 3600 0.0 0.0
-field ATMP ndbc_46092_air_temp_c exponential-decay thermal C 3600 0.0 0.0
-field WTMP ndbc_46092_water_temp_c exponential-decay thermal C 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.bin
 terms PD-USGov https://transmission.bpa.gov/business/operations/gic/gic.txt

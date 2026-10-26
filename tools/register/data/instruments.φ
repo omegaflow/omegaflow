@@ -45,7 +45,7 @@ host services.swpc.noaa.gov
   probe 2026-10-24T23:06:32Z 206 https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
   probe 2026-10-24T23:06:32Z 206 https://services.swpc.noaa.gov/json/solar_regions.json
   note the block says cadence 6.0; the page says 1-minute averaged, and the artefact itself is not measurable yet because no mode reads raw JSON
-  fields Hp He total
+  fields Hp
   applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 
 host ncei.noaa.gov
@@ -278,7 +278,7 @@ host ndbc.noaa.gov
   probe 2026-10-24T23:27:01Z 206 https://www.ndbc.noaa.gov/data/realtime2/46092.txt
   probe 2026-10-25T07:58:20Z 200 https://www.ndbc.noaa.gov/data/realtime2/
   probe 2026-10-25T07:58:26Z 200 https://www.ndbc.noaa.gov/data/historical/stdmet/
-  fields WSPD GST WDIR WVHT DPD APD MWD PRES ATMP WTMP
+  fields WSPD
   applies https://www.ndbc.noaa.gov/data/realtime2/46092.txt
   note nur dieser Met-Pfad; der DART-Pfad (21414.dart) traegt Wassersaeule in m und einen Bodendrucksensor
 
@@ -321,7 +321,7 @@ host vires.services
   instrument_cite https://swarmhandbook.earth.esa.int/catalogue/SW_MAGx_LR_1B
   instrument_quote "| F | nT | Magnetic field intensity | 1 | CDF_DOUBLE |"
   probe 2026-10-24T23:59:38Z 200 https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start=2026-10-23T00:00:00Z&stop=2026-10-23T00:05:00Z&parameters=F&format=json
-  fields cryosat_magnetic_field_intensity_nt
+  fields F
   applies https://vires.services/hapi/data
   note 5 Blöcke, vier Instrumente auf einer HAPI-Route: MAG (nT, VFM/ASM), EFI (K, V, cm-3), FAC (uA/m2), TEC (TECU). Die Zeile belegt nur den MAG-Zweig; die anderen Datensätze (SW_FAST_EFIA_LP_1B, SW_FAST_FACATMS_2F, SW_FAST_TECATMS_2F, CH_ME_MAG_LR_3) brauchen je eine eigene Zeile. Ältere Zeitfenster (2010) antworten 400 "time outside valid range"; das Produkt beginnt 2026-04-23.
 
@@ -2000,7 +2000,7 @@ host eyes.nasa.gov
   host_cite https://eyes.nasa.gov/dsn/data/dsn.xml
   host_quote "HTTP cache-control: max-age=3600, must-revalidate"
   probe 2026-10-25T10:01:01Z 206 https://eyes.nasa.gov/dsn/data/dsn.xml
-  fields dsn_s_down_power dsn_x_down_power dsn_k_down_power dsn_ka_down_power dsn_s_up_power dsn_x_up_power
+  fields dsn_s_down_power
   applies https://eyes.nasa.gov/dsn/data/dsn.xml
   note dsn.xml 206, fuehrt power/downSignal ohne Einheitenangabe; dBm und 60-s-Takt sind im Dokument nicht belegt. DSN-Antennen (DSS14/DSS23) im XML.
 
@@ -3881,7 +3881,7 @@ host earthquake.usgs.gov
   host_cite https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
   host_quote "HTTP cache-control: public, max-age=60"
   probe 2026-10-25T10:06:39Z 200 https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
-  fields geometry.coordinates.2 properties.mag
+  fields geometry.coordinates.2
   applies https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
   note geometry.coordinates.2 ist die Hypozentrumstiefe; die API-Doku fuehrt depth-Parameter explizit in km. sampling 6.0 s ist die Aktualisierungsfrequenz des all_day-Feeds (Minutensicht), kein Messabstand der Ereignisse.
 
@@ -3895,7 +3895,7 @@ host earthquake.usgs.gov
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-01&endtime=2026-10-02
   host_quote "HTTP cache-control: public, max-age=60"
   probe 2026-10-25T10:06:41Z 200 https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-01&endtime=2026-10-02
-  fields geometry.coordinates.2 properties.mag
+  fields geometry.coordinates.2
   applies https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-01&endtime=2026-10-02
   note Wie Block 118, nur FDSN-Abfrage statt Feed; Tiefe in km laut API-Doku (mindepth/maxdepth in km). sampling 6.0 nicht belegt.
 
@@ -4617,7 +4617,7 @@ host aviationweather.gov
   host_cite https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
   host_quote "HTTP cache-control: max-age=60"
   probe 2026-10-25T10:03:30Z 206 https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
-  fields temp dewp altim wspd wdir
+  fields temp
   applies https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
   note METAR/SPECI als JSON/CSV/XML; Temperatur in ganzen Grad Celsius kodiert; Zeitstufe 30.0 aus Blockkarte, im Zitat nicht belegt.
 
@@ -6315,7 +6315,7 @@ host api.open-meteo.com
   instrument_cite https://www.dwd.de/EN/ourservices/nwp_forecast_data/nwp_forecast_data.html
   instrument_quote "The time interval for the forecast period up to +78 hours is one hour"
   probe 2026-10-25T10:57:55Z 200 https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.405&current=temperature_2m
-  fields temperature_2m relative_humidity_2m dew_point_2m surface_pressure wind_speed_10m
+  fields temperature_2m
   applies https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
   note ICON-Stundenraster (sampling 3600); current liefert 15-minuetige Modellwerte (interval 900); temperature_2m in °C.
 
@@ -6577,7 +6577,7 @@ host reg.bom.gov.au
   instrument_cite https://www.bom.gov.au/climate/cdo/about/definitionstemp.shtml
   instrument_quote "Maximum and minimum temperature thermometers are placed inside a Stevenson Screen."
   probe 2026-10-25T11:24:44Z 200 http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
-  fields air_temp rel_hum wind_spd_kmh
+  fields air_temp
   applies http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
   note Lufttemperatur in °C, Stationsreihe im 10-Minuten-Takt (600 s).
 
@@ -7850,7 +7850,7 @@ host geomag.usgs.gov
   instrument_cite https://www.usgs.gov/programs/geomagnetism/introduction-geomagnetism
   instrument_quote "These days, one-minute-average data is a standard observatory product, but one-second-average data production is becoming more common."
   probe 2026-10-26T00:00:00Z 200 https://geomag.usgs.gov/ws/observatories/?format=json
-  fields usgs_geomag_e_e_mv_km usgs_geomag_e_n_mv_km
+  fields usgs_geomag_e_e_mv_km
   applies https://geomag.usgs.gov/ws/data/
   note OpenAPI /ws/openapi.json: sampling_period "Interval in seconds between values.", Default 60; /ws/observatories/?format=json 200 nennt sensor_sampling_rate 100.0 Hz und sensor_orientation HDZ. Datenendpunkt antwortet auf alle doku-konformen Aufrufe (id=BOU/FRD, elements, sampling_period, format) mit 404 "The specified URL cannot be found"; /ws/data/ ohne id 400 "Field required"; /ws/health 200. Instrumentenseite: fluxgate + 1-s-/60-s-Kadenz.
 
@@ -7920,7 +7920,7 @@ host data.sensor.community
   instrument_cite https://aqicn.org/sensor/sds011/
   instrument_quote "Serial Data Output Frequency: 1 time/second"
   probe 2026-10-25T12:41:22Z 200 https://data.sensor.community/airrohr/v1/filter/box=-95.0,29.0,-94.0,30.0&type=SDS011
-  fields sensordatavalues.0.value sensordatavalues.1.value
+  fields sensordatavalues.0.value
   applies https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
   note Probe 200, Body "[]" (2 B). Die Doku verlangt box={lat1,lon1,lat2,lon2}; der Block uebergibt lon,lat, daher leere Menge (kein Ausfall des Hosts). value_types P1 (PM10) und P2 (PM2.5). Zitat aus der Spezifikationsliste der Seite (Titel: "The SDS011 Air Quality Sensor experiment"), die auch "Measuring Range: 0.0-999.9μg/m3" fuehrt. Firmware-Default sending_intervall_ms=145000 (airrohr.ino:139), API-Fenster 5 min.
 
@@ -8140,7 +8140,7 @@ host arclink.ethz.ch
   instrument_cite https://en.wikipedia.org/wiki/Seismometer
   instrument_quote "Some seismometers can measure motions with frequencies from 500 Hz to 0.00118 Hz (1/500 = 0.002 seconds per cycle, to 1/0.00118 = 850 seconds per cycle)."
   probe 2026-10-25T12:54:59Z 200 http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime=2026-10-20&endtime=2026-10-22&minmagnitude=1.0&limit=50&orderby=time
-  fields 4
+  fields 5
   applies http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time line=296
   note SED/SeisComP-FDSNWS-Event, Ereignis-Katalog (interval none). CSV ohne Header: id,time,lat,lon,depth,mag,region — depth ist Spalte 5. Einheit km über die FDSN-Event-Spezifikation (Textformat-Abschnitt), nicht im CSV-Kopf. Instrumentenzitat aus der gerenderten Wikipedia-Seite.
 
@@ -9831,7 +9831,7 @@ host services.swpc.noaa.gov
   instrument_cite https://www.goes-r.gov/education/docs/Spaceweather.pdf
   instrument_quote "SEISS and the Magnetometer monitor, respectively, energetic particles and the magnetic field variations associated with space weather."
   probe 2026-10-25T14:50:44Z 200 https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-  fields Hp He total
+  fields Hp
   applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json id=262
   zustand gemessen
   note JSON je Minute mit He, Hp, Hn und total (nT) sowie arcjet_flag; time_tag 14:43, 14:44, 14:45 = 60 s. Die Feldzeile traegt total, die Registerzeilen Hp/He/total stehen bereits im Block. Geraet: GOES-Magnetometer (satellite 19 in dieser Datei).
@@ -12309,7 +12309,7 @@ host services.swpc.noaa.gov
   instrument_cite https://www.goes-r.gov/education/docs/Spaceweather.pdf
   instrument_quote "SEISS and the Magnetometer monitor, respectively, energetic particles and the magnetic field variations associated with space weather."
   probe 2026-10-25T14:50:44Z 200 https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-  fields Hp He total
+  fields Hp
   applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json id=262
   zustand gemessen
   note JSON je Minute mit He, Hp, Hn und total (nT) sowie arcjet_flag; time_tag 14:43, 14:44, 14:45 = 60 s. Die Feldzeile traegt total, die Registerzeilen Hp/He/total stehen bereits im Block. Geraet: GOES-Magnetometer (satellite 19 in dieser Datei).
@@ -19731,7 +19731,7 @@ host services.swpc.noaa.gov
   instrument_cite https://www.goes-r.gov/spacesegment/mag.html
   instrument_quote "The GOES-R Series requires measurements of three components of the geomagnetic field with a resolution of 0.016 nT and response frequency of 2.5 Hz."
   probe 2026-10-25T15:58:15Z 206 https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-  fields Hp He total
+  fields Hp
   applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
   note Drei Komponenten Hp/He/Hn plus Ht; Antwortfrequenz 2,5 Hz (0,4 s), Reihe als 1-Minuten-Mittel.
 
@@ -20941,7 +20941,7 @@ host earthquake.usgs.gov
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-25T17:34:00&latitude=19.5&longitude=-155.6&maxradiuskm=500&minmagnitude=2.0
   host_quote "cache-control: public, max-age=60"
   probe 2026-10-25T18:34:32Z 206 https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-25T17:34:00&latitude=19.5&longitude=-155.6&maxradiuskm=500&minmagnitude=2.0
-  fields geometry.coordinates.2 mag
+  fields depth
   applies https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0 line=135
   field depth usgs_event_depth_km km null
   note FDSN-Event-API, Geometrie-Koordinate 3 = Tiefe in km (Doku fuehrt km fuer maxdepth/mindepth, Bereich [-100, 1000]). Ereigniskatalog, keine regulaere Reihe (interval null). Probe mit gerenderten Platzhaltern (hour_ago = 17:34Z).
@@ -25091,7 +25091,7 @@ host earthquake.usgs.gov
   instrument_quote "https://earthquake.usgs.gov/fdsnws/event/1/query?format=xml&starttime=2014-01-01&endtime=2014-01-02&minmagnitude=5"
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/
   host_quote "Limit to events updated after the specified time."
-  fields geometry.coordinates.2 mag
+  fields depth
   applies https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0 line=135
   field mag seismic_magnitude_mw 1 0
   note Katalog je Ereignis, keine Zeitreihe: intervall 0 (Ereigniszeile, wie wave4-03 bei Katalogen). Einheit 1 = dimensionslos (Magnitude); der Magnitudentyp steht im eigenen Blockfeld `mag_type_key magType`. Instrument: Netzloesung `seismometer` (Block-Token), Geraet+Rate je Station steht nicht in der FDSN-Doku — offen ausgewiesen, nicht erfunden.
@@ -25942,7 +25942,7 @@ host earthquake.usgs.gov
   host_quote "cache-control: public, max-age=60; last-modified: Sun, 25 Oct 2026 19:20:05 GMT"
   ttl 2592000
   probe 2026-10-25T19:15:49Z 200 https://earthquake.usgs.gov/fdsnws/event/1/query
-  fields geometry.coordinates.2 mag
+  fields depth
   applies https://earthquake.usgs.gov/fdsnws/event/1/query line=12590
   quantity usgs_comcat_m45 usgs_comcat_m45_rate gaussian-inverse-square relative count 2592000.0 0.0 0.0
   note Block zaehlt ComCat-Ereignisse M>=4,5 je 30 Tagen (2592000 s); count ist dimensionslos. FDSN-Event-API, Geraeteklasse Seismometer.
@@ -28605,7 +28605,7 @@ host earthquake.usgs.gov
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-24T00:00:00Z&latitude=19.5&longitude=-155.6&maxradiuskm=500&minmagnitude=2.0
   host_quote "HTTP cache-control: public, max-age=60"
   probe 2026-10-25T21:17:43Z 200 https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-24T00:00:00Z&latitude=19.5&longitude=-155.6&maxradiuskm=500&minmagnitude=2.0
-  fields geometry.coordinates.2 mag
+  fields depth
   applies https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
   note events are irregular in time (field interval null); geometry.coordinates.2 is depth below the surface (positive down), not a height; mag is magnitude in the scale named by properties.magType
 
