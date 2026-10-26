@@ -1824,7 +1824,7 @@ fn main() {
                     continue;
                 };
                 eprintln!(
-                    "probe {} ({}) jd {}: phi={:.6} deg theta={:.9} rad psi={:.9} rad",
+                    "probe {} ({}) jd {}: phi={:.9} rad theta={:.9} rad psi={:.9} rad",
                     frame.name, frame.id, jd, phi, theta, psi
                 );
                 let Some(child) = fk.tkframe_child_of(&frame.name) else {
