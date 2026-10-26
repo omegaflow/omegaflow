@@ -327,6 +327,17 @@ pub fn linear_orientation(wgccre: &PckBody, jd: f64) -> Option<(f64, f64, f64)> 
     ))
 }
 
+fn wrap180(deg: f64) -> f64 {
+    let mut x = deg % 360.0;
+    if x > 180.0 {
+        x -= 360.0;
+    }
+    if x < -180.0 {
+        x += 360.0;
+    }
+    x
+}
+
 pub fn nutation_delta_fit(
     wgccre: &PckBody,
     bpc_files: &[BpcFile],
@@ -341,7 +352,11 @@ pub fn nutation_delta_fit(
         let jd = mid_jd + tau * half_jd;
         let full = full_orientation(wgccre, bpc_files, fk, body_id, jd)?;
         let lin = linear_orientation(wgccre, jd)?;
-        samples.push((full.0 - lin.0, full.1 - lin.1, full.2 - lin.2));
+        samples.push((
+            wrap180(full.0 - lin.0),
+            full.1 - lin.1,
+            wrap180(full.2 - lin.2),
+        ));
     }
     let (ra_d, dec_d, pm_d) = (samples[0].0.abs(), samples[0].1.abs(), samples[0].2.abs());
     if ra_d < 1e-9 && dec_d < 1e-9 && pm_d < 1e-9 {
@@ -838,6 +853,15 @@ mod tests {
                 "{body} is woven but declares no orientation model"
             );
         }
+    }
+
+    #[test]
+    fn the_orientation_delta_wraps_at_360() {
+        assert!((wrap180(370.0) - 10.0).abs() < 1e-12);
+        assert!((wrap180(-370.0) + 10.0).abs() < 1e-12);
+        assert!((wrap180(179.0) - 179.0).abs() < 1e-12);
+        assert!((wrap180(-179.0) + 179.0).abs() < 1e-12);
+        assert!((wrap180(-48265.0) - (-48265.0 + 134.0 * 360.0)).abs() < 1e-9);
     }
 
     #[test]
