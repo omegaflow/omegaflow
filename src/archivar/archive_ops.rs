@@ -115,9 +115,7 @@ pub fn raw_presence_gate(
             alt,
             body_name,
         } => {
-            let Some(alt) = *alt else {
-                return None;
-            };
+            let alt = (*alt)?;
             let p = body_fixed_to_icrs(body_name, *lat, *lon, alt, ctx.now, ctx.body_ephemerides)?;
             (p[0], p[1], p[2])
         }

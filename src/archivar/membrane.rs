@@ -257,9 +257,7 @@ pub fn frame_motion(
             alt,
             ..
         } => {
-            let Some(alt) = *alt else {
-                return None;
-            };
+            let alt = (*alt)?;
             match (spd, hdg) {
                 (Some(s), Some(h)) if s > 0.0 => surface_motion(SurfaceMotionParams {
                     body_name,

@@ -1,9 +1,6 @@
-use crate::{machines::*, omega::*, radiators::*, scalar_te_gpu::*};
+use crate::scalar_te_gpu::*;
 use omegaflow::archivar::PHI;
-use omegaflow::archivar::*;
-use omegaflow::mathematikerin::*;
 use omegaflow::te::*;
-use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, RwLock, mpsc};
 
 #[test]

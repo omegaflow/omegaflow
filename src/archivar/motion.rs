@@ -822,6 +822,11 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
         })
     }
 }
+pub fn load_gestalt_surface_threads(path: &str, body_name: &str) -> Option<Vec<Motion>> {
+    let bytes = std::fs::read(path).ok()?;
+    let recs = crate::geo::parse_gbco(&bytes)?;
+    Some(gestalt_surface_threads(&recs, body_name))
+}
 
 #[cfg(test)]
 mod tests {
@@ -901,11 +906,6 @@ mod tests {
             "IAU and the linear pole return the same vector (sep {sep} deg)"
         );
     }
-}
-pub fn load_gestalt_surface_threads(path: &str, body_name: &str) -> Option<Vec<Motion>> {
-    let bytes = std::fs::read(path).ok()?;
-    let recs = crate::geo::parse_gbco(&bytes)?;
-    Some(gestalt_surface_threads(&recs, body_name))
 }
 
 

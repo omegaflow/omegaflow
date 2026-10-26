@@ -1,3 +1,4 @@
+#![allow(mixed_script_confusables)]
 pub(crate) use std::sync::atomic::{AtomicBool, Ordering};
 pub(crate) use std::sync::{Arc, Mutex, RwLock, mpsc};
 pub(crate) use std::thread;
