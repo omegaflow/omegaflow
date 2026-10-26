@@ -10,9 +10,9 @@
 
 # Granit
 
-Der Granit trägt die Grundsätze des omegaflow-Feldes. Er ist die eine
-Quelle — das Gate liest genau diese Datei und stellt sie je Request an die
-erste Stelle.
+Der Granit trägt die Grundsätze des omegaflow-Feldes. Er ist die Quelle; die
+geladene Fassung steht in `bindend/grundsaetze.md` (work-Repo) und wird bei jedem
+Turn an die erste Stelle gestellt.
 
 ## Die Axiome — fünf
 
