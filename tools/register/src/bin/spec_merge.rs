@@ -2031,8 +2031,9 @@ fn suggest_assets(path: &str, out_path: &str) {
 
 fn block_indent(block: &[String]) -> &'static str {
     match block.first() {
+        Some(l) if l.starts_with("host ") => "  ",
         Some(l) if l.starts_with(' ') => "  ",
-        _ => "",
+        _ => "  ",
     }
 }
 
@@ -2816,7 +2817,7 @@ fn reprobe(report: &str) {
     }
     write_out(REG, out.join("\n") + "\n", "register");
     write_out(report, report_lines.join("\n") + "\n", "report");
-    println!("reprobe: {fixed} auf 2xx gebracht, {failed} offen (siehe {report})");
+    println!("reprobe: {fixed} auf 2xx gebracht, {failed} offen, {skipped} nach ttl oder Sperrliste ausgelassen (siehe {report})");
 }
 
 fn normalize_blocks() {
@@ -3075,7 +3076,7 @@ fn probe_map(path: &str) {
     let reg = fs::read_to_string(REG).expect("register");
     let lines: Vec<String> = reg.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
-    let (mut fixed, mut failed, mut skipped) = (0usize, 0usize, 0usize);
+    let (mut fixed, mut failed) = (0usize, 0usize);
     for (start, block) in blocks(&reg) {
         let Some(pos) = block
             .iter()
@@ -3413,6 +3414,10 @@ fn list_missing_rows(key: &str) {
     }
 }
 
+fn looks_html(s: &str) -> bool {
+    s.contains("</") || s.contains("<!") || s.contains("<html") || s.contains("<a href") || s.contains("<BR") || s.contains("<br")
+}
+
 fn strip_markup(s: &str) -> String {
     let mut out = String::new();
     let mut in_tag = false;
@@ -3456,11 +3461,11 @@ fn verify_cites(path: &str) {
             let out = Command::new("curl")
                 .args(["-sSL", "--max-time", "30", url])
                 .output();
-            let body = match out {
-                Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
-                Err(_) => String::new(),
+            let raw = match out {
+                Ok(o) => o.stdout,
+                Err(_) => Vec::new(),
             };
-            if body.is_empty() {
+            if raw.is_empty() {
                 bad_http += 1;
                 println!("HTTP\t{kind}\t{url}");
                 continue;
@@ -3471,13 +3476,18 @@ fn verify_cites(path: &str) {
                 .take(8)
                 .collect::<Vec<_>>()
                 .join(" ");
-            let mut text = body;
-            if text.contains('<') {
-                text = strip_markup(&text);
+            let mut text = String::from_utf8_lossy(&raw).to_string();
+            if raw.starts_with(b"PK\x03\x04") || url.to_lowercase().ends_with(".zip") {
+                let tmp = std::env::temp_dir().join(format!("zip-{}", std::process::id()));
+                let _ = fs::write(&tmp, &raw);
+                if let Ok(o) = Command::new("unzip").args(["-p", &tmp.to_string_lossy()]).output() {
+                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                }
+                let _ = fs::remove_file(&tmp);
             }
-            if text.starts_with("%PDF") || url.to_lowercase().ends_with(".pdf") {
+            if raw.starts_with(b"%PDF") || url.to_lowercase().ends_with(".pdf") {
                 let tmp = std::env::temp_dir().join(format!("cite-{}", std::process::id()));
-                let _ = fs::write(&tmp, text.as_bytes());
+                let _ = fs::write(&tmp, &raw);
                 if let Ok(o) = Command::new("pdftotext")
                     .args(["-layout", &tmp.to_string_lossy(), "-"])
                     .output()
@@ -3486,8 +3496,23 @@ fn verify_cites(path: &str) {
                 }
                 let _ = fs::remove_file(&tmp);
             }
+            if looks_html(&text) {
+                text = strip_markup(&text);
+            }
+            if text.contains('\u{FFFD}') {
+                let tmp = std::env::temp_dir().join(format!("enc-{}", std::process::id()));
+                let _ = fs::write(&tmp, &raw);
+                if let Ok(o) = Command::new("iconv")
+                    .args(["-f", "cp1251", "-t", "utf-8", &tmp.to_string_lossy()])
+                    .output()
+                {
+                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                }
+                let _ = fs::remove_file(&tmp);
+            }
+            text = text.replace("-\n", "").replace("-\r\n", "");
             let hay: String = text.split_whitespace().collect::<Vec<_>>().join(" ");
-            if needle.is_empty() || hay.contains(&needle) {
+            if needle.is_empty() || quote_holds(&hay, quote) {
                 ok += 1;
             } else {
                 let reader = format!("https://r.jina.ai/{url}");
@@ -3499,7 +3524,7 @@ fn verify_cites(path: &str) {
                     Err(_) => String::new(),
                 };
                 let rhay: String = rbody.split_whitespace().collect::<Vec<_>>().join(" ");
-                if !needle.is_empty() && rhay.contains(&needle) {
+                if !needle.is_empty() && quote_holds(&rhay, quote) {
                     ok += 1;
                 } else {
                     bad_quote += 1;
@@ -3529,32 +3554,45 @@ fn set_doc_quote(path: &str) {
                 continue;
             }
             let doc = cols[0].trim();
-            let kind = cols[1].trim().to_string();
-            let matches = if kind == "instrument" {
-                inst_cite == doc
-            } else {
-                api_cite == doc
+            let norm = |s: &str| {
+                s.trim()
+                    .trim_end_matches('/')
+                    .replace("http://", "https://")
+                    .to_lowercase()
             };
-            if matches {
+            let matches_api = norm(&api_cite) == norm(doc);
+            let matches_inst = norm(&inst_cite) == norm(doc);
+            if matches_api || matches_inst {
                 let beleg = match cols.get(3) {
                     Some(s) => s.trim().to_string(),
                     None => String::new(),
                 };
-                hit = Some((kind, cols[2].trim().to_string(), beleg));
+                hit = Some((doc.to_string(), cols[2].trim().to_string(), beleg));
                 break;
             }
         }
-        if let Some((kind, quote, beleg)) = hit {
-            let (cite_key, quote_key) = if kind == "instrument" {
-                ("instrument_cite", "instrument_quote")
-            } else {
-                ("api_cite", "api_quote")
-            };
-            if !beleg.is_empty() && beleg.starts_with("http") {
-                set_row_key(&mut b, cite_key, &beleg);
-            }
+        if let Some((doc, quote, beleg)) = hit {
             let q = quote.trim_matches('"');
-            set_row_key(&mut b, quote_key, &format!("\"{q}\""));
+            let norm = |s: &str| {
+                s.trim()
+                    .trim_end_matches('/')
+                    .replace("http://", "https://")
+                    .to_lowercase()
+            };
+            if norm(&api_cite) == norm(&doc) {
+                let beleg = beleg.clone();
+                if !beleg.is_empty() && beleg.starts_with("http") {
+                    set_row_key(&mut b, "api_cite", &beleg);
+                }
+                set_row_key(&mut b, "api_quote", &format!("\"{q}\""));
+            }
+            if norm(&inst_cite) == norm(&doc) {
+                let beleg = beleg.clone();
+                if !beleg.is_empty() && beleg.starts_with("http") {
+                    set_row_key(&mut b, "instrument_cite", &beleg);
+                }
+                set_row_key(&mut b, "instrument_quote", &format!("\"{q}\""));
+            }
             rows += 1;
         }
         out.extend(b);
@@ -3562,6 +3600,22 @@ fn set_doc_quote(path: &str) {
     }
     write_out(REG, out.join("\n") + "\n", "register");
     println!("set-doc-quote: {rows} Zeilen gesetzt");
+}
+
+fn quote_holds(hay: &str, quote: &str) -> bool {
+    let q = quote.trim().trim_matches('"');
+    let mut pos = 0usize;
+    for seg in q.split(" ... ") {
+        let needle: String = seg.split_whitespace().take(6).collect::<Vec<_>>().join(" ");
+        if needle.is_empty() {
+            continue;
+        }
+        match hay.get(pos..).and_then(|rest| rest.find(&needle)) {
+            Some(p) => pos += p + needle.len(),
+            None => return false,
+        }
+    }
+    true
 }
 
 fn verify_register(filter_path: &str) {
@@ -3593,18 +3647,27 @@ fn verify_register(filter_path: &str) {
             let out = Command::new("curl")
                 .args(["-sSL", "--max-time", "30", &url])
                 .output();
-            let mut text = match out {
-                Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
-                Err(_) => String::new(),
+            let raw = match out {
+                Ok(o) => o.stdout,
+                Err(_) => Vec::new(),
             };
+            let mut text = String::from_utf8_lossy(&raw).to_string();
+            if raw.starts_with(b"PK\x03\x04") || url.to_lowercase().ends_with(".zip") {
+                let tmp = std::env::temp_dir().join(format!("zip-{}", std::process::id()));
+                let _ = fs::write(&tmp, &raw);
+                if let Ok(o) = Command::new("unzip").args(["-p", &tmp.to_string_lossy()]).output() {
+                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                }
+                let _ = fs::remove_file(&tmp);
+            }
             if text.is_empty() {
                 http += 1;
                 println!("HTTP\t{kind}\t{url}");
                 continue;
             }
-            if text.starts_with("%PDF") || url.to_lowercase().ends_with(".pdf") {
+            if raw.starts_with(b"%PDF") || url.to_lowercase().ends_with(".pdf") {
                 let tmp = std::env::temp_dir().join(format!("reg-{}", std::process::id()));
-                let _ = fs::write(&tmp, text.as_bytes());
+                let _ = fs::write(&tmp, &raw);
                 if let Ok(o) = Command::new("pdftotext")
                     .args(["-layout", &tmp.to_string_lossy(), "-"])
                     .output()
@@ -3613,9 +3676,21 @@ fn verify_register(filter_path: &str) {
                 }
                 let _ = fs::remove_file(&tmp);
             }
-            if text.contains('<') {
+            if looks_html(&text) {
                 text = strip_markup(&text);
             }
+            if text.contains('\u{FFFD}') {
+                let tmp = std::env::temp_dir().join(format!("enc-{}", std::process::id()));
+                let _ = fs::write(&tmp, text.as_bytes());
+                if let Ok(o) = Command::new("iconv")
+                    .args(["-f", "cp1251", "-t", "utf-8", &tmp.to_string_lossy()])
+                    .output()
+                {
+                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                }
+                let _ = fs::remove_file(&tmp);
+            }
+            text = text.replace("-\n", "").replace("-\r\n", "");
             let needle: String = quote
                 .trim_matches('"')
                 .split_whitespace()
@@ -3623,15 +3698,286 @@ fn verify_register(filter_path: &str) {
                 .collect::<Vec<_>>()
                 .join(" ");
             let hay: String = text.split_whitespace().collect::<Vec<_>>().join(" ");
-            if !needle.is_empty() && hay.contains(&needle) {
+            if !needle.is_empty() && quote_holds(&hay, &quote) {
                 ok += 1;
             } else {
-                bad += 1;
-                println!("ZITAT\t{kind}\t{url}\t{needle}");
+                let reader = format!("https://r.jina.ai/{url}");
+                let rbody = match Command::new("curl")
+                    .args(["-sSL", "--max-time", "45", &reader])
+                    .output()
+                {
+                    Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+                    Err(_) => String::new(),
+                };
+                let rhay: String = rbody.split_whitespace().collect::<Vec<_>>().join(" ");
+                if !needle.is_empty() && quote_holds(&rhay, &quote) {
+                    ok += 1;
+                } else {
+                    bad += 1;
+                    println!("ZITAT\t{kind}\t{url}\t{needle}");
+                }
             }
         }
     }
     println!("verify-register: ok={ok} zitat={bad} http={http}");
+}
+
+fn block_audit() {
+    let reg = fs::read_to_string(REG).expect("register");
+    let (mut nohost, mut dup) = (0usize, 0usize);
+    for (start, b) in blocks(&reg) {
+        let first = match b.first() {
+            Some(l) => l.clone(),
+            None => String::new(),
+        };
+        if !first.trim_start().starts_with("host ") {
+            nohost += 1;
+            println!("OHNE-HOST\t{}\t{}", start + 1, first.chars().take(80).collect::<String>());
+        }
+        let mut seen: BTreeSet<String> = BTreeSet::new();
+        for line in &b {
+            let key = match line.split_whitespace().next() {
+                Some(k) => k.to_string(),
+                None => continue,
+            };
+            if key == "host" || key.starts_with('#') {
+                continue;
+            }
+            if !seen.insert(key.clone()) {
+                dup += 1;
+                println!("DOPPELT\t{}\t{}\t{}", start + 1, key, first.chars().take(60).collect::<String>());
+            }
+        }
+    }
+    println!("block-audit: {nohost} Bloecke ohne host, {dup} doppelte Schluessel");
+}
+
+fn stray_report(limit: usize) {
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut shown = 0usize;
+    let mut blocks_with_tail = 0usize;
+    let mut sigs: BTreeMap<String, usize> = BTreeMap::new();
+    for (start, b) in blocks(&reg) {
+        let tail_at = b.iter().enumerate().skip(1).find_map(|(i, l)| {
+            if l.starts_with(' ') || l.starts_with('#') || l.trim().is_empty() {
+                None
+            } else {
+                Some(i)
+            }
+        });
+        let Some(i) = tail_at else {
+            continue;
+        };
+        blocks_with_tail += 1;
+        let tail = &b[i..];
+        let mut keys: Vec<String> = Vec::new();
+        for l in tail {
+            let k = match l.split_whitespace().next() {
+                Some(k) => k.to_string(),
+                None => continue,
+            };
+            if !keys.contains(&k) {
+                keys.push(k);
+            }
+        }
+        *sigs.entry(keys.join("+")).or_insert(0) += 1;
+        if shown >= limit {
+            continue;
+        }
+        shown += 1;
+        let val = |lines: &[String], k: &str| -> String {
+            match lines
+                .iter()
+                .find(|l| l.trim_start().starts_with(&format!("{k} ")))
+            {
+                Some(l) => l.trim_start()[k.len() + 1..].chars().take(70).collect(),
+                None => String::new(),
+            }
+        };
+        let head = &b[..i];
+        let tail = &b[i..];
+        println!("== Block ab Zeile {} · host {}", start + 1, val(head, "host"));
+        println!("   applies       {}", val(head, "applies"));
+        println!("   Kopf api      {}", val(head, "api_cite"));
+        println!("   Rest api      {}", val(tail, "api_cite"));
+        println!("   Kopf instr    {}", val(head, "instrument_cite"));
+        println!("   Rest instr    {}", val(tail, "instrument_cite"));
+        println!("   Kopf Geraet   {}", val(head, "instrument"));
+        println!("   Rest Geraet   {}", val(tail, "instrument"));
+    }
+    for (sig, n) in &sigs {
+        println!("SIGNATUR\t{n}\t{sig}");
+    }
+    println!("stray-report: {blocks_with_tail} Bloecke mit Restzeilen");
+}
+
+fn tail_value(lines: &[String], key: &str) -> String {
+    match lines
+        .iter()
+        .find(|l| l.trim_start().starts_with(&format!("{key} ")))
+    {
+        Some(l) => l.trim_start()[key.len() + 1..].trim().to_string(),
+        None => String::new(),
+    }
+}
+
+fn fix_stray(mode: &str) {
+    let reg = fs::read_to_string(REG).expect("register");
+    let (mut fixed, open, mut skipped, mut flipped) = (0usize, 0usize, 0usize, 0usize);
+    let mut report: Vec<String> = Vec::new();
+    let mut out: Vec<String> = Vec::new();
+    for (start, b) in blocks(&reg) {
+        let unindented = b.iter().enumerate().skip(1).find_map(|(i, l)| {
+            if l.starts_with(' ') || l.starts_with('#') || l.trim().is_empty() {
+                None
+            } else {
+                Some(i)
+            }
+        });
+        let (mut seen_api, mut seen_inst, mut dup_at) = (0usize, 0usize, None);
+        if unindented.is_none() {
+            for (i, l) in b.iter().enumerate().skip(1) {
+                let t = l.trim_start();
+                if t.starts_with("api_cite ") {
+                    seen_api += 1;
+                    if seen_api == 2 {
+                        dup_at = Some(i);
+                        break;
+                    }
+                }
+                if t.starts_with("instrument_cite ") {
+                    seen_inst += 1;
+                    if seen_inst == 2 {
+                        dup_at = Some(i);
+                        break;
+                    }
+                }
+            }
+        }
+        let from_dup = dup_at.is_some();
+        let tail_at = match unindented {
+            Some(v) => Some(v),
+            None => dup_at,
+        };
+        let Some(i) = tail_at else {
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        };
+        let mut head: Vec<String> = b[..i].to_vec();
+        let tail: Vec<String> = b[i..].to_vec();
+        let tail_keys: BTreeSet<String> = tail
+            .iter()
+            .filter_map(|l| l.split_whitespace().next().map(|k| k.to_string()))
+            .collect();
+        let only_instrument = tail_keys.iter().all(|k| k == "instrument");
+        let has_docs = tail_keys.contains("api_cite")
+            && tail_keys.contains("instrument_cite")
+            && !tail_keys.contains("applies")
+            && !tail_keys.contains("host_cite");
+        let has_own_id = tail_keys.contains("applies") || tail_keys.contains("host_cite");
+        let api_only = tail_keys.contains("api_cite")
+            && tail_keys.contains("api_quote")
+            && !tail_keys.contains("instrument_cite")
+            && !has_own_id;
+
+        let take = match mode {
+            "instrument-only" => only_instrument,
+            "doc-triple" => has_docs,
+            "split-entry" => has_own_id,
+            "api-only" => api_only,
+            "dup-docs" => from_dup,
+            _ => false,
+        };
+        if !take {
+            skipped += 1;
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
+        if mode == "doc-triple" {
+            let head_api = or_empty(field(&head, "api_cite"));
+            let tail_api = tail_value(&tail, "api_cite");
+            if !head_api.is_empty() && head_api != tail_api {
+                flipped += 1;
+                let tail_instr = tail_value(&tail, "instrument_cite");
+                report.push(format!("{}\t{}\t{}\t{}", start + 1, head_api, tail_api, tail_instr));
+            }
+        }
+        if mode == "split-entry" {
+            let head_applies = or_empty(field(&head, "applies"));
+            let tail_applies = tail_value(&tail, "applies");
+            let distinct = !tail_applies.is_empty() && tail_applies != head_applies;
+            if distinct {
+                let host = or_empty(field(&head, "host"));
+                out.extend(head);
+                out.push(String::new());
+                out.push(format!("host {host}"));
+                for line in &tail {
+                    out.push(format!("  {}", line.trim()));
+                }
+                out.push(String::new());
+                fixed += 1;
+                continue;
+            }
+        }
+        for line in &tail {
+            let t = line.trim_start();
+            let mut it = t.splitn(2, ' ');
+            let key = match it.next() {
+                Some(k) => k,
+                None => continue,
+            };
+            if key.is_empty() {
+                continue;
+            }
+            let value = it.next().unwrap_or("").trim();
+            if key == "instrument" {
+                head.push(format!("  instrument {value}"));
+                continue;
+            }
+            set_row_key(&mut head, key, value);
+        }
+        fixed += 1;
+        if mode == "dup-docs" {
+            println!("DUP-MERGE\t{}\ttail_bei\t{}", start + 1, i + 1);
+        }
+        out.extend(head);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    if let Ok(p) = std::env::var("OMEGAFLOW_STRAY_REPORT") {
+        let _ = fs::write(&p, report.join("\n") + "\n");
+    }
+    println!("fix-stray {mode}: {fixed} Bloecke zusammengefuehrt, {flipped} mit anderem Datendokument, {open} unentschieden, {skipped} andere Muster");
+}
+
+fn entry_audit() {
+    let reg = fs::read_to_string(REG).expect("register");
+    let (mut host_in_block, mut multi_applies, mut multi_block) = (0usize, 0usize, 0usize);
+    for (start, b) in blocks(&reg) {
+        let hosts = b.iter().skip(1).filter(|l| l.starts_with("host ")).count();
+        if hosts > 0 {
+            host_in_block += hosts;
+            println!("HOST-IM-BLOCK\t{}\t{hosts}", start + 1);
+        }
+        let applies = b
+            .iter()
+            .filter(|l| l.trim_start().starts_with("applies "))
+            .count();
+        if applies > 1 {
+            multi_applies += 1;
+            println!("MULTI-APPLIES\t{}\t{applies}", start + 1);
+        }
+        let blocks_n = b
+            .iter()
+            .filter(|l| l.trim_start().starts_with("block "))
+            .count();
+        if blocks_n > 1 {
+            multi_block += 1;
+        }
+    }
+    println!("entry-audit: {host_in_block} host-Zeilen in Bloecken, {multi_applies} Bloecke mit mehreren applies, {multi_block} mit mehreren block");
 }
 
 fn main() {
@@ -3681,6 +4027,10 @@ fn main() {
         Some("set-host-doc") if args.len() >= 3 => set_host_doc(&args[2]),
         Some("set-doc-quote") if args.len() >= 3 => set_doc_quote(&args[2]),
         Some("verify-register") if args.len() >= 3 => verify_register(&args[2]),
+        Some("block-audit") => block_audit(),
+        Some("entry-audit") => entry_audit(),
+        Some("stray-report") => stray_report(12),
+        Some("fix-stray") if args.len() >= 3 => fix_stray(&args[2]),
         Some("verify-cites") if args.len() >= 3 => verify_cites(&args[2]),
         Some("filter-rows") if args.len() >= 5 => filter_rows(&args[2], &args[3], &args[4]),
         Some("fill-sha") => fill_sha(
