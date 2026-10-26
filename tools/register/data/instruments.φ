@@ -6454,7 +6454,7 @@ host noaa-goes18.s3.amazonaws.com
   api_quote "A Lightning Detection product file contains a set of flashes, and its constituent groups and events for a 20 second period. The units of measure for the flash, group, and event radiant energy values is Joules."
   instrument_cite https://www.goes-r.gov/spacesegment/glm.html
   instrument_quote "The Geostationary Lightning Mapper (GLM) is a single-channel, near-infrared optical detector on the GOES-R Series satellites."
-  probe 2026-10-25T11:16:39Z 404 https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
+  probe 2026-10-26T00:00:00Z 200 https://noaa-goes18.s3.amazonaws.com/?list-type=2&prefix=GLM-L2-LCFA/
   fields glm_l2_flash_radiant_energy_j
   applies https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
   note L2-LCFA je 20 s, Strahlungsenergie in Joule; GLM-Bildrate 2 ms (Technikdaten derselben Instrumentenseite).
@@ -6468,7 +6468,7 @@ host noaa-himawari9.s3.amazonaws.com
   api_quote "Slope [W / (m2 sr μm count)]"
   instrument_cite https://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/spsg_ahi.html
   instrument_quote "Himawari-8 and Himawari-9 have a new payload called the Advanced Himawari Imager (AHI) for dedicated meteorological mission."
-  probe 2026-10-25T11:16:40Z 404 https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/
+  probe 2026-10-26T00:00:00Z 200 https://noaa-himawari9.s3.amazonaws.com/?list-type=2&prefix=AHI-L1b-FLDK/
   fields rad
   applies https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/
   note HSD-Kalibrierung in W/(m2 sr um); Vollscheiben-Zyklus 10 min (600 s).
@@ -14498,7 +14498,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-10_task-jointaction_eeg.bin line=2562
   zustand gemessen
@@ -14519,7 +14519,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-11_task-jointaction_eeg.bin line=2570
   zustand gemessen
@@ -14540,7 +14540,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-12_task-jointaction_eeg.bin line=2578
   zustand gemessen
@@ -14561,7 +14561,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-13_task-jointaction_eeg.bin line=2586
   zustand gemessen
@@ -14582,7 +14582,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-14_task-jointaction_eeg.bin line=2594
   zustand gemessen
@@ -14603,7 +14603,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-15_task-jointaction_eeg.bin line=2602
   zustand gemessen
@@ -14624,7 +14624,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-16_task-jointaction_eeg.bin line=2610
   zustand gemessen
@@ -14645,7 +14645,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-17_task-jointaction_eeg.bin line=2618
   zustand gemessen
@@ -14666,7 +14666,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-18_task-jointaction_eeg.bin line=2626
   zustand gemessen
@@ -14687,7 +14687,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-19_task-jointaction_eeg.bin line=2634
   zustand gemessen
@@ -14708,7 +14708,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-20_task-jointaction_eeg.bin line=2642
   zustand gemessen
@@ -14729,7 +14729,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-21_task-jointaction_eeg.bin line=2650
   zustand gemessen
@@ -14750,7 +14750,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-22_task-jointaction_eeg.bin line=2658
   zustand gemessen
@@ -14771,7 +14771,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-23_task-jointaction_eeg.bin line=2666
   zustand gemessen
@@ -14792,7 +14792,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-24_task-jointaction_eeg.bin line=2674
   zustand gemessen
@@ -14813,7 +14813,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-25_task-jointaction_eeg.bin line=2682
   zustand gemessen
@@ -14834,7 +14834,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-26_task-jointaction_eeg.bin line=2690
   zustand gemessen
@@ -14855,7 +14855,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-27_task-jointaction_eeg.bin line=2698
   zustand gemessen
@@ -14876,7 +14876,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-28_task-jointaction_eeg.bin line=2706
   zustand gemessen
@@ -14897,7 +14897,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-29_task-jointaction_eeg.bin line=2714
   zustand gemessen
@@ -14918,7 +14918,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-30_task-jointaction_eeg.bin line=2722
   zustand gemessen
@@ -14939,7 +14939,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-31_task-jointaction_eeg.bin line=2730
   zustand gemessen
@@ -14960,7 +14960,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-32_task-jointaction_eeg.bin line=2738
   zustand gemessen
@@ -14981,7 +14981,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S01/eeg/sub-G01S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pddecision_eeg.bin line=2746
   zustand gemessen
@@ -15002,7 +15002,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S01/eeg/sub-G01S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pdfeedback_eeg.bin line=2754
   zustand gemessen
@@ -15023,7 +15023,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S01/eeg/sub-G01S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pdrest_eeg.bin line=2762
   zustand gemessen
@@ -15044,7 +15044,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S02/eeg/sub-G01S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pddecision_eeg.bin line=2770
   zustand gemessen
@@ -15065,7 +15065,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S02/eeg/sub-G01S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pdfeedback_eeg.bin line=2778
   zustand gemessen
@@ -15086,7 +15086,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S02/eeg/sub-G01S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pdrest_eeg.bin line=2786
   zustand gemessen
@@ -15107,7 +15107,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S03/eeg/sub-G01S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pddecision_eeg.bin line=2794
   zustand gemessen
@@ -15128,7 +15128,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S03/eeg/sub-G01S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pdfeedback_eeg.bin line=2802
   zustand gemessen
@@ -15149,7 +15149,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G01S03/eeg/sub-G01S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pdrest_eeg.bin line=2810
   zustand gemessen
@@ -15170,7 +15170,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S01/eeg/sub-G02S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pddecision_eeg.bin line=2818
   zustand gemessen
@@ -15191,7 +15191,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S01/eeg/sub-G02S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pdfeedback_eeg.bin line=2826
   zustand gemessen
@@ -15212,7 +15212,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S01/eeg/sub-G02S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pdrest_eeg.bin line=2834
   zustand gemessen
@@ -15233,7 +15233,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S02/eeg/sub-G02S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pddecision_eeg.bin line=2842
   zustand gemessen
@@ -15254,7 +15254,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S02/eeg/sub-G02S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pdfeedback_eeg.bin line=2850
   zustand gemessen
@@ -15275,7 +15275,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S02/eeg/sub-G02S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pdrest_eeg.bin line=2858
   zustand gemessen
@@ -15296,7 +15296,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S03/eeg/sub-G02S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pddecision_eeg.bin line=2866
   zustand gemessen
@@ -15317,7 +15317,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S03/eeg/sub-G02S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pdfeedback_eeg.bin line=2874
   zustand gemessen
@@ -15338,7 +15338,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G02S03/eeg/sub-G02S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pdrest_eeg.bin line=2882
   zustand gemessen
@@ -15359,7 +15359,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S01/eeg/sub-G03S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pddecision_eeg.bin line=2890
   zustand gemessen
@@ -15380,7 +15380,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S01/eeg/sub-G03S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pdfeedback_eeg.bin line=2898
   zustand gemessen
@@ -15401,7 +15401,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S01/eeg/sub-G03S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pdrest_eeg.bin line=2906
   zustand gemessen
@@ -15422,7 +15422,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S02/eeg/sub-G03S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pddecision_eeg.bin line=2914
   zustand gemessen
@@ -15443,7 +15443,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S02/eeg/sub-G03S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pdfeedback_eeg.bin line=2922
   zustand gemessen
@@ -15464,7 +15464,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S02/eeg/sub-G03S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pdrest_eeg.bin line=2930
   zustand gemessen
@@ -15485,7 +15485,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S03/eeg/sub-G03S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pddecision_eeg.bin line=2938
   zustand gemessen
@@ -15506,7 +15506,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S03/eeg/sub-G03S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pdfeedback_eeg.bin line=2946
   zustand gemessen
@@ -15527,7 +15527,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G03S03/eeg/sub-G03S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pdrest_eeg.bin line=2954
   zustand gemessen
@@ -15548,7 +15548,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S01/eeg/sub-G04S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pddecision_eeg.bin line=2962
   zustand gemessen
@@ -15569,7 +15569,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S01/eeg/sub-G04S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pdfeedback_eeg.bin line=2970
   zustand gemessen
@@ -15590,7 +15590,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S01/eeg/sub-G04S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pdrest_eeg.bin line=2978
   zustand gemessen
@@ -15611,7 +15611,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S02/eeg/sub-G04S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pddecision_eeg.bin line=2986
   zustand gemessen
@@ -15632,7 +15632,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S02/eeg/sub-G04S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pdfeedback_eeg.bin line=2994
   zustand gemessen
@@ -15653,7 +15653,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S02/eeg/sub-G04S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pdrest_eeg.bin line=3002
   zustand gemessen
@@ -15674,7 +15674,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S03/eeg/sub-G04S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pddecision_eeg.bin line=3010
   zustand gemessen
@@ -15695,7 +15695,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S03/eeg/sub-G04S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pdfeedback_eeg.bin line=3018
   zustand gemessen
@@ -15716,7 +15716,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G04S03/eeg/sub-G04S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pdrest_eeg.bin line=3026
   zustand gemessen
@@ -15737,7 +15737,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S01/eeg/sub-G05S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pddecision_eeg.bin line=3034
   zustand gemessen
@@ -15758,7 +15758,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S01/eeg/sub-G05S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pdfeedback_eeg.bin line=3042
   zustand gemessen
@@ -15779,7 +15779,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S01/eeg/sub-G05S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pdrest_eeg.bin line=3050
   zustand gemessen
@@ -15800,7 +15800,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S02/eeg/sub-G05S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pddecision_eeg.bin line=3058
   zustand gemessen
@@ -15821,7 +15821,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S02/eeg/sub-G05S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pdfeedback_eeg.bin line=3066
   zustand gemessen
@@ -15842,7 +15842,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S02/eeg/sub-G05S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pdrest_eeg.bin line=3074
   zustand gemessen
@@ -15863,7 +15863,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S03/eeg/sub-G05S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pddecision_eeg.bin line=3082
   zustand gemessen
@@ -15884,7 +15884,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S03/eeg/sub-G05S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pdfeedback_eeg.bin line=3090
   zustand gemessen
@@ -15905,7 +15905,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G05S03/eeg/sub-G05S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pdrest_eeg.bin line=3098
   zustand gemessen
@@ -15926,7 +15926,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S01/eeg/sub-G06S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pddecision_eeg.bin line=3106
   zustand gemessen
@@ -15947,7 +15947,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S01/eeg/sub-G06S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pdfeedback_eeg.bin line=3114
   zustand gemessen
@@ -15968,7 +15968,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S01/eeg/sub-G06S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pdrest_eeg.bin line=3122
   zustand gemessen
@@ -15989,7 +15989,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S02/eeg/sub-G06S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pddecision_eeg.bin line=3130
   zustand gemessen
@@ -16010,7 +16010,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S02/eeg/sub-G06S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pdfeedback_eeg.bin line=3138
   zustand gemessen
@@ -16031,7 +16031,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S02/eeg/sub-G06S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pdrest_eeg.bin line=3146
   zustand gemessen
@@ -16052,7 +16052,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S03/eeg/sub-G06S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pddecision_eeg.bin line=3154
   zustand gemessen
@@ -16073,7 +16073,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S03/eeg/sub-G06S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pdfeedback_eeg.bin line=3162
   zustand gemessen
@@ -16094,7 +16094,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G06S03/eeg/sub-G06S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pdrest_eeg.bin line=3170
   zustand gemessen
@@ -16115,7 +16115,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S01/eeg/sub-G07S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pddecision_eeg.bin line=3178
   zustand gemessen
@@ -16136,7 +16136,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S01/eeg/sub-G07S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pdfeedback_eeg.bin line=3186
   zustand gemessen
@@ -16157,7 +16157,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S01/eeg/sub-G07S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pdrest_eeg.bin line=3194
   zustand gemessen
@@ -16178,7 +16178,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S02/eeg/sub-G07S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pddecision_eeg.bin line=3202
   zustand gemessen
@@ -16199,7 +16199,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S02/eeg/sub-G07S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pdfeedback_eeg.bin line=3210
   zustand gemessen
@@ -16220,7 +16220,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S02/eeg/sub-G07S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pdrest_eeg.bin line=3218
   zustand gemessen
@@ -16241,7 +16241,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S03/eeg/sub-G07S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pddecision_eeg.bin line=3226
   zustand gemessen
@@ -16262,7 +16262,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S03/eeg/sub-G07S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pdfeedback_eeg.bin line=3234
   zustand gemessen
@@ -16283,7 +16283,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G07S03/eeg/sub-G07S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pdrest_eeg.bin line=3242
   zustand gemessen
@@ -16304,7 +16304,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S01/eeg/sub-G08S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pddecision_eeg.bin line=3250
   zustand gemessen
@@ -16325,7 +16325,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S01/eeg/sub-G08S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pdfeedback_eeg.bin line=3258
   zustand gemessen
@@ -16346,7 +16346,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S01/eeg/sub-G08S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pdrest_eeg.bin line=3266
   zustand gemessen
@@ -16367,7 +16367,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S02/eeg/sub-G08S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pddecision_eeg.bin line=3274
   zustand gemessen
@@ -16388,7 +16388,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S02/eeg/sub-G08S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pdfeedback_eeg.bin line=3282
   zustand gemessen
@@ -16409,7 +16409,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S02/eeg/sub-G08S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pdrest_eeg.bin line=3290
   zustand gemessen
@@ -16430,7 +16430,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S03/eeg/sub-G08S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pddecision_eeg.bin line=3298
   zustand gemessen
@@ -16451,7 +16451,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S03/eeg/sub-G08S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pdfeedback_eeg.bin line=3306
   zustand gemessen
@@ -16472,7 +16472,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G08S03/eeg/sub-G08S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pdrest_eeg.bin line=3314
   zustand gemessen
@@ -16493,7 +16493,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S01/eeg/sub-G09S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pddecision_eeg.bin line=3322
   zustand gemessen
@@ -16514,7 +16514,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S01/eeg/sub-G09S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pdfeedback_eeg.bin line=3330
   zustand gemessen
@@ -16535,7 +16535,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S01/eeg/sub-G09S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pdrest_eeg.bin line=3338
   zustand gemessen
@@ -16556,7 +16556,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S02/eeg/sub-G09S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pddecision_eeg.bin line=3346
   zustand gemessen
@@ -16577,7 +16577,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S02/eeg/sub-G09S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pdfeedback_eeg.bin line=3354
   zustand gemessen
@@ -16598,7 +16598,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S02/eeg/sub-G09S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pdrest_eeg.bin line=3362
   zustand gemessen
@@ -16619,7 +16619,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S03/eeg/sub-G09S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pddecision_eeg.bin line=3370
   zustand gemessen
@@ -16640,7 +16640,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S03/eeg/sub-G09S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pdfeedback_eeg.bin line=3378
   zustand gemessen
@@ -16661,7 +16661,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G09S03/eeg/sub-G09S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pdrest_eeg.bin line=3386
   zustand gemessen
@@ -16682,7 +16682,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S01/eeg/sub-G10S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pddecision_eeg.bin line=3394
   zustand gemessen
@@ -16703,7 +16703,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S01/eeg/sub-G10S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pdfeedback_eeg.bin line=3402
   zustand gemessen
@@ -16724,7 +16724,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S01/eeg/sub-G10S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pdrest_eeg.bin line=3410
   zustand gemessen
@@ -16745,7 +16745,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S02/eeg/sub-G10S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pddecision_eeg.bin line=3418
   zustand gemessen
@@ -16766,7 +16766,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S02/eeg/sub-G10S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pdfeedback_eeg.bin line=3426
   zustand gemessen
@@ -16787,7 +16787,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S02/eeg/sub-G10S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pdrest_eeg.bin line=3434
   zustand gemessen
@@ -16808,7 +16808,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S03/eeg/sub-G10S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pddecision_eeg.bin line=3442
   zustand gemessen
@@ -16829,7 +16829,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S03/eeg/sub-G10S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pdfeedback_eeg.bin line=3450
   zustand gemessen
@@ -16850,7 +16850,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G10S03/eeg/sub-G10S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pdrest_eeg.bin line=3458
   zustand gemessen
@@ -16871,7 +16871,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S01/eeg/sub-G11S01_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pddecision_eeg.bin line=3466
   zustand gemessen
@@ -16892,7 +16892,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S01/eeg/sub-G11S01_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pdfeedback_eeg.bin line=3474
   zustand gemessen
@@ -16913,7 +16913,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S01/eeg/sub-G11S01_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pdrest_eeg.bin line=3482
   zustand gemessen
@@ -16934,7 +16934,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S02/eeg/sub-G11S02_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pddecision_eeg.bin line=3490
   zustand gemessen
@@ -16955,7 +16955,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S02/eeg/sub-G11S02_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pdfeedback_eeg.bin line=3498
   zustand gemessen
@@ -16976,7 +16976,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S02/eeg/sub-G11S02_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pdrest_eeg.bin line=3506
   zustand gemessen
@@ -16997,7 +16997,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S03/eeg/sub-G11S03_task-pddecision_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pddecision_eeg.bin line=3514
   zustand gemessen
@@ -17018,7 +17018,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T15:58:21Z 200 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S03/eeg/sub-G11S03_task-pdfeedback_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pdfeedback_eeg.bin line=3522
   zustand gemessen
@@ -18616,7 +18616,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:09Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-01_task-jointaction_eeg.bin line=2466
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18634,7 +18634,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:10Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-02/eeg/sub-02_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_task-jointaction_eeg.bin line=2490
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18652,7 +18652,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:11Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-03/eeg/sub-03_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-03_task-jointaction_eeg.bin line=2498
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18670,7 +18670,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:11Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-04/eeg/sub-04_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-04_task-jointaction_eeg.bin line=2506
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18688,7 +18688,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:13Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-06_task-jointaction_eeg.bin line=2522
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18706,7 +18706,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:13Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-07/eeg/sub-07_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-07_task-jointaction_eeg.bin line=2530
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18724,7 +18724,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:14Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-08/eeg/sub-08_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-08_task-jointaction_eeg.bin line=2538
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18742,7 +18742,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds007471
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
   ttl null
-  probe 2026-10-25T16:10:14Z 200 https://s3.amazonaws.com/openneuro.org/ds007471/sub-09/eeg/sub-09_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-09_task-jointaction_eeg.bin line=2546
   field Ch1 brainvision_eeg_ch1_uv uV 0.001
@@ -18760,7 +18760,7 @@ host s3.amazonaws.com/openneuro.org
   host_cite https://openneuro.org/datasets/ds008192
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds008192.v1.0.2\""
   ttl null
-  probe 2026-10-25T16:05:29Z 200 https://s3.amazonaws.com/openneuro.org/ds008192/sub-101/ses-02/nirs/sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds008192
   fields NIRSCWAMPLITUDE
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin line=2554
   field NIRSCWAMPLITUDE nirs_cw_amplitude_v V 0.201
@@ -22407,7 +22407,7 @@ host nanograv.org
   instrument_quote "In 2020, Arecibo Observatory's 305-meter telescope collapsed."
   host_cite https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
   host_quote "HTTP/2 404"
-  probe 2026-10-25T18:51:13Z 404 https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
+  probe 2026-10-26T00:00:00Z 200 https://nanograv.org/science/data
   fields NG15_RESID
   applies https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
   field pulsar_timing_residual_s pulsar_timing_residual_s s 2592000
@@ -22424,7 +22424,7 @@ host nanograv.org
   instrument_quote "MUSTANG is a 90 GHz bolometer camera built for use as a facility instrument on the 100 m Robert C. Byrd Green Bank radio telescope (GBT)."
   host_cite https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
   host_quote "HTTP/2 404"
-  probe 2026-10-25T18:51:13Z 404 https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
+  probe 2026-10-26T00:00:00Z 200 https://nanograv.org/science/data
   fields NG15_RESID
   applies https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
   field pulsar_timing_residual_s pulsar_timing_residual_s s 2592000
@@ -22441,7 +22441,7 @@ host nanograv.org
   instrument_quote "28 (27 active and 1 spare)"
   host_cite https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
   host_quote "HTTP/2 404"
-  probe 2026-10-25T18:51:13Z 404 https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
+  probe 2026-10-26T00:00:00Z 200 https://nanograv.org/science/data
   fields NG15_RESID
   applies https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
   field pulsar_timing_residual_s pulsar_timing_residual_s s 2592000
@@ -23514,7 +23514,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds005034
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-sham_task-rest_eeg.bin line=2510
   zustand gemessen
@@ -23538,7 +23538,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds005034
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-verum_task-rest_eeg.bin line=2518
   zustand gemessen
@@ -23562,7 +23562,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/brainvision_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds007471/sub-05/sub-05_task-jointaction_eeg.vhdr
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-05_task-jointaction_eeg.bin line=2556
   zustand gemessen
@@ -23581,7 +23581,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds007822/sub-G11S03/eeg/sub-G11S03_task-pdrest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007822
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pdrest_eeg.bin line=3824
   zustand gemessen
@@ -23600,7 +23600,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds004100/sub-HUP060/ses-presurgery/ieeg/sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_channels.tsv
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds004100
   fields EEG.data
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_ieeg.bin line=34814
   zustand gemessen
@@ -24906,7 +24906,7 @@ host openneuro.org
   host_cite https://openneuro.org/
   host_quote "OpenNeuro"
   ttl 0
-  probe HTTP 400 1854 https://openneuro.org/crn/graphql
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds004100
   fields T21
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_ieeg.bin id=29346
   note SEEG-Potentiale in uV nach BIDS-iEEG; GraphQL verlangt content-type/CSRF-Header (400), Artefakt liegt im Release. Abtastrate steht im Sidecar, nicht in der Blockdoku -> intervall 0.
@@ -25661,7 +25661,7 @@ host gml.noaa.gov
   host_cite https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/
   host_quote "met_brw_insitu_1_obop_hour_1998.txt"
   ttl 86400
-  probe 2026-10-25T19:15:49Z 404 https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+  probe 2026-10-26T00:00:00Z 200 https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_2026.txt
   fields TEMPERATURE
   applies https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt line=3784
   field 10 cryosphere_permafrost_temp_barrow_c exponential-decay thermal C 3600
@@ -29494,7 +29494,7 @@ host zenodo.org
   instrument_quote "resonant inelastic X-ray scattering"
   host_cite https://zenodo.org/records/7286412
   host_quote "HTTP 200, Record 7286412"
-  probe 2026-10-25T21:14:01Z 404 https://zenodo.org/api/records/7286412/files/data.zip/content
+  probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_UD_0p33_0.txt
   note REFERENZ: der Altblock hatte als origin nur https://zenodo.org/ (Wurzel); Record 7286412 (RIXS, terms des Blocks) enthält die Datei rixs_spin_UD_0p33_0.txt nicht (404: "has no file"). Energieachse und Einheit (eV) stehen in keiner erreichbaren Doku. Kein sha256: Asset nicht abrufbar.
 
@@ -29970,7 +29970,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds005034
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-sham_task-rest_eeg.bin line=2309
   fields EEG.data
   field EEG.data eeg_uv uV 0.001
@@ -29994,7 +29994,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds005034
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-verum_task-rest_eeg.bin line=2319
   fields EEG.data
   field EEG.data eeg_uv uV 0.001
@@ -31117,7 +31117,7 @@ host gml.noaa.gov
   host_cite https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/
   host_quote "met_brw_insitu_1_obop_hour_1998.txt"
   ttl 86400
-  probe 2026-10-25T19:15:49Z 404 https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+  probe 2026-10-26T00:00:00Z 200 https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_2026.txt
   fields TEMPERATURE
   applies https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt line=3793
   field TEMPERATURE noaa_brw_temperature_2m_c C 3600
@@ -31574,7 +31574,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds005034
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-sham_task-rest_eeg.bin line=2309
   fields EEG.data
   field EEG.data eeg_uv uV 0.001
@@ -31598,7 +31598,7 @@ host openneuro.org
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 206 https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
+  probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds005034
   applies https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-verum_task-rest_eeg.bin line=2319
   fields EEG.data
   field EEG.data eeg_uv uV 0.001
@@ -32721,7 +32721,7 @@ host gml.noaa.gov
   host_cite https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/
   host_quote "met_brw_insitu_1_obop_hour_1998.txt"
   ttl 86400
-  probe 2026-10-25T19:15:49Z 404 https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+  probe 2026-10-26T00:00:00Z 200 https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_2026.txt
   fields TEMPERATURE
   applies https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt line=3793
   field TEMPERATURE noaa_brw_temperature_2m_c C 3600
