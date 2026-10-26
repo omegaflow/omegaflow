@@ -4563,6 +4563,26 @@ mod probe_classify_tests {
                 "surface_pressure",
                 "pressure unification → acoustic hPa; register advective hPa",
             ),
+            (
+                "air_temperature",
+                "one column, two units: register carries K (long line) and degC (short line); a name-only replay cannot hold both",
+            ),
+            (
+                "amplitude",
+                "one column, two units: register carries em/db (long line) and nT (short line)",
+            ),
+            (
+                "flux",
+                "one column, ten units: Jy, W/m2, pfu, sfu, mCrab …; the block decides",
+            ),
+            (
+                "snr",
+                "one column, two units: register carries em/1 (long line) and dB (short line)",
+            ),
+            (
+                "value",
+                "one column, five forces: advective, diffusion, electric, em, thermal; the block decides",
+            ),
         ];
         let allow_names: std::collections::HashSet<&str> =
             allowlist.iter().map(|(n, _)| *n).collect();
