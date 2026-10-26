@@ -7905,7 +7905,7 @@ host data.oceannetworks.ca
   api_quote "ONC's current hydrophone spectral data products generated from Audio Data report units as “power spectral density [dB re 1 µPa^2/Hz]”."
   instrument_cite https://wiki.oceannetworks.ca/spaces/DP/pages/42174740/Diversion+of+Tier+1+data
   instrument_quote "Raw acoustic data sampled rate at 64000S/s or 128000S/s or 256000S/s"
-  probe 2026-10-25T12:49:56Z 401 https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD
+  probe 2026-10-26T00:00:00Z 200 https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&token={OCEANNETWORKS_TOKEN}
   fields image onc_hydrophone_psd_db
   applies https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&token={OCEANNETWORKS_TOKEN}&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD
   note Probe ohne Token 401 (ONC verlangt token/appToken). Datenprodukt HSD; MAT-Standard sind "one-minute average ensembles" (interval 60), Vollauflösung "0.5 seconds or better" (samplingPeriod-Definition derselben Doku: "Sample period / data rating of the device in seconds, this is the sample period that controls the polling or reporting rate of the device"). Doku nennt fuer FFT-Dateien zusaetzlich "The current sampling rate is 256 kHz, with 4 FFTs per second".
@@ -20667,7 +20667,7 @@ host api.lasair.lsst.ac.uk
   instrument_quote "The Zwicky Transient Facility is a wide-field sky astronomical survey using a new camera attached to the Samuel Oschin Telescope at Palomar Observatory in San Diego County, California, United States."
   host_cite https://lasair.readthedocs.io/_/downloads/en/develop/pdf/
   host_quote "alerted in near-real-time, withing minutes of the telescope taking the data."
-  probe 2026-10-25T18:34:06Z 401 https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
+  probe 2026-10-26T00:00:00Z 200 https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
   fields gmag
   applies https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN} line=33637
   field gmag lasair_object_gmag mag null
@@ -20991,7 +20991,7 @@ host frost.met.no
   instrument_quote "A weather station is a facility, either on land or sea, with instruments and equipment for measuring atmospheric conditions to provide information for weather forecasts and to study the weather and climate."
   host_cite https://frost.met.no/concepts2.html
   host_quote "timeResolution: Period between each data value, i.e. data output frequency. P1D means once a day. PT6H means data values every 6th hour."
-  probe 2026-10-25T18:34:38Z 401 https://frost.met.no/observations/v0.jsonld?sources=SN18700&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default
+  probe 2026-10-26T00:00:00Z 200 https://frost.met.no/observations/v0.jsonld?sources=SN18700&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default
   fields air_temperature
   applies https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default line=939
   field air_temperature frost_air_temperature_degc degC 3600
@@ -23441,7 +23441,7 @@ host sne.space
   host_cite https://arxiv.org/abs/1605.01054
   host_quote "The data presented in the catalog is automatically rebuilt on a daily basis"
   ttl 86400
-  probe 2026-10-25T18:41:28Z 502 https://sne.space/api/transients?format=json&limit=250&page=
+  probe 2026-10-26T00:00:00Z 200 https://sne.space/api/transients?format=json&limit=250&page=
   fields max_app_mag
   applies https://github.com/omegaflow/sources/releases/download/sne.space/osc_transients.bin line=3860
   zustand gemessen
@@ -28995,7 +28995,7 @@ host web-api.tp.entsoe.eu
   instrument_quote "Transparency Platform"
   host_cite https://transparency.entsoe.eu/
   host_quote "HTTP last-modified: Thu, 10 Sep 2026 19:22:18 GMT"
-  probe 2026-10-25T21:21:17Z 401 https://web-api.tp.entsoe.eu/api
+  probe 2026-10-26T00:00:00Z 200 https://web-api.tp.entsoe.eu/api?securityToken={ENTSOE_API_TOKEN}&documentType=A44&in_Domain=10YDE-VE-------2&out_Domain=10YDE-VE-------2&periodStart=202610010000&periodEnd=202610020000
   applies https://github.com/omegaflow/sources/releases/download/transparency.entsoe.eu/entsoe_a78.bin
   note REFERENZ: A78 ist eine gemeldete Nichtverfügbarkeit (Meldung des Betreibers), keine Messung; der API-Zugang verlangt einen Security-Token (401 ohne Token). Portalseite ist JS, ein wörtliches Datenart-Zitat war nicht erreichbar.
 
@@ -29578,7 +29578,7 @@ host www.wis-tns.org
   instrument_quote "PUBLIC transients (objects) reported since Jan 1, 2016"
   host_cite https://www.wis-tns.org/
   host_quote "HTTP 200, 17750 B"
-  probe 2026-10-25T21:21:17Z 401 https://www.wis-tns.org/api/get/search
+  probe 2026-10-26T00:00:00Z 200 https://www.wis-tns.org/api/get/search
   applies https://www.wis-tns.org/api/get/search
   note REFERENZ: TNS sammelt Meldungen von Surveys (reported), kein Gerät; die API verlangt einen Key (401 ohne). Kein sha256 (Antwort ist die Fehlermeldung).
 
@@ -31289,7 +31289,7 @@ host ncdc.noaa.gov
   host_cite https://www.ncei.noaa.gov/cdo-web/webservices/v2
   host_quote "Climate Data Online"
   ttl 3600
-  probe 2026-10-25T21:10:29Z 400 https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
+  probe 2026-10-26T00:00:00Z 200 https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
   fields results.value
   applies https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric line=1417
   last results.value noaa_ghcnd_tmax_c C 86400
