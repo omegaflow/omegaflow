@@ -7413,7 +7413,7 @@ host tapvizier.cds.unistra.fr
   sampling 0.03
   interval 604800
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/A+A/594/A27?format=html
-  api_quote "168-176 F9.6 z Redshift of cluster (REDSHIFT) (5)"
+  api_quote "168-176 F9.6 --- z Redshift of cluster (REDSHIFT) (5)"
   instrument_cite https://irsa.ipac.caltech.edu/Missions/planck.html
   instrument_quote "High Frequency Instrument (HFI): 100, 143, 217, 353, 545 and 857 GHz"
   probe 2026-10-25T11:58:39Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/A%2BA/594/A27/psz2%22
@@ -12785,7 +12785,7 @@ host zenodo.org
   sampling null
   interval 0
   api_cite https://zenodo.org/records/7286412
-  api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://arxiv.org/pdf/2204.08749
   instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
   block 15397
@@ -12802,7 +12802,7 @@ host zenodo.org
   sampling null
   interval 0
   api_cite https://zenodo.org/records/7286412
-  api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://arxiv.org/pdf/2204.08749
   instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
   block 33372
@@ -13956,7 +13956,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Bordeaux_Observatory
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   field bordeaux_ccd_dec_icrs_deg bordeaux_ccd_dec_icrs_deg inverse-square geometry deg 0.0 0.0
@@ -13971,7 +13971,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/McDonald_Observatory
   instrument_quote "The then-unnamed Otto Struve Telescope was dedicated on May 5, 1939, and at that time was the second largest telescope in the world."
   field mcdonald_ccd_dec_icrs_deg mcdonald_ccd_dec_icrs_deg inverse-square geometry deg 0.0 0.0
@@ -14001,7 +14001,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Bordeaux_Observatory
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   field bordeaux_meridian_dec_icrs_arcsec bordeaux_meridian_dec_icrs_arcsec inverse-square geometry arcsec 0.0 0.0
@@ -14016,7 +14016,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west transit building at the Massachusetts Avenue site in Washington, D. C."
   field ssd_transit_dec_icrs_arcsec ssd_transit_dec_icrs_arcsec inverse-square geometry arcsec 0.0 0.0
@@ -14031,7 +14031,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west transit building at the Massachusetts Avenue site in Washington, D. C."
   field ssd_transit_dec_icrs_arcsec ssd_transit_dec_icrs_arcsec inverse-square geometry arcsec 0.0 0.0
@@ -14046,7 +14046,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west transit building at the Massachusetts Avenue site in Washington, D. C."
   field ssd_transit_dec_icrs_arcsec ssd_transit_dec_icrs_arcsec inverse-square geometry arcsec 0.0 0.0
@@ -14061,7 +14061,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval none
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "In 1944 the USNO retired its 80-year-old Nine-inch Transit Circle"
   field ssd_transit_dec_icrs_arcsec ssd_transit_dec_icrs_arcsec inverse-square geometry arcsec 0.0 0.0
@@ -18228,7 +18228,7 @@ host zenodo.org
   sampling null
   interval 0
   api_cite https://zenodo.org/records/7286412
-  api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://arxiv.org/pdf/2204.08749
   instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
   host_cite https://zenodo.org/api/records/7286412
@@ -18248,7 +18248,7 @@ host zenodo.org
   sampling null
   interval 0
   api_cite https://zenodo.org/records/7286412
-  api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://arxiv.org/pdf/2204.08749
   instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
   host_cite https://zenodo.org/api/records/7286412
@@ -18727,7 +18727,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/United_States_Naval_Observatory_Flagstaff_Station
   instrument_quote "A modern-day example of a fully_robotic transit_telescope is the small 0.20-meter (8-inch) Flagstaff Astrometric Scanning Transit Telescope (FASTT) completed in 1981 and located at the observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18745,7 +18745,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Bordeaux_Observatory
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18763,7 +18763,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/McDonald_Observatory
   instrument_quote "The then-unnamed Otto Struve Telescope was dedicated on May 5, 1939, and at that time it was the second largest telescope in the world."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18781,7 +18781,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Table_Mountain_Observatory
   instrument_quote "A 0.6 m Ritchey-Chrétien reflector built by Astro Mechanics was installed in 1966. It is attached to an off-axis German_equatorial_mount."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18799,7 +18799,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Bordeaux_Observatory
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18817,7 +18817,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west transit building at the Massachusetts Avenue site in Washington, D. C."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18835,7 +18835,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west transit building at the Massachusetts Avenue site in Washington, D. C."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18853,7 +18853,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west transit building at the Massachusetts Avenue site in Washington, D. C."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -18871,7 +18871,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "In 1944 the USNO retired its 80-year-old Nine-inch Transit Circle"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -19609,8 +19609,8 @@ host www.canfar.net
   interval null
   api_cite https://arxiv.org/html/2601.09399
   api_quote "It includes a total-intensity dynamic spectrum between 400 and 800 MHz at 0.983 ms resolution."
-  instrument_cite https://arxiv.org/html/2601.09399
-  instrument_quote "It consists of four immovable 20 m × 100 m parabolic cylinders oriented N-S, with each cylinder axis populated with 256 dual-linear-polarization antennas sensitive in the range 400–800 MHz."
+  instrument_cite https://arxiv.org/pdf/1803.11235
+  instrument_quote "The CHIME telescope (see Fig. 1) consists of four 20-m wide and 100-m long cylindrical paraboloidal reflectors."
   probe 2026-10-25T16:08:16Z 200 https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv
   fields ra
   applies https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv id=31758
@@ -20002,8 +20002,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
-  instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  instrument_quote "The registration of pulsations in the Pc1 range was conducted from July 1957 till December 1970 by a terrestrial currents installation"
+  instrument_cite https://gi.copernicus.org/articles/6/367/2017/gi-6-367-2017.pdf
+  instrument_quote "At this date, two La Cour type magnetographs were provided by the International Polar Year Commission to the National Observatory of Brazil (Gama, 1955)."
   host_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
   host_quote "1_catal.txt ... 02-Nov-1998 00:00    10k ... 57-59.txt ... 01-Apr-1997 00:00    47k ... 89-92.txt ... 01-Apr-1997 00:00   116k"
   ttl no-sampling
@@ -20031,8 +20031,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
-  instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  instrument_quote "From 1971 to 1992  the  pulsation  recording  was  made  by  inductive magnitograph."
+  instrument_cite https://gi.copernicus.org/articles/6/367/2017/gi-6-367-2017.pdf
+  instrument_quote "At this date, two La Cour type magnetographs were provided by the International Polar Year Commission to the National Observatory of Brazil (Gama, 1955)."
   host_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
   host_quote "1_catal.txt ... 02-Nov-1998 00:00    10k ... 57-59.txt ... 01-Apr-1997 00:00    47k ... 89-92.txt ... 01-Apr-1997 00:00   116k"
   ttl no-sampling
@@ -20077,8 +20077,8 @@ host vmf.geo.tuwien.ac.at
   interval 21600
   api_cite https://vmf.geo.tuwien.ac.at/products.html
   api_quote "coefficients are determined epoch-wise (00, 06, 12, 18 UT) from ray-traced delays at 3° elevation and eight equally spaced azimuth angles."
-  instrument_cite https://vmf.geo.tuwien.ac.at/products.html
-  instrument_quote "VMF3 is the successor of VMF1. ... The ray-tracing is performed through different NWM types, resulting in different versions of VMF3."
+  instrument_cite https://vmf.geo.tuwien.ac.at/documentation/Landskron%20and%20Boehm,%202018%20%20%20(VMF3+GPT3).pdf
+  instrument_quote "One of the most accurate ways of obtaining (at least approximate values of) troposphere delays is ray-tracing through numerical weather models (NWMs)."
   host_cite https://vmf.geo.tuwien.ac.at/trop_products/GRID/1x1/VMF3/VMF3_OP/2026/
   host_quote "VMF3_20260105.H00 ... 2026-01-06 18:27 ... 3.3M"
   ttl 86400
@@ -20094,8 +20094,8 @@ host vmf.geo.tuwien.ac.at
   interval 21600
   api_cite https://vmf.geo.tuwien.ac.at/products.html
   api_quote "coefficients are determined epoch-wise (00, 06, 12, 18 UT) from ray-traced delays at 3° elevation and eight equally spaced azimuth angles."
-  instrument_cite https://vmf.geo.tuwien.ac.at/products.html
-  instrument_quote "Site-wise VMF3 parameters are provided for DORIS, GNSS, and VLBI stations listed in the respective *.ell file."
+  instrument_cite https://vmf.geo.tuwien.ac.at/documentation/Landskron%20and%20Boehm,%202018%20%20%20(VMF3+GPT3).pdf
+  instrument_quote "One of the most accurate ways of obtaining (at least approximate values of) troposphere delays is ray-tracing through numerical weather models (NWMs)."
   host_cite https://vmf.geo.tuwien.ac.at/trop_products/VLBI/VMF3/VMF3_OP/daily/2026/
   host_quote "2026002.vmf3_r ... 2026-01-03 18:01 ... 84K"
   ttl 86400
@@ -20272,7 +20272,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/McDonald_Observatory
   instrument_quote "The then-unnamed Otto Struve Telescope was dedicated on May 5, 1939, and at that time was the second largest telescope in the world."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20290,7 +20290,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Table_Mountain_Observatory
   instrument_quote "A 0.6 m Ritchey-Chrétien reflector built by Astro Mechanics was installed in 1966. It is attached to an off-axis German equatorial mount."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20308,7 +20308,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://web.astronomicalheritage.net/index.php/show-entity?identity=172&
   instrument_quote "In the pavilions, the Repsold meridian circle (MCR), Repsold vertical circle (VCR), and the Carl Zeiss Jena zone astrograph (ZA) can be found, well preserved until today."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20326,7 +20326,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Bordeaux_Observatory
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20344,7 +20344,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://www.royalobservatorygreenwich.org/articles.php?article=995
   instrument_quote "The main instrument to be housed was the Cooke Reversible Transit Circle."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20362,7 +20362,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://en.wikipedia.org/wiki/Carlsberg_Meridian_Telescope
   instrument_quote "The Carlsberg Meridian Telescope (formerly the Carlsberg Automatic Meridian Circle) is a decommissioned meridian circle telescope located at the Roque de los Muchachos Observatory in the Canary Islands."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20380,7 +20380,7 @@ host ssd.jpl.nasa.gov
   sampling none
   interval 0.0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "51-59  dec. [+/-ddmmss^ss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://journals.openedition.org/cahierscfv/4086?lang=en
   instrument_quote "In 1944 the USNO retired its 80-year-old Nine-inch Transit Circle"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -20817,8 +20817,8 @@ host data.geopf.fr
   interval null
   api_cite https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=IGNF_LIDAR-HD_METADONNEE:metadata
   api_quote "<IGNF_LIDAR-HD_METADONNEE:url_mnt>https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.LAMB93"
-  instrument_cite https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=IGNF_LIDAR-HD_METADONNEE:metadata
-  instrument_quote "<IGNF_LIDAR-HD_METADONNEE:capteur>[\"RIEGL VQ-780 II-S:H2227189\"]"
+  instrument_cite https://www.riegl.com/fileadmin/media/Products/03_Airborne_Scanning/RIEGL_VQ-780_II-S/RIEGL_VQ-780II-S_Datasheet_2024-03-22.pdf
+  instrument_quote "The RIEGL VQ-780II-S is a high performance, rugged, lightweight, and compact airborne mapping sensor."
   host_cite https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=IGNF_LIDAR-HD_METADONNEE:metadata
   host_quote "<IGNF_LIDAR-HD_METADONNEE:date_edition>2025-10-14Z"
   probe 2026-10-25T18:34:17Z 200 https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=IGNF_LIDAR-HD_METADONNEE:metadata&COUNT=1
@@ -20991,8 +20991,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   api_quote "DATE    ORIGIN TIME     GEOGRAPHIC      DEPTH  MAGNITUDES SD   NO.      REGION,  CONTRIBUTED  MAGNITUDES  AND  COMMENTS / UTC  COORDINATES  GS  STA / HR MN SEC  LAT  LONG  MB  Msz  USED"
-  instrument_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
-  instrument_quote "National Earthquake Information Center / World Data Center for Seismology, Denver ... Earthquakes of magnitude 6.5 or greater or ones that caused fatalities, injuries or substantial damage. ... BRK--Berkeley.  PAS--Pasadena."
+  instrument_cite https://pubs.usgs.gov/unnumbered/70015357/report.pdf
+  instrument_quote "broadband digital seismograph network for the United States"
   host_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   host_quote "SIGNIFICANT EARTHQUAKES OF THE WORLD, 2000"
   ttl 31536000
@@ -21029,8 +21029,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
-  instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  instrument_quote "From 1971 to 1992 the pulsation recording was made by inductive magnitograph."
+  instrument_cite https://gi.copernicus.org/articles/6/367/2017/gi-6-367-2017.pdf
+  instrument_quote "At this date, two La Cour type magnetographs were provided by the International Polar Year Commission to the National Observatory of Brazil (Gama, 1955)."
   host_cite https://web.archive.org/web/20020708091700id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
   host_quote "1_catal.txt ... 02-Nov-1998 00:00    10k ... 57-59.txt ... 01-Apr-1997 00:00    47k ... 89-92.txt ... 01-Apr-1997 00:00   116k"
   ttl no-sampling
@@ -21348,8 +21348,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21367,8 +21367,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21386,8 +21386,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21405,8 +21405,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21424,8 +21424,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21443,8 +21443,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21462,8 +21462,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21481,8 +21481,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
   api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
+  instrument_cite https://www.rand.org/pubs/reports/R1647.html
+  instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
   ttl no-sampling
@@ -21649,8 +21649,8 @@ host zeus.wdcb.ru
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
-  instrument_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
-  instrument_quote "2*GSS2                                  GAIS MOSCOW,CATALOGUE"
+  instrument_cite https://www.jstage.jst.go.jp/article/jpe1952/20/3/20_3_267/_pdf
+  instrument_quote "Aboard the Vityaz a pair of Graf-Askania sea gravimeters were mounted antiparallel on a gyro-stabilized platform"
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
   host_quote "VIT51 1972 6541 5433"
   ttl no-sampling
@@ -21670,8 +21670,8 @@ host zeus.wdcb.ru
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
-  instrument_cite https://web.archive.org/web/20170409034634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku03.dat
-  instrument_quote "GRAF-ASKANIA AND GAL/GAL-F/GAL-M"
+  instrument_cite https://www.jstage.jst.go.jp/article/jpe1952/20/3/20_3_267/_pdf
+  instrument_quote "Aboard the Vityaz a pair of Graf-Askania sea gravimeters were mounted antiparallel on a gyro-stabilized platform"
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
   host_quote "AKU03 1968 111 24"
   ttl no-sampling
@@ -21794,8 +21794,8 @@ host www.gmrt.org
   unit m
   sampling none
   interval 0
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/services/
@@ -21852,8 +21852,8 @@ host zenodo.org
   interval 60
   api_cite https://zenodo.org/api/records/13309040/files/00readme.txt/content
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data. ... CMPTIM is the “compression” time, or the integration interval for the Doppler data."
-  instrument_cite https://zenodo.org/api/records/13309040/files/00readme.txt/content
-  instrument_quote "DTYPE is the Doppler type, with 13 being “3 way” Doppler, or that sent and received by different DSN stations, and 12 being two-way Doppler sent and received by the same DSN station."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19880021170/downloads/19880021170.pdf
+  instrument_quote "Deep Space Network operates and maintains the Earth-based two-way communications link for unmanned spacecraft exploring the solar system"
   host_cite https://zenodo.org/records/13309040
   host_quote "This Pioneer 11 Doppler tracking data set was created by John Anderson from NAVIO format."
   ttl no-sampling
@@ -21905,8 +21905,8 @@ host zenodo.org
   interval 86400
   api_cite https://zenodo.org/api/records/15349031/files/grdc-caravan_data_description.pdf/content
   api_quote "streamflow  Observed streamflow  Daily sum  mm/day"
-  instrument_cite https://zenodo.org/api/records/15349031/files/grdc-caravan_data_description.pdf/content
-  instrument_quote "the national station code for each gauge station"
+  instrument_cite https://www.innovativehydrology.com/WMO-No.168-1994.pdf
+  instrument_quote "Several types of non-recording gauges for measuring stage are used in hydrometric practice."
   host_cite https://zenodo.org/records/15349031
   host_quote "This dataset is an extension to Caravan, a global community dataset of meteorological forcing data, catchment attributes, and discharge data for catchments around the world"
   ttl no-sampling
@@ -21924,8 +21924,8 @@ host lmsal.com
   interval 30
   api_cite https://www.lmsal.com/solarsoft/irisa/data/level2_compressed/2014/07/08/20140708_114109_3824262996/iris_l2_20140708_114109_3824262996_raster.tar.gz
   api_quote "BTYPE   = 'Intensity' ... BUNIT   = 'Corrected DN' ... EXPTIME =              29.9987"
-  instrument_cite https://www.lmsal.com/solarsoft/irisa/data/level2_compressed/2014/07/08/20140708_114109_3824262996/iris_l2_20140708_114109_3824262996_raster.tar.gz
-  instrument_quote "TELESCOP= 'IRIS    ' ... INSTRUME= 'SPEC    ' ... OBS_DESC= 'Very large dense raster 131.7x175 400s  C II   Mg II h/k   Mg II w D'"
+  instrument_cite https://arxiv.org/pdf/1401.2491v1
+  instrument_quote "The Interface Region Imaging Spectrograph (IRIS) small explorer spacecraft provides simultaneous spectra and images of the photosphere"
   host_cite https://www.lmsal.com/solarsoft/irisa/data/level2_compressed/2014/07/08/20140708_114109_3824262996/iris_l2_20140708_114109_3824262996_raster.tar.gz
   host_quote "DATE_OBS= '2014-07-08T11:41:09.731' ... DATE_END= '2014-07-08T15:10:46.051'"
   ttl no-sampling
@@ -21941,8 +21941,8 @@ host zenodo.org
   interval 1
   api_cite https://zenodo.org/api/records/10673982
   api_quote "The columns of each CSV file correspond to the following values: ... [11] Frequency (Hz) ... [12] Signal to Noise Ration (SNR) [dB]"
-  instrument_cite https://zenodo.org/api/records/10673982
-  instrument_quote "Reverse Beacon Network (https://reversebeacon.net/)"
+  instrument_cite https://ntrs.nasa.gov/api/citations/20170007906/downloads/20170007906.pdf
+  instrument_quote "Reverse Beacon Network A network of automated radio receiver stations that listen to Amateur Radio transmissions and report what stations they hear"
   host_cite https://zenodo.org/api/records/10673982
   host_quote "This dataset contains monthy GZipped Comma Separated Value (CSV) files of data aggregated from the following amateur radio spotting networks"
   ttl no-sampling
@@ -22266,7 +22266,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
   api_quote "# CCD Astrometric Measuerements from US Naval Observatory/Flagstaff ... # 9-11 ..... J2000 RA (h,m,s) # 12-14 ..... J2000 Dec (d,m,s)"
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "#### CCD Astrometry of Outer Planets and Satellites ... * [USNO, Flagstaff](https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt)"
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
   host_quote "last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T18:51:07Z 200 https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
@@ -22573,7 +22573,7 @@ host gea.esac.esa.int
   sampling none
   interval none
   api_cite https://arxiv.org/abs/2208.00211
-  api_quote More than 150 000 Solar System objects, including new discoveries, with preliminary orbital solutions and individual epoch observations are part of this release.
+  api_quote "More than $150\,000$ Solar System objects, including new discoveries, with preliminary orbital solutions and individual epoch observations"
   instrument_cite https://www.esa.int/Science_Exploration/Space_Science/Gaia/Science_instruments
   instrument_quote Gaia’s main astrometric instrument precisely determined the positions of stars in the sky.
   host_cite https://gea.esac.esa.int/tap-server/tap/sync
@@ -22594,8 +22594,8 @@ host geodesy.unr.edu
   interval 86400
   api_cite https://geodesy.unr.edu/gps_timeseries/IGS20/tenv3/IGS20/ARDA.tenv3
   api_quote "site YYMMMDD yyyy.yyyy __MJD week d reflon _e0(m) __east(m) ____n0(m) _north(m) u0(m) ____up(m) _ant(m) sig_e(m) sig_n(m) sig_u(m)"
-  instrument_cite https://geodesy.unr.edu/gps_timeseries/IGS20/tenv3/IGS20/ARDA.tenv3
-  instrument_quote "site YYMMMDD yyyy.yyyy __MJD week d reflon _e0(m) __east(m) ____n0(m) _north(m) u0(m) ____up(m) _ant(m) sig_e(m) sig_n(m) sig_u(m)"
+  instrument_cite https://eos.org/opinions/harnessing-the-gps-data-explosion-for-interdisciplinary-science
+  instrument_quote "The Nevada Geodetic Laboratory processes data from a global network of about 17,000 geodetic GPS stations."
   host_cite https://geodesy.unr.edu/gps_timeseries/IGS20/tenv3/IGS20/ARDA.tenv3
   host_quote "HTTP Last-Modified: Fri, 26 Sep 2025 10:36:24 GMT"
   ttl 86400
@@ -22792,8 +22792,8 @@ host iopscience.iop.org
   interval none
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 1. MDIS-controlled Mariner 10 Control Network and Mosaic Results"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9."
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -22811,8 +22811,8 @@ host iopscience.iop.org
   interval none
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 2. Coordinates of the Crater Hun Kal"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9."
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -22830,8 +22830,8 @@ host iopscience.iop.org
   interval none
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 3. Mariner 10 UV/OR Ratio Values of Concentrated LRM Deposits"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9."
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -22936,8 +22936,8 @@ host kauai.ccmc.gsfc.nasa.gov
   interval 3600
   api_cite https://www.swpc.noaa.gov/products/goes-x-ray-flux
   api_quote "SWPC has used this data to produce a variety of data sets including 1-minute averages and flare lists."
-  instrument_cite https://www.swpc.noaa.gov/products/goes-x-ray-flux
-  instrument_quote "The GOES X-ray flux 6-hour and three-day plots contain 1-minute averages of solar X-rays in the 1-8 Angstrom (0.1-0.8 nm) and 0.5-4.0 Angstrom (0.05-0.4 nm) passbands."
+  instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC11582350/
+  instrument_quote "The GOES‐R series of XRS sensors, with the first in the series launched in November 2016, has a completely different instrument design"
   host_cite https://www.swpc.noaa.gov/products/goes-x-ray-flux
   host_quote "The plots on this page update dynamically every minute."
   ttl 3600
@@ -23254,8 +23254,8 @@ host pds-rings.seti.org
   interval none
   api_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw/bundle_readme.txt
   api_quote "include samples from receiver outputs at S-band (13 cm wavelength)"
-  instrument_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw/bundle_readme.txt
-  instrument_quote "54 original data tapes -- known as Original Data Records (ODRs) --"
+  instrument_cite https://descanso.jpl.nasa.gov/DPSummary/Descanso4--Voyager_ed.pdf
+  instrument_quote "The S-/X-band antenna subsystem consists of a low-gain antenna and a high-gain antenna"
   host_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
   host_quote "voyager1_rss_jupiter_raw/"
   ttl 604800
@@ -23273,8 +23273,8 @@ host planetarycomputer.microsoft.com
   interval none
   api_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   api_quote "Sentinel 1 Radiometrically Terrain Corrected (RTC)"
-  instrument_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
-  instrument_quote "C-Band"
+  instrument_cite https://esamultimedia.esa.int/multimedia/publications/SP-1322_1/SP-1322_1.pdf
+  instrument_quote "The CSAR instrument is a synthetic aperture radar operating in the C-band"
   host_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   host_quote "\"temporal\":{\"interval\":[[\"2014-10-10T00:28:21Z\",null]]}"
   ttl 604800
@@ -23307,8 +23307,8 @@ host planetarymaps.usgs.gov
   interval none
   api_cite https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.lbl
   api_quote "PixelResolution    = 166.310788000000002 <meters/pixel>"
-  instrument_cite https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.lbl
-  instrument_quote "InstrumentName          = (\"MERCURY DUAL IMAGING SYSTEM NARROW ANGLE CAMERA\","
+  instrument_cite https://link.springer.com/article/10.1007/s11214-007-9266-3
+  instrument_quote "MDIS consists of a monochrome narrow-angle camera (NAC) and a multispectral wide-angle camera (WAC)"
   host_cite https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.lbl
   host_quote "ProductId               = MDIS_BDR_256PPD_GLOBAL_8BIT"
   ttl 31536000
@@ -23341,8 +23341,8 @@ host ser.im-ldi.com
   interval none
   api_cite https://ser.im-ldi.com/M10/TXT/angles.html
   api_quote "The third line contains the camera pointing angles."
-  instrument_cite https://ser.im-ldi.com/M10/TXT/angles.html
-  instrument_quote "The first line contains the Julian Date at which the image was acquired and the FDS clock count number (which is also the image file name)."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9"
   host_cite https://ser.im-ldi.com/M10/TXT/angles.html
   host_quote "Mariner 10 Improved Camera Angles and Spacecraft Vector"
   ttl 31536000
@@ -23452,8 +23452,8 @@ host openneuro.org
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
   api_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
-  instrument_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
-  instrument_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
+  instrument_cite https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=7691542&retmode=text&rettype=abstract
+  instrument_quote "The geodesic sensor net organizes an array of sensors, each enclosed in a saline sponge, in a geodesic tension structure comprised of elastic threads"
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
@@ -23472,8 +23472,8 @@ host openneuro.org
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
   api_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
-  instrument_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
-  instrument_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
+  instrument_cite https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=7691542&retmode=text&rettype=abstract
+  instrument_quote "The geodesic sensor net organizes an array of sensors, each enclosed in a saline sponge, in a geodesic tension structure comprised of elastic threads"
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
@@ -23549,7 +23549,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
   api_quote "These represent a round-trip light time for range measurements by the NASA Deep Space Network to the Mars Reconaissance Orbiter spacecraft."
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "Spacecraft Encounter Estimates ... from spacecraft encounters with tracking data (Doppler, range, and VLBI) re-reduced in ICRF frame."
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23564,7 +23564,7 @@ host ssd.jpl.nasa.gov
   sampling 0
   interval 0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote 22-25  observatory/telescope # (see table below)
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   instrument_quote Photographic Astrometry of Outer Planets and Satellites
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -23583,7 +23583,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
   api_quote "13      Observed two-way range (one-way range times 2), in microseconds"
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "These observations have been reduced to Earth=planet vectors at a given ephemeris coordiante time"
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23617,7 +23617,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
   api_quote "# Pathfinder Differenced Range #  [tau(t+interval/2)-tau(t-interval/2)]/interval ... 21:07:30    24.1444046127    .11   60.0"
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "Mars Spacecraft Doppler (Differenced Range) [ Format ] [ References ] Viking Lander Pathfinder Lander"
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23631,7 +23631,7 @@ host ssd.jpl.nasa.gov
   sampling 0
   interval 0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "34-42  r.a. [hhmmss^sss] ... 43  equinox [0: true e&e; 3: mean 1950; 9: mean J2000]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   instrument_quote "Photographic Astrometry of Pluto [ Format ] [ References ] 1914-1969 1969-1988 1989-1995"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -23649,7 +23649,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
   api_quote # Pluto Photographic Astrometry, 1969-1988
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote 22-25  observatory/telescope # (see table below)
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23667,7 +23667,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
   api_quote # Pluto Photographic Astrometry, 1914-1969
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote 22-25  observatory/telescope # (see table below)
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23685,7 +23685,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
   api_quote "# Meridian Circle Observations, Bordeaux Observatory"
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "Meridian Circle Timings (transits) ... iBordeaux, 1985-96"
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23700,7 +23700,7 @@ host ssd.jpl.nasa.gov
   sampling 0
   interval 0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "29  type     1 => transit, geocentric ... 4 => transit, topocentric"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   instrument_quote "USNO 9&Prime;, 1913-25, 1935-45 ... Meridian Circle Timings (transits)"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -23737,7 +23737,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/vlbi_vlba_refs.txt
   api_quote "References for the VLBI and VLBA Measurements of Spacecraft at Planets ... VLBI measurements of the Magellan Spacecraft orbiting Venus"
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "Data from Magellan, Venus Express at Venus, Phobos, Mars Global Surveyor, Odyssey, Mars Reconnaisance Orbiter at Mars, and Galileo at Jupiter."
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -23752,8 +23752,8 @@ host ssd.jpl.nasa.gov
   interval 0
   api_cite https://www.cosmos.esa.int/web/gaia/dr3
   api_quote "The full contents of Gaia DR3 is described below. ... The full astrometric solution"
-  instrument_cite https://www.cosmos.esa.int/web/gaia/dr3
-  instrument_quote "The Gaia DR3 catalogue builds upon the Early Data Release 3 (released on 3 December 2020) and combines, for the same stretch of time and the same set of observations, these already-published data products"
+  instrument_cite https://arxiv.org/pdf/1609.04153
+  instrument_quote "The focal plane is depicted in Figure 4 and carries 106 charge-coupled device (CCD) detectors"
   host_cite https://www.cosmos.esa.int/web/gaia/dr3
   host_quote "Gaia DR3 ... released on 13 June 2022. The data is available from the Gaia Archive"
   ttl 0
@@ -23927,8 +23927,8 @@ host wdcb.ru
   interval 60
   api_cite https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
   api_quote "34520 37310981129H 5MSKZ             23    23    21"
-  instrument_cite https://esdb.gcras.ru/doi/2016/mag-msk-minute-values.html
-  instrument_quote The dataset contains variational minute values of geomagnetic field elements E (East), H (Horizontal), Z (Down) derived at Geomagnetic Observatory Moscow
+  instrument_cite https://esdb.wdcb.ru/doi/2016/mag-msk-minute-values.html
+  instrument_quote "The dataset contains variational minute values of geomagnetic field elements E (East), H (Horizontal), Z (Down) derived at Geomagnetic Observatory Moscow"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24585,7 +24585,7 @@ host zenodo.org
   sampling 0
   interval 0
   api_cite https://zenodo.org/records/7286412
-  api_quote "Unravelling Nature of Spin and Charge Excitations — theory and experimental data"
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://zenodo.org/
   instrument_quote "Resolving Phonons in Superconductor Bi2Sr2CaCu2O8+δ at Sub-Unit-Cell Resolution"
   host_cite https://zenodo.org/
@@ -24707,8 +24707,8 @@ host km3net.org
   interval 0
   api_cite https://vo.km3net.de/ant20_01/nu/cone/form
   api_quote "The data set corresponds to the track sample (muon neutrino candidates) of a study meant to search for a point sources with data collected from January 2007 to December 2017 by the ANTARES neutrino telescope."
-  instrument_cite https://vo.km3net.de/ant20_01/nu/cone/form
-  instrument_quote "The ANTARES neutrino telescope aims for the identification of neutrinos from cosmic accelerators."
+  instrument_cite https://arxiv.org/pdf/1104.1607
+  instrument_quote "commercially available models of large hemispherical photomultipliers"
   host_cite https://vo.km3net.de/ant20_01/nu/cone/form
   host_quote "Created 2020-06-01T00:00:00Z"
   ttl 0
@@ -24794,8 +24794,8 @@ host usgs.gov
   interval 60
   api_cite https://geomag.usgs.gov/ws/observatories/?format=json
   api_quote ""sensor_orientation":"HDZ","sensor_sampling_rate":100.0,"declination_base":5527""
-  instrument_cite https://geomag.usgs.gov/ws/observatories/?format=json
-  instrument_quote ""name":"Boulder","agency":"USGS","sensor_orientation":"HDZ","sensor_sampling_rate":100.0"
+  instrument_cite https://pubs.usgs.gov/circ/1469/circ1469.pdf
+  instrument_quote "Electronic fluxgate magnetometers, a standard empirical mapping of storm-caused geomagnetic disturbance"
   host_cite https://geomag.usgs.gov/
   host_quote "USGS Geomagnetism Program"
   ttl 0
@@ -24828,8 +24828,8 @@ host caltech.edu
   interval 120
   api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
   api_quote Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files.
-  instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
-  instrument_quote TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year …
+  instrument_cite https://arxiv.org/abs/1406.0151
+  instrument_quote "TESS will employ four wide-field optical CCD cameras to monitor at least 200,000 main-sequence dwarf stars"
   host_cite https://exoplanetarchive.ipac.caltech.edu/
   host_quote "NASA Exoplanet Archive"
   ttl 0
@@ -25190,8 +25190,8 @@ host cdsarc.cds.unistra.fr
   interval null
   api_cite https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/ReadMe
   api_quote "14-  24 F11.5  AU      a        [26/18866] Semimajor axis of the best-fit orbit … 56-  65 F10.7  deg     i        [0.18/96] Inclination"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/ReadMe
-  instrument_quote "Byte-by-byte Description of file"
+  instrument_cite https://arxiv.org/abs/1504.02900
+  instrument_quote "The Dark Energy Camera is a new imager with a 2.2-degree diameter field of view mounted at the prime focus"
   host_cite https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/ReadMe
   host_quote "J/ApJS/258/41"
   fields a
@@ -25206,8 +25206,8 @@ host cdsarc.cds.unistra.fr
   interval null
   api_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
   api_quote "1-  8  F8.4  deg     GLON      Galactic longitude … 10- 17  F8.4  deg     GLAT      Galactic latitude"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
-  instrument_quote "The Effelsberg-Bonn HI Survey (EBHIS) is a new 21-cm survey performed with the 100-m telescope at Effelsberg."
+  instrument_cite https://www.mpifr-bonn.mpg.de/en/effelsberg
+  instrument_quote "With a diameter of 100 meters, the Radio Telescope Effelsberg is one of the largest fully steerable radio telescopes on earth"
   host_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
   host_quote "(End)        Benjamin Winkel [MPIfR], Patricia Vannier [CDS]    18-Nov-2015"
   fields GLON
@@ -25222,8 +25222,8 @@ host content.cld.iop.org
   interval null
   api_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
   api_quote "Table: Values and coordinates of spectral reflectance measurements … 71- 81 F11.9  ---   UVave      UV filter spectral reflectance average … 43- 55 F13.8  deg   Long       Longitude; degrees East"
-  instrument_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
-  instrument_quote "Title: Evolution of the Mercurian Crust Recorded in Carbon"
+  instrument_cite https://link.springer.com/article/10.1007/s11214-007-9264-5
+  instrument_quote "MASCS consists of a small Cassegrain telescope with 257-mm effective focal length and a 50-mm aperture"
   host_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
   host_quote "Authors: Sonke A.J., Robinson M.S."
   fields UVave
@@ -25238,8 +25238,8 @@ host pds-ppi.igpp.ucla.edu
   interval 42
   api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
   api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position … NAME = \"DIST S/C TO EARTH\" … UNIT = \"km\" … NAME = \"Time\" … UNIT = \"seconds\""
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_quote "SPACECRAFT_NAME = \"MARINER 10\" … MISSION_PHASE_NAME = \"MERCURY ENCOUNTER I\" … INSTRUMENT_NAME = \"N/A\""
+  instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/203/203C.pdf
+  instrument_quote "The DSN ranging system measures the round-trip phase delay of a ranging signal"
   host_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
   host_quote "provided with the 42 second averaged MAG data for the M1 encounter."
   fields mariner10_position_km
@@ -25254,8 +25254,8 @@ host ssd.jpl.nasa.gov
   interval 0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
   api_quote "# Range measurements to Juno spacecraft. … 32- 48  F17.10 sec     rtlt     Round trip light time … 11- 14  I4     ---     yyyy     Year of measurement time (UTC)"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
-  instrument_quote "5-  6  I2     ---     up       DSN transmitting station ID … 8-  9  I2     ---     dn       DSN receiving station ID"
+  instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/203/203C.pdf
+  instrument_quote "The DSN ranging system measures the round-trip phase delay of a ranging signal"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
   host_quote "Current as of 15 Oct 2019"
   fields rtlt
@@ -25302,8 +25302,8 @@ host archives.esac.esa.int
   interval null
   api_cite https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
   api_quote "<name>FRAME</name> <field_number>2</field_number> <field_location unit=\"byte\">12</field_location> <data_type>ASCII_NonNegative_Integer</data_type> <description>Channel-specific continuous number of a data record</description> … <name>OBT</name> … <description>Onboard time in 2^−24 s</description>"
-  instrument_cite https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
-  instrument_quote "<name>INSTRUMENT</name> … <description>Channel identifier</description>"
+  instrument_cite https://link.springer.com/article/10.1007/s11214-017-0437-6
+  instrument_quote "ACS consists of three separate infrared spectrometers, sharing common mechanical, electrical, and thermal interfaces"
   host_cite https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
   host_quote "acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1"
   fields FRAME
@@ -25840,8 +25840,8 @@ host www.gmrt.org
   unit m
   sampling none
   interval 0
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
@@ -27236,8 +27236,8 @@ host www.gmrt.org
   unit m
   sampling null
   interval 0
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/services/
@@ -27449,8 +27449,8 @@ host www.gmrt.org
   unit m
   sampling none
   interval 0
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/services/
@@ -27494,8 +27494,8 @@ host cdsarc.cds.unistra.fr
   interval 0
   api_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
   api_quote "1-  8  F8.4  deg     GLON      Galactic longitude ... 10- 17  F8.4  deg     GLAT      Galactic latitude"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
-  instrument_quote "The Effelsberg-Bonn HI Survey (EBHIS) is a new 21-cm survey performed with the 100-m telescope at Effelsberg."
+  instrument_cite https://www.mpifr-bonn.mpg.de/en/effelsberg
+  instrument_quote "With a diameter of 100 meters, the Radio Telescope Effelsberg is one of the largest fully steerable radio telescopes on earth"
   host_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
   host_quote "(End)        Benjamin Winkel [MPIfR], Patricia Vannier [CDS]    18-Nov-2015"
   ttl no-sampling
@@ -27532,8 +27532,8 @@ host ser.im-ldi.com
   interval 0
   api_cite https://ser.im-ldi.com/M10/TXT/angles.html
   api_quote "The third line contains the camera pointing angles."
-  instrument_cite https://ser.im-ldi.com/M10/TXT/angles.html
-  instrument_quote "The first line contains the Julian Date at which the image was acquired and the FDS clock count number (which is also the image file name)."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9"
   host_cite https://ser.im-ldi.com/M10/TXT/angles.html
   host_quote "Mariner 10 Improved Camera Angles and Spacecraft Vector"
   ttl no-sampling
@@ -28489,7 +28489,7 @@ host ssd.jpl.nasa.gov
   instrument CCD camera (McDonald Observatory)
   unit h
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "         34-42  r.a. [hhmmss^sss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   instrument_quote "CCD Astrometry of Outer Planets and Satellites [ Format ] [ References ] USNO, Flagstaff Bordeaux Table Mountain McDonald misc. observations"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
@@ -28505,7 +28505,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
   api_quote "#         9-11 ..... J2000 RA  (h,m,s)"
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote "CCD Astrometry of Outer Planets and Satellites [ Format ] [ References ] USNO, Flagstaff Bordeaux Table Mountain McDonald misc. observations"
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:17:44Z 200 https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
@@ -28545,7 +28545,7 @@ host ssd.jpl.nasa.gov
   instrument photographic telescope (Mykolaiv)
   unit h
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "         34-42  r.a. [hhmmss^sss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   instrument_quote "Photographic Astrometry of Outer Planets and Satellites [ Format ] [ References ] Nikolaev misc. observatories"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
@@ -28573,7 +28573,7 @@ host ssd.jpl.nasa.gov
   instrument photographic telescope (Pluto 1989-95)
   unit h
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "         34-42  r.a. [hhmmss^sss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/plutofk5.txt
   instrument_quote "Pluto Photographic Astrometry, 1989-95"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/plutofk5.txt
@@ -28587,7 +28587,7 @@ host ssd.jpl.nasa.gov
   instrument meridian circle (Bordeaux Observatory)
   unit h
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "  29  type     1 => transit, geocentric"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
   instrument_quote "Meridian Circle Observations, Bordeaux Observatory"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
@@ -28601,7 +28601,7 @@ host ssd.jpl.nasa.gov
   instrument 9-inch transit telescope (US Naval Observatory)
   unit h
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "     7869  Washington - 9 inch"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
   instrument_quote "Meridian Circle Observations, US Naval Observatory, 9\" transit"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
@@ -28615,7 +28615,7 @@ host zenodo.org
   instrument ADRESS RIXS spectrometer
   unit eV
   api_cite https://zenodo.org/records/7286412
-  api_quote The intense spin excitations up to the over-doped regime revealed by resonant inelastic X-ray scattering bring new insights as well as problems
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://arxiv.org/pdf/2204.08749
   instrument_quote The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut
   host_cite https://zenodo.org/api/records/7286412
@@ -28891,9 +28891,9 @@ host ssd.jpl.nasa.gov
   unit deg
   interval null
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote "observatory/telescope # (see table below)"
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_mpc.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/ccd_mpc.txt
@@ -28993,9 +28993,9 @@ host ssd.jpl.nasa.gov
   unit deg
   interval null
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "34-42  r.a. [hhmmss^sss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote "Table of Observatory/Telescope Codes"
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/dat/planets/miscastrom.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/miscastrom.txt
@@ -29027,7 +29027,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
   api_quote These observations have been reduced to Earth=planet vectors at a given ephemeris coordiante time, so no light time or aberation corrections should be applied.
   instrument_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
-  instrument_quote Data from Magellan, Venus Express at Venus, Phobos, Mars Global Surveyor, Odyssey, Mars Reconnaisance Mover at Mars, and Galileo at Jupiter.
+  instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/npts3d.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/npts3d.txt
@@ -29044,9 +29044,9 @@ host ssd.jpl.nasa.gov
   unit deg
   interval null
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296, Pasadena, CA."
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote "51-59  dec. [+/-ddmmss^ss]"
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
@@ -29093,7 +29093,7 @@ host ssd.jpl.nasa.gov
   sampling null
   interval null
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_quote "34-42  r.a. [hhmmss^sss]"
+  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt
   instrument_quote "# Meridian Circle Observations, RGO, Herstmonceux"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt
@@ -29113,7 +29113,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
   api_quote "# (Updated Aug 20, 1999 : observations now referred to ICRF)"
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
-  instrument_quote "# Meridian Circle Observations, La Palma Observatory, RGO"
+  instrument_quote "# (Updated Aug 20, 1999 : observations now referred to ICRF)"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
@@ -29159,7 +29159,7 @@ host tapvizier.cds.unistra.fr
   sampling null
   interval null
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/A+A/594/A27?format=html
-  api_quote MSZ ?=0 SZ mass proxy (MSZ)
+  api_quote "168-176 F9.6 --- z Redshift of cluster (REDSHIFT) (5)"
   instrument_cite https://arxiv.org/html/1502.01598v1
   instrument_quote The Planck High-Frequency Instrument (HFI) is unique in providing high-precision data for both the increment and the decrement across the whole sky.
   host_cite https://cdsarc.cds.unistra.fr/viz-bin/cat/J/A+A/594/A27
@@ -29275,9 +29275,9 @@ host zenodo.org
   unit eV
   interval null
   api_cite https://zenodo.org/records/7286412
-  api_quote "The nature of the spin excitations in superconducting cuprates is a key question"
+  api_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   instrument_cite https://zenodo.org/records/7286412
-  instrument_quote "resonant inelastic X-ray scattering"
+  instrument_quote "Unravelling the Nature of the Spin Excitations Disentangled from the Charge Contributions in a Doped Cuprate Superconductor"
   host_cite https://zenodo.org/records/7286412
   host_quote "HTTP 200, Record 7286412"
   probe 2026-10-26T00:00:00Z 200 https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
@@ -29307,8 +29307,8 @@ host www.gmrt.org
   unit m
   sampling null
   interval null
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/services/
@@ -29462,8 +29462,8 @@ host pds-rings.seti.org
   interval 0
   api_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw/bundle_readme.txt
   api_quote "include samples from receiver outputs at S-band (13 cm wavelength)"
-  instrument_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw/bundle_readme.txt
-  instrument_quote "54 original data tapes -- known as Original Data Records (ODRs) --"
+  instrument_cite https://descanso.jpl.nasa.gov/DPSummary/Descanso4--Voyager_ed.pdf
+  instrument_quote "The S-/X-band antenna subsystem consists of a low-gain antenna and a high-gain antenna"
   host_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
   host_quote "voyager1_rss_jupiter_raw/"
   ttl 604800
@@ -29658,8 +29658,8 @@ host iopscience.iop.org
   interval 0
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 1. MDIS-controlled Mariner 10 Control Network and Mosaic Results"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9"
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -29677,8 +29677,8 @@ host iopscience.iop.org
   interval 0
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 2. Coordinates of the Crater Hun Kal"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9"
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -29714,7 +29714,7 @@ host gea.esac.esa.int
   sampling null
   interval 0
   api_cite https://arxiv.org/abs/2208.00211
-  api_quote More than 150 000 Solar System objects, including new discoveries, with preliminary orbital solutions and individual epoch observations are part of this release.
+  api_quote "More than $150\,000$ Solar System objects, including new discoveries, with preliminary orbital solutions and individual epoch observations"
   instrument_cite https://www.esa.int/Science_Exploration/Space_Science/Gaia/Science_instruments
   instrument_quote Gaia’s main astrometric instrument precisely determined the positions of stars in the sky.
   host_cite https://gea.esac.esa.int/tap-server/tap/sync
@@ -29775,8 +29775,8 @@ host planetarycomputer.microsoft.com
   interval 0
   api_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   api_quote "Sentinel 1 Radiometrically Terrain Corrected (RTC)"
-  instrument_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
-  instrument_quote "C-Band"
+  instrument_cite https://esamultimedia.esa.int/multimedia/publications/SP-1322_1/SP-1322_1.pdf
+  instrument_quote "The CSAR instrument is a synthetic aperture radar operating in the C-band"
   host_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   host_quote "\"temporal\":{\"interval\":[[\"2014-10-10T00:28:21Z\",null]]}"
   ttl 604800
@@ -29873,7 +29873,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
   api_quote # Pluto Photographic Astrometry, 1969-1988
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote 22-25  observatory/telescope # (see table below)
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -29893,7 +29893,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
   api_quote # Pluto Photographic Astrometry, 1914-1969
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote 22-25  observatory/telescope # (see table below)
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -30090,8 +30090,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
-  instrument_quote "3*AMG                                   IFZ CATALOGUE"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -30112,8 +30112,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
-  instrument_quote "4*AMG (IFZ AN USSR)           10111213  IFZ AN (MAGNETIC TAPE)"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -30133,8 +30133,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
-  instrument_quote "3*AMG                                   IPE AC.SC. USSR"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
@@ -30195,8 +30195,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20020624191812id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_7.txt
   api_quote 2000 0128 1421 3.7  42.96 N 146.81 E  33  6.9  7.1  7.1 Off Coast of Hokkaido, Japan
-  instrument_cite https://web.archive.org/web/20020624191812id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_7.txt
-  instrument_quote Origin_time        Lat.    Long.   h  MPSP MPLP  MS         Region
+  instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_3.html
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
   host_cite http://www.wdcb.ru/sep/seismology/cat_OBN.html
   host_quote "The Seismological Catalogue is published every ten days and contains data on the main parameters of earthquake sources, for which the minimum magnitude estimates M for body and surface waves are: - for territory of Russia M > 4.0; - for territory of Northern Eurasia M > 4.5; - for other territory of the world M > 5.5 (+/-0.3)."
   ttl 864000
@@ -30236,8 +30236,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
-  instrument_quote "2*GSS2                                  GAIS MOSCOW,CATALOGUE"
+  instrument_cite https://link.springer.com/article/10.1007/BF00305295
+  instrument_quote "With knowledge of the response characteristics of the Graf-Askania Gss2, No. 11 gravity meter"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -30494,8 +30494,8 @@ host zenodo.org
   unit mag
   sampling null
   interval 0
-  api_cite https://zenodo.org/api/records/17086764/files/KiDS_DR4_brightsample.fits/content
-  api_quote <FIELD datatype="double" name="MAG_AUTO_CALIB" unit="mag"/>
+  api_cite https://kids.strw.leidenuniv.nl/DR4/brightsample.php
+  api_quote "Zero-point calibrated and extinction-corrected Kron-like elliptical aperture magnitude in the r band; MAG_AUTO_calib = MAG_AUTO + DMAG – EXTINCTION_R"
   instrument_cite https://arxiv.org/pdf/1902.11265
   instrument_quote The Kilo-Degree Survey (KiDS) is an ongoing optical wide-field imaging survey with the OmegaCAM camera at the VLT Survey Telescope, specifically designed for measuring weak gravitational lensing by galaxies and large-scale structure.
   host_cite https://zenodo.org/records/17086764
@@ -30806,8 +30806,8 @@ host caltech.edu
   interval 120
   api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
   api_quote Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files.
-  instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
-  instrument_quote TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year …
+  instrument_cite https://archive.stsci.edu/files/live/sites/mast/files/home/missions-and-data/active-missions/tess/_documents/TESS_Instrument_Handbook_v0.1.pdf
+  instrument_quote "The TESS instrument consists of four wide-field CCD cameras"
   host_cite https://exoplanetarchive.ipac.caltech.edu/
   host_quote "NASA Exoplanet Archive"
   ttl 0
@@ -30921,8 +30921,8 @@ host pds-rings.seti.org
   interval 0
   api_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw/bundle_readme.txt
   api_quote "include samples from receiver outputs at S-band (13 cm wavelength)"
-  instrument_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw/bundle_readme.txt
-  instrument_quote "54 original data tapes -- known as Original Data Records (ODRs) --"
+  instrument_cite https://descanso.jpl.nasa.gov/DPSummary/Descanso4--Voyager_new.pdf
+  instrument_quote "The S-/X-band antenna subsystem consists of a low-gain antenna and a high-gain antenna"
   host_cite https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
   host_quote "voyager1_rss_jupiter_raw/"
   ttl 604800
@@ -31194,8 +31194,8 @@ host iopscience.iop.org
   interval 0
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 1. MDIS-controlled Mariner 10 Control Network and Mosaic Results"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1973-085A-01
+  instrument_quote "each attached to a GEC 1 inch vidicon tube camera"
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -31213,8 +31213,8 @@ host iopscience.iop.org
   interval 0
   api_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   api_quote "Table 2. Coordinates of the Crater Hun Kal"
-  instrument_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
-  instrument_quote "The majority of Mariner 10 color-filter images, in contrast to the CLR-filter images, did not have valid preexisting SPICE data."
+  instrument_cite https://nssdc.gsfc.nasa.gov/nmc/experiment/display.action?id=1973-085A-01
+  instrument_quote "each attached to a GEC 1 inch vidicon tube camera"
   host_cite https://iopscience.iop.org/article/10.3847/PSJ/ae32f5
   host_quote "A machine-readable version of the full table is available."
   ttl 31536000
@@ -31250,7 +31250,7 @@ host gea.esac.esa.int
   sampling null
   interval 0
   api_cite https://arxiv.org/abs/2208.00211
-  api_quote More than 150 000 Solar System objects, including new discoveries, with preliminary orbital solutions and individual epoch observations are part of this release.
+  api_quote "More than $150\,000$ Solar System objects, including new discoveries, with preliminary orbital solutions and individual epoch observations"
   instrument_cite https://www.esa.int/Science_Exploration/Space_Science/Gaia/Science_instruments
   instrument_quote Gaia’s main astrometric instrument precisely determined the positions of stars in the sky.
   host_cite https://gea.esac.esa.int/tap-server/tap/sync
@@ -31311,8 +31311,8 @@ host planetarycomputer.microsoft.com
   interval 0
   api_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   api_quote "Sentinel 1 Radiometrically Terrain Corrected (RTC)"
-  instrument_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
-  instrument_quote "C-Band"
+  instrument_cite https://earth.esa.int/eogateway/documents/20142/0/Sentinel-1-ESA's-Radar-Observatory-Mission-for-GMES-Operational-Services.pdf
+  instrument_quote "The CSAR instrument is a synthetic aperture radar operating in the C-band"
   host_cite https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc
   host_quote "\"temporal\":{\"interval\":[[\"2014-10-10T00:28:21Z\",null]]}"
   ttl 604800
@@ -31409,7 +31409,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
   api_quote # Pluto Photographic Astrometry, 1969-1988
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote 22-25  observatory/telescope # (see table below)
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -31429,7 +31429,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
   api_quote # Pluto Photographic Astrometry, 1914-1969
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_quote 22-25  observatory/telescope # (see table below)
+  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech"
   ttl 0
@@ -31566,8 +31566,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
-  instrument_quote "4*AMG (IFZ AN USSR)           10111213  IFZ AN (MAGNETIC TAPE)"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -31626,8 +31626,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
-  instrument_quote "3*AMG                                   IFZ CATALOGUE"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -31648,8 +31648,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
-  instrument_quote "4*AMG (IFZ AN USSR)           10111213  IFZ AN (MAGNETIC TAPE)"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -31669,8 +31669,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
-  instrument_quote "3*AMG                                   IPE AC.SC. USSR"
+  instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
+  instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
@@ -31731,8 +31731,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20020624191812id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_7.txt
   api_quote 2000 0128 1421 3.7  42.96 N 146.81 E  33  6.9  7.1  7.1 Off Coast of Hokkaido, Japan
-  instrument_cite https://web.archive.org/web/20020624191812id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_7.txt
-  instrument_quote Origin_time        Lat.    Long.   h  MPSP MPLP  MS         Region
+  instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_3.html
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
   host_cite http://www.wdcb.ru/sep/seismology/cat_OBN.html
   host_quote "The Seismological Catalogue is published every ten days and contains data on the main parameters of earthquake sources, for which the minimum magnitude estimates M for body and surface waves are: - for territory of Russia M > 4.0; - for territory of Northern Eurasia M > 4.5; - for other territory of the world M > 5.5 (+/-0.3)."
   ttl 864000
@@ -31772,8 +31772,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
-  instrument_quote "2*GSS2                                  GAIS MOSCOW,CATALOGUE"
+  instrument_cite https://link.springer.com/article/10.1007/BF00305295
+  instrument_quote "With knowledge of the response characteristics of the Graf-Askania Gss2, No. 11 gravity meter"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   host_cite https://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -32030,8 +32030,8 @@ host zenodo.org
   unit mag
   sampling null
   interval 0
-  api_cite https://zenodo.org/api/records/17086764/files/KiDS_DR4_brightsample.fits/content
-  api_quote <FIELD datatype="double" name="MAG_AUTO_CALIB" unit="mag"/>
+  api_cite https://kids.strw.leidenuniv.nl/DR4/brightsample.php
+  api_quote "Zero-point calibrated and extinction-corrected Kron-like elliptical aperture magnitude in the r band; MAG_AUTO_calib = MAG_AUTO + DMAG – EXTINCTION_R"
   instrument_cite https://arxiv.org/pdf/1902.11265
   instrument_quote The Kilo-Degree Survey (KiDS) is an ongoing optical wide-field imaging survey with the OmegaCAM camera at the VLT Survey Telescope, specifically designed for measuring weak gravitational lensing by galaxies and large-scale structure.
   host_cite https://zenodo.org/records/17086764
@@ -32342,8 +32342,8 @@ host caltech.edu
   interval 120
   api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
   api_quote Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files.
-  instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
-  instrument_quote TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year …
+  instrument_cite https://archive.stsci.edu/files/live/sites/mast/files/home/missions-and-data/active-missions/tess/_documents/TESS_Instrument_Handbook_v0.1.pdf
+  instrument_quote "The TESS instrument consists of four wide-field CCD cameras"
   host_cite https://exoplanetarchive.ipac.caltech.edu/
   host_quote "NASA Exoplanet Archive"
   ttl 0
@@ -32401,8 +32401,8 @@ host aviationweather.gov
   interval 0
   api_cite https://aviationweather.gov/help/data/
   api_quote "ttt is the temperature in Celsius"
-  instrument_cite https://aviationweather.gov/help/data/
-  instrument_quote "Pilot and aircraft reports"
+  instrument_cite https://skybrary.aero/sites/default/files/bookshelf/3689.pdf
+  instrument_quote "AMDAR records meteorological data that is measured by the aircraft’s existing sensors"
   host_cite https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
   host_quote "cache-control: max-age=60"
   ttl 60
@@ -32420,8 +32420,8 @@ host aviationweather.gov
   interval 0
   api_cite https://aviationweather.gov/help/data/
   api_quote "ttt is the temperature in Celsius"
-  instrument_cite https://aviationweather.gov/help/data/
-  instrument_quote "Pilot and aircraft reports"
+  instrument_cite https://skybrary.aero/sites/default/files/bookshelf/3689.pdf
+  instrument_quote "AMDAR records meteorological data that is measured by the aircraft’s existing sensors"
   host_cite https://aviationweather.gov/api/data/pirep?id=KJFK&distance=2000&format=json&age=6
   host_quote "cache-control: max-age=60"
   ttl 60
@@ -32514,8 +32514,8 @@ host www.gmrt.org
   unit m
   sampling none
   interval 0
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/about/terms_of_use.php
@@ -32554,8 +32554,8 @@ host cdsarc.cds.unistra.fr
   interval 0
   api_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
   api_quote "1-  8  F8.4  deg     GLON      Galactic longitude"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/ReadMe
-  instrument_quote "The Effelsberg-Bonn HI Survey (EBHIS) is a new 21-cm survey performed with the 100-m telescope at Effelsberg."
+  instrument_cite https://arxiv.org/abs/1005.4604
+  instrument_quote "an L-band 7-Feed-Array receiver is used for a 21-cm line survey performed with the 100-m telescope"
   host_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/hpx/HPX_190.fit
   host_quote "EXTNAME = 'EBHIS-HPX'"
   ttl no-sampling
@@ -32630,8 +32630,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval."
-  instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  instrument_quote "The catalogue contains the very full for the time being summary of basic data on the geomagnetic pulsations with periods from 0.2 to 5.0 seconds."
+  instrument_cite https://www.nature.com/articles/144827c0
+  instrument_quote "A SENSITIVE induction magnetograph for measuring the time-rate dH/dt of the horizontal component of the earth's magnetic field"
   host_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   host_quote "Catalogue of geomagnetic pulsations of Pc1 type on observation data at observatory Borok"
   ttl no-sampling
@@ -32935,8 +32935,8 @@ host web.archive.org
   interval 60
   api_cite https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
   api_quote "DATA-1..DATA-60 are one-minute values"
-  instrument_cite https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  instrument_quote "One-Minute Geomagnetic Data"
+  instrument_cite https://gi.copernicus.org/articles/6/487/2017/
+  instrument_quote "typical fluxgate magnetometers used at geomagnetic observatories"
   host_cite https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
   host_quote "MSK9811"
   ttl no-sampling
@@ -33150,8 +33150,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20040919074245id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/New_cat.ru.html
   api_quote "48- 49  MAG      Magnitude (as a rule, surface-wave, horizontal compo-nent or transformed to it)."
-  instrument_cite https://web.archive.org/web/20040919074245id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/New_cat.ru.html
-  instrument_quote "Новый каталог сильных землетрясений на территории СССР"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20130426203510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat004.dat
   host_quote "IFZ104-2000"
   ttl no-sampling
@@ -33169,8 +33169,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20160428111806id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT.dat
   host_quote "19620104141527.2    51.77  91.25"
   ttl no-sampling
@@ -33188,8 +33188,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20161007182100id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT9299.dat
   host_quote "1992 1 1012418.7"
   ttl no-sampling
@@ -33207,8 +33207,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20170817132607id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CAU.dat
   host_quote "19620101000853"
   ttl no-sampling
@@ -33226,8 +33226,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20161007182250id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CAU9200.dat
   host_quote "1992"
   ttl no-sampling
@@ -33245,8 +33245,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20160428152634id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRM.dat
   host_quote "19620218180740"
   ttl no-sampling
@@ -33264,8 +33264,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20160427192236id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRP.dat
   host_quote "1962"
   ttl no-sampling
@@ -33283,8 +33283,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20160428152650id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_MAK.dat
   host_quote "19620101000853"
   ttl no-sampling
@@ -33302,8 +33302,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20160427210257id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_NTS.dat
   host_quote "19620105022834"
   ttl no-sampling
@@ -33321,8 +33321,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
   api_quote "39-42   энергетический класс с точностью до 0.1"
-  instrument_cite https://web.archive.org/web/20111224040925id_/http://zeus.wdcb.ru/wdcb/sep/hp/seismology.ru/cat_USSR.ru.html
-  instrument_quote "В каталоге содержатся определения координат и глубин гипоцентров, а также значения магнитуд и энергетического класса событий"
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20160427201745id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_TRM.dat
   host_quote "19620101000853"
   ttl no-sampling
@@ -33340,8 +33340,8 @@ host web.archive.org
   interval 0
   api_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   api_quote "DATE    ORIGIN TIME     GEOGRAPHIC      DEPTH  MAGNITUDES SD   NO."
-  instrument_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
-  instrument_quote "Earthquakes of magnitude 6.5 or greater or ones that caused fatalities, injuries or substantial damage."
+  instrument_cite https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07C0004_Final.pdf
+  instrument_quote "The STsR-SS system consists of a 3-component, short-period seismometer – SKM-3 (Kirnos high-gain)"
   host_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   host_quote "SIGNIFICANT EARTHQUAKES OF THE WORLD, 2000"
   ttl no-sampling
@@ -33376,8 +33376,8 @@ host www.gmrt.org
   unit m
   sampling none
   interval 0
-  api_cite https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=netcdf
-  api_quote z_range | units | Elevation (m)
+  api_cite https://www.gmrt.org/services/gridserverinfo.php
+  api_quote "Requested data may be up to 2GB, or approximately 20 by 20 degrees at 100 meters per node (maximum available resolution)."
   instrument_cite https://www.gmrt.org/about/
   instrument_quote By transforming decades of multibeam sonar surveys into a seamless global map, GMRT helps advance ocean exploration, natural hazard assessment, marine resource management, scientific discovery, and national ocean mapping priorities.
   host_cite https://www.gmrt.org/about/terms_of_use.php
@@ -33417,8 +33417,8 @@ host dhm.gov.np
   interval 600
   api_cite https://web.archive.org/web/20261004054615id_/https://dhm.gov.np/hydrology/hms-Single/4913
   api_quote "Water Level"
-  instrument_cite https://web.archive.org/web/20261004054615id_/https://dhm.gov.np/hydrology/hms-Single/4913
-  instrument_quote "Hydrological Station with RLS"
+  instrument_cite https://www.hydrology.nl/images/docs/hwrp/WMO_Guide_168_Vol_I_en.pdf
+  instrument_quote "Many different types of continuously recording stage gauges are in use."
   host_cite https://web.archive.org/web/20261004054615id_/https://dhm.gov.np/hydrology/hms-Single/4913
   host_quote "Bhotekoshi at Rasuwagadi"
   ttl 600
@@ -33491,8 +33491,8 @@ host exoplanetarchive.ipac.caltech.edu
   interval 120
   api_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
   api_quote "Aperture photometry is performed on each image, creating an array of fluxes; these are known as Light Curve (LC) files."
-  instrument_cite https://outerspace.stsci.edu/spaces/TESS/pages/14563420/2.0+-+Data+Product+Overview
-  instrument_quote "TESS obtains time-series photometry at a few different cadences with a baseline ranging from ~27 days to a full year"
+  instrument_cite https://archive.stsci.edu/files/live/sites/mast/files/home/missions-and-data/active-missions/tess/_documents/TESS_Instrument_Handbook_v0.1.pdf
+  instrument_quote "The TESS instrument consists of four wide-field CCD cameras"
   host_cite https://exofop.ipac.caltech.edu/tess/pcp.php
   host_quote "TESS Follow-up Observing Program"
   ttl 604800

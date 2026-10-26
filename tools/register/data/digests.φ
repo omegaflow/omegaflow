@@ -1,0 +1,2 @@
+# digests - Aussagen je Dokument (Feld, Einheit, Takt, Geraet) mit woertlichem Zitat
+# Aufbau: doc <url> / kind / sha256 / fetched / claim <art> <werte> "<zitat>"

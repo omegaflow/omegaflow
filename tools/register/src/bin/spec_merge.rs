@@ -3980,6 +3980,415 @@ fn entry_audit() {
     println!("entry-audit: {host_in_block} host-Zeilen in Bloecken, {multi_applies} Bloecke mit mehreren applies, {multi_block} mit mehreren block");
 }
 
+fn block_list() {
+    let reg = fs::read_to_string(REG).expect("register");
+    println!("line\thost\tapplies\tfields\tinstrument\tunit\tinterval\tsampling\tapi_cite\tinstrument_cite");
+    for (start, b) in blocks(&reg) {
+        let one = |k: &str| or_empty(field(&b, k));
+        let fields: Vec<String> = b
+            .iter()
+            .filter(|l| l.trim_start().starts_with("fields "))
+            .map(|l| l.trim_start()["fields ".len()..].trim().to_string())
+            .collect();
+        println!(
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+            start + 1,
+            one("host"),
+            one("applies"),
+            fields.join(" "),
+            one("instrument"),
+            one("unit"),
+            one("interval"),
+            one("sampling"),
+            one("api_cite"),
+            one("instrument_cite")
+        );
+    }
+}
+
+fn doc_audit() {
+    let reg = fs::read_to_string(REG).expect("register");
+    let (mut same, mut empty_api, mut empty_instr, mut total) = (0usize, 0usize, 0usize, 0usize);
+    for (start, b) in blocks(&reg) {
+        total += 1;
+        let a = or_empty(field(&b, "api_cite"));
+        let i = or_empty(field(&b, "instrument_cite"));
+        if a.is_empty() {
+            empty_api += 1;
+        }
+        if i.is_empty() {
+            empty_instr += 1;
+        }
+        if !a.is_empty() && a == i {
+            same += 1;
+            if same <= 20 {
+                println!("GLEICH\t{}\t{}\t{}", start + 1, or_empty(field(&b, "host")), a);
+            }
+        }
+    }
+    println!("doc-audit: {total} Bloecke, {same} mit gleichem Dokument fuer Daten und Geraet, {empty_api} ohne api_cite, {empty_instr} ohne instrument_cite");
+}
+
+const DIGESTS: &str = "tools/register/data/digests.φ";
+
+struct Digest {
+    claims: Vec<(String, Vec<String>, String)>,
+}
+
+fn load_digests() -> BTreeMap<String, Digest> {
+    let text = match fs::read_to_string(DIGESTS) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    let mut out: BTreeMap<String, Digest> = BTreeMap::new();
+    for (_, b) in blocks(&text) {
+        let url = match b.first() {
+            Some(l) if l.starts_with("doc ") => l[4..].trim().to_string(),
+            _ => continue,
+        };
+        let mut claims: Vec<(String, Vec<String>, String)> = Vec::new();
+        for line in b.iter().skip(1) {
+            let t = line.trim_start();
+            if !t.starts_with("claim ") {
+                continue;
+            }
+            let rest = &t["claim ".len()..];
+            let kind = match rest.split_whitespace().next() {
+                Some(k) => k.to_string(),
+                None => continue,
+            };
+            let body = rest[kind.len()..].trim();
+            let quote = match body.rfind('"') {
+                Some(end) => {
+                    match body[..end].rfind('"') {
+                        Some(begin) => {
+                            let q = body[begin + 1..end].to_string();
+                            (body[..begin].to_string(), q)
+                        }
+                        None => (body.to_string(), String::new()),
+                    }
+                }
+                None => (body.to_string(), String::new()),
+            };
+            let parts: Vec<String> = quote.0.split_whitespace().map(|s| s.to_string()).collect();
+            claims.push((kind, parts, quote.1));
+        }
+        out.insert(url, Digest { claims });
+    }
+    out
+}
+
+fn claim_unit(claims: &[(String, Vec<String>, String)], key: &str) -> Option<String> {
+    for (kind, parts, _) in claims {
+        if kind != "column" {
+            continue;
+        }
+        match parts.first() {
+            Some(k) if k.eq_ignore_ascii_case(key) => {
+                return Some(match parts.get(1) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                })
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+fn claim_cadence(claims: &[(String, Vec<String>, String)], key: &str) -> Option<String> {
+    for (kind, parts, _) in claims {
+        if kind != "column" {
+            continue;
+        }
+        match parts.first() {
+            Some(k) if k.eq_ignore_ascii_case(key) => {
+                return Some(match parts.get(2) { Some(v) => v.clone(), None => String::new() })
+            }
+            _ => {}
+        }
+    }
+    for (kind, parts, _) in claims {
+        if kind == "cadence" {
+            return Some(match parts.first() { Some(v) => v.clone(), None => String::new() });
+        }
+    }
+    None
+}
+
+fn claims_device(claims: &[(String, Vec<String>, String)]) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    for (kind, parts, _) in claims {
+        if kind == "device" || kind == "instrument" {
+            if let Some(v) = parts.first() {
+                out.push(v.to_lowercase());
+            }
+        }
+    }
+    out
+}
+
+fn check_blocks() {
+    let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let (mut ok, mut no_digest, mut no_field, mut unit_bad, mut cadence_bad, mut device_bad, mut one_doc) =
+        (0usize, 0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
+    for (start, b) in blocks(&reg) {
+        let host = or_empty(field(&b, "host"));
+        let api = or_empty(field(&b, "api_cite"));
+        let instr = or_empty(field(&b, "instrument_cite"));
+        let mut keys: Vec<String> = Vec::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut it = t.split_whitespace();
+            match it.next() {
+                Some("field") => {
+                    if let Some(k) = it.next() {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("fields") => {
+                    for k in it {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("last") => {
+                    let rest: Vec<&str> = it.collect();
+                    if let Some(k) = rest.get(1) {
+                        keys.push(k.to_string());
+                    }
+                }
+                _ => {}
+            }
+        }
+        if !api.is_empty() && api == instr {
+            one_doc += 1;
+            println!("EIN-DOKUMENT\t{}\t{host}\t{api}", start + 1);
+            continue;
+        }
+        let d_api = digests.get(&api);
+        let d_instr = digests.get(&instr);
+        if d_api.is_none() || d_instr.is_none() {
+            no_digest += 1;
+            continue;
+        }
+        let d_api = match d_api {
+            Some(d) => d,
+            None => continue,
+        };
+        let d_instr = match d_instr {
+            Some(d) => d,
+            None => continue,
+        };
+        let unit = or_empty(field(&b, "unit"));
+        let interval = or_empty(field(&b, "interval"));
+        let mut verdict = "ok";
+        let mut detail = String::new();
+        if keys.is_empty() {
+            verdict = "KEIN-FELD";
+        } else {
+            for key in &keys {
+                let cu = claim_unit(&d_api.claims, key);
+                match cu {
+                    None => {
+                        verdict = "KEIN-FELD";
+                        detail = format!("{key} fehlt im Datendokument");
+                        break;
+                    }
+                    Some(cu) => {
+                        if keys.len() == 1 && !cu.is_empty() && !unit.is_empty() && !unit.contains(&cu) {
+                            verdict = "EINHEIT";
+                            detail = format!("{key}: Dokument {cu}, Block {unit}");
+                            break;
+                        }
+                        if let Some(cc) = claim_cadence(&d_api.claims, key) {
+                            if cc != "null" && interval != "null" && !interval.is_empty() && cc != interval {
+                                verdict = "TAKT";
+                                detail = format!("{key}: Dokument {cc}, Block {interval}");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if verdict == "ok" {
+            let device = or_empty(field(&b, "instrument")).to_lowercase();
+            let devices = claims_device(&d_instr.claims);
+            let hit = devices.iter().any(|d| {
+                !d.is_empty() && (device.contains(d.as_str()) || d.contains(device.as_str()))
+            });
+            if !hit && !device.is_empty() {
+                verdict = "GERAET";
+                detail = format!("device {device} not named in the instrument paper");
+            }
+        }
+        match verdict {
+            "ok" => ok += 1,
+            "KEIN-FELD" => no_field += 1,
+            "EINHEIT" => unit_bad += 1,
+            "TAKT" => cadence_bad += 1,
+            "GERAET" => device_bad += 1,
+            _ => {}
+        }
+        if verdict != "ok" {
+            println!("{verdict}\t{}\t{host}\t{detail}", start + 1);
+        }
+    }
+    println!(
+        "check-blocks: {ok} ok, {no_digest} without digest, {one_doc} with one document, {no_field} no field, {unit_bad} unit, {cadence_bad} cadence, {device_bad} device"
+    );
+}
+
+fn digest_fetch(url: &str) {
+    let out = Command::new("curl")
+        .args(["-sSL", "--max-time", "60", url])
+        .output();
+    let raw = match out {
+        Ok(o) => o.stdout,
+        Err(_) => Vec::new(),
+    };
+    if raw.is_empty() {
+        println!("digest-fetch: keine Antwort von {url}");
+        return;
+    }
+    let tmp = std::env::temp_dir().join(format!("dig-{}", std::process::id()));
+    let _ = fs::write(&tmp, &raw);
+    let hash = match Command::new("sha256sum").arg(&tmp).output() {
+        Ok(o) => String::from_utf8_lossy(&o.stdout)
+            .split_whitespace()
+            .next()
+            .unwrap_or("")
+            .to_string(),
+        Err(_) => String::new(),
+    };
+    let mut text = String::from_utf8_lossy(&raw).to_string();
+    if raw.starts_with(b"%PDF") || url.to_lowercase().ends_with(".pdf") {
+        if let Ok(o) = Command::new("pdftotext")
+            .args(["-layout", &tmp.to_string_lossy(), "-"])
+            .output()
+        {
+            text = String::from_utf8_lossy(&o.stdout).to_string();
+        }
+    } else if raw.starts_with(b"PK\x03\x04") || url.to_lowercase().ends_with(".zip") {
+        if let Ok(o) = Command::new("unzip").args(["-p", &tmp.to_string_lossy()]).output() {
+            text = String::from_utf8_lossy(&o.stdout).to_string();
+        }
+    }
+    let _ = fs::remove_file(&tmp);
+    let dir = "scratch/docs-cache";
+    let _ = fs::create_dir_all(dir);
+    let path = format!("{dir}/{hash}.txt");
+    let _ = fs::write(&path, &text);
+    println!("digest-fetch: {url} -> {path} ({} Bytes Text)", text.len());
+}
+
+fn coord_audit() {
+    let phi = fs::read_to_string(PHI).expect("phi");
+    let (mut total, mut with_at, mut with_sky, mut with_ground, mut with_epoch, mut with_map, mut none) =
+        (0usize, 0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
+    for (_, b) in blocks(&phi) {
+        if !b.iter().any(|l| l.starts_with("url ")) {
+            continue;
+        }
+        total += 1;
+        let has = |k: &str| b.iter().any(|l| l.starts_with(&format!("{k} ")));
+        let at = has("at");
+        let sky = has("ra") || has("dec");
+        let ground = has("lat") || has("lon") || has("station") || has("cgm_lat");
+        let epoch = has("epoch");
+        let map = has("map");
+        if at {
+            with_at += 1;
+        }
+        if sky {
+            with_sky += 1;
+        }
+        if ground {
+            with_ground += 1;
+        }
+        if epoch {
+            with_epoch += 1;
+        }
+        if map {
+            with_map += 1;
+        }
+        if !(at || sky || ground || epoch || map) {
+            none += 1;
+        }
+    }
+    println!("coord-audit: {total} Bloecke; at {with_at}, Himmel (ra/dec) {with_sky}, Boden (lat/lon/station) {with_ground}, epoch {with_epoch}, map {with_map}, ohne jede Koordinate {none}");
+}
+
+fn set_instr_doc(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut wanted: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for line in tsv.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 3 {
+            continue;
+        }
+        let key = cols[0].trim().to_string();
+        let cite = cols[1].trim().to_string();
+        let quote = cols[2].trim().trim_matches('"').to_string();
+        if key.is_empty() || cite.is_empty() || quote.is_empty() || cite == "-" || quote == "-" {
+            continue;
+        }
+        wanted.insert(key, (cite, quote));
+    }
+    let mut out: Vec<String> = Vec::new();
+    let mut set = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let key = or_empty(field(&b, "applies"));
+        let hit = match wanted.get(&key) {
+            Some(v) => Some(v.clone()),
+            None => None,
+        };
+        if let Some((cite, quote)) = hit {
+            set_row_key(&mut b, "instrument_cite", &cite);
+            set_row_key(&mut b, "instrument_quote", &format!("\"{quote}\""));
+            set += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("set-instr-doc: {set} Zeilen gesetzt ({} angefragt)", wanted.len());
+}
+
+fn mirror_instr_doc(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let keys: BTreeSet<String> = tsv
+        .lines()
+        .map(|l| l.trim().to_string())
+        .filter(|l| !l.is_empty())
+        .collect();
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut set = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let key = or_empty(field(&b, "applies"));
+        if keys.contains(&key) {
+            let api = or_empty(field(&b, "api_cite"));
+            let quote = or_empty(field(&b, "api_quote"));
+            set_row_key(&mut b, "instrument_cite", &api);
+            set_row_key(&mut b, "instrument_quote", &quote);
+            set += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("mirror-instr-doc: {set} Zeilen auf das Datendokument gesetzt (Geraetepapier fehlt)");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
@@ -4029,6 +4438,13 @@ fn main() {
         Some("verify-register") if args.len() >= 3 => verify_register(&args[2]),
         Some("block-audit") => block_audit(),
         Some("entry-audit") => entry_audit(),
+        Some("block-list") => block_list(),
+        Some("doc-audit") => doc_audit(),
+        Some("digest-fetch") if args.len() >= 3 => digest_fetch(&args[2]),
+        Some("check-blocks") => check_blocks(),
+        Some("coord-audit") => coord_audit(),
+        Some("set-instr-doc") if args.len() >= 3 => set_instr_doc(&args[2]),
+        Some("mirror-instr-doc") if args.len() >= 3 => mirror_instr_doc(&args[2]),
         Some("stray-report") => stray_report(12),
         Some("fix-stray") if args.len() >= 3 => fix_stray(&args[2]),
         Some("verify-cites") if args.len() >= 3 => verify_cites(&args[2]),
