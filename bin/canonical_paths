@@ -3,7 +3,7 @@
 # Blockt neue Top-Level-Ordner, neue Root-Dateien außerhalb der Liste und
 # getracktes scratch/. Prüft nur hinzugefügte/kopierte/umbenannte Pfade.
 set -u
-allow_dirs="bin build docs experiments handover phi post projects research sources src state templates tools .github .opencode .githooks .cargo"
+allow_dirs="bin build docs experiments handover phi post projects research sources src state static templates tools .github .opencode .githooks .cargo"
 allow_root="AGENTS.md opencode.json Cargo.toml Cargo.lock README.md .gitignore .gitattributes NOTICE LICENSE rust-toolchain.toml .env.example"
 fail=0
 tmp="$(mktemp)" || exit 2
