@@ -6,8 +6,8 @@ use std::collections::HashMap;
 use std::process::Command;
 
 const UA: &str = "omegaflow-lasair-ztf-compiler/1.0";
-const NETLOC: &str = "api.lasair.lsst.ac.uk";
-const LAS_QUERY: &str = "https://api.lasair.lsst.ac.uk/api/query/";
+const NETLOC: &str = "lasair-ztf.lsst.ac.uk";
+const LAS_QUERY: &str = "https://lasair-ztf.lsst.ac.uk/api/query/";
 const LAS_LIMIT: usize = 1000;
 const DEFAULT_SELECTED: &str = "objectId,ramean,decmean,gmag,jdmin,jdmax";
 const DEFAULT_TABLES: &str = "objects";
