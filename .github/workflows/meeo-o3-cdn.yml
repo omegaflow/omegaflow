@@ -1,0 +1,22 @@
+name: meeo-o3-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  meeo_o3:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"meeo_o3_compiler","netloc":"meeo-s5p.s3.amazonaws.com","asset":"meeo_s5p_o3_tcl_20180430T105026.csv","args":"https://meeo-s5p.s3.amazonaws.com/OFFL/L2__O3_TCL/2018/04/30/S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc --limit 100000 --out meeo_s5p_o3_tcl_20180430T105026.csv","timeout":30}
+        ]
