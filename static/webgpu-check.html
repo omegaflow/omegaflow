@@ -7,8 +7,8 @@
 <style>
   body { font: 16px/1.45 system-ui, sans-serif; margin: 2rem; background: #111; color: #eee; }
   h1 { font-size: 1.2rem; font-weight: 600; }
-  pre { background: #000; padding: 1rem; overflow-x: auto; white-space: pre-wrap; }
-  .ok { color: #6f6; } .no { color: #f66; }
+  pre { background: #000; padding: 1rem; overflow-x: auto; white-space: pre-wrap; line-height: 1.5; }
+  .ok { color: #6f6; } .no { color: #f66; } .note { color: #fd6; }
 </style>
 </head>
 <body>
@@ -20,35 +20,57 @@ const out = document.getElementById("out");
 const lines = [];
 const say = (s, cls) => {
   lines.push(s);
-  out.innerHTML = lines.map(l => l).join("\n");
+  out.textContent = lines.join("\n");
   if (cls) out.className = cls;
 };
-const ok = s => say("ja   " + s, "ok");
-const no = s => say("nein " + s, "no");
+const ok = s => say("ja     " + s, "ok");
+const no = s => say("nein   " + s, "no");
+const note = s => say("       " + s, "note");
 
-say("Browser: " + navigator.userAgent);
-say("WebGPU: navigator.gpu " + (navigator.gpu ? "vorhanden" : "fehlt"));
-if (navigator.gpu) {
+say("Origin:        " + location.origin);
+say("SecureContext: " + (window.isSecureContext ? "ja" : "nein"));
+say("");
+say("Browser:       " + navigator.userAgent);
+say("");
+
+// navigator.gpu ist [SecureContext] im WebGPU-Standard: auf einem http://-Origin
+// mit LAN-Adresse ist es undefiniert, auch wenn der Browser WebGPU kann.
+// Deshalb steht die Ursache vor dem Befund.
+if (!window.isSecureContext) {
+  no("kein SecureContext — navigator.gpu wird hier nicht angeboten");
+  note("Ursache: " + location.origin + " ist weder https noch localhost.");
+  note("Diese Zeile sagt nichts über den Browser. Über https wiederholen.");
+} else if (!navigator.gpu) {
+  no("navigator.gpu fehlt, obwohl der Origin sicher ist");
+  note("Das ist ein Befund über den Browser, nicht über die Seite.");
+} else {
+  ok("navigator.gpu vorhanden");
   const adapter = await navigator.gpu.requestAdapter();
   if (!adapter) {
     no("kein Adapter — WebGPU vorhanden, aber kein Gerät");
   } else {
     ok("Adapter gefunden");
     const info = adapter.info ?? {};
-    say("Adapter-Info: " + JSON.stringify({
+    say("       Adapter: " + JSON.stringify({
       vendor: info.vendor, architecture: info.architecture,
       device: info.device, description: info.description
     }));
     const device = await adapter.requestDevice();
     ok("Device angefordert");
-    say("Limits maxStorageBufferBindingSize: " + device.limits.maxStorageBufferBindingSize);
-    say("Limits maxComputeWorkgroupSizeX: " + device.limits.maxComputeWorkgroupSizeX);
+    say("       maxStorageBufferBindingSize: " + device.limits.maxStorageBufferBindingSize);
+    say("       maxComputeWorkgroupSizeX:    " + device.limits.maxComputeWorkgroupSizeX);
+    say("       maxComputeInvocationsPerWorkgroup: " + device.limits.maxComputeInvocationsPerWorkgroup);
     const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("webgpu");
-    ok("Canvas-Kontext webgpu: " + (ctx ? "vorhanden" : "fehlt"));
+    ok("Canvas-Kontext webgpu: " + (canvas.getContext("webgpu") ? "vorhanden" : "fehlt"));
+    say("");
+    say("WebXR:        " + (navigator.xr ? "navigator.xr vorhanden" : "navigator.xr fehlt"));
+    if (navigator.xr) {
+      const vr = await navigator.xr.isSessionSupported("immersive-vr").catch(() => false);
+      say("       immersive-vr: " + (vr ? "unterstützt" : "nicht unterstützt"));
+    }
   }
+  out.className = "ok";
 }
-out.className = navigator.gpu ? "ok" : "no";
 </script>
 </body>
 </html>
