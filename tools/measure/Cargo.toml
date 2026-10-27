@@ -7,5 +7,4 @@ description = "measurement and probe binaries"
 
 [dependencies]
 omegaflow = { path = "../.." }
-omegaflow-membrane = { path = "../membrane" }
 zstd = "0.13"

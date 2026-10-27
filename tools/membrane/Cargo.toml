@@ -3,7 +3,7 @@ name = "omegaflow-membrane"
 version = "1.0.0"
 edition = "2024"
 license-file = "../../LICENSE"
-description = "the field: omega loop, the two gpu workers, the radiators"
+description = "the field: omega loop, the two gpu workers, the radiators and their probes"
 
 [dependencies]
 omegaflow = { path = "../..", default-features = false }

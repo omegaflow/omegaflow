@@ -872,7 +872,6 @@ name = "omegaflow-measure"
 version = "1.0.0"
 dependencies = [
  "omegaflow",
- "omegaflow-membrane",
  "zstd",
 ]
 
