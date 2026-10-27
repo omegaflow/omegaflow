@@ -5156,6 +5156,75 @@ fn set_quote(args: &[String]) {
     );
 }
 
+fn quote_trim(args: &[String]) {
+    let dry = args.first().map(|s| s == "dry").unwrap_or(false);
+    let text = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut trimmed = 0usize;
+    let mut left = 0usize;
+    for (_, b) in blocks(&text) {
+        for line in &b {
+            let t = line.trim_start();
+            let mut hit = false;
+            for prefix in ["api_quote ", "instrument_quote ", "host_quote "] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => continue,
+                };
+                if words(&q) <= 25 {
+                    continue;
+                }
+                if q.contains('\u{2026}') || q.contains("...") {
+                    left += 1;
+                    out.push(line.clone());
+                    hit = true;
+                    break;
+                }
+                let w: Vec<&str> = q.split_whitespace().collect();
+                let mut cut = 25usize;
+                for i in (8..=25).rev() {
+                    let last = w[i - 1];
+                    if last.ends_with('.') || last.ends_with(';') || last.ends_with(':') {
+                        cut = i;
+                        break;
+                    }
+                }
+                let short = w[..cut].join(" ");
+                out.push(format!("  {}\"{}\"", prefix, short.replace('"', "\\\"")));
+                trimmed += 1;
+                hit = true;
+                break;
+            }
+            if !hit {
+                if t.starts_with("api_quote ")
+                    || t.starts_with("instrument_quote ")
+                    || t.starts_with("host_quote ")
+                {
+                    left += 1;
+                }
+                out.push(line.clone());
+            }
+        }
+        out.push(String::new());
+    }
+    let mut body = out.join("\n");
+    while body.ends_with("\n\n") {
+        body.pop();
+    }
+    if !body.ends_with('\n') {
+        body.push('\n');
+    }
+    if dry {
+        println!("dry-run: quote-trim {trimmed} quotes cut to 25 words, {left} under the limit");
+        return;
+    }
+    write_out(REG, body, "instruments");
+    println!("quote-trim: {trimmed} quotes cut to 25 words, {left} under the limit");
+}
+
 fn quote_widen(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -5419,6 +5488,7 @@ fn main() {
         Some("quote-widen") => quote_widen(&args[2..]),
         Some("quote-short") => quote_short(&args[2..]),
         Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
+        Some("quote-trim") => quote_trim(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
         Some("clear-cite") if args.len() >= 3 => clear_cite(&args[2..]),
         Some("digest-fetch") if args.len() >= 3 => digest_fetch(&args[2]),
