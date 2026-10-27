@@ -4487,6 +4487,149 @@ fn claims_device(claims: &[(String, Vec<String>, String)]) -> Vec<String> {
     out
 }
 
+fn demote_api(args: &[String]) {
+    let path = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("demote-api: needs a tsv (old_url, new_url, new_quote)");
+            return;
+        }
+    };
+    let list = match fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(_) => {
+            println!("demote-api: {path} not readable");
+            return;
+        }
+    };
+    let mut want: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for line in list.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 3 {
+            continue;
+        }
+        want.insert(
+            c[0].trim().to_string(),
+            (c[1].trim().to_string(), c[2].trim().to_string()),
+        );
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut moved = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let api = or_empty(field(&b, "api_cite"));
+        if let Some((new_api, new_quote)) = want.get(&api) {
+            let old_quote = or_empty(field(&b, "api_quote"));
+            set_row_key(&mut b, "host_cite", &api);
+            set_row_key(
+                &mut b,
+                "host_quote",
+                &format!("\"{}\"", old_quote.replace('"', "\\\"")),
+            );
+            set_row_key(&mut b, "api_cite", new_api);
+            set_row_key(
+                &mut b,
+                "api_quote",
+                &format!("\"{}\"", new_quote.replace('"', "\\\"")),
+            );
+            moved += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "instruments");
+    println!("demote-api: {moved} blocks moved to a format document");
+}
+
+fn field_work(args: &[String]) {
+    let out_path = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("field-work: needs an output file");
+            return;
+        }
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let mut rows = 0usize;
+    let mut out: Vec<String> = Vec::new();
+    for (start, b) in blocks(&reg) {
+        let api = or_empty(field(&b, "api_cite"));
+        let instr = or_empty(field(&b, "instrument_cite"));
+        let d_api = match digests.get(&api) {
+            Some(d) => d,
+            None => continue,
+        };
+        let mut keys: Vec<String> = Vec::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut it = t.split_whitespace();
+            match it.next() {
+                Some("field") => {
+                    if let Some(k) = it.next() {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("fields") => {
+                    for k in it {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("last") => {
+                    let rest: Vec<&str> = it.collect();
+                    if let Some(k) = rest.get(1) {
+                        keys.push(k.clone().to_string());
+                    }
+                }
+                _ => {}
+            }
+        }
+        let missing = keys
+            .iter()
+            .any(|k| claim_unit(&d_api.claims, k).is_none());
+        if !missing {
+            continue;
+        }
+        let cols: Vec<String> = d_api
+            .claims
+            .iter()
+            .filter(|(kind, _, _)| kind == "column")
+            .filter_map(|(_, parts, _)| {
+                let k = parts.first()?;
+                let u = parts.get(1);
+                Some(match u {
+                    Some(u) => format!("{k} [{u}]"),
+                    None => k.clone(),
+                })
+            })
+            .collect();
+        rows += 1;
+        out.push(format!(
+            "block\t{}\thost={}\tinstrument={}\tunit={}\tinterval={}\tsampling={}\tkeys={}\tapi={}\tinstr={}\tcolumns={}",
+            start,
+            or_empty(field(&b, "host")),
+            or_empty(field(&b, "instrument")),
+            or_empty(field(&b, "unit")),
+            or_empty(field(&b, "interval")),
+            or_empty(field(&b, "sampling")),
+            keys.join(","),
+            api,
+            instr,
+            cols.join("; ")
+        ));
+    }
+    let mut text = String::new();
+    for r in &out {
+        text.push_str(r);
+        text.push('\n');
+    }
+    if let Some(parent) = std::path::Path::new(&out_path).parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    let _ = fs::write(&out_path, text);
+    println!("field-work: {rows} blocks written to {out_path}");
+}
+
 fn check_blocks() {
     let reg = fs::read_to_string(REG).expect("register");
     let digests = load_digests();
@@ -5101,6 +5244,102 @@ fn quoted(line: &str) -> Option<String> {
     Some(line[begin + 1..end].to_string())
 }
 
+fn write_refs(args: &[String]) {
+    let dry = args.first().map(|s| s == "dry").unwrap_or(false);
+    let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let mut meta: BTreeMap<String, (String, String)> = BTreeMap::new();
+    let text = match fs::read_to_string(DIGESTS) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    for (_, b) in blocks(&text) {
+        let url = match b.iter().find(|l| l.starts_with("doc ")) {
+            Some(l) => l[4..].trim().to_string(),
+            None => continue,
+        };
+        let mut title = String::new();
+        let mut source = String::new();
+        for l in &b {
+            let t = l.trim_start();
+            if let Some(v) = t.strip_prefix("title ") {
+                title = v.trim().to_string();
+            }
+            if let Some(v) = t.strip_prefix("source ") {
+                source = v.trim().to_string();
+            }
+        }
+        if title.is_empty() {
+            continue;
+        }
+        let mut refr = String::new();
+        if !source.is_empty() {
+            refr.push_str(&source);
+            if !refr.ends_with('.') {
+                refr.push('.');
+            }
+            refr.push(' ');
+        }
+        refr.push_str(&title);
+        if !refr.ends_with('.') {
+            refr.push('.');
+        }
+        meta.insert(url, (refr, String::new()));
+    }
+    let _ = digests;
+    let mut out: Vec<String> = Vec::new();
+    let mut written = 0usize;
+    for (_, b) in blocks(&reg) {
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut cite = false;
+            for (key, prefix) in [
+                ("api", "api_cite "),
+                ("instrument", "instrument_cite "),
+                ("host", "host_cite "),
+            ] {
+                if t.starts_with(prefix) {
+                    cur.insert(key.to_string(), t[prefix.len()..].trim().to_string());
+                    cite = true;
+                    break;
+                }
+            }
+            out.push(line.clone());
+            if !cite {
+                continue;
+            }
+            let key = match t.split_whitespace().next() {
+                Some(k) => k.trim_end_matches("_cite").to_string(),
+                None => continue,
+            };
+            let url = match cur.get(&key) {
+                Some(u) => u.clone(),
+                None => continue,
+            };
+            let r = match meta.get(&url) {
+                Some(r) => r.0.clone(),
+                None => continue,
+            };
+            let already = b
+                .iter()
+                .any(|l| l.trim_start().starts_with(&format!("{key}_ref ")));
+            if already {
+                continue;
+            }
+            out.push(format!("  {key}_ref \"{}\"", r.replace('"', "\\\"")));
+            written += 1;
+        }
+        out.push(String::new());
+    }
+    if dry {
+        println!("dry-run: write-refs {written} ref lines");
+        return;
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!("write-refs: {written} ref lines written");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -5487,12 +5726,16 @@ fn specs_to_digests(dir: &str) {
         };
         let mut url = String::new();
         let mut kind = String::new();
+        let mut title = String::new();
+        let mut source = String::new();
         let mut lines: Vec<String> = Vec::new();
         for line in text.lines() {
             let c: Vec<&str> = line.split('\t').collect();
             match c.first().map(|s| *s) {
                 Some("doc") if c.len() >= 2 => url = c[1].trim().to_string(),
                 Some("kind") if c.len() >= 2 => kind = c[1].trim().to_string(),
+                Some("title") if c.len() >= 2 => title = c[1].trim().to_string(),
+                Some("source") if c.len() >= 2 => source = c[1].trim().to_string(),
                 Some("column") if c.len() >= 5 => {
                     let key = c[2].trim();
                     let unit = c[3].trim();
@@ -5532,6 +5775,12 @@ fn specs_to_digests(dir: &str) {
         docs += 1;
         claims += lines.len();
         out.push(format!("doc {url}"));
+        if !title.is_empty() {
+            out.push(format!("  title {title}"));
+        }
+        if !source.is_empty() {
+            out.push(format!("  source {source}"));
+        }
         if !kind.is_empty() {
             out.push(format!("  kind {kind}"));
         }
@@ -5608,6 +5857,9 @@ fn main() {
         Some("clear-cite") if args.len() >= 3 => clear_cite(&args[2..]),
         Some("digest-fetch") if args.len() >= 3 => digest_fetch(&args[2]),
         Some("check-blocks") => check_blocks(),
+        Some("field-work") if args.len() >= 3 => field_work(&args[2..]),
+        Some("demote-api") if args.len() >= 3 => demote_api(&args[2..]),
+        Some("write-refs") => write_refs(&args[2..]),
         Some("coord-audit") => coord_audit(),
         Some("set-instr-doc") if args.len() >= 3 => set_instr_doc(&args[2]),
         Some("mirror-instr-doc") if args.len() >= 3 => mirror_instr_doc(&args[2]),
