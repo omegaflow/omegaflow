@@ -23912,6 +23912,42 @@ doc https://www.brainproducts.com/support-resources/brainvision-core-data-format
   claim standard BIDS hat das Format als offizielles EEG-Format uebernommen ""In appreciation for the robustness and wide use of the BrainVision Core Data Format, BIDS has officially adopted it as one of the official EEG/iEEG data formats.""
   claim lizenz Brain Products erlaubt BIDS die freie Veroeffentlichung der Spezifikation ""Brain Products GmbH has provided formal permission for BIDS to freely publish and share the format specification across the open-source neuroscience research community.""
 
+doc https://www.seismicportal.eu/fdsn-wsevent.html
+  title SeismicPortal — FDSN Event web service
+  source European-Mediterranean Seismological Centre (EMSC), SeismicPortal
+  kind data
+  claim dienst Sammlung von Erdbeben-Webservices mit den Datenbestaenden der EMSC und Verweisen auf europaeische Agenturen ""A collection of various earthquake related data webservices giving access to EMSC's data collections and links to multiple European agencies""
+  claim traeger EMSC ist eine internationale, nichtstaatliche Vereinigung zur raschen Sammlung und Verbreitung ""The European-Mediterranean Seismological Centre (EMSC) is an international, non-governmental, non-profit association""
+  claim katalog Katalogliste des Dienstes ""https://www.seismicportal.eu/fdsnws/event/1/#catalogues""
+  claim frame geographic ""
+
+doc https://www.emsc-csem.org/
+  title EMSC Earthquake Information — European-Mediterranean Seismological Centre
+  source EMSC / CSEM, Startseite
+  kind instrument
+  claim katalog Katalog und Zugangspunkt fuer aktuelle und historische Erdbebeninformation ""Catalogue and web access point for recent and historical earthquake information published by the European-Mediterranean Seismological Centre (EMSC)""
+  claim ausgabe gefuehlte und bedeutende Beben der letzten 72 Stunden ""Latest felt and significant earthquakes reported by the EMSC during the past 72 hours""
+  claim traeger Name des Traegers ""EMSC - European-Mediterranean Seismological Centre""
+  claim frame geographic ""
+
+doc https://www.ign.es/web/ign/portal/sis-area-sismicidad
+  title Información sísmica — Instituto Geográfico Nacional (IGN)
+  source Instituto Geográfico Nacional, España
+  kind instrument
+  claim bereich Informationsbereich Erdbeben des IGN ""Información sísmica""
+  claim ausgabe nahe Beben der letzten dreissig Tage ""Terremotos próximos (Últimos 30 días)""
+  claim ausgabe ferne Beben der letzten Monate ""Terremotos lejanos (Últimos 1""
+  claim frame geographic ""
+
+doc https://www.ign.es/web/ign/portal/sis-catalogo-terremotos
+  title Catálogo de terremotos — Instituto Geográfico Nacional (IGN), España
+  source Instituto Geográfico Nacional, Información sísmica
+  kind data
+  claim katalog Katalog der Erdbeben, Suche nach Zeitraum und Ort ""Catálogo de terremotos""
+  claim phasen zu jedem Beben sind die Phasen abrufbar ""Si selecciona "Sí", verá un enlace en la página siguiente desde el cual podrá ver las fases de todos los terremotos que cumplan los requisitos introducidos en la búsqueda""
+  claim tiefe Tiefe und Phasen sind waehlbare Merkmale der Suche ""Profundidad y fases""
+  claim frame geographic ""
+
 doc https://minorplanetcenter.net/mpcops/documentation/ades/
   title ADES — Astrometry Data Exchange Standard
   source IAU Minor Planet Center, Documentation
@@ -23958,6 +23994,17 @@ doc https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/NumObs.txt.gz
   claim column mpc_obs_dec_deg deg null "null"
   claim frame J2000 ""
 
+doc https://www.ngdc.noaa.gov/hazard/earthqk.shtml
+  title The Significant Earthquake Database — NCEI
+  source NOAA National Centers for Environmental Information (NCEI), Tsunamis, Earthquakes and Volcanoes
+  kind data
+  claim inhalt Datenbank zerstoererischer Beben ab 2150 v. Chr. bis heute ""The Significant Earthquake Database contains information about destructive earthquakes from 2150 B.C. to the present""
+  claim kriterium Aufnahme bei mindestens einem Kriterium: Schaeden, Tote oder Magnitude ""that meet at least one of the following criteria: moderate damage (approximately $1 million or more), 10 or more deaths, Magnitude 7""
+  claim zugang Suche ueber das HazEL-Werkzeug ""Significant earthquake event data is available through the NCEI Hazardous Event Lookup (HazEL) search tool""
+  claim intensitaet Intensitaetsdatenbank 1638 bis 1985 als eigenes Produkt ""Earthquake Intensity Database 1638–1985""
+  claim doi DOI des Bestands ""7289/V5TD9V7K""
+  claim frame geographic ""
+
 doc https://wiki.openstreetmap.org/wiki/API_v0.6
   title API v0.6 — OpenStreetMap Wiki
   source OpenStreetMap Wiki, Abschnitt GPS traces
@@ -23988,6 +24035,38 @@ doc https://api.openstreetmap.org/api/0.6/trackpoints?bbox=8.6,47.3,8.7,47.4&pag
   claim column osm_track_lat_deg deg null "1"
   claim frame geographic ""
   claim timescale UTC ""
+
+doc http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  title Описание формата каталогов — Атлас землетрясений в СССР
+  source WDC for Solid Earth Physics (GC RAS), Atlas of earthquakes in the USSR, Formatbeschreibung
+  kind instrument
+  claim titel Beschreibung des Katalogformats ""Описание формата каталогов""
+  claim tiefe Tiefe des Hypozentrums in Kilometern, Spalte 65 bis 67 ""Глубина гипоцентра в километрах""
+  claim magnitude Magnitude, Spalte 84 bis 87, Format f4.2 ""Магнитуда""
+  claim station Stationskennung, Spalte 101 bis 106 ""Код станции (см. таблицу на стр. 17""
+  claim genauigkeit Genauigkeitsklasse a=5, б=10, А=25, Б=50, Spalte 75 bis 76 ""Класс точности (а=5, б=10, А=25, Б=50)""
+  claim zeit Zeitpunkt des Bebens, Spalte 22 bis 29 ""Время возникновения""
+  claim breite Breite in Grad, Spalte 33 bis 37 ""Широта в градусах""
+  claim laenge Laenge in Grad, negativ westlich, Spalte 47 bis 53 ""Долгота в градусах [− = западная]""
+  claim column year Jahr null "i4"
+  claim column time Stunden null ""Время возникновения""
+  claim column lat_deg Grad null ""Широта в градусах""
+  claim column lon_deg Grad null ""Долгота в градусах""
+  claim column depth_km km null ""Глубина гипоцентра в километрах""
+  claim column magnitude 1 null ""Магнитуда""
+  claim column station Kennung null ""Код станции""
+  claim frame geographic ""
+  claim timescale UTC ""
+
+doc http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.html
+  title Atlas of earthquakes in the USSR — Results of observations of the seismic station network in the USSR, 1911-1957
+  source Savarensky E.F., Soloviev S.L., Kharin D.A. (eds.). Publishing house AS USSR, Moscow, 1962; WDC for SEP, GC RAS
+  kind instrument
+  claim netz Ergebnisse der Beobachtungen des seismischen Stationsnetzes der UdSSR 1911 bis 1957 ""Results of observations of the seismic station network in the USSR 1911 - 1957""
+  claim herkunft Instrumentaldaten des stationaeren Stationsnetzes, einheitlich bearbeitet, im Atlas zusammengefuehrt ""The instrumental data obtained from the network of stationary stations in the USSR from 1911 to 1957 were collected, processed according to a unified technique""
+  claim umfang etwa zehntausend Ereignisse in Katalogen fuer die gesamte UdSSR und neun Zonen ""There are about 10,000 events in total.""
+  claim zitat Savarensky, Soloviev, Kharin (Hrsg.), Atlas of earthquakes in the USSR, Moskau 1962 ""Atlas of earthquakes in the USSR. Results of observations of the seismic station network in the USSR, 1911-1957.""
+  claim frame geographic ""
 
 doc https://api.crossref.org/works/10.1086/191309
   title The centers of star formation in NGC 6334 and their stellar mass distributions
