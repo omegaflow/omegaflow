@@ -14899,6 +14899,7 @@ host zenodo.org
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=15397
   note Zip-Readme und Spaltenkopf Eloss RIXS err; Energieverlust in eV (Paper: constant energy loss of 0 and -0.25 eV). Spektrum, keine Zeitreihe (interval 0). sampling null.
   instrument Hall_effect_transducer
+  instrument_quote "The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut"
 
 host zenodo.org
   instrument SAXES
@@ -14917,6 +14918,7 @@ host zenodo.org
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=33372
   note Zweiter Block auf denselben Zip; gleiche Datendoku und Instrumentendoku (SAXES/ADRESS).
   instrument Hall_effect_transducer
+  instrument_quote "The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut"
 
 host zenodo.org
   instrument GBT
@@ -21023,6 +21025,7 @@ host zenodo.org
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=15397
   note Zip-Readme und Spaltenkopf Eloss RIXS err; Energieverlust in eV (Paper: constant energy loss of 0 and -0.25 eV). Spektrum, keine Zeitreihe (interval 0). sampling null. Host: ein Deposit, ttl null.
   instrument Hall_effect_transducer
+  instrument_quote "The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut"
 
 host zenodo.org
   instrument SAXES
@@ -21044,6 +21047,7 @@ host zenodo.org
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content id=33372
   note Zweiter Block auf denselben Zip; gleiche Datendoku und Instrumentendoku. Host: ein Deposit, ttl null.
   instrument Hall_effect_transducer
+  instrument_quote "The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut"
 
 host zenodo.org
   instrument GBT
@@ -26931,6 +26935,7 @@ host ssd.jpl.nasa.gov
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/odyrange2002-2013.txt id=24074
   note "only one range point for each tracking pass" -> intervall 0.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   instrument dsn
@@ -32546,6 +32551,7 @@ host zenodo.org
   applies https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
   note member exp_data/azimuthal_analysis/OD1_0p33_0/sw_spin.txt carries the columns Eloss, weight, err; the CDN path of the block answers 404, so the hash is not measurable; spectral axis, no time cadence (interval null)
   instrument Hall_effect_transducer
+  instrument_quote "The RIXS experiments were carried out with the SAXES spectrometer at the ADRESS beamline of the Swiss Light Source at the Paul Scherrer Institut"
 
 host jma.go.jp
   instrument seismograph
@@ -32833,6 +32839,7 @@ host ssd.jpl.nasa.gov
   fields rtlt
   note Key `rtlt` = round-trip light time, Spalte 5 des Kopfes (µs). Keine Kadenz: eine Zeile je Messung, field-Intervall null. Anker at earth, weil der Kopf nur die DSN-Station als Empfänger nennt und keine Stationskoordinate führt.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   status messung
@@ -32852,6 +32859,7 @@ host ssd.jpl.nasa.gov
   fields rtlt
   note Key `rtlt` = Spalte 8 (adjusted round-trip light time, µs). Alle Messungen X-Band (7,2/8,4 GHz), Korrekturen für Troposphäre/Ionosphäre und Sonnenplasma im Kopf. Eine Zeile je Messung, kein fester Takt.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   status messung
@@ -32872,6 +32880,7 @@ host ssd.jpl.nasa.gov
   fields r-dot
   note Key `r-dot` steht wörtlich im Spaltenkopf, Einheit km/sec. Geocentrische Radialgeschwindigkeit der Venus, je Zeile eine Lösung; kein fester Takt.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   status messung
@@ -32891,6 +32900,7 @@ host ssd.jpl.nasa.gov
   fields rtlt
   note Key `rtlt` = Spalte 8 (µs), Mars-Global-Surveyor-Ranging 1999-2006. Keine Kadenz; je Zeile eine Messung.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   status messung
@@ -32932,6 +32942,7 @@ host ssd.jpl.nasa.gov
   fields rtlt
   note Key `rtlt` = Spalte 8 (µs); der Transponder-Delay ~420 ist laut Kopf NICHT entfernt. Je Zeile eine Messung, kein fester Takt.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   status referenz
@@ -33751,6 +33762,7 @@ host ssd.jpl.nasa.gov
   zustand gemessen
   note JPL-Datei cassini_range_avg.txt: Zweiweg-Range in Mikrosekunden (round-trip light time); die alte Feldzeile dec. ssd_ccd1_nofs_dec_deg war die Fremdzeile von ccd1_nofs.txt und entfaellt.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   instrument DSN
@@ -33772,6 +33784,7 @@ host ssd.jpl.nasa.gov
   zustand gemessen
   note Mars-Odyssey-X-Band-Tracking: Dateikopf nennt round-trip light time for range measurements; Feld range in µs. Die Kandidatenliste ist die Fremdzeile des Meridiankreis-Blattes.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   instrument photographic
@@ -34497,6 +34510,7 @@ host zenodo.org
   zustand gemessen
   note KiDS DR4 brightsample (Zenodo 17086764) ist VST/OmegaCAM; DECam und das Feld noirlab_ls_dr10_g_flux stammen aus dem falsch zusammengesetzten Legacy-Survey-DR10-Block. MAG_AUTO_CALIB in mag.
   instrument OmegaCAM (VST)
+  instrument_quote "Its focal plane contains the square 268-million pixel CCD mosaic camera OmegaCAM"
 
 host zenodo.org
   instrument NIRCam_GRISM
@@ -35474,6 +35488,7 @@ host ssd.jpl.nasa.gov
   zustand gemessen
   note JPL-Datei cassini_range_avg.txt: Zweiweg-Range in Mikrosekunden (round-trip light time); die alte Feldzeile dec. ssd_ccd1_nofs_dec_deg war die Fremdzeile von ccd1_nofs.txt und entfaellt.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   instrument DSN
@@ -35495,6 +35510,7 @@ host ssd.jpl.nasa.gov
   zustand gemessen
   note Mars-Odyssey-X-Band-Tracking: Dateikopf nennt round-trip light time for range measurements; Feld range in µs. Die Kandidatenliste ist die Fremdzeile des Meridiankreis-Blattes.
   instrument NASA Deep Space Network (DSN)
+  instrument_quote "The Deep Space Network … is NASA’s international array of giant radio antennas that supports interplanetary spacecraft missions"
 
 host ssd.jpl.nasa.gov
   instrument photographic
@@ -36220,6 +36236,7 @@ host zenodo.org
   zustand gemessen
   note KiDS DR4 brightsample (Zenodo 17086764) ist VST/OmegaCAM; DECam und das Feld noirlab_ls_dr10_g_flux stammen aus dem falsch zusammengesetzten Legacy-Survey-DR10-Block. MAG_AUTO_CALIB in mag.
   instrument OmegaCAM (VST)
+  instrument_quote "Its focal plane contains the square 268-million pixel CCD mosaic camera OmegaCAM"
 
 host zenodo.org
   instrument NIRCam_GRISM
