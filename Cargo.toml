@@ -32,5 +32,6 @@ commit_gate = []
 
 [dev-dependencies]
 cdshealpix = "0.10"
+time = { version = "0.3", features = ["parsing"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

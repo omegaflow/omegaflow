@@ -14513,3 +14513,44 @@ fn test_waldo_ab_refuses_a_short_or_truncated_table() {
     assert!(decode(&bytes[..bytes.len() - 4]).is_err());
     assert!(decode(b"XXXX").is_err());
 }
+
+#[test]
+fn every_timestamp_in_the_register_parses_as_rfc3339() {
+    let text = include_str!("../../phi/sources.φ");
+    let bytes = text.as_bytes();
+    let mut checked = 0usize;
+    let mut i = 0usize;
+    while i + 20 < bytes.len() {
+        let looks_like_stamp = bytes[i].is_ascii_digit()
+            && bytes[i + 1].is_ascii_digit()
+            && bytes[i + 2].is_ascii_digit()
+            && bytes[i + 3].is_ascii_digit()
+            && bytes[i + 4] == b'-'
+            && bytes[i + 7] == b'-'
+            && bytes[i + 10] == b'T';
+        if !looks_like_stamp {
+            i += 1;
+            continue;
+        }
+        let mut end = i;
+        while end < bytes.len()
+            && (bytes[end].is_ascii_alphanumeric()
+                || bytes[end] == b':'
+                || bytes[end] == b'+'
+                || bytes[end] == b'-')
+        {
+            end += 1;
+        }
+        let stamp = &text[i..end];
+        assert!(
+            time::OffsetDateTime::parse(stamp, &time::format_description::well_known::Rfc3339).is_ok(),
+            "the register carries a timestamp that is not RFC 3339: {stamp}"
+        );
+        checked += 1;
+        i = end;
+    }
+    assert!(
+        checked >= 40,
+        "only {checked} timestamps found — the scan is blind (measured floor: 42 on 2026-10-27)"
+    );
+}
