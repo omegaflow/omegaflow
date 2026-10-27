@@ -35,6 +35,16 @@ done
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "commit: kein Repo" >&2; exit 2; }
 cd "$root" || exit 2
 
+for p in $paths; do
+    case "$p" in
+        phi/*|src/gate/*|tools/gate/*)
+            if [ -z "${OMEGAFLOW_OWNER_OK:-}" ]; then
+                echo "commit: $p — geschuetzter Pfad; nur mit OMEGAFLOW_OWNER_OK=\"<Eigentuemer-Wort>\"" >&2
+                exit 2
+            fi ;;
+    esac
+done
+
 missing=""
 for p in $paths; do
     if [ ! -e "$p" ] && ! git cat-file -e "HEAD:$p" 2>/dev/null; then
