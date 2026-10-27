@@ -29499,8 +29499,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
-  api_cite https://amisr.com/amisr/
-  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
+  api_cite https://data.amisr.com/madrigal/
+  api_quote "Madrigal is a robust, World Wide Web based system capable of managing and serving archival and real-time data, in a variety of formats, from a wide range of upper atmospheric science instruments"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14938
   field pfisr_isr_ne_m3 pfisr_isr_ne_m3 1/m3 600
   field pfisr_isr_ti_k pfisr_isr_ti_k K 600
@@ -29521,8 +29521,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
-  api_cite https://amisr.com/amisr/
-  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
+  api_cite https://data.amisr.com/madrigal/
+  api_quote "Madrigal is a robust, World Wide Web based system capable of managing and serving archival and real-time data, in a variety of formats, from a wide range of upper atmospheric science instruments"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14950
   field NE openmadrigal_ne_m3 1/m3 600
   zustand gemessen
@@ -31039,8 +31039,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
-  api_cite https://amisr.com/amisr/
-  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
+  api_cite https://data.amisr.com/madrigal/
+  api_quote "Madrigal is a robust, World Wide Web based system capable of managing and serving archival and real-time data, in a variety of formats, from a wide range of upper atmospheric science instruments"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14938
   field pfisr_isr_ne_m3 pfisr_isr_ne_m3 1/m3 600
   field pfisr_isr_ti_k pfisr_isr_ti_k K 600
@@ -31061,8 +31061,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
-  api_cite https://amisr.com/amisr/
-  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
+  api_cite https://data.amisr.com/madrigal/
+  api_quote "Madrigal is a robust, World Wide Web based system capable of managing and serving archival and real-time data, in a variety of formats, from a wide range of upper atmospheric science instruments"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14950
   field NE openmadrigal_ne_m3 1/m3 600
   zustand gemessen
