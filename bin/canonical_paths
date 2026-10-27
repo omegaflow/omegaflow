@@ -4,7 +4,7 @@
 # getracktes scratch/. Prüft nur hinzugefügte/kopierte/umbenannte Pfade.
 set -u
 allow_dirs="bin build docs experiments handover phi post projects research sources src state static templates tools .github .opencode .githooks .cargo"
-allow_root="AGENTS.md opencode.json Cargo.toml Cargo.lock README.md .gitignore .gitattributes NOTICE LICENSE rust-toolchain.toml .env.example"
+allow_root="AGENTS.md opencode.json Cargo.toml Cargo.lock README.md .gitignore .gitattributes NOTICE LICENSE rust-toolchain.toml .env.example SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md CHANGELOG.md CITATION.cff"
 fail=0
 tmp="$(mktemp)" || exit 2
 trap 'rm -f "$tmp"' 0 1 2 15
