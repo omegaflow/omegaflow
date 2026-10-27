@@ -4,6 +4,35 @@ use super::types::J2000_UNIX_OFFSET;
 
 const SECONDS_PER_JULIAN_YEAR: f64 = 86400.0 * 365.25;
 
+const DJ00: f64 = 2_451_545.0;
+const DJM: f64 = 365_250.0;
+const DD2R: f64 = std::f64::consts::PI / 180.0;
+
+const TDB_SERIES_TSV: &str = include_str!("kernels/tdb_fairhead.tsv");
+
+fn tdb_series() -> Option<&'static Vec<(f64, f64, f64)>> {
+    static SERIES: std::sync::OnceLock<Option<Vec<(f64, f64, f64)>>> = std::sync::OnceLock::new();
+    SERIES
+        .get_or_init(|| {
+            let mut v: Vec<(f64, f64, f64)> = Vec::with_capacity(787);
+            for line in TDB_SERIES_TSV.lines() {
+                if line.starts_with('#') || line.trim().is_empty() {
+                    continue;
+                }
+                let mut p = line.split('\t');
+                let amp = p.next()?.trim().parse::<f64>().ok()?;
+                let freq = p.next()?.trim().parse::<f64>().ok()?;
+                let phase = p.next()?.trim().parse::<f64>().ok()?;
+                if ![amp, freq, phase].iter().all(|x| x.is_finite()) {
+                    return None;
+                }
+                v.push((amp, freq, phase));
+            }
+            if v.len() == 787 { Some(v) } else { None }
+        })
+        .as_ref()
+}
+
 fn delta_t_at_unix(unix: f64) -> f64 {
     let year = 2000.0 + (unix - J2000_UNIX_OFFSET) / SECONDS_PER_JULIAN_YEAR;
     super::astrometry::delta_t_espenak_meeus(year)
@@ -15,11 +44,72 @@ pub struct LeapSeconds {
     pub deltas: Vec<(f64, f64)>,
 }
 
-pub(crate) fn tdb_minus_tt_seconds(unix: f64) -> f64 {
-    let d = unix / 86400.0 + 40587.0 - 51544.5;
-    let g = (357.53 + 0.9856003 * d) * std::f64::consts::PI / 180.0;
-    let lm = (246.11 + 0.9025179 * d) * std::f64::consts::PI / 180.0;
-    0.001657 * g.sin() + 0.000022 * lm.sin()
+pub(crate) fn tdb_minus_tt_full(
+    date1: f64,
+    date2: f64,
+    ut: f64,
+    elong: f64,
+    u: f64,
+    v: f64,
+) -> Option<f64> {
+    if ![date1, date2, ut, elong, u, v].iter().all(|x| x.is_finite()) {
+        return None;
+    }
+    let s = tdb_series()?;
+    let t = ((date1 - DJ00) + date2) / DJM;
+    let tsol = (ut % 1.0) * std::f64::consts::TAU + elong;
+    let w = t / 3600.0;
+    let elsun = (280.46645683_f64 + 1_296_027_711.03429 * w).rem_euclid(360.0) * DD2R;
+    let emsun = (357.52910918_f64 + 1_295_965_810.481 * w).rem_euclid(360.0) * DD2R;
+    let d = (297.85019547_f64 + 16_029_616_012.090 * w).rem_euclid(360.0) * DD2R;
+    let elj = (34.35151874_f64 + 109_306_899.89453 * w).rem_euclid(360.0) * DD2R;
+    let els = (50.07744430_f64 + 44_046_398.47038 * w).rem_euclid(360.0) * DD2R;
+    let wt = 0.00029e-10 * u * (tsol + elsun - els).sin()
+        + 0.00100e-10 * u * (tsol - 2.0 * emsun).sin()
+        + 0.00133e-10 * u * (tsol - d).sin()
+        + 0.00133e-10 * u * (tsol + elsun - elj).sin()
+        - 0.00229e-10 * u * (tsol + 2.0 * elsun + emsun).sin()
+        - 0.02200e-10 * v * (elsun + emsun).cos()
+        + 0.05312e-10 * u * (tsol - emsun).sin()
+        - 0.13677e-10 * u * (tsol + 2.0 * elsun).sin()
+        - 1.31840e-10 * v * elsun.cos()
+        + 3.17679e-10 * u * tsol.sin();
+    let mut w0 = 0.0;
+    for &(a, f, p) in &s[0..474] {
+        w0 += a * (f * t + p).sin();
+    }
+    let mut w1 = 0.0;
+    for &(a, f, p) in &s[474..679] {
+        w1 += a * (f * t + p).sin();
+    }
+    let mut w2 = 0.0;
+    for &(a, f, p) in &s[679..764] {
+        w2 += a * (f * t + p).sin();
+    }
+    let mut w3 = 0.0;
+    for &(a, f, p) in &s[764..784] {
+        w3 += a * (f * t + p).sin();
+    }
+    let mut w4 = 0.0;
+    for &(a, f, p) in &s[784..787] {
+        w4 += a * (f * t + p).sin();
+    }
+    let wf = t * (t * (t * (t * w4 + w3) + w2) + w1) + w0;
+    let wj = 0.00065e-6 * (6069.776754 * t + 4.021194).sin()
+        + 0.00033e-6 * (213.299095 * t + 5.543132).sin()
+        + (-0.00196e-6 * (6208.294251 * t + 5.696701).sin())
+        + (-0.00173e-6 * (74.781599 * t + 2.435900).sin())
+        + 0.03638e-6 * t * t;
+    let out = wt + wf + wj;
+    if out.is_finite() { Some(out) } else { None }
+}
+
+pub(crate) fn tdb_minus_tt_seconds(unix: f64) -> Option<f64> {
+    if !unix.is_finite() {
+        return None;
+    }
+    let jd = unix / 86400.0 + 2_440_587.5;
+    tdb_minus_tt_full(jd, 0.0, 0.0, 0.0, 0.0, 0.0)
 }
 
 impl LeapSeconds {
@@ -42,14 +132,14 @@ impl LeapSeconds {
                 delta_t_at_unix(unix)
             }
         };
-        Some(unix + to_tt - J2000_UNIX_OFFSET + tdb_minus_tt_seconds(unix))
+        Some(unix + to_tt - J2000_UNIX_OFFSET + tdb_minus_tt_seconds(unix)?)
     }
 
     pub fn tdb_to_unix(&self, tdb: f64) -> Option<f64> {
         for &(offset, _) in self.deltas.iter().rev() {
             let mut unix = tdb - self.delta_t_a - offset + J2000_UNIX_OFFSET;
             for _ in 0..2 {
-                unix = tdb - self.delta_t_a - offset - tdb_minus_tt_seconds(unix)
+                unix = tdb - self.delta_t_a - offset - tdb_minus_tt_seconds(unix)?
                     + J2000_UNIX_OFFSET;
             }
             if self.leap_at(unix) == Some(offset) {
@@ -63,7 +153,7 @@ impl LeapSeconds {
         }
         let mut unix = tdb + J2000_UNIX_OFFSET;
         for _ in 0..2 {
-            unix = tdb + J2000_UNIX_OFFSET - delta_t_at_unix(unix) - tdb_minus_tt_seconds(unix);
+            unix = tdb + J2000_UNIX_OFFSET - delta_t_at_unix(unix) - tdb_minus_tt_seconds(unix)?;
         }
         Some(unix)
     }
@@ -200,6 +290,23 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
     }
 
     #[test]
+    fn tdb_minus_tt_matches_the_erfa_published_vector() {
+        let got = tdb_minus_tt_full(2_448_939.5, 0.123, 0.76543, 5.0123, 5525.242, 3190.0)
+            .expect("the frozen series parses");
+        let want = -0.1280368005936998991e-2;
+        assert!(
+            (got - want).abs() <= 1e-15,
+            "eraDtdb vector: got {got:.18e}, want {want:.18e}"
+        );
+    }
+
+    #[test]
+    fn the_frozen_series_carries_787_terms() {
+        assert_eq!(tdb_series().expect("series").len(), 787);
+        assert!(tdb_minus_tt_full(f64::NAN, 0.0, 0.0, 0.0, 0.0, 0.0).is_none());
+    }
+
+    #[test]
     fn absent_entries_leave_none() {
         assert!(parse("DELTET/DELTA_T_A = ( 32.184 )\n").is_none());
         assert!(parse("DELTA_AT = ( 37, @2017-JAN-1 )\n").is_none());
@@ -228,8 +335,10 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         let tdb_1968 = lsk
             .unix_to_tdb(unix_1968)
             .expect("a 1968 UT1 epoch resolves through the Delta T polynomial");
-        let expect_1968 =
-            unix_1968 + delta_t_at_unix(unix_1968) - J2000_UNIX_OFFSET + tdb_minus_tt_seconds(unix_1968);
+        let expect_1968 = unix_1968
+            + delta_t_at_unix(unix_1968)
+            - J2000_UNIX_OFFSET
+            + tdb_minus_tt_seconds(unix_1968).expect("the frozen series parses");
         assert!(
             (tdb_1968 - expect_1968).abs() < 1e-9,
             "pre-1972 carries TDB = UT1 + Delta T + (TDB-TT), was {tdb_1968}"
