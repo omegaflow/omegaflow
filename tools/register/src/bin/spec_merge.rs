@@ -6445,8 +6445,8 @@ fn class_table(args: &[String]) {
             || instr.contains("concepts")
             || instr.contains("/doc/")
             || instr.contains("/docs/")
-            || instr.contains("catalog")
-            || instr.contains("/info/")
+
+
             || instr.contains("dictionary");
         let mut klasse: Option<&str> = None;
         if !api.is_empty() && api == instr {
