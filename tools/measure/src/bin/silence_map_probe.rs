@@ -24,7 +24,7 @@ struct SilenceMap {
     absent_cells: usize,
     blind_cells: usize,
     consistent_cells: usize,
-    fdr_cutoff: f64,
+    fdr_cutoff: Option<f64>,
     fdr_level: f64,
     deficits: Vec<f64>,
     counts: Vec<usize>,
@@ -255,10 +255,7 @@ fn silence_map(points: &[[f64; 3]], cell: f64) -> Option<SilenceMap> {
         absent_cells: absent,
         blind_cells: blind,
         consistent_cells: consistent,
-        fdr_cutoff: match cutoff {
-            Some(c) => c,
-            None => f64::NAN,
-        },
+        fdr_cutoff: cutoff,
         fdr_level: FDR_LEVEL,
         deficits,
         counts: obs_counts,
@@ -412,9 +409,13 @@ fn main() {
                 m.consistent_cells, m.total_cells
             );
             let testable = m.still_cells + m.consistent_cells;
+            let cutoff_text = match m.fdr_cutoff {
+                Some(c) => format!("{c:.6}"),
+                None => "absent".to_string(),
+            };
             println!(
-                "BH FDR level {} over {testable} testable cells | cutoff {:.6} | significant still cells {} / {testable}",
-                m.fdr_level, m.fdr_cutoff, m.still_cells
+                "BH FDR level {} over {testable} testable cells | cutoff {cutoff_text} | significant still cells {} / {testable}",
+                m.fdr_level, m.still_cells
             );
             if m.still_cells > 0 {
                 println!(
@@ -551,7 +552,7 @@ mod tests {
             baseline.still_cells
         );
         assert!(
-            holed_map.fdr_cutoff > 0.0,
+            holed_map.fdr_cutoff.is_some_and(|c| c > 0.0),
             "BH gate: the detected hole carries no positive FDR cutoff"
         );
     }
