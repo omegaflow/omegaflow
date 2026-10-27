@@ -304,7 +304,11 @@ fn chanlocs_positions(source: &EegSource) -> Option<Vec<Option<(f64, f64, f64)>>
     )
 }
 
-pub fn open_set_chanlocs(path: &str) -> Option<Vec<(String, Option<(f64, f64, f64)>)>> {
+pub type ChanLocation = (String, Option<(f64, f64, f64)>);
+
+pub type ChanLocs = Vec<ChanLocation>;
+
+pub fn open_set_chanlocs(path: &str) -> Option<ChanLocs> {
     let bytes = std::fs::read(path).ok()?;
     let arrays = omegaflow::matfile::parse_mat(&bytes)?;
     let source = match arrays.iter().find(|a| a.name == "EEG") {
@@ -327,10 +331,7 @@ fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
     let pnts = field_usize(source, "pnts")?;
     let trials = field_usize(source, "trials").unwrap_or(1);
     let srate = field_double(source, "srate").filter(|v| v.is_finite() && *v > 0.0);
-    let labels = match chanlocs_labels(source) {
-        Some(labels) => labels,
-        None => Vec::new(),
-    };
+    let labels: Vec<String> = chanlocs_labels(source).into_iter().flatten().collect();
     let samples = match &source.array("data")?.data {
         omegaflow::matfile::MatData::Single(s) => s.clone(),
         omegaflow::matfile::MatData::Double(d) => {
