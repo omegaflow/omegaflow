@@ -52,6 +52,7 @@ host services.swpc.noaa.gov
   note the block says cadence 6.0; the page says 1-minute averaged, and the artefact itself is not measurable yet because no mode reads raw JSON
   fields Hp
   applies https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+  instrument_quote "The MAG requirements are similar to the tri-axial fluxgates that have previously flown."
 
 host ncei.noaa.gov
   instrument thermometer
@@ -191,6 +192,7 @@ host spdf.gsfc.nasa.gov
   applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/
   applies https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/
   note Zitate aus Zeilen zusammengefuegt (Leerzeichen normalisiert); gilt fuer voyager1/merged und voyager2/merged (die daily.asc-Bloecke); die uebrigen spdf-Pfade (helios, voyager_saturn, voyager_occlt, wind_waves) fuehren eigene readme und sind von dieser Zeile nicht gedeckt
+  instrument_quote "Hence, the dual magnetometer design (Ness et al., 1971; Behannon et al. 1977)."
 
 host hfradar.ioos.us
   instrument hf-radar
