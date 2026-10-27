@@ -31475,6 +31475,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt id=25535
   note AF_form.1min.txt ist die Formstdoku "WDC-A Digital Exchange Format for One-Minute Geomagnetic Data": 60 Ein-Minuten-Werte je Stunde, Element F in nT. Der Block traegt das Elementfeld F (total field); die Werte liegen in den Monatsdateien (z.B. MSK98xx.ZIP).
   instrument vector magnetometer
+  instrument_quote "One minute magnetic field values should be measured using a vector magnetometer and, optionally, a scalar magnetometer."
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (Hartland/Canberra)
@@ -33078,6 +33079,7 @@ host tapvizier.cds.unistra.fr
   fields MSZ
   note Key `MSZ` = SZ-Massenproxy; TAP-Metadaten führen unit "1e+14solMass" (Register-Token Msun, Skalierung 1e14 steht im Zitat). Ein Instrument für den ganzen Katalog (Planck HFI). Kein Zeitraster.
   instrument Planck HFI
+  instrument_quote "The Planck data required for the construction of the catalogue comprises the HFI maps, point source catalogues for each of the HFI channels"
 
 host tapvizier.cds.unistra.fr
   status referenz
@@ -36728,6 +36730,7 @@ host archives.ia2.inaf.it
   zustand gemessen
   note TAP-Metadaten deklarieren `flux` als DOUBLE mit unit "mJy"; die TSV-Einheit Jy ist Faktor 1000 daneben und wurde auf mJy korrigiert (Feldname bleibt ..._jy). Der TSV-Query mit `dec` ist am Katalog falsch (Spalte heisst `dec_`) und wurde korrigiert. Katalog, kein Zeitraster. Geraet HFI-Bolometer; TOI-Abtastung 180.3737 Hz, nicht der Katalogtakt.
   instrument HFI
+  instrument_quote "The Planck High Frequency Instrument (HFI) is designed to measure the temperature and polarization anisotropies of the Cosmic Microwave Background"
 
 host datacentral.org.au
   instrument HERMES
