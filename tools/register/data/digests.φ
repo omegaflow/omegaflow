@@ -16853,6 +16853,11 @@ doc https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
   claim column Last modified YYYY-MM-DD hh:mm null "<th><a href="?C=M;O=A">Last modified</a></th>"
   claim column Size Bytes bzw. K null "<th><a href="?C=S;O=A">Size</a></th>"
 
+doc https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/PSCM-00017_DD005408_05-MAR-69.tar
+  kind data
+  claim archiv das tar-Archiv enthaelt ein Verzeichnis mit einer Datendatei ""PSCM-00017_DD005408_05-MAR-69.dir/""
+  claim datei Datendatei DD005408_F1.DAT ""PSCM-00017_DD005408_05-MAR-69.dir/DD005408_F1.DAT""
+
 doc https://web.archive.org/web/2020id_/http://mag.gcras.ru/obs-MOS.html
   kind instrument
   claim betrieb seit 1944 "Moskva Magnetic Observatory began functioning in 1944, but systematic measurements have been performed since 1946."
@@ -16926,6 +16931,11 @@ doc https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-joint
   claim sampling 1000 ""SamplingFrequency": 1000"
   claim netzfrequenz 60 ""PowerLineFrequency": 60"
   claim frame none ""
+
+doc https://ssd.jpl.nasa.gov/dat/planets/pluto_refs.txt
+  kind data
+  claim inhalt Literaturverzeichnis der fotografischen Pluto-Beobachtungen ""References to the Photographic Observations of Pluto""
+  claim eintrag Cohen, Hubbard, Oesterwinter 1967, New Orbit for Pluto ""Cohen,J.C., Hubbard,E.C. and Oesterwinter,C.: 1967, ``New Orbit for Pluto and Analysis""
 
 doc https://rsaa.anu.edu.au/observatories/telescopes/skymapper-telescope
   kind instrument
@@ -17968,6 +17978,12 @@ doc https://zenodo.org/api/records/21185812
   claim column emersion value Austrittswert null ""emersion value""
   claim frame none ""
 
+doc https://amisr.com/amisr/
+  kind data
+  claim zugang verarbeitete und archivierte AMISR-Daten ueber Madrigal und SRI ""Processed and archival data from AMISR systems, as well as operations schedules and summary plots""
+  claim verweis Menuepunkt "Access AMISR Data" ""Access AMISR Data""
+  claim frame geographic ""
+
 doc https://data.earthscope.org/archive/seismology/products/emc/netcdf/
   kind data
   claim server EarthScope Data Server ""EarthScope Data Server""
@@ -17985,6 +18001,13 @@ doc https://erddap.emso.eu/erddap/info/OBSEA_seabed_station_TS_L1c/index.htmlTab
   claim feld elektrische Leitfaehigkeit der Wassersaeule ""Electrical conductivity of the water column""
   claim variablen TEMP, PSAL, PRES, SVEL mit Qualitaetsflags ""platform_id,sensor_id,depth,CNDC_QC,PRES_QC,PSAL_QC,SVEL_QC,TEMP_QC""
   claim frame geographic ""
+
+doc https://www.galah-survey.org/dr3/table_schema
+  kind data
+  claim schema die Seite gibt das Datenmodell der Haupt- und Zusatzkataloge ""This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues""
+  claim kataloge Hauptkatalog aller Sterne und aller Spektren ""GALAH_DR3_main_allstar_v2 and GALAH_DR3_main_allspec_v2""
+  claim spalten Haeufigkeiten sind zu Einzeleintraegen zusammengefasst ""To save space in the table below, the columns related to abundances have been collapsed in single entries""
+  claim frame J2000 ""
 
 doc https://giro.uml.edu/didbase/scaled.php
   kind data
@@ -18015,6 +18038,14 @@ doc https://raw.githubusercontent.com/linz/elevation/master/README.md
   claim zugang STAC-Collection auf S3 und LINZ Basemaps ""STAC Collection""
   claim frame geographic ""
 
+doc https://raw.githubusercontent.com/Angshuman1211/Mirage/main/MAST_2026-05-11T1524/MAST_2026-05-11T1524/JWST/WASP39b_binned_spectra.csv
+  kind data
+  claim column instrument Text null ""instrument""
+  claim column wavelength_um Mikrometer null ""wavelength_um""
+  claim column flux_mjy mJy null ""flux_mjy""
+  claim kopf Spaltenkopf der Spektren ""instrument,wavelength_um,flux_mjy""
+  claim instrumente NIRISS SOSS als erstes Instrument der Reihe ""NIRISS_SOSS,0.8750000000000003,0.08153787854755819""
+
 doc https://coast.noaa.gov/digitalcoast/data/highresortho.html
   kind instrument
   claim bestand NAIP-Luftbilder liegen als 4-Band-Image-Services im Katalog ""USDA National Agriculture Imagery Program (NAIP) 4-Band Image Services""
@@ -18041,6 +18072,13 @@ doc https://api.crossref.org/works/10.1051/0004-6361/202452391
   claim zweck Sammlung aller astrometrischen Beobachtungen der planetaren Monde ""The goal of our work is to build a database of all available astrometric observations""
   claim begruendung jede Untersuchung der Monddynamik braucht so viele astrometrische Beobachtungen wie moeglich ""Any study of the dynamics of the natural planetary satellites requires as many astrometric observations as possible.""
   claim frame ICRS ""
+
+doc https://www.fdsn.org/station_book/II/OBN/obn_4.html
+  kind instrument
+  claim geraet Streckeisen STS-1/VBB, dreikomponentig, Breitband und sehr langperiodisch ""Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels""
+  claim betrieb 18. Juni 1998 bis heute ""18 Jun 1998 to Present""
+  claim netz Global Seismograph Network (GSN) ""Global Seismograph Network - GSN""
+  claim frame geographic ""
 
 doc https://open-lidar-data.s3.amazonaws.com/?list-type=2&prefix=data/BE/&max-keys=5
   kind data

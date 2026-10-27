@@ -2048,6 +2048,8 @@ host eeadmz1-downloads-api-appservice.azurewebsites.net
   instrument_cite https://eeadmz1-downloads-webapp.azurewebsites.net/content/documentation/How_To_Downloads.pdf
   instrument_quote "Air quality Download service page"
   fields Value
+  api_cite https://www.eea.europa.eu/en/datahub/datahubitem-view/778ef9f5-6293-4846-badd-56a29c70880d
+  api_quote "They contain the complete time series of the corresponding sampling points."
   applies https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
   note Endpunkt antwortet 405 (nur POST); Parquet-Downloaddienst, stündliche Messreihen. Einheit ug/m3 nicht im Zitat.
 
@@ -3193,7 +3195,7 @@ host psa.esa.int
   unit nT
   interval 0.0078125
   api_cite https://psa.esa.int/psa-tap/data?retrieval_access=DIRECT&retrieval_type=PRODUCT&tapclient=EPN-TAP&id=urn:esa:psa:bc_mpo_mag:data_derived:mag_der_sc_ib_a001_e2k_00000_20181024
-  api_quote "bc_mpo_mag"
+  api_quote "This bundle contains raw data from the BepiColombo MPO-MAG magnetometer on the BepiColombo Mercury Planetary Orbiter."
   instrument_cite https://www.cosmos.esa.int/web/bepicolombo/mpo/mag
   instrument_quote "The two sensors measure the magnetic field with a sample rate of 128 Hz."
   host_cite https://psa.esa.int/psa-tap/data?retrieval_access=DIRECT&retrieval_type=PRODUCT&tapclient=EPN-TAP&id=urn:esa:psa:bc_mpo_mag:data_derived:mag_der_sc_ib_a001_e2k_00000_20181024
@@ -3333,7 +3335,7 @@ host open-lidar-data.s3.amazonaws.com
   api_cite https://github.com/flai-ai/open-lidar-data
   api_quote "LiDAR (Light Detection and Ranging) is an essential technology for applications in archaeology, geography, forestry and urban planning."
   instrument_cite https://github.com/flai-ai/open-lidar-data
-  instrument_quote "airborne LiDAR"
+  instrument_quote "LiDAR (Light Detection and Ranging) is an essential technology for applications in archaeology, geography, forestry, and urban planning."
   host_cite https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
   host_quote "HTTP last-modified: Wed, 22 May 2024 13:30:35 GMT"
   fields las_x_icrs_m las_y_icrs_m las_z_icrs_m las_intensity_dn las_classification
@@ -3360,7 +3362,7 @@ host lambda.gsfc.nasa.gov
   unit K
   interval 604800
   api_cite https://lambda.gsfc.nasa.gov/product/spt/
-  api_quote "SPT-3G"
+  api_quote "In January 2017, the SPT-3G receiver was installed on the SPT."
   instrument_cite https://pole.uchicago.edu/
   instrument_quote "South Pole Telescope (SPT)"
   host_cite https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2
@@ -3417,7 +3419,7 @@ host portal.opentopography.org
   unit m
   interval 31536000
   api_cite https://portal.opentopography.org/apidocs/
-  api_quote "Developers/API"
+  api_quote "Returns elevation data for a specified latitude and longitude, derived from topography datasets hosted by OpenTopography."
   instrument_cite https://www2.jpl.nasa.gov/srtm/
   instrument_quote "Shuttle Radar Topography Mission"
   fields elevation
@@ -3431,7 +3433,7 @@ host noaa-dcdb-bathymetry-pds.s3.amazonaws.com
   api_cite https://www.ncei.noaa.gov/products/bathymetry
   api_quote "Use this interactive map to search and access bathymetric data, including multibeam, singlebeam, lidar, and crowdsourced bathymetry data"
   instrument_cite https://oceanexplorer.noaa.gov/technology/sonar/multibeam.html
-  instrument_quote "multibeam"
+  instrument_quote "Multibeam sonar is a type of active sonar system used to map the seafloor and detect objects in the water column or along the seafloor."
   probe 2026-10-25T09:59:46Z 200 https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com
   fields noaa_dcdb_depth_m
   applies https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com
@@ -3474,7 +3476,7 @@ host physionet.org
   api_cite https://physionet.org/files/bidsleep-dataset/1.0.0/
   api_quote "bidsleep"
   instrument_cite https://physionet.org/content/bidsleep-dataset/1.0.0/
-  instrument_quote "BIDSleep"
+  instrument_quote "Apple Watch (consumer-grade device): A custom-developed WatchOS application, BIDSleep, was used to continuously record instantaneous heart rate (IHR) and three-axis accelerometry."
   probe 2026-10-25T09:59:52Z 200 https://physionet.org/files/bidsleep-dataset/1.0.0/
   fields bidsleep_mx_ms2 bidsleep_my_ms2 bidsleep_mz_ms2
   applies https://physionet.org/files/bidsleep-dataset/1.0.0/
@@ -4119,7 +4121,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:26Z 206 https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
@@ -4134,7 +4136,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:46Z 206 https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
@@ -4149,7 +4151,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:49Z 206 https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat
@@ -4163,7 +4165,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513181110id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_1.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:50Z 206 https://web.archive.org/web/20030513181110id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_1.dat
@@ -4177,7 +4179,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030930094743id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:51Z 206 https://web.archive.org/web/20030930094743id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_2.dat
@@ -4191,7 +4193,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513013706id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_3.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:53Z 206 https://web.archive.org/web/20030513013706id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_3.dat
@@ -4205,7 +4207,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513013759id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_1.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:55Z 206 https://web.archive.org/web/20030513013759id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_1.dat
@@ -4219,7 +4221,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513014417id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:56Z 206 https://web.archive.org/web/20030513014417id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_2.dat
@@ -4233,7 +4235,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513013922id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_3.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:57Z 206 https://web.archive.org/web/20030513013922id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_3.dat
@@ -4247,7 +4249,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030513013843id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_1.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:02:58Z 206 https://web.archive.org/web/20030513013843id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_1.dat
@@ -4261,7 +4263,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514060940id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:00Z 206 https://web.archive.org/web/20030514060940id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_2.dat
@@ -4275,7 +4277,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061246id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_3.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:02Z 206 https://web.archive.org/web/20030514061246id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_3.dat
@@ -4289,7 +4291,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061343id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_1.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:03Z 206 https://web.archive.org/web/20030514061343id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_1.dat
@@ -4303,7 +4305,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061346id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:05Z 206 https://web.archive.org/web/20030514061346id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_2.dat
@@ -4317,7 +4319,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061256id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_3.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:06Z 206 https://web.archive.org/web/20030514061256id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_3.dat
@@ -4331,7 +4333,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061444id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_1.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:07Z 206 https://web.archive.org/web/20030514061444id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_1.dat
@@ -4345,7 +4347,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:09Z 206 https://web.archive.org/web/20030514061510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_2.dat
@@ -4359,7 +4361,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061523id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_3.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:10Z 206 https://web.archive.org/web/20030514061523id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_3.dat
@@ -4373,7 +4375,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061626id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_1.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:03:11Z 206 https://web.archive.org/web/20030514061626id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_1.dat
@@ -4387,7 +4389,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20100114163814id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
   host_quote "HTTP cache-control: private"
   probe 2026-10-25T10:04:13Z 206 https://web.archive.org/web/20100114163814id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
@@ -4402,7 +4404,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20051124035849id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:14Z 206 https://web.archive.org/web/20051124035849id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
@@ -4417,7 +4419,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:16Z 206 https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
@@ -4432,7 +4434,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20190905142451id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:17Z 206 https://web.archive.org/web/20190905142451id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
@@ -4447,7 +4449,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061309id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:02:24Z 206 https://web.archive.org/web/20030514061309id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
@@ -4461,7 +4463,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:18Z 206 https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
@@ -4476,7 +4478,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:20Z 206 https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
@@ -4491,7 +4493,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030515081038id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200006.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:03:25Z 206 https://web.archive.org/web/20030515081038id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200006.dat
@@ -4505,7 +4507,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:22Z 206 https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
@@ -4520,7 +4522,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20180212024918id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2001/cat200101.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:03:28Z 206 https://web.archive.org/web/20180212024918id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2001/cat200101.dat
@@ -4534,7 +4536,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20190902071540id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:26Z 206 https://web.archive.org/web/20190902071540id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
@@ -4549,7 +4551,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20190902080725id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:29Z 206 https://web.archive.org/web/20190902080725id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
@@ -4564,7 +4566,7 @@ host web.archive.org
   api_cite https://pubs.usgs.gov/of/2002/0500/report.pdf
   api_quote "Dep: depth of origin, in km"
   instrument_cite https://www.fdsn.org/station_book/II/OBN/obn_4.html
-  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels."
+  instrument_quote "Streckeisen Model STS-1/VBB 3 component system for broadband, long period and very long period channels"
   host_cite https://web.archive.org/web/20190905174141id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
   host_quote "cache-control: max-age=1800"
   probe 2026-10-25T10:04:31Z 206 https://web.archive.org/web/20190905174141id_/http://zeus.wdcb.ru:80/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
@@ -6990,7 +6992,7 @@ host datacentral.org.au
   instrument HERMES
   note Katalogstern, kein Zeitraster; 604800 ist der Blockwert. HERMES liefert R=28000-Spektren, eine Beobachtung je Stern.
   api_cite https://www.galah-survey.org/dr3/table_schema
-  api_quote | `teff` | Spectroscopic effective temperature (used for fitting) | K | float |
+  api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
 
 host erddap.marine.ie
@@ -8522,7 +8524,7 @@ host datacentral.org.au
   instrument HERMES
   note Katalog (DR3), kein Zeitraster; api_quote ist die Feldtabelle der DR3-Beschreibung (Spalte teff, Einheit K). 3600 s = Belichtungszeit je Feld ("in one hour of exposure time", facilities-Seite); R~28,000/50,000, vier Kameras 471.8-789.0 nm.
   api_cite https://www.galah-survey.org/dr3/table_schema
-  api_quote | `teff` | Spectroscopic effective temperature (used for fitting) | K | float |
+  api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
 
 host data.ghrc.earthdata.nasa.gov
@@ -20542,6 +20544,8 @@ host alasky.cds.unistra.fr
   unit 1
   sampling null
   interval null
+  instrument_cite https://en.wikipedia.org/wiki/Pan-STARRS
+  instrument_quote "Pan-STARRS consists of two 1.8-m Ritchey–Chrétien telescopes located at Haleakalā in Hawaii."
 
 host alasky.cds.unistra.fr
   api_cite https://alasky.cds.unistra.fr/Pan-STARRS/DR1/color-i-r-g/properties
@@ -22357,7 +22361,7 @@ host nanograv.org
   instrument_cite https://www.nsf.gov/news/media-toolkits/arecibo
   instrument_quote "In 2020, Arecibo Observatory's 305-meter telescope collapsed."
   host_cite https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
-  host_quote "HTTP/2 404"
+  host_quote "Sorry, the requested page was not found."
   probe 2026-10-26T00:00:00Z 200 https://nanograv.org/science/data
   fields NG15_RESID
   applies https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
@@ -22374,7 +22378,7 @@ host nanograv.org
   instrument_cite https://arxiv.org/abs/0907.1306
   instrument_quote "MUSTANG is a 90 GHz bolometer camera built for use as a facility instrument on the 100 m Robert C."
   host_cite https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
-  host_quote "HTTP/2 404"
+  host_quote "Sorry, the requested page was not found."
   probe 2026-10-26T00:00:00Z 200 https://nanograv.org/science/data
   fields NG15_RESID
   applies https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
@@ -22391,7 +22395,7 @@ host nanograv.org
   instrument_cite https://public.nrao.edu/telescopes/vla/
   instrument_quote "28 (27 active and 1 spare)"
   host_cite https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
-  host_quote "HTTP/2 404"
+  host_quote "Sorry, the requested page was not found."
   probe 2026-10-26T00:00:00Z 200 https://nanograv.org/science/data
   fields NG15_RESID
   applies https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
@@ -22746,7 +22750,7 @@ host gsaweb.ast.cam.ac.uk
   instrument_cite https://www.esa.int/Science_Exploration/Space_Science/Gaia
   instrument_quote "1 billion pixel camera"
   host_cite https://gsaweb.ast.cam.ac.uk/alerts/alertsindex
-  host_quote "Gaia Alerts"
+  host_quote "We acknowledge ESA Gaia, DPAC and the Photometric Science Alerts Team (http://gsaweb.ast.cam.ac.uk/alerts)"
   ttl 86400
   probe 2026-10-25T18:41:28Z 206 https://gsaweb.ast.cam.ac.uk/alerts/
   fields gmag
@@ -24031,6 +24035,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "42-44 i 3 Depth in kilometers."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   api_quote "42-44 i 3 Depth in kilometers."
@@ -24052,6 +24058,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -24073,6 +24081,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
   api_quote "61-63 i 3 Depth in kilometers."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24094,6 +24104,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -24115,6 +24127,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -24136,6 +24150,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -24157,6 +24173,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -24390,6 +24408,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   api_quote "Catalogue compiled by B.Gutenberg and C.Richter includes information on 4158 world earthquakes for the period from 1904 to 1952. ... 65-68 f4.2 Magnitude"
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24412,6 +24432,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "42-44 i 3 Depth in kilometers."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   api_quote ISS   1913 0105172101      31.700 131.000                                             235
@@ -24434,6 +24456,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "Earthquakes in the USSR from 1962 to 1991"
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/global_hypoc.html
@@ -24456,6 +24480,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24477,6 +24503,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
   api_quote "61-63 i 3 Depth in kilometers."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24498,6 +24526,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   api_quote "45-47 f3.1 Surface magnitude M s ... Length of logical record - 50 byte."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
@@ -24520,6 +24550,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24839,7 +24871,7 @@ host openneuro.org
   instrument_cite https://openneuro.org/crn/graphql
   instrument_quote "sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_ieeg"
   host_cite https://openneuro.org/
-  host_quote "OpenNeuro"
+  host_quote "OpenNeuro is a BRAIN Initiative designated data archive"
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds004100
   fields T21
@@ -25629,7 +25661,7 @@ host datacentral.org.au
   sampling none
   interval 604800
   api_cite https://www.galah-survey.org/dr3/table_schema
-  api_quote | `teff` | Spectroscopic effective temperature (used for fitting) | K | float |
+  api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   instrument_cite https://www.galah-survey.org/details/facilities/
   instrument_quote GALAH observes using the HERMES spectrograph (Sheinis et al. 2015) at the Anglo-Australian Telescope. GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer.
   host_cite https://datacentral.org.au:443/vo/tap/sync
@@ -27003,6 +27035,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
@@ -27045,6 +27079,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
@@ -27068,6 +27104,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
@@ -27091,6 +27129,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   api_quote "Three hourly indices aa for 1868 thru 1992 ... CC09-CC11  First 3 hourly aa indice ... CC12-CC32  3 hourly aa indices"
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
@@ -27114,6 +27154,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of 60 will indicate disturbance onset."
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27156,6 +27198,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of 60 will indicate disturbance onset."
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27179,6 +27223,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of 60 will indicate disturbance onset."
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27202,6 +27248,8 @@ host zeus.wdcb.ru
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   api_quote "An AA* of 60 will indicate disturbance onset."
+  instrument_cite https://centaur.reading.ac.uk/80180/9/swsc180020.pdf
+  instrument_quote "Analysis of the effect of secular change in the geomagnetic field on the aa magnetic index"
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27404,7 +27452,7 @@ host datacentral.org.au
   sampling none
   interval 0
   api_cite https://www.galah-survey.org/dr3/table_schema
-  api_quote | `teff` | Spectroscopic effective temperature (used for fitting) | K | float |
+  api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   instrument_cite https://www.galah-survey.org/details/facilities/
   instrument_quote GALAH observes using the HERMES spectrograph (Sheinis et al. 2015) at the Anglo-Australian Telescope. GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer.
   host_cite https://www.galah-survey.org/dr3/overview/
@@ -29295,7 +29343,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/16365279
   api_quote "Complete Pantheon+ compilation of 1701 Type Ia supernovae with standardized distance measurements."
   instrument_cite https://github.com/PantheonPlusSH0ES/DataRelease
-  instrument_quote "Pantheon+"
+  instrument_quote "Data for Pantheon+ is in Pantheon+_Data"
   host_cite https://zenodo.org/api/records/16365279/files/Pantheon_SH0ES.dat/content
   host_quote "HTTP last-modified: Fri, 13 Feb 2026 18:45:27 GMT"
   probe 2026-10-25T21:14:01Z 200 https://zenodo.org/api/records/16365279/files/Pantheon_SH0ES.dat/content
@@ -30363,6 +30411,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   api_quote "Catalogue compiled by B.Gutenberg and C.Richter includes information on 4158 world earthquakes for the period from 1904 to 1952. ... 65-68 f4.2 Magnitude"
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -30387,6 +30437,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   api_quote "45-47 f3.1 Surface magnitude M s ... Length of logical record - 50 byte."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
@@ -30433,7 +30485,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -30452,7 +30504,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -30471,7 +30523,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -30490,7 +30542,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -30509,7 +30561,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -31895,6 +31947,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   api_quote "Catalogue compiled by B.Gutenberg and C.Richter includes information on 4158 world earthquakes for the period from 1904 to 1952. ... 65-68 f4.2 Magnitude"
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -31919,6 +31973,8 @@ host wdcb.ru
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   api_quote "45-47 f3.1 Surface magnitude M s ... Length of logical record - 50 byte."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_quote "устанавливались следующие основные типы сейсмографов"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
@@ -31965,7 +32021,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -31984,7 +32040,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -32003,7 +32059,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -32022,7 +32078,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -32041,7 +32097,7 @@ host zenodo.org
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope"
   host_cite https://zenodo.org/records/8300645
-  host_quote "EPTA DR2"
+  host_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   ttl no-sampling
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1 line=27474
@@ -32501,7 +32557,7 @@ host datacentral.org.au
   sampling none
   interval 0
   api_cite https://www.galah-survey.org/dr3/table_schema
-  api_quote | `teff` | Spectroscopic effective temperature (used for fitting) | K | float |
+  api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   instrument_cite https://www.galah-survey.org/details/facilities/
   instrument_quote GALAH observes using the HERMES spectrograph (Sheinis et al. 2015) at the Anglo-Australian Telescope. GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer.
   host_cite https://www.galah-survey.org/dr3/overview/
@@ -33526,3 +33582,4 @@ host exoplanetarchive.ipac.caltech.edu
   applies https://exoplanetarchive.ipac.caltech.edu/TAP/sync + https://mast.stsci.edu/api/v0/invoke
   field flux normalized_flux 1 120
   zustand gemessen
+

@@ -4462,6 +4462,12 @@ fn check_blocks() {
         let d_instr = digests.get(&instr);
         if d_api.is_none() || d_instr.is_none() {
             no_digest += 1;
+            if d_api.is_none() {
+                println!("OHNE-AUSZUG\t{}\t{}\tdata\t{}\t{}", start + 1, host, api, or_empty(field(&b, "instrument")));
+            }
+            if d_instr.is_none() {
+                println!("OHNE-AUSZUG\t{}\t{}\tinstrument\t{}\t{}", start + 1, host, instr, or_empty(field(&b, "instrument")));
+            }
             continue;
         }
         let d_api = match d_api {
@@ -4710,7 +4716,7 @@ fn set_doc_slot(path: &str) {
         Err(_) => return,
     };
     let reg = fs::read_to_string(REG).expect("register");
-    let mut wanted: BTreeMap<String, (String, String, String)> = BTreeMap::new();
+    let mut wanted: BTreeMap<(String, String), (String, String, String)> = BTreeMap::new();
     for line in tsv.lines() {
         let cols: Vec<&str> = line.split('\t').collect();
         if cols.len() < 4 {
@@ -4726,21 +4732,25 @@ fn set_doc_slot(path: &str) {
         if slot != "data" && slot != "instrument" {
             continue;
         }
-        wanted.insert(key, (slot, cite, quote));
+        wanted.insert((key, slot.clone()), (slot, cite, quote));
     }
     let mut out: Vec<String> = Vec::new();
     let (mut nd, mut ni) = (0usize, 0usize);
     for (_, mut b) in blocks(&reg) {
         let key = or_empty(field(&b, "applies"));
-        match wanted.get(&key) {
+        let mut hit = wanted.get(&(key.clone(), "data".to_string())).cloned();
+        if hit.is_none() {
+            hit = wanted.get(&(key.clone(), "instrument".to_string())).cloned();
+        }
+        match hit {
             Some((slot, cite, quote)) => {
                 if slot == "data" {
-                    set_row_key(&mut b, "api_cite", cite);
-                    set_row_key(&mut b, "api_quote", &format!("\"{quote}\""));
+                    set_row_key(&mut b, "api_cite", &cite);
+                    set_row_key(&mut b, "api_quote", &format!("\"{}\"", quote.replace('"', "\\\"")));
                     nd += 1;
                 } else {
-                    set_row_key(&mut b, "instrument_cite", cite);
-                    set_row_key(&mut b, "instrument_quote", &format!("\"{quote}\""));
+                    set_row_key(&mut b, "instrument_cite", &cite);
+                    set_row_key(&mut b, "instrument_quote", &format!("\"{}\"", quote.replace('"', "\\\"")));
                     ni += 1;
                 }
             }
