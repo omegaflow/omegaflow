@@ -64,6 +64,10 @@ jobs:
       run: |
         cargo llvm-cov --release --features browser_relay --summary-only | tee coverage.txt
     - if: matrix.shard == 1
+      name: Barrierefreiheit — WCAG 2.2 Level AA
+      run: |
+        npx --yes pa11y@8 --standard WCAG2AA --threshold 0 "file://$PWD/static/index.html"
+    - if: matrix.shard == 1
       name: Prüfprotokoll — what ran, with which toolchain
       run: |
         rustc --version > pruefprotokoll.txt
