@@ -6149,6 +6149,172 @@ fn quote_repair(args: &[String]) {
     );
 }
 
+fn quote_retarget(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        if let Ok(t) = fs::read_to_string(c[1]) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let (mut taken, mut left, mut nodoc) = (0usize, 0usize, 0usize);
+    let mut report: Vec<String> = Vec::new();
+    for (start, b) in blocks(&reg) {
+        let instrument = or_empty(field(&b, "instrument"));
+        let unit = or_empty(field(&b, "unit"));
+        let mut keys: Vec<String> = Vec::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut it = t.split_whitespace();
+            match it.next() {
+                Some("field") => {
+                    if let Some(k) = it.next() {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("fields") => {
+                    for k in it {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("last") => {
+                    let rest: Vec<&str> = it.collect();
+                    if let Some(k) = rest.get(1) {
+                        keys.push(k.clone().to_string());
+                    }
+                }
+                _ => {}
+            }
+        }
+        let mut topic: Vec<String> = Vec::new();
+        for k in keys.iter().chain(std::iter::once(&instrument)).chain(std::iter::once(&unit)) {
+            for w in k.split(|c: char| !c.is_alphanumeric()) {
+                let lw: String = w.chars().flat_map(|c| c.to_lowercase()).collect();
+                if lw.chars().count() >= 5 && !topic.contains(&lw) {
+                    topic.push(lw);
+                }
+            }
+        }
+        if topic.len() < 2 {
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        let mut body: Vec<String> = Vec::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut is_cite = false;
+            for (key, prefix) in [
+                ("api", "api_cite "),
+                ("instrument", "instrument_cite "),
+                ("host", "host_cite "),
+            ] {
+                if t.starts_with(prefix) {
+                    cur.insert(key.to_string(), t[prefix.len()..].trim().to_string());
+                    is_cite = true;
+                    break;
+                }
+            }
+            if is_cite {
+                body.push(line.clone());
+                continue;
+            }
+            let mut done = false;
+            for (key, prefix) in [
+                ("api", "api_quote "),
+                ("instrument", "instrument_quote "),
+                ("host", "host_quote "),
+            ] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                done = true;
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => break,
+                };
+                let w = words(&q);
+                if w < 2 || w > 10 || q.ends_with('.') || q.ends_with('!') || q.ends_with('?') {
+                    body.push(line.clone());
+                    break;
+                }
+                let url = match cur.get(key) {
+                    Some(u) => u.clone(),
+                    None => String::new(),
+                };
+                let text = match cache.get(&url) {
+                    Some(t) => t,
+                    None => {
+                        nodoc += 1;
+                        body.push(line.clone());
+                        break;
+                    }
+                };
+                let mut best: Option<(usize, String)> = None;
+                for s in sentences_of(text) {
+                    let n = words(&s);
+                    if n < 5 || n > 25 {
+                        continue;
+                    }
+                    let sw = words_low(&s);
+                    let hits = topic.iter().filter(|t| sw.contains(t)).count();
+                    if hits < 2 {
+                        continue;
+                    }
+                    let better = match &best {
+                        Some((h, _)) => hits > *h,
+                        None => true,
+                    };
+                    if better {
+                        best = Some((hits, s));
+                    }
+                }
+                match best {
+                    Some((h, s)) => {
+                        taken += 1;
+                        report.push(format!("{}\t{}\t{}", start, h, s.chars().take(90).collect::<String>()));
+                        body.push(format!("  {}\"{}\"", prefix, s.replace('"', "\\\"")));
+                    }
+                    None => {
+                        left += 1;
+                        body.push(line.clone());
+                    }
+                }
+                break;
+            }
+            if !done {
+                body.push(line.clone());
+            }
+        }
+        out.extend(body);
+        out.push(String::new());
+    }
+    for r in report.iter().take(15) {
+        println!("RETARGET\t{r}");
+    }
+    if dry {
+        println!("dry-run: quote-retarget {taken} quotes re-grounded, {left} without sentence, {nodoc} without text");
+        return;
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!("quote-retarget: {taken} quotes re-grounded, {left} without sentence, {nodoc} without text");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -6671,6 +6837,7 @@ fn main() {
         Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
         Some("quote-trim") => quote_trim(&args[2..]),
         Some("quote-repair") => quote_repair(&args[2..]),
+        Some("quote-retarget") => quote_retarget(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
