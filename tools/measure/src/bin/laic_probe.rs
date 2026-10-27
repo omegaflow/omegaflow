@@ -1814,7 +1814,10 @@ fn parse_window_file(body: &str) -> Option<WindowData> {
         lon: get_num("lon")?,
         station: match get_str("station") {
             Some(s) => s,
-            None => String::new(),
+            None => {
+                eprintln!("station: the record names no station");
+                String::new()
+            }
         },
         f: Vec::new(),
         bz: Vec::new(),
@@ -2406,7 +2409,10 @@ fn harvest_main(args: &[String]) {
     };
     let n_null = match usize_arg("--null") {
         Some(v) => v,
-        None => 60,
+        None => {
+            eprintln!("--null absent — the default of 60 stands, named here so it is not silent");
+            60
+        }
     };
     let swarm_limit = match usize_arg("--swarm-limit") {
         Some(v) => v,
