@@ -3748,7 +3748,7 @@ host gracedb.ligo.org
   interval 31536000
   api_cite https://ligo-gracedb.readthedocs.io/en/latest/api.html
   api_ref "LIGO Scientific Collaboration, ligo-gracedb Dokumentation Version 2.16.1. API — ligo-gracedb 2.16.1 documentation."
-  api_quote "property api_versions List of available API versions on the server."
+  api_quote "property api_versions  List of available API versions on the server."
   instrument_cite https://emfollow.docs.ligo.org/userguide/content.html
   instrument_ref "LIGO Scientific Collaboration, Virgo Collaboration, KAGRA Collaboration; Jahr nicht genannt. Alert Contents — IGWN Public Alerts User Guide."
   instrument_quote "The sky localization is saved in a FITS file as a HEALPix all-sky image."
@@ -8024,7 +8024,7 @@ host erddap.marine.ie
   interval 60
   api_cite https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.html
   api_ref "Marine Institute Ireland, Dataset smartbay_obs_ctd_sbe16, doi:10.20393/F9E99461-B75C-423C-A605-D227C0020C7B; Abruf 2026-10-27. SmartBay Observatory CTD and Oxygen Data (Processed) - ERDDAP tabledap Data Access Form."
-  api_quote "temperature (temperature of the water, degC)"
+  api_quote "The sensor measures the temperature, conductivity, pressure and oxygen concentration of the seawater."
   instrument_cite https://www.comm-tec.com/?lang=en&page_id=38&m=c&cat_id=CTD&pid=SBE-16plus%20V2
   instrument_ref "Sea-Bird Electronics, über Comm-Tec (Händlerseite), o.J. SBE-16plus V2 SeaCAT Recorder."
   instrument_quote "The SBE 16plus V2 (Version 2) SeaCAT Recorder measures temperature and conductivity (pressure optional) and provides high accuracy and resolution, reliability, and ease-of-use on moorings"
@@ -26064,7 +26064,7 @@ host gracedb.ligo.org
   interval none
   api_cite https://ligo-gracedb.readthedocs.io/en/latest/api.html
   api_ref "LIGO Scientific Collaboration, ligo-gracedb Dokumentation Version 2.16.1. API — ligo-gracedb 2.16.1 documentation."
-  api_quote "property api_versions List of available API versions on the server."
+  api_quote "property api_versions  List of available API versions on the server."
   instrument_cite https://emfollow.docs.ligo.org/userguide/content.html
   instrument_ref "LIGO Scientific Collaboration, Virgo Collaboration, KAGRA Collaboration; Jahr nicht genannt. Alert Contents — IGWN Public Alerts User Guide."
   instrument_quote "The sky localization is saved in a FITS file as a HEALPix all-sky image."
@@ -28555,7 +28555,7 @@ host earthscope.org
   instrument_quote "EMC — Earth Model Collaboration"
   host_cite https://data.earthscope.org/archive/seismology/products/emc/data/
   host_ref "EarthScope Data Server, Verzeichnisausgabe vom Abruftag. EarthScope EMC — Verzeichnis data."
-  host_quote "EarthScope Data Server"
+  host_quote "var currentPath = window.location.pathname; if (currentPath.indexOf('/archive/') === 0) { window.location.replace('/?path=' + encodeURIComponent(currentPath)); } EarthScope Data Server <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAADAFBMVEVHcEz////////9/f3////////////////////////////////+/v7////////////9/f3//////////////////////////////////////v/////9/f3////+/v79/Pz////////////////////////////////+/v7o6Oj9/f3y7O328/T////////////////////////////////////+/v7////9/PzQwsjWwsX////////////////+/v7///+fi6Ds6ezCrrf9+/u5kZn////////+/v78/PzKysy9vsDq6uv9/f3f4ODb29zw7/DGxsjS0tPIycrMzM739/fd3t75+Pi/wMLj5OTs7O3DxMXQ0dH19/e4ury0tbe7vL6+wMH7+/u2t7nt7+/19fXCw8TY2Nnj4eb6+fnW19jp6eny8fKur7HExsfYz9Pn5+jh4uLl5ubTub3Ozs/Z2tqxs7SqpbrOz9Dx5OXy6err5OZ2aJK9AADy8vLg3uWgoaTU1dbv7vL8/v7Wra+LWnf9+vr28fLf2t/Hqa+/tMDz8/SiiJrc0tbYnp+2prPKhorRkpSblbGHgaHKmJzawsXAk5aOjbLAucfq09Tjv7/r2NnDv82lpqyPiKfgycozMoqYX3PFsrry8vW4ZW2sZ3S6dnzX1d+kU2WJdZSATHHUztaxn67m3N+8maKFQWbay87m7e2pq63sy8vYmZuZm53DgofGWFwAAHHPzNeVkrBuZpeFbIrnx8fGvMaCgqXCeHzKeHqvpLbPz9y7vM+USmTFo6qjc4S6fYWwqbB4cZ+zjpmZjaZ9WoDEm6GThaDj1NZ3YovPwceLTWyBZIeql6i+naWWVW379PTZ4OH78vLafn7Y2eCCeZ7JyNWsq8OUb4e5rq/XtLaCcZSokqPeoqKyX2nDOT2bm7u+YGW0WmN8eZ7Mn6ObGDG3TFWYAABLM3Q7AF2lmKyVFj6kWGllAFSOGUuHNVxkOXC3lZ+vg4+umqm3rr21k53h19uCM15DmRYUAAAARnRSTlMAA/36Afr5AgUEBs4WDsr7/dVvIx6VrtgbZu5j9xSs+ofBxLdc8fcukgf++ftZmn/qiaPfKLZ64fL3+opyuFbTdPv5+I37xe8NcwAABbpJREFUeNqlVgVQW1kU/YQIrhUoXahSm7psOyvsdnfP/CT9IRAIRDYJQUMgBHcr0GIt9VJ3t9l6t+1Wtjb1divr7u5u9ycB2qGyM3tnkjd//jn3nit5N8y9TCiUkAmFzH8yiYeXp9BB8/TykDwU7ublOt2cp9eDKRJP+hoS2nOgX2Cg38SeYUPo0VPyADEM02N0FLoswHtSCMN4CO+jRsiEjBIRTCDiLSLCXUAPfYf6MBK3e+HJfVAkIBIMB8uyHMtHGC4gB5NDSVd3vBfjOxAQA6xLzvTl8+a/NX9e+1QgfBi97ua/x3iI/cERNEGrsb65+ODht1PWZRw6eeTpqYjy6WR04ceQe/JuUcSp9LnHVr9T/OLK4mqim1/aOgXjfe5W5cb4jkck7z5dl54FnFpsdoj6YEsjnVkNzyBqGIG6TMhMdOCViekUJP7UwWPk/lA8sO3SdmJI10xBOCMR3iEoCGLC5ya1AJm6Fas3ZVRvar947WIG8OG7CYDy9AiEEcxppC4kEgIOah2QZygwf/oyzFLe8fJLN1msbSBG/nPo8wgjcenxZEZBVAd7GhBrUGLd6sXnD1dUbPlTCWxvUGLtWSrchhF41pU3HcGRCEC83Aw9cfLmnz80nUVC9clLN824vkuJC2eAywsxmVruIoyGmIXKjmg5EJP0RTXWVTdqSVLb1nJcXwN28w4sXCDCU85mUO5RiIBVhiojh0Qd..."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://data.earthscope.org/archive/seismology/products/emc/data/
   fields VS
