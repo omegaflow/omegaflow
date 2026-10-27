@@ -287,6 +287,12 @@ impl Friction {
     }
 }
 
+impl Default for Friction {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 fn fingerprint(text: &str) -> Option<String> {
     let fp: String = text
         .to_lowercase()

@@ -101,7 +101,7 @@ fn pair_list(json: &JsonVal, key: &str) -> Vec<(String, String)> {
                 .iter()
                 .filter_map(|v| match v {
                     JsonVal::Arr(pair) => {
-                        let marker = pair.get(0).and_then(|x| match x {
+                        let marker = pair.first().and_then(|x| match x {
                             JsonVal::Str(s) => Some(s.clone()),
                             _ => None,
                         });
@@ -230,10 +230,7 @@ fn german_concept_title(path: &str) -> bool {
     if v.de_works.iter().any(|w| w.as_str() == slug) {
         return true;
     }
-    let token = match slug.split('-').next() {
-        Some(t) => t,
-        None => "",
-    };
+    let token: &str = slug.split('-').next().unwrap_or("");
     if v.de_determiners.iter().any(|d| d.as_str() == token) {
         return true;
     }
@@ -1131,16 +1128,12 @@ impl Gate {
         let path = jstr(&obj, "filePath")
             .or_else(|| jstr(&obj, "path"))
             .or_else(|| jstr(&obj, "file"));
-        let Some(path) = path else {
-            return None;
-        };
+        let path = path?;
         let content = jstr(&obj, "newString")
             .or_else(|| jstr(&obj, "content"))
             .or_else(|| jstr(&obj, "text"))
             .or_else(|| jstr(&obj, "file_text"));
-        let Some(content) = content else {
-            return None;
-        };
+        let content = content?;
         if let Some(v) = self.check_human_threshold(&content) {
             return Some(v);
         }
@@ -1234,10 +1227,10 @@ impl Gate {
         }
         for (line_idx, line) in content.lines().enumerate() {
             let t = line.trim_start();
-            if t.starts_with("field") {
-                if let Some((force, unit)) = field_line_force_unit(t) {
-                    if let Some(id) = force_id_of(&force) {
-                        if unit == "1" && !allowed_units_for_force(id).contains(&"1") {
+            if t.starts_with("field")
+                && let Some((force, unit)) = field_line_force_unit(t) {
+                    if let Some(id) = force_id_of(&force)
+                        && unit == "1" && !allowed_units_for_force(id).contains(&"1") {
                             return Some(Verdict {
                                 severity: Severity::Hard,
                                 rule: "dimensionless-force".to_string(),
@@ -1246,7 +1239,6 @@ impl Gate {
                                 quote: clip(t, 90),
                             });
                         }
-                    }
                     if !unit.is_empty()
                         && unit != "1"
                         && !self
@@ -1265,7 +1257,6 @@ impl Gate {
                         });
                     }
                 }
-            }
         }
         if is_code && !is_test_file_path(&path) {
             let prod = test_regions_stripped(&content);
@@ -1400,11 +1391,10 @@ impl Gate {
                     });
                 }
             }
-            if let Some(home) = classify_home(&path) {
-                if let Some(verdict) = home_drift(&content, home) {
+            if let Some(home) = classify_home(&path)
+                && let Some(verdict) = home_drift(&content, home) {
                     return Some(verdict);
                 }
-            }
         }
         None
     }
@@ -1942,11 +1932,10 @@ fn burn_token_pos(body: &str, token: &str) -> Option<usize> {
 fn burn_reason_after(body: &str, cap_pos: usize) -> bool {
     let rest = &body[cap_pos + "cap".len()..];
     for marker in ["Grund:", "reason:"] {
-        if let Some(p) = rest.find(marker) {
-            if !rest[p + marker.len()..].trim().is_empty() {
+        if let Some(p) = rest.find(marker)
+            && !rest[p + marker.len()..].trim().is_empty() {
                 return true;
             }
-        }
     }
     false
 }
@@ -2265,11 +2254,10 @@ fn trigger_has_proof(trigger: &str) -> bool {
 fn has_register_key(line: &str) -> bool {
     let chars: Vec<char> = line.chars().collect();
     for (i, &c) in chars.iter().enumerate() {
-        if c == '#' && i > 0 && i + 1 < chars.len() {
-            if chars[i - 1].is_alphanumeric() && chars[i + 1].is_alphanumeric() {
+        if c == '#' && i > 0 && i + 1 < chars.len()
+            && chars[i - 1].is_alphanumeric() && chars[i + 1].is_alphanumeric() {
                 return true;
             }
-        }
     }
     false
 }
@@ -2393,17 +2381,16 @@ fn check_status_proof(
             ));
         }
     }
-    if lower == "descoped" {
-        if !has_befund(block) {
+    if lower == "descoped"
+        && !has_befund(block) {
             out.push((
                 line,
                 "descoped-ohne-befund".to_string(),
                 feedback("descoped-ohne-befund").to_string(),
             ));
         }
-    }
-    if let Some(lage) = field_value(block, "Lage") {
-        if !lage.contains("(gemessen") {
+    if let Some(lage) = field_value(block, "Lage")
+        && !lage.contains("(gemessen") {
             out.push((
                 line,
                 "lage-unstamped".to_string(),
@@ -2411,7 +2398,6 @@ fn check_status_proof(
                     .to_string(),
             ));
         }
-    }
 }
 
 pub fn ereignis_folge_violations(
@@ -2939,7 +2925,7 @@ fn home_path_hit(text: &str) -> Option<(usize, usize)> {
             continue;
         }
         let name = &text[i + 6..j];
-        if SYSTEM_HOMES.iter().any(|h| name.eq_ignore_ascii_case(*h)) {
+        if SYSTEM_HOMES.iter().any(|h| name.eq_ignore_ascii_case(h)) {
             i = j;
             continue;
         }
@@ -5417,7 +5403,7 @@ mod tests {
     #[test]
     fn fn_status_proof_operator_gebunden_with_wort_field() {
         let h = "## Offen\n\n### P\n- **Status:** operator-gebunden | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** the operator word\n- **Braucht:** operator word\n- **Wort:** send | 2026-09-25 | operator\n";
-        assert!(status_proof_violations(&h).is_empty());
+        assert!(status_proof_violations(h).is_empty());
     }
 
     #[test]
@@ -5462,13 +5448,13 @@ mod tests {
     #[test]
     fn fn_status_proof_skips_actor_headings() {
         let h = "## Offen\n\n### Line acts\n\n#### P\n- **Status:** eigen | **Bindung:** eigen\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
-        assert!(status_proof_violations(&h).is_empty());
+        assert!(status_proof_violations(h).is_empty());
     }
 
     #[test]
     fn status_proof_reports_heading_line() {
         let h = "## Offen\n\n### Point X\n- **Status:** wartend | **Bindung:** eigen\n- **Trigger:** at some point\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
-        let v = status_proof_violations(&h);
+        let v = status_proof_violations(h);
         assert!(
             v.iter()
                 .any(|(l, r, _)| *l == 3 && r == "wartend-ohne-trigger-beleg")
