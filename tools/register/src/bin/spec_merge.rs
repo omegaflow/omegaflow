@@ -6504,6 +6504,228 @@ fn class_table(args: &[String]) {
     );
 }
 
+fn device_claims(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let out_path = match args.get(1) {
+        Some(p) => p.clone(),
+        None => return,
+    };
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        if let Ok(t) = fs::read_to_string(c[1]) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let mut rows: Vec<String> = Vec::new();
+    let mut found = 0usize;
+    let mut none = 0usize;
+    for (_, b) in blocks(&reg) {
+        let instr = or_empty(field(&b, "instrument"));
+        let api = or_empty(field(&b, "api_cite"));
+        let icite = or_empty(field(&b, "instrument_cite"));
+        if instr.is_empty() || icite.is_empty() || api == icite {
+            continue;
+        }
+        let (d_api, d_instr) = match (digests.get(&api), digests.get(&icite)) {
+            (Some(a), Some(i)) => (a, i),
+            _ => continue,
+        };
+        let mut keys: Vec<String> = Vec::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut it = t.split_whitespace();
+            match it.next() {
+                Some("field") => {
+                    if let Some(k) = it.next() {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("fields") => {
+                    for k in it {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("last") => {
+                    let rest: Vec<&str> = it.collect();
+                    if let Some(k) = rest.get(1) {
+                        keys.push(k.clone().to_string());
+                    }
+                }
+                _ => {}
+            }
+        }
+        let all_keys = !keys.is_empty() && keys.iter().all(|k| claim_unit(&d_api.claims, k).is_some());
+        if !all_keys {
+            continue;
+        }
+        let device = instr.to_lowercase();
+        let devices = claims_device(&d_instr.claims);
+        if devices
+            .iter()
+            .any(|d| !d.is_empty() && (device.contains(d.as_str()) || d.contains(device.as_str())))
+        {
+            continue;
+        }
+        let text = match cache.get(&icite) {
+            Some(t) => t,
+            None => {
+                none += 1;
+                continue;
+            }
+        };
+        let needle = device.trim().to_string();
+        let mut hit: Option<String> = None;
+        for s in sentences_of(text) {
+            let n = words(&s);
+            if n < 4 || n > 25 {
+                continue;
+            }
+            if s.to_lowercase().contains(&needle) {
+                hit = Some(s);
+                break;
+            }
+        }
+        match hit {
+            Some(s) => {
+                found += 1;
+                rows.push(format!("{icite}\t{instr}\t{}", s.replace('\t', " ")));
+            }
+            None => none += 1,
+        }
+    }
+    let _ = fs::write(&out_path, rows.join("\n") + "\n");
+    println!("device-claims: {found} Geraetesaetze gefunden, {none} ohne");
+}
+
+fn claim_import(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
+    let files: Vec<String> = args.iter().skip(2).cloned().collect();
+    if files.is_empty() {
+        println!("claim-import: keine Sitzungsdateien angegeben");
+        return;
+    }
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        if let Ok(t) = fs::read_to_string(c[1]) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let mut specs: BTreeMap<String, String> = BTreeMap::new();
+    let mut stack: Vec<std::path::PathBuf> = vec![std::path::PathBuf::from(&dir)];
+    while let Some(d) = stack.pop() {
+        if let Ok(rd) = fs::read_dir(&d) {
+            for e in rd.flatten() {
+                let p = e.path();
+                if p.is_dir() {
+                    stack.push(p);
+                } else if p.extension().map(|x| x == "spec").unwrap_or(false) {
+                    if let Ok(t) = fs::read_to_string(&p) {
+                        if let Some(l) = t.lines().find(|l| l.starts_with("doc\t")) {
+                            specs.insert(l[4..].trim().to_string(), p.to_string_lossy().to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let (mut ok, mut bad_quote, mut no_text, mut no_spec, mut empty, mut too_long) =
+        (0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
+    let mut writes: Vec<(String, String)> = Vec::new();
+    for f in &files {
+        let list = match fs::read_to_string(f) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        for line in list.lines().skip(1) {
+            let c: Vec<&str> = line.split('\t').collect();
+            if c.len() < 11 {
+                continue;
+            }
+            let icite = c[6].trim();
+            let instr = c[2].trim();
+            let quote = c[10].trim().trim_matches('"');
+            let status = c.get(11).map(|s| s.trim()).unwrap_or("");
+            if quote.is_empty() {
+                empty += 1;
+                continue;
+            }
+            if status != "✓" {
+                continue;
+            }
+            if words(quote) > 25 {
+                too_long += 1;
+                println!("ZU_LANG\t{icite}\t{quote}");
+                continue;
+            }
+            let text = match cache.get(icite) {
+                Some(t) => t,
+                None => {
+                    no_text += 1;
+                    println!("KEIN_TEXT\t{icite}");
+                    continue;
+                }
+            };
+            let hay = toks(text).join(" ").to_lowercase();
+            let needle = toks(quote).join(" ").to_lowercase();
+            if !hay.contains(&needle) {
+                bad_quote += 1;
+                println!("NICHT_WOERTLICH\t{icite}\t{}", quote.chars().take(70).collect::<String>());
+                continue;
+            }
+            let spec = match specs.get(icite) {
+                Some(p) => p.clone(),
+                None => {
+                    no_spec += 1;
+                    println!("KEIN_AUSZUG\t{icite}");
+                    continue;
+                }
+            };
+            let clean = quote.replace('\t', " ").replace('"', "'");
+            writes.push((spec, format!("claim\tdevice\t{instr}\t\"{clean}\"\n")));
+            ok += 1;
+        }
+    }
+    if dry {
+        println!("dry-run: claim-import {ok} geprueft, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer");
+        return;
+    }
+    let mut applied = 0usize;
+    for (path, row) in writes {
+        if let Ok(mut f) = fs::OpenOptions::new().append(true).open(&path) {
+            use std::io::Write;
+            if f.write_all(row.as_bytes()).is_ok() {
+                applied += 1;
+            }
+        }
+    }
+    println!("claim-import: {applied} Geraetezeilen eingetragen, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -7030,6 +7252,8 @@ fn main() {
         Some("phi-replace") if args.len() >= 5 => phi_replace(&args[2..]),
         Some("phi-split-blocks") => phi_split_blocks(),
         Some("class-table") if args.len() >= 3 => class_table(&args[2..]),
+        Some("device-claims") if args.len() >= 4 => device_claims(&args[2..]),
+        Some("claim-import") if args.len() >= 4 => claim_import(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
