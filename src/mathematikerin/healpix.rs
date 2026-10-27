@@ -327,8 +327,30 @@ mod tests {
     }
 
     #[test]
-    fn ang2pix_roundtrip_all_nside() {
-        for n in [1i64, 2, 4, 8] {
+    fn ring_centres_match_the_reference_implementation() {
+        for nside in [1u32, 2, 4] {
+            let npix = 12 * nside * nside;
+            for ipix in 0..npix {
+                let (lon, lat) = cdshealpix::ring::center(nside, ipix as u64);
+                let (theta, phi) = pix2ang_ring(nside as i64, ipix as i64)
+                    .expect("a valid ring pixel carries a centre");
+                let ref_theta = std::f64::consts::FRAC_PI_2 - lat;
+                assert!(
+                    (theta - ref_theta).abs() < 1e-12,
+                    "nside {nside} pix {ipix}: theta {theta} vs reference {ref_theta}"
+                );
+                let dphi = (phi - lon).rem_euclid(std::f64::consts::TAU);
+                let dphi = dphi.min(std::f64::consts::TAU - dphi);
+                assert!(
+                    dphi < 1e-12,
+                    "nside {nside} pix {ipix}: phi {phi} vs reference {lon}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn ang2pix_roundtrip_all_nside() {        for n in [1i64, 2, 4, 8] {
             for p in 0..(12 * n * n) {
                 let (theta, phi) = pix2ang_nest(n, p).unwrap();
                 let back = ang2pix_nest(n, theta, phi).unwrap();
