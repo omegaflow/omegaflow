@@ -243,3 +243,38 @@ host ssd-api.jpl.nasa.gov
   probe 2026-10-25T21:21:14Z 200 https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=433&phys-par=1
   applies https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/asteroid_h.json
   note REFERENZ: H ist ein aus Photometrie abgeleiteter Katalogparameter (absolute Magnitude), kein Messwert eines benannten Geräts; je Objekt keine Gerätespalte. sha256 = die API-Antwort für 433 Eros.
+
+host ftp.imcce.fr
+  keine_messung "Vergleich numerischer Ephemeriden (INPOP19a/EPM2021), kein Sensor"
+  api_cite https://ftp.imcce.fr/pub/ephem/planets/inpop19a/
+  api_ref "IMCCE — Observatoire de Paris, Verzeichnisauskunft INPOP19A, 16. Dezember 2019. Index of /pub/ephem/planets/inpop19a — INPOP19A ephemeris."
+  api_quote "The binary and text data files provide the rectangular coordinates (x,y,z) in kilometers of the bodies with respect to the International Celestial Reference Frame (ICRF)."
+  instrument_cite https://ftp.imcce.fr/pub/ephem/planets/inpop19a/
+  instrument_ref "IMCCE — Observatoire de Paris, Verzeichnisauskunft INPOP19A, 16. Dezember 2019. Index of /pub/ephem/planets/inpop19a — INPOP19A ephemeris."
+  instrument_quote "This directory contains the data of the current release of the INPOP19 ephemeris : INPOP19A"
+  host_cite https://ftp.imcce.fr/pub/ephem/planets/inpop19a/
+  host_ref "IMCCE — Observatoire de Paris, Verzeichnisauskunft INPOP19A, 16. Dezember 2019. Index of /pub/ephem/planets/inpop19a — INPOP19A ephemeris."
+  host_quote "2019, December 16"
+  ttl 604800
+  probe 2026-10-25T18:41:28Z 200 https://ftp.imcce.fr/pub/ephem/planets/inpop19a/
+  applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts.bin line=12617
+  zustand absent
+  note weberin_verdicts ist ein Vergleich der Ephemeriden INPOP19a und EPM2021 gegen JPL DE; die Koordinaten sind berechnet, kein Geraet. Die Existenz eines Instruments ist damit belegt absent, nicht offen.
+
+host gea.esac.esa.int
+  keine_messung "berechnetes Baryzentrum/Bake (ssb_field), kein Sensor"
+  api_cite https://ssd.jpl.nasa.gov/planets/approx_pos.html
+  api_ref "NASA/JPL Solar System Dynamics; Inhalt von E.M. Standish und J.G. Williams (1992). Approximate Positions of the Planets."
+  api_quote "Approximate positions of the planets may be found by using Keplerian formulae with their associated elements and rates."
+  instrument_cite https://ssd.jpl.nasa.gov/planets/approx_pos.html
+  instrument_ref "NASA/JPL Solar System Dynamics; Inhalt von E.M. Standish und J.G. Williams (1992). Approximate Positions of the Planets."
+  instrument_quote "Keplerian elements and their rates, with respect to the mean ecliptic and equinox of J2000"
+  host_cite https://ssd.jpl.nasa.gov/planets/approx_pos.html
+  host_ref "NASA/JPL Solar System Dynamics; Inhalt von E.M. Standish und J.G. Williams (1992). Approximate Positions of the Planets."
+  host_quote "Approximate positions of the planets may be found by using Keplerian formulae with their associated elements and rates."
+  ttl 604800
+  probe 2026-10-25T18:41:28Z 206 https://ssd.jpl.nasa.gov/planets/approx_pos.html
+  applies https://github.com/omegaflow/sources/releases/download/ssb/ssb_field.bin line=12521
+  zustand absent
+  note ssb_field wird aus Gaia-TAP, Hipparcos und JPL-DAST5 gebacken; es ist ein berechnetes Bezugssystem-Feld, kein Instrumentenmesswert. Die drei Origins sind in der Registerzeile genannt. Keine Messzeile.
+
