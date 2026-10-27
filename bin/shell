@@ -25,6 +25,13 @@ body="$*"
 case "$body" in
     -c\ *) body="${body#-c }" ;;
 esac
+case "$body" in
+    *"sgrep"*"--all"*|*"archive_search"*"--all"*)
+        if [ "${OMEGAFLOW_ALL:-}" != "1" ]; then
+            echo "blocked: --all ist der Breitenmodus (Baumwalk, kann Stunden laufen) — eng suchen oder OMEGAFLOW_ALL=1" >&2
+            exit 2
+        fi ;;
+esac
 if [ "${OMEGAFLOW_WRITE:-}" != "1" ]; then
     case "$body" in
         *"sed -i"*|*"perl -i"*|*"truncate"*)
