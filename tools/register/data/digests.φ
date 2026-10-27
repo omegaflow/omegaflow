@@ -1651,6 +1651,7 @@ doc https://www.gmrt.ncra.tifr.res.in/index.html
   claim reach nearby Solar system to the edge of the observable Universe ""GMRT is a very versatile instrument for investigating a variety of radio astrophysical problems ranging from nearby Solar system to the edge of observable Universe.""
   claim operator NCRA of TIFR ""The GMRT, which is the world's most powerful telescope operating at low radio frequencies, was built and is being operated by the National Centre for Radio Astrophysics (NCRA) of the Tata Institute of Fundamental Research (TIFR).""
   claim frequency span tens of MHz to hundreds of GHz (radio astronomy) ""At frequencies ranging from tens of MHz to hundreds of GHz, radio astronomy provides an outstanding and a unique window to study a wide range of astrophysical objects and phenomena.""
+  claim device GMRT ""GMRT is a very versatile instrument for investigating a variety of radio astrophysical problems ranging from nearby Solar system to the edge of observable Universe.""
 
 doc https://www.goes-r.gov/products/GLM.html
   title GOES-R Series Data Products — Geostationary Lightning Mapper (GLM)
@@ -1927,6 +1928,7 @@ doc https://www.eoportal.org/satellite-missions/euclid
   claim Laufzeit 6 Jahre "The mission lifetime has been set to 6 years (6 months margin included), hence a telescope with a stable, large field of view is required."
   claim Teleskop 1.2 m "The Payload Module consists of a 1.2 m three-mirror Korsch type telescope and of two instruments"
   claim Tiefenfelder 40 deg2 "With a cumulative area of 40 square degrees, equivalent to just over 200 times the footprint of the full Moon in the sky"
+  claim device VIS ""It is also in charge of the design, construction, tests, integration and delivery to ESA of the imaging and spectroscopic instruments VIS and NISP.""
 
 doc https://www.eoportal.org/satellite-missions/icesat-2
   title ICESat-2 (Ice, Cloud, and land Elevation Satellite-2) - eoPortal
@@ -2009,6 +2011,7 @@ doc https://www.esa.int/Science_Exploration/Space_Science/NIRSpec_factsheet
   claim Wellenlaengenbereich 0.6-5.0 microns "It will support the mission's four main science themes by providing low, medium and high-resolution spectroscopic observations in the near-infrared (from 0.6 to 5.0 microns)."
   claim Multiplex >100 Objekte "it is a multi-object spectrograph capable of observing more than 100 objects simultaneously over a 9 square-arcminute field of view"
   claim IFU 900 Spektren "It provides 900 spectra per exposure over a field of view of 3 x 3 arcminutes."
+  claim device NIRSpec ""NameNIRSpec stands for Near-InfraRed Spectrograph StatusNIRSpec was delivered to NASA in September 2013.""
 
 doc https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Proba-3/Eclipse-maker_How_Proba-3_subtracts_the_Sun
   title Eclipse-maker: How Proba-3 subtracts the Sun
@@ -2047,6 +2050,7 @@ doc https://www.euclid-ec.org/public/mission/vis/
   claim Bildfeld 0.57 deg2 "It is a large format imager, with 609 million pixels covering a field of view of 0.57 deg 2"
   claim Belichtung 565 sec "During this time four nominal duration exposures of 565 sec and two shorter exposures of 100 sec are taken"
   claim Band 550-950 nm "VIS observes in only a single broad band from 550nm to 950nm."
+  claim device VIS ""VIS slightly under-samples the telescope point spread function, but this is recovered through multiple exposures, so its effective angular resolution is 0.18 arcsec.""
 
 doc https://www.fdsn.org/networks/detail/IV/
   title IV: Italian National Seismic Network
@@ -2192,6 +2196,7 @@ doc https://www.dwd.de/EN/ourservices/nwp_forecast_data/nwp_forecast_data.html
   claim Modelllaeufe ICON-D2 alle 3 Stunden "Based on model runs at 00, 06, 09, 12, 15, 18 and 21 UTC, ICON-D2 provides new 48-hour forecasts every 3 hours."
   claim Ensemble 20 Mitglieder "The ensemble forecasting system ICON-D2 EPS is based on the DWD's numerical weather forecast model ICON-D2 and currently includes 20 ensemble members."
   claim timescale UTC ""
+  claim device ICON ""The DWD furthermore runs a regional model, ICON-D2, which is restricted to Germany and the neighbouring countries and is mainly used for very short-range forecasting.""
 
 doc https://www.earthdata.nasa.gov/data/instruments/solstice
   title SOLSTICE - NASA Earthdata (Find Data / Instruments)
@@ -3610,6 +3615,7 @@ doc https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/document/lidar_instrument
   claim time_unit 14 nsec resolution ""a time interval unit with 14 nsec resolution""
   claim footprint 12x4.9 m at 7 km ""topography of Itokawa within approximately 12x4.9 m footprints""
   claim pointing 10 m along-track and across-track ""Shot locations are determined to within 10 m in the along-track and across-track directions.""
+  claim device LIDAR ""'?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,'/pds4/hayabusa/hay.lidar/document/lidar_instrument_description.txt?__cf_chl_rt_tk=QAfSNNcz.qJsffKZeVEeCinAJKDZ736i.W3SPtR2Srg-1793099342-1.0.1.1-i14hWbmwLBkxSP9YPtgx.S8EMshsFLPE1Hwmibw5no4'+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());""
 
 doc https://arcnav.psi.edu/urn:nasa:pds:context:instrument:lidar.hay
   title Hayabusa Light Detection and Ranging Instrument (LIDAR)
@@ -3689,6 +3695,7 @@ doc https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph/nirspec-instrume
   claim resolving power, mittel ~1,000 "three medium resolution, R ~ 1,000, gratings"
   claim resolving power, prism ~100 "one low resolution, R ~ 100, double-pass prism"
   claim Wellenlängengenauigkeit 1/8 Auflösungselement "NIRSpec is required to deliver a wavelength accuracy to better than 1/8 of a spectral resolution element"
+  claim device NIRSpec ""On this page NIRSpec is sensitive to nearly a full decade in wavelength: 0.6–5.3 µm.""
 
 doc https://web.archive.org/web/20020622175149id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_6.txt
   title OBN2000_6.txt — earthquake bulletin for the year 2000 (file 6 of the OBN set)
@@ -3768,6 +3775,8 @@ doc https://en.wikipedia.org/wiki/Seismometer
   claim Digitalisierung 24-bit "A 24-bit analog-to-digital conversion channel is commonplace."
   claim Linearität one part per million "Practical devices are linear to roughly one part per million."
   claim Geophon-Bereich down to 1 Hz "They receive frequencies from several hundred hertz down to 1 Hz."
+  claim device seismometer ""Early seismometers used optical levers or mechanical linkages to amplify the small motions involved, recording on soot-covered paper or photographic paper.""
+  claim device seismometer ""Early seismometers used optical levers or mechanical linkages to amplify the small motions involved, recording on soot-covered paper or photographic paper.""
 
 doc https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   title SIGNIFICANT EARTHQUAKES OF THE WORLD, 2000
@@ -4964,6 +4973,7 @@ doc https://space.leonardo.com/en/focus-detail/-/detail/lightning-imager-leonard
   claim Datenmenge etwa 48 Gbps gesammelt, 30 Mbps gesendet ""the LI can collect approximately 48 Gbps per second, however only 30 Mbps of this data will be transmitted to Earth""
   claim Filter KI-Prozessoren verwerfen Nicht-Blitz-Daten ""This is because the AI-based processors will automatically reject any data that is not related to lightning.""
   claim Programm sechs MTG-Satelliten, vier davon mit LI ""The Meteosat Third Generation programme, developed by ESA in collaboration with EUMETSAT , includes six satellites""
+  claim device LI ""As a result, on board of the MTG programme LI will make a huge difference to the study of this important meteorological phenomenon.""
 
 doc https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/attrib/PSCM-00017_DD005408_05-MAR-69_att
   title NSSDC_ATTRIBUTE_OBJECT zu PSCM-00017, Bandkopie DD005408 vom 5. März 1969
@@ -5537,6 +5547,7 @@ doc https://safecast.org/devices/bgeigie-nano/
   claim Montage für die Außenseite der Autoscheibe, auch zu Fuß und im Zug ""It is designed for mounting on the outside of a car window but can be used on bicycles, trains, planes, and other modes of transportation.""
   claim Standmessung auch für ortsfeste Messungen und Kontaminationssuche ""It can also be used for taking static readings and contamination findings.""
   claim Takt im Logbetrieb eine Messung alle 5 Sekunden mit Zeit und Ort ""In logging mode, the Nano takes a measurement every 5 seconds and logs the time and location coordinates.""
+  claim device bGeigie ""Kits bGeigieZen (as kit or fully assembled).""
 
 doc https://sbuv.gsfc.nasa.gov/solar/compositev2/
   title Verzeichnis solar/compositev2, solare Spektren in 1-nm-Bins
@@ -6504,6 +6515,7 @@ doc https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-origi
   claim Bandbreite 10 Hz ""Bandwidth                     10 Hz""
   claim Zeitauflösung 10 Vektoren je Sekunde, ein Spektrum je 25 s ""Time resolution               10 vector/s""
   claim Modi vier Betriebsarten, im Speichermodus 1 Vektor je 2,5 min ""this is the cruise phase mode; 1 vector/2.5 min and 1 averaged spectrum/80 min""
+  claim device fluxgate ""The advantage of this dual-sensor fluxgate system is the possibility to determine the spacecraft's stray magnetic field.""
 
 doc https://pds-rings.seti.org/voyager/rss/vg1sinst.html
   title Voyager RSS VG1SINST.CAT — Instrumentenkatalog Voyager 1
@@ -6515,6 +6527,7 @@ doc https://pds-rings.seti.org/voyager/rss/vg1sinst.html
   claim Bandbreiten 50 kHz bei S-Band, 150 kHz bei X-Band für Ringokkultationen ""Filter bandwidths for S-RCP and S-LCP ring occultations and scattering observations were 50 kHz""
   claim Umsetzung Turn-around-Verhältnis 240/221 bei S-Band, (11/3)*240/221 bei X-Band ""a 'turn-around ratio' of 240/221 at S-band and (11/3)*240/221 at X-band""
   claim Empfang Multi-Mission-Receiver, vier Kanäle, 10 MHz ZF ""The Multi-Mission Receiver provided four channels of data for occultations studies during the Voyager encounters at Saturn""
+  claim device RADIO SCIENCE SUBSYSTEM ""Instrument Specifications Spacecraft ====================================== The Voyager spacecraft telecommunications subsystem served as part of a radio science subsystem for investigations of the giant planets.""
 
 doc https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/CATALOG/VG2_S_RSS_DS.CAT
   title VOYAGER 2 SATURN RADIO OCCULTATION RAW DATA V1.0 — Datensatzkatalog
@@ -6647,6 +6660,7 @@ doc https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:con
   claim wavelength 1064 nm "The Hayabusa LiDAR used a 1064 nm yttrium-aluminum-garnet-neodymium (YAG-Nd) laser."
   claim beamwidth 0.04 x 0.097 degrees "The beamwidth was 0.04 x 0.097 degrees, giving a footprint at 7 km altitude of about 5 x 12 meters."
   claim method time of flight "Light Detection and Ranging (LiDAR) instruments use the time-of-flight measurement of a laser pulse reflected from a surface to determine topography."
+  claim device LIDAR ""The Hayabusa LiDAR used a 1064 nm yttrium-aluminum-garnet-neodymium (YAG-Nd) laser.""
 
 doc https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/document/arch_sis.txt
   title MAGELLAN RADIO TRACKING DATA ARCHIVE VOLUME — SOFTWARE INTERFACE SPECIFICATION, Version 1.0
@@ -6693,6 +6707,7 @@ doc https://pds-geosciences.wustl.edu/missions/mgs/catalog/inst_mola.txt
   claim resolution 37 cm "Range measurements, with an effective resolution of 37 cm, are converted to profiles of planetary radius and topographic height after correction for orbit and pointing errors."
   claim accuracy approximately 1 m RMS "Radial accuracy of individual profiles is approximately 1 m RMS, as determined by altimetric crossovers, and shot locations are determined to within 100 m in the along-track and across-track directions."
   claim grid 1/128 degree per pixel "MOLA profiles have been assembled into global grids referenced to Mars' center-of-mass, with resolutions of up to 1/128 degree per pixel, although at this density some interpolation is required across-track."
+  claim device MOLA ""All components of MOLA except for the laser and telescope have been designed, built and tested at NASA's Goddard Space Flight Center, Greenbelt, MD.""
 
 doc https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/mors_0201/odf/7223224b.lbl
   title PDS3 label for MGS ODF 7223224B (Orbit Data File, 1792 records x 36 bytes)
@@ -6829,6 +6844,7 @@ doc https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:con
   kind instrument
   claim bauart 2-axis scanning lidar "The OSIRIS-REx Laser Altimeter (OLA) is a 2-axis scanning lidar instrument with a single receiver and two transmitters."
   claim range 1 to 7.5 km / about 200 m to 1 km "The high-energy transmitter is used for ranging and mapping at distances from 1 to 7.5 km; the low-energy transmitter is used at distances of about 200m to 1km."
+  claim device OLA ""Lauretta, The OSIRIS-REX Laser Altimeter (OLA) Investigation and Instrument, Space Science Reviews, in press, 2018.""
 
 doc https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/CATALOG/ULY_SCE_INST.CAT
   title SOLAR CORONA EXPERIMENT (Ulysses SCE, PDS3 instrument catalog)
@@ -7232,6 +7248,7 @@ doc https://ogle.astrouw.edu.pl/main/general.html
   claim kamera acht SITe-Chips, 8192x8192 Pixel, 0,26 Bogensekunden je Pixel "The 8k-mosaic camera consists of eight thin SITe 2048×4096 CCD chips (8192×8192 pixels of 0.26 arcsec/pixel) …"
   claim auslese 98 Sekunden Auslesezeit, 6 bis 9 e Rauschen "The readout time of the camera is 98 seconds with readout noise of 6-9 e (depending on chip) and the gain of 1.3 e/ADU."
   claim ziele Magellansche Wolken und galaktisches Bulge als Felder "The Magellanic Clouds and the Galactic Bulge are the most natural locations to conduct such search …"
+  claim device CCD ""The first 'electronic light', taken with the main CCD camera was registered on July 18, 1996.""
 
 doc https://open-meteo.com/en/docs#current-conditions
   title Open-Meteo Forecast API (Dokumentation, Abschnitt Current Conditions)
@@ -7556,6 +7573,7 @@ doc https://noirlab.edu/public/news/noirlab2406/
   claim pixelzahl 35786 x 35881, 1.28 gigapixels ""This image contains a total of 35786 x 35881 pixels, or 1.28 gigapixels.""
   claim detektor 570 megapixels je Aufnahme ""A single image taken with DECam has 570 megapixels, so with multiple exposures stacked on top of one another…""
   claim ccds 62 CCDs ""passing through a corrective lens nearly a meter (3.3 feet) across before falling on a grid of 62 charge-coupled devices (CCDs)""
+  claim device DECam ""DECam is one of the highest-performing wide-field imaging instruments in the world and is mounted on the US National Science Foundation&#x27;s Víctor M.""
 
 doc https://nro-fugin.github.io/
   title FOREST Unbiased Galactic plane Imaging survey with the Nobeyama 45-m telescope (FUGIN)
@@ -8303,6 +8321,10 @@ doc https://carisma.ca/backgrounder/sensing-magnetic-fields
   claim aufloesung not_named "keine Auflösung auf der Seite benannt"
   claim kalibrierung not_named "keine Kalibrierung auf der Seite benannt"
   claim hersteller Universitaet Alberta, Betrieb CARISMA, Foerderung CSA "CARISMA is funded by the"
+  claim device fluxgate ""It is this asymmetry which is measured and is the basis for the fluxgate magnetometer.""
+  claim device fluxgate ""It is this asymmetry which is measured and is the basis for the fluxgate magnetometer.""
+  claim device fluxgate ""It is this asymmetry which is measured and is the basis for the fluxgate magnetometer.""
+  claim device fluxgate ""It is this asymmetry which is measured and is the basis for the fluxgate magnetometer.""
 
 doc https://donnees-data.asc-csa.gc.ca/users/OpenData_DonneesOuvertes/pub/CARISMA/carisma_csv/mag/daily/2009/DAWS/20090105DAWS.MAG.csv
   title CARISMA Magnetometer-Tagesdatei 2009-01-05, Station DAWS
@@ -8893,6 +8915,7 @@ doc https://ioos.noaa.gov/project/hf-radar/
   claim produkt stuendliche Gitterdateien, Totalvektoren "Creating hourly gridded surface current total vector velocity data files nationally"
   claim gerätetyp Kuestenradar, bodengestuetzt, vertikal polarisiert "The vertically polarized electromagnetic waves attach to the mean spherical sea surface."
   claim band kein Radare ueber 49.5 MHz "none of the radars within the IOOS network uses transmit frequencies above 49.5 MHz"
+  claim device radar ""var ajaxurl = 'https://ioos.noaa.gov/wp-admin/admin-ajax.php'; var ff_template_url = 'https://ioos.noaa.gov/wp-content/themes/ark'; HF Radar The U.S.""
 
 doc https://irsa.ipac.caltech.edu/Missions/planck.html
   title IRSA — Planck, Missionskennwerte und Datenprodukte
@@ -9395,6 +9418,10 @@ doc https://en.wikipedia.org/wiki/Moderate_Resolution_Imaging_Spectroradiometer
   claim quantisierung 12 Bit "12 bits"
   claim kalibrierung vier Bordkalibratoren plus Weltraumblick "MODIS utilizes four on-board calibrators in addition to the space view in order to provide in-flight calibration"
   claim teleskop 17.78 cm Oeffnung, off-axis "17.78 cm diam. off-axis"
+  claim device MODIS ""For other uses, see Modis.""
+  claim device MODIS ""For other uses, see Modis.""
+  claim device MODIS ""For other uses, see Modis.""
+  claim device MODIS ""For other uses, see Modis.""
 
 doc http://mag.gcras.ru/obs-MOS.html
   title Moskva Observatory (MOS) - Analytical Geomagnetic Data Center
@@ -10224,6 +10251,9 @@ doc https://www.ztf.caltech.edu/ztf-camera.html
   claim column Median Single Visit Depth (5 sigma, R band) mag null "Median Single Visit Depth (5 sigma, R band )20.4 mag (all lunar phases)"
   claim column Filters g, r, i null "Filters g, r, i"
   claim column Areal survey rate square degrees/hour null "Areal survey rate 3750 square degrees/hour"
+  claim device ZTF ""﻿ ZTF Camera window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-KMVC1FBFZH'); Loading...""
+  claim device ZTF ""﻿ ZTF Camera window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-KMVC1FBFZH'); Loading...""
+  claim device ZTF ""﻿ ZTF Camera window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-KMVC1FBFZH'); Loading...""
 
 doc https://izw1.caltech.edu/ACE/ASC/docs/swepam-ssr-paper.pdf
   title Solar Wind Electron Proton Alpha Monitor (SWEPAM) for the Advanced Composition Explorer
@@ -12362,6 +12392,7 @@ doc https://en.wikipedia.org/wiki/Canada%E2%80%93France%E2%80%93Hawaii_Telescope
   claim betrieb seit 1979 ""has been in operation since 1979""
   claim bauart Primaerfokus und Cassegrain ""The telescope has a Prime Focus/Cassegrain configuration""
   claim instrumente fuenf Instrumente ""CFHT currently operates five instruments""
+  claim device CFHT ""The contributions from these associate partners help fund CFHT's future instrumentation.""
 
 doc https://en.wikipedia.org/wiki/Carlsberg_Meridian_Telescope
   title Carlsberg Meridian Telescope (CMT)
@@ -12589,6 +12620,7 @@ doc https://en.wikipedia.org/wiki/Moon_Mineralogy_Mapper
   claim kanaele 260 Kanaele zu 10 Nanometer ""Spectral channels | 260 (10 nm/channel)""
   claim abdeckung ueber 95 Prozent im Globalmodus ""M3 was used to map over 95% of the lunar surface in its low-resolution Global mode""
   claim missionsdauer 312 Tage statt geplanter zwei Jahre ""Chandrayaan-1 operated for 312 days as opposed to the intended two years""
+  claim device M3 ""HVM3[edit] The design of the M3 instrument was used as the basis for the HVM3 instrument on the unsuccessful Lunar Trailblazer mission.""
 
 doc https://en.wikipedia.org/wiki/Magellan_(spacecraft)
   title Magellan (Venus Radar Mapper)
@@ -14670,6 +14702,7 @@ doc https://atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-sroc15-v10/cors_0366/AAR
   claim ordner Tagesverzeichnisse SROC15_ddd nach Tag des Jahres ""The primary data are stored in subdirectories RSR, ODF and TNF,in per-day directories SROC15_ddd (where 'ddd' specifies the day of year based on the start time of the data).""
   claim kalibrierung Leapsecond-Kernel, Spacecraft-Clock-Datei und Boresight-Bericht ""CALIB    contains a Leapsecond kernel file, a Spacecraft Clock""
   claim label entkoppelte Label mit Endung .LBL neben jeder Datei ""Detached labels have the same file name as the data file except that the label name has the suffix \".LBL\".""
+  claim device RSS ""Members of the Radio Science Systems Group (RSSG) involved in data acquisition included Aseel Anabtawi, Sami Asmar, Elias Barbinis, Don Fleischman, and Daniel Kahan.""
 
 doc https://atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-sroc15-v10/cors_0366/SROC15_156/158/S73SROI2012_156_1930_014563.LBL
   title PDS3-Label der Tabelle S73SROI2012_156_1930_014563.158, Cassini Radio Science SROC15
@@ -15100,6 +15133,7 @@ doc https://arxiv.org/pdf/1101.2039
   claim auslesung Kuehlkette war eine der grossen technischen Aufgaben der Mission ""The Planck active cooling chain was one of the great technological challenges of this mission and is fully successful.""
   claim temperaturstabilitaet Stabilitaet der geregelten Stufen wirkt direkt auf die wissenschaftliche Leistung ""The temperature stability of the regulated stages has a direct impact on the scientific performance of the HFI.""
   claim kalibrierung Spektralkalibrierung aus Boden- und Flugdaten ""The spectral calibration is described in Pajot et al. (2010)""
+  claim device HFI ""Planck2011-1.5_astroph c ESO 2018 October 29, 2018 Planck early results: first assessment of the High Frequency Instrument in-flight performance Planck HFI Core Team: P.""
 
 doc https://arxiv.org/html/1502.01598v1
   title Planck 2015 results XXVII. The second Planck catalogue of Sunyaev-Zeldovich sources (PSZ2)
@@ -15403,6 +15437,9 @@ doc https://arxiv.org/abs/1101.2039
   claim start 2009-05-14 "HFI has been operating flawlessly since launch on 14 May 2009."
   claim messgroesse Temperatur- und Polarisationsanisotropien "designed to measure the temperature and polarization anisotropies of the Cosmic Microwave Background"
   claim kalibrierung an Mars, Jupiter und Saturn geprueft "Observations of Mars, Jupiter, and Saturn verified both the optical system and the time response of the detection chains."
+  claim device HFI ""View a PDF of the paper titled Planck early results: first assessment of the High Frequency Instrument in-flight performance, by Planck HFI Core Team: P.""
+  claim device HFI ""View a PDF of the paper titled Planck early results: first assessment of the High Frequency Instrument in-flight performance, by Planck HFI Core Team: P.""
+  claim device HFI ""View a PDF of the paper titled Planck early results: first assessment of the High Frequency Instrument in-flight performance, by Planck HFI Core Team: P.""
 
 doc https://arxiv.org/abs/1605.01054
   title An Open Catalog for Supernova Data
@@ -16067,6 +16104,7 @@ doc https://icecube.wisc.edu/
   claim detektor MeV-Neutrinos nur in Bursts ""Detection of MeV neutrinos is possible provided they are produced in bursts""
   claim letztes_ereignis Bronze 2026/10/20 03:58:53 ""Bronze alert - IceCube observation of a high-energy neutrino candidate event at 2026/10/20 03:58:53 UTC""
   claim timescale UTC ""
+  claim device IceCube ""#IceCubeAlert Twitter feed image.""
 
 doc https://web.archive.org/web/20170409034744id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki02.dat
   title IKI02 — marines gravimetrisch-magnetisches Profil im MGD77-Kopfsatz, Leningrad 1981 bis Leningrad 1982
@@ -16378,6 +16416,7 @@ doc https://en.wikipedia.org/wiki/MESSENGER
   claim eps 15 keV/nukleon bis 3 MeV/nukleon ""EPS measured ions (H to Fe) from around 15 keV/nucleon to around 3 MeV/nucleon""
   claim fips unter 50 eV/Q bis 20 keV/Q ""FIPS measured ions in the range of energy-per-charge from < 50 eV/Q upto 20 keV/Q.""
   claim mag Aufgabe ""Measured the magnetic field around Mercury in detail to determine the strength and average position of the field.""
+  claim device MDIS ""13:38:00 Start MDIS color images of South America (set 1).""
 
 doc https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
   title Mars Reconnaissance Orbiter range data
@@ -16585,6 +16624,9 @@ doc https://oceanobservatories.org/instrument-class/pco2a/
   claim fluss Fluss aus der Differenz der Partialdrücke, skaliert mit Windgeschwindigkeit "The flux is then estimated as proportional to the difference of these partial pressures."
   claim auflösung nicht benannt, nur Datenprodukte und Algorithmus "Algorithm Code"
   claim frame geographic ""
+  claim device CO2-Pro ""Class-Series Make Model PCO2AA Pro-Oceanus pCO2-pro The CO2-Pro Atmosphere NEMA box, used to take in air from above the buoy.""
+  claim device CO2-Pro ""Class-Series Make Model PCO2AA Pro-Oceanus pCO2-pro The CO2-Pro Atmosphere NEMA box, used to take in air from above the buoy.""
+  claim device CO2-Pro ""Class-Series Make Model PCO2AA Pro-Oceanus pCO2-pro The CO2-Pro Atmosphere NEMA box, used to take in air from above the buoy.""
 
 doc https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.das
   title Global Argentine Basin: Apex Surface Mooring: Surface Buoy: pCO2 Air-Sea
@@ -17059,6 +17101,7 @@ doc https://en.wikipedia.org/wiki/SuperDARN
   claim messgroesse Dopplergeschwindigkeit ""The radars measure the Doppler velocity (and other related characteristics) of plasma density irregularities in the ionosphere.""
   claim hoehe F-Region 300 km ""a map of high-latitude plasma velocity at F region altitudes (300 km)""
   claim frame geographic ""
+  claim device SuperDARN ""This work led to SuperDARN, a network of HF radars with pairs of radars having overlapping fields of view.""
 
 doc https://supermag.jhuapl.edu/info/
   title SuperMAG: About SuperMAG — Netz bodengestützter Magnetometer
@@ -17979,6 +18022,8 @@ doc https://en.wikipedia.org/wiki/Global_Positioning_System
   claim satelliten 24 bis 32 ""The space segment (SS) is composed of 24 to 32 satellites, or Space Vehicles (SV), in medium Earth orbit""
   claim uhrkorrektur 38 Mikrosekunden je Tag ""the clocks on GPS satellites, as observed by those on Earth, run 38 microseconds faster per day""
   claim offset 19 Sekunden gegen TAI ""The lack of corrections means that GPS time remains at a constant offset with International Atomic Time (TAI) (TAI – GPS = 19 seconds).""
+  claim device GPS ""For other uses, see GPS (disambiguation).""
+  claim device GPS ""For other uses, see GPS (disambiguation).""
 
 doc https://en.wikipedia.org/wiki/High_Altitude_Water_Cherenkov_Observatory
   title High Altitude Water Cherenkov Observatory
@@ -18010,6 +18055,8 @@ doc https://en.wikipedia.org/wiki/IceCube_Neutrino_Observatory
   claim detektoren 5160 optische Module ""IceCube consists of spherical optical sensors called digital optical modules (DOMs)""
   claim deepcore unter 100 GeV ""The Deep Core Low-Energy Extension is a densely instrumented region of the IceCube array which extends the observable energies below 100 GeV.""
   claim upgrade 5 zusaetzliche Strings ""added five more closely spaced and denser instrumented strings of light sensors at bottom center of the 86 existing strings""
+  claim device IceCube ""For the satellite, see IceCube (spacecraft).""
+  claim device IceCube ""For the satellite, see IceCube (spacecraft).""
 
 doc https://en.wikipedia.org/wiki/Integrated_Forecasting_System
   title Integrated Forecasting System
@@ -18078,6 +18125,8 @@ doc https://en.wikipedia.org/wiki/Stream_gauge
   claim column Einbauteile Text null ""Stilling well - to provide a calm water level that can be measured by a sensor""
   claim messung stage als Surrogat fuer Durchfluss ""In place of the direct measurement of stream discharge, one or more surrogate measurements can be used as proxy variables to produce discharge values.""
   claim telemetrie automatische Stationen mit Fernuebertragung ""Some gauging stations are highly automated and may include telemetry capability transmitted to a central data logging facility.""
+  claim device Streamgage ""A stream gauge, streamgage or stream gauging station is a location used by hydrologists or environmental scientists to monitor and test terrestrial bodies of water.""
+  claim device Streamgage ""A stream gauge, streamgage or stream gauging station is a location used by hydrologists or environmental scientists to monitor and test terrestrial bodies of water.""
 
 doc https://en.wikipedia.org/wiki/United_States_Naval_Observatory_Flagstaff_Station
   title United States Naval Observatory Flagstaff Station
@@ -18109,6 +18158,7 @@ doc https://en.wikipedia.org/wiki/Very_Long_Baseline_Array
   claim datenmenge etwa ein Terabyte je Antenne ""The signals from each antenna are recorded on a bank of approximately one-terabyte hard disc drives""
   claim hsa Faktor fuenf Empfindlichkeit ""its sensitivity can be improved by a factor of five by including other radio telescopes""
   claim betrieb maximal 100 Stunden je Trimester ""These three additional sites are brought online for as much as 100 hours per four-month trimester.""
+  claim device VLBA ""Within this frequency range, the VLBA observes in eight different frequency bands that are useful for radio astronomy.""
 
 doc https://en.wikipedia.org/wiki/Weather_station
   title Weather station
@@ -18227,6 +18277,8 @@ doc https://ftp.cptec.inpe.br/modelos/tempo/SAMeT/Rozante_et_al_2021.pdf
   claim verfahren Beobachtungen plus ERA5 ""SAMeT is based on combinations of observed 2-m temperatures and ERA5 reanalysis""
   claim validierung 90 zu 10 Prozent ""The remaining 10% (OBS10) is used for validation purposes.""
   claim zeitraum 2011 bis 2013 ""The evaluation period was from January 2011 to December 2013.""
+  claim device SYNOP ""(2008) Seasonal and synoptic variaAbatzoglou, 2021) and also to distinguish regimes that tions in near-surface air temperature lapse rates in a Mountaincan be grouped together.""
+  claim device SYNOP ""(2008) Seasonal and synoptic variaAbatzoglou, 2021) and also to distinguish regimes that tions in near-surface air temperature lapse rates in a Mountaincan be grouped together.""
 
 doc https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=NEAR-A-NLR-5-CDR-EROS-ORBIT-V1.0
   title NEAR-A-NLR-5-CDR-EROS-ORBIT-V1.0 — NEAR Laser Rangefinder, Level 2, Eros-Orbit
@@ -18434,6 +18486,7 @@ doc https://igs.org/data-products-overview/
   claim zugang ueber das CDDIS-Portal ""These data are available through the CDDIS portal.""
   claim volumen rund 1.5 Gbytes je Woche ""Weekly and daily GNSS orbits, station position, and EOP files: ~1.5 Gbytes/week (compressed)""
   claim troposphaere rund 3 Mbytes je Tag ""Daily troposphere files: ~3 Mbytes/day (compressed)""
+  claim device GPS ""Furthermore, some stations are upgraded with multi-GNSS receivers capable of obtaining signals from GPS, GLONASS, Galileo and other GNSS (BeiDou, QZS, etc.).""
 
 doc https://ilrs.gsfc.nasa.gov/data_and_products/formats/crd.html
   title CRD Format Overview — Consolidated Laser Ranging Data Format
@@ -18919,6 +18972,8 @@ doc https://public.nrao.edu/news/radar-2015-hm10/
   claim column Entfernung Kilometer, rund 440.000 km null ""At the time of the observations, 2015 HM10 was about 440,000 kilometers from Earth""
   claim Messverfahren bistatisches Radar, Sender Goldstone DSS-13, Empfaenger GBT ""The reflected signal was then received by the 100-meter diameter dish of the GBT in a process known as bistatic radar imaging.""
   claim Takt rund 42 Bilder in 29 Minuten ""produced a collage of 42 images that spanned a total of 29 minutes (about 1.3 rotations of the asteroid).""
+  claim device GBT ""The reflected signal was then received by the 100-meter diameter dish of the GBT in a process known as bistatic radar imaging.""
+  claim device GBT ""The reflected signal was then received by the 100-meter diameter dish of the GBT in a process known as bistatic radar imaging.""
 
 doc https://nap.nationalacademies.org/read/13216/chapter/13
   title Appendix E: Automated Surface Observing System Impact on the Climate Record
@@ -19323,6 +19378,7 @@ doc https://arxiv.org/pdf/1803.11235
   claim column Frequenzauflösung 24.4 kHz null "FRB search frequency resolution"
   claim beams 1024 ""These give a total of 1024 discrete formed static beams that are closely spaced…""
   claim korrelator 1024 Frequenzkanäle ""…capable of recording visibilities across 400 MHz of bandwidth divided into 1024 frequency channels…""
+  claim device CHIME telescope ""In §2 we provide a brief description of the CHIME telescope structure and analog system.""
 
 doc https://api.crossref.org/works/10.1007/s11431-018-9241-7
   title The electromagnetic wave experiment for CSES mission: Search coil magnetometer
@@ -19341,6 +19397,7 @@ doc https://deepspace.jpl.nasa.gov/dsndocs/810-005/201/201D.pdf
   claim column Ka-Band Uplink 34200–34700 MHz null "Ka-band (Deep Space) 34200–34700 31800–32300"
   claim kanalabstand 10/27 MHz ""…the ratio 10/27 is the spacing (in MHz) between the centers of two adjacent channels.""
   claim turnaround Ratio ""Table 1 provides the recommended spacecraft transponder turnaround ratios for various uplink and downlink frequency bands.""
+  claim device DSN ""Shin Date Timothy Pham Date DSN System Engineer Communications Systems Chief Engineer Prepared by: Released by: Signature provided 08/10/2020 Signature provided 09/04/2020 Dong K.""
 
 doc https://deepspace.jpl.nasa.gov/dsndocs/810-005/203/203C.pdf
   title DSN Telecommunications Link Design Handbook, Modul 203: Sequential Ranging, Rev. C
@@ -19595,6 +19652,7 @@ doc https://ntrs.nasa.gov/api/citations/19880021170/downloads/19880021170.pdf
   claim auflösung 30 Hz "This equipment will provide 30-hertz resolution for spectral observations over bandwidths as large as 300 megahertz."
   claim zeitanteil bis 3 Prozent "Currently, up to 3 percent of Network time is made available for radio astronomy observations, which are conducted on a noninterference basis with scheduled spacecraft view periods."
   claim apertur 70 m Durchmesser "The 70-meter extension of the Goldstone 64-meter antenna (Figure 3 ) is scheduled for completion in June 1988."
+  claim device DSN ""Techniques for measuring arrival times of pulsar signals I: DSN observations from 1968 to 1980, JPL Publication 80-54, Pasadena, California: Jet Propulsion Laboratory.""
 
 doc https://link.springer.com/article/10.1007/s11214-017-0437-6
   title The Atmospheric Chemistry Suite (ACS) of Three Spectrometers for the ExoMars 2016 Trace Gas Orbiter
@@ -19781,6 +19839,7 @@ doc https://www.ldeo.columbia.edu/~richards/my_papers/AFRL-RV-HA-TR-2010-1024_07
   claim zeitmarke alle 30 s "The absolute time in 12-bit time code is recorded at every 30 s intervals…"
   claim uhr 0.1 s je Tag "A quartz clock synchronized by radio wave signal once every 12 hours maintains an overall accuracy of 0.1 s per day (Osadchiy & Daragan, 1966)."
   claim verstärkung 3000 und 300 counts/µm "…nominal gains of 3,000 counts/µm and 300 counts/µm for high- and low-gain channels, respectively…"
+  claim device seismograph ""The KOD Digital Seismograph System 24 3.3.""
 
 doc https://scispace.com/pdf/the-upgraded-carisma-magnetometer-array-in-the-themis-era-3dtgjutfsu.pdf
   title The Upgraded CARISMA Magnetometer Array in the THEMIS Era
@@ -19954,6 +20013,7 @@ doc https://www.innovativehydrology.com/WMO-No.168-1994.pdf
   claim abfluss Volumen je Zeit "River discharge, which is expressed as volume per unit time, is the rate at which water flows through a cross-section."
   claim zeit UTC oder Ortszeit "…it is important that observations be taken at the same time each day and that this time be recorded in UTC or local standard time…"
   claim timescale UTC ""
+  claim device gauge ""91 7.2 Gauge location .""
 
 doc https://skybrary.aero/sites/default/files/bookshelf/3689.pdf
   title The WMO AMDAR Observing System — Benefits to airlines and aviation
@@ -20889,6 +20949,7 @@ doc https://www.goes-r.gov/spacesegment/mag.html
   claim zweck Warnungen fuer Satelliten und Stromnetze ""providing alerts and warnings to many customers, including satellite operators and power utilities""
   claim ausleger Magnetometer-Ausleger entfaltet sich nach dem Start ""The Magnetometer boom deploys after the spacecraft launches""
   claim produkt Datenprodukt MAG beim NCEI ""MAG_Data_Product""
+  claim device MAG ""/* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; }/* Transition effect.""
 
 doc https://zenodo.org/api/records/21380428/files/GRBR%20input%20data.zip/content
   title GRBR C/NOFS Data Year 2012-2014 and GTEX Data Year 2014
@@ -20936,6 +20997,8 @@ doc https://www.ursi.org/proceedings/procGA11/ursi/G05-4.pdf
   claim startzeit UT "was at 12:19:33 UT (LT=UT+7 hrs at Bac Lieu)"
   claim frame geographic ""
   claim timescale UTC ""
+  claim device GRBR ""GNU Radio Beacon Receiver (GRBR) observations of Large-Scale Wave Structure (LSWS) and Equatorial Spread F (ESF) Smitha V.""
+  claim device GRBR ""GNU Radio Beacon Receiver (GRBR) observations of Large-Scale Wave Structure (LSWS) and Equatorial Spread F (ESF) Smitha V.""
 
 doc https://www.usgs.gov/programs/earthquake-hazards/gsn-global-seismographic-network
   title GSN - Global Seismographic Network
@@ -21336,6 +21399,7 @@ doc https://www.ncei.noaa.gov/products/space-weather/partners/swpc-products-and-
   claim GONG heliographische Remaps im 10-Minuten-Takt ""10-minute cadence heliographic remaps of the magnetic flux""
   claim GOES netCDF4 fuer GOES 16-19 ""daily products (2020-present). netCDF4 files.""
   claim GOES netCDF4 fuer GOES 1-15 ""daily products (1975-2020). netCDF4 files.""
+  claim device SWPC ""NCEI archives and provides access to some SWPC data products for retrospective users.""
 
 doc https://zenodo.org/records/7798617
   title GPS and hydraulic head measurement utilized in North China Plain research
@@ -21389,6 +21453,7 @@ doc https://www.ndbc.noaa.gov/dart/dart.shtml
   claim netz 39 Stationen seit Maerz 2008 ""expanded to a full network of 39 stations in March, 2008""
   claim rueckkehr Standardmodus nach vier Stunden ohne Ereignis ""The system returns to standard transmission after 4 hours of 1-minute real-time transmissions if no further events are detected.""
   claim archiv Archiv beim NCEI ""National Centers for Environmental Information (NCEI) is the long-term archive center for recovered DART® data""
+  claim device bpr ""An acoustic link transmits data from the BPR on the seafloor to the surface buoy.""
 
 doc https://www.ndbc.noaa.gov/faq/rsa.shtml
   title What are the sensor reporting, sampling, and accuracy readings?
@@ -25412,6 +25477,7 @@ doc https://swarmhandbook.earth.esa.int/catalogue/SW_MAGx_LR_1B
   claim instrumente VFM und ASM "Magnetic field (1Hz) from VFM and ASM"
   claim zugang HTTPS, FTP, VirES, HAPI "Files HTTPS (Product files): https://swarm-diss.eo.esa.int/#swarm/Level1b/Latest_baselines/MAGx_LR"
   claim timescale UTC ""
+  claim device VFM ""both VFM vector and ASM scalar data are interpolated to yield these data.""
 
 doc https://themis.ssl.berkeley.edu/instrument_asi.shtml
   title Instruments - All-Sky Imagers (THEMIS)
@@ -25430,6 +25496,7 @@ doc https://themis.ssl.berkeley.edu/instrument_asi.shtml
   claim verfuegbarkeit CDF nach etwa zwei Tagen, Vollaufloesung nach 3-5 Monaten "Thumbnail images are transmitted in almost real-time from the sites and corresponding overview plots and CDF-data-files are available about two days following data collection."
   claim institution UCB und UofC "University of California, Berkeley (UCB) and University of Calgary (UofC), Canada"
   claim timescale UTC ""
+  claim device ASI ""The ASI array consists of 20 cameras covering a large section of the auroral oval with one-kilometer resolution.""
 
 doc https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf
   title thg_l1_ast_fsim_20220131_v01.cdf (THEMIS GBO, All-Sky Imager FSIM)
@@ -25581,6 +25648,8 @@ doc https://science.nasa.gov/mission/webb/nirspec/
   kind instrument
   claim wellenlänge 0.6-5.3 µm "JWST's Near-Infrared Spectrograph (NIRSpec) is a versatile spectroscopic instrument that operates in the 0.6 to 5.3 μm wavelength range."
   claim frame none ""
+  claim device NIRSpec ""The NIRSpec is the first spectrograph in space that has this remarkable multi-object capability.""
+  claim device NIRSpec ""The NIRSpec is the first spectrograph in space that has this remarkable multi-object capability.""
 
 doc https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.json
   title EEG-Sidecar sub-23 task-jointaction
@@ -28973,6 +29042,8 @@ doc https://arxiv.org/pdf/1902.11265
   claim bildgitter 0.20 arcsec Pixel, tangentiale Projektion "Images are regridded to a grid of 0.20 pixels, using a tangential projection."
   claim katalogdateien 1006 Kataloge, je Kachel einer "The data release consists of 1006 catalogues one per KiDS tile."
   claim frame J2000 ""
+  claim device OmegaCAM ""Each tile is covered by a set of five (four in u) dithered exposures with OmegaCAM/VST, consisting of 32 individual CCD images each.""
+  claim device OmegaCAM ""Each tile is covered by a set of five (four in u) dithered exposures with OmegaCAM/VST, consisting of 32 individual CCD images each.""
 
 doc https://emfollow.docs.ligo.org/userguide/content.html
   title Alert Contents — IGWN Public Alerts User Guide
