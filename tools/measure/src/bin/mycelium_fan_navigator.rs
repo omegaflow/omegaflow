@@ -220,8 +220,7 @@ fn main() {
                 pool_cap,
                 wise,
                 &register_path,
-                run + 1,
-                steps,
+                (run + 1, steps),
             ) {
                 break;
             }
@@ -238,8 +237,7 @@ fn main() {
             pool_cap,
             wise,
             &register_path,
-            run + 1,
-            steps,
+            (run + 1, steps),
         ) {
             break;
         }
@@ -282,9 +280,9 @@ fn campaign_step(
     pool_cap: usize,
     wise: bool,
     register_path: &str,
-    step_no: usize,
-    steps: usize,
+    step: (usize, usize),
 ) -> bool {
+    let (step_no, steps) = step;
     let heading = format!("step {step_no} of {steps}");
     let frontier = build_frontier(start, active, pool_cap);
     if frontier.is_empty() {
@@ -358,27 +356,25 @@ fn choose_from_frontier(
             river_window_deg,
             mycelium_window_deg,
         );
-        match synthesis_of(&s) {
-            Some(v) => {
-                let improve = match best {
-                    Some((_, bv)) => v > bv,
-                    None => true,
-                };
-                if improve {
-                    best = Some((i, v));
-                }
+        if let Some(v) = synthesis_of(&s) {
+            let improve = match best {
+                Some((_, bv)) => v > bv,
+                None => true,
+            };
+            if improve {
+                best = Some((i, v));
             }
-            None => {}
+        } else {
+            eprintln!(
+                "candidate {i}: no voice is present at this direction — it cannot be the step"
+            );
         }
         scores.push((i, s));
     }
-    match best {
-        Some((chosen_index, _)) => Some(StepChoice {
-            chosen_index,
-            scores,
-        }),
-        None => None,
-    }
+    best.map(|(chosen_index, _)| StepChoice {
+        chosen_index,
+        scores,
+    })
 }
 
 fn print_choice(frontier: &[ConeCandidate], choice: &StepChoice, heading: &str) {
@@ -418,23 +414,23 @@ fn voice_scores(
     mycelium_window_deg: f64,
 ) -> VoiceScores {
     let nearest = nearest_scanned(ra_deg, dec_deg, measured);
-    let mountain = match nearest {
-        Some((_, d)) => Some(voice_mountain(d, scale_deg)),
-        None => None,
-    };
+    let mountain = nearest.map(|(_, d)| voice_mountain(d, scale_deg));
     let future = mountain.map(voice_future);
     let river = voice_river(ra_deg, dec_deg, measured, river_window_deg);
     let mycelium = voice_mycelium(ra_deg, dec_deg, measured, mycelium_window_deg);
     let sensory = Some(voice_sensory(ra_deg, dec_deg));
-    let mut present: Vec<f64> = Vec::new();
-    for s in [mountain, river, mycelium, sensory, future] {
-        if let Some(v) = s {
-            present.push(v);
-        }
-    }
+    let present: Vec<f64> = [mountain, river, mycelium, sensory, future]
+        .into_iter()
+        .flatten()
+        .collect();
     let synthesis = match synthesis_geometric_mean(&present) {
         Some(s) => s,
-        None => f64::NAN,
+        None => {
+            eprintln!(
+                "synthesis: no voice is present — the value stays NaN, the absence is the value"
+            );
+            f64::NAN
+        }
     };
     VoiceScores {
         mountain,
@@ -479,7 +475,12 @@ fn voice_river(c_ra: f64, c_dec: f64, measured: &[&ConeVisit], window_deg: f64) 
                 ys.push(m.dec_deg - c_dec);
                 zs.push(food as f64);
             }
-            None => {}
+            None => {
+                eprintln!(
+                    "measured visit at ra {:.3} dec {:.3}: no food value — it stays out of the plane",
+                    m.ra_deg, m.dec_deg
+                );
+            }
         }
     }
     if xs.len() < 3 {
@@ -528,12 +529,9 @@ fn voice_mycelium(
         if sep_deg(ra_deg, dec_deg, m.ra_deg, m.dec_deg) > window_deg {
             continue;
         }
-        match m.food {
-            Some(f) => {
-                food_measured = true;
-                food_sum += f as f64;
-            }
-            None => {}
+        if let Some(f) = m.food {
+            food_measured = true;
+            food_sum += f as f64;
         }
     }
     if food_measured {
@@ -772,7 +770,7 @@ fn cone_rows(ra: f64, dec: f64, radius_arcsec: f64) -> Option<Vec<ConeObjectRow>
             simbad,
         });
     }
-    objs.sort_by(|a, b| b.n_sources.cmp(&a.n_sources));
+    objs.sort_by_key(|o| std::cmp::Reverse(o.n_sources));
     println!(
         "mycelium cone (ra {ra}, dec {dec}, {radius_arcsec} arcsec): HTTP {code}, {} object row(s)",
         objs.len()
@@ -826,7 +824,10 @@ fn curl_post_retry(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
     for attempt in 0..HTTP_RETRY {
         let resp = match curl_post_bytes(url, json_body) {
             Some(r) => r,
-            None => return None,
+            None => {
+                eprintln!("{url}: attempt {attempt} carries no response — the retry loop ends here");
+                return None;
+            }
         };
         if resp.0 == "429" {
             let backoff = RATE_LIMIT_BACKOFF_MS * (attempt as u64 + 1);
@@ -875,7 +876,10 @@ fn curl_post_bytes(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
 fn read_file(path: &str) -> String {
     match std::fs::read_to_string(path) {
         Ok(s) => s,
-        Err(_) => String::new(),
+        Err(_) => {
+            eprintln!("{path}: the file reads void — the text stays empty");
+            String::new()
+        }
     }
 }
 
@@ -898,26 +902,26 @@ fn parse_register(body: &str) -> Vec<ConeVisit> {
         while i < words.len() {
             match words[i].as_str() {
                 "ra" => {
-                    if i + 1 < words.len() {
-                        if let Ok(v) = words[i + 1].parse() {
-                            ra = Some(v);
-                        }
+                    if i + 1 < words.len()
+                        && let Ok(v) = words[i + 1].parse()
+                    {
+                        ra = Some(v);
                     }
                     i += 2;
                 }
                 "dec" => {
-                    if i + 1 < words.len() {
-                        if let Ok(v) = words[i + 1].parse() {
-                            dec = Some(v);
-                        }
+                    if i + 1 < words.len()
+                        && let Ok(v) = words[i + 1].parse()
+                    {
+                        dec = Some(v);
                     }
                     i += 2;
                 }
                 "radius" => {
-                    if i + 1 < words.len() {
-                        if let Ok(v) = words[i + 1].parse() {
-                            radius = Some(v);
-                        }
+                    if i + 1 < words.len()
+                        && let Ok(v) = words[i + 1].parse()
+                    {
+                        radius = Some(v);
                     }
                     i += 2;
                 }
@@ -959,10 +963,10 @@ fn token_usize_after(words: &[String], key: &str) -> Option<usize> {
     let mut i = 0;
     while i < words.len() {
         if words[i] == key {
-            if i + 1 < words.len() {
-                if let Ok(v) = words[i + 1].parse() {
-                    return Some(v);
-                }
+            if i + 1 < words.len()
+                && let Ok(v) = words[i + 1].parse()
+            {
+                return Some(v);
             }
             return None;
         }

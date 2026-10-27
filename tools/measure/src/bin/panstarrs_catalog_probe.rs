@@ -144,14 +144,15 @@ fn read_anchors(path: &str) -> Vec<Anchor> {
         }
         let ra = f[1].trim().parse::<f64>();
         let dec = f[2].trim().parse::<f64>();
-        if let (Ok(ra), Ok(dec)) = (ra, dec) {
-            if ra.is_finite() && dec.is_finite() {
-                out.push(Anchor {
-                    iers: f[0].trim().to_string(),
-                    ra_deg: ra,
-                    dec_deg: dec,
-                });
-            }
+        if let (Ok(ra), Ok(dec)) = (ra, dec)
+            && ra.is_finite()
+            && dec.is_finite()
+        {
+            out.push(Anchor {
+                iers: f[0].trim().to_string(),
+                ra_deg: ra,
+                dec_deg: dec,
+            });
         }
     }
     out
@@ -210,10 +211,10 @@ fn parse_cone(body: &str) -> Vec<Ps1Object> {
     let mut fields = Vec::new();
     for chunk in body.split("<FIELD ").skip(1) {
         let head = chunk.split('>').next().unwrap_or("");
-        if let Some(rest) = head.split("name=\"").nth(1) {
-            if let Some(name) = rest.split('"').next() {
-                fields.push(name.to_string());
-            }
+        if let Some(rest) = head.split("name=\"").nth(1)
+            && let Some(name) = rest.split('"').next()
+        {
+            fields.push(name.to_string());
         }
     }
     let idx = field_indexes(&fields);
@@ -236,11 +237,17 @@ fn parse_cone(body: &str) -> Vec<Ps1Object> {
         let mut o = Ps1Object {
             obj_name: match text_at("objName") {
                 Some(value) => value,
-                None => String::new(),
+                None => {
+                    eprintln!("objName: the row carries no object name — the field stays empty");
+                    String::new()
+                }
             },
             obj_id: match text_at("objID") {
                 Some(value) => value,
-                None => String::new(),
+                None => {
+                    eprintln!("objID: the row carries no object id — the field stays empty");
+                    String::new()
+                }
             },
             n_detections: text_at("nDetections").and_then(|v| v.parse::<u32>().ok()),
             ra_deg: num_at("RAmean"),
