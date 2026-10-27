@@ -112,6 +112,25 @@ jobs:
             echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
           done
         } > tools.manifest
+    - uses: taiki-e/install-action@cargo-cyclonedx
+    - name: Stückliste — SBOM des Werkzeug-Baums
+      run: |
+        cargo cyclonedx --format json --output-cdx sbom.cdx.json --all-features
+        echo "sbom: $(jq '.components | length' sbom.cdx.json) components"
+    - name: Sign the assets — the origin is proven, not asserted
+      env:
+        SIGNING_KEY: ${{ secrets.OMEGAFLOW_SIGNING_KEY }}
+      run: |
+        if [ -z "$SIGNING_KEY" ]; then
+          echo "signing: secrets.OMEGAFLOW_SIGNING_KEY is absent — the release stays unsigned" >&2
+          exit 1
+        fi
+        printf '%s\n' "$SIGNING_KEY" > /tmp/sign_key
+        chmod 600 /tmp/sign_key
+        for f in tools.manifest sbom.cdx.json; do
+          ssh-keygen -Y sign -f /tmp/sign_key -n file "$f"
+        done
+        echo "signed: tools.manifest.sig sbom.cdx.json.sig"
     - name: Publish to tools-latest
       env:
         GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
@@ -120,4 +139,4 @@ jobs:
           gh release create tools-latest --title tools-latest --generate-notes --repo omegaflow/omegaflow
         ARGS=""
         for t in $TOOLS; do ARGS="$ARGS target/release/$t"; done
-        gh release upload tools-latest $ARGS tools.manifest --clobber --repo omegaflow/omegaflow
+        gh release upload tools-latest $ARGS tools.manifest tools.manifest.sig sbom.cdx.json sbom.cdx.json.sig --clobber --repo omegaflow/omegaflow
