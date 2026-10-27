@@ -1270,7 +1270,7 @@ host cdaweb.gsfc.nasa.gov
   sampling 3.107
   api_cite https://github.com/hapi-server/data-specification/blob/master/hapi-2.0.0/HAPI-data-access-spec-2.0.0.md
   api_quote "units | string | **Required** The units for the data values represented by this parameter."
-  instrument_cite https://www.researchgate.net/publication/225666485_The_THEMIS_ESA_plasma_instrument_and_in-flight_calibration
+  instrument_cite https://api.crossref.org/works/10.1007/s11214-008-9440-2
   instrument_quote "The THEMIS Electrostatic Analyzer (ESA) measured the ion and electron distribution functions for each 3 s spin period (McFadden et al., 2008)."
   probe 2026-10-25T09:07:59Z 200 https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_MOM%400&time.min=2026-09-01T00:00:00Z&time.max=2026-09-01T01:00:00Z&parameters=tha_peim_density,tha_peim_velocity_gse&format=json
   fields tha_peim_density_percc tha_peim_vx_gse_kms tha_peim_vy_gse_kms tha_peim_vz_gse_kms
@@ -2045,8 +2045,6 @@ host eeadmz1-downloads-api-appservice.azurewebsites.net
   instrument EEA
   unit ug/m3
   interval 3600
-  api_cite https://www.eea.europa.eu/en/datahub/datahubitem-view/778ef9f5-6293-4846-badd-56a29c70880d
-  api_quote "Selected time series will be downloaded as zipped Parquet files that are only accessible by scripting or by use of dedicated web-services."
   instrument_cite https://eeadmz1-downloads-webapp.azurewebsites.net/content/documentation/How_To_Downloads.pdf
   instrument_quote "Air quality Download service page"
   fields Value
@@ -2085,8 +2083,8 @@ host lgdc.uml.edu
   instrument ionosonde
   unit MHz
   interval 3600
-  api_cite https://lgdc.uml.edu/fastchar/getbest
-  api_quote "foF2"
+  api_cite https://giro.uml.edu/didbase/scaled.php
+  api_quote "foF2 -- F2 layer critical frequency"
   instrument_cite https://giro.uml.edu/
   instrument_quote "In cooperation with the URSI Ionosonde Network Advisory Group (INAG), the LGDC promotes cooperative agreements with the ionosonde observatories of the world to accept and process real-time data of HF radio monitoring of the ionosphere"
   fields fof2_mhz cs
@@ -2350,8 +2348,8 @@ host sbnarchive.psi.edu
 host sbnarchive.psi.edu
   instrument NLR
   unit METER
-  api_cite https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/l00074ng.lbl
-  api_quote "Range is 0.5 * counts * (c/f) - r_corr,     where c is the speed of light, f=480,000,000 Hz, and r_corr is the range walk correction at the receiver_threshold."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=NEAR-A-NLR-5-CDR-EROS-ORBIT-V1.0
+  api_quote "NLR Level 2 Data Products include the along-track profiles of NLR data in SI units, together with spacecraft position, orientation, and timing data."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:nlr.near
   instrument_quote "It was also used as a laser altimeter to determine the range to points on the surface and hence the shape of the asteroid."
   host_cite https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/l00074ng.tab
@@ -2366,8 +2364,8 @@ host sbnarchive.psi.edu
   unit km
   api_cite https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.xml
   api_quote "Radius of lidar point."
-  instrument_cite https://sbnarchive.psi.edu/pds4/orex/orex.ola_v5_0/document/ola_inst_paper.pdf
-  instrument_quote "As a scanning laser altimeter, the OLA instrument will measure the range between the OSIRIS-REx spacecraft and the surface of Bennu to produce digital terrain maps of unprecedented spatial scales for a planetary mission."
+  instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:ola.orex
+  instrument_quote "The OLA is designed to measure the shape of asteroid Bennu at high spatial resolution"
   host_cite https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.dat
   host_quote "HTTP cache-control: max-age=86400"
   probe 2026-10-25T10:03:47Z 206 https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.dat
@@ -2406,8 +2404,8 @@ host sbnarchive.psi.edu
   instrument LIDAR
   unit Kilometer
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.xml
-  api_quote "Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:lidar.hay
   instrument_quote "The Light Detection and Ranging Instrument (LIDAR) on Hayabusa uses the time-of-flight measurement of a laser pulse reflected from the surface of asteroid 25143 Itokawa to determine the surface topography."
   host_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.tab
@@ -2420,8 +2418,8 @@ host sbnarchive.psi.edu
   instrument LIDAR
   unit Kilometer
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.xml
-  api_quote "Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:lidar.hay
   instrument_quote "The Light Detection and Ranging Instrument (LIDAR) on Hayabusa uses the time-of-flight measurement of a laser pulse reflected from the surface of asteroid 25143 Itokawa to determine the surface topography."
   host_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.tab
@@ -2434,8 +2432,8 @@ host sbnarchive.psi.edu
   instrument LIDAR
   unit Kilometer
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.xml
-  api_quote "Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:lidar.hay
   instrument_quote "The Light Detection and Ranging Instrument (LIDAR) on Hayabusa uses the time-of-flight measurement of a laser pulse reflected from the surface of asteroid 25143 Itokawa to determine the surface topography."
   host_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.tab
@@ -2448,8 +2446,8 @@ host sbnarchive.psi.edu
   instrument LIDAR
   unit Kilometer
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.xml
-  api_quote "Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:lidar.hay
   instrument_quote "The Light Detection and Ranging Instrument (LIDAR) on Hayabusa uses the time-of-flight measurement of a laser pulse reflected from the surface of asteroid 25143 Itokawa to determine the surface topography."
   host_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.tab
@@ -2462,8 +2460,8 @@ host sbnarchive.psi.edu
   instrument LIDAR
   unit Kilometer
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.xml
-  api_quote "Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://arcnav.psi.edu/urn:nasa:pds:context:instrument:lidar.hay
   instrument_quote "The Light Detection and Ranging Instrument (LIDAR) on Hayabusa uses the time-of-flight measurement of a laser pulse reflected from the surface of asteroid 25143 Itokawa to determine the surface topography."
   host_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.tab
@@ -2607,7 +2605,7 @@ host api.geonet.org.nz
   interval 60
   api_cite https://api.geonet.org.nz/
   api_quote "If publicID is not specified the information is for the last 60 minutes."
-  instrument_cite https://www.researchgate.net/publication/269637950_The_New_Zealand_National_Seismograph_Network
+  instrument_cite https://api.crossref.org/works/10.1785/gssrl.82.1.9
   instrument_quote "The New Zealand GeoNet is a strongly integrated data collection and analysis system consisting of national and regional-scale sensor networks."
   host_cite https://api.geonet.org.nz/quake?MMI=4
   host_quote "HTTP cache-control: max-age=10"
@@ -2635,10 +2633,10 @@ host jvo.nao.ac.jp
   instrument FOREST
   unit K.m/s
   interval 31536000
-  api_cite https://cade.irap.omp.eu/doku.php?id=fugin
-  api_quote "The intrinsic angular resolution of the FUGIN survey data is ~20 arcseconds, and the velocity resolution is 1.3 km/s."
+  api_cite https://nro-fugin.github.io/
+  api_quote "FOREST Unbiased Galactic plane Imaging survey with the Nobeyama 45-m telescope (FUGIN)"
   instrument_cite https://nro-fugin.github.io/
-  instrument_quote "FUGIN provides us the highest angular resolution data to date (~20\") among the existing Galactic plane CO surveys."
+  instrument_quote "FOREST Unbiased Galactic plane Imaging survey with the Nobeyama 45-m telescope (FUGIN)"
   probe 2026-10-25T10:01:26Z 200 https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
   fields fugin_moment0_k_ms
   applies https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
@@ -3182,8 +3180,8 @@ host storage.googleapis.com
   interval 604800
   api_cite https://www.ncei.noaa.gov/products/passive-acoustic-data
   api_quote "metadata fields span high level project description to platform type to details on the hydrophone, preamplifier, and sampling details"
-  instrument_cite https://www.fisheries.noaa.gov/national/science-data/acoustics
-  instrument_quote "hydrophone"
+  instrument_cite https://www.fisheries.noaa.gov/national/science-data/ocean-noise
+  instrument_quote "an underwater microphone or acoustic recorder, deployed in Gray's Reef National Marine Sanctuary in Georgia"
   host_cite https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
   host_quote "HTTP cache-control: private, max-age=0"
   fields pcm
@@ -3306,7 +3304,7 @@ host api.v2.sondehub.org
   interval 3600
   api_cite https://sondehub.org/
   api_quote "SondeHub"
-  instrument_cite https://www.vaisala.com/en/products/weather-and-environment/radiosondes/rs41
+  instrument_cite https://www.vaisala.com/en/products/weather-environmental-sensors/upper-air-radiosondes-rs41-rs41-e-models
   instrument_quote "RS41"
   probe 2026-10-25T09:59:06Z 206 https://api.v2.sondehub.org/sonde/Y3313219
   fields temp vel_h vel_v heading pressure humidity
@@ -3334,7 +3332,7 @@ host open-lidar-data.s3.amazonaws.com
   interval 86400
   api_cite https://github.com/flai-ai/open-lidar-data
   api_quote "LiDAR (Light Detection and Ranging) is an essential technology for applications in archaeology, geography, forestry and urban planning."
-  instrument_cite https://www.openlidar.org/
+  instrument_cite https://github.com/flai-ai/open-lidar-data
   instrument_quote "airborne LiDAR"
   host_cite https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
   host_quote "HTTP last-modified: Wed, 22 May 2024 13:30:35 GMT"
@@ -3403,8 +3401,8 @@ host data.impc.dlr.de
   instrument GNSS
   unit TECU/min
   interval 60
-  api_cite https://impc.dlr.de/index.php?id=65&L=0
-  api_quote "This product can be applied to help to improve the accuracy during GNSS positioning."
+  api_cite https://impc.dlr.de/products
+  api_quote "ROTI) and equivalent slab thickness"
   instrument_cite https://www.swsc-journal.org/component/article?access=doi&doi=10.1051/swsc/2018008
   instrument_quote "Rate of change of TEC index (ROTI) in TECU per minute."
   host_cite https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
@@ -3418,7 +3416,7 @@ host portal.opentopography.org
   instrument SRTM
   unit m
   interval 31536000
-  api_cite https://www.opentopography.org/apidocs
+  api_cite https://portal.opentopography.org/apidocs/
   api_quote "Developers/API"
   instrument_cite https://www2.jpl.nasa.gov/srtm/
   instrument_quote "Shuttle Radar Topography Mission"
@@ -3430,8 +3428,8 @@ host noaa-dcdb-bathymetry-pds.s3.amazonaws.com
   instrument multibeam
   unit m
   interval 604800
-  api_cite https://www.ncei.noaa.gov/products/digital-coast-bathymetry
-  api_quote "Digital Coast Bathymetry"
+  api_cite https://www.ncei.noaa.gov/products/bathymetry
+  api_quote "Use this interactive map to search and access bathymetric data, including multibeam, singlebeam, lidar, and crowdsourced bathymetry data"
   instrument_cite https://oceanexplorer.noaa.gov/technology/sonar/multibeam.html
   instrument_quote "multibeam"
   probe 2026-10-25T09:59:46Z 200 https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com
@@ -3503,7 +3501,7 @@ host service.earthscope.org
   interval 60
   api_cite https://service.earthscope.org/fdsnws/dataselect/1/
   api_quote "Data are returned in miniSEED and GeoCSV format."
-  instrument_cite https://www.earthscope.org/observatories/gnss/seismology/
+  instrument_cite https://ngf.earthscope.org/
   instrument_quote "seismometer"
   fields fdsn_waveform_bhz_ms
   applies https://service.earthscope.org/fdsnws/dataselect/1/query
@@ -3515,7 +3513,7 @@ host service.earthscope.org
   interval 86400
   api_cite https://service.earthscope.org/fdsnws/station/1/
   api_quote "returns station metadata in FDSN StationXML format v1.1"
-  instrument_cite https://www.earthscope.org/observatories/gnss/seismology/
+  instrument_cite https://ngf.earthscope.org/
   instrument_quote "seismometer"
   host_cite https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&network=IM
   host_quote "HTTP cache-control: no-cache, no-store, max-age=0, must-revalidate"
@@ -3530,7 +3528,7 @@ host service.earthscope.org
   interval 86400
   api_cite https://service.earthscope.org/fdsnws/station/1/
   api_quote "Results are available at multiple levels of granularity: network, station, channel and response."
-  instrument_cite https://www.earthscope.org/observatories/gnss/seismology/
+  instrument_cite https://ngf.earthscope.org/
   instrument_quote "seismometer"
   host_cite https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
   host_quote "HTTP cache-control: no-cache, no-store, max-age=0, must-revalidate"
@@ -3581,10 +3579,10 @@ host data-argo.ifremer.fr
   instrument CTD
   unit degree_C
   interval 864000
-  api_cite https://manualzz.com/doc/1498984/argo-data-management-system-user-s-manual
+  api_cite https://archimer.ifremer.fr/doc/00187/29825/120885.pdf
   api_quote "DOXY unit: micromole/kg"
   instrument_cite https://argo.ucsd.edu/
-  instrument_quote "Argo"
+  instrument_quote "The sensors on Argo floats and the floats themselves are what make the Argo Program possible."
   host_cite https://data-argo.ifremer.fr/argo_synthetic-profile_index.txt
   host_quote "HTTP last-modified: Sun, 25 Oct 2026 10:24:13 GMT"
   probe 2026-10-25T10:03:15Z 206 https://data-argo.ifremer.fr/argo_synthetic-profile_index.txt
@@ -3596,10 +3594,10 @@ host data-argo.ifremer.fr
   instrument optode
   unit micromole/kg
   interval 864000
-  api_cite https://manualzz.com/doc/1498984/argo-data-management-system-user-s-manual
+  api_cite https://archimer.ifremer.fr/doc/00187/29825/120885.pdf
   api_quote "DOXY unit: micromole/kg"
   instrument_cite https://argo.ucsd.edu/
-  instrument_quote "Argo"
+  instrument_quote "The sensors on Argo floats and the floats themselves are what make the Argo Program possible."
   host_cite https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
   host_quote "HTTP last-modified: Fri, 23 Oct 2026 15:01:52 GMT"
   probe 2026-10-25T10:03:18Z 206 https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
@@ -3611,10 +3609,10 @@ host data-argo.ifremer.fr
   instrument optode
   unit micromole/kg
   interval 864000
-  api_cite https://manualzz.com/doc/1498984/argo-data-management-system-user-s-manual
+  api_cite https://archimer.ifremer.fr/doc/00187/29825/120885.pdf
   api_quote "DOXY unit: micromole/kg"
   instrument_cite https://argo.ucsd.edu/
-  instrument_quote "Argo"
+  instrument_quote "The sensors on Argo floats and the floats themselves are what make the Argo Program possible."
   host_cite https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
   host_quote "HTTP last-modified: Wed, 22 Jul 2026 21:41:31 GMT"
   probe 2026-10-25T10:03:20Z 206 https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
@@ -3626,10 +3624,10 @@ host data-argo.ifremer.fr
   instrument CTD
   unit degree_C
   interval 864000
-  api_cite https://manualzz.com/doc/1498984/argo-data-management-system-user-s-manual
+  api_cite https://archimer.ifremer.fr/doc/00187/29825/120885.pdf
   api_quote "DOXY unit: micromole/kg"
   instrument_cite https://argo.ucsd.edu/
-  instrument_quote "Argo"
+  instrument_quote "The sensors on Argo floats and the floats themselves are what make the Argo Program possible."
   host_cite https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
   host_quote "HTTP last-modified: Wed, 05 Aug 2026 23:14:35 GMT"
   probe 2026-10-25T10:03:22Z 206 https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
@@ -3641,10 +3639,10 @@ host data-argo.ifremer.fr
   instrument optode
   unit micromole/kg
   interval 864000
-  api_cite https://manualzz.com/doc/1498984/argo-data-management-system-user-s-manual
+  api_cite https://archimer.ifremer.fr/doc/00187/29825/120885.pdf
   api_quote "DOXY unit: micromole/kg"
   instrument_cite https://argo.ucsd.edu/
-  instrument_quote "Argo"
+  instrument_quote "The sensors on Argo floats and the floats themselves are what make the Argo Program possible."
   host_cite https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz
   host_quote "HTTP last-modified: Sun, 25 Oct 2026 10:24:08 GMT"
   probe 2026-10-25T10:03:23Z 206 https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz
@@ -3658,8 +3656,8 @@ host seismic-api.science.unimelb.edu.au
   interval 6
   api_cite https://seismic-api.science.unimelb.edu.au/today-quakes
   api_quote "properties.mag"
-  instrument_cite https://www.ga.gov.au/scientific-topics/community-safety/seismology
-  instrument_quote "seismograph"
+  instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://seismic-api.science.unimelb.edu.au/today-quakes
   host_quote "HTTP etag: W/"fe-jIy/kRRYqS/9A/GmMJnOSh3HnKs""
   probe 2026-10-25T10:03:25Z 200 https://seismic-api.science.unimelb.edu.au/today-quakes
@@ -3673,8 +3671,8 @@ host seismic-api.science.unimelb.edu.au
   interval 30
   api_cite https://seismic-api.science.unimelb.edu.au/three-day-quakes
   api_quote "properties.mag"
-  instrument_cite https://www.ga.gov.au/scientific-topics/community-safety/seismology
-  instrument_quote "seismograph"
+  instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://seismic-api.science.unimelb.edu.au/three-day-quakes
   host_quote "HTTP etag: W/"fc-iz3DYBmB+CbmIESwBEn63Xq1FLY""
   probe 2026-10-25T10:03:27Z 200 https://seismic-api.science.unimelb.edu.au/three-day-quakes
@@ -3688,8 +3686,8 @@ host seismic-api.science.unimelb.edu.au
   interval 180
   api_cite https://seismic-api.science.unimelb.edu.au/month-quakes
   api_quote "properties.mag"
-  instrument_cite https://www.ga.gov.au/scientific-topics/community-safety/seismology
-  instrument_quote "seismograph"
+  instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://seismic-api.science.unimelb.edu.au/month-quakes
   host_quote "HTTP etag: W/"fa-HvpAXrGc6mFrmQ46X+00p20SEEQ""
   probe 2026-10-25T10:03:29Z 200 https://seismic-api.science.unimelb.edu.au/month-quakes
@@ -3701,7 +3699,7 @@ host noaa-oar-keo-papa-pds.s3.amazonaws.com
   instrument CTD
   unit C
   interval 86400
-  api_cite https://www.pmel.noaa.gov/keo/
+  api_cite https://www.pmel.noaa.gov/ocs/KEO
   api_quote "Ocean Station Papa"
   instrument_cite https://www.pmel.noaa.gov/gtmba/
   instrument_quote "mooring"
@@ -3782,7 +3780,7 @@ host data.openei.org
   interval 3600
   api_cite https://data.openei.org/files/6458/Outage_Dataset_R1.zip
   api_quote "Outage_Dataset_R1"
-  instrument_cite https://www.energy.gov/oe/software/eagle-i
+  instrument_cite https://figshare.com/articles/dataset/EAGLE-I_Power_Outage_Data/24237376
   instrument_quote "EAGLE-I"
   host_cite https://data.openei.org/files/6458/Outage_Dataset_R1.zip
   host_quote "HTTP last-modified: Thu, 24 Apr 2025 22:05:06 GMT"
@@ -3797,7 +3795,7 @@ host ndownloader.figshare.com
   interval 900
   api_cite https://figshare.com/articles/dataset/EAGLE-I_Power_Outage_Data/24237376
   api_quote "EAGLE-I"
-  instrument_cite https://www.energy.gov/oe/software/eagle-i
+  instrument_cite https://figshare.com/articles/dataset/EAGLE-I_Power_Outage_Data/24237376
   instrument_quote "EAGLE-I"
   host_cite https://ndownloader.figshare.com/files/42547717
   host_quote "HTTP cache-control: public, must-revalidate, proxy-revalidate"
@@ -3864,7 +3862,7 @@ host seismicportal.eu
   api_cite https://fdsn.org/webservices/fdsnws-event-1.2.pdf
   api_quote "Depth/km                Event depth in kilometers"
   instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
-  instrument_quote "Seismometers (instruments for recording earthquakes) are tested and fitted at the USGS Cascades Volcano Observatory before going out into the field."
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   probe 2026-10-25T10:06:38Z 200 https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=1
   fields properties.depth
   applies https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
@@ -3876,7 +3874,7 @@ host earthquake.usgs.gov
   api_cite https://earthquake.usgs.gov/fdsnws/event/1/
   api_quote "maxdepth | Decimal [-100, 1000] km | 1000 | Limit to events with depth less than the specified maximum."
   instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
-  instrument_quote "Seismometers (instruments for recording earthquakes) are tested and fitted at the USGS Cascades Volcano Observatory before going out into the field."
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
   host_quote "HTTP cache-control: public, max-age=60"
   probe 2026-10-25T10:06:39Z 200 https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
@@ -3890,7 +3888,7 @@ host earthquake.usgs.gov
   api_cite https://earthquake.usgs.gov/fdsnws/event/1/
   api_quote "maxdepth | Decimal [-100, 1000] km | 1000 | Limit to events with depth less than the specified maximum."
   instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
-  instrument_quote "Seismometers (instruments for recording earthquakes) are tested and fitted at the USGS Cascades Volcano Observatory before going out into the field."
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-01&endtime=2026-10-02
   host_quote "HTTP cache-control: public, max-age=60"
   probe 2026-10-25T10:06:41Z 200 https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-01&endtime=2026-10-02
@@ -3983,8 +3981,8 @@ host erddap.emso.eu
   interval 1800
   api_cite https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.html
   api_quote "String units \"degC\";"
-  instrument_cite https://erddap.emso.eu/erddap/info/EMSO_OBSEA_CTD_full/index.htmlTable
-  instrument_quote "CTD data measured at OBSEA underwater observatory full data."
+  instrument_cite https://erddap.emso.eu/erddap/info/OBSEA_seabed_station_TS_L1c/index.htmlTable
+  instrument_quote "in situ sea water temperature"
   host_cite https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
   host_quote "HTTP last-modified: Sun, 25 Oct 2026 10:37:15 GMT"
   probe 2026-10-25T10:15:24Z 200 https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
@@ -6797,7 +6795,7 @@ host zenodo.org
   instrument LEAP phased array
   unit s
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from25 millisecond pulsars collected with the five largest radio telescopes in Europe, as well as the Large European Array for Pulsars."
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
@@ -6881,7 +6879,7 @@ host zenodo.org
   instrument Lovell
   unit s
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
@@ -6893,7 +6891,7 @@ host zenodo.org
   instrument Nancay
   unit s
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
@@ -6905,7 +6903,7 @@ host zenodo.org
   instrument Effelsberg
   unit s
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
@@ -6917,7 +6915,7 @@ host zenodo.org
   instrument Westerbork
   unit s
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
@@ -6929,7 +6927,7 @@ host zenodo.org
   instrument Sardinia
   unit s
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   probe 2026-10-25T11:01:44Z 206 https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
@@ -6981,6 +6979,8 @@ host datacentral.org.au
   interval 604800
   api_cite https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
   api_quote "quantity teff galah_dr3_effective_temp_k erfc source-parameter K 604800 0.0 0.0"
+  instrument_cite https://www.galah-survey.org/details/facilities/
+  instrument_quote "GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer."
 
 host datacentral.org.au
   instrument_cite https://www.galah-survey.org/details/facilities/
@@ -7025,8 +7025,8 @@ host open-lidar-data.s3.amazonaws.com
   instrument LIDAR
   unit m
   interval 86400
-  api_cite https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.amazonaws.com/open_lidar_data_be_dhmv2.bin
-  api_quote "quantity las_x_icrs_m las_x_icrs_m inverse-linear geometry m 86400 0.0 0.0"
+  api_cite https://open-lidar-data.s3.amazonaws.com/?list-type=2&prefix=data/BE/&max-keys=5
+  api_quote "<Name>open-lidar-data</Name>"
   instrument_cite https://github.com/flai-ai/open-lidar-data
   instrument_quote "Belgium ... data/BE/SPW/LIEGE_2021-2022/copc ... SPW, LIDAR point cloud 2021-2022"
   probe 2026-10-25T11:59:24Z 200 https://open-lidar-data.s3.amazonaws.com/?list-type=2
@@ -7039,8 +7039,8 @@ host sdc-serv.usask.ca
   unit m/s
   sampling 60
   interval 600
-  api_cite https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/superdarn_fitacf.bin
-  api_quote "field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0"
+  api_cite https://sdc-serv.usask.ca/
+  api_quote "The Super Dual Auroral Radar Network (SuperDARN) is a global network of scientific radars monitoring conditions in the near-Earth space environment"
   instrument_cite https://pmc.ncbi.nlm.nih.gov/articles/PMC9285094/
   instrument_quote "Normally, the SuperDARN radars are scheduled for 1-min or 2-min azimuthal sweeps in the normal mode."
   probe 2026-10-25T11:16:46Z 500 https://sdc-serv.usask.ca/data/
@@ -7630,7 +7630,7 @@ host download.scidb.cn
   interval 0.000019531
   api_cite https://eppcgs.org/article/doi/10.26464/epp2018044
   api_quote "51.2-kHz sampling rate. The scientific data file uses the hierarchical data format (HDF), and their corresponding figures use the portable network graphics (PNG) format."
-  instrument_cite https://link.springer.com/article/10.1007/s11431-018-9241-7
+  instrument_cite https://api.crossref.org/works/10.1007/s11431-018-9241-7
   instrument_quote "The search coil magnetometer (SCM) mounted on China Seismo-Electromagnetic satellite (CSES) is designed to measure the magnetic field fluctuation of low frequency electromagnetic waves in the frequency range of 10 Hz–20 kHz."
   probe 2026-10-25T12:37:53Z 206 https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55
   fields A311 A321 FG2_X FG2_Y FG2_Z UF UP X_WAVE Y_WAVE Z_WAVE
@@ -8213,8 +8213,8 @@ host sbnarchive.psi.edu
   unit km
   sampling 1
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.xml
-  api_quote "unit Kilometer / Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/document/lidar_instrument_description.txt
   instrument_quote "The pulse repetition rate is 1 Hz, and the pulse energy was 10 mJ durign the entire peroid of operation."
   probe 2026-10-25T13:00:37Z 206 https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.xml
@@ -8227,8 +8227,8 @@ host sbnarchive.psi.edu
   unit km
   sampling 1
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.xml
-  api_quote "unit Kilometer / Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/document/lidar_instrument_description.txt
   instrument_quote "The pulse repetition rate is 1 Hz, and the pulse energy was 10 mJ durign the entire peroid of operation."
   probe 2026-10-25T13:00:40Z 206 https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.xml
@@ -8241,8 +8241,8 @@ host sbnarchive.psi.edu
   unit km
   sampling 1
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.xml
-  api_quote "unit Kilometer / Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/document/lidar_instrument_description.txt
   instrument_quote "The pulse repetition rate is 1 Hz, and the pulse energy was 10 mJ durign the entire peroid of operation."
   probe 2026-10-25T13:00:42Z 206 https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.xml
@@ -8255,8 +8255,8 @@ host sbnarchive.psi.edu
   unit km
   sampling 1
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.xml
-  api_quote "unit Kilometer / Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/document/lidar_instrument_description.txt
   instrument_quote "The pulse repetition rate is 1 Hz, and the pulse energy was 10 mJ durign the entire peroid of operation."
   probe 2026-10-25T13:00:44Z 206 https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.xml
@@ -8269,8 +8269,8 @@ host sbnarchive.psi.edu
   unit km
   sampling 1
   interval 1
-  api_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.xml
-  api_quote "unit Kilometer / Distance or Range in KM measured by the HAYABUSA LIDAR along the boresight to the surface."
+  api_cite https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=HAY-A-LIDAR-3-HAYLIDAR-V2.0
+  api_quote "The HAYABUSA spacecraft included a LIght Detection and Ranging (LIDAR) altimeter."
   instrument_cite https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/document/lidar_instrument_description.txt
   instrument_quote "The pulse repetition rate is 1 Hz, and the pulse energy was 10 mJ durign the entire peroid of operation."
   probe 2026-10-25T13:00:23Z 206 https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.xml
@@ -8511,6 +8511,8 @@ host datacentral.org.au
   interval 3600
   api_cite https://ar5iv.labs.arxiv.org/html/2011.02505
   api_quote "teff K Spectroscopic effective temperature (used for fitting) float"
+  instrument_cite https://www.galah-survey.org/details/facilities/
+  instrument_quote "GALAH was the primary science driver for the HERMES, a high resolution (R~28,000 or 50,000) fibre-fed multi-object spectrometer."
 
 host datacentral.org.au
   instrument_cite https://www.galah-survey.org/details/facilities/
@@ -8742,7 +8744,7 @@ host donnees-data.asc-csa.gc.ca
   interval 1
   api_cite https://carisma.ca/carisma-data/product-info
   api_quote "The incoming 8 Hz data streams from the CARISMA remote sites are processed, validated, and downsampled to 1 Hz before being made available."
-  instrument_cite https://link.springer.com/article/10.1007/s11214-008-9457-6
+  instrument_cite https://api.crossref.org/works/10.1007/s11214-008-9457-6
   instrument_quote "the upgrading of the fluxgate magnetometer cadence to a standard data product of 1 sample/s (raw sampled 8 samples/s data stream available on request)"
   probe 2026-10-25T13:25:27Z 206 https://data.carisma.ca/
   fields carisma_mag_x_nt carisma_mag_y_nt carisma_mag_z_nt
@@ -8798,7 +8800,7 @@ host download.scidb.cn
   interval 0.000977
   api_cite https://www.eppcgs.org/en/article/doi/10.26464/epp2018044
   api_quote "Generally, the SCM data include three frequency band waveforms and/or power spectral density (PSD) data, i.e., ultra-low-frequency band (ULF, 10–200 Hz) data with a 1024-Hz sampling rate, extremely low frequency band (ELF, 200–2200 Hz) data with a 10.24-kHz sampling rate, and very low frequency band (VLF, 1.8–20 kHz) data with a 51.2-kHz sampling rate."
-  instrument_cite https://link.springer.com/article/10.1007/s11431-018-9241-7
+  instrument_cite https://api.crossref.org/works/10.1007/s11431-018-9241-7
   instrument_quote "The sampling rate of the SCM is 51.2 kHz and the time resolution of the power spectrum density (PSD) is 2 s."
   probe 2026-10-25T12:37:53Z 206 https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55
   fields X_WAVE Y_WAVE Z_WAVE
@@ -9640,7 +9642,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
@@ -9870,7 +9872,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
@@ -10086,7 +10088,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
@@ -10104,7 +10106,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
@@ -10122,7 +10124,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
@@ -10140,7 +10142,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
@@ -10158,7 +10160,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
@@ -10176,7 +10178,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
@@ -10194,7 +10196,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
@@ -10212,7 +10214,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
@@ -10230,7 +10232,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
@@ -10248,7 +10250,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
@@ -10266,7 +10268,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
@@ -10284,7 +10286,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
@@ -10302,7 +10304,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
@@ -10320,7 +10322,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
@@ -10338,7 +10340,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
@@ -10356,7 +10358,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
@@ -12385,8 +12387,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31868
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:02Z 206 https://zenodo.org/api/records/10673982/files/2018-11_RBN.gz/content
@@ -12401,8 +12403,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31878
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:02Z 206 https://zenodo.org/api/records/10673982/files/2018-12_RBN.gz/content
@@ -12417,8 +12419,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31888
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:04Z 206 https://zenodo.org/api/records/10673982/files/2019-01_RBN.gz/content
@@ -12433,8 +12435,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31898
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:04Z 206 https://zenodo.org/api/records/10673982/files/2019-02_RBN.gz/content
@@ -12449,8 +12451,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31908
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:05Z 206 https://zenodo.org/api/records/10673982/files/2019-03_RBN.gz/content
@@ -12465,8 +12467,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31918
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:06Z 206 https://zenodo.org/api/records/10673982/files/2019-04_RBN.gz/content
@@ -12481,8 +12483,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31928
   field Frequency rbn_spot_frequency_hz inverse-square em Hz 0 0.0 0.0
   probe 2026-10-25T14:59:07Z 206 https://zenodo.org/api/records/10673982/files/2019-05_RBN.gz/content
@@ -12852,8 +12854,8 @@ host zenodo.org
   interval 0
   api_cite https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content
   api_quote "QSO:  7047 CW 2017-08-21 1431 KC0P          599 EN34sb VE6WZ           8 DO21st"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   block 31945
   field QSO_FREQ kc0p_qso_frequency_khz inverse-square em kHz 0 0.0 0.0
   probe 2026-10-25T15:00:14Z 206 https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content
@@ -14273,7 +14275,7 @@ host vizier.cfa.harvard.edu
   api_cite https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=1
   api_quote "Right ascension (J2000) of satellite at date"
   instrument_cite https://arxiv.org/pdf/1508.02997
-  instrument_quote "Here, we aim at contributing to dynamical models of the motions of the main satellites of Uranus: Miranda, Ariel, Umbriel, Titania, and Oberon. This contribution is made by determining accurate positions determined from CCD observations"
+  instrument_quote "from CCD observations carried out at the Pico dos Dias Observatory in the period 1992-2011"
   field camargo_umbriel_de_icrs_arcsec camargo_umbriel_de_icrs_arcsec inverse-square geometry arcsec 0.0 0.0
   probe 2026-10-25T15:02:11Z 200 https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=1
   fields DEJ2000
@@ -14600,7 +14602,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
@@ -14621,7 +14623,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
@@ -14642,7 +14644,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
@@ -14663,7 +14665,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
@@ -14684,7 +14686,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
@@ -14705,7 +14707,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
@@ -14726,7 +14728,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
@@ -14747,7 +14749,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
@@ -14768,7 +14770,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
@@ -14789,7 +14791,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
@@ -14810,7 +14812,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
@@ -14831,7 +14833,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
@@ -14852,7 +14854,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
@@ -14873,7 +14875,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
@@ -14894,7 +14896,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
@@ -14915,7 +14917,7 @@ host openneuro.org
   sampling 1000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds SamplingInterval=1000"
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.json
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
@@ -16994,8 +16996,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/api/records/10673982
   host_quote "monthy GZipped Comma Separated Value (CSV) files"
   ttl 2592000
@@ -17013,8 +17015,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/api/records/10673982
   host_quote "monthy GZipped Comma Separated Value (CSV) files"
   ttl 2592000
@@ -17032,8 +17034,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/api/records/10673982
   host_quote "monthy GZipped Comma Separated Value (CSV) files"
   ttl 2592000
@@ -17051,8 +17053,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/api/records/10673982
   host_quote "monthy GZipped Comma Separated Value (CSV) files"
   ttl 2592000
@@ -17070,8 +17072,8 @@ host zenodo.org
   interval null
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/api/records/10673982
   host_quote "monthy GZipped Comma Separated Value (CSV) files"
   ttl 2592000
@@ -18307,8 +18309,8 @@ host zenodo.org
   interval 0
   api_cite https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content
   api_quote "QSO:  7047 CW 2017-08-21 1431 KC0P          599 EN34sb VE6WZ           8 DO21st"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/api/records/999021
   host_quote "\"publication_date\": \"2017-09-29\""
   ttl null
@@ -18637,7 +18639,7 @@ host s3.amazonaws.com/openneuro.org
   sampling 100000
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
-  api_quote "SamplingInterval=1000"
+  api_quote "Sampling interval in microseconds"
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_quote "Up to 100 kHz sampling rate"
   host_cite https://openneuro.org/datasets/ds007471
@@ -20060,8 +20062,8 @@ host vizier.cfa.harvard.edu
   interval 0
   api_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/582/A8/ReadMe
   api_quote "1- 16  F16.8 d       JD        UTC instant of the satellite position (JD) ... 20- 21  I2    h       RAh       Right ascension (J2000) of satellite at date ... 49- 51  I3    mas   e_RAs       Error in RA (J2000) at date (1)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/582/A8/ReadMe
-  instrument_quote "All runs were made at the Pico dos Dias Observatory, Brazil. ... Also, as requested by the editor of A&A, the X,Y coordinates on the CCD of the observed satellites and reference stars are given."
+  instrument_cite https://arxiv.org/pdf/1508.02997
+  instrument_quote "from CCD observations carried out at the Pico dos Dias Observatory in the period 1992-2011"
   host_cite https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
   host_quote "#INFO publication_date=2015-09-29     Date of first publication in the data centre"
   ttl no-sampling
@@ -21107,7 +21109,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
   api_quote "DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES  TREE HOURLY  VALUES ... 2-9 1-32 I4 248 tree Hourly Values for the month. Values are in nanoTeslas  A missing value is identified by -1."
   instrument_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
-  instrument_quote "aa index is a planetary three-hour geomagnetic index calculated from the values of K index measured in two almost diametrically opposite magnetic observatories in the northern and southern hemispheres - now it is Hartland in the UK and Canberra in Australia. ... The index aa is measured in nanoTeslas (nT)."
+  instrument_quote "The index aa is measured in nanoTeslas (nT)."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "AA3398.txt ... 08-Feb-2002 19:30   918k ... AA_IMA.fmt ... 16-Aug-1999 09:52     1k ... AA_IMF/ ... 01-Nov-2002 16:30      - ... aa2001_ima.txt ... 08-Feb-2002 19:30    12k"
   ttl 2592000
@@ -21127,7 +21129,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926203947id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_year
   api_quote "1868  18.2 / 1869  20.8 / 1870  22.2 / 1871  21.3"
   instrument_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
-  instrument_quote "aa index is a planetary three-hour geomagnetic index calculated from the values of K index measured in two almost diametrically opposite magnetic observatories in the northern and southern hemispheres - now it is Hartland in the UK and Canberra in Australia. ... The index aa is measured in nanoTeslas (nT). ... Aa index is the average value of the index aa per day."
+  instrument_quote "The index aa is measured in nanoTeslas (nT)."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "Aa_month ... 19-Jun-2002 11:43    22k ... Aa_year ... 19-Jun-2002 11:43     1k ... aa2001_ima.txt ... 08-Feb-2002 19:30    12k"
   ttl no-sampling
@@ -21146,7 +21148,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926204019id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_month
   api_quote "1868  1  10.5 / 1868  2  15.9 / 1868  3  19.6 / 1868  4  20.9"
   instrument_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
-  instrument_quote "aa index is a planetary three-hour geomagnetic index calculated from the values of K index measured in two almost diametrically opposite magnetic observatories in the northern and southern hemispheres - now it is Hartland in the UK and Canberra in Australia. ... The index aa is measured in nanoTeslas (nT). ... Aa index is the average value of the index aa per day."
+  instrument_quote "The index aa is measured in nanoTeslas (nT)."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "Aa_month ... 19-Jun-2002 11:43    22k ... Aa_year ... 19-Jun-2002 11:43     1k ... aa2001_ima.txt ... 08-Feb-2002 19:30    12k"
   ttl no-sampling
@@ -21220,8 +21222,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
@@ -21242,11 +21244,12 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+  api_quote "42-44 i 3 Depth in kilometers."
 
 host zeus.wdcb.ru
-  api_quote "Depth in kilometers."
+  api_quote "42-44 i 3 Depth in kilometers."
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   host_quote "The Catalogue is a part of the Global Hypocenter Database, prepared in the National Earthquake Information Center, U.S.Geological Survey (NEIC, USGS)."
   ttl no-sampling
@@ -21254,6 +21257,7 @@ host zeus.wdcb.ru
   field depth iss_hypocenter_depth_km km 0
   probe 2026-10-25T18:40:45Z 206 https://web.archive.org/web/20081221113021id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat002.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   applies https://web.archive.org/web/20081221113021id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat002.dat id=32032
   note ISS-Katalog 1913–1963; Formatseite nennt Positionen 1-5 Quellcode, 6-10 Jahr, 12-13 Monat, 14-15 Tag, 16-21 Uhrzeit, 27-33 Breite, 34-41 Länge, 42-44 Tiefe, 65-68 Magnitude. Die Magnitudenspalte ist im gelieferten File leer (0/80 Stichproben), die Tiefe ist gesetzt (39/40 in 1961) — Feld deshalb depth. Ereignisliste, interval 0. Fester Bestand, no-sampling.
 
@@ -21262,8 +21266,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20091023174944id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme05.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20091023174944id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme05.dat
@@ -21283,8 +21287,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20100206214913id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme07.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20100206214913id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme07.dat
@@ -21304,8 +21308,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20101230152900id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme09.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20101230152900id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme09.dat
@@ -21325,8 +21329,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
@@ -21498,8 +21502,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20170408173843id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme10.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20170408173843id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme10.dat
@@ -21540,8 +21544,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20170408173858id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme28.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20170408173858id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme28.dat
@@ -21561,8 +21565,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20170408173904id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme30.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20170408173904id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme30.dat
@@ -21582,8 +21586,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20170408173909id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme31.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20170408173909id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme31.dat
@@ -21603,8 +21607,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20170408173914id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme38.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20170408173914id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme38.dat
@@ -21624,8 +21628,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling none
   interval 0
-  api_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
   instrument_cite https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
@@ -22699,8 +22703,8 @@ host gml.noaa.gov
 host gportal.jaxa.jp
   instrument GPM_KuPR
   keine_messung "Katalog-Record (Metadaten) ohne Messreihe; der Feed trug am Messtag die Wartungsseite"
-  api_cite https://gportal.jaxa.jp/gpr/search/catalog_records.json
-  api_quote "Sorry! This site is down for maintenance."
+  api_cite https://www.eorc.jaxa.jp/GPM/en/
+  api_quote "G-Portal offers earth observation data free of charge"
   instrument_cite https://gpm.nasa.gov/missions/GPM/DPR
   instrument_quote "Pulse Repetition Freq. (In nominal operations mode) 4100 to 4400 Hertz"
   host_cite https://gportal.jaxa.jp/gpr/search/catalog_records.json
@@ -22884,8 +22888,8 @@ host irsa.ipac.caltech.edu
   keine_messung "Fussabdruck (fp01), keine Messreihe"
   api_cite https://wise2.ipac.caltech.edu/docs/release/allwise/
   api_quote "By combining the data from two complete sky coverage epochs using an advanced data processing system, AllWISE has generated new products that have enhanced photometric sensitivity and accuracy"
-  instrument_cite https://wise2.ipac.caltech.edu/docs/release/allwise/
-  instrument_quote "The Wide-field Infrared Survey Explorer at IPAC"
+  instrument_cite https://arxiv.org/pdf/1008.0031
+  instrument_quote "The WISE telescope, imager, dichroic beamsplitter, detectors, and cryostat were built by the Space Dynamics Laboratory of Utah State University"
   host_cite https://wise2.ipac.caltech.edu/docs/release/allwise/
   host_quote "The AllWISE Data Release November 13, 2013"
   ttl 31536000
@@ -22897,8 +22901,8 @@ host irsa.ipac.caltech.edu
 host irsa.ipac.caltech.edu
   instrument 2MASS
   keine_messung "Fussabdruck (fp01), keine Messreihe"
-  api_cite https://irsa.ipac.caltech.edu/Missions/2mass.html
-  api_quote "Area Coverage: All Sky"
+  api_cite https://cdsarc.cds.unistra.fr/ftp/II/246/ReadMe
+  api_quote "55- 60 F6.3 mag Jmag ?(j_m) J selected default magnitude (2)"
   instrument_cite https://irsa.ipac.caltech.edu/Missions/2mass.html
   instrument_quote "1.3-m telescopes at Mt. Hopkins and CTIO, Chile"
   host_cite https://irsa.ipac.caltech.edu/Missions/2mass.html
@@ -22967,8 +22971,8 @@ host noaa-eri-pds.s3.amazonaws.com
   keine_messung "S3-Bucket-Index der NOAA-ERI-Luftbilder, keine Messreihe"
   api_cite https://noaa-eri-pds.s3.amazonaws.com
   api_quote "noaa-eri-pds"
-  instrument_cite https://coast.noaa.gov/digitalcoast/data/naip.html
-  instrument_quote "The Digital Coast was developed to meet the unique needs of the coastal management community."
+  instrument_cite https://coast.noaa.gov/digitalcoast/data/highresortho.html
+  instrument_quote "USDA National Agriculture Imagery Program (NAIP) 4-Band Image Services"
   host_cite https://noaa-eri-pds.s3.amazonaws.com
   host_quote "ListBucketResult"
   ttl 604800
@@ -23012,8 +23016,8 @@ host nz-elevation.s3-ap-southeast-2.amazonaws.com
   keine_messung "S3-Index des LINZ-Hoehenmodells, keine Messreihe"
   api_cite https://nz-elevation.s3-ap-southeast-2.amazonaws.com/?list-type=2
   api_quote "<Name>nz-elevation</Name>"
-  instrument_cite https://www.linz.govt.nz/products-services/data/elevation
-  instrument_quote "LINZ elevation data"
+  instrument_cite https://raw.githubusercontent.com/linz/elevation/master/README.md
+  instrument_quote "Toitū Te Whenua makes New Zealand's most up-to-date publicly owned elevation data freely available to use under an open licence"
   host_cite https://nz-elevation.s3-ap-southeast-2.amazonaws.com/?list-type=2
   host_quote "<Name>nz-elevation</Name>"
   ttl 604800
@@ -23115,10 +23119,10 @@ host nsdb.imcce.fr
   unit deg
   sampling none
   interval none
-  api_cite https://nsdb.imcce.fr/obspos/OBS_COLL/N/no0011.txt
-  api_quote "200205 2002 08 14.01345  20 45 49.07  -18 10 00.2    -    -  807"
-  instrument_cite https://nsdb.imcce.fr/obspos/OBS_COLL/N/no0011.txt
-  instrument_quote "200205 2002 08 14.01345  20 45 49.07  -18 10 00.2    -    -  807"
+  api_cite https://api.crossref.org/works/10.1051/0004-6361/202452391
+  api_quote "The goal of our work is to build a database of all available astrometric observations"
+  instrument_cite https://api.crossref.org/works/10.1051/0004-6361/202452391
+  instrument_quote "The goal of our work is to build a database of all available astrometric observations"
   host_cite https://nsdb.imcce.fr/obspos/OBS_COLL/N/no0011.txt
   host_quote "no0011.txt"
   ttl 31536000
@@ -23289,8 +23293,8 @@ host planetarymaps.usgs.gov
   keine_messung "globales Bildmosaik (Raster), keine Messreihe mit Zeitachse"
   api_cite https://planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.lbl
   api_quote "PixelResolution      = 500.0 <meters/pixel>"
-  instrument_cite https://planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.lbl
-  instrument_quote "Center = 747.700000000000045 <NM>"
+  instrument_cite https://ntrs.nasa.gov/api/citations/19760004316/downloads/19760004316.pdf
+  instrument_quote "The Mariner 10 mission to Venus and Mercury carried a pair of vidicon cameras similar to those on Mariner 9."
   host_cite https://planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.lbl
   host_quote "Name   = \"748 BP 53\""
   ttl 31536000
@@ -23307,7 +23311,7 @@ host planetarymaps.usgs.gov
   interval none
   api_cite https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.lbl
   api_quote "PixelResolution    = 166.310788000000002 <meters/pixel>"
-  instrument_cite https://link.springer.com/article/10.1007/s11214-007-9266-3
+  instrument_cite https://api.crossref.org/works/10.1007/s11214-007-9266-3
   instrument_quote "MDIS consists of a monochrome narrow-angle camera (NAC) and a multispectral wide-angle camera (WAC)"
   host_cite https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.lbl
   host_quote "ProductId               = MDIS_BDR_256PPD_GLOBAL_8BIT"
@@ -23431,10 +23435,6 @@ host spdf.gsfc.nasa.gov
 host noise.discomap.eea.europa.eu
   instrument none
   keine_messung "modellierter Laermindikator (City_Area_Noise), kein Messgeraet"
-  api_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  api_quote "\"name\": \"City_Area_Noise\""
-  instrument_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  instrument_quote "\"geometryType\": \"esriGeometryPolygon\""
   host_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
   host_quote "\"currentVersion\": 11.5"
   ttl 604800
@@ -23771,7 +23771,7 @@ host wdcb.ru
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   api_quote The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval.
   instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  instrument_quote From 1971 to 1992  the  pulsation  recording  was  made  by  inductive magnitograph.
+  instrument_quote "From 1971 to 1992 the pulsation recording was made by inductive magnitograph"
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24030,9 +24030,10 @@ host wdcb.ru
   sampling 0
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+  api_quote "42-44 i 3 Depth in kilometers."
 
 host wdcb.ru
-  api_quote "Depth in kilometers."
+  api_quote "42-44 i 3 Depth in kilometers."
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
   instrument_quote "Earthquake Catalogue Compiled by B.Gutenberg and C.Richter"
   host_cite http://www.wdcb.ru/sep/
@@ -24040,6 +24041,7 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat002.dat id=26631
   note ISS-Hypozentrenkatalog, 110-Byte-Satz; ein Beben je Zeile -> intervall 0; Stationsnetz ohne Sensorrate in der Doku.
 
@@ -24053,12 +24055,14 @@ host wdcb.ru
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_strong_USSR_format.html
+  api_quote "42-44 i 3 Focal depth in kilometers."
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat004.dat id=26639
   note Regionalkatalog (IFZ-Satz, 95 Byte); ein Beben je Zeile -> intervall 0.
 
@@ -24068,7 +24072,7 @@ host wdcb.ru
   sampling 0
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
-  api_quote "Length of logical record - 90 byte ... 34-38 f5.2 Latitude in degrees ("&ndash;" - south)"
+  api_quote "61-63 i 3 Depth in kilometers."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24078,6 +24082,8 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
+  api_quote "61-63 i 3 Depth in kilometers."
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat005.dat id=26647
   note Türkei-Katalog, 90-Byte-Satz; ein Beben je Zeile -> intervall 0.
 
@@ -24091,12 +24097,14 @@ host wdcb.ru
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20161007182100id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT9299.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/eq_USSR/ALT_1962-1991_Data_Format.pdf
+  api_quote "WDC SEP eq_USSR/ALT_1962-1991_Data_Format.pdf, Abschnitt "Формат данных", Zeile 89 (Text: w2b-alt.txt)"
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_ALT9299.dat id=26777
   note Regionalkatalog Altai 1992-99; ein Beben je Zeile -> intervall 0.
 
@@ -24110,12 +24118,14 @@ host wdcb.ru
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20160428152634id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRM.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/eq_USSR/CRM_1962-1991_Data_Format.pdf
+  api_quote "WDC SEP eq_USSR/CRM_1962-1991_Data_Format.pdf, Abschnitt "Формат данных", Zeile 95 (Text: w2b-crm.txt)"
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CRM.dat id=26807
   note Regionalkatalog Krim ab 1962; ein Beben je Zeile -> intervall 0.
 
@@ -24129,12 +24139,14 @@ host wdcb.ru
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20160427210257id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_NTS.dat
   fields obn_obninsk_depth obn_obninsk_magnitude
+  api_cite http://www.wdcb.ru/sep/seismology/eq_USSR/NTS_Data_Format_1962-1991.pdf
+  api_quote "WDC SEP eq_USSR/NTS_Data_Format_1962-1991.pdf, Abschnitt "Формат данных", Zeile 75 (Text: w2b-nts.txt)"
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_NTS.dat id=26837
   note Regionalkatalog Nevada ab 1962; ein Beben je Zeile -> intervall 0.
 
@@ -24148,12 +24160,14 @@ host wdcb.ru
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20160427201745id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_TRM.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/eq_USSR/TRM_Data_Format_1962-1991.pdf
+  api_quote "WDC SEP eq_USSR/TRM_Data_Format_1962-1991.pdf, Abschnitt "Формат данных", Zeile 81 (Text: w2b-trm.txt)"
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_TRM.dat id=26845
   note Regionalkatalog Turkmenistan ab 1962; ein Beben je Zeile -> intervall 0.
 
@@ -24241,6 +24255,8 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
   fields G
+  api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
+  api_quote "Gravitational constant (cm*cm*cm/g*s*s)"
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme id=26894
   note Russische Readme zu formula.exe (G-Experimente); Messzeile = G, intervall 0.
 
@@ -24260,6 +24276,8 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
   fields MAG
+  api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
+  api_quote "Gravitational constant (cm*cm*cm/g*s*s)"
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme_en id=26902
   note Englische Readme; G-Messreihe je Experiment, intervall 0.
 
@@ -24393,11 +24411,12 @@ host wdcb.ru
   sampling 0
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+  api_quote "42-44 i 3 Depth in kilometers."
 
 host wdcb.ru
   api_quote ISS   1913 0105172101      31.700 131.000                                             235
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote Catalogue compiled on the data from the International Seismological Summaries (ISS), for the period from 1913 to 1963 in the International Seismological Centre.
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
   ttl 0
@@ -24446,6 +24465,8 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_strong_USSR_format.html
+  api_quote "42-44 i 3 Focal depth in kilometers."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat004.dat id=27054
   note Regionalkatalog (IFZ-Satz "IFZ1 04-2000 ..."); ein Beben je Zeile -> intervall 0.
 
@@ -24455,7 +24476,7 @@ host wdcb.ru
   sampling 0
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
-  api_quote "Catalogue of earthquakes includes information on 2698 events for the territory of Turkey for the period from 1913 to 1970. ... Length of logical record - 90 byte."
+  api_quote "61-63 i 3 Depth in kilometers."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -24465,6 +24486,8 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
+  api_quote "61-63 i 3 Depth in kilometers."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat005.dat id=27062
   note Türkei 1913-1970; ein Beben je Zeile -> intervall 0.
 
@@ -24506,6 +24529,8 @@ host wdcb.ru
   ttl 0
   probe 2026-10-26T00:00:00Z 200 http://www.wdcb.ru/sep/seismology/catalogues/cat007.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/Fennoscandia/FEN_format.pdf
+  api_quote "29-32 f4.1 Latitude north in degrees with an accuracy of 0.1"
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat007.dat id=27078
   note Regionalkatalog APAN (Satzbeginn "APAN 1951...", Tiefe 999 = unbestimmt); ein Beben je Zeile -> intervall 0.
 
@@ -24724,7 +24749,7 @@ host jma.go.jp
   interval 0
   api_cite https://www.jma.go.jp/bosai/quake/data/list.json
   api_quote "{"ctt": "20261025191740", "eid": "20261025191443", "rdt": "2026-10-25T19:17:00+09:00", "ttl": "震源・震度情報", "mag": "3.8", "cod": "+36.8+140.4-90000/"}"
-  instrument_cite https://www.jma.go.jp/bosai/quake/
+  instrument_cite https://www.jma.go.jp/bosai/quake/data/list.json
   instrument_quote "地震情報 ... 震源・震度情報"
   host_cite https://www.jma.go.jp/bosai/quake/
   host_quote "震源・震度情報"
@@ -24760,8 +24785,8 @@ host bayernwolke.de
   interval 0
   api_cite https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif
   api_quote "II* ... GeoTIFF (DOM20, Kachel 32605_5282)"
-  instrument_cite https://www.ldbv.bayern.de/produkte/3dprodukte/dgm_dom.html
-  instrument_quote "Digitales Oberflächenmodell (DOM)"
+  instrument_cite https://www.ldbv.bayern.de/produkte/landschaftsinformationen/dom.html
+  instrument_quote "Das DOM liegt als Raster mit einer Bodenpixelgröße von 0,2 Metern vor"
   host_cite https://download1.bayernwolke.de/a/dom20/DOM/
   host_quote "DOM20"
   ttl 0
@@ -25023,8 +25048,8 @@ host data.earthscope.org
   unit 1
   sampling 0
   interval null
-  api_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP20-MASK-3D.r0.0-n4c.volume.bin
-  api_quote "model_type 3-D Tomography Earth Model … model_subtype P-wave velocity … long_name mask on (1/0) … units degrees_north / degrees_east … long_name depth below earth surface"
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/
+  api_quote "AFRP20-MASK-3D.r0.0-n4c.nc"
   instrument_cite https://ds.iris.edu/ds/products/emc/
   instrument_quote "Earth Model Collaboration (EMC)"
   host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP20-MASK-3D.r0.0-n4c.volume.bin
@@ -25090,8 +25115,8 @@ host data.earthscope.org
   unit km/s
   sampling 0
   interval null
-  api_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMP_kmps.r0.0-n4c.volume.bin
-  api_quote "model GyPSuM … model_subtype P & S velocities … units km.s-1 … long_name depth below earth surface"
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/
+  api_quote "GYPSUMP_kmps.r0.0-n4c.nc"
   instrument_cite https://ds.iris.edu/ds/products/emc/
   instrument_quote "Earth Model Collaboration (EMC)"
   host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMP_kmps.r0.0-n4c.volume.bin
@@ -25106,8 +25131,8 @@ host data.earthscope.org
   unit km/s
   sampling 0
   interval null
-  api_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMS_kmps.r0.0-n4c.volume.bin
-  api_quote "model GyPSuM … model_subtype P & S velocities … units km.s-1 … vs"
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/
+  api_quote "GYPSUMS_kmps.r0.0-n4c.nc"
   instrument_cite https://ds.iris.edu/ds/products/emc/
   instrument_quote "Earth Model Collaboration (EMC)"
   host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMS_kmps.r0.0-n4c.volume.bin
@@ -25222,7 +25247,7 @@ host content.cld.iop.org
   interval null
   api_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
   api_quote "Table: Values and coordinates of spectral reflectance measurements … 71- 81 F11.9  ---   UVave      UV filter spectral reflectance average … 43- 55 F13.8  deg   Long       Longitude; degrees East"
-  instrument_cite https://link.springer.com/article/10.1007/s11214-007-9264-5
+  instrument_cite https://api.crossref.org/works/10.1007/s11214-007-9264-5
   instrument_quote "MASCS consists of a small Cassegrain telescope with 257-mm effective focal length and a 50-mm aperture"
   host_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
   host_quote "Authors: Sonke A.J., Robinson M.S."
@@ -25268,10 +25293,8 @@ host noise.discomap.eea.europa.eu
   unit dB
   sampling 0
   interval 31536000
-  api_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  api_quote "NLD5559 → alias \"Lden55-59\" … NLD6064 → \"Lden60-64\" … NLN5054 → \"Lnight50-54\" … N_INHAB"
-  instrument_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  instrument_quote "\"name\":\"City_Area_Noise\",\"type\":\"Feature Layer\""
+  instrument_cite https://publications.jrc.ec.europa.eu/repository/handle/JRC72550
+  instrument_quote "the European Commission developed Common NOise aSSessment methOdS (CNOSSOS-EU) for road, railway, aircraft and industrial noise"
   host_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
   host_quote "\"currentVersion\":11.5"
   fields NLD5559
@@ -25284,8 +25307,8 @@ host www.waterqualitydata.us
   unit C
   sampling 0
   interval null
-  api_cite https://www.waterqualitydata.us/data/Result/search?statecode=US%3A19&startDateLo=01-01-2020&startDateHi=01-02-2020&mimeType=csv&zip=no
-  api_quote "CharacteristicName,ResultSampleFractionText,ResultMeasureValue,ResultMeasure/MeasureUnitCode,MeasureQualifierCode,ResultStatusIdentifier"
+  api_cite https://www.waterqualitydata.us/portal_userguide/
+  api_quote "The reportable measure of the result for the chemical, microbiological or other characteristic being analyzed."
   instrument_cite https://www.waterqualitydata.us/data/Result/search?statecode=US%3A19&startDateLo=01-01-2020&startDateHi=01-02-2020&mimeType=csv&zip=no
   instrument_quote "ResultAnalyticalMethod/MethodName,MethodDescriptionText,LaboratoryName"
   host_cite https://www.waterqualitydata.us/data/Result/search?statecode=US%3A19&startDateLo=01-01-2020&startDateHi=01-02-2020&mimeType=csv&zip=no
@@ -25302,7 +25325,7 @@ host archives.esac.esa.int
   interval null
   api_cite https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
   api_quote "<name>FRAME</name> <field_number>2</field_number> <field_location unit=\"byte\">12</field_location> <data_type>ASCII_NonNegative_Integer</data_type> <description>Channel-specific continuous number of a data record</description> … <name>OBT</name> … <description>Onboard time in 2^−24 s</description>"
-  instrument_cite https://link.springer.com/article/10.1007/s11214-017-0437-6
+  instrument_cite https://api.crossref.org/works/10.1007/s11214-017-0437-6
   instrument_quote "ACS consists of three separate infrared spectrometers, sharing common mechanical, electrical, and thermal interfaces"
   host_cite https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
   host_quote "acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1"
@@ -25732,8 +25755,8 @@ host data.gesdisc.earthdata.nasa.gov
   unit n-units
   sampling none
   interval 604800
-  api_cite https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/2019/10/01/gnssro_cosmic2_ucar_l2b_0001.0001_cosmic2e4-R23-201910010003.nc4
-  api_quote "Analyzed microwave refractivity, in N-units, or the index of refraction less one in parts per million"
+  api_cite https://www.earthdata.nasa.gov/data/catalog/ges-disc-gnssro-cosmic2-ucar-l2b-2.0
+  api_quote "GNSS radio occultation L2B temperature, pressure, and water vapor retrieval for COSMIC2 as contributed by UCAR, version 2.0"
   instrument_cite https://www.cosmic.ucar.edu/what-we-do/cosmic-2/
   instrument_quote "The GNSS-RO payload, named TGRS for Tri-GNSS Radio-occultation System, was developed by NASA's Jet Propulsion Laboratory and is tracking more than 4,000 high-quality profiles per day (across the 6 satellite constellation)."
   host_cite https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/
@@ -25825,7 +25848,7 @@ host earthquake.usgs.gov
   api_cite https://earthquake.usgs.gov/fdsnws/event/1/
   api_quote "maxdepth | Decimal [-100, 1000] km | 1000 | Limit to events with depth less than the specified maximum."
   instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
-  instrument_quote "Seismometers (instruments for recording earthquakes) are tested and fitted at the USGS Cascades Volcano Observatory before going out into the field."
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/query
   host_quote "cache-control: public, max-age=60; last-modified: Sun, 25 Oct 2026 19:20:05 GMT"
   ttl 2592000
@@ -26716,7 +26739,7 @@ host web.archive.org
   api_cite https://web.archive.org/web/20030926204019id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_month
   api_quote "1868  1  10.5 ... 1868  2  15.9 ... 1868  3  19.6 ... 1868  4  20.9"
   instrument_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
-  instrument_quote "aa index is a planetary three-hour geomagnetic index calculated from the values of K index measured in two almost diametrically opposite magnetic observatories in the northern and southern hemispheres - now it is Hartland in the UK and Canberra in Australia. ... The index aa is measured in nanoTeslas (nT). ... Aa index is the average value of the index aa per day."
+  instrument_quote "The index aa is measured in nanoTeslas (nT)."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "Aa_month ... 19-Jun-2002 11:43    22k ... Aa_year ... 19-Jun-2002 11:43     1k ... aa2001_ima.txt ... 08-Feb-2002 19:30    12k"
   ttl null
@@ -27100,6 +27123,8 @@ host zeus.wdcb.ru
   ttl null
   probe 2026-10-25T14:57:54Z 200 https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   fields aa_star
+  api_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
+  api_quote "The index aa is measured in nanoTeslas (nT)."
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* ist die Schwellen-Ableitung der aa-Reihe; 47847 Sätze, 3-Stunden-Raster (10800 s). Abinger als Vorläufer der Nordstation. Fester Bestand, ttl null.
@@ -27110,8 +27135,8 @@ host zeus.wdcb.ru
   unit nT
   sampling 10800
   interval 10800
-  api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
+  api_quote "The index aa is measured in nanoTeslas (nT)."
   instrument_cite https://en.wikipedia.org/wiki/Magnetometer
   instrument_quote "A magnetometer is a device that measures magnetic field (B) or magnetic dipole moment."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
@@ -27140,6 +27165,8 @@ host zeus.wdcb.ru
   ttl null
   probe 2026-10-25T14:57:54Z 200 https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   fields aa_star
+  api_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
+  api_quote "The index aa is measured in nanoTeslas (nT)."
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* der Nordreihe; Greenwich als Vorläufer der Nordstation. 3-Stunden-Raster, Einheit nT. Fester Bestand, ttl null.
@@ -27161,6 +27188,8 @@ host zeus.wdcb.ru
   ttl null
   probe 2026-10-25T14:57:54Z 200 https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   fields aa_star
+  api_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
+  api_quote "The index aa is measured in nanoTeslas (nT)."
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* der Südreihe; Melbourne als Vorläufer der Südstation. 3-Stunden-Raster, Einheit nT. Fester Bestand, ttl null.
@@ -27182,6 +27211,8 @@ host zeus.wdcb.ru
   ttl null
   probe 2026-10-25T14:57:54Z 200 https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
   fields aa_star
+  api_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
+  api_quote "The index aa is measured in nanoTeslas (nT)."
   applies https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst id=26371
   field aa_star aa_star_nt nT 10800
   note AA* der Südreihe; Toolangi als Vorläufer der Südstation. 3-Stunden-Raster, Einheit nT. Fester Bestand, ttl null.
@@ -27571,7 +27602,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
   instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  instrument_quote "From 1971 to 1992 the pulsation recording was made by inductive magnitograph."
+  instrument_quote "From 1971 to 1992 the pulsation recording was made by inductive magnitograph"
   host_cite https://web.archive.org/web/20020708091700id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
   host_quote "1_catal.txt ... 02-Nov-1998 00:00    10k ... 57-59.txt ... 01-Apr-1997 00:00    47k ... 89-92.txt ... 01-Apr-1997 00:00   116k"
   ttl no-sampling
@@ -27651,7 +27682,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926203947id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_year
   api_quote "1868  18.2 / 1869  20.8 / 1870  22.2 / 1871  21.3"
   instrument_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
-  instrument_quote "The index aa is measured in nanoTeslas (nT). ... Aa index is the average value of the index aa per day."
+  instrument_quote "The index aa is measured in nanoTeslas (nT)."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
   host_quote "Aa_month ... 19-Jun-2002 11:43    22k ... Aa_year ... 19-Jun-2002 11:43     1k"
   ttl no-sampling
@@ -28263,11 +28294,12 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+  api_quote "42-44 i 3 Depth in kilometers."
 
 host zeus.wdcb.ru
-  api_quote "Depth in kilometers."
+  api_quote "42-44 i 3 Depth in kilometers."
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  instrument_quote "Depth in kilometers."
+  instrument_quote "42-44 i 3 Depth in kilometers."
   host_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   host_quote "The Catalogue is a part of the Global Hypocenter Database, prepared in the National Earthquake Information Center"
   ttl no-sampling
@@ -28275,6 +28307,7 @@ host zeus.wdcb.ru
   field depth iss_hypocenter_depth_km km 0
   probe 2026-10-25T19:32:42Z 206 https://web.archive.org/web/20081221113021id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat002.dat
   fields MAG
+  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   applies https://web.archive.org/web/20081221113021id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat002.dat id=26730
   note ISS-Katalog 1913–1963 (Satzformat: Quellcode 1-5, Jahr 6-10, Datum/Zeit 12-21, Breite 27-33, Laenge 34-41, Tiefe 42-44, Magnitude 65-68). Die Magnitudenspalte ist im File leer, die Tiefe gesetzt — Feld deshalb depth (km). Ereignisliste, interval 0.
 
@@ -28336,8 +28369,8 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   api_quote "DATE    ORIGIN TIME     GEOGRAPHIC      DEPTH  MAGNITUDES SD   NO.      REGION,  CONTRIBUTED  MAGNITUDES  AND  COMMENTS / UTC  COORDINATES  GS  STA / HR MN SEC  LAT  LONG  MB  Msz  USED"
-  instrument_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
-  instrument_quote "National Earthquake Information Center / World Data Center for Seismology, Denver ... Earthquakes of magnitude 6.5 or greater"
+  instrument_cite https://pubs.usgs.gov/unnumbered/70015357/report.pdf
+  instrument_quote "USGS National Earthquake Information Center (NEIC) has planned and is developing a broadband digital seismograph network for the United States."
   host_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   host_quote "SIGNIFICANT EARTHQUAKES OF THE WORLD, 2000"
   ttl 31536000
@@ -28374,8 +28407,8 @@ host bayernwolke.de
   interval 0
   api_cite https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif
   api_quote "GeoTIFF (DOM20, Kachel 32605_5282)"
-  instrument_cite https://www.ldbv.bayern.de/produkte/3dprodukte/dgm_dom.html
-  instrument_quote "Digitales Oberflächenmodell (DOM)"
+  instrument_cite https://www.ldbv.bayern.de/produkte/landschaftsinformationen/dom.html
+  instrument_quote "Das DOM liegt als Raster mit einer Bodenpixelgröße von 0,2 Metern vor"
   host_cite https://download1.bayernwolke.de/a/dom20/DOM/
   host_quote "DOM20"
   ttl no-sampling
@@ -28431,7 +28464,7 @@ host earthquake.usgs.gov
   api_cite https://earthquake.usgs.gov/fdsnws/event/1/
   api_quote "maxdepth Decimal [-100, 1000] km 1000 Limit to events with depth less than the specified maximum."
   instrument_cite https://www.usgs.gov/faqs/seismometers-seismographs-seismograms-whats-difference-how-do-they-work
-  instrument_quote "Seismometers (instruments for recording earthquakes) are tested and fitted at the USGS Cascades Volcano Observatory before going out into the field."
+  instrument_quote "Seismographs are instruments used to record the motion of the ground during an earthquake."
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-24T00:00:00Z&latitude=19.5&longitude=-155.6&maxradiuskm=500&minmagnitude=2.0
   host_quote "HTTP cache-control: public, max-age=60"
   probe 2026-10-25T21:17:43Z 200 https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-10-24T00:00:00Z&latitude=19.5&longitude=-155.6&maxradiuskm=500&minmagnitude=2.0
@@ -28518,8 +28551,8 @@ host ssd.jpl.nasa.gov
   unit s
   api_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
   api_quote "#   32- 48  F17.10 sec     rtlt     Round trip light time"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
-  instrument_quote "#    5-  6  I2     ---     up       DSN transmitting station ID"
+  instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/201/201D.pdf
+  instrument_quote "To measure two-way or three-way Doppler shift, the spacecraft must transmit a downlink signal that is phase coherent with the uplink signal."
   host_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:17:44Z 200 https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
@@ -28532,8 +28565,8 @@ host ssd.jpl.nasa.gov
   unit us
   api_cite https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
   api_quote "#   Column 8 is the adjusted round-trip light time in microseconds"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
-  instrument_quote "# These represent a round-trip light time for range measurements"
+  instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/201/201D.pdf
+  instrument_quote "To measure two-way or three-way Doppler shift, the spacecraft must transmit a downlink signal that is phase coherent with the uplink signal."
   host_cite https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:17:45Z 200 https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
@@ -28560,8 +28593,8 @@ host ssd.jpl.nasa.gov
   unit km/s
   api_cite https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
   api_quote " 31-46    Differenced Range measurement   [km/sec]"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
-  instrument_quote "   4-5    Number of the Transmitting Station (DSS #)"
+  instrument_cite https://deepspace.jpl.nasa.gov/
+  instrument_quote "array of giant radio antennas that supports interplanetary spacecraft missions"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
   host_quote "HTTP last-modified: Mon, 30 Oct 2023 22:30:56 GMT"
   probe 2026-10-25T21:17:45Z 200 https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
@@ -28722,8 +28755,8 @@ host ned.ipac.caltech.edu
   instrument none
   unit 1
   interval null
-  api_cite https://ned.ipac.caltech.edu/byparams
-  api_quote "\"name\":\"z\",\"description\":\"Redshift in z.\""
+  api_cite https://ned.ipac.caltech.edu/Docs::API/
+  api_quote "Overview data for an object (formerly byname)"
   instrument_cite https://ned.ipac.caltech.edu/
   instrument_quote "NASA/IPAC Extragalactic Database"
   host_cite https://ned.ipac.caltech.edu/byparams
@@ -29076,8 +29109,8 @@ host ssd.jpl.nasa.gov
   instrument none
   unit deg
   interval null
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/pluto_refs.txt
-  api_quote "References to the Photographic Observations of Pluto"
+  api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
+  api_quote "Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/pluto_refs.txt
   instrument_quote "Cohen,J.C., Hubbard,E.C. and Oesterwinter,C.: 1967"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/pluto_refs.txt
@@ -29110,8 +29143,8 @@ host ssd.jpl.nasa.gov
   unit deg
   sampling null
   interval null
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
-  api_quote "# (Updated Aug 20, 1999 : observations now referred to ICRF)"
+  api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
+  api_quote "34-42  r.a. [hhmmss^sss]"
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
   instrument_quote "# (Updated Aug 20, 1999 : observations now referred to ICRF)"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
@@ -29127,8 +29160,8 @@ host ssd.jpl.nasa.gov
   instrument none
   unit us
   interval null
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/vikpath_refs.txt
-  api_quote "References for Mars spacecraft range and Doppler measurements"
+  api_cite https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
+  api_quote "Format for Viking and Pathfinder Differenced Range observations"
   instrument_cite https://ssd.jpl.nasa.gov/dat/planets/vikpath_refs.txt
   instrument_quote "Konopliv, A.S., Asmar, S.W., Folkner, W.M., Karatekin, O., Nunes, D.C.,"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/vikpath_refs.txt
@@ -29226,8 +29259,8 @@ host zenodo.org
   interval 86400
   api_cite https://zenodo.org/records/15349031
   api_quote In total, the dataset covers stations from 5356 catchments and 25 countries worldwide with a time series record from 1950 – 2023.
-  instrument_cite https://zenodo.org/records/15349031
-  instrument_quote The extension includes a subset of those hydrological discharge data and station-based watersheds from the Global Runoff Data Centre (GRDC), which are covered by an open data policy (Attribution 4.0 International; CC BY 4.0).
+  instrument_cite https://pubs.usgs.gov/tm/tm3-a8/tm3a8.pdf
+  instrument_quote "Streamflow cannot be measured directly but must be computed from variables that can be measured directly"
   host_cite https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
   host_quote "HTTP last-modified: Fri, 02 Oct 2026 08:14:21 GMT"
   probe 2026-10-25T21:14:01Z 200 https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
@@ -29244,8 +29277,8 @@ host zenodo.org
   interval 86400
   api_cite https://zenodo.org/records/15349031
   api_quote In total, the dataset covers stations from 5356 catchments and 25 countries worldwide with a time series record from 1950 – 2023.
-  instrument_cite https://zenodo.org/records/15349031
-  instrument_quote The extension includes a subset of those hydrological discharge data and station-based watersheds from the Global Runoff Data Centre (GRDC), which are covered by an open data policy (Attribution 4.0 International; CC BY 4.0).
+  instrument_cite https://pubs.usgs.gov/tm/tm3-a8/tm3a8.pdf
+  instrument_quote "Streamflow cannot be measured directly but must be computed from variables that can be measured directly"
   host_cite https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
   host_quote "HTTP last-modified: Fri, 02 Oct 2026 08:14:21 GMT"
   probe 2026-10-25T21:14:01Z 200 https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
@@ -29324,8 +29357,8 @@ host nsdb.imcce.fr
   instrument none
   unit deg
   interval null
-  api_cite https://nsdb.imcce.fr/obspos/OBS_COLL/N/no0011.txt
-  api_quote "no0011.txt"
+  api_cite https://api.crossref.org/works/10.1051/0004-6361/202452391
+  api_quote "The goal of our work is to build a database of all available astrometric observations"
   instrument_cite https://nsdb.imcce.fr/nsdb/acknowledging.html
   instrument_quote "NSDB"
   host_cite https://nsdb.imcce.fr/obspos/OBS_COLL/N/no0011.txt
@@ -29538,8 +29571,6 @@ host cedar.openmadrigal.org
   unit 1/m3
   sampling null
   interval 600
-  api_cite https://cedar.openmadrigal.org
-  api_quote isprintService parms=UT1_UNIX&parms=NE&parms=TI&parms=TE
   instrument_cite https://amisr.com/amisr/about/about_pfisr/
   instrument_quote "The AMISR face, designated PFISR for Poker Flat ISR, is located on an existing gravel pad near the launch pads."
   host_cite https://cedar.openmadrigal.org/
@@ -29560,8 +29591,6 @@ host cedar.openmadrigal.org
   unit 1/m3
   sampling null
   interval 600
-  api_cite https://cedar.openmadrigal.org
-  api_quote isprintService parms=UT1_UNIX&parms=NE (Datei experiments5/2024/mlh/mlh240104g.001.hdf5)
   instrument_cite https://www.haystack.mit.edu/the-millstone-hill-geospace-facility/
   instrument_quote For nearly 6 solar cycles, Millstone Hill’s location (42.6 ̊ geodetic latitude; 288.5 ̊ geodetic longitude; 54 ̊ magnetic latitude) has made it an enabling anchor for mid-latitude and sub-auroral science
   host_cite https://cedar.openmadrigal.org/
@@ -29735,8 +29764,8 @@ host openneuro.org
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
   api_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
-  instrument_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
-  instrument_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
+  instrument_cite https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=7691542&retmode=text&rettype=abstract
+  instrument_quote "The geodesic sensor net organizes an array of sensors, each enclosed in a saline sponge, in a geodesic tension structure comprised of elastic threads."
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
@@ -29755,8 +29784,8 @@ host openneuro.org
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
   api_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
-  instrument_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
-  instrument_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
+  instrument_cite https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=7691542&retmode=text&rettype=abstract
+  instrument_quote "The geodesic sensor net organizes an array of sensors, each enclosed in a saline sponge, in a geodesic tension structure comprised of elastic threads."
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
@@ -30028,8 +30057,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling null
   interval 0
-  api_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   instrument_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
   instrument_quote "4*AMG (IFZ AN USSR)           10111213  IFZ AN (MAGNETIC TAPE)"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
@@ -30236,7 +30265,7 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://link.springer.com/article/10.1007/BF00305295
+  instrument_cite https://api.crossref.org/works/10.1007/BF00305295
   instrument_quote "With knowledge of the response characteristics of the Graf-Askania Gss2, No. 11 gravity meter"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
@@ -30382,8 +30411,8 @@ host zenodo.org
   interval 1
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/records/10673982
   host_quote "2018-12_RBN.gz"
   ttl no-sampling
@@ -30400,7 +30429,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -30419,7 +30448,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -30438,7 +30467,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -30457,7 +30486,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -30476,7 +30505,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -31074,8 +31103,6 @@ host cedar.openmadrigal.org
   unit 1/m3
   sampling null
   interval 600
-  api_cite https://cedar.openmadrigal.org
-  api_quote isprintService parms=UT1_UNIX&parms=NE&parms=TI&parms=TE
   instrument_cite https://amisr.com/amisr/about/about_pfisr/
   instrument_quote "The AMISR face, designated PFISR for Poker Flat ISR, is located on an existing gravel pad near the launch pads."
   host_cite https://cedar.openmadrigal.org/
@@ -31096,8 +31123,6 @@ host cedar.openmadrigal.org
   unit 1/m3
   sampling null
   interval 600
-  api_cite https://cedar.openmadrigal.org
-  api_quote isprintService parms=UT1_UNIX&parms=NE (Datei experiments5/2024/mlh/mlh240104g.001.hdf5)
   instrument_cite https://www.haystack.mit.edu/the-millstone-hill-geospace-facility/
   instrument_quote For nearly 6 solar cycles, Millstone Hill’s location (42.6 ̊ geodetic latitude; 288.5 ̊ geodetic longitude; 54 ̊ magnetic latitude) has made it an enabling anchor for mid-latitude and sub-auroral science
   host_cite https://cedar.openmadrigal.org/
@@ -31271,8 +31296,8 @@ host openneuro.org
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
   api_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
-  instrument_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.json
-  instrument_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
+  instrument_cite https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=7691542&retmode=text&rettype=abstract
+  instrument_quote "The geodesic sensor net organizes an array of sensors, each enclosed in a saline sponge, in a geodesic tension structure comprised of elastic threads."
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
@@ -31291,8 +31316,8 @@ host openneuro.org
   interval 0.001
   api_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
   api_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
-  instrument_cite https://s3.amazonaws.com/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.json
-  instrument_quote "EEGChannelCount": 129, "MiscChannelCount": 0, "EOGChannelCount": 0,"
+  instrument_cite https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=7691542&retmode=text&rettype=abstract
+  instrument_quote "The geodesic sensor net organizes an array of sensors, each enclosed in a saline sponge, in a geodesic tension structure comprised of elastic threads."
   host_cite tools/harvest/src/bin/openneuro_compiler.rs
   host_quote "const TTL: u64 = 86400;"
   ttl 86400
@@ -31564,8 +31589,8 @@ host zeus.wdcb.ru
   unit mGal
   sampling null
   interval 0
-  api_cite https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
-  api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
+  api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  api_quote "Free-air Anomaly = G(observed) - G(theoretical)"
   instrument_cite https://portal.ifz.ru/journals/hes/01-4/02-HES-1-4.pdf
   instrument_quote "В рейсе впервые использовались гравиметры АМГ с одноканальной схемой регистрации."
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
@@ -31772,7 +31797,7 @@ host zeus.wdcb.ru
   interval 0
   api_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
   api_quote "AI1,I5,I4,I1,I2,I3,I2,I4,I2,I3,I2,I4,I2,F4.1,I2,I1,I2,I3,2I1,I2,4I1,I2,F3.1 / BI1,I4,4I2,I3,F5.3,I4,F5.3,F5.1,F6.1,F7.1,F5.1,I1,F5.1,I1"
-  instrument_cite https://link.springer.com/article/10.1007/BF00305295
+  instrument_cite https://api.crossref.org/works/10.1007/BF00305295
   instrument_quote "With knowledge of the response characteristics of the Graf-Askania Gss2, No. 11 gravity meter"
   unit_cite https://www.wdcb.ru/sep/gravimetry/format_marine.ru.html
   unit_quote "91-97 7 real Измеренное значение силы тяжести / В десятых долях миллигал."
@@ -31918,8 +31943,8 @@ host zenodo.org
   interval 1
   api_cite https://zenodo.org/api/records/10673982
   api_quote "[11] Frequency (Hz)"
-  instrument_cite http://hamsci.org/resources
-  instrument_quote "The Reverse Beacon Network (RBN) is a network of Software Defined Radio (SDR) receivers which automatically decodes and reports spots of CW and digital signals."
+  instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
+  instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/records/10673982
   host_quote "2018-12_RBN.gz"
   ttl no-sampling
@@ -31936,7 +31961,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -31955,7 +31980,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -31974,7 +31999,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -31993,7 +32018,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645
@@ -32012,7 +32037,7 @@ host zenodo.org
   sampling null
   interval 31536000
   api_cite https://zenodo.org/records/8300645
-  api_quote "The dataset contains high-precision pulsar timing data from 25 millisecond pulsars collected with the five largest radio telescopes in Europe"
+  api_quote "We present the dataset and the results of the timing analysis from the second data release of the European Pulsar Timing Array (EPTA)."
   instrument_cite https://www.epta.eu.org/the-leap-project.html
   instrument_quote "The LEAP project uses pulsar observations from the 76-m Lovell telescope in England, the 94-m Nancay Radio Telescope in France, the 100-m Effelsberg Radio Telescope in Germany, the 94-m Westerbork Synthesis Radio Telescope in the Netherlands and the 64-m Sardinia Radio Telescope in Italy."
   host_cite https://zenodo.org/records/8300645

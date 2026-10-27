@@ -3634,6 +3634,17 @@ fn strip_markup(s: &str) -> String {
         .replace("&lt;", "<")
         .replace("&gt;", ">")
         .replace("&quot;", "\"")
+        .replace("&auml;", "\u{e4}")
+        .replace("&ouml;", "\u{f6}")
+        .replace("&uuml;", "\u{fc}")
+        .replace("&Auml;", "\u{c4}")
+        .replace("&Ouml;", "\u{d6}")
+        .replace("&Uuml;", "\u{dc}")
+        .replace("&szlig;", "\u{df}")
+        .replace("&eacute;", "\u{e9}")
+        .replace("&egrave;", "\u{e8}")
+        .replace("&deg;", "\u{b0}")
+        .replace("&middot;", "\u{b7}")
 }
 
 fn verify_cites(path: &str) {
@@ -3791,14 +3802,14 @@ fn set_doc_quote(path: &str) {
                 if !beleg.is_empty() && beleg.starts_with("http") {
                     set_row_key(&mut b, "api_cite", &beleg);
                 }
-                set_row_key(&mut b, "api_quote", &format!("\"{q}\""));
+                set_row_key(&mut b, "api_quote", &format!("\"{}\"", q.replace('"', "\\\"")));
             }
             if norm(&inst_cite) == norm(&doc) {
                 let beleg = beleg.clone();
                 if !beleg.is_empty() && beleg.starts_with("http") {
                     set_row_key(&mut b, "instrument_cite", &beleg);
                 }
-                set_row_key(&mut b, "instrument_quote", &format!("\"{q}\""));
+                set_row_key(&mut b, "instrument_quote", &format!("\"{}\"", q.replace('"', "\\\"")));
             }
             rows += 1;
         }
@@ -4993,6 +5004,277 @@ fn clear_cite(args: &[String]) {
     println!("clear-cite: {cleared} blocks cleared ({old})");
 }
 
+fn words(s: &str) -> usize {
+    s.split_whitespace().count()
+}
+
+fn quoted(line: &str) -> Option<String> {
+    let begin = line.find('"')?;
+    let end = line.rfind('"')?;
+    if end <= begin {
+        return None;
+    }
+    Some(line[begin + 1..end].to_string())
+}
+
+fn quote_short(args: &[String]) {
+    let limit = match args.first() {
+        Some(v) => v.parse::<usize>().unwrap_or(2),
+        None => 2,
+    };
+    let text = fs::read_to_string(REG).expect("register");
+    let mut n = 0usize;
+    for (start, b) in blocks(&text) {
+        let host = or_empty(field(&b, "host"));
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            for (key, prefix) in [
+                ("api", "api_cite "),
+                ("instrument", "instrument_cite "),
+                ("host", "host_cite "),
+            ] {
+                if t.starts_with(prefix) {
+                    cur.insert(key.to_string(), t[prefix.len()..].trim().to_string());
+                }
+            }
+            for (key, prefix) in [
+                ("api", "api_quote "),
+                ("instrument", "instrument_quote "),
+                ("host", "host_quote "),
+            ] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => continue,
+                };
+                if words(&q) > limit {
+                    continue;
+                }
+                let url = match cur.get(key) {
+                    Some(u) => u.clone(),
+                    None => String::new(),
+                };
+                n += 1;
+                println!("{}\t{}\t{}\t{}\t{}", start + 1, key, host, url, q);
+            }
+        }
+    }
+    eprintln!("quote-short: {n} quotes with at most {limit} words");
+}
+
+fn set_quote(args: &[String]) {
+    let path = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("set-quote: needs a tsv file (url, slot, old, new)");
+            return;
+        }
+    };
+    let list = match fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(_) => {
+            println!("set-quote: {path} not readable");
+            return;
+        }
+    };
+    let mut want: BTreeMap<(String, String, String), String> = BTreeMap::new();
+    for line in list.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 4 {
+            continue;
+        }
+        want.insert(
+            (c[0].trim().to_string(), c[1].trim().to_string(), c[2].to_string()),
+            c[3].to_string(),
+        );
+    }
+    let text = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut changed = 0usize;
+    let mut seen: BTreeSet<(String, String, String)> = BTreeSet::new();
+    for (_, b) in blocks(&text) {
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            for (key, prefix) in [
+                ("api", "api_cite "),
+                ("instrument", "instrument_cite "),
+                ("host", "host_cite "),
+            ] {
+                if t.starts_with(prefix) {
+                    cur.insert(key.to_string(), t[prefix.len()..].trim().to_string());
+                }
+            }
+            let mut done = false;
+            for (key, prefix) in [
+                ("api", "api_quote "),
+                ("instrument", "instrument_quote "),
+                ("host", "host_quote "),
+            ] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => continue,
+                };
+                let url = match cur.get(key) {
+                    Some(u) => u.clone(),
+                    None => String::new(),
+                };
+                let id = (url, key.to_string(), q.clone());
+                if let Some(new) = want.get(&id) {
+                    out.push(format!("  {}\"{}\"", prefix, new.replace('"', "\\\"")));
+                    seen.insert(id);
+                    changed += 1;
+                } else {
+                    out.push(line.clone());
+                }
+                done = true;
+            }
+            if !done {
+                out.push(line.clone());
+            }
+        }
+        out.push(String::new());
+    }
+    let mut body = out.join("\n");
+    while body.ends_with("\n\n") {
+        body.pop();
+    }
+    let mut final_text = body;
+    if !final_text.ends_with('\n') {
+        final_text.push('\n');
+    }
+    write_out(REG, final_text, "instruments");
+    println!(
+        "set-quote: {changed} quotes replaced, {} lines without match",
+        want.len().saturating_sub(seen.len())
+    );
+}
+
+fn quote_widen(args: &[String]) {
+    let limit = match args.first() {
+        Some(v) => v.parse::<usize>().unwrap_or(2),
+        None => 2,
+    };
+    let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
+    let digests = load_digests();
+    let text = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let (mut short, mut widened, mut nohit) = (0usize, 0usize, 0usize);
+    let mut report: Vec<String> = Vec::new();
+    for (start, b) in blocks(&text) {
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut slot: Option<&str> = None;
+            if t.starts_with("api_cite ") {
+                slot = Some("api");
+                cur.insert("api".to_string(), t["api_cite ".len()..].trim().to_string());
+            } else if t.starts_with("instrument_cite ") {
+                slot = Some("instrument");
+                cur.insert(
+                    "instrument".to_string(),
+                    t["instrument_cite ".len()..].trim().to_string(),
+                );
+            } else if t.starts_with("host_cite ") {
+                slot = Some("host");
+                cur.insert("host".to_string(), t["host_cite ".len()..].trim().to_string());
+            }
+            if slot.is_some() {
+                out.push(line.clone());
+                continue;
+            }
+            let mut handled = false;
+            for (key, prefix) in [
+                ("api", "api_quote "),
+                ("instrument", "instrument_quote "),
+                ("host", "host_quote "),
+            ] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                handled = true;
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => break,
+                };
+                if words(&q) > limit || q.contains("...") || q.contains('…') {
+                    out.push(line.clone());
+                    break;
+                }
+                short += 1;
+                let url = match cur.get(key) {
+                    Some(u) => u.clone(),
+                    None => String::new(),
+                };
+                let mut best: Option<String> = None;
+                if let Some(d) = digests.get(&url) {
+                    for (_, _, dq) in &d.claims {
+                        if dq == &q || !dq.contains(&q) {
+                            continue;
+                        }
+                        let w = words(dq);
+                        if w <= words(&q) || w > 25 {
+                            continue;
+                        }
+                        let better = match &best {
+                            Some(b) => w < words(b),
+                            None => true,
+                        };
+                        if better {
+                            best = Some(dq.clone());
+                        }
+                    }
+                }
+                match best {
+                    Some(nq) => {
+                        widened += 1;
+                        report.push(format!(
+                            "WEIT\t{}\t{}\t{}\t=>\t{}",
+                            start + 1,
+                            key,
+                            q,
+                            nq
+                        ));
+                        out.push(format!("  {}\"{}\"", prefix, nq.replace('"', "'")));
+                    }
+                    None => {
+                        nohit += 1;
+                        out.push(line.clone());
+                    }
+                }
+                break;
+            }
+            if !handled {
+                out.push(line.clone());
+            }
+        }
+        out.push(String::new());
+    }
+    for r in &report {
+        println!("{r}");
+    }
+    let mut body = out.join("\n");
+    while body.ends_with("\n\n") {
+        body.pop();
+    }
+    let mut final_text = body;
+    if !final_text.ends_with('\n') {
+        final_text.push('\n');
+    }
+    if dry {
+        println!("dry-run: quote-widen {widened} of {short} short quotes, {nohit} without longer sentence");
+        return;
+    }
+    write_out(REG, final_text, "instruments");
+    println!("quote-widen: {widened} of {short} short quotes widened, {nohit} without longer sentence");
+}
+
 fn specs_to_digests(dir: &str) {
     let mut files: Vec<std::path::PathBuf> = Vec::new();
     let mut stack: Vec<std::path::PathBuf> = vec![std::path::PathBuf::from(dir)];
@@ -5134,6 +5416,9 @@ fn main() {
         Some("drop-orphans") => drop_orphans(),
         Some("set-ttl") if args.len() >= 4 => set_ttl(&args[2..]),
         Some("specs-to-digests") if args.len() >= 3 => specs_to_digests(&args[2]),
+        Some("quote-widen") => quote_widen(&args[2..]),
+        Some("quote-short") => quote_short(&args[2..]),
+        Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
         Some("clear-cite") if args.len() >= 3 => clear_cite(&args[2..]),
         Some("digest-fetch") if args.len() >= 3 => digest_fetch(&args[2]),
