@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebGPU-Prüfung</title>
+<style>
+  body { font: 16px/1.45 system-ui, sans-serif; margin: 2rem; background: #111; color: #eee; }
+  h1 { font-size: 1.2rem; font-weight: 600; }
+  pre { background: #000; padding: 1rem; overflow-x: auto; white-space: pre-wrap; }
+  .ok { color: #6f6; } .no { color: #f66; }
+</style>
+</head>
+<body>
+<h1>WebGPU-Prüfung</h1>
+<p>Diese Seite misst nur, sie rendert nichts. Ergebnis steht unten.</p>
+<pre id="out">läuft …</pre>
+<script type="module">
+const out = document.getElementById("out");
+const lines = [];
+const say = (s, cls) => {
+  lines.push(s);
+  out.innerHTML = lines.map(l => l).join("\n");
+  if (cls) out.className = cls;
+};
+const ok = s => say("ja   " + s, "ok");
+const no = s => say("nein " + s, "no");
+
+say("Browser: " + navigator.userAgent);
+say("WebGPU: navigator.gpu " + (navigator.gpu ? "vorhanden" : "fehlt"));
+if (navigator.gpu) {
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) {
+    no("kein Adapter — WebGPU vorhanden, aber kein Gerät");
+  } else {
+    ok("Adapter gefunden");
+    const info = adapter.info ?? {};
+    say("Adapter-Info: " + JSON.stringify({
+      vendor: info.vendor, architecture: info.architecture,
+      device: info.device, description: info.description
+    }));
+    const device = await adapter.requestDevice();
+    ok("Device angefordert");
+    say("Limits maxStorageBufferBindingSize: " + device.limits.maxStorageBufferBindingSize);
+    say("Limits maxComputeWorkgroupSizeX: " + device.limits.maxComputeWorkgroupSizeX);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("webgpu");
+    ok("Canvas-Kontext webgpu: " + (ctx ? "vorhanden" : "fehlt"));
+  }
+}
+out.className = navigator.gpu ? "ok" : "no";
+</script>
+</body>
+</html>
