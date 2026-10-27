@@ -21,4 +21,20 @@ case "$cmd" in
         ;;
 esac
 
+body="$*"
+case "$body" in
+    -c\ *) body="${body#-c }" ;;
+esac
+if [ "${OMEGAFLOW_WRITE:-}" != "1" ]; then
+    case "$body" in
+        *"sed -i"*|*"perl -i"*|*"truncate"*)
+            case "$body" in
+                *"scratch/"*) ;;
+                *)
+                    echo "blocked: in-place Schreiben — erst bin/dry auf der Kopie, dann bin/write (oder OMEGAFLOW_WRITE=1)" >&2
+                    exit 2 ;;
+            esac ;;
+    esac
+fi
+
 exec /bin/bash "$@"
