@@ -27587,9 +27587,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -27643,9 +27643,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -27671,9 +27671,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -27699,9 +27699,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -27727,9 +27727,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -28032,9 +28032,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "Earthquakes in the USSR from 1962 to 1991"
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/global_hypoc.html
@@ -28059,9 +28059,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -28142,9 +28142,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
   api_ref "WDC for Solid Earth Physics (GC RAS), Moscow; compiled from the yearbooks \"Earthquakes in the USSR, 1962\"-\"1991\", ed. N.V.Kondorskaya, Nauka press, 1964-1997. Earthquakes in the USSR from 1962 to 1991."
   api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_format.pdf
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Глубина гипоцентра в километрах"
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
