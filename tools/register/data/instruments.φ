@@ -11058,9 +11058,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder. Brain Vision Header sub-06 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.json
   instrument_ref "OpenNeuro dataset ds007471, BIDS-Sidecar. sub-06 task-jointaction EEG sidecar (OpenNeuro ds007471)."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11068,6 +11068,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds\""
   applies https://openneuro.org/crn/graphql id=2522
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11319,9 +11321,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder. Brain Vision Header sub-06 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.json
   instrument_ref "OpenNeuro dataset ds007471, BIDS-Sidecar. sub-06 task-jointaction EEG sidecar (OpenNeuro ds007471)."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11329,6 +11331,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds\""
   applies https://openneuro.org/crn/graphql id=2522
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11339,9 +11343,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-07/eeg/sub-07_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro dataset ds007471; BrainVision Recorder Professional V. 1.20.0801. sub-07 task-jointaction EEG header (Brain Vision Data Exchange Header File Version 1.0)."
-  api_quote "; Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-07/eeg/sub-07_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-07 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11349,6 +11353,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-07/eeg/sub-07_task-jointaction_eeg.vhdr
+  host_quote "\"; Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2530
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11359,9 +11365,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-08/eeg/sub-08_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro dataset ds007471; BrainVision Recorder Professional V. 1.20.0801. sub-08 task-jointaction EEG header (Brain Vision Data Exchange Header File Version 1.0)."
-  api_quote "; Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-08/eeg/sub-08_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-08 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11369,6 +11375,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-08/eeg/sub-08_task-jointaction_eeg.vhdr
+  host_quote "\"; Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2538
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11379,9 +11387,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-09/eeg/sub-09_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro dataset ds007471; BrainVision Recorder Professional V. 1.20.0801. sub-09 task-jointaction EEG header (Brain Vision Data Exchange Header File Version 1.0)."
-  api_quote "; Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-09/eeg/sub-09_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-09 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11389,6 +11397,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-09/eeg/sub-09_task-jointaction_eeg.vhdr
+  host_quote "\"; Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2546
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11419,9 +11429,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-10 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.json
   instrument_ref "OpenNeuro dataset ds007471, BIDS-Sidecar. sub-10 task-jointaction EEG sidecar (OpenNeuro ds007471)."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11429,6 +11439,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2562
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11439,9 +11451,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-11 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-11 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11449,6 +11461,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2570
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11459,9 +11473,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-12 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-12 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11469,6 +11483,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2578
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11479,9 +11495,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-13 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-13 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11489,6 +11505,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2586
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11499,9 +11517,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-14 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-14 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11509,6 +11527,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2594
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11519,9 +11539,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-15 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-15 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11529,6 +11549,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2602
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11539,9 +11561,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-16 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-16 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11549,6 +11571,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2610
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11559,9 +11583,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-17 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-17 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11569,6 +11593,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2618
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11579,9 +11605,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-18 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-18 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11589,6 +11615,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2626
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11599,9 +11627,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-19 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-19 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11609,6 +11637,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2634
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11619,9 +11649,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-20 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-20 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11629,6 +11659,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2642
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11639,9 +11671,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-21 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-21 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11649,6 +11681,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2650
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11659,9 +11693,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-22 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-22 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11669,6 +11703,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2658
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11679,9 +11715,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-23 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-23 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11689,6 +11725,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2666
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11699,9 +11737,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-24 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-24 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11709,6 +11747,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2674
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11719,9 +11759,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-25 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-25 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11729,6 +11769,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2682
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11739,9 +11781,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-26 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-26 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11749,6 +11791,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2690
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11759,9 +11803,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-27 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-27 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11769,6 +11813,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2698
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11779,9 +11825,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-28 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-28 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11789,6 +11835,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2706
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11799,9 +11847,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-29 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-29 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11809,6 +11857,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2714
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11819,9 +11869,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-30 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-30 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11829,6 +11879,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2722
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11839,9 +11891,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-31 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-31 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11849,6 +11901,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2730
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -11859,9 +11913,9 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-32 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-32 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
@@ -11869,6 +11923,8 @@ host openneuro.org
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   applies https://openneuro.org/crn/graphql id=2738
   zustand gemessen
   note BIDS-eeg.json nennt Manufacturer und CapManufacturer "BrainProducts" sowie SamplingFrequency 1000; der .vhdr derselben Aufnahme traegt SamplingInterval=1000 (Mikrosekunden), NumberOfChannels=64 und je Kanal die Aufloesung 0.5 µV (Einheit µV, 32 Kanaele je Person, Channels 1-32 linke und 33-64 rechte Person laut README). Die 27 .vhdr der Bloecke 2522-2738 wurden einzeln abgerufen, alle tragen SamplingInterval=1000. Das Geraetemodell nennt der Datensatz nicht, nur den Hersteller (die BrainAmp-Familie ist herstellerseitig bis 5 kHz spezifiziert, daher ist 1000 Hz keine Obergrenze der Hardware). probe 400 = HEAD/GET auf den GraphQL-Endpunkt; die POST-Query (dataset id, latestSnapshot files) lieferte 200.
@@ -16721,16 +16777,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-10 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.json
   instrument_ref "OpenNeuro dataset ds007471, BIDS-Sidecar. sub-10 task-jointaction EEG sidecar (OpenNeuro ds007471)."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-10/eeg/sub-10_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16744,16 +16800,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-11 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-11 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-11/eeg/sub-11_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16767,16 +16823,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-12 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-12 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-12/eeg/sub-12_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16790,16 +16846,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-13 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-13 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-13/eeg/sub-13_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16813,16 +16869,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-14 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-14 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-14/eeg/sub-14_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16836,16 +16892,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-15 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-15 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-15/eeg/sub-15_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16859,16 +16915,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-16 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-16 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-16/eeg/sub-16_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16882,16 +16938,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-17 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-17 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-17/eeg/sub-17_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16905,16 +16961,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-18 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-18 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-18/eeg/sub-18_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16928,16 +16984,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-19 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-19 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-19/eeg/sub-19_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16951,16 +17007,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-20 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-20 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-20/eeg/sub-20_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16974,16 +17030,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-21 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-21 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-21/eeg/sub-21_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -16997,16 +17053,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder (V. 1.20.0801); Jahr nicht genannt. Brain Vision Header sub-22 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-22 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-22/eeg/sub-22_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17020,16 +17076,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-23 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-23 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17043,16 +17099,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-24 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-24 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-24/eeg/sub-24_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17066,16 +17122,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-25 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-25 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-25/eeg/sub-25_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17089,16 +17145,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-26 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-26 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-26/eeg/sub-26_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17112,16 +17168,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-27 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-27 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-27/eeg/sub-27_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17135,16 +17191,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-28 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-28 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-28/eeg/sub-28_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17158,16 +17214,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-29 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-29 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-29/eeg/sub-29_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17181,16 +17237,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-30 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-30 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-30/eeg/sub-30_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17204,16 +17260,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-31 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-31 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-31/eeg/sub-31_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -17227,16 +17283,16 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-32 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-32 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
   unit_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
   unit_quote "Ch1=VEOG_b_R,,0.5,µV"
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-32/eeg/sub-32_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -21357,14 +21413,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-01 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21377,14 +21433,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-02/eeg/sub-02_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-02 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-02/eeg/sub-02_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21397,14 +21453,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-03/eeg/sub-03_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-03 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-03/eeg/sub-03_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21417,14 +21473,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-04/eeg/sub-04_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-04 task-jointaction (64 Kanäle, Impedanztabelle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-04/eeg/sub-04_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21437,14 +21493,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder. Brain Vision Header sub-06 task-jointaction (64 Kanäle)."
-  api_quote "Sampling interval in microseconds"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-06/eeg/sub-06_task-jointaction_eeg.vhdr
+  host_quote "\"Sampling interval in microseconds\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21457,14 +21513,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-07/eeg/sub-07_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro dataset ds007471; BrainVision Recorder Professional V. 1.20.0801. sub-07 task-jointaction EEG header (Brain Vision Data Exchange Header File Version 1.0)."
-  api_quote "; Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-07/eeg/sub-07_task-jointaction_eeg.vhdr
+  host_quote "\"; Sampling interval in microseconds SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21477,14 +21533,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-08/eeg/sub-08_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro dataset ds007471; BrainVision Recorder Professional V. 1.20.0801. sub-08 task-jointaction EEG header (Brain Vision Data Exchange Header File Version 1.0)."
-  api_quote "; Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-08/eeg/sub-08_task-jointaction_eeg.vhdr
+  host_quote "\"; Sampling interval in microseconds SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -21497,14 +21553,14 @@ host s3.amazonaws.com/openneuro.org
   unit uV
   sampling 100000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-09/eeg/sub-09_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro dataset ds007471; BrainVision Recorder Professional V. 1.20.0801. sub-09 task-jointaction EEG header (Brain Vision Data Exchange Header File Version 1.0)."
-  api_quote "; Sampling interval in microseconds SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://www.brainproducts.com/solutions/actichamp/
   instrument_ref "Brain Products GmbH, Solutions/actiCHamp; Seite datiert 2022-06-01, geändert 2026-08-11. actiCHamp series."
   instrument_quote "Up to 100 kHz sampling rate"
-  host_cite https://openneuro.org/datasets/ds007471
-  host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds007471.v1.0.0\""
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-09/eeg/sub-09_task-jointaction_eeg.vhdr
+  host_quote "\"; Sampling interval in microseconds SamplingInterval=1000\""
   ttl null
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1
@@ -26857,14 +26913,14 @@ host openneuro.org
   unit µV
   sampling 1000
   interval 0.001
-  api_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-05/sub-05_task-jointaction_eeg.vhdr
+  api_cite https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
   api_ref "OpenNeuro ds007471; Header erzeugt von Vision Recorder; Jahr nicht genannt. Brain Vision Header sub-05 task-jointaction (64 Kanäle)."
-  api_quote "SamplingInterval=1000"
+  api_quote "Header file (*.vhdr): This is a text file containing recording parameters and further meta-information."
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-05/sub-05_task-jointaction_eeg.json
   instrument_ref "OpenNeuro ds007471; Sidecar ohne Autor- und Jahresangabe. EEG-Sidecar sub-05 task-jointaction."
   instrument_quote "\"Manufacturer\": \"BrainProducts\""
-  host_cite tools/harvest/src/bin/brainvision_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://s3.amazonaws.com/openneuro.org/ds007471/sub-05/sub-05_task-jointaction_eeg.vhdr
+  host_quote "\"SamplingInterval=1000\""
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds007471
   fields Ch1..Ch64
@@ -26906,8 +26962,8 @@ host openneuro.org
   instrument_cite https://s3.amazonaws.com/openneuro.org/ds004100/README
   instrument_ref "OpenNeuro ds004100; Bernabei & Li et al. (in Vorbereitung), University of Pennsylvania. HUP iEEG dataset — README."
   instrument_quote "Each of the 58 subjects underwent intracranial EEG with subdural grid, strip, and depth electrodes (ECoG) or purely stereotactically-placed depth electrodes (SEEG)."
-  host_cite tools/harvest/src/bin/openneuro_compiler.rs
-  host_quote "const TTL: u64 = 86400;"
+  host_cite https://docs.openneuro.org/
+  host_quote "OpenNeuro is a free and open platform for sharing neuroimaging data"
   ttl 86400
   probe 2026-10-26T00:00:00Z 200 https://openneuro.org/datasets/ds004100
   fields EEG.data
@@ -38346,3 +38402,4 @@ host api.openstreetmap.org
   applies https://api.openstreetmap.org/api/0.6/trackpoints?bbox=8.6,47.3,8.7,47.4&page=0
   field osm_track_lat_deg lat_deg deg 1
   zustand gemessen
+

@@ -4487,6 +4487,38 @@ fn claims_device(claims: &[(String, Vec<String>, String)]) -> Vec<String> {
     out
 }
 
+fn replace_host(args: &[String]) {
+    let old = match args.first() {
+        Some(v) => v.clone(),
+        None => {
+            println!("replace-host: needs <old> <new> <quote>");
+            return;
+        }
+    };
+    let new = match args.get(1) {
+        Some(v) => v.clone(),
+        None => return,
+    };
+    let quote = match args.get(2) {
+        Some(v) => v.clone(),
+        None => return,
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut n = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        if or_empty(field(&b, "host_cite")) == old {
+            set_row_key(&mut b, "host_cite", &new);
+            set_row_key(&mut b, "host_quote", &format!("\"{}\"", quote.replace('"', "\\\"")));
+            n += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "instruments");
+    println!("replace-host: {n} blocks -> {new}");
+}
+
 fn demote_api(args: &[String]) {
     let path = match args.first() {
         Some(p) => p.clone(),
@@ -5859,6 +5891,7 @@ fn main() {
         Some("check-blocks") => check_blocks(),
         Some("field-work") if args.len() >= 3 => field_work(&args[2..]),
         Some("demote-api") if args.len() >= 3 => demote_api(&args[2..]),
+        Some("replace-host") if args.len() >= 5 => replace_host(&args[2..]),
         Some("write-refs") => write_refs(&args[2..]),
         Some("coord-audit") => coord_audit(),
         Some("set-instr-doc") if args.len() >= 3 => set_instr_doc(&args[2]),

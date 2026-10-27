@@ -1,0 +1,50 @@
+#!/bin/sh
+# register-gate — Pflichtschritt vor jedem Commit, der das Register beruehrt.
+#
+# Prueft die Messungen, nicht die Hosts:
+#   1  check-blocks      jeder Block hat zwei Dokumente, Feld/Einheit/Takt/Geraet
+#   2  verify-register   jedes geaenderte Zitat steht wirklich im Dokument
+#
+#   bin/register-gate [pfad ...]      (Vorgabe: tools/register/data/instruments.φ)
+set -u
+root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "register-gate: kein Repo" >&2; exit 2; }
+cd "$root" || exit 2
+
+reg="tools/register/data/instruments.φ"
+paths="${*:-$reg}"
+tool=""
+for b in target/debug/spec_merge target/release/spec_merge; do
+    [ -x "$b" ] && tool="$b" && break
+done
+[ -n "$tool" ] || { echo "register-gate: spec_merge fehlt — cargo build -p omegaflow-register --bin spec_merge" >&2; exit 2; }
+
+status=0
+
+echo "register-gate: check-blocks"
+"$tool" check-blocks | tail -1 || status=1
+if ! "$tool" check-blocks | grep -q '^check-blocks: '; then
+    echo "register-gate: check-blocks lieferte keine Bilanz" >&2
+    status=1
+fi
+
+tmp="$(mktemp "${TMPDIR:-/tmp}/register-gate.XXXXXX")" || exit 2
+trap 'rm -f "$tmp"' 0 1 2 15
+
+for p in $paths; do
+    [ -f "$p" ] || continue
+    git diff -U0 HEAD -- "$p" | sed -n 's/^+  \(api_cite\|instrument_cite\|host_cite\) //p'
+done | sed 's/ *$//' | sort -u | grep '^http' > "$tmp" || true
+
+n="$(wc -l < "$tmp" | tr -d ' ')"
+echo "register-gate: verify-register ueber $n geaenderte Adressen"
+if [ "$n" -gt 0 ]; then
+    if ! "$tool" verify-register "$tmp" | tee /dev/stderr | grep -q 'zitat=0 http=0'; then
+        status=1
+    fi
+fi
+
+if [ "$status" -ne 0 ]; then
+    echo "register-gate: rot — Commit unterlassen" >&2
+    exit 1
+fi
+echo "register-gate: gruen"

@@ -23902,6 +23902,16 @@ doc https://bids-specification.readthedocs.io/en/stable/modality-specific-files/
   claim column PowerLineFrequency Hz null "null"
   claim column Manufacturer Text null "null"
 
+doc https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
+  title BrainVision Core Data Format (BVCDF) — Brain Products GmbH
+  source Brain Products GmbH, Support Resources, Nuts & bolts
+  kind instrument
+  claim datei die Header-Datei .vhdr traegt Aufnahmeparameter und weitere Metainformation ""Header file (*.vhdr): This is a text file containing recording parameters and further meta-information.""
+  claim marker die Marker-Datei .vmrk beschreibt die Ereignisse der Aufnahme ""Marker file (*.vmrk): This is a text file describing the events that have been collected during the EEG data recording.""
+  claim rohdaten die .eeg-Datei ist binaer und traegt die EEG-Daten ""Raw EEG data file (*.eeg): This is a binary file containing the EEG data as well as additional signals recorded along with the EEG.""
+  claim standard BIDS hat das Format als offizielles EEG-Format uebernommen ""In appreciation for the robustness and wide use of the BrainVision Core Data Format, BIDS has officially adopted it as one of the official EEG/iEEG data formats.""
+  claim lizenz Brain Products erlaubt BIDS die freie Veroeffentlichung der Spezifikation ""Brain Products GmbH has provided formal permission for BIDS to freely publish and share the format specification across the open-source neuroscience research community.""
+
 doc https://minorplanetcenter.net/mpcops/documentation/ades/
   title ADES — Astrometry Data Exchange Standard
   source IAU Minor Planet Center, Documentation
