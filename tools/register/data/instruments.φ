@@ -25516,7 +25516,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
   api_ref "US Naval Observatory Flagstaff Station / JPL SSD. CCD Astrometric Measuerements from US Naval Observatory/Flagstaff."
   api_quote "# CCD Astrometric Measuerements from US Naval Observatory/Flagstaff ... # 9-11 ..... J2000 RA (h,m,s) # 12-14 ..... J2000 Dec (d,m,s)"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
@@ -26882,7 +26882,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
   api_ref "JPL, Datei mit Verweis auf Kuchynka et al. (IPN Progress Report 42-190, 2012) und Konopliv et al. (Icarus 211, 2011). Mars Reconnaissance Orbiter range data."
   api_quote "These represent a round-trip light time for range measurements by the NASA Deep Space Network to the Mars Reconaissance Orbiter spacecraft."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -26902,7 +26902,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
   api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
   api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
@@ -26912,7 +26912,7 @@ host ssd.jpl.nasa.gov
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/nikolaev.txt id=24052
   note P-Karten-Satz (90 Zeichen), RA/Dec gepackt sexagesimal; eine Platte = eine Zeile -> intervall 0.
   instrument photographic telescope (Mykolaiv/Nikolaev)
-  instrument_quote "References to the Photographic Observations from Nikolaev Obsrvatory"
+  instrument_quote "In 1961, Zonal Astrograph made by the “Carl Zeiss” firm was transferred from Pulkovo to MAO and the history of photographic astrometry has begun."
 
 host ssd.jpl.nasa.gov
   instrument dsn
@@ -26922,7 +26922,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
   api_ref "NASA/JPL Solar System Dynamics (ssd.jpl.nasa.gov); Jahr nicht genannt. Format for Spacecraft 3-D Normal Point Observations."
   api_quote "13      Observed two-way range (one-way range times 2), in microseconds 14      Difference between observed two-way range and value on DE 405, in microseconds"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -26961,7 +26961,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
   api_ref "NASA/JPL Solar System Dynamics, Mars Pathfinder, Daten ab 1997. Pathfinder Differenced Range."
   api_quote "# Pathfinder Differenced Range #  [tau(t+interval/2)-tau(t-interval/2)]/interval ... 21:07:30    24.1444046127    .11   60.0"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -26980,7 +26980,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
   api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
   api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Photographic Astrometry of Pluto [ Format ] [ References ] 1914-1969 1969-1988 1989-1995"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -27039,7 +27039,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
   api_ref "Observatoire de Bordeaux / JPL SSD; Jahr nicht genannt. Meridian Circle Observations, Bordeaux Observatory."
   api_quote "# Meridian Circle Observations, Bordeaux Observatory"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -27059,7 +27059,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
   api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
   api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "USNO 9&Prime;, 1913-25, 1935-45 ... Meridian Circle Timings (transits)"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -27099,7 +27099,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/vlbi_vlba_refs.txt
   api_ref "NASA/JPL Solar System Dynamics; Verweisliste, Stand 2011/2014. References for the VLBI and VLBA Measurements of Spacecraft at Planets."
   api_quote "References for the VLBI and VLBA Measurements of Spacecraft at Planets ... VLBI measurements of the Magellan Spacecraft orbiting Venus"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
@@ -27218,7 +27218,7 @@ host wdcb.ru
   interval 60
   api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
   api_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
-  instrument_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
   instrument_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
@@ -27229,7 +27229,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku31.dat id=25574
   note MGD77-Schiffsprofil AKU-31; MAG in Zehntel-nT, Digitisierrate 1 min -> 60 s.
   instrument magnetometer (model not named in MGD77 header)
-  instrument_quote "Magnetics Instrumentation | e.g., "PROTON PRECESSION MAG-GEOMETRICS G-801""
+  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
 
 host wdcb.ru
   instrument magnetometer
@@ -27258,7 +27258,7 @@ host wdcb.ru
   interval 60
   api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
   api_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
-  instrument_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
+  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
   instrument_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
@@ -27269,7 +27269,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme21.dat id=25661
   note MGD77, Fahrt 21 (Wladiwostok 1978); Magnetometer NEL-6 im Kopf.
   instrument magnetometer (model not named in MGD77 header)
-  instrument_quote "Magnetics Instrumentation | e.g., "PROTON PRECESSION MAG-GEOMETRICS G-801""
+  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
 
 host wdcb.ru
   instrument magnetometer
@@ -27298,7 +27298,7 @@ host wdcb.ru
   interval 60
   api_cite https://cires.gitbook.io/the-marine-geophysical-data-exchange-format
   api_ref "CIRES / National Geophysical Data Center (NGDC); Workshop Januar 1977, Gitbook-Fassung v0.1.0. The Marine Geophysical Data Exchange Format (MGD77/MGD77T), v0.1.0."
-  instrument_cite https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
+  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
   instrument_ref "IFZ AN SSSR (Institut für Physik der Erde, Akademie der Wissenschaften der UdSSR); Katalog unter den Programmen ARCHIV-GRAVIK, Moskau. PET-12 — Fahrt 12 des Forschungsschiffs AKADEMIK PETROV, 1989."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
@@ -27309,7 +27309,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Pet12.dat id=26239
   note MGD77, Fahrt 12 Akademik Petrov; Protonen-Präzessions-Magnetometer (Kopf Pos. 7), 1-min-Rate.
   instrument precession magnetometer
-  instrument_quote "PRECESSION MAGN. IZMIRAN AC.SCI"
+  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
 
 host wdcb.ru
   instrument magnetometer
@@ -32430,7 +32430,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
   api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
   api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "CCD Astrometry of Outer Planets and Satellites [ Format ] [ References ] USNO, Flagstaff Bordeaux Table Mountain McDonald misc. observations"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
@@ -32446,7 +32446,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
   api_ref "Table Mountain Observatory / JPL SSD; Stand 13. Oktober 2008. CCD Astrometric Measuerements from Table Mountain Observatory."
   api_quote "#         9-11 ..... J2000 RA  (h,m,s) #        12-14 ..... J2000 Dec (d,m,s) #        15 ..... Not used here (Geocentric parallax in RA for NOFS)"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
@@ -32497,7 +32497,7 @@ host ssd.jpl.nasa.gov
   api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
   api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
   api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Photographic Astrometry of Outer Planets and Satellites [ Format ] [ References ] Nikolaev misc. observatories"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
@@ -32950,7 +32950,7 @@ host ssd.jpl.nasa.gov
   interval null
   api_cite https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
   api_ref "NASA/JPL Solar System Dynamics (ssd.jpl.nasa.gov); Jahr nicht genannt. Format for Spacecraft 3-D Normal Point Observations."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+  instrument_cite https://en.wikipedia.org/wiki/Mykolaiv_Observatory
   instrument_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
   instrument_quote "Meridian Circle Timings (transits) ... USNO 9″, 1913-25, 1935-45"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/npts3d.txt
@@ -33123,7 +33123,7 @@ host web.archive.org
   interval null
   api_cite https://cires.gitbook.io/the-marine-geophysical-data-exchange-format
   api_ref "CIRES / National Geophysical Data Center (NGDC); Workshop Januar 1977, Gitbook-Fassung v0.1.0. The Marine Geophysical Data Exchange Format (MGD77/MGD77T), v0.1.0."
-  instrument_cite https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
+  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
   instrument_ref "IFZ AN SSSR (Institut für Physik der Erde, Akademie der Wissenschaften der UdSSR); Katalog unter den Programmen ARCHIV-GRAVIK, Moskau. PET-12 — Fahrt 12 des Forschungsschiffs AKADEMIK PETROV, 1989."
   host_cite https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
   host_ref "IFZ AN SSSR (Institut für Physik der Erde, Akademie der Wissenschaften der UdSSR); Katalog unter den Programmen ARCHIV-GRAVIK, Moskau. PET-12 — Fahrt 12 des Forschungsschiffs AKADEMIK PETROV, 1989."
@@ -33133,7 +33133,7 @@ host web.archive.org
   fields mtf
   note Key `mtf` = Total Field, 1. Sensor (MGD77); der Wert steht in Zehntel-nT, Register-Token nT. Gerät im Kopf benannt (Präzessionsmagnetometer, IZMIRAN). Keine Rate dokumentiert (MGD77: instrumentation dependent), field-Intervall null; statischer Fahrtbestand.
   instrument precession magnetometer
-  instrument_quote "PRECESSION MAGN. IZMIRAN AC.SCI"
+  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
 
 host zenodo.org
   status messung
