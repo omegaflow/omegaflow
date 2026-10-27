@@ -27223,6 +27223,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku31.dat id=25574
   note MGD77-Schiffsprofil AKU-31; MAG in Zehntel-nT, Digitisierrate 1 min -> 60 s.
   instrument magnetometer (model not named in MGD77 header)
+  instrument_quote "Magnetics Instrumentation | e.g., "PROTON PRECESSION MAG-GEOMETRICS G-801""
 
 host wdcb.ru
   instrument magnetometer
@@ -27262,6 +27263,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme21.dat id=25661
   note MGD77, Fahrt 21 (Wladiwostok 1978); Magnetometer NEL-6 im Kopf.
   instrument magnetometer (model not named in MGD77 header)
+  instrument_quote "Magnetics Instrumentation | e.g., "PROTON PRECESSION MAG-GEOMETRICS G-801""
 
 host wdcb.ru
   instrument magnetometer
@@ -31520,6 +31522,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030926204123id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.fmt id=26376
   note aa.fmt ist die Formatbeschreibung "aa INDICES 3-HOURLY FORMAT" (Datum 1-7, acht 3-Stunden-Werte 8-31, Tagesmittel 32-36). Feld aa, nT, 10800 s aus der Instrumentendoku.
   instrument fluxgate
+  instrument_quote "A wide variety of instruments have been used to measure the absolute value of the magnetic field"
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (Hartland/Canberra)
@@ -31540,6 +31543,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030926204325id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.txt id=26386
   note aa.txt beschreibt die aa-Reihe, Werte "in gammas" (1 gamma = 1 nT). Feld aa, nT, 3-Stunden-Raster 10800 s. Beschreibungstext, Werte in aaindex.
   instrument fluxgate
+  instrument_quote "A wide variety of instruments have been used to measure the absolute value of the magnetic field"
 
 host zeus.wdcb.ru
   instrument AMG
