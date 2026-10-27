@@ -261,7 +261,10 @@ fn fetch(target: &Target, cache_root: &Path, offline: bool, timeout_sec: u64) ->
     let body = fs::read(&path).ok();
     let hdr = match fs::read_to_string(&hdr_path) {
         Ok(text) => text,
-        Err(_) => String::new(),
+        Err(e) => {
+            eprintln!("read: {e} — the header stays absent");
+            String::new()
+        }
     };
     let bytes = body.as_ref().map_or(0, |b| b.len());
     let sha256 = match body.as_ref().map(|b| sha256_hex(b)) {
