@@ -5784,6 +5784,141 @@ fn set_field(args: &[String]) {
     println!("set-field: {changed} Feldzeilen ersetzt");
 }
 
+fn norm_id(s: &str) -> String {
+    s.chars()
+        .filter(|c| c.is_alphanumeric())
+        .flat_map(|c| c.to_lowercase())
+        .collect()
+}
+
+fn field_align(args: &[String]) {
+    let dry = args.first().map(|s| s == "dry").unwrap_or(false);
+    let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let mut out: Vec<String> = Vec::new();
+    let mut changed = 0usize;
+    let mut ambiguous = 0usize;
+    let mut none = 0usize;
+    let mut report: Vec<String> = Vec::new();
+    for (start, b) in blocks(&reg) {
+        let api = or_empty(field(&b, "api_cite"));
+        let d_api = match digests.get(&api) {
+            Some(d) => d,
+            None => {
+                out.extend(b);
+                out.push(String::new());
+                continue;
+            }
+        };
+        let cols: Vec<String> = d_api
+            .claims
+            .iter()
+            .filter(|(kind, _, _)| kind == "column")
+            .filter_map(|(_, parts, _)| parts.first().cloned())
+            .collect();
+        let mut mapping: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut it = t.split_whitespace();
+            let kind = it.next();
+            if kind != Some("field") && kind != Some("last") {
+                continue;
+            }
+            let key = match kind {
+                Some("field") => it.next(),
+                Some("last") => it.nth(1),
+                _ => None,
+            };
+            let key = match key {
+                Some(k) => k.to_string(),
+                None => continue,
+            };
+            if claim_unit(&d_api.claims, &key).is_some() {
+                continue;
+            }
+            let nk = norm_id(&key);
+            if nk.len() < 4 {
+                none += 1;
+                continue;
+            }
+            let mut hits: Vec<String> = Vec::new();
+            for c in &cols {
+                let nc = norm_id(c);
+                if !c.chars().next().map(|ch| ch.is_alphanumeric()).unwrap_or(false) {
+                    continue;
+                }
+                if nc.is_empty() {
+                    continue;
+                }
+
+                if nc == nk {
+                    hits.push(c.clone());
+                }
+            }
+            hits.sort();
+            hits.dedup();
+            match hits.len() {
+                0 => none += 1,
+                1 => {
+                    mapping.insert(key, hits[0].clone());
+                }
+                _ => ambiguous += 1,
+            }
+        }
+        if mapping.is_empty() {
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
+        let mut body: Vec<String> = Vec::new();
+        for line in &b {
+            let mut newline = line.clone();
+            let t = line.trim_start();
+            for (old, new) in &mapping {
+                if t.starts_with("field ") || t.starts_with("last ") {
+                    let mut parts: Vec<String> =
+                        newline.split_whitespace().map(|s| s.to_string()).collect();
+                    if parts.len() > 1 && parts[1] == *old {
+                        parts[1] = new.clone();
+                        newline = format!("  {}", parts.join(" "));
+                        report.push(format!("{}\t{}\t{}", start, old, new));
+                        changed += 1;
+                    }
+                } else if t.starts_with("fields ") {
+                    let toks: Vec<String> = newline.split_whitespace().map(|s| s.to_string()).collect();
+                    if toks.len() > 1 {
+                        let mut nt = toks.clone();
+                        let mut hit = false;
+                        for tok in nt.iter_mut().skip(1) {
+                            if tok == old {
+                                *tok = new.clone();
+                                hit = true;
+                            }
+                        }
+                        if hit {
+                            newline = format!("  {}", nt.join(" "));
+                            report.push(format!("{}\t{}\t{}", start, old, new));
+                            changed += 1;
+                        }
+                    }
+                }
+            }
+            body.push(newline);
+        }
+        out.extend(body);
+        out.push(String::new());
+    }
+    for r in &report {
+        println!("ALIGN\t{r}");
+    }
+    if dry {
+        println!("dry-run: field-align {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate");
+        return;
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!("field-align: {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -6305,6 +6440,7 @@ fn main() {
         Some("set-field") if args.len() >= 3 => set_field(&args[2..]),
         Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
         Some("quote-trim") => quote_trim(&args[2..]),
+        Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
         Some("clear-cite") if args.len() >= 3 => clear_cite(&args[2..]),
