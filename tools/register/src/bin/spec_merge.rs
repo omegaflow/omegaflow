@@ -5629,16 +5629,44 @@ fn host_quote_title(args: &[String]) {
         }
     }
     let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let mut titles: BTreeMap<String, String> = BTreeMap::new();
+    if let Ok(dtext) = fs::read_to_string(DIGESTS) {
+        for (_, db) in blocks(&dtext) {
+            let url = match db.iter().find(|l| l.starts_with("doc ")) {
+                Some(l) => l[4..].trim().to_string(),
+                None => continue,
+            };
+            if let Some(t) = db.iter().find(|l| l.trim_start().starts_with("title ")) {
+                let t = t.trim_start()[6..].trim().to_string();
+                if !t.is_empty() {
+                    titles.insert(url, t);
+                }
+            }
+        }
+    }
+    let _ = digests;
     let mut out: Vec<String> = Vec::new();
     let (mut changed, mut left) = (0usize, 0usize);
     for (_, mut b) in blocks(&reg) {
-        let hq = or_empty(field(&b, "host_quote"));
-        if !hq.starts_with("HTTP ") {
+        let hq = or_empty(field(&b, "host_quote")).trim_matches('"').to_string();
+        if !hq.starts_with("HTTP") {
             out.extend(b);
             out.push(String::new());
             continue;
         }
         let url = or_empty(field(&b, "host_cite"));
+        if let Some(t) = titles.get(&url) {
+            set_row_key(
+                &mut b,
+                "host_quote",
+                &format!("\"{}\"", t.replace('"', "\\\"")),
+            );
+            changed += 1;
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
         let text = match cache.get(&url) {
             Some(t) => t,
             None => {
