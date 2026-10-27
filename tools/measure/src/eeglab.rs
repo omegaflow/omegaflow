@@ -389,7 +389,7 @@ pub fn eeg_from_bin(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
     } = omegaflow::openneuro_eeg::parse_bin(bytes)?;
     let samples = match samples {
         omegaflow::openneuro_eeg::Samples::Single(s) => s,
-        omegaflow::openneuro_eeg::Samples::Double(s) => s.into_iter().map(|v| v as f32).collect(),
+        omegaflow::openneuro_eeg::Samples::Double(_) => return None,
     };
     let set = EeglabSet {
         datfile: String::new(),
@@ -515,9 +515,7 @@ mod tests {
         b.extend_from_slice(&1u32.to_le_bytes());
         b.extend_from_slice(&(len as u32).to_le_bytes());
         b.extend_from_slice(name.as_bytes());
-        for _ in name.len()..len {
-            b.push(0);
-        }
+        b.extend(std::iter::repeat_n(0u8, len - name.len()));
         b
     }
 
@@ -581,7 +579,7 @@ mod tests {
     }
 
     fn pad_body(body: &mut Vec<u8>) {
-        while body.len() % 8 != 0 {
+        while !body.len().is_multiple_of(8) {
             body.push(0);
         }
     }
@@ -611,9 +609,7 @@ mod tests {
         body.extend_from_slice(&1u32.to_le_bytes());
         body.extend_from_slice(&(table_len as u32).to_le_bytes());
         body.extend_from_slice(&table);
-        for _ in field_len..table_len {
-            body.push(0);
-        }
+        body.extend(std::iter::repeat_n(0u8, table_len - field_len));
         let n_elements = dims.iter().product::<i32>() as usize;
         for i in 0..n_elements {
             for (_, values) in fields {
