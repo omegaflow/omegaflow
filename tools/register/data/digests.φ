@@ -20046,6 +20046,10 @@ doc https://www.rand.org/pubs/reports/R1647.html
   claim dämpfung Antwortkurven stärker gedämpft als moderne US-Typen ""Response curves are more heavily damped.""
   claim digitaltechnik nur wenige, primitive digitale Systeme ""Digital systems are few and rather primitive.""
   claim frame none ""
+  claim device seismograph ""Second in a series on Soviet seismographic stations and seismic instruments""
+  claim device seismometer ""Short-period seismometer design is constrained by massiveness.""
+  claim device galvanometer ""Short-period galvanometers are well developed.""
+  claim device amplifier ""Older solid-state amplifiers are 1-2 orders of magnitude noisier than American ones.""
 
 doc https://www.riegl.com/fileadmin/media/Products/03_Airborne_Scanning/RIEGL_VQ-780_II-S/RIEGL_VQ-780II-S_Datasheet_2024-03-22.pdf
   title RIEGL VQ-780 II-S — Waveform Processing Airborne Laser Scanner, Data Sheet
