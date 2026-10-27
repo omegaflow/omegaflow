@@ -25854,6 +25854,7 @@ host gea.esac.esa.int
   zustand gemessen
   note catalog_gaia_sso ist eine Tabelle solarer Systemobjekte; die TAP-Abfrage auf gaiadr3.sso_observation liefert das Schema: ra/dec in deg, g_mag in mag, epoch in d. Keine Zeitreihe im Block (interval none), aber je Objekt eine Messzeile. Die Gaia-Datamodellseite antwortete 503; der Schema-Beleg ist die TAP-Antwort selbst.
   instrument Gaia astrometric instrument (ASTRO)
+  instrument_quote "Gaia’s main astrometric instrument precisely determined the positions of stars in the sky."
 
 host geodesy.unr.edu
   instrument GPS
@@ -27082,6 +27083,7 @@ host ssd.jpl.nasa.gov
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbiobs_jun2013.txt id=24233
   note Korrektur relativ DE405 in mas; eine VLBI-Beobachtung je Zeile -> intervall 0.
   instrument VLBI array (radio telescopes)
+  instrument_quote "it measures the time difference between the arrival at two Earth-based antennas of a radio wavefront emitted by a distant quasar"
 
 host ssd.jpl.nasa.gov
   instrument vlba
@@ -33652,6 +33654,7 @@ host gea.esac.esa.int
   zustand gemessen
   note Gaia-DR3-SSO-Tabelle (gaiadr3.sso_observation), Rektaszension in Grad; telescope ist die Klasse, Gaia das Geraet.
   instrument Gaia astrometric instrument (ASTRO)
+  instrument_quote "Gaia’s main astrometric instrument precisely determined the positions of stars in the sky."
 
 host openneuro.org
   instrument EGI
@@ -33873,6 +33876,7 @@ host ssd.jpl.nasa.gov
   zustand gemessen
   note Single-Baseline-VLBI-Beobachtungen des Cassini-Systems: eindimensionale Winkelkorrektur dRA in mas; VLBA ist die dokumentierte Geraetezeile.
   instrument VLBI array (radio telescopes)
+  instrument_quote "it measures the time difference between the arrival at two Earth-based antennas of a radio wavefront emitted by a distant quasar"
 
 host web.archive.org
   instrument magnitograph
@@ -35378,6 +35382,7 @@ host gea.esac.esa.int
   zustand gemessen
   note Gaia-DR3-SSO-Tabelle (gaiadr3.sso_observation), Rektaszension in Grad; telescope ist die Klasse, Gaia das Geraet.
   instrument Gaia astrometric instrument (ASTRO)
+  instrument_quote "Gaia’s main astrometric instrument precisely determined the positions of stars in the sky."
 
 host openneuro.org
   instrument EGI
@@ -35599,6 +35604,7 @@ host ssd.jpl.nasa.gov
   zustand gemessen
   note Single-Baseline-VLBI-Beobachtungen des Cassini-Systems: eindimensionale Winkelkorrektur dRA in mas; VLBA ist die dokumentierte Geraetezeile.
   instrument VLBI array (radio telescopes)
+  instrument_quote "it measures the time difference between the arrival at two Earth-based antennas of a radio wavefront emitted by a distant quasar"
 
 host web.archive.org
   instrument magnitograph
