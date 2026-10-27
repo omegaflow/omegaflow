@@ -4088,6 +4088,7 @@ doc http://www.wdcb.ru/sep/seismology/cat_OBN.html
   claim Magnitude Welt M > 5.5 (+/-0.3) "for other territory of the world M > 5.5 (+/-0.3)."
   claim Zeitraum 1 January 1993 to present time "the Seismological Catalogue for the period from 1 January 1993 to present time"
   claim Netz teleseismic stations "Data obtained by a network of teleseismic stations as a result of monitoring"
+  claim device teleseismic station network ""Data obtained by a network of teleseismic stations as a result of monitoring are published in the form of Seismological Bulletin and Seismological Catalogue …""
 
 doc http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
   title Earthquakes of the Mediterranean and surrounding areas
