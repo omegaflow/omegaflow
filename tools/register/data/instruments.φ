@@ -15961,6 +15961,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note Beobachtungsreihe 1868-1925; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. Einheit nT und 3-Stunden-Raster aus der Instrumentendoku; Datendoku ist aa.doc selbst — der Block ist die Formatdoku (Satzformat, 3-hourly aa), die Werte liegen in aaindex.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Abinger
@@ -15977,6 +15978,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note Beobachtungsreihe 1926-1956; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. Einheit nT und 3-Stunden-Raster aus der Instrumentendoku; Datendoku ist aa.doc selbst — der Block ist die Formatdoku (Satzformat, 3-hourly aa), die Werte liegen in aaindex.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Hartland
@@ -15993,6 +15995,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note Beobachtungsreihe 1957-; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. Einheit nT und 3-Stunden-Raster aus der Instrumentendoku; Datendoku ist aa.doc selbst — der Block ist die Formatdoku (Satzformat, 3-hourly aa), die Werte liegen in aaindex.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Melbourne
@@ -16009,6 +16012,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note Beobachtungsreihe 1868-1919; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. Einheit nT und 3-Stunden-Raster aus der Instrumentendoku; Datendoku ist aa.doc selbst — der Block ist die Formatdoku (Satzformat, 3-hourly aa), die Werte liegen in aaindex.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Toolangi
@@ -16025,6 +16029,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note Beobachtungsreihe 1920-1979; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. Einheit nT und 3-Stunden-Raster aus der Instrumentendoku; Datendoku ist aa.doc selbst — der Block ist die Formatdoku (Satzformat, 3-hourly aa), die Werte liegen in aaindex.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Canberra
@@ -16041,6 +16046,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note Beobachtungsreihe 1980-; die BGS-Tabelle führt Greenwich/Abinger/Hartland (Nord) und Melbourne/Toolangi/Canberra (Süd) mit Jahresabschnitten. Der Block tokent dieses eine Observatorium, nicht die Sammelreihe. Einheit nT und 3-Stunden-Raster aus der Instrumentendoku; Datendoku ist aa.doc selbst — der Block ist die Formatdoku (Satzformat, 3-hourly aa), die Werte liegen in aaindex.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Greenwich
@@ -22909,6 +22915,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc line=31081
   note aa.doc ist die Formatdoku der aa-Reihe (Satzformat, 3-Stunden-Indizes); die Werte liegen in aaindex/AA3398.txt. Instrumentendoku BGS nennt die Ableitung aus K-Indizes zweier antipodaler Observatorien und die Einheit nT; die historische Stationsfolge (Greenwich/Abinger/Melbourne/Toolangi) ist in der heute abrufbaren Fassung nicht mehr enthalten, deshalb ein Reihen-Token aa statt erfundener Stationsnamen. Fester Bestand (Dateien 1999/2002), keine Anbieterkadenz.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument aa
@@ -30716,6 +30723,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
   api_ref "WDC STP Moscow, IMA exchange format (AA_IMA.fmt). DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES TREE HOURLY VALUES."
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26266
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument magnetometer
@@ -30735,6 +30743,7 @@ host zeus.wdcb.ru
   field aa aa_index_nt nT 10800
   note Generische Gerätezeile für die aa-Ableitung; die Reihen selbst nennen wechselnde Observatorien. 3-Stunden-Raster und Einheit nT aus aa.doc/BGS-Doku. Fester Bestand, ttl null.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Greenwich
@@ -30762,6 +30771,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
   api_ref "WDC STP Moscow, IMA exchange format (AA_IMA.fmt). DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES TREE HOURLY VALUES."
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26266
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Melbourne
@@ -30789,6 +30799,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
   api_ref "WDC STP Moscow, IMA exchange format (AA_IMA.fmt). DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES TREE HOURLY VALUES."
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26266
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Toolangi
@@ -30816,6 +30827,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
   api_ref "WDC STP Moscow, IMA exchange format (AA_IMA.fmt). DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES TREE HOURLY VALUES."
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26266
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Abinger
@@ -31421,6 +31433,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt id=25515
   note AA_IMA.fmt ist die Formatbeschreibung der aa-Reihe (248 Werte je Monat, 3-Stunden-Raster, nanoTeslas); der Block traegt das Reihenfeld aa. Werte liegen in AA3398.txt / aa2001_ima.txt.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (Hartland/Canberra)
@@ -31441,6 +31454,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030926204059id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_INDEX.TXT id=25525
   note AA_INDEX.TXT beschreibt die aa-Reihe (Fortsetzung ab 1868, 3-stuendlich, nT). Beschreibungstext, die Werte stehen in aaindex/AA3398.txt; Feld aus der Reihe.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument magnetometer observatory (INTERMAGNET)
@@ -31955,6 +31969,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26361
   note aa.doc ist die Formatdoku der aa-Reihe (3-Stunden-Satzformat); die Werte liegen in aaindex/AA3398.txt. Der Block tokent das Observatorium Greenwich (1868–1925) aus der BGS-Stationsfolge; Einheit nT, 3-Stunden-Raster 10800 s.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Abinger
@@ -31974,6 +31989,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26361
   note Wie Greenwich, Stationsabschnitt Abinger (1926–1956). Derselbe Block traegt fuenf Geraete; je Geraet eine eigene applies-Zeile.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Melbourne
@@ -31993,6 +32009,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26361
   note Wie Greenwich, Stationsabschnitt Melbourne (1868–1919).
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Toolangi
@@ -32012,6 +32029,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26361
   note Wie Greenwich, Stationsabschnitt Toolangi (1920–1979).
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Hartland
@@ -32031,6 +32049,7 @@ host zeus.wdcb.ru
   applies https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc id=26361
   note Wie Greenwich, Stationsabschnitt Hartland (1957–), der aktuellen Nordstation.
   instrument magnetometer
+  instrument_quote "There are a number of reasons to be concerned about seasonal variation in magnetometer calibrations."
 
 host zeus.wdcb.ru
   instrument Greenwich
