@@ -481,6 +481,56 @@ mod tests {
     }
 
     #[test]
+    fn a_nan_depth_refuses_the_edge() {
+        let mut grid = flat_grid(4, 4, 4000.0);
+        assert!(edge_seconds(&grid, 0, 1).is_some(), "a wet edge exists");
+        grid.depths[1] = f32::NAN;
+        assert!(
+            edge_seconds(&grid, 0, 1).is_none(),
+            "NaN is not water — the edge is refused, not walked"
+        );
+    }
+
+    #[test]
+    fn a_nan_window_bound_returns_no_grid() {
+        let global = flat_grid(16, 16, 4000.0);
+        assert!(unwrap_window(&global, 0.0, 0.1, 0.0, 0.1).is_some());
+        assert!(
+            unwrap_window(&global, 0.0, f64::NAN, 0.0, 0.1).is_none(),
+            "a NaN longitude cannot bound a window"
+        );
+        assert!(
+            unwrap_window(&global, 0.0, 0.1, f64::NAN, 0.1).is_none(),
+            "a NaN latitude cannot bound a window"
+        );
+    }
+
+    #[test]
+    fn a_nan_source_depth_yields_no_arrival() {
+        let mut grid = flat_grid(8, 8, 4000.0);
+        grid.depths[0] = f32::NAN;
+        let (times, touched) = dijkstra_times_boundary(&grid, 0);
+        assert_eq!(times.len(), 64);
+        assert!(
+            times.iter().all(|t| t.is_infinite()),
+            "a NaN source is not water: no cell carries an arrival"
+        );
+        assert!(touched.iter().all(|t| !t), "nothing is reached");
+    }
+
+    #[test]
+    fn a_nan_depth_is_not_a_node() {
+        let mut grid = flat_grid(8, 8, 4000.0);
+        grid.depths[9] = f32::NAN;
+        let times = vec![0.0f32; 64];
+        assert!(
+            arrival_at(&grid, &times, 0.01, 0.01).is_none(),
+            "a NaN depth cannot be read as a node arrival"
+        );
+        assert!(arrival_at(&grid, &times, 0.01, 0.02).is_some());
+    }
+
+    #[test]
     fn synthetic_constant_depth_matches_shallow_water_speed() {
         let grid = flat_grid(16, 16, 4000.0);
         let times = dijkstra_times(&grid, 0);
