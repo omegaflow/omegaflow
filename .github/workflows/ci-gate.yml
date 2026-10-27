@@ -197,3 +197,6 @@ jobs:
         cargo run -q -p omegaflow-register --bin test_shape_scan
     - name: matrix — every workspace member runs, no --bin filter
       run: cargo run -q -p omegaflow-register --bin ci_matrix_scan
+    - uses: taiki-e/install-action@cargo-deny
+    - name: dependencies — advisories, licences, sources
+      run: cargo deny check advisories licenses sources

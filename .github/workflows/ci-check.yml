@@ -57,6 +57,19 @@ jobs:
       run: cargo run -q -p omegaflow-register --release --bin cdn_reconcile -- --fail
     - if: matrix.shard == 1
       run: node --test static/presence_frame.test.mjs static/sensorium.test.mjs static/radiator.test.mjs static/verdicts.test.mjs static/constants.test.mjs static/color_lut.test.mjs workers/r2-verifier/test/verify.test.mjs
+    - if: matrix.shard == 1
+      name: Prüfprotokoll — what ran, with which toolchain
+      run: |
+        rustc --version > pruefprotokoll.txt
+        cargo --version >> pruefprotokoll.txt
+        git rev-parse HEAD >> pruefprotokoll.txt
+        echo "tests: $(cargo nextest list --release --features browser_relay 2>/dev/null | grep -c '::')" >> pruefprotokoll.txt
+        cat pruefprotokoll.txt
+    - if: matrix.shard == 1
+      uses: actions/upload-artifact@v4
+      with:
+        name: pruefprotokoll
+        path: pruefprotokoll.txt
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
