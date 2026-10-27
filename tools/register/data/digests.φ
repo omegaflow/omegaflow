@@ -24080,6 +24080,15 @@ doc http://www.koeri.boun.edu.tr/new/en/history
   claim frame geographic ""
   claim device seismograph ""Two seismographs were purchased at 3,200 Franks each""
 
+doc https://link.springer.com/chapter/10.1007/978-0-387-77214-1_9
+  title The Mercury Dual Imaging System on the MESSENGER Spacecraft (Space Science Reviews)
+  source Springer, Space Science Reviews; Buchkapitel 10.1007/978-0-387-77214-1_9
+  kind instrument
+  claim geraet MDIS besteht aus einer monochromen Schmalwinkelkamera und einer multispektralen Weitwinkelkamera ""MDIS consists of a monochrome narrow-angle camera (NAC) and a multispectral wide-angle camera (WAC).""
+  claim zweck MDIS liefert Messungen zur Herkunft und Entwicklung des Merkur ""The Mercury Dual Imaging System (MDIS) on the MESSENGER spacecraft will provide critical measurements tracing Mercury's origin and evolution.""
+  claim frame ICRS ""
+  claim device MDIS ""MDIS consists of a monochrome narrow-angle camera (NAC) and a multispectral wide-angle camera (WAC).""
+
 doc https://minorplanetcenter.net/mpcops/documentation/ades/
   title ADES — Astrometry Data Exchange Standard
   source IAU Minor Planet Center, Documentation

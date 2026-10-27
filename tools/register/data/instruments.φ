@@ -22206,7 +22206,7 @@ host astrogeology.usgs.gov
   api_cite https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_global_basemap_bdr_166m
   api_ref "Applied Coherent Technology Corporation; MESSENGER Team/ASU/JHU-APL; USGS Astrogeology Science Center, 2016-05-06. Mercury MESSENGER MDIS Global Basemap BDR 166m (Astropedia-Datensatz)."
   api_quote "original band 1 reflectance values (I/F) were stretch to 8bit (0 to 255)"
-  instrument_cite https://en.wikipedia.org/wiki/MESSENGER
+  instrument_cite https://link.springer.com/chapter/10.1007/978-0-387-77214-1_9
   instrument_ref "Wikipedia (en), abgerufen 2026-10-26; NASA/APL, Mission 2004–2015. MESSENGER."
   instrument_quote "Included two CCD cameras, a narrow-angle camera (NAC) and a wide-angle camera (WAC) mounted to a pivoting platform."
   host_cite https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_global_basemap_bdr_166m
@@ -23824,7 +23824,7 @@ host content.cld.iop.org
   api_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
   api_ref "Sonke A.J., Robinson M.S.; Planet. Sci. J. 7, 35 (2026); doi 10.3847/PSJ/ae32f5. Evolution of the Mercurian Crust as Recorded in Carbon — Table A1, machine-readable table."
   api_quote "71- 81 F11.9  ---   UVave      UV filter spectral reflectance average"
-  instrument_cite https://en.wikipedia.org/wiki/MESSENGER
+  instrument_cite https://link.springer.com/chapter/10.1007/978-0-387-77214-1_9
   instrument_ref "Wikipedia (en), abgerufen 2026-10-26; NASA/APL, Mission 2004–2015. MESSENGER."
   instrument_quote "MESSENGER was a NASA robotic space probe that orbited the planet Mercury between 2011 and 2015, studying Mercury's chemical composition, geology, and magnetic field."
   host_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
@@ -29692,7 +29692,7 @@ host planetarymaps.usgs.gov
   api_cite https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.lbl
   api_ref "USGS Astrogeology, Mosaik Mercury_Messenger_USGS_DEM_Global_665m_v2 (PDS3-kompatibles ISIS-Cube-Label). MESSENGER-USGS-DEM des Merkur, global, 665 m — ISIS3-Label."
   api_quote "Multiplier = 0.5 ... PixelResolution = 665.243153000000007 <meters/pixel>"
-  instrument_cite https://en.wikipedia.org/wiki/MESSENGER
+  instrument_cite https://link.springer.com/chapter/10.1007/978-0-387-77214-1_9
   instrument_ref "Wikipedia (en), abgerufen 2026-10-26; NASA/APL, Mission 2004–2015. MESSENGER."
   instrument_quote "Included two CCD cameras, a narrow-angle camera (NAC) and a wide-angle camera (WAC) mounted to a pivoting platform."
   host_cite https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
