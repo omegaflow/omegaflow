@@ -6376,6 +6376,134 @@ fn phi_split_blocks() {
     println!("phi-split-blocks: {splits} Bloecke getrennt");
 }
 
+fn class_table(args: &[String]) {
+    let out_path = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("class-table: needs an output file");
+            return;
+        }
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let digests = load_digests();
+    let mut titles: BTreeMap<String, String> = BTreeMap::new();
+    if let Ok(dtext) = fs::read_to_string(DIGESTS) {
+        for (_, db) in blocks(&dtext) {
+            let url = match db.iter().find(|l| l.starts_with("doc ")) {
+                Some(l) => l[4..].trim().to_string(),
+                None => continue,
+            };
+            if let Some(t) = db.iter().find(|l| l.trim_start().starts_with("title ")) {
+                let t = t.trim_start()[6..].trim().to_string();
+                if !t.is_empty() {
+                    titles.insert(url, t);
+                }
+            }
+        }
+    }
+    let mut rows: Vec<String> = Vec::new();
+    rows.push(
+        "klasse\thost\tinstrument\tunit\tfields\tapi_cite\tinstrument_cite\tbait\tgesucht".to_string(),
+    );
+    let mut n_fmt = 0usize;
+    let mut n_one = 0usize;
+    let mut n_dev = 0usize;
+    for (start, b) in blocks(&reg) {
+        let host = or_empty(field(&b, "host"));
+        let instrument = or_empty(field(&b, "instrument"));
+        let unit = or_empty(field(&b, "unit"));
+        let api = or_empty(field(&b, "api_cite"));
+        let instr = or_empty(field(&b, "instrument_cite"));
+        let mut keys: Vec<String> = Vec::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut it = t.split_whitespace();
+            match it.next() {
+                Some("field") => {
+                    if let Some(k) = it.next() {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("fields") => {
+                    for k in it {
+                        keys.push(k.to_string());
+                    }
+                }
+                Some("last") => {
+                    let rest: Vec<&str> = it.collect();
+                    if let Some(k) = rest.get(1) {
+                        keys.push(k.clone().to_string());
+                    }
+                }
+                _ => {}
+            }
+        }
+        let fmt_doc = instr.contains("format")
+            || instr.contains("ReadMe")
+            || instr.contains("readme")
+            || instr.contains("swagger")
+            || instr.contains("concepts")
+            || instr.contains("/doc/")
+            || instr.contains("/docs/")
+            || instr.contains("catalog")
+            || instr.contains("/info/")
+            || instr.contains("dictionary");
+        let mut klasse: Option<&str> = None;
+        if !api.is_empty() && api == instr {
+            klasse = Some("ein-dokument");
+            n_one += 1;
+        } else if fmt_doc {
+            klasse = Some("formatdokument");
+            n_fmt += 1;
+        } else if let (Some(d_api), Some(d_instr)) = (digests.get(&api), digests.get(&instr)) {
+            let all_keys = !keys.is_empty() && keys.iter().all(|k| claim_unit(&d_api.claims, k).is_some());
+            if !all_keys {
+                continue;
+            }
+            let device = or_empty(field(&b, "instrument")).to_lowercase();
+            let devices = claims_device(&d_instr.claims);
+            let hit = devices
+                .iter()
+                .any(|dv| !dv.is_empty() && (device.contains(dv.as_str()) || dv.contains(device.as_str())));
+            let _ = d_api;
+            if !hit && !device.is_empty() {
+                klasse = Some("geraet-nicht-benannt");
+                n_dev += 1;
+            }
+        }
+        let klasse = match klasse {
+            Some(k) => k,
+            None => continue,
+        };
+        let bait = if instr.contains("/ftp/") {
+            match instr.split("/ftp/").nth(1) {
+                Some(s) => s.trim_end_matches("/ReadMe").to_string(),
+                None => host.clone(),
+            }
+        } else {
+            match titles.get(&instr) {
+                Some(t) => format!("{host}: {t}"),
+                None => host.clone(),
+            }
+        };
+        let gesucht = match klasse {
+            "formatdokument" => "Geraeteschrift zur Anlage des Katalogs",
+            "ein-dokument" => "zweites Dokument: Geraet oder Daten",
+            _ => "Geraetename im Papier oder anderes Papier",
+        };
+        rows.push(format!(
+            "{klasse}\t{host}\t{instrument}\t{unit}\t{}\t{api}\t{instr}\t{bait}\t{gesucht}\t{}",
+            keys.join(" "),
+            start
+        ));
+    }
+    let _ = fs::write(&out_path, rows.join("\n") + "\n");
+    println!(
+        "class-table: {} Zeilen (format {n_fmt}, ein-dokument {n_one}, geraet {n_dev}) -> {out_path}",
+        rows.len() - 1
+    );
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -6901,6 +7029,7 @@ fn main() {
         Some("quote-retarget") => quote_retarget(&args[2..]),
         Some("phi-replace") if args.len() >= 5 => phi_replace(&args[2..]),
         Some("phi-split-blocks") => phi_split_blocks(),
+        Some("class-table") if args.len() >= 3 => class_table(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
