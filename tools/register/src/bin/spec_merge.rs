@@ -6315,6 +6315,45 @@ fn quote_retarget(args: &[String]) {
     println!("quote-retarget: {taken} quotes re-grounded, {left} without sentence, {nodoc} without text");
 }
 
+fn phi_replace(args: &[String]) {
+    let m = match args.first() {
+        Some(v) => v.clone(),
+        None => {
+            println!("phi-replace: needs <match> <old> <new>");
+            return;
+        }
+    };
+    let old = match args.get(1) {
+        Some(v) => v.clone(),
+        None => return,
+    };
+    let new = match args.get(2) {
+        Some(v) => v.clone(),
+        None => return,
+    };
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut n = 0usize;
+    for (_, b) in blocks(&text) {
+        let hit = b.iter().any(|l| l.starts_with("url ") && l.contains(&m));
+        for line in &b {
+            let t = line.trim_start();
+            if hit
+                && (t.starts_with("url ") || t.starts_with("origin ") || t.starts_with("applies "))
+                && t.contains(&old)
+            {
+                out.push(line.replace(&old, &new));
+                n += 1;
+            } else {
+                out.push(line.clone());
+            }
+        }
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n"), "phi");
+    println!("phi-replace: {n} Zeilen in Bloecken mit {m}");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -6838,6 +6877,7 @@ fn main() {
         Some("quote-trim") => quote_trim(&args[2..]),
         Some("quote-repair") => quote_repair(&args[2..]),
         Some("quote-retarget") => quote_retarget(&args[2..]),
+        Some("phi-replace") if args.len() >= 5 => phi_replace(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
