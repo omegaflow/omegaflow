@@ -32331,7 +32331,7 @@ host datacenter.iers.org
   interval 0
   api_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt
   api_ref "Charlot et al. 2020, A&A, 644, A159; IERS Datacenter. S/X-band coordinates for 4536 sources of the ICRF3."
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/644/A159/ReadMe
+  instrument_cite https://www.aanda.org/articles/aa/abs/2020/12/aa38368-20/aa38368-20.html
   instrument_ref "Charlot P., Jacobs C.S., Gordon D. et al., Astron. Astrophys. 644, A159 (2020). J/A+A/644/A159 The third realization of the ICRF, ICRF3 (Charlot+, 2020)."
   host_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/
   host_quote "icrf3sx.txt ... 2025-10-31 06:40:07 ... 728KB"
@@ -32343,6 +32343,7 @@ host datacenter.iers.org
   applies https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/ + https://datacenter.iers.org/products/reference-systems/celestial/icrf3/ id=29003
   note CDDIS-crf-Verzeichnis leitet auf EDL-Auth, der messbare ICRF3-Spiegel ist IERS icrf3sx.txt (4536 Quellen, S/X-Band). Die TSV-Angabe icrf3_ra_deg/deg existiert im Katalog nicht: RA steht als RAh (h)/RAm/RAs, Dec als DEd (deg). Feld und Einheit aus der CDS-ReadMe korrigiert; statischer Katalog, interval 0.
   instrument VLBI (geodetic VLBI network)
+  instrument_quote "The new frame, referred to as ICRF3, is based on nearly 40 years of data acquired by very long baseline interferometry"
 
 host earthquake.usgs.gov
   instrument seismometer
@@ -34810,7 +34811,7 @@ host cddis.nasa.gov
   interval 31536000
   api_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt
   api_ref "Charlot et al. 2020, A&A, 644, A159; IERS Datacenter. S/X-band coordinates for 4536 sources of the ICRF3."
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/644/A159/ReadMe
+  instrument_cite https://www.aanda.org/articles/aa/abs/2020/12/aa38368-20/aa38368-20.html
   instrument_ref "Charlot P., Jacobs C.S., Gordon D. et al., Astron. Astrophys. 644, A159 (2020). J/A+A/644/A159 The third realization of the ICRF, ICRF3 (Charlot+, 2020)."
   host_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/
   host_quote "icrf3sx.txt 2025-10-31 06:40:07 728KB"
@@ -34823,6 +34824,7 @@ host cddis.nasa.gov
   zustand gemessen
   note ICRF3-Realisation aus VLBI (IVS); ra_deg/dec_deg in Grad. DSN ist eine Bodenstation, nicht das VLBI-Netz des ICRF3.
   instrument VLBI (geodetic VLBI network)
+  instrument_quote "The new frame, referred to as ICRF3, is based on nearly 40 years of data acquired by very long baseline interferometry"
 
 host github.com
   instrument uGMRT
@@ -36539,7 +36541,7 @@ host cddis.nasa.gov
   interval 31536000
   api_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt
   api_ref "Charlot et al. 2020, A&A, 644, A159; IERS Datacenter. S/X-band coordinates for 4536 sources of the ICRF3."
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/644/A159/ReadMe
+  instrument_cite https://www.aanda.org/articles/aa/abs/2020/12/aa38368-20/aa38368-20.html
   instrument_ref "Charlot P., Jacobs C.S., Gordon D. et al., Astron. Astrophys. 644, A159 (2020). J/A+A/644/A159 The third realization of the ICRF, ICRF3 (Charlot+, 2020)."
   host_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/
   host_quote "icrf3sx.txt 2025-10-31 06:40:07 728KB"
@@ -36552,6 +36554,7 @@ host cddis.nasa.gov
   zustand gemessen
   note ICRF3-Realisation aus VLBI (IVS); ra_deg/dec_deg in Grad. DSN ist eine Bodenstation, nicht das VLBI-Netz des ICRF3.
   instrument VLBI (geodetic VLBI network)
+  instrument_quote "The new frame, referred to as ICRF3, is based on nearly 40 years of data acquired by very long baseline interferometry"
 
 host github.com
   instrument uGMRT
@@ -37833,7 +37836,7 @@ host cddis.nasa.gov
   interval 0
   api_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt
   api_ref "Charlot et al. 2020, A&A, 644, A159; IERS Datacenter. S/X-band coordinates for 4536 sources of the ICRF3."
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/644/A159/ReadMe
+  instrument_cite https://www.aanda.org/articles/aa/abs/2020/12/aa38368-20/aa38368-20.html
   instrument_ref "Charlot P., Jacobs C.S., Gordon D. et al., Astron. Astrophys. 644, A159 (2020). J/A+A/644/A159 The third realization of the ICRF, ICRF3 (Charlot+, 2020)."
   host_cite https://datacenter.iers.org/products/reference-systems/celestial/icrf3/
   host_quote "icrf3sx.txt"
@@ -37843,6 +37846,7 @@ host cddis.nasa.gov
   zustand gemessen
   note ICRF3-Katalog: RA/Dec J2000.0 (Sexagesimal im Text, im Feld in Grad). Fester Release, kein Zeitraster. Der CDDIS-Pfad verlangt Earthdata-Login; die Messung ist ueber den IERS-Spiegel icrf3sx.txt belegt. Geraet VLBI-Netz (DSN).
   instrument VLBI (geodetic VLBI network)
+  instrument_quote "The new frame, referred to as ICRF3, is based on nearly 40 years of data acquired by very long baseline interferometry"
 
 host tapvizier.cds.unistra.fr
   instrument UK_Schmidt
