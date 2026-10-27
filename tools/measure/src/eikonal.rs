@@ -365,6 +365,14 @@ fn coord_values(file: &NetcdfFile, bytes: &[u8], names: &[&str]) -> Option<Vec<f
 }
 
 pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
+    let host = omegaflow::odp::dsn_host().ok_or(EikonalNote::AbsentRadius)?;
+    let radius_m = omegaflow::cdn::body_mean_radius_km(host)
+        .map_err(|_| EikonalNote::AbsentRadius)?
+        * 1000.0;
+    decode_etopo1_with_radius(bytes, radius_m)
+}
+
+pub fn decode_etopo1_with_radius(bytes: &[u8], radius_m: f64) -> Result<DepthGrid, EikonalNote> {
     let is_gzip = bytes.len() >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b;
     let gunzipped = if is_gzip {
         let mut out = Vec::new();
@@ -444,10 +452,6 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
     if !(dlon > 0.0 && dlat > 0.0) {
         return Err(EikonalNote::Shape);
     }
-    let host = omegaflow::odp::dsn_host().ok_or(EikonalNote::AbsentRadius)?;
-    let radius_m = omegaflow::cdn::body_mean_radius_km(host)
-        .map_err(|_| EikonalNote::AbsentRadius)?
-        * 1000.0;
     Ok(DepthGrid {
         depths,
         nlon,
@@ -820,7 +824,7 @@ mod tests {
         let depth = 4000.0;
         let cdf = build_etopo_cdf(nlon, nlat, dlon, dlat, depth);
         let gz = gzip_stored(&cdf);
-        let grid = decode_etopo1(&gz).expect("cdf1 round trip");
+        let grid = decode_etopo1_with_radius(&gz, GRID_RADIUS_M).expect("cdf1 round trip");
         assert_eq!(grid.nlon, nlon);
         assert_eq!(grid.nlat, nlat);
         assert!((grid.depths[0] - 4000.0).abs() < 1e-3);
