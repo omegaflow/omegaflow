@@ -5919,6 +5919,236 @@ fn field_align(args: &[String]) {
     println!("field-align: {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate");
 }
 
+fn toks(text: &str) -> Vec<String> {
+    let raw: Vec<&str> = text.split_whitespace().collect();
+    let mut out: Vec<String> = Vec::new();
+    let mut i = 0;
+    while i < raw.len() {
+        let mut t = raw[i].to_string();
+        while (t.ends_with('-') || t.ends_with('\u{ad}')) && i + 1 < raw.len() {
+            t.pop();
+            if t.ends_with('\u{ad}') {
+                t.pop();
+            }
+            i += 1;
+            t.push_str(raw[i]);
+        }
+        out.push(t);
+        i += 1;
+    }
+    out
+}
+
+fn sentences_of(text: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut cur: Vec<String> = Vec::new();
+    for t in toks(text) {
+        let end = t.ends_with('.') || t.ends_with('!') || t.ends_with('?');
+        cur.push(t);
+        if end {
+            out.push(cur.join(" "));
+            cur = Vec::new();
+        }
+    }
+    if !cur.is_empty() {
+        out.push(cur.join(" "));
+    }
+    out
+}
+
+fn words_low(s: &str) -> Vec<String> {
+    s.split_whitespace()
+        .map(|w| {
+            w.chars()
+                .filter(|c| c.is_alphanumeric())
+                .flat_map(|c| c.to_lowercase())
+                .collect::<String>()
+        })
+        .filter(|w| w.chars().count() >= 3)
+        .collect()
+}
+
+fn quote_repair(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        if let Ok(t) = fs::read_to_string(c[1]) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let (mut exact, mut by_overlap, mut skipped, mut no_doc) = (0usize, 0usize, 0usize, 0usize);
+    for (_, b) in blocks(&reg) {
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut is_cite = false;
+            for (key, prefix) in [
+                ("api", "api_cite "),
+                ("instrument", "instrument_cite "),
+                ("host", "host_cite "),
+            ] {
+                if t.starts_with(prefix) {
+                    cur.insert(key.to_string(), t[prefix.len()..].trim().to_string());
+                    is_cite = true;
+                    break;
+                }
+            }
+            if is_cite {
+                out.push(line.clone());
+                continue;
+            }
+            let mut done = false;
+            for (key, prefix) in [
+                ("api", "api_quote "),
+                ("instrument", "instrument_quote "),
+                ("host", "host_quote "),
+            ] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                done = true;
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => break,
+                };
+                let w = words(&q);
+                if w < 2 || w > 10 {
+                    out.push(line.clone());
+                    break;
+                }
+                let url = match cur.get(key) {
+                    Some(u) => u.clone(),
+                    None => String::new(),
+                };
+                let text = match cache.get(&url) {
+                    Some(t) => t,
+                    None => {
+                        no_doc += 1;
+                        out.push(line.clone());
+                        break;
+                    }
+                };
+                let hay = toks(text);
+                let needle: Vec<String> = q.split_whitespace().map(|s| s.to_string()).collect();
+                let mut found: Option<usize> = None;
+                if hay.len() >= needle.len() {
+                    'outer: for i in 0..=(hay.len() - needle.len()) {
+                        for j in 0..needle.len() {
+                            if hay[i + j] != needle[j] {
+                                continue 'outer;
+                            }
+                        }
+                        found = Some(i);
+                        break;
+                    }
+                }
+                if let Some(start) = found {
+                    let mut lo = start;
+                    while lo > 0 {
+                        let prev = &hay[lo - 1];
+                        if prev.ends_with('.') || prev.ends_with('!') || prev.ends_with('?') {
+                            break;
+                        }
+                        lo -= 1;
+                    }
+                    let mut hi = start + needle.len();
+                    while hi < hay.len() {
+                        let wv = &hay[hi - 1];
+                        if wv.ends_with('.') || wv.ends_with('!') || wv.ends_with('?') {
+                            break;
+                        }
+                        hi += 1;
+                    }
+                    let span = &hay[lo..hi.min(hay.len())];
+                    if span.len() <= 25 && span.len() > needle.len() {
+                        exact += 1;
+                        out.push(format!(
+                            "  {}\"{}\"",
+                            prefix,
+                            span.join(" ").replace('"', "\\\"")
+                        ));
+                        break;
+                    }
+                    out.push(line.clone());
+                    break;
+                }
+                let qw = words_low(&q);
+                if qw.is_empty() {
+                    skipped += 1;
+                    out.push(line.clone());
+                    break;
+                }
+                let mut best: Option<(f64, String)> = None;
+                for s in sentences_of(text) {
+                    let n = words(&s);
+                    if n > 25 || n < 5 {
+                        continue;
+                    }
+                    let sw = words_low(&s);
+                    if sw.is_empty() {
+                        continue;
+                    }
+                    let hit = qw.iter().filter(|w| sw.contains(w)).count();
+                    let distinctive = qw.iter().filter(|w| w.chars().count() >= 5 && sw.contains(w)).count() >= 2;
+                    if !distinctive {
+                        continue;
+                    }
+                    let score = hit as f64 / qw.len() as f64;
+                    if score < 0.4 {
+                        continue;
+                    }
+                    let better = match &best {
+                        Some((b, _)) => score > *b,
+                        None => true,
+                    };
+                    if better {
+                        best = Some((score, s));
+                    }
+                }
+                match best {
+                    Some((_, s)) => {
+                        by_overlap += 1;
+                        out.push(format!("  {}\"{}\"", prefix, s.replace('"', "\\\"")));
+                    }
+                    None => {
+                        skipped += 1;
+                        out.push(line.clone());
+                    }
+                }
+                break;
+            }
+            if !done {
+                out.push(line.clone());
+            }
+        }
+        out.push(String::new());
+    }
+    if dry {
+        println!(
+            "dry-run: quote-repair {exact} sentence around the fragment, {by_overlap} by word overlap, {skipped} without, {no_doc} without text"
+        );
+        return;
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!(
+        "quote-repair: {exact} sentence around the fragment, {by_overlap} by word overlap, {skipped} without, {no_doc} without text"
+    );
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -6440,6 +6670,7 @@ fn main() {
         Some("set-field") if args.len() >= 3 => set_field(&args[2..]),
         Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
         Some("quote-trim") => quote_trim(&args[2..]),
+        Some("quote-repair") => quote_repair(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
