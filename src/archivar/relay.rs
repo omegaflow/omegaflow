@@ -1160,6 +1160,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn our_frame_reader_accepts_a_frame_written_by_tungstenite() {
+        use std::net::{TcpListener, TcpStream};
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind");
+        let addr = listener.local_addr().expect("addr");
+        let client = TcpStream::connect(addr).expect("connect");
+        let (mut server, _) = listener.accept().expect("accept");
+        let payload = b"{\"t\":1}".to_vec();
+        let mut ws = tungstenite::WebSocket::from_raw_socket(
+            client,
+            tungstenite::protocol::Role::Client,
+            None,
+        );
+        ws.send(tungstenite::Message::Binary(payload.clone().into()))
+            .expect("tungstenite writes the frame");
+        let read = read_ws_frame_raw(&mut server).expect("our reader takes the frame");
+        assert_eq!(read.opcode, 0x2, "binary opcode");
+        assert_eq!(read.payload, payload, "payload byte-identical");
+    }
+
+    #[test]
     fn the_wire_tau_wins_when_positive() {
         assert_eq!(relay_tau(30.0, Some(60.0)), Some(30.0));
         assert_eq!(relay_tau(30.0, None), Some(30.0));
