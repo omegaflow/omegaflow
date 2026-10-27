@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-use omegaflow::archivar::fetch::{live_markers, unresolved_key};
+use omegaflow::archivar::fetch::{live_markers, url_is_fanout};
 use omegaflow::archivar::render::COORD_MARKERS;
 
 fn apply(template: &str, markers: &[(String, String)]) -> String {
@@ -17,6 +17,7 @@ struct Block {
     line: usize,
     url: String,
     has_compiler: bool,
+    has_stations: bool,
 }
 
 fn blocks(text: &str) -> Vec<Block> {
@@ -28,19 +29,24 @@ fn blocks(text: &str) -> Vec<Block> {
                 line: i + 1,
                 url: rest.trim().to_string(),
                 has_compiler: false,
+                has_stations: false,
             });
             continue;
         }
         if let Some(last) = out.last_mut()
-            && trimmed.starts_with("compiler ")
+            && (trimmed.starts_with("compiler ") || trimmed.starts_with("stations ") || trimmed.starts_with("fanout "))
         {
-            last.has_compiler = true;
+            if trimmed.starts_with("compiler ") {
+                last.has_compiler = true;
+            } else {
+                last.has_stations = true;
+            }
         }
     }
     out
 }
 
-fn scan(text: &str, env: &HashMap<String, String>) -> Vec<String> {
+fn scan(text: &str, _env: &HashMap<String, String>) -> Vec<String> {
     let markers = live_markers();
     let coords: Vec<(String, String)> = COORD_MARKERS
         .iter()
@@ -50,6 +56,9 @@ fn scan(text: &str, env: &HashMap<String, String>) -> Vec<String> {
     let mut probes = 0usize;
     for block in blocks(text) {
         if block.has_compiler {
+            continue;
+        }
+        if block.has_stations && url_is_fanout(&block.url) {
             continue;
         }
         probes += 1;
