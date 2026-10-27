@@ -19722,69 +19722,6 @@ host services.swpc.noaa.gov
   applies https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
   note Kanaele XRS-A (0.05-0.4 nm) und XRS-B (0.1-0.8 nm), Fluss in W/m2 auf 1 AU normiert.
 
-host ned.ipac.caltech.edu
-  zustand absent
-  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
-  api_quote "Detailed and referenced photometry, position, and redshift data, have been taken from large compilations and from the literature."
-  probe 2026-10-25T16:00:52Z 200 https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
-  fields z
-  applies https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
-  note Kein Instrument: NED ist eine Kompilation aus Literatur und Katalogen; kein Sensor, keine Rate.
-
-host ned.ipac.caltech.edu
-  zustand absent
-  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
-  api_quote "NED's data and references are being continually updated, with revised versions being put on-line every 2-3 months."
-  probe 2026-10-25T16:02:31Z 206 https://ned.ipac.caltech.edu/byparams
-  fields z
-  applies https://ned.ipac.caltech.edu/byparams
-  note Aggregat ohne Messreihe; Publikationsstand 2-3 Monate, kein Messintervall.
-
-host ned.ipac.caltech.edu
-  zustand absent
-  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
-  api_quote "NED also includes images for over 773,000 extragalactic objects from 2MASS, from the literature, and from the Digitized Sky Survey."
-  probe 2026-10-25T16:02:34Z 200 https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
-  fields z
-  applies https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
-  note Positionsabfrage auf ein Aggregat; kein Instrument, keine Rate.
-
-host ned.ipac.caltech.edu
-  zustand absent
-  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
-  api_quote "NED is a master list of extragalactic objects for which cross-identifications of names have been established, accurate positions and redshifts entered to the extent possible,"
-  probe 2026-10-25T16:06:35Z 200 https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+NEDTAP.objdir
-  fields hyperleda_radial_velocity_kms hyperleda_mag
-  applies https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+NEDTAP.objdir
-  note HyperLeda-Radialgeschwindigkeit kommt aus derselben Kompilation; kein Messgeraet.
-
-host ssd-api.jpl.nasa.gov
-  zustand absent
-  api_cite https://ssd-api.jpl.nasa.gov/doc/sbdb.html
-  api_quote "The SBDB contains object identification and naming information, orbital data, and selected physical data for all known asteroids and comets within the solar system."
-  probe 2026-10-25T16:02:49Z 200 https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=433&phys-par=1
-  fields phys_par.0.value
-  applies https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=433&phys-par=1
-  note Katalogwert aus Literatur und Bahnrechnung; H-Magnitude ist kein Instrumentenmesswert.
-
-host ssd-api.jpl.nasa.gov
-  zustand absent
-  api_cite https://ssd-api.jpl.nasa.gov/doc/sbdb.html
-  api_quote "The SBDB contains object identification and naming information, orbital data, and selected physical data for all known asteroids and comets within the solar system."
-  probe 2026-10-25T16:02:51Z 200 https://ssd-api.jpl.nasa.gov/sbdb_query.api
-  fields H
-  applies https://ssd-api.jpl.nasa.gov/sbdb_query.api
-  note Auch die KBO-H-Magnitude stammt aus dem Small-Body-Katalog; kein Sensor, keine Rate.
-
-host download.geofabrik.de
-  zustand absent
-  api_cite https://www.openstreetmap.org/about
-  api_quote "OpenStreetMap is built by a community of mappers that contribute and maintain data about roads, trails, cafés, railway stations, and much more, all over the"
-  probe 2026-10-25T16:00:40Z 206 https://download.geofabrik.de/europe/monaco-latest.osm.pbf
-  fields osm_node
-  applies https://download.geofabrik.de/europe/monaco-latest.osm.pbf
-  note Kein Messwert: beigetragene Kartendaten (OSM-Extrakt), kein Sensor und keine Rate.
-
 host zeus.wdcb.ru
   instrument torsion balance
   unit cm3/g/s2
@@ -20546,6 +20483,8 @@ host alasky.cds.unistra.fr
   interval null
   instrument_cite https://en.wikipedia.org/wiki/Pan-STARRS
   instrument_quote "Pan-STARRS consists of two 1.8-m Ritchey–Chrétien telescopes located at Haleakalā in Hawaii."
+  api_cite https://alasky.cds.unistra.fr/Pan-STARRS/DR1/color-i-r-g/properties
+  api_quote "creator_did          = ivo://CDS/P/PanSTARRS/DR1/color-i-r-g"
 
 host alasky.cds.unistra.fr
   api_cite https://alasky.cds.unistra.fr/Pan-STARRS/DR1/color-i-r-g/properties
@@ -21241,14 +21180,6 @@ host zeus.wdcb.ru
   fields GRAV gravity_free_air_anomaly
   applies https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat id=31028
   note MGD77-B-Record (80 B); Gravimetrie F7.1 = Zehntel mGal (Einheit aus der WDCB-Formatspezifikation), Key GRAV ist der MGD77-Spaltenname. Kein fester Takt: der B-Record trägt HH/MM/SS je Punkt (interval 0). Instrumentenzeile 8 nennt 4*AMG; Reise AKADEMIK STRAKHOV 18.03.–01.07.1990. Fester Bestand, no-sampling.
-
-host zeus.wdcb.ru
-  instrument ISS seismograph network
-  unit km
-  sampling none
-  interval 0
-  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  api_quote "42-44 i 3 Depth in kilometers."
 
 host zeus.wdcb.ru
   api_quote "42-44 i 3 Depth in kilometers."
@@ -23436,18 +23367,6 @@ host spdf.gsfc.nasa.gov
   zustand gemessen
   note Mariner-6/7-2-Way-Doppler-Tracking (RST): ODG-Records mit Code-Woertern und Observables, Einheit km aus dem Parser (mariner_rst.rs). Der Zeitabstand steht im Zeitwort jedes Records, eine feste Kadenz nennt die Quelle nicht (interval none). Eine oeffentliche Formatdoku liegt am Ort nicht; das NSSDC-Attribut beschreibt nur das Tape-Image. Die Zeile ist aus dem gemessenen Parser.
 
-host noise.discomap.eea.europa.eu
-  instrument none
-  keine_messung "modellierter Laermindikator (City_Area_Noise), kein Messgeraet"
-  host_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  host_quote "\"currentVersion\": 11.5"
-  ttl 604800
-  probe 2026-10-25T18:41:28Z 200 https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  fields NLD5559
-  applies https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json line=11118
-  zustand absent
-  note Der Layer City_Area_Noise fuehrt Stadtflaechen mit Laermexpositionsfeldern (SNLD55, SNLD65, SNLD75, SNLN50, ...). Das sind modellierte Indikatoren aus Verkehrsdaten, kein Sensor; ein Geraet nennt der Dienst nicht. Die Werte sind je Flaeche, nicht je Zeitpunkt -> keine Messzeile.
-
 host openneuro.org
   instrument EGI
   field EEG.data eeg_uv uV 0.001
@@ -24267,18 +24186,6 @@ host wdcb.ru
   instrument_cite https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
 
 host wdcb.ru
-  instrument_quote "formula.exe <ключ> <параметр 1, параметр 2, параметр 3 ...>"
-  host_cite http://www.wdcb.ru/sep/
-  host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
-  ttl 0
-  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
-  fields G
-  api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
-  api_quote "Gravitational constant (cm*cm*cm/g*s*s)"
-  applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme id=26894
-  note Russische Readme zu formula.exe (G-Experimente); Messzeile = G, intervall 0.
-
-host wdcb.ru
   instrument gravimeter
   unit m3/kg/s2
   sampling 0
@@ -24286,18 +24193,6 @@ host wdcb.ru
   api_cite https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
   api_quote "a0               formula.exe a0 <data file> <experiment's data(I)> add results of measurement to the run"
   instrument_cite https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
-
-host wdcb.ru
-  instrument_quote "formula.exe <ключ> <параметр 1, параметр 2, параметр 3 ...>"
-  host_cite http://www.wdcb.ru/sep/
-  host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
-  ttl 0
-  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
-  fields MAG
-  api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
-  api_quote "Gravitational constant (cm*cm*cm/g*s*s)"
-  applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme_en id=26902
-  note Englische Readme; G-Messreihe je Experiment, intervall 0.
 
 host wdcb.ru
   instrument gps
@@ -25319,20 +25214,6 @@ host ssd.jpl.nasa.gov
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/juno_range.txt line=23990
   field rtlt juno_round_trip_light_time_s s 0
   note Key `rtlt` mit Einheit "sec" woertlich im Spaltenkopf; Messung je Pass (Ereigniszeile) → intervall 0. Geraet: DSN-Stationen (up/dn IDs im Datensatz), keine feste Rate.
-
-host noise.discomap.eea.europa.eu
-  instrument noise model (CNOSSOS-EU)
-  unit dB
-  sampling 0
-  interval 31536000
-  instrument_cite https://publications.jrc.ec.europa.eu/repository/handle/JRC72550
-  instrument_quote "the European Commission developed Common NOise aSSessment methOdS (CNOSSOS-EU) for road, railway, aircraft and industrial noise"
-  host_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
-  host_quote "\"currentVersion\":11.5"
-  fields NLD5559
-  applies https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json line=10774
-  field NLD5559 eea_noise_lden_55_59_db dB 31536000
-  note Feld/Alias-Paar aus der Layer-Metadaten (NLD5559 = Lden 55-59 dB). Der Block trug `instrument none`; ein Sensor ist nicht belegt — die Karte ist eine strategische Laermmodellierung. Intervall 31536000 = Jahresstand der 2025er-Karte (ein Bestand, keine Reihe). Einheit dB ist aus dem Alias "Lden…" abgeleitet, nicht als unit-Feld der Quelle vorhanden — ausgewiesen.
 
 host www.waterqualitydata.us
   instrument multiparameter sonde
@@ -28337,14 +28218,6 @@ host zeus.wdcb.ru
   instrument magnetometer
 
 host zeus.wdcb.ru
-  instrument ISS seismograph network
-  unit km
-  sampling none
-  interval 0
-  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
-  api_quote "42-44 i 3 Depth in kilometers."
-
-host zeus.wdcb.ru
   api_quote "42-44 i 3 Depth in kilometers."
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   instrument_quote "42-44 i 3 Depth in kilometers."
@@ -29626,6 +29499,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
+  api_cite https://amisr.com/amisr/
+  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14938
   field pfisr_isr_ne_m3 pfisr_isr_ne_m3 1/m3 600
   field pfisr_isr_ti_k pfisr_isr_ti_k K 600
@@ -29646,6 +29521,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
+  api_cite https://amisr.com/amisr/
+  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14950
   field NE openmadrigal_ne_m3 1/m3 600
   zustand gemessen
@@ -31162,6 +31039,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
+  api_cite https://amisr.com/amisr/
+  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14938
   field pfisr_isr_ne_m3 pfisr_isr_ne_m3 1/m3 600
   field pfisr_isr_ti_k pfisr_isr_ti_k K 600
@@ -31182,6 +31061,8 @@ host cedar.openmadrigal.org
   ttl no-sampling
   probe 2026-10-25T21:10:29Z 000 https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
   fields pfisr_isr_ne_m3 pfisr_isr_ti_k pfisr_isr_te_k
+  api_cite https://amisr.com/amisr/
+  api_quote "Processed and archival data from AMISR systems, as well as operations schedules and summary plots"
   applies https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research line=14950
   field NE openmadrigal_ne_m3 1/m3 600
   zustand gemessen

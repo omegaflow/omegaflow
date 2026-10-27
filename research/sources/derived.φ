@@ -1,0 +1,103 @@
+host ned.ipac.caltech.edu
+  zustand absent
+  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
+  api_quote "Detailed and referenced photometry, position, and redshift data, have been taken from large compilations and from the literature."
+  probe 2026-10-25T16:00:52Z 200 https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
+  applies https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
+  note Kein Instrument: NED ist eine Kompilation aus Literatur und Katalogen; kein Sensor, keine Rate.
+
+host ned.ipac.caltech.edu
+  zustand absent
+  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
+  api_quote "NED's data and references are being continually updated, with revised versions being put on-line every 2-3 months."
+  probe 2026-10-25T16:02:31Z 206 https://ned.ipac.caltech.edu/byparams
+  applies https://ned.ipac.caltech.edu/byparams
+  note Aggregat ohne Messreihe; Publikationsstand 2-3 Monate, kein Messintervall.
+
+host ned.ipac.caltech.edu
+  zustand absent
+  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
+  api_quote "NED also includes images for over 773,000 extragalactic objects from 2MASS, from the literature, and from the Digitized Sky Survey."
+  probe 2026-10-25T16:02:34Z 200 https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
+  applies https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
+  note Positionsabfrage auf ein Aggregat; kein Instrument, keine Rate.
+
+host ned.ipac.caltech.edu
+  zustand absent
+  api_cite https://science.nasa.gov/astrophysics/data/nasa-ipac-extragalactic-database-ned/
+  api_quote "NED is a master list of extragalactic objects for which cross-identifications of names have been established, accurate positions and redshifts entered to the extent possible,"
+  probe 2026-10-25T16:06:35Z 200 https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+NEDTAP.objdir
+  applies https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+NEDTAP.objdir
+  note HyperLeda-Radialgeschwindigkeit kommt aus derselben Kompilation; kein Messgeraet.
+
+host ssd-api.jpl.nasa.gov
+  zustand absent
+  api_cite https://ssd-api.jpl.nasa.gov/doc/sbdb.html
+  api_quote "The SBDB contains object identification and naming information, orbital data, and selected physical data for all known asteroids and comets within the solar system."
+  probe 2026-10-25T16:02:49Z 200 https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=433&phys-par=1
+  applies https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=433&phys-par=1
+  note Katalogwert aus Literatur und Bahnrechnung; H-Magnitude ist kein Instrumentenmesswert.
+
+host ssd-api.jpl.nasa.gov
+  zustand absent
+  api_cite https://ssd-api.jpl.nasa.gov/doc/sbdb.html
+  api_quote "The SBDB contains object identification and naming information, orbital data, and selected physical data for all known asteroids and comets within the solar system."
+  probe 2026-10-25T16:02:51Z 200 https://ssd-api.jpl.nasa.gov/sbdb_query.api
+  applies https://ssd-api.jpl.nasa.gov/sbdb_query.api
+  note Auch die KBO-H-Magnitude stammt aus dem Small-Body-Katalog; kein Sensor, keine Rate.
+
+host download.geofabrik.de
+  zustand absent
+  api_cite https://www.openstreetmap.org/about
+  api_quote "OpenStreetMap is built by a community of mappers that contribute and maintain data about roads, trails, cafés, railway stations, and much more, all over the"
+  probe 2026-10-25T16:00:40Z 206 https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+  applies https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+  note Kein Messwert: beigetragene Kartendaten (OSM-Extrakt), kein Sensor und keine Rate.
+
+host zeus.wdcb.ru
+  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+  api_quote "42-44 i 3 Depth in kilometers."
+
+host noise.discomap.eea.europa.eu
+  keine_messung "modellierter Laermindikator (City_Area_Noise), kein Messgeraet"
+  host_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
+  host_quote "\"currentVersion\": 11.5"
+  ttl 604800
+  probe 2026-10-25T18:41:28Z 200 https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
+  applies https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json line=11118
+  zustand absent
+  note Der Layer City_Area_Noise fuehrt Stadtflaechen mit Laermexpositionsfeldern (SNLD55, SNLD65, SNLD75, SNLN50, ...). Das sind modellierte Indikatoren aus Verkehrsdaten, kein Sensor; ein Geraet nennt der Dienst nicht. Die Werte sind je Flaeche, nicht je Zeitpunkt -> keine Messzeile.
+
+host wdcb.ru
+  instrument_quote "formula.exe <ключ> <параметр 1, параметр 2, параметр 3 ...>"
+  host_cite http://www.wdcb.ru/sep/
+  host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
+  ttl 0
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
+  api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
+  api_quote "Gravitational constant (cm*cm*cm/g*s*s)"
+  applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme id=26894
+  note Russische Readme zu formula.exe (G-Experimente); Messzeile = G, intervall 0.
+
+host wdcb.ru
+  instrument_quote "formula.exe <ключ> <параметр 1, параметр 2, параметр 3 ...>"
+  host_cite http://www.wdcb.ru/sep/
+  host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
+  ttl 0
+  probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
+  api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
+  api_quote "Gravitational constant (cm*cm*cm/g*s*s)"
+  applies https://github.com/omegaflow/sources/releases/download/web.archive.org/readme_en id=26902
+  note Englische Readme; G-Messreihe je Experiment, intervall 0.
+
+host noise.discomap.eea.europa.eu
+  instrument_cite https://publications.jrc.ec.europa.eu/repository/handle/JRC72550
+  instrument_quote "the European Commission developed Common NOise aSSessment methOdS (CNOSSOS-EU) for road, railway, aircraft and industrial noise"
+  host_cite https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76?f=json
+  host_quote "\"currentVersion\":11.5"
+  applies https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json line=10774
+  note Feld/Alias-Paar aus der Layer-Metadaten (NLD5559 = Lden 55-59 dB). Der Block trug `instrument none`; ein Sensor ist nicht belegt — die Karte ist eine strategische Laermmodellierung. Intervall 31536000 = Jahresstand der 2025er-Karte (ein Bestand, keine Reihe). Einheit dB ist aus dem Alias "Lden…" abgeleitet, nicht als unit-Feld der Quelle vorhanden — ausgewiesen.
+
+host zeus.wdcb.ru
+  api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
+  api_quote "42-44 i 3 Depth in kilometers."

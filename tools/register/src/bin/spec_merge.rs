@@ -1111,6 +1111,80 @@ fn apply_instruments_url(path: &str) {
     );
 }
 
+fn aussondern_reg(args: &[String]) {
+    use std::collections::BTreeSet;
+    let out_path = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("aussondern-reg: needs a target file");
+            return;
+        }
+    };
+    let list_path = match args.get(1) {
+        Some(p) => p.clone(),
+        None => {
+            println!("aussondern-reg: needs a list of block keys");
+            return;
+        }
+    };
+    let list = match fs::read_to_string(&list_path) {
+        Ok(t) => t,
+        Err(_) => {
+            println!("aussondern-reg: {list_path} not readable");
+            return;
+        }
+    };
+    let mut wanted: BTreeSet<usize> = BTreeSet::new();
+    for line in list.lines() {
+        let key = line.split('\t').next().unwrap_or("").trim();
+        if let Ok(n) = key.parse::<usize>() {
+            wanted.insert(n);
+        }
+    }
+    let text = fs::read_to_string(REG).expect("register");
+    let mut keep: Vec<String> = Vec::new();
+    let mut moved: Vec<String> = Vec::new();
+    let mut count = 0usize;
+    for (start, block) in blocks(&text) {
+        if !wanted.contains(&start) {
+            keep.extend(block);
+            keep.push(String::new());
+            continue;
+        }
+        let mut stripped: Vec<String> = Vec::new();
+        for l in block {
+            let head = l.split_whitespace().next().unwrap_or("");
+            if matches!(
+                head,
+                "field" | "fields" | "quantity" | "last" | "instrument" | "unit" | "sampling" | "interval"
+            ) {
+                continue;
+            }
+            if head == "at" || head == "on" || head == "query" {
+                continue;
+            }
+            stripped.push(l);
+        }
+        moved.extend(stripped);
+        moved.push(String::new());
+        count += 1;
+    }
+    write_out(REG, keep.join("\n") + "\n", "instruments");
+    let mut out = match fs::read_to_string(&out_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
+    };
+    if !out.is_empty() && !out.ends_with("\n\n") {
+        out.push('\n');
+    }
+    out.push_str(&moved.join("\n"));
+    if let Some(parent) = std::path::Path::new(&out_path).parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    write_out(&out_path, out, "derived");
+    println!("aussondern-reg: {count} Bloecke nach {out_path}");
+}
+
 fn aussondern(class: &str, out_path: &str, derived_list: Option<&str>) {
     use std::collections::BTreeSet;
     let text = fs::read_to_string(PHI).expect("phi");
@@ -4323,9 +4397,9 @@ fn load_digests() -> BTreeMap<String, Digest> {
     };
     let mut out: BTreeMap<String, Digest> = BTreeMap::new();
     for (_, b) in blocks(&text) {
-        let url = match b.first() {
-            Some(l) if l.starts_with("doc ") => l[4..].trim().to_string(),
-            _ => continue,
+        let url = match b.iter().find(|l| l.starts_with("doc ")) {
+            Some(l) => l[4..].trim().to_string(),
+            None => continue,
         };
         let mut claims: Vec<(String, Vec<String>, String)> = Vec::new();
         for line in b.iter().skip(1) {
@@ -4463,10 +4537,10 @@ fn check_blocks() {
         if d_api.is_none() || d_instr.is_none() {
             no_digest += 1;
             if d_api.is_none() {
-                println!("OHNE-AUSZUG\t{}\t{}\tdata\t{}\t{}", start + 1, host, api, or_empty(field(&b, "instrument")));
+                println!("OHNE-AUSZUG\t{}\t{}\tdata\t{}\t{}\t{}", start + 1, host, api, or_empty(field(&b, "instrument")), start);
             }
             if d_instr.is_none() {
-                println!("OHNE-AUSZUG\t{}\t{}\tinstrument\t{}\t{}", start + 1, host, instr, or_empty(field(&b, "instrument")));
+                println!("OHNE-AUSZUG\t{}\t{}\tinstrument\t{}\t{}\t{}", start + 1, host, instr, or_empty(field(&b, "instrument")), start);
             }
             continue;
         }
@@ -5529,6 +5603,7 @@ fn main() {
         Some("quote-short") => quote_short(&args[2..]),
         Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
         Some("quote-trim") => quote_trim(&args[2..]),
+        Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
         Some("clear-cite") if args.len() >= 3 => clear_cite(&args[2..]),
         Some("digest-fetch") if args.len() >= 3 => digest_fetch(&args[2]),
