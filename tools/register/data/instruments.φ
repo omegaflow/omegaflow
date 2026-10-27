@@ -27860,8 +27860,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_ref "WDC SEP Moscow, cat_Gute.html. Gutenberg-Richter earthquake catalogue — data format."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "WDC SEP Moscow, cat_Gute.html. Gutenberg-Richter earthquake catalogue — data format."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -27873,6 +27872,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
   api_ref "International Seismological Centre; Global Hypocenter Database, NEIC, USGS; WDC for Solid Earth Physics Moskau. Catalogue compiled on the data from the International Seismological Summaries (ISS), 1913-1963 (Katalogdatei cat001.dat)."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat id=27029
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument seismograph
@@ -27915,8 +27915,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/global_hypoc.html
-  instrument_ref "WDCB Moskau (МЦД по ФТЗ); Datenbank von NEIC/USGS, ueber WDC Denver. Global Hypocenters."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "WDCB Moskau (МЦД по ФТЗ); Datenbank von NEIC/USGS, ueber WDC Denver. Global Hypocenters."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -27928,6 +27927,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat003.gz
   api_ref "USGS NEIC und Vorgaenger (U.S. Coast and Geodetic Survey, National Ocean Survey, Environmental Research Laboratories); Spiegel am WDCB Moskau. PDE — Preliminary Determination of Epicenters, 1868 bis 1992."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat003.gz id=27046
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument seismograph
@@ -27998,8 +27998,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
-  instrument_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, University of Thessaloniki, Geophysical Laboratory, Publication No 5, 1978. Earthquakes of the Mediterranean and surrounding areas."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, University of Thessaloniki, Geophysical Laboratory, Publication No 5, 1978. Earthquakes of the Mediterranean and surrounding areas."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -28011,6 +28010,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
   api_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, Thessaloniki 1978; elektronische Form WDC for Solid Earth Physics. Earthquakes of the Mediterranean and surrounding areas (Katalogdatei cat006.dat)."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat id=27070
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument seismograph
@@ -34355,8 +34355,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_ref "WDC SEP Moscow, cat_Gute.html. Gutenberg-Richter earthquake catalogue — data format."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "WDC SEP Moscow, cat_Gute.html. Gutenberg-Richter earthquake catalogue — data format."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -34370,6 +34369,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
   api_ref "International Seismological Centre; Global Hypocenter Database, NEIC, USGS; WDC for Solid Earth Physics Moskau. Catalogue compiled on the data from the International Seismological Summaries (ISS), 1913-1963 (Katalogdatei cat001.dat)."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat line=27165
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument seismograph
@@ -34384,8 +34384,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
-  instrument_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, University of Thessaloniki, Geophysical Laboratory, Publication No 5, 1978. Earthquakes of the Mediterranean and surrounding areas."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, University of Thessaloniki, Geophysical Laboratory, Publication No 5, 1978. Earthquakes of the Mediterranean and surrounding areas."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -34399,6 +34398,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
   api_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, Thessaloniki 1978; elektronische Form WDC for Solid Earth Physics. Earthquakes of the Mediterranean and surrounding areas (Katalogdatei cat006.dat)."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat line=27215
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host zenodo.org
   instrument SDR receiver
@@ -36087,8 +36087,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
-  instrument_ref "WDC SEP Moscow, cat_Gute.html. Gutenberg-Richter earthquake catalogue — data format."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "WDC SEP Moscow, cat_Gute.html. Gutenberg-Richter earthquake catalogue — data format."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -36102,6 +36101,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
   api_ref "International Seismological Centre; Global Hypocenter Database, NEIC, USGS; WDC for Solid Earth Physics Moskau. Catalogue compiled on the data from the International Seismological Summaries (ISS), 1913-1963 (Katalogdatei cat001.dat)."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat line=27165
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
   instrument seismograph
@@ -36116,8 +36116,7 @@ host wdcb.ru
   instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host wdcb.ru
-  instrument_cite http://www.wdcb.ru/sep/seismology/cat_Mediterranean.html
-  instrument_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, University of Thessaloniki, Geophysical Laboratory, Publication No 5, 1978. Earthquakes of the Mediterranean and surrounding areas."
+  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/atlas_USSR.pdf  instrument_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, University of Thessaloniki, Geophysical Laboratory, Publication No 5, 1978. Earthquakes of the Mediterranean and surrounding areas."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
   host_quote "WDC for SEP ensures the collection of geophysical data, guaranteed long-term storage and distribution of data."
@@ -36131,6 +36130,7 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
   api_ref "Comninakis P.E., Papazachos B.C., A Catalogue of Earthquakes in the Mediterranean and the Surrounding Area for the Period 1901-1975, Thessaloniki 1978; elektronische Form WDC for Solid Earth Physics. Earthquakes of the Mediterranean and surrounding areas (Katalogdatei cat006.dat)."
   applies https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat line=27215
+  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
 
 host zenodo.org
   instrument SDR receiver
