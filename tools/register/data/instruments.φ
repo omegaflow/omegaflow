@@ -27301,6 +27301,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Pet12.dat id=26239
   note MGD77, Fahrt 12 Akademik Petrov; Protonen-Präzessions-Magnetometer (Kopf Pos. 7), 1-min-Rate.
   instrument precession magnetometer
+  instrument_quote "PRECESSION MAGN. IZMIRAN AC.SCI"
 
 host wdcb.ru
   instrument magnetometer
@@ -33118,6 +33119,7 @@ host web.archive.org
   fields mtf
   note Key `mtf` = Total Field, 1. Sensor (MGD77); der Wert steht in Zehntel-nT, Register-Token nT. Gerät im Kopf benannt (Präzessionsmagnetometer, IZMIRAN). Keine Rate dokumentiert (MGD77: instrumentation dependent), field-Intervall null; statischer Fahrtbestand.
   instrument precession magnetometer
+  instrument_quote "PRECESSION MAGN. IZMIRAN AC.SCI"
 
 host zenodo.org
   status messung
