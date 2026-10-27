@@ -6407,7 +6407,7 @@ fn class_table(args: &[String]) {
     }
     let mut rows: Vec<String> = Vec::new();
     rows.push(
-        "klasse\thost\tinstrument\tunit\tfields\tapi_cite\tinstrument_cite\tbait\tgesucht".to_string(),
+        "klasse\thost\tinstrument\tunit\tfields\tapi_cite\tinstrument_cite\tbait\tgesucht\tblock\tkatalog\tvarianten\tsuche\tbefehl".to_string(),
     );
     let mut n_fmt = 0usize;
     let mut n_one = 0usize;
@@ -6490,15 +6490,47 @@ fn class_table(args: &[String]) {
                 None => host.clone(),
             }
         };
+        let katalog = if instr.contains("/ftp/") {
+            match instr.split("/ftp/").nth(1) {
+                Some(s) => s.trim_end_matches("/ReadMe").to_string(),
+                None => String::new(),
+            }
+        } else {
+            String::new()
+        };
+        let varianten: Vec<&str> = device_aliases(&instrument);
+        let keyword = match titles.get(&instr) {
+            Some(t) => t.split_whitespace().take(6).collect::<Vec<_>>().join(" "),
+            None => String::new(),
+        };
+        let mut suche = String::new();
+        for w in [instrument.as_str(), katalog.as_str(), keyword.as_str(), "instrument paper"] {
+            if !w.is_empty() {
+                if !suche.is_empty() {
+                    suche.push_str(" | ");
+                }
+                suche.push_str(w);
+            }
+        }
         let gesucht = match klasse {
             "formatdokument" => "Geraeteschrift zur Anlage des Katalogs",
             "ein-dokument" => "zweites Dokument: Geraet oder Daten",
             _ => "Geraetename im Papier oder anderes Papier",
         };
+        let interval = or_empty(field(&b, "interval"));
+        let quantity = if keys.is_empty() {
+            instrument.clone()
+        } else {
+            keys[0].clone()
+        };
+        let befehl = format!(
+            "bin/spec --quantity \"{quantity}\" --unit \"{unit}\" --cadence \"{interval} s\" --instrument \"{instrument}\" --arms youmcp,searxng"
+        );
         rows.push(format!(
-            "{klasse}\t{host}\t{instrument}\t{unit}\t{}\t{api}\t{instr}\t{bait}\t{gesucht}\t{}",
+            "{klasse}\t{host}\t{instrument}\t{unit}\t{}\t{api}\t{instr}\t{bait}\t{gesucht}\t{}\t{katalog}\t{}\t{suche}\t{befehl}",
             keys.join(" "),
-            start
+            start,
+            varianten.join(" / ")
         ));
     }
     let _ = fs::write(&out_path, rows.join("\n") + "\n");
@@ -6933,6 +6965,32 @@ fn verbatim_window(doc_norm: &str, quote: &str, instr: &str) -> Option<String> {
     None
 }
 
+fn qwords(s: &str) -> usize {
+    s.split_whitespace()
+        .filter(|t| *t != "…" && *t != "...")
+        .count()
+}
+
+fn verbatim_in(doc_norm: &str, quote: &str) -> bool {
+    let parts: Vec<String> = quote
+        .split('…')
+        .flat_map(|p| p.split("..."))
+        .map(|p| norm(p))
+        .filter(|p| !p.is_empty())
+        .collect();
+    if parts.is_empty() {
+        return false;
+    }
+    let mut pos = 0usize;
+    for p in parts {
+        match doc_norm[pos..].find(&p) {
+            Some(i) => pos += i + p.len(),
+            None => return false,
+        }
+    }
+    true
+}
+
 fn claim_verify(args: &[String]) {
     let dir = match args.first() {
         Some(d) => d.clone(),
@@ -7072,10 +7130,10 @@ fn claim_verify(args: &[String]) {
                 if let Some(dn) = &doc_norm {
                     for q in &quotes {
                         let qn = norm(q);
-                        if words(q) <= 25
+                        if qwords(q) <= 25
                             && !qn.is_empty()
                             && !junk_sentence(q)
-                            && dn.contains(&qn)
+                            && verbatim_in(dn, q)
                             && names_device(&qn, &instr)
                         {
                             chosen = Some((q.clone(), "zitat"));
@@ -7113,7 +7171,7 @@ fn claim_verify(args: &[String]) {
                         ok += 1;
                         rows.push(format!(
                             "{f}\t{section}\t{url}\t{instr}\t{start}\tok\t{how}\t{}\t{q}",
-                            words(&q)
+                            qwords(&q)
                         ));
                         if let Some(sp) = &spec {
                             let clean = q.replace('\t', " ").replace('"', "'");
@@ -7128,10 +7186,10 @@ fn claim_verify(args: &[String]) {
                         } else if quotes.is_empty() {
                             no_lit += 1;
                             ("kein_zitat", "kein_zitat")
-                        } else if quotes.iter().any(|q| dn.contains(&norm(q))) {
+                        } else if quotes.iter().any(|q| verbatim_in(dn, q)) {
                             no_lit += 1;
                             ("kein_zitat", "kein_zitat")
-                        } else if quotes.iter().any(|q| dn.contains(&norm(q))) {
+                        } else if quotes.iter().any(|q| verbatim_in(dn, q)) {
                             no_dev += 1;
                             ("ohne_geraet", "ohne_geraet")
                         } else {
