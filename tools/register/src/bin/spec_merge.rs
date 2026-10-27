@@ -6354,6 +6354,28 @@ fn phi_replace(args: &[String]) {
     println!("phi-replace: {n} Zeilen in Bloecken mit {m}");
 }
 
+fn phi_split_blocks() {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut seen_url = false;
+    let mut splits = 0usize;
+    for line in text.lines() {
+        if line.starts_with("url ") && seen_url {
+            out.push(String::new());
+            splits += 1;
+            seen_url = false;
+        }
+        if line.is_empty() {
+            seen_url = false;
+        } else if line.starts_with("url ") {
+            seen_url = true;
+        }
+        out.push(line.to_string());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("phi-split-blocks: {splits} Bloecke getrennt");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -6878,6 +6900,7 @@ fn main() {
         Some("quote-repair") => quote_repair(&args[2..]),
         Some("quote-retarget") => quote_retarget(&args[2..]),
         Some("phi-replace") if args.len() >= 5 => phi_replace(&args[2..]),
+        Some("phi-split-blocks") => phi_split_blocks(),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
