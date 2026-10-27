@@ -17978,10 +17978,11 @@ doc https://zenodo.org/api/records/21185812
   claim column emersion value Austrittswert null ""emersion value""
   claim frame none ""
 
-doc https://amisr.com/amisr/
+doc https://data.amisr.com/madrigal/
   kind data
-  claim zugang verarbeitete und archivierte AMISR-Daten ueber Madrigal und SRI ""Processed and archival data from AMISR systems, as well as operations schedules and summary plots""
-  claim verweis Menuepunkt "Access AMISR Data" ""Access AMISR Data""
+  claim zweck Madrigal verwaltet archivierte und Echtzeitdaten oberer Atmosphaere in mehreren Formaten ""Madrigal is a robust, World Wide Web based system capable of managing and serving archival and real-time data, in a variety of formats, from a wide range of upper atmospheric science instruments""
+  claim zugang Menue: List experiments, Select single experiment, Download mehrerer Experimente ""List experiments"
+  claim metadaten gemeinsame Metadaten erlauben die Suche ueber alle Madrigal-Standorte ""Data at each Madrigal site is locally controlled and can be updated at any time, but shared metadata between Madrigal sites allow searching of all Madrigal sites at once from any Madrigal site""
   claim frame geographic ""
 
 doc https://data.earthscope.org/archive/seismology/products/emc/netcdf/
