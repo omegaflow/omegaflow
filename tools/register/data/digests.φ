@@ -8974,6 +8974,8 @@ doc https://www.jma.go.jp/jma/en/Activities/earthquake.html
   claim tsunami Warnung in zwei bis drei Minuten ""JMA issues a Tsunami_Warning/Advisory for each region within around two to three minutes of the quake.""
   claim betrieb EPOS in Tokio und Osaka, Echtzeit ""Earthquake Phenomena Observation System (EPOS) at the headquarters in""
   claim frame geographic ""
+  claim device seismograph ""To monitor earthquakes, JMA operates an earthquake observation network comprised of about 200 seismographs and 600 seismic intensity meters.""
+  claim device seismograph (JMA network) ""To monitor earthquakes, JMA operates an earthquake observation network comprised of about 200 seismographs and 600 seismic intensity meters.""
 
 doc https://www.jmmc.fr/
   title We interfere constructively - English
@@ -24123,6 +24125,15 @@ doc https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/NumObs.txt.gz
   claim column mpc_obs_ra_deg deg null "null"
   claim column mpc_obs_dec_deg deg null "null"
   claim frame J2000 ""
+
+doc https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  title What is the Deep Space Network? — NASA
+  source NASA, Space Communications and Navigation Program (SCaN)
+  kind instrument
+  claim netz das Deep Space Network ist die Antennenkette zu Missionen jenseits der Erde ""The antennas of the Deep Space Network are the indispensable link to explorers venturing beyond Earth.""
+  claim station jede DSN-Station fuehrt eine 70-m-Antenne ""Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna.""
+  claim frame ICRS ""
+  claim device DSN ""The antennas of the Deep Space Network are the indispensable link to explorers venturing beyond Earth.""
 
 doc https://www.ngdc.noaa.gov/hazard/earthqk.shtml
   title The Significant Earthquake Database — NCEI

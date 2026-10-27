@@ -14634,7 +14634,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/13309040/files/00readme.txt/content
   api_ref "NASA Space Physics Data Facility; Zenodo-Record 13309040, doi 10.5281/zenodo.13309040; Jahr nicht genannt. Pioneer 11 Doppler tracking data."
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   block 32764
@@ -14652,7 +14652,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/13309156/files/00readme.txt/content
   api_ref "NASA Space Physics Data Facility; Zenodo-Record 13309156, doi 10.5281/zenodo.13309156; Jahr nicht genannt. Pioneer 10 Doppler tracking data."
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   block 32757
@@ -19819,7 +19819,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/13309040/files/00readme.txt/content
   api_ref "NASA Space Physics Data Facility; Zenodo-Record 13309040, doi 10.5281/zenodo.13309040; Jahr nicht genannt. Pioneer 11 Doppler tracking data."
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://zenodo.org/api/records/13309040
@@ -19840,7 +19840,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/13309156/files/00readme.txt/content
   api_ref "NASA Space Physics Data Facility; Zenodo-Record 13309156, doi 10.5281/zenodo.13309156; Jahr nicht genannt. Pioneer 10 Doppler tracking data."
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://zenodo.org/api/records/13309156
@@ -26854,7 +26854,7 @@ host spdf.gsfc.nasa.gov
   api_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
   api_ref "NASA GSFC Space Physics Data Facility (SPDF), Verzeichnisliste. Index of /pub/data/mariner/mariner4/celestial_mechanics."
   api_quote "PSCM-00021_DD001528_05-DEC-64.tar"
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
@@ -26876,7 +26876,7 @@ host spdf.gsfc.nasa.gov
   api_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   api_ref "NASA/NSSDC, Goddard Space Flight Center (SPDF); Paket PSCM-00017, Daten 1969, Paketierung 2010. Mariner 6 — two-way Doppler radio tracking / celestial mechanics (PSCM-00017)."
   api_quote "PSCM-00017_DD005408_05-MAR-69.tar"
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
@@ -27559,9 +27559,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_ref "WDC for Solid Earth Physics, Moscow (GC RAS); Daten aus ISS/NEIC USGS, o. J. Hypocenter Data in the International Seismological Summaries — Formatbeschreibung und Kataloghinweis."
   api_quote "42-44 i 3 Depth in kilometers."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_cite https://www.isc.ac.uk/about/history
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
+  instrument_quote "The need for international exchange of readings was soon recognised by Professor John Milne, whose work resulted in the International Seismological Summary"
 
 host wdcb.ru
   api_quote "42-44 i 3 Depth in kilometers."
@@ -27615,9 +27615,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
   api_ref "Alsan E., Tezucan L., Bath M., 1975. Earthquake in Turkey (Katalog 1913-1970)."
   api_quote "61-63 i 3 Depth in kilometers."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_cite http://www.koeri.boun.edu.tr/new/en/history
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
+  instrument_quote "Two seismographs were purchased at 3,200 Franks each"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -28004,9 +28004,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_ref "WDC for Solid Earth Physics, Moscow (GC RAS); Daten aus ISS/NEIC USGS, o. J. Hypocenter Data in the International Seismological Summaries — Formatbeschreibung und Kataloghinweis."
   api_quote "42-44 i 3 Depth in kilometers."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_cite https://www.isc.ac.uk/about/history
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
+  instrument_quote "The need for international exchange of readings was soon recognised by Professor John Milne, whose work resulted in the International Seismological Summary"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -28087,9 +28087,9 @@ host wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_Turkey.html
   api_ref "Alsan E., Tezucan L., Bath M., 1975. Earthquake in Turkey (Katalog 1913-1970)."
   api_quote "61-63 i 3 Depth in kilometers."
-  instrument_cite http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
+  instrument_cite http://www.koeri.boun.edu.tr/new/en/history
   instrument_ref "WDC SEP Moscow, Atlas/stations.pdf (Scan, 3 Seiten; OCR mit tesseract -l rus). Сведения о сейсмических станциях СССР — Основные сведения об аппаратуре."
-  instrument_quote "Для сейсмических станций в течение всего периода их деятельности, начиная с 1902 года, устанавливались следующие основные типы сейсмографов."
+  instrument_quote "Two seismographs were purchased at 3,200 Franks each"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_Gute.html
@@ -29733,7 +29733,7 @@ host spdf.gsfc.nasa.gov
   api_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
   api_ref "NASA GSFC Space Physics Data Facility (SPDF), Verzeichnisliste. Index of /pub/data/mariner/mariner4/celestial_mechanics."
   api_quote "PSCM-00021_DD001528_05-DEC-64.tar"
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
@@ -34008,7 +34008,7 @@ host spdf.gsfc.nasa.gov
   api_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   api_ref "NASA/NSSDC, Goddard Space Flight Center (SPDF); Paket PSCM-00017, Daten 1969, Paketierung 2010. Mariner 6 — two-way Doppler radio tracking / celestial mechanics (PSCM-00017)."
   api_quote "PSCM-00017_DD005408_05-MAR-69.tar"
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
@@ -34903,7 +34903,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/13309156/files/00readme.txt/content
   api_ref "NASA Space Physics Data Facility; Zenodo-Record 13309156, doi 10.5281/zenodo.13309156; Jahr nicht genannt. Pioneer 10 Doppler tracking data."
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://zenodo.org/api/records/13309156
@@ -35731,7 +35731,7 @@ host spdf.gsfc.nasa.gov
   api_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   api_ref "NASA/NSSDC, Goddard Space Flight Center (SPDF); Paket PSCM-00017, Daten 1969, Paketierung 2010. Mariner 6 — two-way Doppler radio tracking / celestial mechanics (PSCM-00017)."
   api_quote "PSCM-00017_DD005408_05-MAR-69.tar"
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
@@ -36626,7 +36626,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/13309156/files/00readme.txt/content
   api_ref "NASA Space Physics Data Facility; Zenodo-Record 13309156, doi 10.5281/zenodo.13309156; Jahr nicht genannt. Pioneer 10 Doppler tracking data."
   api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
-  instrument_cite https://science.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
+  instrument_cite https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/
   instrument_ref "NASA Science, space communications and navigation programme. What is the Deep Space Network? (NASA, science.nasa.gov)."
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://zenodo.org/api/records/13309156

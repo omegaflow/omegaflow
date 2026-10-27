@@ -6737,11 +6737,18 @@ fn norm(s: &str) -> String {
         .iter()
         .map(|t| {
             t.chars()
-                .filter(|c| c.is_alphanumeric())
-                .flat_map(|c| c.to_lowercase())
+                .map(|c| {
+                    if c.is_alphanumeric() {
+                        c.to_ascii_lowercase()
+                    } else {
+                        ' '
+                    }
+                })
                 .collect::<String>()
         })
-        .filter(|t| !t.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+        .split_whitespace()
         .collect::<Vec<_>>()
         .join(" ")
 }
