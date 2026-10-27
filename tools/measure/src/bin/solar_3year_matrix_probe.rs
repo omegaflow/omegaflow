@@ -74,6 +74,18 @@ fn load_bin(kind: &str, url: &str, path: Option<String>) -> Option<Vec<u8>> {
     }
 }
 
+fn parsed_or_absent<T>(kind: &str, bytes: &[u8], parse: fn(&[u8]) -> Option<Vec<T>>) -> Vec<T> {
+    match parse(bytes) {
+        Some(records) => records,
+        None => {
+            eprintln!(
+                "{kind}: the binary is present but parses to no records — the series stays empty"
+            );
+            Vec::new()
+        }
+    }
+}
+
 fn bin_mean(series: &[(f64, f64)], t0: f64, n: usize, cell: f64) -> Vec<Option<f32>> {
     let mut sums = vec![0.0f64; n];
     let mut counts = vec![0u32; n];
@@ -260,38 +272,23 @@ fn main() {
     };
 
     let goes_records = match &goes_bytes {
-        Some(b) => match goes::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("goes", b, goes::parse_bin),
         None => Vec::new(),
     };
     let f107_records = match &f107_bytes {
-        Some(b) => match f107::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("f107", b, f107::parse_bin),
         None => Vec::new(),
     };
     let omni2_records = match &omni2_bytes {
-        Some(b) => match omni2::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("omni2", b, omni2::parse_bin),
         None => Vec::new(),
     };
     let omni2_1h_records = match &omni2_1h_bytes {
-        Some(b) => match omni2::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("omni2-1h", b, omni2::parse_bin),
         None => Vec::new(),
     };
     let euvs_records = match &euvs_bytes {
-        Some(b) => match euvs::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("euvs", b, euvs::parse_bin),
         None => Vec::new(),
     };
 
@@ -360,7 +357,7 @@ fn main() {
     let mut aia_all: Vec<(f64, f64, u32)> = Vec::new();
     let single_year: Option<u32> = arg_value(&args, "--year")
         .and_then(|y| y.parse::<u32>().ok())
-        .filter(|y| matches!(y, 2013 | 2014 | 2015));
+        .filter(|y| matches!(y, 2013..=2015));
     match single_year {
         Some(year) => aia_all.extend(load_aia(year)),
         None => {
@@ -442,7 +439,11 @@ fn main() {
                 }
             }
             if let Some(te) = transfer_entropy_lag(&xs, &ys, lag) {
-                if best.map_or(true, |(_, b)| te > b) {
+                let improves = match best {
+                    Some((_, b)) => te > b,
+                    None => true,
+                };
+                if improves {
                     best = Some((lag, te));
                     best_thr = mean_plus_2sigma(&surr);
                 }
@@ -484,7 +485,12 @@ fn main() {
             .into_iter()
             .flat_map(|h| match h.join() {
                 Ok(v) => v,
-                Err(_) => Vec::new(),
+                Err(_) => {
+                    eprintln!(
+                        "surrogate worker: the thread did not finish — its cells stay absent from the matrix"
+                    );
+                    Vec::new()
+                }
             })
             .collect()
     });

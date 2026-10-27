@@ -65,6 +65,18 @@ fn load_bin(kind: &str, url: &str, path: Option<String>) -> Option<Vec<u8>> {
     }
 }
 
+fn parsed_or_absent<T>(kind: &str, bytes: &[u8], parse: fn(&[u8]) -> Option<Vec<T>>) -> Vec<T> {
+    match parse(bytes) {
+        Some(records) => records,
+        None => {
+            eprintln!(
+                "{kind}: the binary is present but parses to no records — the series stays empty"
+            );
+            Vec::new()
+        }
+    }
+}
+
 fn bin_mean(series: &[(f64, f64)], t0: f64, n: usize, cell: f64) -> Vec<Option<f32>> {
     let mut sums = vec![0.0f64; n];
     let mut counts = vec![0u32; n];
@@ -99,7 +111,11 @@ fn fold_max_into(best: &mut [Option<f32>], series: &[(f64, f64)], t0: f64, cell:
         }
         let i = idx as usize;
         let vf = v as f32;
-        if best[i].map_or(true, |b| vf > b) {
+        let improves = match best[i] {
+            Some(b) => vf > b,
+            None => true,
+        };
+        if improves {
             best[i] = Some(vf);
         }
     }
@@ -250,10 +266,10 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, refractory: usize) -> Vec<us
                 if v < threshold && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = trig[peak] {
-                    if v > pv {
-                        peak = j;
-                    }
+                if let Some(pv) = trig[peak]
+                    && v > pv
+                {
+                    peak = j;
                 }
             }
             j += 1;
@@ -403,14 +419,16 @@ fn row_for(
             }
         }
         let thr = mean_plus_2sigma(&surr_vals);
-        if d.is_finite() {
-            if best.map_or(true, |(_, b)| d > b) {
-                best = Some((lag, d));
-                best_thr = thr;
-                best_pos = pos;
-                best_tot = tot;
-                best_cells = cell_sum / tot as f64;
-            }
+        let improves = match best {
+            Some((_, b)) => d > b,
+            None => true,
+        };
+        if d.is_finite() && improves {
+            best = Some((lag, d));
+            best_thr = thr;
+            best_pos = pos;
+            best_tot = tot;
+            best_cells = cell_sum / tot as f64;
         }
     }
     match best {
@@ -499,8 +517,8 @@ fn main() {
         "Direction 'A -> B' reads 'A drives B': per-event D = (TE(A->B) - TE(B->A)) / (|TE(A->B)| + |TE(B->A)|); the pair stacks the mean of per-event D over events; pos counts events with D > 0."
     );
     println!(
-        "Verdicts: ARROW (stacked D > fam) | family bound (stacked D > own mean+2sigma over {} surrogates, <= fam) | still | no-statement ({} < {} events, the MIN_N event gate).",
-        N_SURR, "events", min_events
+        "Verdicts: ARROW (stacked D > fam) | family bound (stacked D > own mean+2sigma over {} surrogates, <= fam) | still | no-statement (events < {} events, the MIN_N event gate).",
+        N_SURR, min_events
     );
     println!(
         "fam = strongest surrogate stacked D over all directed pairs x {} lags x {} surrogates; cross-block fam over pairs whose actors differ in kind (excludes XRSA<->XRSB and intra-AIA).",
@@ -521,17 +539,11 @@ fn main() {
     };
 
     let goes_records = match &goes_bytes {
-        Some(b) => match goes::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("goes_xrs", b, goes::parse_bin),
         None => Vec::new(),
     };
     let omni_records = match &omni2_1h_bytes {
-        Some(b) => match omni2::parse_bin(b) {
-            Some(r) => r,
-            None => Vec::new(),
-        },
+        Some(b) => parsed_or_absent("omni2-1h", b, omni2::parse_bin),
         None => Vec::new(),
     };
 
@@ -543,7 +555,7 @@ fn main() {
             .iter()
             .filter(|(_, _, c)| *c == COMP_XRSA)
             .filter_map(|&(t, v, _)| lsk.tdb_to_unix(t).map(|u| (u, v)))
-            .filter(|&(t, _)| t >= WINDOW_LO && t < WINDOW_HI)
+            .filter(|&(t, _)| (WINDOW_LO..WINDOW_HI).contains(&t))
             .collect(),
     });
     actors.push(Actor {
@@ -553,7 +565,7 @@ fn main() {
             .iter()
             .filter(|(_, _, c)| *c == COMP_XRSB)
             .filter_map(|&(t, v, _)| lsk.tdb_to_unix(t).map(|u| (u, v)))
-            .filter(|&(t, _)| t >= WINDOW_LO && t < WINDOW_HI)
+            .filter(|&(t, _)| (WINDOW_LO..WINDOW_HI).contains(&t))
             .collect(),
     });
     for (name, comp) in [("Bz", COMP_BZ), ("Density", COMP_N1800)] {
@@ -564,7 +576,7 @@ fn main() {
                 .iter()
                 .filter(|(_, _, c)| *c == comp)
                 .map(|&(t, v, _)| (t, v))
-                .filter(|&(t, _)| t >= WINDOW_LO && t < WINDOW_HI)
+                .filter(|&(t, _)| (WINDOW_LO..WINDOW_HI).contains(&t))
                 .collect(),
         });
     }
@@ -580,7 +592,7 @@ fn main() {
                 .iter()
                 .filter(|(_, _, i)| *i == bidx)
                 .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET - TT_UNIX, v))
-                .filter(|&(t, _)| t >= WINDOW_LO && t < WINDOW_HI)
+                .filter(|&(t, _)| (WINDOW_LO..WINDOW_HI).contains(&t))
                 .collect(),
         });
     }
@@ -671,9 +683,12 @@ fn main() {
             .collect();
         let mut out = Vec::new();
         for h in handles {
-            match h.join() {
-                Ok(v) => out.extend(v),
-                Err(_) => {}
+            if let Ok(v) = h.join() {
+                out.extend(v);
+            } else {
+                eprintln!(
+                    "surrogate worker: the thread did not finish — its cells stay absent from the stack"
+                );
             }
         }
         out
