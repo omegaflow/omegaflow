@@ -21635,7 +21635,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "A modern-day example of a fully_robotic transit_telescope is the small 0.20-meter (8-inch) Flagstaff Astrometric Scanning Transit Telescope (FASTT) completed in 1981 and located at the"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_ccd1_nofs_dec_deg deg 0.0
   probe 2026-10-25T15:58:05Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
@@ -21656,7 +21656,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_ccd_bord_dec_deg deg 0.0
   probe 2026-10-25T16:05:04Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_bord.txt
@@ -21677,7 +21677,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The then-unnamed Otto Struve Telescope was dedicated on May 5, 1939, and at that time it was the second largest telescope in the world."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_ccd_mcd_dec_deg deg 0.0
   probe 2026-10-25T16:05:07Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
@@ -21698,7 +21698,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "A 0.6 m Ritchey-Chrétien reflector built by Astro Mechanics was installed in 1966. It is attached to an off-axis German_equatorial_mount."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_ccd_tmo_dec_deg deg 0.0
   probe 2026-10-25T16:05:09Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
@@ -21719,7 +21719,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_trnstsbordx_dec_deg deg 0.0
   probe 2026-10-25T16:05:11Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
@@ -21740,7 +21740,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_trnstswash6a_dec_deg deg 0.0
   probe 2026-10-25T16:05:12Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstswash6a.txt
@@ -21761,7 +21761,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_trnstswash6b_dec_deg deg 0.0
   probe 2026-10-25T16:05:14Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstswash6b.txt
@@ -21782,7 +21782,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The Six-inch Transit Circle would become the true workhorse of fundamental astrometry at the USNO in the 20th century, operating from 1899-1999 in the west"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_trnstswash6c_dec_deg deg 0.0
   probe 2026-10-25T16:05:16Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstswash6c.txt
@@ -21803,7 +21803,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "In 1944 the USNO retired its 80-year-old Nine-inch Transit Circle, and Watts began work on his crowning achievement"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_trnstswash9_dec_deg deg 0.0
   probe 2026-10-25T16:05:18Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
@@ -21824,7 +21824,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Several instruments, derived from Danjon astrolabe, have been dedicated to solar diameter measurements such as DORaySol experiment (Morand et al. 2010)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field RA0 ssd_astljupiter_ra0_s s 0.0
   probe 2026-10-25T15:58:07Z 206 https://ssd.jpl.nasa.gov/dat/planets/astljupiter.txt
@@ -21845,7 +21845,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Several instruments, derived from Danjon astrolabe, have been dedicated to solar diameter measurements such as DORaySol experiment (Morand et al. 2010)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field RA0 ssd_astlmars_ra0_s s 0.0
   probe 2026-10-25T16:05:20Z 206 https://ssd.jpl.nasa.gov/dat/planets/astlmars.txt
@@ -21866,7 +21866,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Several instruments, derived from Danjon astrolabe, have been dedicated to solar diameter measurements such as DORaySol experiment (Morand et al. 2010)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field RA0 ssd_astlsaturn_ra0_s s 0.0
   probe 2026-10-25T16:05:22Z 206 https://ssd.jpl.nasa.gov/dat/planets/astlsaturn.txt
@@ -21887,7 +21887,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Several instruments, derived from Danjon astrolabe, have been dedicated to solar diameter measurements such as DORaySol experiment (Morand et al. 2010)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field RA0 ssd_astluranus_ra0_s s 0.0
   probe 2026-10-25T16:05:25Z 206 https://ssd.jpl.nasa.gov/dat/planets/astluranus.txt
@@ -21908,7 +21908,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The VLBA radio telescopes are located at: Hancock North Liberty Fort Davis"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field Declination ssd_vlbaobs_cassini_dec_arcsec arcsec 0.0
   probe 2026-10-25T16:05:26Z 206 https://ssd.jpl.nasa.gov/dat/planets/vlbaobs.txt
@@ -23107,7 +23107,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The Gravity Science (GRAV) investigation was designed to use the X and Ka-band transponders on-board the Juno spacecraft and Doppler tracking equipment at the Deep"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field rtlt juno_round_trip_light_time_s s 0.0
   probe 2026-10-25T18:33:51Z 206 https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
@@ -23128,7 +23128,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "It was based on analysis of Doppler shifts in the spacecraft's radio signals and measuring range and range rate to track Mariner 9's precise motion."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field range mariner9_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:33:54Z 206 https://ssd.jpl.nasa.gov/dat/planets/mariner9obs.txt
@@ -23149,7 +23149,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The Radio Science (RS) experiment on MESSENGER is designed to make use of the existing radio communications equipment on the spacecraft to study Mercury's gravitational"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field range messenger_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:33:56Z 206 https://ssd.jpl.nasa.gov/dat/planets/messenger.txt
@@ -23170,7 +23170,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Upon completing cycle 3, Magellan ceased imaging the surface."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field r-dot magellan_radial_velocity_km_s km/s 0.0
   probe 2026-10-25T18:33:58Z 206 https://ssd.jpl.nasa.gov/dat/planets/mgndoppler.txt
@@ -23191,7 +23191,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The radio science instrument consists of an ultrastable oscillator and the normal Mars Global Surveyor transmitter and reciever."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field range mgs_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:33:59Z 206 https://ssd.jpl.nasa.gov/dat/planets/mgsrange1999-2006.txt
@@ -23212,7 +23212,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Speed changes are detected by measuring doppler shifts in MRO's radio signals received on Earth."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field range mro_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:34:01Z 206 https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
@@ -23233,7 +23233,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The spacecraft radio system was constructed around a redundant pair of X-band Small Deep Space Transponders (SDSTs)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field range ody_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:34:03Z 206 https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt
@@ -23254,7 +23254,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Mars Pathfinder uses a 12 Watt RF output X-band SSPA (Solid State Power Amplifier) transmitter to downlink data back to Earth."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field tau pathfinder_differenced_range_km_s km/s 60.0
   probe 2026-10-25T18:34:04Z 206 https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
@@ -23275,7 +23275,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Mars Pathfinder uses a 12 Watt RF output X-band SSPA (Solid State Power Amplifier) transmitter to downlink data back to Earth."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field range pathfinder_round_trip_light_time_us us 0.0
   probe 2026-10-25T18:34:06Z 206 https://ssd.jpl.nasa.gov/dat/planets/pathrange.txt
@@ -23296,7 +23296,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The then-unnamed Otto Struve Telescope was dedicated on May 5, 1939, and at that time was the second largest telescope in the world."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_ccd_mcd_dec_deg deg 0.0
   probe 2026-10-25T18:34:07Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
@@ -23317,7 +23317,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "A 0.6 m Ritchey-Chrétien reflector built by Astro Mechanics was installed in 1966. It is attached to an off-axis German equatorial mount."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. ssd_ccd_tmo_dec_deg deg 0.0
   probe 2026-10-25T18:34:09Z 206 https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
@@ -23338,7 +23338,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "In the pavilions, the Repsold meridian circle (MCR), Repsold vertical circle (VCR), and the Carl Zeiss Jena zone astrograph (ZA) can be found, well preserved"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. nikolaev_dec_deg deg 0.0
   probe 2026-10-25T18:34:14Z 206 https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
@@ -23359,7 +23359,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Between 1983 and 1988, the automatic meridian circle of Bordeaux Observatory was used in support of the Hipparcos space observatory."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. bordeaux_meridian_dec_deg deg 0.0
   probe 2026-10-25T18:34:15Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
@@ -23380,7 +23380,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The main instrument to be housed was the Cooke Reversible Transit Circle."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. herstmonceux_transit_dec_deg deg 0.0
   probe 2026-10-25T18:34:17Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt
@@ -23401,7 +23401,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "The Carlsberg Meridian Telescope (formerly the Carlsberg Automatic Meridian Circle) is a decommissioned meridian circle telescope located at the Roque de los Muchachos Observatory in"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. lapalma_meridian_dec_deg deg 0.0
   probe 2026-10-25T18:34:18Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
@@ -23422,7 +23422,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "In 1944 the USNO retired its 80-year-old Nine-inch Transit Circle, and Watts began work on his crowning achievement"
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   field dec. usno_nine_inch_dec_deg deg 0.0
   probe 2026-10-25T18:34:20Z 206 https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
@@ -26859,7 +26859,7 @@ host spdf.gsfc.nasa.gov
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
   host_ref "NASA GSFC Space Physics Data Facility (SPDF), Verzeichnisliste. Index of /pub/data/mariner/mariner4/celestial_mechanics."
-  host_quote "2010-05-31 12:41"
+  host_quote "Index of /pub/data/mariner/mariner4/celestial_mechanics Index of /pub/data/mariner/mariner4/celestial_mechanics Name Last modified Size Parent Directory &nbsp; PSCM-00021_DD001528_05-DEC-64.tar 2010-05-31 12:41 380K PSCM-00021_DD001529_28-NOV-64.tar 2010-05-31 12:45 40K attrib/ 2010-05-31 12:45 -"
   ttl 604800
   probe 2026-10-25T18:41:28Z 206 https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/
   fields mariner4_odg_dtype_08
@@ -26881,7 +26881,7 @@ host spdf.gsfc.nasa.gov
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   host_ref "NASA/NSSDC, Goddard Space Flight Center (SPDF); Paket PSCM-00017, Daten 1969, Paketierung 2010. Mariner 6 — two-way Doppler radio tracking / celestial mechanics (PSCM-00017)."
-  host_quote "2010-05-31 12:45"
+  host_quote "Index of /pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking Index of /pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking Name Last modified Size Parent Directory &nbsp; PSCM-00017_DD005407_05-MAR-69.tar 2010-05-31 12:45 1.0M PSCM-00017_DD005408_05-MAR-69.tar 2010-05-31 12:45 1.9M attrib/ 2010-05-31 12:45 -"
   ttl 604800
   probe 2026-10-25T18:41:28Z 206 https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   fields mariner_rst_dtype_08
@@ -28169,7 +28169,7 @@ host census.gov
   interval 0
   api_cite https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html
   api_ref "U.S. Census Bureau, 2026 (Seite überarbeitet 4. September 2026). Gazetteer Files."
-  api_quote "Gazetteer Files ... 2020 Gazetteer Files"
+  api_quote "Gazetteer Files provide a listing of all geographic areas for selected geographic area types."
   instrument_cite https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/
   instrument_ref "U.S. Census Bureau, 2020 (Dateien vom 22. Januar 2021). Index of /geo/docs/maps-data/data/gazetteer/2020_Gazetteer."
   instrument_quote "2020_Gaz_zcta_national.zip"
@@ -34103,7 +34103,7 @@ host spdf.gsfc.nasa.gov
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   host_ref "NASA/NSSDC, Goddard Space Flight Center (SPDF); Paket PSCM-00017, Daten 1969, Paketierung 2010. Mariner 6 — two-way Doppler radio tracking / celestial mechanics (PSCM-00017)."
-  host_quote "2010-05-31 12:45"
+  host_quote "Index of /pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking Index of /pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking Name Last modified Size Parent Directory &nbsp; PSCM-00017_DD005407_05-MAR-69.tar 2010-05-31 12:45 1.0M PSCM-00017_DD005408_05-MAR-69.tar 2010-05-31 12:45 1.9M attrib/ 2010-05-31 12:45 -"
   ttl 604800
   probe 2026-10-25T18:41:28Z 206 https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   applies https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_rst.bin line=23864
@@ -34125,7 +34125,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Several instruments, derived from Danjon astrolabe, have been dedicated to solar diameter measurements such as DORaySol experiment (Morand et al. 2010)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   probe 2026-10-25T15:58:07Z 206 https://ssd.jpl.nasa.gov/dat/planets/astljupiter.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astljupiter.txt line=23904
@@ -35826,7 +35826,7 @@ host spdf.gsfc.nasa.gov
   instrument_quote "Each Deep Space Network site has one huge, 230-foot (70-meter) diameter antenna."
   host_cite https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   host_ref "NASA/NSSDC, Goddard Space Flight Center (SPDF); Paket PSCM-00017, Daten 1969, Paketierung 2010. Mariner 6 — two-way Doppler radio tracking / celestial mechanics (PSCM-00017)."
-  host_quote "2010-05-31 12:45"
+  host_quote "Index of /pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking Index of /pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking Name Last modified Size Parent Directory &nbsp; PSCM-00017_DD005407_05-MAR-69.tar 2010-05-31 12:45 1.0M PSCM-00017_DD005408_05-MAR-69.tar 2010-05-31 12:45 1.9M attrib/ 2010-05-31 12:45 -"
   ttl 604800
   probe 2026-10-25T18:41:28Z 206 https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/
   applies https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_rst.bin line=23864
@@ -35848,7 +35848,7 @@ host ssd.jpl.nasa.gov
   instrument_quote "Several instruments, derived from Danjon astrolabe, have been dedicated to solar diameter measurements such as DORaySol experiment (Morand et al. 2010)."
   host_cite https://ssd.jpl.nasa.gov/planets/obs_data.html
   host_ref "JPL Solar System Dynamics, planets/obs_data. Planetary observations — data and formats (JPL SSD)."
-  host_quote "These data are currently maintained by Ryan Park; JPL/Caltech (ryan.s.park@jpl.nasa.gov)."
+  host_quote "These data are currently maintained by Ryan Park ; JPL/Caltech ( ryan.s.park@jpl.nasa.gov )."
   ttl no-cadence
   probe 2026-10-25T15:58:07Z 206 https://ssd.jpl.nasa.gov/dat/planets/astljupiter.txt
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astljupiter.txt line=23904
