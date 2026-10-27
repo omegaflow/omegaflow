@@ -383,6 +383,7 @@ host erddap.marine.ie
   fields 1 2 3
   applies https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16
   note Dieselbe info-Seite trägt die Kadenz wörtlich: "attribute NC_GLOBAL update_interval String PT1M" und die Instrumentzuordnung "attribute salinity sdn_instrument_name String Sea-Bird SBE 16Plus V2 SEACAT C-T Recorder". CTD = Conductivity-Temperature-Depth; der Sensor steht auf 25 m Tiefe (Beschreibung derselben Seite).
+  instrument_quote "The SBE 16plus V2 is a high accuracy conductivity and temperature recorder (pressure optional) with RS232 or RS485 interfaces."
 
 host vires.services
   instrument langmuir probe
@@ -23610,7 +23611,7 @@ host api.antares.noirlab.edu
   interval null
   api_cite https://nsf-noirlab.gitlab.io/csdc/antares/client/api.html
   api_ref "NSF NOIRLab / CSDC, Dokumentation des ANTARES-Client 2.0.0. API Reference — ANTARES Client 2.0.0 documentation."
-  instrument_cite https://rubinobs.org/for-scientists/data-products/alerts-and-brokers
+  instrument_cite https://arxiv.org/abs/1902.01932
   instrument_ref "Rubin Observatory / NSF NOIRLab and SLAC, Seite zuletzt aktualisiert 25 Oct 2026. Alerts and brokers | Rubin Observatory."
   host_cite https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
   host_quote "\"newest_alert_observation_time\": 59461.47165510012"
@@ -23619,6 +23620,7 @@ host api.antares.noirlab.edu
   applies https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0 line=15423
   field newest_alert_magnitude ant_locus_newest_alert_mag mag null
   note Payload (200) fuehrt je Locus ra/dec und newest_alert_magnitude (mag) aus dem ZTF-Alertstrom; Alert-Broker, keine regulaere Reihe (interval null). Host-Zeit = JD des neuesten Alerts; ein Publikationsabstand ist an der API nicht dokumentiert.
+  instrument_quote "A custom-built wide-field camera provides a 47 deg2 field of view and 8 second readout time"
 
 host api.bas.ac.uk
   instrument SuperDARN
