@@ -76,7 +76,10 @@ fn curl_bytes(url: &str) -> (Option<u16>, Vec<u8>) {
     };
     let body = match fs::read(&tmp) {
         Ok(b) => b,
-        Err(_) => Vec::new(),
+        Err(e) => {
+            eprintln!("read: {e} — the body stays absent");
+            Vec::new()
+        }
     };
     let _ = fs::remove_file(&tmp);
     (code, body)
