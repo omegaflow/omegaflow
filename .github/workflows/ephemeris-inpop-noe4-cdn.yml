@@ -9,6 +9,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest the inpop and noe4 arms even when the asset is present
+        type: boolean
+        default: false
 permissions:
   contents: write
 env:
@@ -24,6 +29,11 @@ jobs:
       - name: Idempotence — skip if the INPOP asset already exists on the CDN
         id: idempotence
         run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
           if gh release view ftp.imcce.fr --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ephemeris_inpop_earth.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
@@ -61,6 +71,11 @@ jobs:
       - name: Idempotence — skip if the NOE-4 asset already exists on the CDN
         id: idempotence
         run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
           if gh release view ftp.imcce.fr --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ephemeris_noe4_phobos.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
