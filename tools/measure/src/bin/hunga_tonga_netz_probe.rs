@@ -116,17 +116,14 @@ fn median(values: &[f64]) -> Option<f64> {
     })
 }
 
-fn mad(values: &[f64], med: f64) -> f64 {
+fn mad(values: &[f64], med: f64) -> Option<f64> {
     let dev: Vec<f64> = values.iter().map(|v| (v - med).abs()).collect();
-    match median(&dev) {
-        Some(v) => v,
-        None => f64::NAN,
-    }
+    median(&dev)
 }
 
 fn robust(values: &[f64]) -> Option<(f64, f64)> {
     let m = median(values)?;
-    Some((m, 1.4826 * mad(values, m)))
+    Some((m, 1.4826 * mad(values, m)?))
 }
 
 struct Onset {
