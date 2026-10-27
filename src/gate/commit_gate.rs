@@ -2872,7 +2872,14 @@ fn word_index(lower: &str, word: &str) -> Option<usize> {
         };
         let after = pos + w.len() >= lower.len() || {
             let c = lower.as_bytes()[pos + w.len()] as char;
-            !c.is_alphanumeric() && c != '_' && c != '.' && c != '-' && c != '/'
+            if c == '.' {
+                lower[pos + w.len() + 1..]
+                    .chars()
+                    .next()
+                    .is_none_or(|n| !n.is_alphanumeric() && n != '_')
+            } else {
+                !c.is_alphanumeric() && c != '_' && c != '-' && c != '/'
+            }
         };
         if before && after {
             return Some(pos);
