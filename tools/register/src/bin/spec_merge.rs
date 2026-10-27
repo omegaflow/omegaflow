@@ -5478,7 +5478,8 @@ fn quote_expand(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        if let Ok(t) = fs::read_to_string(c[1]) {
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
     }
@@ -5624,7 +5625,8 @@ fn host_quote_title(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        if let Ok(t) = fs::read_to_string(c[1]) {
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
     }
@@ -5984,7 +5986,8 @@ fn quote_repair(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        if let Ok(t) = fs::read_to_string(c[1]) {
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
     }
@@ -6165,7 +6168,8 @@ fn quote_retarget(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        if let Ok(t) = fs::read_to_string(c[1]) {
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
     }
@@ -6523,7 +6527,8 @@ fn device_claims(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        if let Ok(t) = fs::read_to_string(c[1]) {
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
     }
@@ -6631,7 +6636,8 @@ fn claim_import(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        if let Ok(t) = fs::read_to_string(c[1]) {
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
     }
@@ -6724,6 +6730,437 @@ fn claim_import(args: &[String]) {
         }
     }
     println!("claim-import: {applied} Geraetezeilen eingetragen, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer");
+}
+
+fn norm(s: &str) -> String {
+    toks(s)
+        .iter()
+        .map(|t| {
+            t.chars()
+                .filter(|c| c.is_alphanumeric())
+                .flat_map(|c| c.to_lowercase())
+                .collect::<String>()
+        })
+        .filter(|t| !t.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn strip_quote(s: &str) -> String {
+    let t = s.trim().trim_start_matches("> ").trim();
+    let t = match t.strip_prefix('„') {
+        Some(r) => r,
+        None => t,
+    };
+    t.trim_end_matches(|c: char| {
+        c == '"' || c == '“' || c == '”' || c == '‘' || c == '’' || c == '„' || c.is_whitespace()
+    })
+    .to_string()
+}
+
+fn phrase_in(hay_words: &[&str], phrase: &str) -> bool {
+    let p: Vec<String> = norm(phrase).split(' ').map(|s| s.to_string()).collect();
+    if p.is_empty() {
+        return false;
+    }
+    hay_words
+        .windows(p.len())
+        .any(|w| w.iter().zip(p.iter()).all(|(a, b)| a == b))
+}
+
+fn common_prefix(a: &str, b: &str) -> usize {
+    a.chars().zip(b.chars()).take_while(|(x, y)| x == y).count()
+}
+
+fn device_aliases(instr: &str) -> Vec<&'static str> {
+    match instr.trim().to_lowercase().as_str() {
+        "dsn" => vec!["deep space network"],
+        "gbt" => vec!["green bank telescope"],
+        "mdis" => vec!["mercury dual imaging system"],
+        "cfht" => vec!["canada france hawaii telescope"],
+        "drao" => vec!["dominion radio astrophysical observatory"],
+        "ztf" | "ztf camera" => vec!["zwicky transient facility"],
+        "rss" | "radio science subsystem" => vec!["radio science subsystem"],
+        "co2-pro" => vec!["pco2-pro", "pco2a"],
+        "ctd" => vec!["conductivity temperature depth"],
+        "vis" => vec!["visible instrument"],
+        "sim" => vec!["spectral irradiance monitor"],
+        "eve" => vec!["extreme ultraviolet variability experiment"],
+        "li" => vec!["lightning imager"],
+        "jwst nircam" => vec!["near infrared camera"],
+        "landsat" => vec!["landsat 8", "landsat"],
+        "air_sampling_network" => vec!["air samples"],
+        _ => Vec::new(),
+    }
+}
+
+fn names_device(quote_norm: &str, instr: &str) -> bool {
+    let il = norm(instr);
+    if il.is_empty() || il == "none" {
+        return false;
+    }
+    let words: Vec<&str> = quote_norm.split(' ').collect();
+    if phrase_in(&words, &il) {
+        return true;
+    }
+    for a in device_aliases(instr) {
+        if phrase_in(&words, a) {
+            return true;
+        }
+    }
+    let acronym: String = il
+        .split(' ')
+        .filter(|w| w.chars().count() >= 2)
+        .map(|w| w.chars().next().unwrap())
+        .collect();
+    if acronym.chars().count() >= 2 && words.contains(&acronym.as_str()) {
+        return true;
+    }
+    let toks: Vec<&str> = il.split(' ').filter(|w| w.chars().count() >= 4).collect();
+    !toks.is_empty()
+        && toks.iter().all(|t| {
+            words
+                .iter()
+                .any(|w| *w == *t || (w.chars().count() >= 6 && common_prefix(w, t) >= 6))
+        })
+}
+
+fn junk_sentence(s: &str) -> bool {
+    let low = s.to_lowercase();
+    const BAD: [&str; 23] = [
+        "window.",
+        "datalayer",
+        "gtag(",
+        "function(",
+        "<body",
+        "<html",
+        "href=",
+        "return to",
+        "for other uses",
+        "for the satellite",
+        "skip to",
+        "jump to",
+        "javascript",
+        "cookie",
+        "privacy",
+        "subscribe",
+        "sign up",
+        "newsletter",
+        "view a pdf",
+        "sign in",
+        "all rights reserved",
+        "xmlns",
+        "see also",
+    ];
+    if BAD.iter().any(|b| low.contains(b)) {
+        return true;
+    }
+    let first = s.split_whitespace().next().unwrap_or("");
+    let digits = first.chars().filter(|c| c.is_ascii_digit()).count();
+    first.contains(':') && digits >= 4
+}
+
+fn sentence_start_ok(first: &str) -> bool {
+    const START: [&str; 22] = [
+        "the", "a", "an", "in", "it", "its", "this", "these", "at", "for", "with", "we", "our",
+        "each", "all", "both", "there", "two", "one", "four", "from", "on",
+    ];
+    let low = first.to_lowercase();
+    let word: String = low.chars().filter(|c| c.is_alphanumeric()).collect();
+    START.contains(&word.as_str())
+}
+
+fn has_verb_early(tokens: &[&str]) -> bool {
+    const VERBS: [&str; 40] = [
+        "is", "are", "was", "were", "has", "have", "consists", "consist", "operates", "operate",
+        "measures", "measure", "provides", "provide", "observes", "observe", "collects", "collect",
+        "uses", "use", "detects", "detect", "records", "record", "covers", "cover", "comprises",
+        "comprise", "includes", "include", "mounts", "mount", "sits", "serves", "forms", "contains",
+        "contain", "tracks", "track", "produces",
+    ];
+    tokens.iter().take(4).any(|t| {
+        let w: String = t
+            .to_lowercase()
+            .chars()
+            .filter(|c| c.is_alphanumeric())
+            .collect();
+        VERBS.contains(&w.as_str())
+    })
+}
+
+fn verbatim_window(doc_norm: &str, quote: &str, instr: &str) -> Option<String> {
+    let qt = toks(quote);
+    let n = qt.len();
+    if n < 4 {
+        return None;
+    }
+    for wlen in (4..=25.min(n)).rev() {
+        for i in 0..=(n - wlen) {
+            let before_ok = i == 0
+                || qt[i - 1].ends_with('.')
+                || qt[i - 1].ends_with('!')
+                || qt[i - 1].ends_with('?');
+            let first = &qt[i];
+            let cap = first
+                .chars()
+                .next()
+                .map(|c| c.is_uppercase() || c.is_ascii_digit())
+                .unwrap_or(false);
+            let words: Vec<&str> = qt[i..i + wlen].iter().map(|s| s.as_str()).collect();
+            let start = sentence_start_ok(first) || has_verb_early(&words);
+            let last = &qt[i + wlen - 1];
+            let ends = last.ends_with('.') || last.ends_with('!') || last.ends_with('?');
+            if !before_ok || !cap || !start || !ends {
+                continue;
+            }
+            let s = qt[i..i + wlen].join(" ");
+            if junk_sentence(&s) {
+                continue;
+            }
+            let sn = norm(&s);
+            if !sn.is_empty() && names_device(&sn, instr) && doc_norm.contains(&sn) {
+                return Some(s);
+            }
+        }
+    }
+    None
+}
+
+fn claim_verify(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let out_path = match args.get(1) {
+        Some(p) => p.clone(),
+        None => return,
+    };
+    let apply = args.get(2).map(|s| s == "apply").unwrap_or(false);
+    let files: Vec<String> = args.iter().skip(3).cloned().collect();
+    if files.is_empty() {
+        println!("claim-verify: keine Sitzungsdateien angegeben");
+        return;
+    }
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => match fs::read_to_string(format!("{dir}/texte/index.tsv")) {
+            Ok(t) => t,
+            Err(_) => {
+                println!("claim-verify: kein index.tsv unter {dir}");
+                return;
+            }
+        },
+    };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        if let Ok(t) = fs::read_to_string(p) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut types: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() >= 3 {
+            types.insert(c[0].to_string(), c[2].to_string());
+        }
+    }
+    let mut by_cite: BTreeMap<String, Vec<(usize, String)>> = BTreeMap::new();
+    for (start, b) in blocks(&reg) {
+        let cite = or_empty(field(&b, "instrument_cite"));
+        let instr = or_empty(field(&b, "instrument"));
+        if cite.is_empty() {
+            continue;
+        }
+        by_cite.entry(cite).or_default().push((start, instr));
+    }
+    let mut specs: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut stack: Vec<std::path::PathBuf> = vec![std::path::PathBuf::from(&dir)];
+    while let Some(d) = stack.pop() {
+        if let Ok(rd) = fs::read_dir(&d) {
+            for e in rd.flatten() {
+                let p = e.path();
+                if p.is_dir() {
+                    stack.push(p);
+                } else if p.extension().map(|x| x == "spec").unwrap_or(false) {
+                    if let Ok(t) = fs::read_to_string(&p) {
+                        if let Some(l) = t.lines().find(|l| l.starts_with("doc\t")) {
+                            specs
+                                .entry(l[4..].trim().to_string())
+                                .or_default()
+                                .push(p.to_string_lossy().to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for v in specs.values_mut() {
+        v.sort();
+    }
+    let mut rows: Vec<String> = Vec::new();
+    rows.push("datei\tabschnitt\turl\tinstrument\tblock\turteil\therkunft\twoerter\tzitat".to_string());
+    let (mut ok, mut no_dev, mut no_lit, mut no_text, mut no_block, mut no_spec) =
+        (0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
+    let mut seen_blocks: BTreeSet<usize> = BTreeSet::new();
+    let mut writes: Vec<(String, String)> = Vec::new();
+    for f in &files {
+        let text = match fs::read_to_string(f) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let mut secs: Vec<(String, String, Vec<String>)> = Vec::new();
+        for line in text.lines() {
+            if let Some(rest) = line.strip_prefix("## ") {
+                secs.push((rest.trim().to_string(), String::new(), Vec::new()));
+                continue;
+            }
+            if let Some(rest) = line.strip_prefix("**instrument_cite:**") {
+                if let Some(last) = secs.last_mut() {
+                    last.1 = rest.trim().trim_matches('`').trim().to_string();
+                }
+                continue;
+            }
+            if line.starts_with("> ") || line.starts_with(">„") {
+                let q = strip_quote(line);
+                if q.chars().count() >= 10 {
+                    if let Some(last) = secs.last_mut() {
+                        last.2.push(q);
+                    }
+                }
+            }
+        }
+        for (section, url, quotes) in secs {
+            let targets = match by_cite.get(&url) {
+                Some(v) => v.clone(),
+                None => {
+                    if !quotes.is_empty() {
+                        no_block += quotes.len();
+                        for q in &quotes {
+                            rows.push(format!(
+                                "{f}\t{section}\t{url}\t\t\tkein_block\t\t{}\t{q}",
+                                words(q)
+                            ));
+                        }
+                    }
+                    continue;
+                }
+            };
+            let doc = cache.get(&url);
+            let doc_norm = doc.map(|d| norm(d));
+            let spec = specs.get(&url).and_then(|v| v.first()).cloned();
+            if spec.is_none() {
+                no_spec += targets.len();
+            }
+            for (start, instr) in targets {
+                if !seen_blocks.insert(start) {
+                    continue;
+                }
+                let mut chosen: Option<(String, &str)> = None;
+                if let Some(dn) = &doc_norm {
+                    for q in &quotes {
+                        let qn = norm(q);
+                        if words(q) <= 25
+                            && !qn.is_empty()
+                            && !junk_sentence(q)
+                            && dn.contains(&qn)
+                            && names_device(&qn, &instr)
+                        {
+                            chosen = Some((q.clone(), "zitat"));
+                            break;
+                        }
+                    }
+                    if chosen.is_none() {
+                        for q in &quotes {
+                            if let Some(s) = verbatim_window(dn, q, &instr) {
+                                chosen = Some((s, "fenster"));
+                                break;
+                            }
+                        }
+                    }
+                    if chosen.is_none() {
+                        let plain = types
+                            .get(&url)
+                            .map(|t| matches!(t.as_str(), "pdftotext" | "raw" | "gzip" | "cp1251" | "browser"))
+                            .unwrap_or(false);
+                        if plain {
+                            if let Some(d) = doc {
+                                for s in sentences_of(d) {
+                                    let n = words(&s);
+                                    if n >= 4 && n <= 25 && !junk_sentence(&s) && names_device(&norm(&s), &instr) {
+                                        chosen = Some((s, "satz"));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                match chosen {
+                    Some((q, how)) => {
+                        ok += 1;
+                        rows.push(format!(
+                            "{f}\t{section}\t{url}\t{instr}\t{start}\tok\t{how}\t{}\t{q}",
+                            words(&q)
+                        ));
+                        if let Some(sp) = &spec {
+                            let clean = q.replace('\t', " ").replace('"', "'");
+                            writes.push((sp.clone(), format!("claim\tdevice\t{instr}\t\"{clean}\"\n")));
+                        }
+                    }
+                    None => {
+                        let dn = doc_norm.as_deref().unwrap_or("");
+                        let (urteil, n) = if doc.is_none() {
+                            no_text += 1;
+                            ("kein_text", "")
+                        } else if quotes.is_empty() {
+                            no_lit += 1;
+                            ("kein_zitat", "kein_zitat")
+                        } else if quotes.iter().any(|q| dn.contains(&norm(q))) {
+                            no_lit += 1;
+                            ("kein_zitat", "kein_zitat")
+                        } else if quotes.iter().any(|q| dn.contains(&norm(q))) {
+                            no_dev += 1;
+                            ("ohne_geraet", "ohne_geraet")
+                        } else {
+                            no_lit += 1;
+                            ("nicht_woertlich", "nicht_woertlich")
+                        };
+                        rows.push(format!("{f}\t{section}\t{url}\t{instr}\t{start}\t{urteil}\t{n}\t0\t"));
+                    }
+                }
+            }
+        }
+    }
+    let _ = fs::write(&out_path, rows.join("\n") + "\n");
+    println!(
+        "claim-verify: {ok} ok, {no_dev} ohne Geraet, {no_lit} nicht woertlich, {no_text} ohne Text, {no_block} ohne Block, {no_spec} ohne Auszug -> {out_path}"
+    );
+    if !apply {
+        return;
+    }
+    let mut applied = 0usize;
+    for (path, row) in writes {
+        let existing = match fs::read_to_string(&path) {
+            Ok(t) => t,
+            Err(_) => String::new(),
+        };
+        if existing.contains(row.trim()) {
+            continue;
+        }
+        if let Ok(mut fh) = fs::OpenOptions::new().append(true).open(&path) {
+            use std::io::Write;
+            if fh.write_all(row.as_bytes()).is_ok() {
+                applied += 1;
+            }
+        }
+    }
+    println!("claim-verify: {applied} Geraetezeilen in Auszuege geschrieben");
 }
 
 fn quote_short(args: &[String]) {
@@ -7254,6 +7691,7 @@ fn main() {
         Some("class-table") if args.len() >= 3 => class_table(&args[2..]),
         Some("device-claims") if args.len() >= 4 => device_claims(&args[2..]),
         Some("claim-import") if args.len() >= 4 => claim_import(&args[2..]),
+        Some("claim-verify") if args.len() >= 5 => claim_verify(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),

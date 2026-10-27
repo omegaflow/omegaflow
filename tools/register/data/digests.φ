@@ -1929,6 +1929,7 @@ doc https://www.eoportal.org/satellite-missions/euclid
   claim Teleskop 1.2 m "The Payload Module consists of a 1.2 m three-mirror Korsch type telescope and of two instruments"
   claim Tiefenfelder 40 deg2 "With a cumulative area of 40 square degrees, equivalent to just over 200 times the footprint of the full Moon in the sky"
   claim device VIS ""It is also in charge of the design, construction, tests, integration and delivery to ESA of the imaging and spectroscopic instruments VIS and NISP.""
+  claim device VIS ""The VIS instrument will handle the precise measurement of galaxy shapes by taking the very best images of distant galaxies that it possibly can.""
 
 doc https://www.eoportal.org/satellite-missions/icesat-2
   title ICESat-2 (Ice, Cloud, and land Elevation Satellite-2) - eoPortal
@@ -7982,6 +7983,7 @@ doc https://lasp.colorado.edu/sorce/instruments/sim/
   claim Detektoren vier Photodioden und ein elektrischer Substitutionsradiometer ""In this focal plane, four photodiode detectors and an electrical substitution radiometer (ESR) are used to detect solar radiation.""
   claim Redundanz zwei identische, spiegelbildliche Spektrometer ""SIM contains two completely independent and identical (mirror-image) spectrometers to provide redundancy and self-calibration capability.""
   claim frame none ""
+  claim device SIM ""SIM contains two completely independent and identical (mirror-image) spectrometers to provide redundancy and self-calibration capability.""
 
 doc https://link.springer.com/article/10.1007/s11214-016-0244-5
   title The FIELDS Instrument Suite for Solar Probe Plus
@@ -10576,6 +10578,7 @@ doc https://kcdc.iap.kit.edu/information/aboutKASCADE
   claim kalorimeter 1460 g/cm2, 11,4 hadronische Wechselwirkungslängen ""The absorber corresponds to 1460 g/cm 2 or 11.4 hadronic interaction lengths.""
   claim grande 2003 aufgebaut, 700 x 700 m, 37 Stationen ""As an extension of the KASCADE experiment KASCADE-Grande was built in 2003 by reassembling 37 stations of the former EAS-TOP experiment""
   claim frame geographic ""
+  claim device scintillator ""Each station contains unshielded liquid scintillation detectors to measure the electron/photon component.""
 
 doc https://lambda.gsfc.nasa.gov/product/act/
   title Atacama Cosmology Telescope (ACT) — MBAC, ACTPol, AdvACT
@@ -12594,6 +12597,7 @@ doc https://en.wikipedia.org/wiki/Green_Bank_Telescope
   claim nutzungszeit 6500 von 8760 Stunden ""It is used for astronomy about 6500 hours out of the 8760 hours in a year""
   claim subreflektor 8 Meter ""the boom is extended to position the feed horn in front of the 8 m subreflector""
   claim radar Ku-Band mit 700 Watt ""Its low power prototype (700 watts at Ku band), with reception at the Very Long Baseline Array, has already imaged the moon""
+  claim device GBT ""The Green Bank Telescope operates at meter to millimeter wavelengths.""
 
 doc https://en.wikipedia.org/wiki/Goldstone_Deep_Space_Communications_Complex
   title Goldstone Deep Space Communications Complex (GDSCC)
@@ -15621,6 +15625,7 @@ doc https://gml.noaa.gov/ccgg/flask.html
   claim beginn 1967 Niwot Ridge ""began in 1967 at Niwot Ridge, Colorado""
   claim plattformen Observatorien, Fixstationen, Schiffe ""regular discrete samples from the NOAA GML baseline observatories, cooperative fixed sites, and commercial ships""
   claim zweck Trends, Saisonalität, Verteilung ""Measurement data are used to identify long-term trends, seasonal variability, and spatial distribution of carbon cycle gases.""
+  claim device air_sampling_network ""Air samples are collected approximately weekly from a globally distributed network of sites.""
 
 doc http://ceein.infp.ro/fdsnws/station/1/query?level=channel
   title FDSN StationXML, level=channel (CEEIN)
@@ -20968,6 +20973,7 @@ doc https://www.goes-r.gov/spacesegment/mag.html
   claim produkt Datenprodukt MAG beim NCEI ""MAG_Data_Product""
   claim device MAG ""/* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; }/* Transition effect.""
   claim device MAG ""The MAG requirements are similar to the tri-axial fluxgates that have previously flown.""
+  claim device fluxgate ""The MAG requirements are similar to the tri-axial fluxgates that have previously flown.""
 
 doc https://zenodo.org/api/records/21380428/files/GRBR%20input%20data.zip/content
   title GRBR C/NOFS Data Year 2012-2014 and GTEX Data Year 2014
@@ -21302,6 +21308,7 @@ doc https://www.usgs.gov/landsat-missions/landsat-8
   claim bahn 98.2 Grad Neigung "Orbits the Earth in a sun-synchronous, near-polar orbit (98.2 degrees inclination)"
   claim bahnhöhe 705 km "Achieved an altitude of 705 km (438 mi)"
   claim umlauf 99 Minuten "Completes one Earth orbit every 99 minutes"
+  claim device Landsat ""Landsat 8 images have 15-meter panchromatic and 30-meter multi-spectral spatial resolutions along a 185 km (115 mi) swath.""
 
 doc https://www.legacysurvey.org/dr10/description/
   title Legacy Surveys Data Release 10 — Description
@@ -25431,6 +25438,7 @@ doc https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327
   claim column not_named not_named null "not_named"
   claim keine not_named "For example, we do not have any information on the data formats."
   claim frame none ""
+  claim device Pioneer_10 ""This directory contains folders for public documents, doppler ranging data, and telemetry data pertaining to analyses of the Pioneer 10 gravitational anomaly.""
 
 doc https://ssd.jpl.nasa.gov/dat/planets/pathrange.txt
   title Mars Pathfinder Ranging Data
