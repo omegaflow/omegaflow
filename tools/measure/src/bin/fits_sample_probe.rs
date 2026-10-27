@@ -1,4 +1,4 @@
-use omegaflow::archivar::fits::{FitsHeader, FitsImage};
+use omegaflow::archivar::fits::{FitsCompressedImage, FitsHeader, FitsImage};
 
 fn arg_values(args: &[String], key: &str) -> Vec<String> {
     let mut out = Vec::new();
@@ -53,8 +53,12 @@ fn data_len(h: &FitsHeader) -> Option<usize> {
     if naxis == 0 {
         return Some(0);
     }
+    let groups = h.value("GROUPS").map(|v| v.starts_with('T')).unwrap_or(false);
     let mut n = 1usize;
     for k in 1..=naxis {
+        if groups && k == 1 {
+            continue;
+        }
         let key = format!("NAXIS{k}");
         let v = keyword(h, &key, 0).max(0) as usize;
         n = n.saturating_mul(v);
@@ -145,6 +149,12 @@ fn check_file(path: &str) -> bool {
             && let Some(img) = FitsImage::parse(&buf, start).map(|(i, _)| i)
         {
             line.push_str(&format!(" image {}x{}", img.dims[0], img.dims[1]));
+        }
+        if let Some((z, _)) = FitsCompressedImage::parse(&buf, start) {
+            line.push_str(&format!(
+                " compressed {} ZBITPIX {} {}x{}",
+                z.cmptype, z.zbitpix, z.dims[0], z.dims[1]
+            ));
         }
         println!("{line}");
         hdu += 1;

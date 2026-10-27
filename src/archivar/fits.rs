@@ -592,6 +592,9 @@ pub struct FitsImage {
 impl FitsImage {
     pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
         let (header, header_end) = FitsHeader::parse(buf, hdu_start)?;
+        if header.value("ZIMAGE") == Some("T") {
+            return None;
+        }
         let bitpix = header.int("BITPIX")? as i32;
         let bytes_per = match bitpix {
             8 => 1,
