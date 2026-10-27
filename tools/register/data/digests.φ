@@ -21200,6 +21200,69 @@ doc https://www.ztf.caltech.edu/
   claim datenfreigabe alle zwei Monate "ZTF delivers bi-monthly public data releases of high quality and reliable data products"
   claim betrieb seit 2018 "has been continuously scanning the entire Northern sky every two days since 2018"
 
+doc https://minorplanetcenter.net/mpcops/documentation/ades/
+  kind instrument
+  claim zweck ADES dient dem Datenaustausch zwischen Beobachtern, MPC und Bahnrechenzentren ""ADES is used for data exchange among observers, the MPC and other orbit computer centers""
+  claim formate zwei Darstellungen, XML und PSV ""The ADES describes two representations, XML and PSV""
+  claim pruefung ADES wird gegen das W3C-Schema validiert ""HTTPS W3C schema validation""
+  claim frame J2000 ""
+
+doc https://minorplanetcenter.net/iau/info/OpticalObs.html
+  kind data
+  claim device CCD "das Format gilt fuer CCD- und Plattenastrometrie"
+  claim format Festspaltenformat fuer optische Astrometrie ""Format For Optical Astrometric Observations Of Comets, Minor Planets and Natural Satellites""
+  claim position Rektaszension in Spalte 33 bis 44, J2000.0 ""Columns 33-44 contain the observed J2000.0 right ascension""
+  claim deklin Deklination in Spalte 45 bis 56, J2000.0 ""Observed Decl. (J2000.0)""
+  claim helligkeit beobachtete Helligkeit und Band in Spalte 66 bis 71 ""Observed magnitude and band""
+  claim station Stationskennung in Spalte 78 bis 80 ""Observatory code""
+  claim column mpc_obs_date Kalendertag null ""Date of observation""
+  claim column mpc_obs_ra_deg Grad (HH MM SS.ddd) null ""Observed RA (J2000.0)""
+  claim column mpc_obs_dec_deg Grad (DD MM SS.s) null ""Observed Decl. (J2000.0)""
+  claim column mpc_obs_mag Magnitude null ""Observed magnitude and band""
+  claim column mpc_obs_station Kennung null ""Observatory code""
+  claim frame J2000 ""
+
+doc https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html
+  kind data
+  claim archiv Links auf vollstaendige Beobachtungssaetze, numeriert und unnummeriert ""The links below provide access to complete observational sets for numbered and unnumbered minor planets and comets""
+  claim form gzip-komprimiert wegen der Dateigroesse ""Due to the size of the files, they are available only in gzip-compressed form""
+  claim stand Dateien sind vollstaendig bis April 2026 ""The file sizes are for the uncompressed versions and the files are complete through the 2026 APR""
+  claim frame J2000 ""
+
+doc https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/NumObs.txt.gz
+  kind data
+  claim archiv Beobachtungssaetze numerierter Kleinplaneten, gzip-komprimiert ""The links below provide access to complete observational sets for numbered and unnumbered minor planets and comets""
+  claim zeile Datensatz: Nummer, Programmcode, Datum, Rektaszension, Deklination, Katalogcode ""00001         A1801 01 01.82630 03 38 23.07 +16 17 25.5                 MC004535""
+  claim umfang Datei ist rund 120 MB komprimiert ""Due to the size of the files, they are available only in gzip-compressed form""
+  claim column mpc_obs_ra_deg deg null "null"
+  claim column mpc_obs_dec_deg deg null "null"
+  claim frame J2000 ""
+
+doc https://wiki.openstreetmap.org/wiki/API_v0.6
+  kind data
+  claim device GPS "die Punkte stammen aus GPS-Aufzeichnungen"
+  claim endpunkt Trackpunkte innerhalb eines Begrenzungsrechtecks, im GPX-Format ""Use this to retrieve the GPS track points that are inside a given bounding box (formatted in a GPX format)""
+  claim parameter bbox und Seitennummer ""trackpoints?bbox= left , bottom , right , top &page= pageNumber""
+  claim frame geographic ""
+  claim timescale UTC ""
+
+doc https://www.openstreetmap.org/traces
+  kind data
+  claim seite oeffentliche Sammlung hochgeladener GPS-Spuren ""Public GPS Traces""
+  claim zugang Liste der neuesten Uploads, je Eintrag eine Datei ""Browse recent GPS trace uploads""
+  claim eintrag Datei mit Punktzahl und Sichtbarkeit ""2026_10_27_07_02_Tue.gpx 338 points IDENTIFIABLE""
+  claim frame geographic ""
+  claim timescale UTC ""
+
+doc https://api.openstreetmap.org/api/0.6/trackpoints?bbox=8.6,47.3,8.7,47.4&page=0
+  kind data
+  claim format GPX 1.0, Erzeuger OpenStreetMap.org ""<?xml version=\"1.0\" encoding=\"UTF-8\"?>""
+  claim erzeuger Spuren werden als trk/trkseg geliefert ""creator=\"OpenStreetMap.org\"""
+  claim inhalt ein Punkt je Zeitstempel mit Breite und Laenge ""<trkpt lat=""
+  claim column osm_track_lat_deg deg null "1"
+  claim frame geographic ""
+  claim timescale UTC ""
+
 doc https://api.crossref.org/works/10.1086/191309
   kind instrument
   claim titel The centers of star formation in NGC 6334 and their stellar mass distributions ""\"title\":[\"The centers of star formation in NGC 6334 and their stellar mass distributions\"]""

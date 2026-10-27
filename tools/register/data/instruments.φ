@@ -33464,3 +33464,39 @@ host exoplanetarchive.ipac.caltech.edu
   field flux normalized_flux 1 120
   zustand gemessen
 
+host minorplanetcenter.net
+  instrument CCD telescope
+  unit deg
+  sampling null
+  interval 0
+  api_cite https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/NumObs.txt.gz
+  api_quote "00001         A1801 01 01.82630 03 38 23.07 +16 17 25.5                 MC004535"
+  instrument_cite https://minorplanetcenter.net/iau/info/OpticalObs.html
+  instrument_quote "Columns 33-44 contain the observed J2000.0 right ascension"
+  host_cite https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html
+  host_quote "The links below provide access to complete observational sets for numbered and unnumbered minor planets and comets"
+  ttl 604800
+  probe 2026-10-27T09:40:00Z 200 https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/NumObs.txt.gz
+  fields mpc_obs_ra_deg mpc_obs_dec_deg
+  applies https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/NumObs.txt.gz
+  field mpc_obs_ra_deg ra_deg deg 0
+  zustand gemessen
+
+host api.openstreetmap.org
+  instrument GPS receiver
+  unit deg
+  sampling 1
+  interval 1
+  api_cite https://api.openstreetmap.org/api/0.6/trackpoints?bbox=8.6,47.3,8.7,47.4&page=0
+  api_quote "<trkpt lat="
+  instrument_cite https://wiki.openstreetmap.org/wiki/API_v0.6
+  instrument_quote "Use this to retrieve the GPS track points that are inside a given bounding box (formatted in a GPX format)"
+  host_cite https://www.openstreetmap.org/traces
+  host_quote "Browse recent GPS trace uploads"
+  ttl 86400
+  probe 2026-10-27T09:41:00Z 200 https://api.openstreetmap.org/api/0.6/trackpoints?bbox=8.6,47.3,8.7,47.4&page=0
+  fields osm_track_lat_deg
+  applies https://api.openstreetmap.org/api/0.6/trackpoints?bbox=8.6,47.3,8.7,47.4&page=0
+  field osm_track_lat_deg lat_deg deg 1
+  zustand gemessen
+
