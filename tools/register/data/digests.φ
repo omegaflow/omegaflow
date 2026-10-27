@@ -3196,6 +3196,13 @@ doc http://www.wdcb.ru/sep/seismology/Atlas/stations.pdf
   claim typ4 Nikiforov-Seismographen mit optischer Registrierung, T = 2 s, V = 2400 ""Сейсмографы системы Никифорова с оптической регистрацией""
   claim zeitraum ab 1902, Umstellung auf Galitzin 1912 ""начиная с 1902 года""
   claim frame geographic ""
+  claim kuerzel_C Kuerzel C: optisch-mechanische Seismographen (Bosch, Rebeur-Elert, Milne) ""1. Оптические и механические сейсмографы системы Боша, Ребер-Элерта, Мильна и другие (С)""
+  claim kuerzel_G Kuerzel Г: Golizyn, galvanometrische Registrierung ""2. Сейсмографы системы Голицына с гальванометрической регистрацией (Г)""
+  claim kuerzel_GG Kuerzel ГГ: mechanische Golizyn-Seismographen ""3. Механические сейсмографы системы Голицына (ГГ)""
+  claim kuerzel_N Kuerzel Н: Nikiforow, optische Registrierung ""4. Сейсмографы системы Никифорова с оптической регистрацией (Н)""
+  claim kuerzel_SI Kuerzel СИ: Seismologisches Institut der AdW der UdSSR ""5. Сейсмографы Сейсмологического института АН СССР с оптической регистрацией (СИ)""
+  claim kuerzel_O Kuerzel О: Kirnos, allgemeiner Typ, galvanometrisch ""6. Сейсмографы общего типа системы Кирноса с гальванометрической регистрацией (О)""
+  claim kuerzel_R Kuerzel Р: regionaler Typ, galvanometrisch ""7. Сейсмографы регионального типа с гальванометрической регистрацией (Р)""
 
 doc https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
   title FILE AAINDEX — format description of the aa index file

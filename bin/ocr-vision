@@ -1,0 +1,28 @@
+#!/bin/sh
+# ocr-vision — eine Seite von Vision-Modellen lesen lassen.
+#
+#   bin/ocr-vision <bild> <frage> [ausgabe-praefix]
+#   MODELS='deepseek-flash Qwen/Qwen3-VL-30B-A3B-Instruct' bin/ocr-vision ...
+#
+# Vorgabe ist das eigene, günstige Modell (deepseek-flash über api.deepseek.com).
+# Teure Modelle nur nennen, wenn es der Fall verlangt. Modelle mit "/" laufen über
+# DeepInfra, Modelle ohne "/" über DeepSeek.
+set -u
+img="$1"; q="$2"; out="${3:-/tmp/ocr}"
+ds_key="$(sed -n 's/^DEEPSEEK_API_KEY=//p' .secrets.local | head -1)"
+di_key="$(sed -n 's/^DEEPINFRA_API_KEY=//p' .secrets.local | head -1)"
+[ -n "$ds_key$di_key" ] || { echo "ocr-vision: kein Schluessel" >&2; exit 2; }
+b64="$(base64 -w0 "$img")"
+for m in ${MODELS:-"deepseek-flash"}; do
+    name="$(printf '%s' "$m" | tr '/' '_')"
+    case "$m" in
+        */*) url='https://api.deepinfra.com/v1/openai/chat/completions'; key="$di_key" ;;
+        *)   url='https://api.deepseek.com/chat/completions'; key="$ds_key" ;;
+    esac
+    printf '{"model":"%s","max_tokens":3000,"messages":[{"role":"user","content":[{"type":"text","text":"%s"},{"type":"image_url","image_url":{"url":"data:image/png;base64,%s"}}]}]}' \
+        "$m" "$q" "$b64" > /tmp/req.json
+    code="$(curl -sS -o "$out-$name.json" -w '%{http_code}' --max-time 240 \
+        -H "Authorization: Bearer $key" -H 'Content-Type: application/json' \
+        --data-binary @/tmp/req.json "$url")"
+    printf '%s %s -> %s\n' "$code" "$m" "$out-$name.json"
+done
