@@ -33482,6 +33482,7 @@ host cedar.openmadrigal.org
   zustand gemessen
   note PFISR-Ne aus dem 10-Minuten-Fit (600 s); die beiden DEM-Hoehenzeilen (Copernicus/GEBCO) und multibeam sind Fremdzeilen und entfallen.
   instrument Millstone Hill Incoherent Scatter Radar
+  instrument_quote "The current centerpiece of the Millstone Hill facility is its high-power, large-aperture incoherent scatter radar (IS radar) facility"
 
 host dap.ceda.ac.uk
   instrument multibeam echosounder
@@ -35210,6 +35211,7 @@ host cedar.openmadrigal.org
   zustand gemessen
   note PFISR-Ne aus dem 10-Minuten-Fit (600 s); die beiden DEM-Hoehenzeilen (Copernicus/GEBCO) und multibeam sind Fremdzeilen und entfallen.
   instrument Millstone Hill Incoherent Scatter Radar
+  instrument_quote "The current centerpiece of the Millstone Hill facility is its high-power, large-aperture incoherent scatter radar (IS radar) facility"
 
 host dap.ceda.ac.uk
   instrument multibeam echosounder
