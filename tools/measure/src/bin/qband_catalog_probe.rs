@@ -95,7 +95,10 @@ fn fetch(url: &str, cache: &Path, offline: bool) -> Option<Fetch> {
     };
     let hdr = match fs::read_to_string(&hdr_path) {
         Ok(text) => text,
-        Err(_) => String::new(),
+        Err(e) => {
+            eprintln!("read: {e} — the header stays absent");
+            String::new()
+        }
     };
     Some(Fetch {
         url: url.to_string(),
