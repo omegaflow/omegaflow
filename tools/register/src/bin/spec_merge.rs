@@ -7170,6 +7170,50 @@ fn claim_verify(args: &[String]) {
     println!("claim-verify: {applied} Geraetezeilen in Auszuege geschrieben");
 }
 
+fn set_slot(args: &[String]) {
+    let url = match args.first() {
+        Some(u) => u.clone(),
+        None => return,
+    };
+    let slot = match args.get(1) {
+        Some(s) => s.clone(),
+        None => return,
+    };
+    let value = match args.get(2) {
+        Some(v) => v.clone(),
+        None => return,
+    };
+    let text = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut changed = 0usize;
+    for (_, b) in blocks(&text) {
+        let cite = or_empty(field(&b, "instrument_cite"));
+        let hit = cite == url;
+        let mut wrote = false;
+        for line in &b {
+            let t = line.trim_start();
+            if hit && t.starts_with(&format!("{slot} ")) {
+                out.push(format!("  {slot} \"{}\"", value.replace('"', "\\\"")));
+                wrote = true;
+                changed += 1;
+            } else {
+                out.push(line.clone());
+            }
+        }
+        if hit && !wrote {
+            out.push(format!("  {slot} \"{}\"", value.replace('"', "\\\"")));
+            changed += 1;
+        }
+        out.push(String::new());
+    }
+    let mut body = out.join("\n");
+    while body.ends_with("\n\n") {
+        body.pop();
+    }
+    write_out(REG, body, "instruments");
+    println!("set-slot: {changed} Zeilen {slot} fuer {url}");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -7699,6 +7743,7 @@ fn main() {
         Some("device-claims") if args.len() >= 4 => device_claims(&args[2..]),
         Some("claim-import") if args.len() >= 4 => claim_import(&args[2..]),
         Some("claim-verify") if args.len() >= 5 => claim_verify(&args[2..]),
+        Some("set-slot") if args.len() >= 5 => set_slot(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
