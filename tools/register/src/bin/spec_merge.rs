@@ -147,7 +147,10 @@ fn merge_rows(out_path: &str, state_path: &str) {
         old.push_str(&states);
         write_out(state_path, old, "states");
     }
-    println!("rows: +{added} neu, {replaced} ersetzt, {} gesamt", rows.len());
+    println!(
+        "rows: +{added} neu, {replaced} ersetzt, {} gesamt",
+        rows.len()
+    );
 }
 
 fn apply_instruments(tsv_path: &str) {
@@ -214,7 +217,9 @@ fn host_docs() {
             out.push_str("\n\n");
             continue;
         }
-        let Some(probe) = field(&b, "probe").and_then(|p| p.split_whitespace().last().map(str::to_string)) else {
+        let Some(probe) =
+            field(&b, "probe").and_then(|p| p.split_whitespace().last().map(str::to_string))
+        else {
             out.push_str(&b.join("\n"));
             out.push_str("\n\n");
             continue;
@@ -235,7 +240,10 @@ fn host_docs() {
         let mut quote = String::new();
         for line in headers.lines() {
             let low = line.to_ascii_lowercase();
-            if low.starts_with("cache-control:") || low.starts_with("last-modified:") || low.starts_with("etag:") {
+            if low.starts_with("cache-control:")
+                || low.starts_with("last-modified:")
+                || low.starts_with("etag:")
+            {
                 quote = line.trim().to_string();
                 if low.starts_with("cache-control:") {
                     break;
@@ -261,7 +269,9 @@ fn host_docs() {
         out.push_str("\n\n");
     }
     write_out(REG, out, "register");
-    println!("rows {rows}, mit probe {with_probe}, host_cite: {docs} ergaenzt, {failed} ohne Header");
+    println!(
+        "rows {rows}, mit probe {with_probe}, host_cite: {docs} ergaenzt, {failed} ohne Header"
+    );
 }
 
 fn url_id(url: &str) -> Option<String> {
@@ -271,7 +281,11 @@ fn url_id(url: &str) -> Option<String> {
     if id.is_empty() {
         return None;
     }
-    Some(id.replace("%40", "@").replace("%2F", "/").replace("%2f", "/"))
+    Some(
+        id.replace("%40", "@")
+            .replace("%2F", "/")
+            .replace("%2f", "/"),
+    )
 }
 
 fn probe_fill() {
@@ -368,7 +382,9 @@ fn probe_fill() {
         out.push_str("\n\n");
     }
     write_out(REG, out, "register");
-    println!("probe: {filled} ergaenzt, {failed} ohne Antwort, {seen} schon belegt, {no_row} ohne Zeile, {considered} mit Zeile");
+    println!(
+        "probe: {filled} ergaenzt, {failed} ohne Antwort, {seen} schon belegt, {no_row} ohne Zeile, {considered} mit Zeile"
+    );
 }
 
 fn probe_drop_failed() {
@@ -606,7 +622,10 @@ fn repair_instruments() {
         let insts: Vec<(usize, String)> = block
             .iter()
             .enumerate()
-            .filter_map(|(i, l)| l.strip_prefix("instrument ").map(|v| (start + i, v.to_string())))
+            .filter_map(|(i, l)| {
+                l.strip_prefix("instrument ")
+                    .map(|v| (start + i, v.to_string()))
+            })
             .collect();
         if insts.len() < 2 {
             continue;
@@ -695,38 +714,38 @@ fn backfill_fields() {
         }
         if keys.is_empty() {
             for (_, block) in &phi_blocks {
-            let Some(origin) = field(block, "origin") else {
-                continue;
-            };
-            let Some(url) = origin.split_whitespace().next() else {
-                continue;
-            };
-            let Some(bh) = url
-                .split_once("://")
-                .and_then(|(_, r)| r.split(['/', '?', ':']).next())
-                .map(|h| h.trim_start_matches("www.").to_string())
-            else {
-                continue;
-            };
-            if bh != host {
-                continue;
-            }
-            let stem = url.split(['?', '{']).next().unwrap_or(url);
-            if !(url.starts_with(&applies) || applies.starts_with(stem)) {
-                continue;
-            }
-            for line in block {
-                let p: Vec<&str> = line.split_whitespace().collect();
-                if matches!(p.first(), Some(&"field") | Some(&"quantity"))
-                    && let Some(k) = p.get(1)
-                {
-                    let k = k.trim_matches('"').to_string();
-                    if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
-                        keys.push(k);
+                let Some(origin) = field(block, "origin") else {
+                    continue;
+                };
+                let Some(url) = origin.split_whitespace().next() else {
+                    continue;
+                };
+                let Some(bh) = url
+                    .split_once("://")
+                    .and_then(|(_, r)| r.split(['/', '?', ':']).next())
+                    .map(|h| h.trim_start_matches("www.").to_string())
+                else {
+                    continue;
+                };
+                if bh != host {
+                    continue;
+                }
+                let stem = url.split(['?', '{']).next().unwrap_or(url);
+                if !(url.starts_with(&applies) || applies.starts_with(stem)) {
+                    continue;
+                }
+                for line in block {
+                    let p: Vec<&str> = line.split_whitespace().collect();
+                    if matches!(p.first(), Some(&"field") | Some(&"quantity"))
+                        && let Some(k) = p.get(1)
+                    {
+                        let k = k.trim_matches('"').to_string();
+                        if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
+                            keys.push(k);
+                        }
                     }
                 }
             }
-        }
         }
         if applies.contains("id=")
             && let Some(idpos) = applies.find("id=")
@@ -740,8 +759,10 @@ fn backfill_fields() {
             keys.clear();
             for line in block {
                 let p: Vec<&str> = line.split_whitespace().collect();
-                if matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
-                    && let Some(k) = p.get(1)
+                if matches!(
+                    p.first(),
+                    Some(&"field") | Some(&"quantity") | Some(&"last")
+                ) && let Some(k) = p.get(1)
                 {
                     let k = k.trim_matches('"').to_string();
                     if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
@@ -751,8 +772,8 @@ fn backfill_fields() {
             }
         }
         if keys.is_empty()
-            && let Some(probe) = field(row, "probe")
-                .and_then(|p| p.split_whitespace().last().map(str::to_string))
+            && let Some(probe) =
+                field(row, "probe").and_then(|p| p.split_whitespace().last().map(str::to_string))
         {
             let pstem = probe.split(['?', '{']).next().unwrap_or(&probe).to_string();
             for (_, block) in &phi_blocks {
@@ -768,8 +789,10 @@ fn backfill_fields() {
                 }
                 for line in block {
                     let p: Vec<&str> = line.split_whitespace().collect();
-                    if matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
-                        && let Some(k) = p.get(1)
+                    if matches!(
+                        p.first(),
+                        Some(&"field") | Some(&"quantity") | Some(&"last")
+                    ) && let Some(k) = p.get(1)
                     {
                         let k = k.trim_matches('"').to_string();
                         if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
@@ -810,7 +833,10 @@ fn align_instruments() {
         let insts: Vec<(usize, String)> = block
             .iter()
             .enumerate()
-            .filter_map(|(i, l)| l.strip_prefix("instrument ").map(|v| (start + i, v.to_string())))
+            .filter_map(|(i, l)| {
+                l.strip_prefix("instrument ")
+                    .map(|v| (start + i, v.to_string()))
+            })
             .collect();
         if insts.len() != 1 {
             continue;
@@ -831,7 +857,10 @@ fn align_instruments() {
                 .filter_map(|l| l.strip_prefix("  fields ").map(str::trim))
                 .flat_map(|s| s.split_whitespace())
                 .collect();
-            if !keys.iter().any(|k| rkeys.iter().any(|x| x.eq_ignore_ascii_case(k))) {
+            if !keys
+                .iter()
+                .any(|k| rkeys.iter().any(|x| x.eq_ignore_ascii_case(k)))
+            {
                 continue;
             }
             if let Some(inst) = field(r, "instrument")
@@ -862,7 +891,10 @@ fn apply_fields(path: &str) {
             continue;
         };
         let fline = fline.trim();
-        if !(fline.starts_with("field ") || fline.starts_with("quantity ") || fline.starts_with("last ")) {
+        if !(fline.starts_with("field ")
+            || fline.starts_with("quantity ")
+            || fline.starts_with("last "))
+        {
             continue;
         }
         let Some((start, block)) = phi_blocks
@@ -873,7 +905,10 @@ fn apply_fields(path: &str) {
                     let Some(u) = field(b, "url") else {
                         return false;
                     };
-                    u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim())))
+                    u.ends_with(&format!(
+                        "/{}",
+                        url.trim().rsplit('/').next().unwrap_or(url.trim())
+                    ))
                 })
             })
         else {
@@ -896,7 +931,10 @@ fn apply_fields(path: &str) {
         lines.insert(*at, line.clone());
     }
     write_out(PHI, lines.join("\n") + "\n", "phi");
-    println!("fields: {} Zeilen in Bloecke eingesetzt, {skipped} ohne Block", ins.len());
+    println!(
+        "fields: {} Zeilen in Bloecke eingesetzt, {skipped} ohne Block",
+        ins.len()
+    );
 }
 
 fn instrumentize(path: &str) {
@@ -1023,7 +1061,10 @@ fn apply_instruments_url(path: &str) {
                     let Some(u) = field(b, "url") else {
                         return false;
                     };
-                    u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim())))
+                    u.ends_with(&format!(
+                        "/{}",
+                        url.trim().rsplit('/').next().unwrap_or(url.trim())
+                    ))
                 })
             })
             .or_else(|| {
@@ -1044,7 +1085,12 @@ fn apply_instruments_url(path: &str) {
         };
         let existing = block.iter().any(|l| l.starts_with("instrument "));
         let mut extra = 0usize;
-        for (i, name) in inst.split(',').map(str::trim).filter(|s| !s.is_empty()).enumerate() {
+        for (i, name) in inst
+            .split(',')
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .enumerate()
+        {
             if existing {
                 continue;
             }
@@ -1059,7 +1105,10 @@ fn apply_instruments_url(path: &str) {
         lines.insert(*at, line.clone());
     }
     write_out(PHI, lines.join("\n") + "\n", "phi");
-    println!("instrument-url: {} gesetzt, {open} OFFEN uebersprungen", ins.len());
+    println!(
+        "instrument-url: {} gesetzt, {open} OFFEN uebersprungen",
+        ins.len()
+    );
 }
 
 fn aussondern(class: &str, out_path: &str, derived_list: Option<&str>) {
@@ -1192,7 +1241,10 @@ fn verify_specs() {
         } else if !quote.to_lowercase().contains(&inst.to_lowercase()) {
             inst_not_in_quote += 1;
             if examples.len() < 20 {
-                examples.push(format!("{inst}\t{}\t{quote}", or_empty(field(&r, "applies"))));
+                examples.push(format!(
+                    "{inst}\t{}\t{quote}",
+                    or_empty(field(&r, "applies"))
+                ));
             }
         }
         if api_quote.trim().is_empty() {
@@ -1241,8 +1293,10 @@ fn sync_fields() {
         let mut keys: Vec<String> = Vec::new();
         for line in block {
             let p: Vec<&str> = line.split_whitespace().collect();
-            if matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
-                && let Some(k) = p.get(1)
+            if matches!(
+                p.first(),
+                Some(&"field") | Some(&"quantity") | Some(&"last")
+            ) && let Some(k) = p.get(1)
             {
                 let k = k.trim_matches('"').to_string();
                 if !keys.iter().any(|x| x.eq_ignore_ascii_case(&k)) {
@@ -1283,7 +1337,10 @@ fn set_instruments_by_asset(path: &str) {
         let names: Vec<String> = if inst.trim() == "-" {
             Vec::new()
         } else {
-            inst.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()
+            inst.split(',')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect()
         };
         if !asset.is_empty() {
             map.insert(asset, names);
@@ -1297,7 +1354,10 @@ fn set_instruments_by_asset(path: &str) {
             Some(u) => u,
             None => String::new(),
         };
-        let names = map.iter().find(|(a, _)| url.ends_with(&format!("/{a}"))).map(|(_, v)| v.clone());
+        let names = map
+            .iter()
+            .find(|(a, _)| url.ends_with(&format!("/{a}")))
+            .map(|(_, v)| v.clone());
         let Some(names) = names else {
             out.extend(block);
             out.push(String::new());
@@ -1516,10 +1576,7 @@ fn replace_blocks(path: &str) {
 fn github_token() -> String {
     let candidates = [
         or_empty(std::env::var("OMEGAFLOW_SECRETS_FILE").ok()),
-        format!(
-            "{}/.secrets.local",
-            or_empty(std::env::var("HOME").ok())
-        ),
+        format!("{}/.secrets.local", or_empty(std::env::var("HOME").ok())),
         ".secrets.local".to_string(),
     ];
     for path in candidates {
@@ -1658,11 +1715,7 @@ fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
             };
             let after = &body[after_start..after_end];
             if let Some(dp) = after.find("\"digest\": \"sha256:") {
-                hash = after[dp + 18..]
-                    .split('"')
-                    .next()
-                    .unwrap_or("")
-                    .to_string();
+                hash = after[dp + 18..].split('"').next().unwrap_or("").to_string();
             }
             if let Some(sp) = after.find("\"size\":") {
                 let digits = after[sp + 7..]
@@ -1675,9 +1728,15 @@ fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
                 }
             }
         }
-        if hash.len() != 64 && found && !asset_id.is_empty() && asset_size > 0 && asset_size <= max_bytes
+        if hash.len() != 64
+            && found
+            && !asset_id.is_empty()
+            && asset_size > 0
+            && asset_size <= max_bytes
         {
-            let dl = format!("https://api.github.com/repos/omegaflow/sources/releases/assets/{asset_id}");
+            let dl = format!(
+                "https://api.github.com/repos/omegaflow/sources/releases/assets/{asset_id}"
+            );
             let tmp = std::env::temp_dir().join(format!("omegaflow-sha-{asset_id}"));
             let got = Command::new("curl")
                 .args([
@@ -1744,7 +1803,9 @@ fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
         done += 1;
         if !existing.is_empty() && existing != hash {
             corrected += 1;
-            report.push(format!("{url}\t{tag}\t{asset}\tkORRIGIERT\t{existing}->{hash}"));
+            report.push(format!(
+                "{url}\t{tag}\t{asset}\tkORRIGIERT\t{existing}->{hash}"
+            ));
         }
     }
     write_out(PHI, out.join("\n") + "\n", "phi");
@@ -1760,9 +1821,9 @@ fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
 }
 
 fn has_measurement_line(block: &[String]) -> bool {
-    block.iter().any(|l| {
-        l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last ")
-    })
+    block
+        .iter()
+        .any(|l| l.starts_with("field ") || l.starts_with("quantity ") || l.starts_with("last "))
 }
 
 fn split_field(path: &str, with_path: &str, without_path: &str) {
@@ -2068,8 +2129,7 @@ fn set_instrument_lines(block: &mut Vec<String>, instruments: &[String]) {
 
 fn spec_matches_block(spec_url: &str, url: &str, origin: &str, fkey: &str) -> bool {
     if (!url.is_empty() && url == spec_url)
-        || (!origin.is_empty()
-            && origin.split(';').any(|o| o.trim() == spec_url))
+        || (!origin.is_empty() && origin.split(';').any(|o| o.trim() == spec_url))
     {
         return true;
     }
@@ -2127,8 +2187,14 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         let origin = or_empty(field(&b, "origin"));
         let fkey = b
             .iter()
-            .find(|l| l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity "))
-            .and_then(|l| l.split_whitespace().nth(2).or_else(|| l.split_whitespace().nth(1)))
+            .find(|l| {
+                l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity ")
+            })
+            .and_then(|l| {
+                l.split_whitespace()
+                    .nth(2)
+                    .or_else(|| l.split_whitespace().nth(1))
+            })
             .unwrap_or("")
             .to_lowercase();
         if let Some(spec) = specs
@@ -2185,8 +2251,14 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         let origin = or_empty(field(&b, "origin"));
         let fkey = b
             .iter()
-            .find(|l| l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity "))
-            .and_then(|l| l.split_whitespace().nth(2).or_else(|| l.split_whitespace().nth(1)))
+            .find(|l| {
+                l.starts_with("field ") || l.starts_with("last ") || l.starts_with("quantity ")
+            })
+            .and_then(|l| {
+                l.split_whitespace()
+                    .nth(2)
+                    .or_else(|| l.split_whitespace().nth(1))
+            })
             .unwrap_or("")
             .to_lowercase();
         let hit = specs
@@ -2261,7 +2333,10 @@ fn align_many(path: &str) {
             .map(|s| s.trim().to_string())
             .filter(|s| !s.is_empty())
             .collect();
-        let host = cols.get(2).map(|s| s.trim().to_string()).filter(|s| !s.is_empty());
+        let host = cols
+            .get(2)
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty());
         if !url.is_empty() && !instruments.is_empty() {
             wanted.push((url, instruments, host));
         }
@@ -2295,8 +2370,7 @@ fn align_many(path: &str) {
         let target = applies.split_whitespace().next().unwrap_or("").to_string();
         let found = targets.iter().find(|(url, origin, _, _)| {
             (!url.is_empty() && *url == target)
-                || (!origin.is_empty()
-                    && origin.split(';').any(|o| o.trim() == target))
+                || (!origin.is_empty() && origin.split(';').any(|o| o.trim() == target))
         });
         if let Some((_, _, instruments, row_host)) = found {
             set_instrument_lines(&mut b, instruments);
@@ -2357,7 +2431,10 @@ fn set_fields(path: &str) {
             continue;
         };
         let fline = fline.trim();
-        if !(fline.starts_with("field ") || fline.starts_with("quantity ") || fline.starts_with("last ")) {
+        if !(fline.starts_with("field ")
+            || fline.starts_with("quantity ")
+            || fline.starts_with("last "))
+        {
             continue;
         }
         let head: Vec<&str> = fline.split_whitespace().take(5).collect();
@@ -2375,7 +2452,12 @@ fn set_fields(path: &str) {
         if idx.is_none() {
             for (i, b) in groups.iter().enumerate() {
                 if field(b, "url")
-                    .map(|u| u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim()))))
+                    .map(|u| {
+                        u.ends_with(&format!(
+                            "/{}",
+                            url.trim().rsplit('/').next().unwrap_or(url.trim())
+                        ))
+                    })
                     .unwrap_or(false)
                 {
                     idx = Some(i);
@@ -2435,7 +2517,12 @@ fn audit_blocks() {
         let has_field = b.iter().any(|l| l.starts_with("field "));
         let has_quantity = b.iter().any(|l| l.starts_with("quantity "));
         let has_last = b.iter().any(|l| l.starts_with("last "));
-        if [has_field, has_quantity, has_last].iter().filter(|x| **x).count() > 1 {
+        if [has_field, has_quantity, has_last]
+            .iter()
+            .filter(|x| **x)
+            .count()
+            > 1
+        {
             mixed += 1;
             if samples.len() < 20 {
                 samples.push(format!("mixed\t{start}\t{url}"));
@@ -2444,7 +2531,10 @@ fn audit_blocks() {
         if !src.is_empty() {
             for l in &b {
                 let p: Vec<&str> = l.split_whitespace().collect();
-                if !matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last")) {
+                if !matches!(
+                    p.first(),
+                    Some(&"field") | Some(&"quantity") | Some(&"last")
+                ) {
                     continue;
                 }
                 let name = p.get(2).copied().unwrap_or("");
@@ -2479,7 +2569,10 @@ fn audit_blocks() {
             .split("/releases/download/")
             .nth(1)
             .and_then(|r| r.split('/').next())
-            && let Some(oh) = origin.split("://").nth(1).and_then(|r| r.split(['/', ' ', '?']).next())
+            && let Some(oh) = origin
+                .split("://")
+                .nth(1)
+                .and_then(|r| r.split(['/', ' ', '?']).next())
             && !tag.is_empty()
             && !oh.is_empty()
             && !tag.starts_with(oh)
@@ -2491,7 +2584,9 @@ fn audit_blocks() {
             }
         }
     }
-    println!("audit: foreign_field={foreign_fields} dup_sha={dup_sha} mixed_lines={mixed} format_compiler={bad_format} host_mismatch={host_mismatch}");
+    println!(
+        "audit: foreign_field={foreign_fields} dup_sha={dup_sha} mixed_lines={mixed} format_compiler={bad_format} host_mismatch={host_mismatch}"
+    );
     for s in samples {
         println!("{s}");
     }
@@ -2505,7 +2600,9 @@ fn secrets() -> BTreeMap<String, String> {
 fn auth_candidates(host: &str, env: &BTreeMap<String, String>) -> Vec<Vec<String>> {
     let mut out: Vec<Vec<String>> = vec![Vec::new()];
     if host.contains("frost") {
-        if let (Some(id), Some(secret)) = (env.get("FROST_CLIENT_ID"), env.get("FROST_CLIENT_SECRET")) {
+        if let (Some(id), Some(secret)) =
+            (env.get("FROST_CLIENT_ID"), env.get("FROST_CLIENT_SECRET"))
+        {
             if !id.is_empty() && !secret.is_empty() {
                 out.push(vec!["-u".to_string(), format!("{id}:{secret}")]);
                 return out;
@@ -2548,7 +2645,8 @@ fn auth_candidates(host: &str, env: &BTreeMap<String, String>) -> Vec<Vec<String
             format!("token: {v}")
         } else if host.contains("tns") {
             format!("api_key: {v}")
-        } else if host.contains("earthdata") || host.contains("gesdisc") || host.contains("podaac") {
+        } else if host.contains("earthdata") || host.contains("gesdisc") || host.contains("podaac")
+        {
             format!("Authorization: Bearer {v}")
         } else {
             String::new()
@@ -2658,12 +2756,23 @@ fn reprobe(report: &str) {
     let mut headers_by_block: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for (_, b) in blocks(&phi_text) {
         let u = or_empty(field(&b, "url"));
-        if u.is_empty() { continue; }
-        let hs: Vec<String> = b.iter().filter(|l| l.trim_start().starts_with("header ")).map(|l| l.trim_start().to_string()).collect();
-        if !hs.is_empty() { headers_by_block.insert(u, hs); }
+        if u.is_empty() {
+            continue;
+        }
+        let hs: Vec<String> = b
+            .iter()
+            .filter(|l| l.trim_start().starts_with("header "))
+            .map(|l| l.trim_start().to_string())
+            .collect();
+        if !hs.is_empty() {
+            headers_by_block.insert(u, hs);
+        }
     }
     for (start, block) in blocks(&text) {
-        let Some(pos) = block.iter().position(|l| l.trim_start().starts_with("probe ")) else {
+        let Some(pos) = block
+            .iter()
+            .position(|l| l.trim_start().starts_with("probe "))
+        else {
             continue;
         };
         let p: Vec<&str> = block[pos].split_whitespace().collect();
@@ -2707,7 +2816,11 @@ fn reprobe(report: &str) {
             Ok(v) => v,
             Err(_) => String::new(),
         };
-        if !skip.is_empty() && skip.split(',').any(|h| !h.trim().is_empty() && host.contains(h.trim())) {
+        if !skip.is_empty()
+            && skip
+                .split(',')
+                .any(|h| !h.trim().is_empty() && host.contains(h.trim()))
+        {
             skipped += 1;
             continue;
         }
@@ -2793,7 +2906,10 @@ fn reprobe(report: &str) {
             if matches!(final_status.as_str(), "200" | "206" | "204" | "202" | "201") {
                 break;
             }
-            if matches!(final_status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
+            if matches!(
+                final_status.as_str(),
+                "429" | "500" | "502" | "503" | "504" | "000"
+            ) {
                 std::thread::sleep(std::time::Duration::from_secs(1u64 << attempt));
                 continue;
             }
@@ -2801,7 +2917,10 @@ fn reprobe(report: &str) {
         }
         let abs = start - 1 + pos;
         if matches!(final_status.as_str(), "200" | "206" | "204" | "202" | "201") {
-            repl.insert(abs, format!("  probe {today}T00:00:00Z {final_status} {raw_url}"));
+            repl.insert(
+                abs,
+                format!("  probe {today}T00:00:00Z {final_status} {raw_url}"),
+            );
             fixed += 1;
         } else {
             report_lines.push(format!("{status}->{final_status}\t{url}\tOFFEN"));
@@ -2817,7 +2936,9 @@ fn reprobe(report: &str) {
     }
     write_out(REG, out.join("\n") + "\n", "register");
     write_out(report, report_lines.join("\n") + "\n", "report");
-    println!("reprobe: {fixed} auf 2xx gebracht, {failed} offen, {skipped} nach ttl oder Sperrliste ausgelassen (siehe {report})");
+    println!(
+        "reprobe: {fixed} auf 2xx gebracht, {failed} offen, {skipped} nach ttl oder Sperrliste ausgelassen (siehe {report})"
+    );
 }
 
 fn normalize_blocks() {
@@ -2833,8 +2954,16 @@ fn normalize_blocks() {
             let key = l.split_whitespace().next().unwrap_or("").to_string();
             let singleton = matches!(
                 key.as_str(),
-                "url" | "terms" | "format" | "origin" | "compiler" | "sha256" | "ttl" | "witness"
-                    | "record" | "zustand"
+                "url"
+                    | "terms"
+                    | "format"
+                    | "origin"
+                    | "compiler"
+                    | "sha256"
+                    | "ttl"
+                    | "witness"
+                    | "record"
+                    | "zustand"
             );
             if singleton && !seen.insert(key) {
                 removed += 1;
@@ -2887,7 +3016,13 @@ fn add_line(path: &str) {
         }
         let Some(b) = groups.iter_mut().find(|b| {
             field(b, "url")
-                .map(|u| u == url.trim() || u.ends_with(&format!("/{}", url.trim().rsplit('/').next().unwrap_or(url.trim()))))
+                .map(|u| {
+                    u == url.trim()
+                        || u.ends_with(&format!(
+                            "/{}",
+                            url.trim().rsplit('/').next().unwrap_or(url.trim())
+                        ))
+                })
                 .unwrap_or(false)
         }) else {
             skipped += 1;
@@ -2932,9 +3067,7 @@ fn refs_audit(path: &str) {
         let Some(b) = blocks(&text).into_iter().map(|(_, b)| b).find(|b| {
             let u = or_empty(field(b, "url"));
             let o = or_empty(field(b, "origin"));
-            u == url
-                || u.ends_with(&format!("/{url}"))
-                || o.split(';').any(|s| s.trim() == url)
+            u == url || u.ends_with(&format!("/{url}")) || o.split(';').any(|s| s.trim() == url)
         }) else {
             println!("FEHLT\t{url}");
             continue;
@@ -2947,13 +3080,16 @@ fn refs_audit(path: &str) {
         println!(
             "{}\t{}\t{}\t{url}",
             if measure { "MESSZEILE" } else { "ohne" },
-            if instr.is_empty() { "-" } else { instr.as_str() },
+            if instr.is_empty() {
+                "-"
+            } else {
+                instr.as_str()
+            },
             or_empty(field(&b, "format"))
         );
     }
     println!("refs-audit: {checked} Bloecke gefunden");
 }
-
 
 fn probe_terms(host_filter: &str) {
     let env = secrets();
@@ -3008,7 +3144,16 @@ fn probe_terms(host_filter: &str) {
         let mut status = String::new();
         for attempt in 0..3 {
             let out = Command::new("curl")
-                .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "30", &url])
+                .args([
+                    "-sSL",
+                    "-o",
+                    "/dev/null",
+                    "-w",
+                    "%{http_code}",
+                    "--max-time",
+                    "30",
+                    &url,
+                ])
                 .output();
             status = match out
                 .ok()
@@ -3021,7 +3166,10 @@ fn probe_terms(host_filter: &str) {
             if matches!(status.as_str(), "200" | "206" | "204" | "202") {
                 break;
             }
-            if matches!(status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
+            if matches!(
+                status.as_str(),
+                "429" | "500" | "502" | "503" | "504" | "000"
+            ) {
                 std::thread::sleep(std::time::Duration::from_secs(1u64 << attempt));
                 continue;
             }
@@ -3029,7 +3177,10 @@ fn probe_terms(host_filter: &str) {
         }
         let abs = start - 1 + pos;
         if matches!(status.as_str(), "200" | "206" | "204" | "202") {
-            repl.insert(abs, format!("  probe {today}T00:00:00Z {status} {term_url}"));
+            repl.insert(
+                abs,
+                format!("  probe {today}T00:00:00Z {status} {term_url}"),
+            );
             fixed += 1;
         } else {
             failed += 1;
@@ -3103,7 +3254,16 @@ fn probe_map(path: &str) {
         let mut status = String::new();
         for attempt in 0..3 {
             let out = Command::new("curl")
-                .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "30", &url])
+                .args([
+                    "-sSL",
+                    "-o",
+                    "/dev/null",
+                    "-w",
+                    "%{http_code}",
+                    "--max-time",
+                    "30",
+                    &url,
+                ])
                 .output();
             status = match out
                 .ok()
@@ -3116,7 +3276,10 @@ fn probe_map(path: &str) {
             if matches!(status.as_str(), "200" | "206" | "204" | "202") {
                 break;
             }
-            if matches!(status.as_str(), "429" | "500" | "502" | "503" | "504" | "000") {
+            if matches!(
+                status.as_str(),
+                "429" | "500" | "502" | "503" | "504" | "000"
+            ) {
                 std::thread::sleep(std::time::Duration::from_secs(1u64 << attempt));
                 continue;
             }
@@ -3196,7 +3359,16 @@ fn probe_openneuro() {
         };
         let target = format!("https://openneuro.org/datasets/{id}");
         let out = Command::new("curl")
-            .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "30", &target])
+            .args([
+                "-sSL",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "--max-time",
+                "30",
+                &target,
+            ])
             .output();
         let status = match out
             .ok()
@@ -3263,7 +3435,16 @@ fn untangle_probes() {
             continue;
         }
         let out = Command::new("curl")
-            .args(["-sSL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "10", &url])
+            .args([
+                "-sSL",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "--max-time",
+                "10",
+                &url,
+            ])
             .output();
         let status = match out
             .ok()
@@ -3289,7 +3470,10 @@ fn untangle_probes() {
         });
     }
     write_out(REG, out.join("\n") + "\n", "register");
-    println!("untangle-probes: {fixed} auf 2xx, {} Zeilen entwirrt", repl.len());
+    println!(
+        "untangle-probes: {fixed} auf 2xx, {} Zeilen entwirrt",
+        repl.len()
+    );
 }
 
 fn set_header(path: &str) {
@@ -3342,7 +3526,9 @@ fn list_missing(key: &str) {
     let reg = fs::read_to_string(REG).expect("register");
     let mut counts: BTreeMap<String, usize> = BTreeMap::new();
     for (_, b) in blocks(&reg) {
-        let has = b.iter().any(|l| l.trim_start().starts_with(&format!("{key} ")));
+        let has = b
+            .iter()
+            .any(|l| l.trim_start().starts_with(&format!("{key} ")));
         if has {
             continue;
         }
@@ -3357,7 +3543,11 @@ fn list_missing(key: &str) {
     for (h, n) in &rows {
         println!("{n}\t{h}");
     }
-    println!("list-missing {key}: {} Hosts, {} Zeilen", rows.len(), rows.iter().map(|r| r.1).sum::<usize>());
+    println!(
+        "list-missing {key}: {} Hosts, {} Zeilen",
+        rows.len(),
+        rows.iter().map(|r| r.1).sum::<usize>()
+    );
 }
 
 fn set_host_doc(path: &str) {
@@ -3395,7 +3585,10 @@ fn set_host_doc(path: &str) {
         out.push(String::new());
     }
     write_out(REG, out.join("\n") + "\n", "register");
-    println!("set-host-doc: {rows} Zeilen mit {} Hostdokumenten", docs.len());
+    println!(
+        "set-host-doc: {rows} Zeilen mit {} Hostdokumenten",
+        docs.len()
+    );
 }
 
 fn list_missing_rows(key: &str) {
@@ -3415,7 +3608,12 @@ fn list_missing_rows(key: &str) {
 }
 
 fn looks_html(s: &str) -> bool {
-    s.contains("</") || s.contains("<!") || s.contains("<html") || s.contains("<a href") || s.contains("<BR") || s.contains("<br")
+    s.contains("</")
+        || s.contains("<!")
+        || s.contains("<html")
+        || s.contains("<a href")
+        || s.contains("<BR")
+        || s.contains("<br")
 }
 
 fn strip_markup(s: &str) -> String {
@@ -3459,7 +3657,7 @@ fn verify_cites(path: &str) {
                 continue;
             }
             let out = Command::new("curl")
-                .args(["-sSL", "--max-time", "30", url])
+                .args(["-sSL", "-A", "Mozilla/5.0", "--max-time", "45", url])
                 .output();
             let raw = match out {
                 Ok(o) => o.stdout,
@@ -3480,7 +3678,10 @@ fn verify_cites(path: &str) {
             if raw.starts_with(b"PK\x03\x04") || url.to_lowercase().ends_with(".zip") {
                 let tmp = std::env::temp_dir().join(format!("zip-{}", std::process::id()));
                 let _ = fs::write(&tmp, &raw);
-                if let Ok(o) = Command::new("unzip").args(["-p", &tmp.to_string_lossy()]).output() {
+                if let Ok(o) = Command::new("unzip")
+                    .args(["-p", &tmp.to_string_lossy()])
+                    .output()
+                {
                     text = String::from_utf8_lossy(&o.stdout).to_string();
                 }
                 let _ = fs::remove_file(&tmp);
@@ -3502,11 +3703,17 @@ fn verify_cites(path: &str) {
             if text.contains('\u{FFFD}') {
                 let tmp = std::env::temp_dir().join(format!("enc-{}", std::process::id()));
                 let _ = fs::write(&tmp, &raw);
-                if let Ok(o) = Command::new("iconv")
-                    .args(["-f", "cp1251", "-t", "utf-8", &tmp.to_string_lossy()])
-                    .output()
-                {
-                    text = String::from_utf8_lossy(&o.stdout).to_string();
+                for enc in ["cp1251", "cp866"] {
+                    if let Ok(o) = Command::new("iconv")
+                        .args(["-f", enc, "-t", "utf-8", &tmp.to_string_lossy()])
+                        .output()
+                    {
+                        let cand = String::from_utf8_lossy(&o.stdout).to_string();
+                        if !cand.contains('\u{FFFD}') {
+                            text = cand;
+                            break;
+                        }
+                    }
                 }
                 let _ = fs::remove_file(&tmp);
             }
@@ -3604,13 +3811,26 @@ fn set_doc_quote(path: &str) {
 
 fn quote_holds(hay: &str, quote: &str) -> bool {
     let q = quote.trim().trim_matches('"');
+    let norm = |s: &str| {
+        s.replace("( ", "(")
+            .replace(" )", ")")
+            .replace(" ,", ",")
+            .replace(" .", ".")
+            .replace("[ ", "[")
+            .replace(" ]", "]")
+    };
+    let hay_n = norm(hay);
     let mut pos = 0usize;
     for seg in q.split(" ... ") {
-        let needle: String = seg.split_whitespace().take(6).collect::<Vec<_>>().join(" ");
+        let needle: String = norm(&seg.split_whitespace().collect::<Vec<_>>().join(" "))
+            .split_whitespace()
+            .take(6)
+            .collect::<Vec<_>>()
+            .join(" ");
         if needle.is_empty() {
             continue;
         }
-        match hay.get(pos..).and_then(|rest| rest.find(&needle)) {
+        match hay_n.get(pos..).and_then(|rest| rest.find(&needle)) {
             Some(p) => pos += p + needle.len(),
             None => return false,
         }
@@ -3637,15 +3857,23 @@ fn verify_register(filter_path: &str) {
     let (mut ok, mut bad, mut http) = (0usize, 0usize, 0usize);
     for (_, b) in blocks(&reg) {
         let pairs = [
-            (or_empty(field(&b, "instrument_cite")), or_empty(field(&b, "instrument_quote")), "instrument"),
-            (or_empty(field(&b, "api_cite")), or_empty(field(&b, "api_quote")), "data"),
+            (
+                or_empty(field(&b, "instrument_cite")),
+                or_empty(field(&b, "instrument_quote")),
+                "instrument",
+            ),
+            (
+                or_empty(field(&b, "api_cite")),
+                or_empty(field(&b, "api_quote")),
+                "data",
+            ),
         ];
         for (url, quote, kind) in pairs {
             if url.is_empty() || quote.is_empty() || !docs.contains(&url) {
                 continue;
             }
             let out = Command::new("curl")
-                .args(["-sSL", "--max-time", "30", &url])
+                .args(["-sSL", "-A", "Mozilla/5.0", "--max-time", "45", &url])
                 .output();
             let raw = match out {
                 Ok(o) => o.stdout,
@@ -3655,7 +3883,10 @@ fn verify_register(filter_path: &str) {
             if raw.starts_with(b"PK\x03\x04") || url.to_lowercase().ends_with(".zip") {
                 let tmp = std::env::temp_dir().join(format!("zip-{}", std::process::id()));
                 let _ = fs::write(&tmp, &raw);
-                if let Ok(o) = Command::new("unzip").args(["-p", &tmp.to_string_lossy()]).output() {
+                if let Ok(o) = Command::new("unzip")
+                    .args(["-p", &tmp.to_string_lossy()])
+                    .output()
+                {
                     text = String::from_utf8_lossy(&o.stdout).to_string();
                 }
                 let _ = fs::remove_file(&tmp);
@@ -3732,7 +3963,11 @@ fn block_audit() {
         };
         if !first.trim_start().starts_with("host ") {
             nohost += 1;
-            println!("OHNE-HOST\t{}\t{}", start + 1, first.chars().take(80).collect::<String>());
+            println!(
+                "OHNE-HOST\t{}\t{}",
+                start + 1,
+                first.chars().take(80).collect::<String>()
+            );
         }
         let mut seen: BTreeSet<String> = BTreeSet::new();
         for line in &b {
@@ -3745,7 +3980,12 @@ fn block_audit() {
             }
             if !seen.insert(key.clone()) {
                 dup += 1;
-                println!("DOPPELT\t{}\t{}\t{}", start + 1, key, first.chars().take(60).collect::<String>());
+                println!(
+                    "DOPPELT\t{}\t{}\t{}",
+                    start + 1,
+                    key,
+                    first.chars().take(60).collect::<String>()
+                );
             }
         }
     }
@@ -3796,7 +4036,11 @@ fn stray_report(limit: usize) {
         };
         let head = &b[..i];
         let tail = &b[i..];
-        println!("== Block ab Zeile {} · host {}", start + 1, val(head, "host"));
+        println!(
+            "== Block ab Zeile {} · host {}",
+            start + 1,
+            val(head, "host")
+        );
         println!("   applies       {}", val(head, "applies"));
         println!("   Kopf api      {}", val(head, "api_cite"));
         println!("   Rest api      {}", val(tail, "api_cite"));
@@ -3901,7 +4145,13 @@ fn fix_stray(mode: &str) {
             if !head_api.is_empty() && head_api != tail_api {
                 flipped += 1;
                 let tail_instr = tail_value(&tail, "instrument_cite");
-                report.push(format!("{}\t{}\t{}\t{}", start + 1, head_api, tail_api, tail_instr));
+                report.push(format!(
+                    "{}\t{}\t{}\t{}",
+                    start + 1,
+                    head_api,
+                    tail_api,
+                    tail_instr
+                ));
             }
         }
         if mode == "split-entry" {
@@ -3949,7 +4199,9 @@ fn fix_stray(mode: &str) {
     if let Ok(p) = std::env::var("OMEGAFLOW_STRAY_REPORT") {
         let _ = fs::write(&p, report.join("\n") + "\n");
     }
-    println!("fix-stray {mode}: {fixed} Bloecke zusammengefuehrt, {flipped} mit anderem Datendokument, {open} unentschieden, {skipped} andere Muster");
+    println!(
+        "fix-stray {mode}: {fixed} Bloecke zusammengefuehrt, {flipped} mit anderem Datendokument, {open} unentschieden, {skipped} andere Muster"
+    );
 }
 
 fn entry_audit() {
@@ -3977,14 +4229,21 @@ fn entry_audit() {
             multi_block += 1;
         }
     }
-    println!("entry-audit: {host_in_block} host-Zeilen in Bloecken, {multi_applies} Bloecke mit mehreren applies, {multi_block} mit mehreren block");
+    println!(
+        "entry-audit: {host_in_block} host-Zeilen in Bloecken, {multi_applies} Bloecke mit mehreren applies, {multi_block} mit mehreren block"
+    );
 }
 
 fn block_list() {
     let reg = fs::read_to_string(REG).expect("register");
-    println!("line\thost\tapplies\tfields\tinstrument\tunit\tinterval\tsampling\tapi_cite\tinstrument_cite");
+    println!(
+        "line\thost\tapplies\tfields\tinstrument\tunit\tinterval\tsampling\tapi_cite\tinstrument_cite"
+    );
     for (start, b) in blocks(&reg) {
-        let one = |k: &str| or_empty(field(&b, k));
+        let one = |k: &str| {
+            let v = or_empty(field(&b, k));
+            if v.is_empty() { "-".to_string() } else { v }
+        };
         let fields: Vec<String> = b
             .iter()
             .filter(|l| l.trim_start().starts_with("fields "))
@@ -3995,7 +4254,11 @@ fn block_list() {
             start + 1,
             one("host"),
             one("applies"),
-            fields.join(" "),
+            if fields.is_empty() {
+                "-".to_string()
+            } else {
+                fields.join(" ")
+            },
             one("instrument"),
             one("unit"),
             one("interval"),
@@ -4022,11 +4285,18 @@ fn doc_audit() {
         if !a.is_empty() && a == i {
             same += 1;
             if same <= 20 {
-                println!("GLEICH\t{}\t{}\t{}", start + 1, or_empty(field(&b, "host")), a);
+                println!(
+                    "GLEICH\t{}\t{}\t{}",
+                    start + 1,
+                    or_empty(field(&b, "host")),
+                    a
+                );
             }
         }
     }
-    println!("doc-audit: {total} Bloecke, {same} mit gleichem Dokument fuer Daten und Geraet, {empty_api} ohne api_cite, {empty_instr} ohne instrument_cite");
+    println!(
+        "doc-audit: {total} Bloecke, {same} mit gleichem Dokument fuer Daten und Geraet, {empty_api} ohne api_cite, {empty_instr} ohne instrument_cite"
+    );
 }
 
 const DIGESTS: &str = "tools/register/data/digests.φ";
@@ -4059,15 +4329,13 @@ fn load_digests() -> BTreeMap<String, Digest> {
             };
             let body = rest[kind.len()..].trim();
             let quote = match body.rfind('"') {
-                Some(end) => {
-                    match body[..end].rfind('"') {
-                        Some(begin) => {
-                            let q = body[begin + 1..end].to_string();
-                            (body[..begin].to_string(), q)
-                        }
-                        None => (body.to_string(), String::new()),
+                Some(end) => match body[..end].rfind('"') {
+                    Some(begin) => {
+                        let q = body[begin + 1..end].to_string();
+                        (body[..begin].to_string(), q)
                     }
-                }
+                    None => (body.to_string(), String::new()),
+                },
                 None => (body.to_string(), String::new()),
             };
             let parts: Vec<String> = quote.0.split_whitespace().map(|s| s.to_string()).collect();
@@ -4088,7 +4356,7 @@ fn claim_unit(claims: &[(String, Vec<String>, String)], key: &str) -> Option<Str
                 return Some(match parts.get(1) {
                     Some(v) => v.clone(),
                     None => String::new(),
-                })
+                });
             }
             _ => {}
         }
@@ -4103,14 +4371,20 @@ fn claim_cadence(claims: &[(String, Vec<String>, String)], key: &str) -> Option<
         }
         match parts.first() {
             Some(k) if k.eq_ignore_ascii_case(key) => {
-                return Some(match parts.get(2) { Some(v) => v.clone(), None => String::new() })
+                return Some(match parts.get(2) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                });
             }
             _ => {}
         }
     }
     for (kind, parts, _) in claims {
         if kind == "cadence" {
-            return Some(match parts.first() { Some(v) => v.clone(), None => String::new() });
+            return Some(match parts.first() {
+                Some(v) => v.clone(),
+                None => String::new(),
+            });
         }
     }
     None
@@ -4131,8 +4405,15 @@ fn claims_device(claims: &[(String, Vec<String>, String)]) -> Vec<String> {
 fn check_blocks() {
     let reg = fs::read_to_string(REG).expect("register");
     let digests = load_digests();
-    let (mut ok, mut no_digest, mut no_field, mut unit_bad, mut cadence_bad, mut device_bad, mut one_doc) =
-        (0usize, 0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
+    let (
+        mut ok,
+        mut no_digest,
+        mut no_field,
+        mut unit_bad,
+        mut cadence_bad,
+        mut device_bad,
+        mut one_doc,
+    ) = (0usize, 0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
     for (start, b) in blocks(&reg) {
         let host = or_empty(field(&b, "host"));
         let api = or_empty(field(&b, "api_cite"));
@@ -4196,13 +4477,21 @@ fn check_blocks() {
                         break;
                     }
                     Some(cu) => {
-                        if keys.len() == 1 && !cu.is_empty() && !unit.is_empty() && !unit.contains(&cu) {
+                        if keys.len() == 1
+                            && !cu.is_empty()
+                            && !unit.is_empty()
+                            && !unit.contains(&cu)
+                        {
                             verdict = "EINHEIT";
                             detail = format!("{key}: Dokument {cu}, Block {unit}");
                             break;
                         }
                         if let Some(cc) = claim_cadence(&d_api.claims, key) {
-                            if cc != "null" && interval != "null" && !interval.is_empty() && cc != interval {
+                            if cc != "null"
+                                && interval != "null"
+                                && !interval.is_empty()
+                                && cc != interval
+                            {
                                 verdict = "TAKT";
                                 detail = format!("{key}: Dokument {cc}, Block {interval}");
                                 break;
@@ -4271,7 +4560,10 @@ fn digest_fetch(url: &str) {
             text = String::from_utf8_lossy(&o.stdout).to_string();
         }
     } else if raw.starts_with(b"PK\x03\x04") || url.to_lowercase().ends_with(".zip") {
-        if let Ok(o) = Command::new("unzip").args(["-p", &tmp.to_string_lossy()]).output() {
+        if let Ok(o) = Command::new("unzip")
+            .args(["-p", &tmp.to_string_lossy()])
+            .output()
+        {
             text = String::from_utf8_lossy(&o.stdout).to_string();
         }
     }
@@ -4285,8 +4577,15 @@ fn digest_fetch(url: &str) {
 
 fn coord_audit() {
     let phi = fs::read_to_string(PHI).expect("phi");
-    let (mut total, mut with_at, mut with_sky, mut with_ground, mut with_epoch, mut with_map, mut none) =
-        (0usize, 0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
+    let (
+        mut total,
+        mut with_at,
+        mut with_sky,
+        mut with_ground,
+        mut with_epoch,
+        mut with_map,
+        mut none,
+    ) = (0usize, 0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
     for (_, b) in blocks(&phi) {
         if !b.iter().any(|l| l.starts_with("url ")) {
             continue;
@@ -4317,7 +4616,9 @@ fn coord_audit() {
             none += 1;
         }
     }
-    println!("coord-audit: {total} Bloecke; at {with_at}, Himmel (ra/dec) {with_sky}, Boden (lat/lon/station) {with_ground}, epoch {with_epoch}, map {with_map}, ohne jede Koordinate {none}");
+    println!(
+        "coord-audit: {total} Bloecke; at {with_at}, Himmel (ra/dec) {with_sky}, Boden (lat/lon/station) {with_ground}, epoch {with_epoch}, map {with_map}, ohne jede Koordinate {none}"
+    );
 }
 
 fn set_instr_doc(path: &str) {
@@ -4357,7 +4658,10 @@ fn set_instr_doc(path: &str) {
         out.push(String::new());
     }
     write_out(REG, out.join("\n") + "\n", "register");
-    println!("set-instr-doc: {set} Zeilen gesetzt ({} angefragt)", wanted.len());
+    println!(
+        "set-instr-doc: {set} Zeilen gesetzt ({} angefragt)",
+        wanted.len()
+    );
 }
 
 fn mirror_instr_doc(path: &str) {
@@ -4387,6 +4691,393 @@ fn mirror_instr_doc(path: &str) {
     }
     write_out(REG, out.join("\n") + "\n", "register");
     println!("mirror-instr-doc: {set} Zeilen auf das Datendokument gesetzt (Geraetepapier fehlt)");
+}
+
+fn set_doc_slot(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut wanted: BTreeMap<String, (String, String, String)> = BTreeMap::new();
+    for line in tsv.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 4 {
+            continue;
+        }
+        let key = cols[0].trim().to_string();
+        let slot = cols[1].trim().to_string();
+        let cite = cols[2].trim().to_string();
+        let quote = cols[3].trim().trim_matches('"').to_string();
+        if key.is_empty() || cite.is_empty() || quote.is_empty() || cite == "-" || quote == "-" {
+            continue;
+        }
+        if slot != "data" && slot != "instrument" {
+            continue;
+        }
+        wanted.insert(key, (slot, cite, quote));
+    }
+    let mut out: Vec<String> = Vec::new();
+    let (mut nd, mut ni) = (0usize, 0usize);
+    for (_, mut b) in blocks(&reg) {
+        let key = or_empty(field(&b, "applies"));
+        match wanted.get(&key) {
+            Some((slot, cite, quote)) => {
+                if slot == "data" {
+                    set_row_key(&mut b, "api_cite", cite);
+                    set_row_key(&mut b, "api_quote", &format!("\"{quote}\""));
+                    nd += 1;
+                } else {
+                    set_row_key(&mut b, "instrument_cite", cite);
+                    set_row_key(&mut b, "instrument_quote", &format!("\"{quote}\""));
+                    ni += 1;
+                }
+            }
+            None => {}
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!(
+        "set-doc-slot: {nd} data, {ni} instrument ({} requested)",
+        wanted.len()
+    );
+}
+
+fn set_instr_by_name(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut wanted: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for line in tsv.lines() {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 3 {
+            continue;
+        }
+        let name = cols[0].trim().to_lowercase();
+        let cite = cols[1].trim().to_string();
+        let quote = cols[2].trim().trim_matches('"').to_string();
+        if name.is_empty() || cite.is_empty() || quote.is_empty() || cite == "-" || quote == "-" {
+            continue;
+        }
+        wanted.insert(name, (cite, quote));
+    }
+    let mut out: Vec<String> = Vec::new();
+    let mut set = 0usize;
+    let mut seen: BTreeMap<String, usize> = BTreeMap::new();
+    for (_, mut b) in blocks(&reg) {
+        let name = or_empty(field(&b, "instrument")).to_lowercase();
+        let has = !or_empty(field(&b, "instrument_cite")).is_empty();
+        match wanted.get(&name) {
+            Some((cite, quote)) if !has => {
+                set_row_key(&mut b, "instrument_cite", cite);
+                set_row_key(&mut b, "instrument_quote", &format!("\"{quote}\""));
+                *seen.entry(name.clone()).or_insert(0) += 1;
+                set += 1;
+            }
+            _ => {}
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    for (k, v) in &seen {
+        println!("set-instr-by-name: {v}x {k}");
+    }
+    println!("set-instr-by-name: {set} rows set");
+}
+
+fn fill_doc_by_host(path: &str) {
+    let tsv = match fs::read_to_string(path) {
+        Ok(s) => s,
+        Err(_) => return,
+    };
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut wanted: Vec<(String, String, String, String, String)> = Vec::new();
+    for line in tsv.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 5 {
+            continue;
+        }
+        let host = c[0].trim();
+        let instr = c[1].trim();
+        let slot = c[2].trim();
+        let cite = c[3].trim();
+        let quote = c[4].trim().trim_matches('"');
+        if host.is_empty() || cite.is_empty() || quote.is_empty() || cite == "-" || quote == "-" {
+            continue;
+        }
+        if slot != "data" && slot != "instrument" {
+            continue;
+        }
+        wanted.push((
+            host.to_string(),
+            instr.to_lowercase(),
+            slot.to_string(),
+            cite.to_string(),
+            quote.to_string(),
+        ));
+    }
+    let mut out: Vec<String> = Vec::new();
+    let mut set = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let host = or_empty(field(&b, "host"));
+        let instr = or_empty(field(&b, "instrument")).to_lowercase();
+        let mut hit: Option<(String, String)> = None;
+        for (h, i, slot, cite, quote) in &wanted {
+            if *h != host {
+                continue;
+            }
+            if !i.is_empty() && !instr.contains(i.as_str()) {
+                continue;
+            }
+            let target_empty = if slot == "data" {
+                or_empty(field(&b, "api_cite")).is_empty()
+            } else {
+                or_empty(field(&b, "instrument_cite")).is_empty()
+            };
+            if target_empty {
+                hit = Some((slot.clone(), format!("{cite}\t{quote}")));
+                break;
+            }
+        }
+        if let Some((slot, payload)) = hit {
+            let parts: Vec<&str> = payload.splitn(2, '\t').collect();
+            let cite = parts.first().cloned().unwrap_or("");
+            let quote = parts.get(1).cloned().unwrap_or("");
+            if slot == "data" {
+                set_row_key(&mut b, "api_cite", cite);
+                set_row_key(&mut b, "api_quote", &format!("\"{quote}\""));
+            } else {
+                set_row_key(&mut b, "instrument_cite", cite);
+                set_row_key(&mut b, "instrument_quote", &format!("\"{quote}\""));
+            }
+            set += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("fill-doc-by-host: {set} rows set");
+}
+
+fn drop_orphans() {
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut dropped = 0usize;
+    for (start, b) in blocks(&text) {
+        let has_url = b.iter().any(|l| l.starts_with("url "));
+        if has_url {
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
+        if b.iter().all(|l| l.trim().is_empty()) {
+            continue;
+        }
+        dropped += 1;
+        for l in &b {
+            println!("DROPPED\t{}\t{}", start + 1, l);
+        }
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("drop-orphans: {dropped} blocks without url dropped");
+}
+
+fn set_ttl(args: &[String]) {
+    let host_pat = args.get(0).map(|s| s.as_str()).unwrap_or("*");
+    let value = match args.get(1) {
+        Some(v) => v.clone(),
+        None => String::new(),
+    };
+    if value.is_empty() || value.parse::<u64>().is_err() {
+        println!("set-ttl: value must be an integer");
+        return;
+    }
+    let old = match args.get(2) {
+        Some(v) => v.clone(),
+        None => String::new(),
+    };
+    let text = fs::read_to_string(PHI).expect("phi");
+    let mut out: Vec<String> = Vec::new();
+    let mut changed = 0usize;
+    for (start, mut b) in blocks(&text) {
+        let url = match b.iter().find(|l| l.starts_with("url ")) {
+            Some(l) => l[4..].trim().to_string(),
+            None => String::new(),
+        };
+        let host = url
+            .trim_start_matches("https://")
+            .trim_start_matches("http://")
+            .split('/')
+            .next()
+            .unwrap_or("")
+            .to_string();
+        let matches_host = host_pat == "*" || host.contains(host_pat);
+        if matches_host {
+            if let Some(pos) = b.iter().position(|l| l.starts_with("ttl ")) {
+                let cur = b[pos][4..].trim().to_string();
+                if old.is_empty() || cur == old {
+                    b[pos] = format!("ttl {value}");
+                    changed += 1;
+                }
+            }
+        }
+        let _ = start;
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(PHI, out.join("\n") + "\n", "phi");
+    println!("set-ttl: {changed} blocks set to {value} (host {host_pat}, old '{}')", if old.is_empty() { "*" } else { &old });
+}
+
+fn replace_cite(args: &[String]) {
+    let old = match args.first() { Some(v) => v.clone(), None => String::new() };
+    let new = match args.get(1) { Some(v) => v.clone(), None => String::new() };
+    if old.is_empty() || new.is_empty() {
+        println!("replace-cite: old and new required");
+        return;
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let (mut na, mut ni) = (0usize, 0usize);
+    for (_, mut b) in blocks(&reg) {
+        for line in b.iter_mut() {
+            let t = line.trim_start();
+            if t.starts_with("api_cite ") && t["api_cite ".len()..].trim() == old {
+                let indent = &line[..line.len() - t.len()];
+                *line = format!("{indent}api_cite {new}");
+                na += 1;
+            } else if t.starts_with("instrument_cite ") && t["instrument_cite ".len()..].trim() == old {
+                let indent = &line[..line.len() - t.len()];
+                *line = format!("{indent}instrument_cite {new}");
+                ni += 1;
+            }
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("replace-cite: {na} api, {ni} instrument -> {new}");
+}
+
+fn clear_cite(args: &[String]) {
+    let old = match args.first() { Some(v) => v.clone(), None => String::new() };
+    if old.is_empty() {
+        println!("clear-cite: url required");
+        return;
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut cleared = 0usize;
+    for (_, mut b) in blocks(&reg) {
+        let api = or_empty(field(&b, "api_cite"));
+        let instr = or_empty(field(&b, "instrument_cite"));
+        if api == old || instr == old {
+            b.retain(|l| {
+                let t = l.trim_start();
+                !(t.starts_with("api_cite ") && t["api_cite ".len()..].trim() == old)
+                    && !(t.starts_with("api_quote ") && api == old)
+                    && !(t.starts_with("instrument_cite ") && t["instrument_cite ".len()..].trim() == old)
+                    && !(t.starts_with("instrument_quote ") && instr == old)
+            });
+            cleared += 1;
+        }
+        out.extend(b);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n") + "\n", "register");
+    println!("clear-cite: {cleared} blocks cleared ({old})");
+}
+
+fn specs_to_digests(dir: &str) {
+    let mut files: Vec<std::path::PathBuf> = Vec::new();
+    let mut stack: Vec<std::path::PathBuf> = vec![std::path::PathBuf::from(dir)];
+    while let Some(d) = stack.pop() {
+        let rd = match fs::read_dir(&d) {
+            Ok(r) => r,
+            Err(_) => continue,
+        };
+        for e in rd.flatten() {
+            let p = e.path();
+            if p.is_dir() {
+                stack.push(p);
+            } else if p.extension().map(|x| x == "spec").unwrap_or(false) {
+                files.push(p);
+            }
+        }
+    }
+    files.sort();
+    let mut out: Vec<String> = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let mut docs = 0usize;
+    let mut claims = 0usize;
+    for f in &files {
+        let text = match fs::read_to_string(f) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let mut url = String::new();
+        let mut kind = String::new();
+        let mut lines: Vec<String> = Vec::new();
+        for line in text.lines() {
+            let c: Vec<&str> = line.split('\t').collect();
+            match c.first().map(|s| *s) {
+                Some("doc") if c.len() >= 2 => url = c[1].trim().to_string(),
+                Some("kind") if c.len() >= 2 => kind = c[1].trim().to_string(),
+                Some("column") if c.len() >= 5 => {
+                    let key = c[2].trim();
+                    let unit = c[3].trim();
+                    let quote = c[4].trim();
+                    if key.is_empty() || quote.is_empty() {
+                        continue;
+                    }
+                    lines.push(format!("  claim column {key} {unit} null \"{}\"", quote));
+                }
+                Some("claim") if c.len() >= 4 => {
+                    let art = c[1].trim();
+                    let wert = c[2].trim();
+                    let quote = c[3].trim();
+                    if art.is_empty() || quote.is_empty() {
+                        continue;
+                    }
+                    lines.push(format!("  claim {art} {wert} \"{}\"", quote));
+                }
+                Some("frame") if c.len() >= 2 => {
+                    let v = c[1].trim();
+                    if v != "not_named" && !v.is_empty() {
+                        lines.push(format!("  claim frame {v} \"\""));
+                    }
+                }
+                Some("timescale") if c.len() >= 2 => {
+                    let v = c[1].trim();
+                    if v != "not_named" && !v.is_empty() {
+                        lines.push(format!("  claim timescale {v} \"\""));
+                    }
+                }
+                _ => {}
+            }
+        }
+        if url.is_empty() || lines.is_empty() || !seen.insert(url.clone()) {
+            continue;
+        }
+        docs += 1;
+        claims += lines.len();
+        out.push(format!("doc {url}"));
+        if !kind.is_empty() {
+            out.push(format!("  kind {kind}"));
+        }
+        out.extend(lines);
+        out.push(String::new());
+    }
+    let mut text = String::from("# digests - Aussagen je Dokument (Feld, Einheit, Takt, Geraet) mit woertlichem Zitat\n");
+    text.push_str(&out.join("\n"));
+    text.push('\n');
+    write_out(DIGESTS, text, "digests");
+    println!("specs-to-digests: {docs} documents, {claims} claims");
 }
 
 fn main() {
@@ -4440,11 +5131,19 @@ fn main() {
         Some("entry-audit") => entry_audit(),
         Some("block-list") => block_list(),
         Some("doc-audit") => doc_audit(),
+        Some("drop-orphans") => drop_orphans(),
+        Some("set-ttl") if args.len() >= 4 => set_ttl(&args[2..]),
+        Some("specs-to-digests") if args.len() >= 3 => specs_to_digests(&args[2]),
+        Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),
+        Some("clear-cite") if args.len() >= 3 => clear_cite(&args[2..]),
         Some("digest-fetch") if args.len() >= 3 => digest_fetch(&args[2]),
         Some("check-blocks") => check_blocks(),
         Some("coord-audit") => coord_audit(),
         Some("set-instr-doc") if args.len() >= 3 => set_instr_doc(&args[2]),
         Some("mirror-instr-doc") if args.len() >= 3 => mirror_instr_doc(&args[2]),
+        Some("set-doc-slot") if args.len() >= 3 => set_doc_slot(&args[2]),
+        Some("fill-doc-by-host") if args.len() >= 3 => fill_doc_by_host(&args[2]),
+        Some("set-instr-by-name") if args.len() >= 3 => set_instr_by_name(&args[2]),
         Some("stray-report") => stray_report(12),
         Some("fix-stray") if args.len() >= 3 => fix_stray(&args[2]),
         Some("verify-cites") if args.len() >= 3 => verify_cites(&args[2]),
@@ -4455,7 +5154,9 @@ fn main() {
                 .and_then(|s| s.parse::<u64>().ok())
                 .unwrap_or(200_000_000),
         ),
-        Some("aussondern") if args.len() >= 4 => aussondern(&args[2], &args[3], args.get(4).map(String::as_str)),
+        Some("aussondern") if args.len() >= 4 => {
+            aussondern(&args[2], &args[3], args.get(4).map(String::as_str))
+        }
         Some("restore-missing") if args.len() >= 3 => restore_missing(&args[2]),
         Some("verify-specs") => verify_specs(),
         Some("sync-fields") => sync_fields(),
