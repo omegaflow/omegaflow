@@ -21,22 +21,19 @@ fn main() {
     let mut bins: Vec<(String, String)> = Vec::new();
     let mut i = 0;
     while i < args.len() {
-        match args[i].as_str() {
-            "--bin" => {
-                let word = match args.get(i + 1) {
-                    Some(w) => w.clone(),
-                    None => String::new(),
-                };
-                let path = match args.get(i + 2) {
-                    Some(p) => p.clone(),
-                    None => String::new(),
-                };
-                if !word.is_empty() && !path.is_empty() {
-                    bins.push((word, path));
-                }
-                i += 2;
+        if args[i].as_str() == "--bin" {
+            let word = match args.get(i + 1) {
+                Some(w) => w.clone(),
+                None => String::new(),
+            };
+            let path = match args.get(i + 2) {
+                Some(p) => p.clone(),
+                None => String::new(),
+            };
+            if !word.is_empty() && !path.is_empty() {
+                bins.push((word, path));
             }
-            _ => {}
+            i += 2;
         }
         i += 1;
     }

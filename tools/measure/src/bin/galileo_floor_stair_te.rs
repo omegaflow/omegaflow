@@ -163,7 +163,7 @@ fn best_split(ps: &[f64], a: usize, b: usize) -> Option<(usize, f64)> {
         let ml = (ps[s + 1] - ps[a]) / nl;
         let mr = (ps[b + 1] - ps[s + 1]) / nr;
         let g = (ml - mr).abs();
-        if best.map_or(true, |(_, bg)| g > bg) {
+        if best.is_none_or(|(_, bg)| g > bg) {
             best = Some((s, g));
         }
     }
@@ -198,11 +198,10 @@ fn split_test(y: &[f64], a: usize, b: usize) -> Option<(usize, f64, f64)> {
         .wrapping_add((b as u64).wrapping_mul(0x0F0F_0F0F_0F0F_0F0F));
     let mut cnt = 0usize;
     for _ in 0..N_PERM {
-        if let Some(pg) = perm_max_gap(y, a, b, &mut rng) {
-            if pg >= gap {
+        if let Some(pg) = perm_max_gap(y, a, b, &mut rng)
+            && pg >= gap {
                 cnt += 1;
             }
-        }
     }
     let p = (cnt as f64 + 1.0) / (N_PERM as f64 + 1.0);
     Some((s, gap, p))
@@ -258,21 +257,18 @@ fn row_marks(
 ) -> String {
     let (te, ph, bl, cte, cth) = r;
     let mut s = String::new();
-    if let (Some(t), Some(h)) = (te, ph) {
-        if t > h {
+    if let (Some(t), Some(h)) = (te, ph)
+        && t > h {
             s.push('P');
         }
-    }
-    if let (Some(t), Some(h)) = (te, bl) {
-        if t > h {
+    if let (Some(t), Some(h)) = (te, bl)
+        && t > h {
             s.push('B');
         }
-    }
-    if let (Some(t), Some(h)) = (cte, cth) {
-        if t > h {
+    if let (Some(t), Some(h)) = (cte, cth)
+        && t > h {
             s.push('C');
         }
-    }
     s
 }
 
@@ -601,14 +597,13 @@ fn main() {
             tot_seg += segs.len();
             tot_steps += steps;
             tot_short += short;
-            if segs.len() == 1 {
-                if let Some((sp, gap, p)) = split_test(&y, 0, nrun - 1) {
+            if segs.len() == 1
+                && let Some((sp, gap, p)) = split_test(&y, 0, nrun - 1) {
                     println!(
                         "      top-level split candidate: {} | gap {gap:.3} log10 | p {p:.3} (> 0.05: not a persistent step)",
                         fmt_day(s.day(a + sp))
                     );
                 }
-            }
             println!(
                 "      -> steps (persistent boundary, both sides >= {K_LEVEL} d) {steps}; short segments (< {K_LEVEL} d) {short}\n"
             );
@@ -923,8 +918,8 @@ fn main() {
                 println!(
                     "    step driver {aname} (constructed, 0 before / 1 from anchor, side n {left}/{right}):"
                 );
-                print_dir_row(&format!("{aname}"), "floor", &step, &y, &era);
-                print_dir_row("floor", &format!("{aname}"), &y, &step, &era);
+                print_dir_row(&aname.to_string(), "floor", &step, &y, &era);
+                print_dir_row("floor", &aname.to_string(), &y, &step, &era);
             }
             println!();
         }

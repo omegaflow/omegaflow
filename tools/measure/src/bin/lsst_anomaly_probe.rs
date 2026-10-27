@@ -645,20 +645,18 @@ fn curl_post_rate_aware(url: &str, json_body: &str) -> Option<(String, Vec<u8>)>
 }
 
 fn token_from(key: &str) -> Option<String> {
-    if let Ok(t) = std::env::var(key) {
-        if !t.is_empty() {
+    if let Ok(t) = std::env::var(key)
+        && !t.is_empty() {
             return Some(t);
         }
-    }
     let mut state_root = cache_root();
     state_root.pop();
     let body = std::fs::read_to_string(state_root.join(".secrets.local")).ok()?;
     for line in body.lines() {
-        if let Some((k, v)) = line.split_once('=') {
-            if k.trim() == key && !v.trim().is_empty() {
+        if let Some((k, v)) = line.split_once('=')
+            && k.trim() == key && !v.trim().is_empty() {
                 return Some(v.trim().to_string());
             }
-        }
     }
     None
 }
@@ -821,15 +819,12 @@ fn parse_lasair_lightcurve(body: &[u8]) -> (Option<(f64, f64)>, Vec<(String, f64
         return (None, Vec::new());
     };
     let mut coord: Option<(f64, f64)> = None;
-    if let Some(JsonVal::Obj(dobj)) = map.get("diaObject") {
-        if let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
+    if let Some(JsonVal::Obj(dobj)) = map.get("diaObject")
+        && let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
             (dobj.get("ra"), dobj.get("decl"))
-        {
-            if ra.is_finite() && dec.is_finite() {
+            && ra.is_finite() && dec.is_finite() {
                 coord = Some((*ra, *dec));
             }
-        }
-    }
     let mut rows: Vec<(String, f64, f64)> = Vec::new();
     let Some(JsonVal::Arr(list)) = map.get("diaSourcesList") else {
         return (coord, rows);
@@ -1122,11 +1117,10 @@ fn fink_cone_list(
         );
         return Vec::new();
     }
-    if let Some(p) = save {
-        if std::fs::write(p, &body).is_err() {
+    if let Some(p) = save
+        && std::fs::write(p, &body).is_err() {
             println!("Fink/LSST cone: the cone sample was not saved ({p})");
         }
-    }
     let Ok(text) = std::str::from_utf8(&body) else {
         println!("Fink/LSST cone: the cone body is not UTF-8 — the parser stays pending");
         return Vec::new();
@@ -1193,11 +1187,10 @@ fn parse_fink_source_rows(body: &[u8]) -> Option<(Vec<(String, f64, f64)>, Optio
         ) else {
             continue;
         };
-        if coord.is_none() {
-            if let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
+        if coord.is_none()
+            && let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
                 coord = Some((ra, dec));
             }
-        }
         rows_ok.push((band.to_string(), mjd, flux));
     }
     Some((rows_ok, coord))
@@ -1250,11 +1243,10 @@ fn parse_fink_fp_rows(
         };
         total += 1;
         *per_band.entry(band.to_string()).or_insert(0) += 1;
-        if coord.is_none() {
-            if let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
+        if coord.is_none()
+            && let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
                 coord = Some((ra, dec));
             }
-        }
         match obj_f64(m, FINK_FLUX) {
             Some(s) if s.is_finite() && s > 0.0 => {
                 detections.push((band.to_string(), mjd, s));
@@ -1616,14 +1608,13 @@ fn cone_scan(
         }
     }
     println!("Nadel V (LSST round): LSS1 asset written {bin_path}, object map {map_path}");
-    if let Some(field) = dust.as_deref() {
-        if !brief {
+    if let Some(field) = dust.as_deref()
+        && !brief {
             println!(
                 "Nadel V (LSST round): the dust layer is live (Bayestar19 3D + Gaia DR3, crossmatch radius {:.0} arcsec) — each candidate counterpart is typed from its intrinsic, dereddened color when it is a background object behind a measured column",
                 field.radius_as
             );
         }
-    }
     let (candidates, scanned) = scan_lss1(&bin_path, brief);
     let mut post = 0usize;
     let mut excluded = 0usize;
@@ -1956,15 +1947,12 @@ fn parse_ztf_phot(body: &[u8], lsk: &LeapSeconds) -> Option<ZtfPhot> {
             let Some(band) = ztf_band_of_fid(*fid) else {
                 continue;
             };
-            if coord.is_none() {
-                if let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
+            if coord.is_none()
+                && let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
                     (m.get("ra"), m.get("dec"))
-                {
-                    if ra.is_finite() && dec.is_finite() {
+                    && ra.is_finite() && dec.is_finite() {
                         coord = Some((*ra, *dec));
                     }
-                }
-            }
             let Some(tdb) = ztf_jd_to_tdb(*jd, lsk) else {
                 continue;
             };
@@ -2004,15 +1992,12 @@ fn parse_ztf_phot(body: &[u8], lsk: &LeapSeconds) -> Option<ZtfPhot> {
             let Some(band) = ztf_band_of_fid(*fid) else {
                 continue;
             };
-            if coord.is_none() {
-                if let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
+            if coord.is_none()
+                && let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
                     (m.get("ranr"), m.get("decnr"))
-                {
-                    if ra.is_finite() && dec.is_finite() {
+                    && ra.is_finite() && dec.is_finite() {
                         coord = Some((*ra, *dec));
                     }
-                }
-            }
             let Some(tdb) = ztf_jd_to_tdb(*jd, lsk) else {
                 continue;
             };
@@ -2613,13 +2598,12 @@ fn antares_scan(max_loci: usize, wise: bool) {
             break;
         };
         let meta_text = String::from_utf8_lossy(&body);
-        if corpus_count.is_none() {
-            if let Some(pos) = meta_text.find("\"count\":") {
+        if corpus_count.is_none()
+            && let Some(pos) = meta_text.find("\"count\":") {
                 let after = meta_text[pos + "\"count\":".len()..].trim_start();
                 let digits: String = after.chars().take_while(|c| c.is_ascii_digit()).collect();
                 corpus_count = digits.parse().ok();
             }
-        }
         let mut densest: Option<&AntaresLocus> = None;
         for r in &rows {
             listed += 1;
@@ -3598,8 +3582,8 @@ fn main() {
             "--cone" => {
                 if let Some(spec) = args.get(i + 1) {
                     let p: Vec<&str> = spec.split(',').collect();
-                    if p.len() == 4 {
-                        if let (Some(ra), Some(dec), Some(radius), Some(min)) = (
+                    if p.len() == 4
+                        && let (Some(ra), Some(dec), Some(radius), Some(min)) = (
                             p[0].trim().parse().ok(),
                             p[1].trim().parse().ok(),
                             p[2].trim().parse().ok(),
@@ -3608,7 +3592,6 @@ fn main() {
                             cones.push((ra, dec, radius, min));
                             i += 1;
                         }
-                    }
                 }
             }
             "--cone-ra" => {
@@ -3664,11 +3647,10 @@ fn main() {
             }
             "--negative-control" => {
                 neg_control_base = args.get(i + 1).cloned();
-                if let Some(d) = args.get(i + 2).and_then(|v| v.parse::<f64>().ok()) {
-                    if d.is_finite() && d > 0.0 {
+                if let Some(d) = args.get(i + 2).and_then(|v| v.parse::<f64>().ok())
+                    && d.is_finite() && d > 0.0 {
                         neg_control_depth = d;
                     }
-                }
                 i += 2;
             }
             "--antares" => {

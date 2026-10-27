@@ -28,12 +28,11 @@ fn arg_values(args: &[String], name: &str) -> Vec<String> {
     let mut out = Vec::new();
     let mut i = 0usize;
     while i < args.len() {
-        if args[i] == name {
-            if let Some(v) = args.get(i + 1) {
+        if args[i] == name
+            && let Some(v) = args.get(i + 1) {
                 out.push(v.clone());
                 i += 1;
             }
-        }
         i += 1;
     }
     out
@@ -199,11 +198,10 @@ fn best_lead_r(
             x.push(a);
             y.push(b);
         }
-        if let Some(r) = pearson(&x, &y) {
-            if best.map_or(true, |(b, _, _)| r.abs() > b.abs()) {
+        if let Some(r) = pearson(&x, &y)
+            && best.is_none_or(|(b, _, _)| r.abs() > b.abs()) {
                 best = Some((r, lead, x.len()));
             }
-        }
     }
     best
 }
@@ -319,11 +317,10 @@ fn main() {
                 if (v as f64) < FLARE_THRESH && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = trig[peak] {
-                    if v > pv {
+                if let Some(pv) = trig[peak]
+                    && v > pv {
                         peak = j;
                     }
-                }
             }
             j += 1;
         }
@@ -353,8 +350,8 @@ fn main() {
             best_cool = run_cool;
             best_hot = run_hot;
         }
-        if best_cool.len() >= 100 {
-            if let Some(d) = te_pair(&best_cool, &best_hot, LAG96) {
+        if best_cool.len() >= 100
+            && let Some(d) = te_pair(&best_cool, &best_hot, LAG96) {
                 events.push(Event {
                     t: t0 + (peak as f64) * DT,
                     d96: d,
@@ -367,7 +364,6 @@ fn main() {
                     }
                 }
             }
-        }
         i = j.max(i + REFRACTORY);
     }
     if events.is_empty() {
@@ -466,11 +462,10 @@ fn main() {
                     continue;
                 }
                 cme_count[d] += 1.0;
-                if let Some(s) = r.speed_kms {
-                    if !cme_speed[d].is_finite() || s > cme_speed[d] {
+                if let Some(s) = r.speed_kms
+                    && (!cme_speed[d].is_finite() || s > cme_speed[d]) {
                         cme_speed[d] = s;
                     }
-                }
             }
         }
     }
@@ -480,9 +475,9 @@ fn main() {
     let mut radio_count = vec![0.0f64; n_days];
     let mut radio_records = 0usize;
     let mut radio_common_days = 0usize;
-    if let Some(path) = &radio_path {
-        if let Ok(bytes) = std::fs::read(path) {
-            if let Some(records) = radio_burst::parse_bin(&bytes) {
+    if let Some(path) = &radio_path
+        && let Ok(bytes) = std::fs::read(path)
+            && let Some(records) = radio_burst::parse_bin(&bytes) {
                 radio_records = records.len();
                 for r in records {
                     let td = lsk
@@ -496,8 +491,6 @@ fn main() {
                     }
                 }
             }
-        }
-    }
     let radio_daily: Option<Vec<Option<f64>>> = if radio_common_days > 0 {
         Some(radio_count.iter().map(|&v| Some(v)).collect())
     } else {
@@ -596,7 +589,7 @@ fn main() {
                 continue;
             }
             let x = *x as f64;
-            if out[d].map_or(true, |b| x > b) {
+            if out[d].is_none_or(|b| x > b) {
                 out[d] = Some(x);
             }
         }

@@ -39,7 +39,7 @@ fn run(name: &str) {
     let scatter = |map: &std::collections::BTreeMap<i64, Vec<f64>>| -> (usize, f64, f64) {
         let mut rms_vals: Vec<f64> = Vec::new();
         let mut n_used = 0usize;
-        for (_, v) in map {
+        for v in map.values() {
             if v.len() < 5 {
                 continue;
             }

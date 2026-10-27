@@ -289,10 +289,7 @@ fn series_block(
     let n_runs = runs.len();
 
     let span_d = rows[n - 1].day - rows[0].day;
-    let (g_a, g_b) = match ols_line(&days, &meds) {
-        Some(v) => v,
-        None => (f64::NAN, f64::NAN),
-    };
+    let (g_a, g_b) = ols_line(&days, &meds).unwrap_or((f64::NAN, f64::NAN));
     let slope_txt = if g_b.is_finite() {
         format!("global OLS slope {g_b:.3e} Hz/day")
     } else {

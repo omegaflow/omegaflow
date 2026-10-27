@@ -406,11 +406,10 @@ fn main() {
                 if v.len() < MIN_CELL {
                     continue;
                 }
-                if let Some(m) = median(v) {
-                    if m.is_finite() {
+                if let Some(m) = median(v)
+                    && m.is_finite() {
                         cells_of.push((*d, m));
                     }
-                }
             }
             cells_of.sort_by_key(|&(d, _)| d);
             if cells_of.is_empty() {

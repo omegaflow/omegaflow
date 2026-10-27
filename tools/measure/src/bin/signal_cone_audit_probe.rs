@@ -683,12 +683,9 @@ fn main() {
             "wind   : absent — wind_orbit.bin carries no contract; L1 pairs stay without cone check"
         ),
     }
-    match (wind_gci, earth_pos_mid) {
-        (Some(_), Some(_)) => println!(
-            "wind ICRS = GCI + earth(t_mid) — the L1 address in the block (the GCI↔ICRS frame bias lies under the measurement width, named). The membrane itself carries the GCI record directly as the block address (finding in the register)."
-        ),
-        _ => {}
-    }
+    if let (Some(_), Some(_)) = (wind_gci, earth_pos_mid) { println!(
+        "wind ICRS = GCI + earth(t_mid) — the L1 address in the block (the GCI↔ICRS frame bias lies under the measurement width, named). The membrane itself carries the GCI record directly as the block address (finding in the register)."
+    ) }
     match wind_pos {
         Some(p) => println!("wind-ICRS : [{:.3e}, {:.3e}, {:.3e}] m", p[0], p[1], p[2]),
         None => println!("wind-ICRS : absent — the earth ephemeris does not carry the offset"),
@@ -787,7 +784,7 @@ fn main() {
             if pt.te.is_nan() {
                 continue;
             }
-            if best.map_or(true, |(_, b, _)| pt.te > b) {
+            if best.is_none_or(|(_, b, _)| pt.te > b) {
                 let Some(thr) = mean_plus_2sigma(&pt.surrs) else {
                     continue;
                 };
@@ -965,7 +962,7 @@ fn main() {
                 continue;
             };
             pc_field.push((lag, te, thr));
-            if pc_best.map_or(true, |(_, b, _)| te > b) {
+            if pc_best.is_none_or(|(_, b, _)| te > b) {
                 pc_best = Some((lag, te, thr));
             }
         }
@@ -1044,22 +1041,19 @@ fn main() {
         for j in (i + 1)..series.len() {
             let fwd = verdicts.iter().find(|v| v.from == i && v.to == j);
             let rev = verdicts.iter().find(|v| v.from == j && v.to == i);
-            match (fwd, rev) {
-                (Some(f), Some(r)) => {
-                    if r.arrow {
-                        rev_arrows += 1;
-                    }
-                    println!(
-                        "{:>6} ↔ {:<6} | {} (lag {} d) / {} (lag {} d)",
-                        series[i].name,
-                        series[j].name,
-                        verdict_word(f),
-                        f.best_lag,
-                        verdict_word(r),
-                        r.best_lag
-                    );
+            if let (Some(f), Some(r)) = (fwd, rev) {
+                if r.arrow {
+                    rev_arrows += 1;
                 }
-                _ => {}
+                println!(
+                    "{:>6} ↔ {:<6} | {} (lag {} d) / {} (lag {} d)",
+                    series[i].name,
+                    series[j].name,
+                    verdict_word(f),
+                    f.best_lag,
+                    verdict_word(r),
+                    r.best_lag
+                );
             }
         }
     }

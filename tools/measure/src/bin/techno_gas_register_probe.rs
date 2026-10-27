@@ -229,11 +229,10 @@ fn main() {
             }
             "--floor" => {
                 i += 1;
-                if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok()) {
-                    if v.is_finite() && v > 0.0 {
+                if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok())
+                    && v.is_finite() && v > 0.0 {
                         floor = v;
                     }
-                }
             }
             other => {
                 eprintln!("techno_gas_register_probe: unknown argument {other} — refused");
@@ -325,9 +324,7 @@ fn run(
         "  domain Teq {:.0}..{:.0} K; below {:.0} K the F/Cl floor stays pending (the condensation bookkeeping of the 273-K path is not yet extended to the F/Cl basis — named, no value fabricated)\n",
         HALOGEN_T_MIN, MODEL_T_MAX, HALOGEN_T_MIN
     ));
-    out.push_str(&format!(
-        "F/Cl data: NIST-JANAF (Chase 1998) Shomate fits, NIST WebBook gas pages (curl cache tmp/nist_fcl/, 2026-09-05); every species with a 298.15-K anchor + fit domain, unit-tested\n",
-    ));
+    out.push_str(&"F/Cl data: NIST-JANAF (Chase 1998) Shomate fits, NIST WebBook gas pages (curl cache tmp/nist_fcl/, 2026-09-05); every species with a 298.15-K anchor + fit domain, unit-tested\n".to_string());
     out.push_str(&format!(
         "detection threshold floor = {:.1e} (mixing ratio); origin: the named verdict value — the seed carries no instrument detection limit per species\n",
         floor
@@ -630,9 +627,7 @@ fn run(
         "      CFCl3 11.8 um covers {} hosts, CF2Cl2 10.8 um {} hosts, SF6 10.7 um {} hosts — on these hosts the species band lies in an observed spectrum; the absence there is a true null above the band (numeric detection limit per host: pending, published in no source)\n",
         per_species_observable["CFCl3"], per_species_observable["CF2Cl2"], per_species_observable["SF6"]
     ));
-    out.push_str(&format!(
-        "      CF4/NF3: band location not measured in the verdict sources — observability pending; NO2 0.2-0.7 um: edge coverage only from ~0.6 um in NIRSpec spectra, the full visible channel is not observed here — pending\n",
-    ));
+    out.push_str(&"      CF4/NF3: band location not measured in the verdict sources — observability pending; NO2 0.2-0.7 um: edge coverage only from ~0.6 um in NIRSpec spectra, the full visible channel is not observed here — pending\n".to_string());
     out.push_str(
         "      where neither band coverage nor a numeric detection limit is measured, the absence stays pending — never claimed as \"sub-floor\" (0 honored, no fabrication)\n",
     );

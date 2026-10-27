@@ -124,11 +124,10 @@ fn perm_slope_p(xs: &[f64], ys: &[f64], seed: u64) -> f64 {
     let mut cnt = 0usize;
     for _ in 0..N_PERM {
         shuffle(&mut yp, &mut rng);
-        if let Some((bp, _, _)) = ols_slope(xs, &yp) {
-            if bp.abs() >= b0.abs() {
+        if let Some((bp, _, _)) = ols_slope(xs, &yp)
+            && bp.abs() >= b0.abs() {
                 cnt += 1;
             }
-        }
     }
     (cnt as f64 + 1.0) / (N_PERM as f64 + 1.0)
 }

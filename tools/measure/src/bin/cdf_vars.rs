@@ -105,7 +105,7 @@ fn report(bytes: &[u8], dump: Option<&str>) {
                         ) else {
                             continue;
                         };
-                        if dump.as_deref() == Some(v.name.as_str()) {
+                        if dump == Some(v.name.as_str()) {
                             for (i, x) in vals.iter().enumerate() {
                                 println!("    [{i}] {x}");
                             }

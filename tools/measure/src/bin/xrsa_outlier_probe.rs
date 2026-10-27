@@ -106,22 +106,20 @@ fn goes_xrs_both(path: &str) -> Option<(Vec<(f64, f64)>, Vec<(f64, f64)>)> {
         };
         let af = u16::from_le_bytes([af_raw[i * 2], af_raw[i * 2 + 1]]);
         let bf = u16::from_le_bytes([bf_raw[i * 2], bf_raw[i * 2 + 1]]);
-        if af == 0 {
-            if let Some(v) = decode_f32(&a_raw, i * 4, Endian::Le) {
+        if af == 0
+            && let Some(v) = decode_f32(&a_raw, i * 4, Endian::Le) {
                 let v = v as f64;
                 if v.is_finite() && v != FILL && v > 0.0 {
                     a_out.push((t, v));
                 }
             }
-        }
-        if bf == 0 {
-            if let Some(v) = decode_f32(&b_raw, i * 4, Endian::Le) {
+        if bf == 0
+            && let Some(v) = decode_f32(&b_raw, i * 4, Endian::Le) {
                 let v = v as f64;
                 if v.is_finite() && v != FILL && v > 0.0 {
                     b_out.push((t, v));
                 }
             }
-        }
     }
     a_out.sort_by(|x, y| x.0.total_cmp(&y.0));
     b_out.sort_by(|x, y| x.0.total_cmp(&y.0));
@@ -206,11 +204,10 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, refractory: usize) -> Vec<us
                 if v < threshold && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = trig[peak] {
-                    if v > pv {
+                if let Some(pv) = trig[peak]
+                    && v > pv {
                         peak = j;
                     }
-                }
             }
             j += 1;
         }
@@ -237,7 +234,7 @@ fn median_sd(vals: &[f32]) -> (Option<f64>, Option<f64>) {
     }
     let mut sorted: Vec<f64> = vals.iter().map(|&v| v as f64).collect();
     sorted.sort_by(|a, b| a.total_cmp(b));
-    let med = if n % 2 == 0 {
+    let med = if n.is_multiple_of(2) {
         (sorted[n / 2 - 1] + sorted[n / 2]) * 0.5
     } else {
         sorted[n / 2]
@@ -254,7 +251,7 @@ fn median(vals: &[f64]) -> Option<f64> {
     let mut s: Vec<f64> = vals.to_vec();
     s.sort_by(|a, b| a.total_cmp(b));
     let n = s.len();
-    Some(if n % 2 == 0 {
+    Some(if n.is_multiple_of(2) {
         (s[n / 2 - 1] + s[n / 2]) * 0.5
     } else {
         s[n / 2]
@@ -454,11 +451,10 @@ fn main() {
 
         let mut xpk: Option<usize> = None;
         for k in lo..hi {
-            if let Some(v) = b_slice[k] {
-                if v >= FLARE_THRESH as f32 && xpk.map_or(true, |p| b_slice[p].unwrap() < v) {
+            if let Some(v) = b_slice[k]
+                && v >= FLARE_THRESH as f32 && xpk.is_none_or(|p| b_slice[p].unwrap() < v) {
                     xpk = Some(k);
                 }
-            }
         }
         let Some(xpk) = xpk else {
             continue;

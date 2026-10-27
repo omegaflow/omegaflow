@@ -69,20 +69,14 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let m: i64 = dp.next()?.parse().ok()?;
     let d: i64 = dp.next()?.parse().ok()?;
     let t = time
-        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .split(['.', 'Z', 'z'])
         .next()?;
     let mut tp = t.split(':');
     let hh: i64 = tp.next()?.parse().ok()?;
-    let mm: i64 = match tp.next() {
-        Some(v) => v,
-        None => "0",
-    }
+    let mm: i64 = tp.next().unwrap_or("0")
     .parse()
     .ok()?;
-    let ss: i64 = match tp.next() {
-        Some(v) => v,
-        None => "0",
-    }
+    let ss: i64 = tp.next().unwrap_or("0")
     .parse()
     .ok()?;
     let a = (14 - m) / 12;
@@ -173,11 +167,10 @@ fn source_carries(src: &SourceConfig, field: &str) -> bool {
 
 fn register_station_point(sources: &[SourceConfig]) -> Option<(f64, f64)> {
     for src in sources {
-        if source_carries(src, "intermagnet_xyz_x_nt") {
-            if let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame() {
+        if source_carries(src, "intermagnet_xyz_x_nt")
+            && let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame() {
                 return Some((lat, lon));
             }
-        }
     }
     None
 }
@@ -450,7 +443,7 @@ fn encounter(
             continue;
         };
         let d = angular_distance_deg(st_lat, st_lon, la, lo);
-        if best.map_or(true, |(bd, _)| d < bd) {
+        if best.is_none_or(|(bd, _)| d < bd) {
             best = Some((d, i));
         }
     }
@@ -463,7 +456,7 @@ fn encounter(
     let mut nearest: Option<(f64, usize)> = None;
     for (i, r) in ground.iter().enumerate() {
         let d = (r.t - enc_t).abs();
-        if nearest.map_or(true, |(bd, _)| d < bd) {
+        if nearest.is_none_or(|(bd, _)| d < bd) {
             nearest = Some((d, i));
         }
     }
@@ -641,11 +634,10 @@ fn station_blob_line(
 
 fn write_station_verdict(out: &str, line: &VerdictLine) -> bool {
     let path = PathBuf::from(out);
-    if let Some(parent) = path.parent() {
-        if !parent.as_os_str().is_empty() {
+    if let Some(parent) = path.parent()
+        && !parent.as_os_str().is_empty() {
             let _ = std::fs::create_dir_all(parent);
         }
-    }
     let mut lines = match std::fs::read(&path) {
         Ok(bytes) => parse_weberin_verdicts(&bytes),
         Err(_) => Vec::new(),

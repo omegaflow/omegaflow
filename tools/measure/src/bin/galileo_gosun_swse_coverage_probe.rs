@@ -115,9 +115,7 @@ fn main() {
             rows[idx][1], rows[idx][2]
         ));
     }
-    out.push(format!(
-        "SWS4-era daily file counts (1995-11-20 .. 1996-01-20):"
-    ));
+    out.push("SWS4-era daily file counts (1995-11-20 .. 1996-01-20):".to_string());
     for (doy, idxs) in &per_day {
         let mut names: Vec<String> = Vec::new();
         for idx in idxs {

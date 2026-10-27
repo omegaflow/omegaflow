@@ -116,11 +116,10 @@ fn sha256_hex(bytes: &[u8]) -> String {
         Ok(child) => child,
         Err(_) => return "absent".to_string(),
     };
-    if let Some(mut stdin) = child.stdin.take() {
-        if stdin.write_all(bytes).is_err() {
+    if let Some(mut stdin) = child.stdin.take()
+        && stdin.write_all(bytes).is_err() {
             return "absent".to_string();
         }
-    }
     match child.wait_with_output() {
         Ok(out) if out.status.success() => String::from_utf8_lossy(&out.stdout)
             .split_whitespace()

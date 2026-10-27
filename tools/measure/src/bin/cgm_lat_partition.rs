@@ -128,11 +128,10 @@ fn supermag_mlat(text: &str) -> BTreeMap<String, (f64, f64)> {
         let f: Vec<&str> = line.split('\t').collect();
         if f.len() >= 5 {
             let code = f[0].trim();
-            if code.len() == 3 && code.chars().all(|c| c.is_ascii_uppercase()) {
-                if let (Ok(la), Ok(lo)) = (f[4].trim().parse::<f64>(), f[3].trim().parse::<f64>()) {
+            if code.len() == 3 && code.chars().all(|c| c.is_ascii_uppercase())
+                && let (Ok(la), Ok(lo)) = (f[4].trim().parse::<f64>(), f[3].trim().parse::<f64>()) {
                     m.insert(code.to_string(), (la, lo));
                 }
-            }
         }
     }
     m
@@ -153,11 +152,10 @@ fn bgs_qd(lat: f64, lon: f64) -> Option<(f64, f64)> {
 }
 
 fn resolve(lat: f64, lon: f64, smag: Option<(f64, f64)>) -> Option<(f64, f64, &'static str)> {
-    if lat.abs() > 20.0 {
-        if let Some((la, lo)) = cgm_of(lat, lon) {
+    if lat.abs() > 20.0
+        && let Some((la, lo)) = cgm_of(lat, lon) {
             return Some((la, lo, "omniweb-cgm"));
         }
-    }
     if let Some((la, lo)) = smag {
         return Some((la, lo, "supermag-aacgm"));
     }
@@ -322,12 +320,11 @@ fn main() {
                 )
             }
         };
-        if source == "omniweb-cgm" {
-            if let (Some(a), Some((s, _))) = (abs_cgm, sm) {
+        if source == "omniweb-cgm"
+            && let (Some(a), Some((s, _))) = (abs_cgm, sm) {
                 drift_sum += (a - s.abs()).abs();
                 drift_n += 1;
             }
-        }
         *fam_counts.entry(family).or_insert(0) += 1;
         let drift = fmt_drift(abs_cgm, sm, source);
         rows.push(format!(
@@ -350,11 +347,10 @@ fn main() {
     let header =
         "station\tcgm_lat\tcgm_lon\tfamily\tabs_cgm\telev_m\tsupermag_aacgmlat\tdrift_deg\tsource";
     let body = format!("{header}\n{}\n", rows.join("\n"));
-    if let Some(dir) = std::path::Path::new(&out_path).parent() {
-        if !dir.as_os_str().is_empty() {
+    if let Some(dir) = std::path::Path::new(&out_path).parent()
+        && !dir.as_os_str().is_empty() {
             fs::create_dir_all(dir).ok();
         }
-    }
     fs::write(&out_path, &body).expect("the partition TSV writes");
     println!("partition written: {out_path} ({} rows)", rows.len());
 

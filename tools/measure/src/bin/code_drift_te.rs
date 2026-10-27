@@ -112,8 +112,8 @@ fn line_level(dir: &Path, seed: u64) {
         let mut d2 = Vec::with_capacity(n / step + 1);
         for ((c, w), d) in chars
             .into_iter()
-            .zip(words.into_iter())
-            .zip(docs.into_iter())
+            .zip(words)
+            .zip(docs)
             .step_by(step)
         {
             c2.push(c);

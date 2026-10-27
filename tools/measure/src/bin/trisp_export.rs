@@ -53,11 +53,10 @@ fn parse_args() -> Option<Args> {
     }
     let mut share_keys = Vec::new();
     for (i, arg) in args.iter().enumerate() {
-        if arg == "--share-log" {
-            if let Some(key) = args.get(i + 1) {
+        if arg == "--share-log"
+            && let Some(key) = args.get(i + 1) {
                 share_keys.push(key.clone());
             }
-        }
     }
     if share_keys.is_empty() {
         share_keys = DEFAULT_SHARE_KEYS.iter().map(|s| s.to_string()).collect();
@@ -77,11 +76,10 @@ fn source_name(path: &Path) -> Option<String> {
 
 fn attach_log(path: &Path, table: &mut TrispNseTable) {
     let log_path = path.with_extension("log");
-    if let Ok(log_bytes) = fs::read(&log_path) {
-        if let Ok(log_text) = String::from_utf8(log_bytes) {
+    if let Ok(log_bytes) = fs::read(&log_path)
+        && let Ok(log_text) = String::from_utf8(log_bytes) {
             table.log = trisp_nse::parse_log(&log_text);
         }
-    }
 }
 
 fn read_table(path: &Path) -> Option<TrispNseTable> {
@@ -171,7 +169,7 @@ fn median(mut values: Vec<f64>) -> Option<f64> {
     }
     values.sort_by(|a, b| a.total_cmp(b));
     let mid = values.len() / 2;
-    if values.len() % 2 == 0 {
+    if values.len().is_multiple_of(2) {
         Some((values[mid - 1] + values[mid]) / 2.0)
     } else {
         Some(values[mid])

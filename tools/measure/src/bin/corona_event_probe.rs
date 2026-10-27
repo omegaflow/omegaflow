@@ -50,11 +50,10 @@ fn series(
         if flag != 0 {
             continue;
         }
-        if let Some(g) = &gc_raw {
-            if g[i] != 0 {
+        if let Some(g) = &gc_raw
+            && g[i] != 0 {
                 continue;
             }
-        }
         let Some(v) = decode_f32(&v_raw, i * 4, Endian::Le) else {
             continue;
         };
@@ -169,11 +168,10 @@ fn detect_events(a: &[Option<f32>], b: &[Option<f32>], e: &[Option<f32>]) -> Vec
                 if v < FLARE_THRESH as f32 && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = b[peak] {
-                    if v > pv {
+                if let Some(pv) = b[peak]
+                    && v > pv {
                         peak = j;
                     }
-                }
             }
             j += 1;
         }

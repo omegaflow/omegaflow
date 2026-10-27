@@ -58,11 +58,10 @@ fn print_struct_fields(fields: &[omegaflow::matfile::MatField], indent: usize) {
     for field in fields {
         for value in &field.values {
             println!("{pad}{} : {}", field.name, summary(value));
-            if let MatData::Struct(inner) = &value.data {
-                if matches!(field.name.as_str(), "etc" | "event" | "urevent") {
+            if let MatData::Struct(inner) = &value.data
+                && matches!(field.name.as_str(), "etc" | "event" | "urevent") {
                     print_struct_fields(inner, indent + 1);
                 }
-            }
         }
     }
 }
@@ -94,12 +93,11 @@ fn dump_header(path: &str) {
                 println!("  {} : {}", a.name, summary(a));
             }
             for name in ["etc", "event"] {
-                if let Some(a) = arrays.iter().find(|a| a.name == name) {
-                    if let MatData::Struct(fields) = &a.data {
+                if let Some(a) = arrays.iter().find(|a| a.name == name)
+                    && let MatData::Struct(fields) = &a.data {
                         println!("{name} struct:");
                         print_struct_fields(fields, 1);
                     }
-                }
             }
         }
     }

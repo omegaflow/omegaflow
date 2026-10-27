@@ -34,20 +34,14 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let m: i64 = dp.next()?.parse().ok()?;
     let d: i64 = dp.next()?.parse().ok()?;
     let t = time
-        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .split(['.', 'Z', 'z'])
         .next()?;
     let mut tp = t.split(':');
     let hh: i64 = tp.next()?.parse().ok()?;
-    let mm: i64 = match tp.next() {
-        Some(v) => v,
-        None => "0",
-    }
+    let mm: i64 = tp.next().unwrap_or("0")
     .parse()
     .ok()?;
-    let ss: i64 = match tp.next() {
-        Some(v) => v,
-        None => "0",
-    }
+    let ss: i64 = tp.next().unwrap_or("0")
     .parse()
     .ok()?;
     let a = (14 - m) / 12;
@@ -363,12 +357,12 @@ fn studentized_max(
             continue;
         };
         let ar = r.abs();
-        if max_r.map_or(true, |v| ar > v) {
+        if max_r.is_none_or(|v| ar > v) {
             max_r = Some(ar);
         }
         if se > 0.0 && se.is_finite() {
             let t = (r / se).abs();
-            if t.is_finite() && max_t.map_or(true, |v| t > v) {
+            if t.is_finite() && max_t.is_none_or(|v| t > v) {
                 max_t = Some(t);
             }
         }
@@ -465,7 +459,7 @@ fn main() {
         match corr_at_lag(&bz_min, &dbdt_min, lag) {
             Some((r, pairs)) => {
                 println!("{lag:>7} | {r:>10.5} | {pairs:>8}");
-                if best.map_or(true, |(_, br, _)| r.abs() > br.abs()) {
+                if best.is_none_or(|(_, br, _)| r.abs() > br.abs()) {
                     best = Some((lag, r, pairs));
                 }
             }

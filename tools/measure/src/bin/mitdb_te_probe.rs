@@ -134,17 +134,15 @@ fn main() {
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         for _ in 0..N_SURR {
             let sa = phase_randomized_surrogate(&a, &mut rng);
-            if let Some(v) = transfer_entropy_lag(&b, &sa, lag) {
-                if v > fam {
+            if let Some(v) = transfer_entropy_lag(&b, &sa, lag)
+                && v > fam {
                     fam = v;
                 }
-            }
         }
-        if let Some(v) = ab {
-            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+        if let Some(v) = ab
+            && v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
                 best = Some((lag, v));
             }
-        }
         println!(
             "{:>4} | {:>11} | {:>11} | {:>11.4e}",
             lag,

@@ -141,12 +141,11 @@ fn run_trains(trains: &[(String, Vec<f64>)]) -> (f64, Vec<TrainVerdict>) {
                     fam = v;
                 }
             }
-            if let Some(te) = self_te(dts, distance) {
-                if best.map_or(true, |(_, b)| te > b) {
+            if let Some(te) = self_te(dts, distance)
+                && best.is_none_or(|(_, b)| te > b) {
                     best = Some((distance, te));
                     best_thr = mean_plus_2sigma(&surr);
                 }
-            }
         }
         let (best_distance, te) = match best {
             Some(b) => b,

@@ -295,8 +295,8 @@ fn main() {
             );
         }
         let mut combined = depths.clone();
-        combined.extend(std::iter::repeat(660.0).take(edge_clamped));
-        combined.extend(std::iter::repeat(700.0).take(saturated));
+        combined.extend(std::iter::repeat_n(660.0, edge_clamped));
+        combined.extend(std::iter::repeat_n(700.0, saturated));
         let with_clamp_median = dp::median(&mut combined);
         let offset_wc = with_clamp_median - event.depth_km;
         if depths.is_empty() {
@@ -447,8 +447,8 @@ fn main() {
             if m.skip.is_some() {
                 continue;
             }
-            if let Some(p) = &m.p_p {
-                if p.corr.abs() >= dp::SECONDARY_CORR_MIN {
+            if let Some(p) = &m.p_p
+                && p.corr.abs() >= dp::SECONDARY_CORR_MIN {
                     match m.p_p_sigma_s {
                         Some(sigma) if sigma.is_finite() && sigma > 0.0 => {
                             dual_deltas.push(m.delta_deg);
@@ -459,7 +459,6 @@ fn main() {
                         _ => {}
                     }
                 }
-            }
             if let Some(sp) = &m.s_p {
                 match sp_gate {
                     Some(g) if sp.corr.abs() >= g => match m.s_p_sigma_s {
@@ -895,12 +894,11 @@ fn upgoing_radiation(m: &[f64; 6], takeoff_up_deg: f64) -> (f64, f64, Vec<f64>) 
         let v = ndk::rp(m, &r);
         rp_min = rp_min.min(v);
         rp_max = rp_max.max(v);
-        if let Some(p) = prev {
-            if (p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0) {
+        if let Some(p) = prev
+            && ((p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0)) {
                 let frac = p / (p - v);
                 nodal.push(prev_az + frac);
             }
-        }
         prev = Some(v);
         prev_az = a;
     }

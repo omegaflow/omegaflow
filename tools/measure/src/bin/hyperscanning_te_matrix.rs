@@ -57,11 +57,10 @@ fn load_series(path: &str, channel: Option<&str>, max_points: Option<usize>) -> 
     let (mut set, samples) = open_set(path)
         .or_else(|| open_set_mat(path))
         .or_else(|| open_set_bin(path))?;
-    if set.labels.is_empty() {
-        if let Some(labels) = labels_from_channels_tsv(path) {
+    if set.labels.is_empty()
+        && let Some(labels) = labels_from_channels_tsv(path) {
             set.labels = labels;
         }
-    }
     let mut series = match channel {
         Some(sel) => {
             let ch = resolve_channel(&set, sel)?;
@@ -69,11 +68,10 @@ fn load_series(path: &str, channel: Option<&str>, max_points: Option<usize>) -> 
         }
         None => common_average_series(&samples, &set)?,
     };
-    if let Some(cap) = max_points {
-        if series.len() > cap {
+    if let Some(cap) = max_points
+        && series.len() > cap {
             series.truncate(cap);
         }
-    }
     if series.len() < MIN_N {
         return None;
     }
@@ -122,7 +120,7 @@ fn best_pair(
             },
         )
         .map(|(_, _, thr)| thr);
-        if best.as_ref().map_or(true, |b| te > b.te) {
+        if best.as_ref().is_none_or(|b| te > b.te) {
             best = Some(PairFinding { lag, te, fam });
         }
     }

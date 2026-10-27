@@ -263,8 +263,8 @@ fn collect_inputs(args: &[String]) -> Result<Vec<PathBuf>, String> {
         }
         i += 1;
     }
-    if inputs.is_empty() {
-        if let Some(dir) = arg_value(args, "--dir") {
+    if inputs.is_empty()
+        && let Some(dir) = arg_value(args, "--dir") {
             let entries =
                 std::fs::read_dir(&dir).map_err(|e| format!("--dir {dir} unreadable: {e}"))?;
             for entry in entries {
@@ -276,7 +276,6 @@ fn collect_inputs(args: &[String]) -> Result<Vec<PathBuf>, String> {
             }
             inputs.sort();
         }
-    }
     if inputs.is_empty() {
         return Err("needs --in <file.pgm> (repeatable) or --dir <dir> holding *.pgm".to_string());
     }
@@ -560,11 +559,10 @@ fn main() {
             for eb in 0..el_bins {
                 let cell = ab * el_bins + eb;
                 let series = contrast_of(cell);
-                if let Some(o) = running_onset(&series, window, threshold_k, persist, search_from) {
-                    if best.map(|b| o.epoch < b.0).unwrap_or(true) {
+                if let Some(o) = running_onset(&series, window, threshold_k, persist, search_from)
+                    && best.map(|b| o.epoch < b.0).unwrap_or(true) {
                         best = Some((o.epoch, eb, o.value));
                     }
-                }
             }
             if let Some((e, eb, v)) = best {
                 println!(

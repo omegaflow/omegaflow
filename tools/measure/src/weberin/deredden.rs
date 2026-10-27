@@ -80,7 +80,7 @@ pub fn type_label(num: f64) -> String {
         return "out-of-sequence".to_string();
     }
     let base = ((num / 10.0).floor() * 10.0).clamp(20.0, 60.0) as i32;
-    if base < 20 || base > 60 {
+    if !(20..=60).contains(&base) {
         return "out-of-sequence".to_string();
     }
     let li = ((base - 20) / 10) as usize;
@@ -299,13 +299,12 @@ pub fn build_star_index(bytes: &[u8]) -> StarIndex {
     let mut dec_min = f64::INFINITY;
     let mut dec_max = f64::NEG_INFINITY;
     for chunk in bytes.chunks_exact(stride) {
-        if let Some(rec) = parse_star_record(chunk) {
-            if rec.ra_deg.is_finite() && rec.dec_deg.is_finite() {
+        if let Some(rec) = parse_star_record(chunk)
+            && rec.ra_deg.is_finite() && rec.dec_deg.is_finite() {
                 dec_min = dec_min.min(rec.dec_deg);
                 dec_max = dec_max.max(rec.dec_deg);
                 stars.push(rec);
             }
-        }
     }
     if stars.is_empty() {
         return StarIndex {

@@ -229,9 +229,7 @@ fn main() {
         out.push(s);
     };
 
-    push(format!(
-        "galileo-pioneer pass-slice probe — sub-daily (station, day) cells, window 1995-11-23..1997-02-28"
-    ));
+    push("galileo-pioneer pass-slice probe — sub-daily (station, day) cells, window 1995-11-23..1997-02-28".to_string());
     push(format!(
         "conventions: Galileo floor = resid strength {FLOOR_AGC} (AGC clamp), modes 1..3, trio stations; lock |resid| > {LOCK_HZ:.0} Hz excluded before noise; floor day cell = (mode, station, TDB day), day RMS about cell mean, loud >= {LOUD_HZ:.0} Hz robust n >= {ROBUST_N}; pass = contiguous samples gap <= {PASS_GAP_S:.0} s, window RMS/median about window mean"
     ));

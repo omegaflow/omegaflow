@@ -334,11 +334,10 @@ fn run_merge(paths: &[String], pct: f64, nominees_out: Option<&str>) {
         }
     }
 
-    if let Some(path) = nominees_out {
-        if !write_nominees(path, &nominees) {
+    if let Some(path) = nominees_out
+        && !write_nominees(path, &nominees) {
             exit(2);
         }
-    }
 }
 
 fn load_series(
@@ -349,18 +348,16 @@ fn load_series(
     let (mut set, samples) = open_set(path)
         .or_else(|| open_set_mat(path))
         .or_else(|| open_set_bin(path))?;
-    if set.labels.is_empty() {
-        if let Some(labels) = labels_from_channels_tsv(path) {
+    if set.labels.is_empty()
+        && let Some(labels) = labels_from_channels_tsv(path) {
             set.labels = labels;
         }
-    }
     let ch = resolve_channel(&set, channel)?;
     let mut series = channel_series(&samples, &set, ch)?;
-    if let Some(cap) = max_points {
-        if series.len() > cap {
+    if let Some(cap) = max_points
+        && series.len() > cap {
             series.truncate(cap);
         }
-    }
     if series.len() < MIN_N {
         return None;
     }
@@ -389,11 +386,10 @@ fn family_max(series: &[Vec<f32>], dim: usize) -> Option<f64> {
             if i == j {
                 continue;
             }
-            if let Some(est) = topological_te_estimate(&series[j], &series[i], dim) {
-                if best.map_or(true, |b| est.te > b) {
+            if let Some(est) = topological_te_estimate(&series[j], &series[i], dim)
+                && best.is_none_or(|b| est.te > b) {
                     best = Some(est.te);
                 }
-            }
         }
     }
     best
@@ -555,7 +551,7 @@ fn surrogate_family_maxima_range(
                         frozen[t][j],
                         frozen[t][i],
                     ) {
-                        if family.map_or(true, |f| te > f) {
+                        if family.is_none_or(|f| te > f) {
                             family = Some(te);
                         }
                         let slot = cell_slot(offsets[t], members, i, j);
@@ -581,7 +577,7 @@ fn surrogate_family_maxima_range(
 fn per_cell_survivors<'a>(cells: &'a [Cell], family: &SurrogateFamily, pct: f64) -> Vec<&'a Cell> {
     cells
         .iter()
-        .filter(|c| percentile(&family.cell_distributions[c.slot], pct).map_or(false, |t| c.te > t))
+        .filter(|c| percentile(&family.cell_distributions[c.slot], pct).is_some_and(|t| c.te > t))
         .collect()
 }
 
@@ -956,7 +952,7 @@ fn main() {
             None => surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent),
         };
         if shard.is_some() {
-            if let Some(_) = shard_out.as_ref() {
+            if shard_out.as_ref().is_some() {
                 let observed_max = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
                 let obs = if cells.is_empty() {
                     "absent".to_string()

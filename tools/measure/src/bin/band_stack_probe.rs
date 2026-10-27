@@ -140,7 +140,7 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let m: i64 = dp.next()?.parse().ok()?;
     let d: i64 = dp.next()?.parse().ok()?;
     let t = time
-        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .split(['.', 'Z', 'z'])
         .next()?;
     let mut tp = t.split(':');
     let hh: i64 = tp.next()?.parse().ok()?;
@@ -356,11 +356,10 @@ fn al_min_time(wdc: &Wdc, start: f64, end: f64) -> Option<f64> {
     let mut best: Option<(f64, f64)> = None;
     let mut t = start;
     while t <= end {
-        if let Some(al) = nearest(&wdc.al, t) {
-            if best.map(|(bv, _)| al < bv).unwrap_or(true) {
+        if let Some(al) = nearest(&wdc.al, t)
+            && best.map(|(bv, _)| al < bv).unwrap_or(true) {
                 best = Some((al, t));
             }
-        }
         t += 60.0;
     }
     best.map(|(_, t)| t)
@@ -563,18 +562,16 @@ fn main() {
                     quiet = false;
                     break;
                 }
-                if let Some(al) = nearest(&wdc.al, t) {
-                    if al < -50.0 {
+                if let Some(al) = nearest(&wdc.al, t)
+                    && al < -50.0 {
                         quiet = false;
                         break;
                     }
-                }
-                if let Some(ae) = nearest(&wdc.ae, t) {
-                    if ae > 200.0 {
+                if let Some(ae) = nearest(&wdc.ae, t)
+                    && ae > 200.0 {
                         quiet = false;
                         break;
                     }
-                }
             }
             if quiet {
                 let near = event_starts.iter().any(|&e| (e - day).abs() < 5.0 * DAY);
@@ -681,8 +678,8 @@ fn main() {
     let mut quiet_det = 0usize;
     let mut quiet_n = 0usize;
     let mut qevents_vec: Vec<Event> = Vec::new();
-    if let Some(qp) = quiet_path {
-        if let Some(qevents) = read_events(&qp) {
+    if let Some(qp) = quiet_path
+        && let Some(qevents) = read_events(&qp) {
             for e in &qevents {
                 let stations: Vec<&Station> = STATIONS.iter().collect();
                 if let Some(s) = stack_event(&mut cache, &raw, e, &wdc, &stations, true, true) {
@@ -697,7 +694,6 @@ fn main() {
             }
             qevents_vec = qevents;
         }
-    }
     let mut quiet_draw = Vec::new();
     let mut seed = 0x9e3779b97f4a7c15u64;
     for _ in 0..500 {

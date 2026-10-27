@@ -468,9 +468,9 @@ fn night_split(rows: &[EpochRow], x: &[f64; 5]) -> Option<NightStats> {
         return None;
     }
     let ids = night_groups(rows);
-    let n_groups = match ids.iter().max() {
-        Some(m) => m + 1,
-        None => return None,
+    let n_groups = {
+        let m = ids.iter().max()?;
+        m + 1
     };
     let mut sum_ra = vec![0.0; n_groups];
     let mut sum_dec = vec![0.0; n_groups];

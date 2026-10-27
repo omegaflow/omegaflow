@@ -211,7 +211,7 @@ fn keep_density(v: f64) -> bool {
 }
 
 fn keep_kp(v: f64) -> bool {
-    v.is_finite() && v >= 0.0 && v <= KP_MAX
+    v.is_finite() && (0.0..=KP_MAX).contains(&v)
 }
 
 fn obj_str<'a>(v: &'a JsonVal, key: &str) -> Option<&'a str> {
@@ -389,16 +389,14 @@ fn parse_omni2_csv(text: &str) -> (Vec<(f64, f64)>, Vec<(f64, f64)>) {
         let Some(t) = parse_iso(parts[0]) else {
             continue;
         };
-        if let Ok(v) = parts[3].parse::<f64>() {
-            if keep_b_fill(v) {
+        if let Ok(v) = parts[3].parse::<f64>()
+            && keep_b_fill(v) {
                 bz.push((t, v));
             }
-        }
-        if let Ok(v) = parts[7].parse::<f64>() {
-            if keep_positive_fill(v, FILL_P, P_MAX_NPA) {
+        if let Ok(v) = parts[7].parse::<f64>()
+            && keep_positive_fill(v, FILL_P, P_MAX_NPA) {
                 pressure.push((t, v));
             }
-        }
     }
     (bz, pressure)
 }
@@ -462,7 +460,7 @@ fn wind_speed_at(wind: &[RtswWind], t: f64) -> Option<f64> {
     }
     if i > 0 {
         let dt = (wind[i - 1].t - t).abs();
-        if dt <= WIND_SPEED_WINDOW_S && best.map_or(true, |(bd, _)| dt < bd) {
+        if dt <= WIND_SPEED_WINDOW_S && best.is_none_or(|(bd, _)| dt < bd) {
             best = Some((dt, wind[i - 1].speed));
         }
     }
@@ -732,7 +730,7 @@ fn j_escape(s: &str) -> String {
             '\\' => out.push_str("\\\\"),
             c if c.is_control() => {
                 for b in c.escape_default() {
-                    out.push(b as char);
+                    out.push(b);
                 }
             }
             c => out.push(c),

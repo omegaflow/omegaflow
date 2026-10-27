@@ -296,8 +296,8 @@ fn main() {
     );
     println!();
     println!(
-        "{:>4} | {:>18} | {:>12} | {:>18} | {:>12} | {}",
-        "lag", "TE(precip->stage)", "threshold", "TE(stage->precip)", "threshold", "verdict"
+        "{:>4} | {:>18} | {:>12} | {:>18} | {:>12} | verdict",
+        "lag", "TE(precip->stage)", "threshold", "TE(stage->precip)", "threshold"
     );
     for &lag in &lags {
         let te_fwd = transfer_entropy_lag(&stage, &precip, lag);

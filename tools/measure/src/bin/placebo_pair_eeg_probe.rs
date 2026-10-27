@@ -54,11 +54,10 @@ fn monotonic_non_decreasing(series: &[Option<f64>]) -> bool {
 fn parse_series(text: &str) -> Option<Vec<f32>> {
     let mut out = Vec::new();
     for tok in text.split_whitespace() {
-        if let Ok(v) = tok.parse::<f32>() {
-            if v.is_finite() {
+        if let Ok(v) = tok.parse::<f32>()
+            && v.is_finite() {
                 out.push(v);
             }
-        }
     }
     if out.is_empty() { None } else { Some(out) }
 }
@@ -344,16 +343,14 @@ fn run_pair(
             }
             _ => Verdict::Still,
         };
-        if let Some(t) = te_ab {
-            if t > best_ab.map_or(f64::NEG_INFINITY, |(_, v)| v) {
+        if let Some(t) = te_ab
+            && t > best_ab.map_or(f64::NEG_INFINITY, |(_, v)| v) {
                 best_ab = Some((lag, t));
             }
-        }
-        if let Some(t) = te_ba {
-            if t > best_ba.map_or(f64::NEG_INFINITY, |(_, v)| v) {
+        if let Some(t) = te_ba
+            && t > best_ba.map_or(f64::NEG_INFINITY, |(_, v)| v) {
                 best_ba = Some((lag, t));
             }
-        }
         println!(
             "{:>4} | {:>11} | {:>11} | {:>5} | {:>11} | {:>11} | {:>5}",
             lag,

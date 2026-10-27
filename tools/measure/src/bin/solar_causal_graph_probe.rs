@@ -275,12 +275,11 @@ fn run_bandwidth(
                     fam = v;
                 }
             }
-            if let Some(te) = te_bandwidth(&xs, &ys, lag, factor) {
-                if best.map_or(true, |(_, b)| te > b) {
+            if let Some(te) = te_bandwidth(&xs, &ys, lag, factor)
+                && best.is_none_or(|(_, b)| te > b) {
                     best = Some((lag, te));
                     best_thr = mean_plus_2sigma(&surr);
                 }
-            }
         }
         let (best_lag, te) = match best {
             Some(b) => b,
@@ -559,12 +558,11 @@ fn main() {
                     fam = v;
                 }
             }
-            if let Some(te) = transfer_entropy_lag(&xs, &ys, lag) {
-                if best.map_or(true, |(_, b)| te > b) {
+            if let Some(te) = transfer_entropy_lag(&xs, &ys, lag)
+                && best.is_none_or(|(_, b)| te > b) {
                     best = Some((lag, te));
                     best_thr = mean_plus_2sigma(&surr);
                 }
-            }
         }
         let Some((best_lag, te)) = best else {
             verdicts.push(PairVerdict {

@@ -58,11 +58,10 @@ fn load_ephemerides(args: &[String]) -> HashMap<String, BodyEphemeris> {
             Some(p) => std::fs::read(&p).ok(),
             None => fetch_raw_bytes(url),
         };
-        if let Some(b) = bytes {
-            if let Some(e) = parse_ephemeris_binary(&b) {
+        if let Some(b) = bytes
+            && let Some(e) = parse_ephemeris_binary(&b) {
                 eph.insert(name, e);
             }
-        }
     }
     eph
 }
@@ -87,9 +86,9 @@ fn main() {
         None => "tmp/f107_penticton.bin".to_string(),
     };
     let mut f107 = read_f107(&f107_path);
-    if f107.is_empty() {
-        if let Some(bytes) = fetch_raw_bytes(F107_CDN) {
-            if bytes.len() >= 8 && bytes[0..4] == *b"F107" {
+    if f107.is_empty()
+        && let Some(bytes) = fetch_raw_bytes(F107_CDN)
+            && bytes.len() >= 8 && bytes[0..4] == *b"F107" {
                 let n = u32::from_le_bytes(bytes[4..8].try_into().unwrap()) as usize;
                 f107 = (0..n)
                     .filter_map(|i| {
@@ -100,8 +99,6 @@ fn main() {
                     })
                     .collect();
             }
-        }
-    }
     if f107.is_empty() {
         eprintln!("{}: F107 absent or carries no F107 contract", f107_path);
         return;
@@ -198,11 +195,10 @@ fn main() {
                 }
             }
         }
-        if let Some(v) = tf {
-            if v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+        if let Some(v) = tf
+            && v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
                 best = Some((lag, v));
             }
-        }
         println!(
             "{:>4} | {:>11} | {:>11} | {:>11.4e}",
             lag,

@@ -24,7 +24,7 @@ fn main() {
         }
     }
     println!();
-    let deltas = vec![30.0, 45.0, 60.0, 75.0, 90.0];
+    let deltas = [30.0, 45.0, 60.0, 75.0, 90.0];
     let lags: Vec<f64> = deltas
         .iter()
         .filter_map(|&d| dp::p_p_lag(d, SOURCE_DEPTH_KM))

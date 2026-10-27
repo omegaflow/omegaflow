@@ -72,11 +72,10 @@ fn collect_files(dir: &Path, filter: Option<&str>, out: &mut Vec<PathBuf>) -> us
             Some("md") | Some("txt") => {}
             _ => continue,
         }
-        if let Some(f) = filter {
-            if !path.to_string_lossy().contains(f) {
+        if let Some(f) = filter
+            && !path.to_string_lossy().contains(f) {
                 continue;
             }
-        }
         out.push(path);
     }
     skipped
@@ -446,8 +445,8 @@ fn main() {
     println!("windows={windows} surrogates={surrogates}");
     println!();
     println!(
-        "{:<6} | {:>10} | {:>10} | {:>10} | {:>10} | {}",
-        "arrow", "te", "threshold", "surr mean", "surr sd", "state"
+        "{:<6} | {:>10} | {:>10} | {:>10} | {:>10} | state",
+        "arrow", "te", "threshold", "surr mean", "surr sd"
     );
 
     let dir_ab;

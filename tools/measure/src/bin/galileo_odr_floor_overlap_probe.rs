@@ -67,7 +67,7 @@ fn main() {
         Ok(t) => t,
         Err(_) => {
             push(format!("segment table void at {seg_path}"));
-            let _ = fs::write(&report_path, out.join("\n") + "\n");
+            let _ = fs::write(report_path, out.join("\n") + "\n");
             return;
         }
     };
@@ -100,7 +100,7 @@ fn main() {
 
     let Ok(bytes) = fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         push("galileo resid bin void".to_string());
-        let _ = fs::write(&report_path, out.join("\n") + "\n");
+        let _ = fs::write(report_path, out.join("\n") + "\n");
         return;
     };
     let Some(recs) = parse_resid_bin(&bytes) else {
@@ -207,6 +207,6 @@ fn main() {
             ));
         }
     }
-    let _ = fs::write(&report_path, out.join("\n") + "\n");
+    let _ = fs::write(report_path, out.join("\n") + "\n");
     eprintln!("report written to {report_path}");
 }

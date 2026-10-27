@@ -422,11 +422,10 @@ fn column_mean_dlnvp(vol: &Volume, lat: f64, lon: f64, depth_km: f64) -> Option<
     let mut vs: Vec<f64> = Vec::with_capacity(levels.len() + 1);
     let mut prev: Option<f64> = None;
     for z in levels {
-        if let Some(p) = prev {
-            if (z - p).abs() < 1e-9 {
+        if let Some(p) = prev
+            && (z - p).abs() < 1e-9 {
                 continue;
             }
-        }
         let v = vol.sample_at([z, lat, lon])?;
         zs.push(z);
         vs.push(v);

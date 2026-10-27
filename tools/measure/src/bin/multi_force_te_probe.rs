@@ -156,8 +156,8 @@ fn main() {
     );
     println!();
     println!(
-        "{:>6} {:>14} {:>4} | {:>10} {:>10} {:>10} | {}",
-        "driver", "target", "lag", "te", "threshold", "p_value", "fdr"
+        "{:>6} {:>14} {:>4} | {:>10} {:>10} {:>10} | fdr",
+        "driver", "target", "lag", "te", "threshold", "p_value"
     );
 
     let mut rows: Vec<(usize, usize, usize, f64, f64, f64)> = Vec::new();

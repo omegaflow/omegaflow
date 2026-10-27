@@ -594,14 +594,13 @@ fn main() {
             None => true,
             Some(prev) => t - prev > gap_s,
         };
-        if boundary {
-            if let Some(mut pass) = ks.pass.take() {
+        if boundary
+            && let Some(mut pass) = ks.pass.take() {
                 let mut stat = finish_pass(&mut pass);
                 stat.mode = mode;
                 stat.station = station;
                 passmap.entry(key).or_default().push(stat);
             }
-        }
         let pass = ks.pass.get_or_insert_with(|| PassOpen::start(t, band_w));
         pass.t_last = t;
         if resid.abs() <= LOCK_HZ {
@@ -955,7 +954,7 @@ fn main() {
         let mut pv: Vec<f64> = Vec::new();
         if let Some(list) = passmap.get(&key) {
             for ps in list {
-                for (_, cell) in &ps.cells {
+                for cell in ps.cells.values() {
                     let fc = cell[0];
                     let pc = cell[1];
                     if fc.n < MIN_CELL || pc.n < MIN_CELL {

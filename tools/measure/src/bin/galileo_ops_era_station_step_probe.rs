@@ -312,8 +312,8 @@ fn main() {
             if let (Some(p), Some(e)) = (
                 body_barycenter_position("galileo_daily", t, &eph),
                 body_barycenter_position(host, t, &eph),
-            ) {
-                if let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p)) {
+            )
+                && let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p)) {
                     geo.insert(
                         d,
                         Geo {
@@ -323,7 +323,6 @@ fn main() {
                         },
                     );
                 }
-            }
         }
     }
 
@@ -524,11 +523,10 @@ fn main() {
             let mut runs: Vec<Vec<&Cell>> = Vec::new();
             let mut cur: Vec<&Cell> = Vec::new();
             for c in &srows {
-                if let Some(last) = cur.last() {
-                    if c.day - last.day > 1 {
+                if let Some(last) = cur.last()
+                    && c.day - last.day > 1 {
                         runs.push(std::mem::take(&mut cur));
                     }
-                }
                 cur.push(c);
             }
             if !cur.is_empty() {
@@ -695,7 +693,7 @@ fn main() {
                 };
                 let gap = (ml - mr).abs();
                 if best.as_ref().map(|(bg, _, _)| gap > *bg).unwrap_or(true) {
-                    best = Some((gap, k, &srows[k]));
+                    best = Some((gap, k, srows[k]));
                 }
             }
             match best {

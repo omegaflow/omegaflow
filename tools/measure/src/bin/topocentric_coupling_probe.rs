@@ -240,8 +240,8 @@ fn resolve_station(
         });
     }
     if dsn_host() == Some(body.as_str()) {
-        if let Some(id) = default_dsn {
-            if let Some((la, lo, al)) = dsn_station(id) {
+        if let Some(id) = default_dsn
+            && let Some((la, lo, al)) = dsn_station(id) {
                 return Ok(Station {
                     label: format!("DSN {id}"),
                     body,
@@ -250,7 +250,6 @@ fn resolve_station(
                     alt_m: al,
                 });
             }
-        }
         return Err(format!(
             "no {body} station coordinates arrive — give {lat_key} {lon_key} {alt_key} or a named station"
         ));
@@ -473,11 +472,10 @@ fn main() {
             needed.push(body.clone());
         }
     }
-    if let Some(body) = arg_token(&args, "--target-body") {
-        if !needed.contains(&body) {
+    if let Some(body) = arg_token(&args, "--target-body")
+        && !needed.contains(&body) {
             needed.push(body.clone());
         }
-    }
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for name in &needed {
         match load(name) {

@@ -53,11 +53,10 @@ fn load_local_or_fetch(name: &str, url: &str) -> Option<Vec<u8>> {
         .join(name)
         .to_string_lossy()
         .into_owned();
-    if let Ok(b) = std::fs::read(&cache) {
-        if !b.is_empty() {
+    if let Ok(b) = std::fs::read(&cache)
+        && !b.is_empty() {
             return Some(b);
         }
-    }
     fetch_raw_bytes(url)
 }
 
@@ -246,13 +245,12 @@ fn deseasonalize_monthly(series: &[Option<f64>]) -> Vec<Option<f64>> {
     let mut sumsq = [0.0f64; CAL_MONTHS];
     let mut counts = [0u32; CAL_MONTHS];
     for (i, v) in series.iter().enumerate() {
-        if let Some(x) = v {
-            if x.is_finite() {
+        if let Some(x) = v
+            && x.is_finite() {
                 sums[i % CAL_MONTHS] += x;
                 sumsq[i % CAL_MONTHS] += x * x;
                 counts[i % CAL_MONTHS] += 1;
             }
-        }
     }
     let mut means = [0.0f64; CAL_MONTHS];
     let mut sds = [0.0f64; CAL_MONTHS];
@@ -292,12 +290,11 @@ fn paired_series(a: &[Option<f64>], b: &[Option<f64>]) -> (Vec<f32>, Vec<f32>) {
     let mut av = Vec::new();
     let mut bv = Vec::new();
     for (x, y) in a.iter().zip(b.iter()) {
-        if let (Some(x), Some(y)) = (x, y) {
-            if x.is_finite() && y.is_finite() {
+        if let (Some(x), Some(y)) = (x, y)
+            && x.is_finite() && y.is_finite() {
                 av.push(*x as f32);
                 bv.push(*y as f32);
             }
-        }
     }
     (av, bv)
 }
@@ -311,13 +308,12 @@ fn triple_series(
     let mut bv = Vec::new();
     let mut cv = Vec::new();
     for ((x, y), z) in a.iter().zip(b.iter()).zip(c.iter()) {
-        if let (Some(x), Some(y), Some(z)) = (x, y, z) {
-            if x.is_finite() && y.is_finite() && z.is_finite() {
+        if let (Some(x), Some(y), Some(z)) = (x, y, z)
+            && x.is_finite() && y.is_finite() && z.is_finite() {
                 av.push(*x as f32);
                 bv.push(*y as f32);
                 cv.push(*z as f32);
             }
-        }
     }
     (av, bv, cv)
 }
@@ -373,11 +369,10 @@ fn direction_verdict(
 ) -> String {
     let mut best: Option<(usize, f64)> = None;
     for &lag in lags {
-        if let Some(te) = transfer_entropy_lag(to_s, from_s, lag) {
-            if best.is_none_or(|(_, b)| te > b) {
+        if let Some(te) = transfer_entropy_lag(to_s, from_s, lag)
+            && best.is_none_or(|(_, b)| te > b) {
                 best = Some((lag, te));
             }
-        }
     }
     match best {
         Some((lag, te)) => {
@@ -506,11 +501,10 @@ fn positive_control() -> Option<PositiveControl> {
     let lags: Vec<usize> = (0..=MAX_LAG_MONTHS).collect();
     let mut best: Option<(usize, f64)> = None;
     for &lag in &lags {
-        if let Some(te) = transfer_entropy_lag(&target, &driver, lag) {
-            if best.is_none_or(|(_, b)| te > b) {
+        if let Some(te) = transfer_entropy_lag(&target, &driver, lag)
+            && best.is_none_or(|(_, b)| te > b) {
                 best = Some((lag, te));
             }
-        }
     }
     let (best_lag, te) = best?;
     let (_, _, threshold) =

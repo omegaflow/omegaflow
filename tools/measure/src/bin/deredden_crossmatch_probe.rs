@@ -104,10 +104,7 @@ struct MatchStar {
 }
 
 fn type_word(bp_rp: f64) -> (f64, f64) {
-    match dwarf_color_type(bp_rp) {
-        Some(x) => x,
-        None => (f64::NAN, f64::NAN),
-    }
+    dwarf_color_type(bp_rp).unwrap_or((f64::NAN, f64::NAN))
 }
 
 fn report_object(
@@ -128,18 +125,16 @@ fn report_object(
         let d_pc = 1000.0 / s.plx_mas;
         let (th, _) = icrs_to_galactic(s.ra_deg, s.dec_deg);
         let b = 90.0 - th.to_degrees();
-        let dust_refused;
-        let dust;
-        match map.at(s.ra_deg, s.dec_deg, d_pc) {
+        
+        
+        let (dust, dust_refused) = match map.at(s.ra_deg, s.dec_deg, d_pc) {
             Some(h) => {
-                dust = Some(h);
-                dust_refused = "";
+                (Some(h), "")
             }
             None => {
-                dust = None;
-                dust_refused = "no map leaf or distance outside the model grid";
+                (None, "no map leaf or distance outside the model grid")
             }
-        }
+        };
         matched.push(MatchStar {
             star_idx: *k,
             sep_arcsec: *sep,

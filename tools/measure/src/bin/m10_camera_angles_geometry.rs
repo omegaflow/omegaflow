@@ -148,11 +148,10 @@ fn main() {
     let mut clusters: Vec<Vec<CameraAngleFrame>> = Vec::new();
     let mut current: Vec<CameraAngleFrame> = Vec::new();
     for f in ordered {
-        if let Some(prev) = current.last() {
-            if f.jd - prev.jd > threshold {
+        if let Some(prev) = current.last()
+            && f.jd - prev.jd > threshold {
                 clusters.push(std::mem::take(&mut current));
             }
-        }
         current.push(f);
     }
     if !current.is_empty() {
@@ -233,14 +232,14 @@ fn main() {
             if f.jd > jd_hi {
                 jd_hi = f.jd;
             }
-            if s_min_frame.as_ref().map_or(true, |(_, _, mv)| m < *mv) {
+            if s_min_frame.as_ref().is_none_or(|(_, _, mv)| m < *mv) {
                 s_min_frame = Some((f.jd, f.fds.clone(), m));
             }
             if let Ok(v) = f.fds.parse::<u64>() {
-                if fds_min.as_ref().map_or(true, |(mv, _)| v < *mv) {
+                if fds_min.as_ref().is_none_or(|(mv, _)| v < *mv) {
                     fds_min = Some((v, f.fds.clone()));
                 }
-                if fds_max.as_ref().map_or(true, |(mv, _)| v > *mv) {
+                if fds_max.as_ref().is_none_or(|(mv, _)| v > *mv) {
                     fds_max = Some((v, f.fds.clone()));
                 }
             }
@@ -255,7 +254,7 @@ fn main() {
             None => "n/a".to_string(),
         };
 
-        let _ = writeln!(out, "");
+        let _ = writeln!(out);
         let _ = writeln!(out, "encounter {}", idx + 1);
         let _ = writeln!(out, "  frames: {}", cluster.len());
         let _ = writeln!(out, "  jd: {jd_lo:.6} .. {jd_hi:.6}");
@@ -283,10 +282,9 @@ fn main() {
 
     print!("{out}");
 
-    if let Some(path) = out_path {
-        if let Err(e) = fs::write(&path, &out) {
+    if let Some(path) = out_path
+        && let Err(e) = fs::write(&path, &out) {
             eprintln!("output not writable: {path}: {e}");
             exit(2);
         }
-    }
 }

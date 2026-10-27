@@ -92,20 +92,18 @@ fn run(spectra_path: &str, equilibrium_path: &str, out_path: &str) -> Result<(),
         let mut best_te = 0.0f64;
         let mut best_lag = 0usize;
         for lag in 0..=LAG_MAX {
-            if let Some(te) = transfer_entropy_lag(&x, &y, lag) {
-                if te > best_te {
+            if let Some(te) = transfer_entropy_lag(&x, &y, lag)
+                && te > best_te {
                     best_te = te;
                     best_lag = lag;
                 }
-            }
         }
         let mut rev_te = 0.0f64;
         for lag in 0..=LAG_MAX {
-            if let Some(te) = transfer_entropy_lag(&y, &x, lag) {
-                if te > rev_te {
+            if let Some(te) = transfer_entropy_lag(&y, &x, lag)
+                && te > rev_te {
                     rev_te = te;
                 }
-            }
         }
         let (forward, dir) = if best_te >= rev_te {
             (best_te, "stellar->chem")

@@ -63,11 +63,10 @@ fn series(
         if flag != 0 {
             continue;
         }
-        if let Some(g) = &gc_raw {
-            if g[i] != 0 {
+        if let Some(g) = &gc_raw
+            && g[i] != 0 {
                 continue;
             }
-        }
         let Some(v) = decode_f32(&v_raw, i * 4, Endian::Le) else {
             continue;
         };
@@ -99,7 +98,7 @@ fn bin_median(series: &[(f64, f64)], t0: f64, bins: usize) -> Vec<Option<f32>> {
             if cnt[i] > 0 {
                 let mut v = std::mem::take(&mut vals[i]);
                 v.sort_by(|a, b| a.total_cmp(b));
-                let m = if v.len() % 2 == 0 {
+                let m = if v.len().is_multiple_of(2) {
                     (v[v.len() / 2 - 1] + v[v.len() / 2]) * 0.5
                 } else {
                     v[v.len() / 2]

@@ -327,7 +327,7 @@ pub fn delta_sweep() -> Vec<(f64, f64, f64)> {
         let p = p_min + (p_max - p_min) * (k as f64 / n as f64);
         if let Some((d, t)) = ray(&nodes, p) {
             let delta_deg = d * RAD_TO_DEG;
-            if delta_deg.is_finite() && delta_deg >= 0.0 && delta_deg <= MAX_DELTA_DEG {
+            if delta_deg.is_finite() && (0.0..=MAX_DELTA_DEG).contains(&delta_deg) {
                 out.push((p * DEG_TO_RAD, delta_deg, t));
             }
         }

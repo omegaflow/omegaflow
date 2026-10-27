@@ -517,13 +517,11 @@ fn main() {
             };
             let use_center = line.word == "de441";
             let worldline = |t: f64| -> Option<[f64; 3]> {
-                if use_center {
-                    if let Some(cm) = &center_map {
-                        if let Some(c) = body_barycenter_position("uranus_c", t, cm) {
+                if use_center
+                    && let Some(cm) = &center_map
+                        && let Some(c) = body_barycenter_position("uranus_c", t, cm) {
                             return Some(c);
                         }
-                    }
-                }
                 let bary = body_barycenter_position(
                     &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
                     t,
@@ -735,7 +733,7 @@ fn main() {
             None => bins.push((y, vec![idx])),
         }
     }
-    bins.sort_by(|a, b| a.0.cmp(&b.0));
+    bins.sort_by_key(|a| a.0);
 
     let mut resid: [Vec<Option<f64>>; 3] = std::array::from_fn(|_| Vec::new());
     for e in &complete {

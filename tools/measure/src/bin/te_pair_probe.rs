@@ -51,10 +51,7 @@ fn main() {
         .position(|a| a == "--surrogat")
         .and_then(|i| args.get(i + 1))
     {
-        Some(v) => match v.parse().ok() {
-            Some(n) => n,
-            None => 10,
-        },
+        Some(v) => v.parse().ok().unwrap_or(10),
         None => 10,
     };
 

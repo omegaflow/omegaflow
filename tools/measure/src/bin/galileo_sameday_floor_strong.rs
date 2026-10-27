@@ -231,14 +231,11 @@ fn main() {
         let (pos, neg) = sign_stats(&diffs);
         let dl = day_set.iter().min().copied();
         let dh = day_set.iter().max().copied();
-        match (dl, dh) {
-            (Some(a), Some(b)) => sec.push(format!(
-                "  span: {} .. {}",
-                jd_date(a as f64 * DAY_S),
-                jd_date(b as f64 * DAY_S)
-            )),
-            _ => {}
-        }
+        if let (Some(a), Some(b)) = (dl, dh) { sec.push(format!(
+            "  span: {} .. {}",
+            jd_date(a as f64 * DAY_S),
+            jd_date(b as f64 * DAY_S)
+        )) }
         sec.push(format!(
             "  median cell floor RMS: {} Hz   median cell strong RMS: {} Hz",
             fmt_o(median(&rms_floor)),

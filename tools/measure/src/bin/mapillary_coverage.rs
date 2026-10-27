@@ -40,14 +40,13 @@ fn secrets_value(contents: &str, name: &str) -> Option<String> {
         if line.is_empty() || line.starts_with('#') {
             continue;
         }
-        if let Some((k, v)) = line.split_once('=') {
-            if k.trim() == name {
+        if let Some((k, v)) = line.split_once('=')
+            && k.trim() == name {
                 let v = v.trim();
                 if !v.is_empty() {
                     return Some(v.to_string());
                 }
             }
-        }
     }
     None
 }
@@ -163,11 +162,10 @@ fn object_after<'a>(hay: &'a str, key: &str) -> Option<&'a str> {
         let pos = search + rel;
         let rest = &hay[pos + marker.len()..];
         let after = rest.trim_start();
-        if let Some(colon) = after.strip_prefix(':') {
-            if let Some(block) = balanced(colon.trim_start(), '{', '}') {
+        if let Some(colon) = after.strip_prefix(':')
+            && let Some(block) = balanced(colon.trim_start(), '{', '}') {
                 return Some(block);
             }
-        }
         search = pos + marker.len();
     }
     None

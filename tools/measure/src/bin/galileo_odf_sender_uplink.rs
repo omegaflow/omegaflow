@@ -123,7 +123,7 @@ struct RawO {
 }
 
 fn parse_odf_file(name: &str, bytes: &[u8]) -> Vec<RawO> {
-    if bytes.len() % 36 != 0 {
+    if !bytes.len().is_multiple_of(36) {
         eprintln!(
             "{name}: {0} bytes not a multiple of 36 (0 honored)",
             bytes.len()
@@ -294,16 +294,16 @@ fn main() {
         if let Some(rms) = s.rms() {
             robust_series
                 .entry((*station, *mode))
-                .or_insert_with(Vec::new)
+                .or_default()
                 .push((*day, rms, n));
         }
     }
     let mut total_robust = 0usize;
     let mut total_loud = 0usize;
     let mut keys: Vec<_> = robust_series.iter_mut().collect();
-    keys.sort_by(|a, b| (a.0.0, a.0.1).cmp(&(b.0.0, b.0.1)));
+    keys.sort_by_key(|a| (a.0.0, a.0.1));
     for ((station, mode), rows) in keys {
-        rows.sort_by(|a, b| a.0.cmp(&b.0));
+        rows.sort_by_key(|a| a.0);
         let loud = rows.iter().filter(|(_, rms, _)| *rms >= LOUD_HZ).count();
         total_robust += rows.len();
         total_loud += loud;
@@ -367,12 +367,11 @@ fn main() {
     let m3_last = m3days.iter().max().copied();
     if let Some(last) = m3_last {
         for name in &names {
-            if let Some((d0, d1)) = name_span(name) {
-                if d0 <= last {
+            if let Some((d0, d1)) = name_span(name)
+                && d0 <= last {
                     fetch_days.insert(d0);
                     fetch_days.insert(d1);
                 }
-            }
         }
     }
     println!(
@@ -547,7 +546,7 @@ fn main() {
         "(receiving x transmitting) robust floor cells over ODF-covered mode-3 samples (day rx tx mode dt n rms class):"
     );
     let mut sk: Vec<_> = split.into_iter().collect();
-    sk.sort_by(|a, b| a.0.cmp(&b.0));
+    sk.sort_by_key(|a| a.0);
     let mut tx_agg: BTreeMap<(i64, i64, i64, i64), (usize, usize)> = BTreeMap::new();
     for ((day, station, tx, mode, dt), s) in sk {
         let n = s.n as usize;

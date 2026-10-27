@@ -65,7 +65,7 @@ fn load_floor_trio() -> Option<(Vec<[f64; 8]>, usize, usize)> {
         }
         let st = r[2] as i64;
         let mode = r[3] as i64;
-        if !(mode >= 1 && mode <= 4) || !TRIO.contains(&st) {
+        if !(1..=4).contains(&mode) || !TRIO.contains(&st) {
             continue;
         }
         let resid = r[1];
@@ -149,7 +149,7 @@ fn main() {
     let mut per: BTreeMap<(i64, i64), Vec<(f64, f64)>> = BTreeMap::new();
     for r in &all {
         per.entry((r[3] as i64, r[2] as i64))
-            .or_insert_with(Vec::new)
+            .or_default()
             .push((r[0], r[1]));
     }
 

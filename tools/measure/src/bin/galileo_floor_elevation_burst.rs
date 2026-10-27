@@ -291,12 +291,11 @@ fn episodes(
                         open = Some((s, i, pk.max(resids[i].abs())));
                     }
                 }
-            } else if let Some((s, e, pk)) = open {
-                if times[i] - times[e] > gap_s {
+            } else if let Some((s, e, pk)) = open
+                && times[i] - times[e] > gap_s {
                     out.push((times[s], times[e], e - s + 1, pk));
                     open = None;
                 }
-            }
         }
         if let Some((s, e, pk)) = open {
             out.push((times[s], times[e], e - s + 1, pk));
@@ -491,11 +490,10 @@ fn main() {
             let mut ceil = f64::NEG_INFINITY;
             let mut t = lo;
             while t < hi {
-                if let Some(el) = elevation_at(t, st, &eph) {
-                    if el > ceil {
+                if let Some(el) = elevation_at(t, st, &eph)
+                    && el > ceil {
                         ceil = el;
                     }
-                }
                 t += EL_STEP_S;
             }
             cells.push(CellStat {
@@ -668,7 +666,7 @@ fn main() {
     );
     for &st in &STATIONS {
         let mut dc: Vec<&CellStat> = cells.iter().filter(|c| c.station == st).collect();
-        dc.sort_by(|a, b| a.day.cmp(&b.day));
+        dc.sort_by_key(|a| a.day);
         let mut n_flip = 0usize;
         let mut dceils: Vec<f64> = Vec::new();
         let mut near = 0usize;

@@ -38,7 +38,7 @@ fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.is_empty() || args.len() % 6 != 0 {
+    if args.is_empty() || !args.len().is_multiple_of(6) {
         eprintln!(
             "galileo ODR same-day phase probe: <odr> <label> <YYYY-MM-DD> <station> <h0> <h1> [...] (6 tokens per window)"
         );

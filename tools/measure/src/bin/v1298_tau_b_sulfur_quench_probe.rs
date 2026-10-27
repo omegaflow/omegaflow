@@ -129,7 +129,7 @@ fn ocs_scan(logz: f64) -> Option<(f64, f64, f64, f64, f64, f64)> {
             if v >= OCS_RET_LOG10 && !cross_ret.is_finite() {
                 cross_ret = t;
             }
-            if v >= OCS_BAND_MIN_LOG10 && v <= OCS_BAND_MAX_LOG10 {
+            if (OCS_BAND_MIN_LOG10..=OCS_BAND_MAX_LOG10).contains(&v) {
                 if !lo_band.is_finite() {
                     lo_band = t;
                 }
@@ -185,12 +185,12 @@ fn run_report() -> Result<String, String> {
     let slots = slot_lookup(&names);
 
     let b_obs =
-        observed_budget(OBSERVED_LOGZ, OBSERVED_C_O).ok_or_else(|| "observed budget refused")?;
+        observed_budget(OBSERVED_LOGZ, OBSERVED_C_O).ok_or("observed budget refused")?;
     let b_solar =
-        observed_budget(SOLAR_LOGZ, OBSERVED_C_O).ok_or_else(|| "solar budget refused")?;
+        observed_budget(SOLAR_LOGZ, OBSERVED_C_O).ok_or("solar budget refused")?;
 
     out.push_str("== Equilibrium table at the observed budget (logZ +0.6, C/O 0.22), 1 bar ==\n");
-    out.push_str(&observed_layer_table(OBSERVED_LOGZ).ok_or_else(|| "layer table refused")?);
+    out.push_str(&observed_layer_table(OBSERVED_LOGZ).ok_or("layer table refused")?);
     out.push('\n');
 
     out.push_str("== Disequilibrium gap: equilibrium OCS at the observed layer and at the Teq reference point ==\n");
@@ -226,7 +226,7 @@ fn run_report() -> Result<String, String> {
     let mut sweep: Vec<(f64, f64, f64, f64, f64, f64, f64)> = Vec::new();
     while logz <= LOGZ_MAX + 1e-9 {
         let (ocs_450, best, best_t, lo_band, hi_band, cross_ret) =
-            ocs_scan(logz).ok_or_else(|| "ocs scan refused")?;
+            ocs_scan(logz).ok_or("ocs scan refused")?;
         let band = if lo_band.is_finite() {
             format!("{lo_band:.0}..{hi_band:.0} K")
         } else {

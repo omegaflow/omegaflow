@@ -35,10 +35,7 @@ fn civil_str(day: i64) -> String {
 }
 
 fn month_key(day: i64) -> Option<i64> {
-    match omegaflow::spectral::civil_from_days(day) {
-        Some((y, m, _)) => Some((y as i64) * 100 + m as i64),
-        None => None,
-    }
+    omegaflow::spectral::civil_from_days(day).map(|(y, m, _)| (y as i64) * 100 + m as i64)
 }
 
 fn median(vals: &[f64]) -> Option<f64> {
@@ -76,7 +73,7 @@ fn fisher_two_sided(a: usize, b: usize, c: usize, d: usize) -> Option<f64> {
     }
     let p_obs = ln_choose(r1 as f64, a as f64) + ln_choose(r2 as f64, c as f64)
         - ln_choose(n as f64, c1 as f64);
-    let lo = if c1 > r2 { c1 - r2 } else { 0 };
+    let lo = c1.saturating_sub(r2);
     let hi = if c1 < r1 { c1 } else { r1 };
     let mut sum = 0.0;
     for a2 in lo..=hi {
@@ -185,7 +182,7 @@ fn main() {
     for r in &recs {
         let mode = r[3] as i64;
         let st = r[2] as i64;
-        if mode < 1 || mode > 3 || st != 14 && st != 43 && st != 63 {
+        if !(1..=3).contains(&mode) || st != 14 && st != 43 && st != 63 {
             continue;
         }
         let resid = r[1];

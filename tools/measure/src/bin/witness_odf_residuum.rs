@@ -539,7 +539,7 @@ fn run(witness: Witness, gravitator: &str) {
                     p[2] / METRES_PER_KM,
                 ];
             }
-            let Some(l) = two_way_light_time(t3, r_rx, r_tx, &sc_km) else {
+            let Some(l) = two_way_light_time(t3, r_rx, r_tx, sc_km) else {
                 break;
             };
             let settled = (l.t_tx_tdb - t_tx).abs() < 1e-9;
@@ -571,7 +571,7 @@ fn run(witness: Witness, gravitator: &str) {
             gravitator_icrs_km: Some(sun_km),
             gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
         };
-        let Some(dop) = two_way_doppler(inputs, &sc_km) else {
+        let Some(dop) = two_way_doppler(inputs, sc_km) else {
             no_model += 1;
             continue;
         };

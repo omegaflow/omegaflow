@@ -35,11 +35,10 @@ fn load(name: &str, explicit: Option<&str>) -> Option<(BodyEphemeris, String)> {
         }
     }
     let local = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
-    if let Ok(b) = std::fs::read(&local) {
-        if let Some(e) = parse_bytes(&local, &b) {
+    if let Ok(b) = std::fs::read(&local)
+        && let Some(e) = parse_bytes(&local, &b) {
             return Some((e, local));
         }
-    }
     let url = body_url(name);
     let bytes = match fetch_raw_bytes(&url) {
         Some(b) => b,

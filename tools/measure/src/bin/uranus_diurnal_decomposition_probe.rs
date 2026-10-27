@@ -513,13 +513,11 @@ fn run_center_reduction(
                 continue;
             };
             let worldline = |t: f64| -> Option<[f64; 3]> {
-                if use_center {
-                    if let Some(cm) = center {
-                        if let Some(c) = body_barycenter_position("uranus_c", t, cm) {
+                if use_center
+                    && let Some(cm) = center
+                        && let Some(c) = body_barycenter_position("uranus_c", t, cm) {
                             return Some(c);
                         }
-                    }
-                }
                 let bary = body_barycenter_position(
                     &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
                     t,
@@ -603,8 +601,8 @@ fn run_center_reduction(
         ));
     }
 
-    if let Some(cm) = center {
-        if let Some(de_map) = lines
+    if let Some(cm) = center
+        && let Some(de_map) = lines
             .iter()
             .find(|l| l.word == "de441")
             .and_then(|l| l.map.as_ref())
@@ -640,7 +638,6 @@ fn run_center_reduction(
                 ));
             }
         }
-    }
 
     out.push_str("\nCenter-anchored decomposition (the planet uranu_j against the center line):\n");
     let mut c0s: Vec<(&str, f64, f64)> = Vec::new();
@@ -1145,7 +1142,7 @@ fn main() {
     }
 
     if cal_center {
-        report.push_str("\n");
+        report.push('\n');
         report.push_str(&run_center_reduction(
             &lines,
             &center_map,

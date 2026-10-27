@@ -97,7 +97,7 @@ fn median_f32(v: &[f32]) -> Option<f32> {
     }
     let mut s = v.to_vec();
     s.sort_by(|a, b| a.total_cmp(b));
-    let m = if s.len() % 2 == 0 {
+    let m = if s.len().is_multiple_of(2) {
         (s[s.len() / 2 - 1] + s[s.len() / 2]) * 0.5
     } else {
         s[s.len() / 2]
@@ -226,11 +226,10 @@ fn main() {
                 if v < threshold && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = trig[peak] {
-                    if v > pv {
+                if let Some(pv) = trig[peak]
+                    && v > pv {
                         peak = j;
                     }
-                }
             }
             j += 1;
         }

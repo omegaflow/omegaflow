@@ -273,22 +273,20 @@ fn sweep_te(rs: &[f32], ws: &[f32], lag_max: usize) -> (f64, usize, &'static str
     let mut best_te = 0.0f64;
     let mut best_lag = 0usize;
     for lag in 0..=lag_max {
-        if let Some(te) = transfer_entropy_lag(rs, ws, lag) {
-            if te > best_te {
+        if let Some(te) = transfer_entropy_lag(rs, ws, lag)
+            && te > best_te {
                 best_te = te;
                 best_lag = lag;
             }
-        }
     }
     let mut rev_te = 0.0f64;
     let mut rev_lag = 0usize;
     for lag in 0..=lag_max {
-        if let Some(te) = transfer_entropy_lag(ws, rs, lag) {
-            if te > rev_te {
+        if let Some(te) = transfer_entropy_lag(ws, rs, lag)
+            && te > rev_te {
                 rev_te = te;
                 rev_lag = lag;
             }
-        }
     }
     if best_te >= rev_te {
         (best_te, best_lag, "R->ϖ")
@@ -353,22 +351,20 @@ fn family_verdict(
     let mut best_te = 0.0f64;
     let mut best_lag = 0usize;
     for lag in 0..=lag_max {
-        if let Some(te) = transfer_entropy_lag(rs, ws, lag) {
-            if te > best_te {
+        if let Some(te) = transfer_entropy_lag(rs, ws, lag)
+            && te > best_te {
                 best_te = te;
                 best_lag = lag;
             }
-        }
     }
     let mut rev_te = 0.0f64;
     let mut rev_lag = 0usize;
     for lag in 0..=lag_max {
-        if let Some(te) = transfer_entropy_lag(ws, rs, lag) {
-            if te > rev_te {
+        if let Some(te) = transfer_entropy_lag(ws, rs, lag)
+            && te > rev_te {
                 rev_te = te;
                 rev_lag = lag;
             }
-        }
     }
     let (forward, dir) = if best_te >= rev_te {
         (best_te, "R->ϖ")
@@ -718,7 +714,7 @@ fn main() {
     for f in &fams {
         let n = fam_n[f];
         if n < 30 {
-            family_verdict(&family_name(*f).to_string(), n, &[], &[], lag_max, fam);
+            family_verdict(family_name(*f), n, &[], &[], lag_max, fam);
             continue;
         }
         let f_rs: Vec<f32> = fam_rs[f].iter().map(|&v| (v / n as f64) as f32).collect();
@@ -726,7 +722,7 @@ fn main() {
         let st = fam_rstat[f];
         let mean_r = st.0 / n as f64;
         let (te, lag, _) =
-            family_verdict(&family_name(*f).to_string(), n, &f_rs, &f_ws, lag_max, fam);
+            family_verdict(family_name(*f), n, &f_rs, &f_ws, lag_max, fam);
         println!(
             "  residual |R| mean {mean_r:.4e} AU, max per object {:.4e} AU, te {te:.4e} @ lag {lag}, location at c travel time {:.1} AU",
             st.1,

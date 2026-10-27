@@ -387,10 +387,10 @@ fn main() {
             let mut working = dirs.clone();
             let mut done = vec![false; working.len()];
             let mut resumed = 0usize;
-            if let Some(out) = &out_path {
-                if let Ok(prior_bytes) = std::fs::read(out) {
-                    if let Some(prior) = parse_bin(&prior_bytes) {
-                        if prior.len() == working.len() {
+            if let Some(out) = &out_path
+                && let Ok(prior_bytes) = std::fs::read(out)
+                    && let Some(prior) = parse_bin(&prior_bytes)
+                        && prior.len() == working.len() {
                             for (i, d) in prior.iter().enumerate() {
                                 if let Some(z) = d.redshift {
                                     working[i].redshift = Some(z);
@@ -404,9 +404,6 @@ fn main() {
                                 );
                             }
                         }
-                    }
-                }
-            }
             let mut since_checkpoint = 0usize;
             for i in 0..working.len() {
                 if done[i] {

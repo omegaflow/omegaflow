@@ -159,11 +159,10 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, grid: &[Vec<Option<f32>>]) -
                 if v < threshold && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = trig[peak] {
-                    if v > pv {
+                if let Some(pv) = trig[peak]
+                    && v > pv {
                         peak = j;
                     }
-                }
             }
             j += 1;
         }

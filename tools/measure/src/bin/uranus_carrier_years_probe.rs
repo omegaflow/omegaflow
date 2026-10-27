@@ -342,7 +342,7 @@ fn main() {
         }
     };
 
-    let spk = match SpkFile::open(&format!("{spk_dir}/{spk_name}")) {
+    let spk = match SpkFile::open(format!("{spk_dir}/{spk_name}")) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("uranus-carrier: {spk_dir}/{spk_name} opens void — {e:?}");
@@ -387,13 +387,11 @@ fn main() {
             };
             let use_center = line.word == "de441";
             let worldline = |t: f64| -> Option<[f64; 3]> {
-                if use_center {
-                    if let Some(cm) = &center_map {
-                        if let Some(c) = body_barycenter_position("uranus_c", t, cm) {
+                if use_center
+                    && let Some(cm) = &center_map
+                        && let Some(c) = body_barycenter_position("uranus_c", t, cm) {
                             return Some(c);
                         }
-                    }
-                }
                 let bary = body_barycenter_position(&line.target, t, map)?;
                 let rel = spk.state(799, 7, t).ok()?;
                 Some([

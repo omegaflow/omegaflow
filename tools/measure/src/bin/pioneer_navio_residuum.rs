@@ -585,7 +585,7 @@ fn run(name: &str, sc_body: &str) {
     }
     floor.sort_by(f64::total_cmp);
     let fmed = floor[floor.len() / 2];
-    let amp = if dts.len() > 0 {
+    let amp = if !dts.is_empty() {
         (2.0 * pp / dts.len() as f64).sqrt()
     } else {
         0.0

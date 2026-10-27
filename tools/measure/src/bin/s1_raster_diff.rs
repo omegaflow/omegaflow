@@ -227,7 +227,7 @@ impl Cog {
         let mut gy: Vec<f64> = vec![];
         let mut glon = vec![];
         let mut glat = vec![];
-        for rec in geo.chunks_exact(6) {
+        for rec in geo.as_chunks::<6>().0 {
             let (i, j, lon, lat) = (rec[0], rec[1], rec[3], rec[4]);
             if !gx.contains(&i) {
                 gx.push(i);
@@ -250,17 +250,15 @@ impl Cog {
                 geo.len() / 6
             ));
         }
-        if width > 0 {
-            if let Some(&gx_max) = gx.last() {
-                if gx_max as usize + 1 != width {
+        if width > 0
+            && let Some(&gx_max) = gx.last()
+                && gx_max as usize + 1 != width {
                     eprintln!(
                         "{path}: gx-max {} != width {} (tolerated)",
                         gx_max as usize, width
                     );
                 }
-            }
-        }
-        let across = (width + tw - 1) / tw;
+        let across = width.div_ceil(tw);
         Ok(Cog {
             path: path.to_string(),
             width,
@@ -303,7 +301,7 @@ impl Cog {
             ));
         }
         let mut px = Vec::with_capacity(self.tw * self.th);
-        for c in dec[..self.tw * self.th * 2].chunks_exact(2) {
+        for c in dec[..self.tw * self.th * 2].as_chunks::<2>().0 {
             px.push(u16::from_le_bytes([c[0], c[1]]));
         }
         self.tile_cache_idx = idx;
@@ -417,14 +415,13 @@ impl Cog {
                         break;
                     }
                 }
-                if (u >= -0.02 && u <= 1.02) && (v >= -0.02 && v <= 1.02) {
+                if (-0.02..=1.02).contains(&u) && (-0.02..=1.02).contains(&v) {
                     let x = self.gx[i] + u * (self.gx[i + 1] - self.gx[i]);
                     let y = self.gy[j] + v * (self.gy[j + 1] - self.gy[j]);
-                    if let Some((lo, la)) = self.forward(x, y) {
-                        if (lo - lon).abs() < 1e-6 && (la - lat).abs() < 1e-6 {
+                    if let Some((lo, la)) = self.forward(x, y)
+                        && (lo - lon).abs() < 1e-6 && (la - lat).abs() < 1e-6 {
                             return Some((x, y));
                         }
-                    }
                 }
             }
         }
@@ -561,8 +558,8 @@ fn main() {
                 vor_hit += 1;
             }
             let mut cell = None;
-            if let (Some((px, py)), Some((vx, vy))) = (xp, xv) {
-                if px >= 0.0
+            if let (Some((px, py)), Some((vx, vy))) = (xp, xv)
+                && px >= 0.0
                     && py >= 0.0
                     && vx >= 0.0
                     && vy >= 0.0
@@ -611,7 +608,6 @@ fn main() {
                         }
                     }
                 }
-            }
             row.push(cell);
         }
         cells.push(row);

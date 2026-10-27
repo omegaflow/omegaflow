@@ -411,7 +411,7 @@ fn main() {
         if idx > 0 {
             let cand = &seq[idx - 1];
             let d = (cand.0 - t).abs();
-            if d <= JOIN_TOL_S && best.map_or(true, |(bd, _)| d < bd) {
+            if d <= JOIN_TOL_S && best.is_none_or(|(bd, _)| d < bd) {
                 best = Some((d, cand.2));
             }
         }
@@ -495,13 +495,12 @@ fn main() {
     for st in STATIONS {
         let mut by_year: BTreeMap<i64, (Vec<f64>, Vec<f64>)> = BTreeMap::new();
         for r in &pasf {
-            if r[6] as i64 == st && r[13] as i64 == 3 && r[3] < 10.0 && r[8].is_finite() {
-                if let Some(y) = year_of(r[0]) {
+            if r[6] as i64 == st && r[13] as i64 == 3 && r[3] < 10.0 && r[8].is_finite()
+                && let Some(y) = year_of(r[0]) {
                     let e = by_year.entry(y).or_default();
                     e.0.push(r[0]);
                     e.1.push(r[8]);
                 }
-            }
         }
         eprintln!("  rx {st}:");
         for y in &years {

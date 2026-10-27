@@ -307,11 +307,10 @@ fn print_curvature(line: &Line, t_great: f64) {
     let mut vals: Vec<(f64, f64)> = Vec::new();
     for s in -10..=10 {
         let t = t_great + s as f64;
-        if let Some((g, sun, moon)) = axis_state(line, t) {
-            if let Some(h) = axis_geocenter_miss(g, sun, moon) {
+        if let Some((g, sun, moon)) = axis_state(line, t)
+            && let Some(h) = axis_geocenter_miss(g, sun, moon) {
                 vals.push((s as f64, h));
             }
-        }
     }
     let Some(h0) = vals.iter().find(|(s, _)| *s == 0.0).map(|(_, h)| *h) else {
         return;
@@ -368,11 +367,10 @@ fn best_time(lo: f64, hi: f64, cost: &dyn Fn(f64) -> Option<f64>) -> Option<(f64
     let mut best: Option<(f64, f64)> = None;
     let mut t = lo;
     while t <= hi {
-        if let Some(c) = cost(t) {
-            if best.map_or(true, |(_, bc)| c < bc) {
+        if let Some(c) = cost(t)
+            && best.is_none_or(|(_, bc)| c < bc) {
                 best = Some((t, c));
             }
-        }
         t += SEARCH_COARSE_S;
     }
     let (tb, cb) = best?;
@@ -381,11 +379,10 @@ fn best_time(lo: f64, hi: f64, cost: &dyn Fn(f64) -> Option<f64>) -> Option<(f64
     let mut best2: Option<(f64, f64)> = None;
     let mut tf = fine_lo;
     while tf <= fine_hi {
-        if let Some(c) = cost(tf) {
-            if best2.map_or(true, |(_, bc)| c < bc) {
+        if let Some(c) = cost(tf)
+            && best2.is_none_or(|(_, bc)| c < bc) {
                 best2 = Some((tf, c));
             }
-        }
         tf += SEARCH_FINE_S;
     }
     let (t2, c2) = best2?;
@@ -436,7 +433,7 @@ fn best_in_box(
                 lon += step;
                 continue;
             };
-            if best.as_ref().map_or(true, |b| score > b.score) {
+            if best.as_ref().is_none_or(|b| score > b.score) {
                 best = Some(Surface {
                     lat,
                     lon: lon_w,
@@ -488,7 +485,7 @@ fn deepest_pierce(line: &Line, t: f64, seed: Option<(f64, f64)>) -> Option<Surfa
         }
         half_lat = step;
         half_lon = step;
-        step = step / 5.0;
+        step /= 5.0;
     }
     Some(b)
 }

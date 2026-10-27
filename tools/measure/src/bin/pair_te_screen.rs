@@ -153,11 +153,10 @@ fn surrogate_zs(
     let mut vals = Vec::with_capacity(n_surr);
     for _ in 0..n_surr {
         let s = phase_randomized_surrogate(driver, &mut rng);
-        if let Some(v) = transfer_entropy_lag(target, &s, lag) {
-            if v.is_finite() {
+        if let Some(v) = transfer_entropy_lag(target, &s, lag)
+            && v.is_finite() {
                 vals.push(v);
             }
-        }
     }
     if vals.len() != n_surr {
         return None;
@@ -244,7 +243,7 @@ fn screen_set(
             let pass = c.family_index.is_some_and(|i| family.pass(i));
             if pass {
                 any_significant = true;
-                if window.map_or(false, |(lo, hi)| c.lag >= lo && c.lag <= hi) {
+                if window.is_some_and(|(lo, hi)| c.lag >= lo && c.lag <= hi) {
                     window_significant = true;
                 }
             }
@@ -301,21 +300,19 @@ fn read_series(path: &str) -> Option<(Vec<f64>, Vec<f32>)> {
             .filter(|t| !t.is_empty())
             .collect();
         if toks.len() == 1 {
-            if let Ok(v) = toks.remove(0).parse::<f32>() {
-                if v.is_finite() {
+            if let Ok(v) = toks.remove(0).parse::<f32>()
+                && v.is_finite() {
                     flux.push(v);
                 }
-            }
             continue;
         }
         let t = toks.remove(0);
         let v = toks.remove(0);
-        if let (Ok(t), Ok(v)) = (t.parse::<f64>(), v.parse::<f32>()) {
-            if t.is_finite() && v.is_finite() {
+        if let (Ok(t), Ok(v)) = (t.parse::<f64>(), v.parse::<f32>())
+            && t.is_finite() && v.is_finite() {
                 times.push(t);
                 flux.push(v);
             }
-        }
     }
     if flux.is_empty() {
         return None;

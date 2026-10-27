@@ -491,7 +491,7 @@ fn probe_color_brightness(
 
     let sdw = sd_f32(brightness);
     let mut resid = color.to_vec();
-    let sdw_const = sdw.map_or(false, |s| s <= 1e-30);
+    let sdw_const = sdw.is_some_and(|s| s <= 1e-30);
     if sdw_const {
         println!(
             "    stage-1: brightness witness is constant — nothing to regress, coupling stays pending (0 honored)"
@@ -609,13 +609,12 @@ fn probe_color_brightness(
             }
             _ => "n/a".to_string(),
         };
-        if let Some(te) = r.te {
-            if best_te.map_or(true, |b| te > b) {
+        if let Some(te) = r.te
+            && best_te.is_none_or(|b| te > b) {
                 best_te = Some(te);
                 best_desc = format!("{label} @ lag {}", r.lag);
                 best_idx = Some(i);
             }
-        }
         println!(
             "      {label:<26} lag {} te {}  thr {}  | {word}",
             r.lag,
@@ -709,8 +708,8 @@ fn main() {
     let groups = groups_of(curves);
 
     let mut map_rows: Vec<(f64, f64, String, i64, String)> = Vec::new();
-    if let Some(map_path) = &map {
-        if let Ok(body) = std::fs::read_to_string(map_path) {
+    if let Some(map_path) = &map
+        && let Ok(body) = std::fs::read_to_string(map_path) {
             for (i, line) in body.lines().enumerate() {
                 if i == 0 {
                     continue;
@@ -728,7 +727,6 @@ fn main() {
                 }
             }
         }
-    }
     let cone_obj = |ra: f64, dec: f64| -> Option<&(f64, f64, String, i64, String)> {
         map_rows
             .iter()

@@ -103,7 +103,7 @@ fn measure_form(daily: &[(f64, f64)], k: usize) -> Option<Form> {
 
     let returns_measured = seg_len >= FINE_MIN_DAYS;
     let returns = if returns_measured {
-        let post_tail: Vec<f64> = post.iter().cloned().collect();
+        let post_tail: Vec<f64> = post.to_vec();
         let tail_med = median(&post_tail);
         (tail_med - pre_med).abs() < 0.5 * jump.abs()
     } else {
@@ -190,7 +190,7 @@ fn scan(name: &str, daily: &[(f64, f64)]) {
 
     let mut forms: Vec<(String, Form)> = Vec::new();
     for (k, _) in &flagged {
-        let Some(f) = measure_form(&daily, *k) else {
+        let Some(f) = measure_form(daily, *k) else {
             too_short += 1;
             continue;
         };
@@ -275,11 +275,10 @@ fn zitter_vs_step(daily: &[(f64, f64)], center: usize) {
         if dd == 0.0 {
             continue;
         }
-        if let Some(p) = prev {
-            if dd * p < 0.0 {
+        if let Some(p) = prev
+            && dd * p < 0.0 {
                 flips += 1;
             }
-        }
         prev = Some(dd);
     }
     let min = win.iter().cloned().fold(f64::INFINITY, f64::min);

@@ -160,11 +160,10 @@ fn arg_after(args: &[String], flag: &str) -> Option<String> {
 fn each_after(args: &[String], flag: &str) -> Vec<String> {
     let mut out = Vec::new();
     for (i, a) in args.iter().enumerate() {
-        if a == flag {
-            if let Some(v) = args.get(i + 1) {
+        if a == flag
+            && let Some(v) = args.get(i + 1) {
                 out.push(v.clone());
             }
-        }
     }
     out
 }
@@ -196,14 +195,13 @@ fn report_table(
         tally.foreground_nearest += t.foreground_nearest;
         tally.no_match += t.no_match;
         tally.background_any += t.background_any;
-        if let Some(h) = hit {
-            if h.d_pc > BACKGROUND_PC_MIN {
+        if let Some(h) = hit
+            && h.d_pc > BACKGROUND_PC_MIN {
                 dt.background_pc.push(h.d_pc);
                 if h.sep_arcsec <= 1.0 {
                     dt.background_sep_le1 += 1;
                 }
             }
-        }
     }
     dt.background_pc.sort_by(|a, b| a.total_cmp(b));
     let med = median_sorted(&dt.background_pc);

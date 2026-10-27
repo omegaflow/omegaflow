@@ -356,11 +356,10 @@ fn coord_values(file: &NetcdfFile, bytes: &[u8], names: &[&str]) -> Option<Vec<f
                 .map(|xs| xs.into_iter().map(|x| x as f64).collect()),
             NetcdfType::Char => None,
         };
-        if let Some(vals) = vals {
-            if vals.len() >= 2 {
+        if let Some(vals) = vals
+            && vals.len() >= 2 {
                 return Some(vals);
             }
-        }
     }
     None
 }
@@ -706,7 +705,7 @@ mod tests {
     fn name(s: &str) -> Vec<u8> {
         let mut b = u32b(s.len() as u32);
         b.extend_from_slice(s.as_bytes());
-        while b.len() % 4 != 0 {
+        while !b.len().is_multiple_of(4) {
             b.push(0);
         }
         b

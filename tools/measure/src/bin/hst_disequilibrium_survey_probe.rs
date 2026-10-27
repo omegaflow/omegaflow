@@ -139,11 +139,10 @@ fn main() {
             }
             "--floor" => {
                 i += 1;
-                if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok()) {
-                    if v.is_finite() && v > 0.0 {
+                if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok())
+                    && v.is_finite() && v > 0.0 {
                         floor = v;
                     }
-                }
             }
             other => {
                 eprintln!("hst_disequilibrium_survey_probe: unknown argument {other}");
@@ -315,9 +314,7 @@ fn main() {
 
     let mut text = String::new();
     text.push_str("HST Disequilibrium Survey (Nadel XIII, HST species hosts)\n");
-    text.push_str(&format!(
-        "model: thermochem::equilibrium_composition_sulfur, Teq at the planet, 1 bar, solar H,C,O,N,S (Floor 1e-6)\n"
-    ));
+    text.push_str(&"model: thermochem::equilibrium_composition_sulfur, Teq at the planet, 1 bar, solar H,C,O,N,S (Floor 1e-6)\n".to_string());
     text.push_str(&format!(
         "seed {} ({} detection lines) | params pscomppars ({} hosts)\n",
         seed,

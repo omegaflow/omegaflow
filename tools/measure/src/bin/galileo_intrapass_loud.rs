@@ -101,7 +101,7 @@ fn load_all() -> Option<Vec<(f64, f64, i64, i64)>> {
         }
         let station = r[2] as i64;
         let mode = r[3] as i64;
-        if !(mode >= 1 && mode <= 4) || !(station == 14 || station == 43 || station == 63) {
+        if !(1..=4).contains(&mode) || !(station == 14 || station == 43 || station == 63) {
             continue;
         }
         outv.push((r[0], resid, mode, station));

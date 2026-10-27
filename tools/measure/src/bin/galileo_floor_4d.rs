@@ -235,7 +235,7 @@ fn detrend(x: &[f64], linear: bool) -> Vec<f64> {
     }
     let b = if sxx > 0.0 { sxy / sxx } else { 0.0 };
     for (k, v) in y.iter_mut().enumerate() {
-        *v = *v - (mx + b * (k as f64 - mt));
+        *v -= (mx + b * (k as f64 - mt));
     }
     y
 }
@@ -656,8 +656,8 @@ fn main() {
         if r[0] < e.3 {
             e.3 = r[0];
         }
-        if mode == 1 {
-            if let Some(si) = st_idx(st) {
+        if mode == 1
+            && let Some(si) = st_idx(st) {
                 let mk = month_key(r[0]);
                 let win = if (1995 * 12 + 11..=1995 * 12 + 12).contains(&mk) {
                     0usize
@@ -668,7 +668,6 @@ fn main() {
                 };
                 color[si * 4 + cls as usize * 2 + win].push((r[0], resid));
             }
-        }
     }
     drop(recs);
 

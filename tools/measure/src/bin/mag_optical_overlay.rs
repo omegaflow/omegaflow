@@ -191,9 +191,9 @@ fn cube_onset(
     persist: usize,
     search_from: f64,
 ) -> Option<f64> {
-    let cells = match frames.first() {
-        Some(f) => f.1.len(),
-        None => return None,
+    let cells = {
+        let f = frames.first()?;
+        f.1.len()
     };
     if cells == 0 {
         return None;
@@ -440,13 +440,9 @@ fn main() {
         );
         std::process::exit(2);
     }
-    let band_run = match arg_value(&args, "--band-run")
+    let band_run = arg_value(&args, "--band-run")
         .and_then(|s| s.parse::<usize>().ok())
-        .filter(|v| *v > 0)
-    {
-        Some(run) => run,
-        None => 16,
-    };
+        .filter(|v| *v > 0).unwrap_or(16);
     let optical_onset_arg = match arg_value(&args, "--optical-onset") {
         Some(s) => match iso_to_unix(&s) {
             Some(t) => Some(t),

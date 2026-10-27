@@ -184,11 +184,10 @@ fn cut_events(
                 if v < threshold && j > i + 3 {
                     break;
                 }
-                if let Some(pv) = trig[peak] {
-                    if v > pv {
+                if let Some(pv) = trig[peak]
+                    && v > pv {
                         peak = j;
                     }
-                }
             }
             j += 1;
         }
@@ -533,14 +532,8 @@ fn main() {
         eprintln!("--year <aia_lines.bin> <goes-dir> absent (repeat per year)");
         return;
     }
-    let max_lag: usize = match arg_value(&args, "--max-lag").and_then(|s| s.parse().ok()) {
-        Some(v) => v,
-        None => 8,
-    };
-    let n_surr: usize = match arg_value(&args, "--n-surr").and_then(|s| s.parse().ok()) {
-        Some(v) => v,
-        None => 10,
-    };
+    let max_lag: usize = arg_value(&args, "--max-lag").and_then(|s| s.parse().ok()).unwrap_or(8);
+    let n_surr: usize = arg_value(&args, "--n-surr").and_then(|s| s.parse().ok()).unwrap_or(10);
     let confound_name = match arg_value(&args, "--confound") {
         Some(n) => n,
         None => "goes".to_string(),
@@ -714,7 +707,7 @@ fn main() {
 
     for (loc, ev) in events.iter().enumerate().skip(processed) {
         let ei = processed + loc;
-        if ei % 25 == 0 {
+        if ei.is_multiple_of(25) {
             eprintln!("progress {} / {}", ei, events.len());
         }
         let mut p = 0usize;
@@ -751,16 +744,14 @@ fn main() {
                     fwd_sum[p][lagi] += te_fwd;
                     rev_sum[p][lagi] += te_rev;
                     d_cnt[p][lagi] += 1;
-                    if let Some((_, _, thr)) = n_fwd {
-                        if te_fwd > thr {
+                    if let Some((_, _, thr)) = n_fwd
+                        && te_fwd > thr {
                             fwd_arrow[p][lagi] += 1;
                         }
-                    }
-                    if let Some((_, _, thr)) = n_rev {
-                        if te_rev > thr {
+                    if let Some((_, _, thr)) = n_rev
+                        && te_rev > thr {
                             rev_arrow[p][lagi] += 1;
                         }
-                    }
                     if let Some(pe) = pe_x {
                         pe_hi[p][lagi].push(pe);
                     }
@@ -772,8 +763,8 @@ fn main() {
                 p += 1;
             }
         }
-        if let Some(path) = &checkpoint_path {
-            if (ei + 1) % 25 == 0 {
+        if let Some(path) = &checkpoint_path
+            && (ei + 1).is_multiple_of(25) {
                 save_checkpoint(
                     path,
                     ei + 1,
@@ -789,7 +780,6 @@ fn main() {
                     &pe_lo,
                 );
             }
-        }
     }
     for p in 0..n_pairs {
         for lagi in 0..LAGS.len() {
@@ -874,11 +864,10 @@ fn main() {
         for d in &deltas[p] {
             let mut best: Option<(usize, f64)> = None;
             for (lagi, _) in LAGS.iter().enumerate() {
-                if let Some(v) = d[lagi] {
-                    if best.map_or(true, |(_, bv)| v.abs() > bv) {
+                if let Some(v) = d[lagi]
+                    && best.is_none_or(|(_, bv)| v.abs() > bv) {
                         best = Some((lagi, v.abs()));
                     }
-                }
             }
             if let Some((lagi, _)) = best {
                 tau_star[p].push(LAGS[lagi] as f64 * DT);
@@ -928,7 +917,7 @@ fn main() {
                 .map(|li| p_dir[p][li])
                 .fold(1.0f64, f64::min);
             let (mode_s, mean_s, sd_s) = mode_mean_sd(&tau_star[p]);
-            let cleared = cutoff.map_or(false, |c| p_min <= c);
+            let cleared = cutoff.is_some_and(|c| p_min <= c);
             let state = if cleared {
                 if dtau_med >= DT {
                     medium_pairs.push((hi, lo));

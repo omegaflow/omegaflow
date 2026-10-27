@@ -50,7 +50,7 @@ fn residual_series(curve: &ZtfCurve) -> Option<Vec<(f64, f32)>> {
         curve
             .samples
             .iter()
-            .map(|&(t, f)| (t, (f / med - 1.0) as f32))
+            .map(|&(t, f)| (t, ((f / med - 1.0))))
             .collect(),
     )
 }
@@ -189,11 +189,10 @@ fn arrow_te(g: &[f32], r: &[f32], fam: &mut f64) -> Option<(f64, f64, String)> {
             let mut rng = SEED.wrapping_add(0x9e37_79b9_7f4a_7c15);
             for _ in 0..10 {
                 let ys = phase_randomized_surrogate(y, &mut rng);
-                if let Some(s) = transfer_entropy_lag(x, &ys, lag) {
-                    if s > *fam {
+                if let Some(s) = transfer_entropy_lag(x, &ys, lag)
+                    && s > *fam {
                         *fam = s;
                     }
-                }
             }
             if te > best_te {
                 best_te = te;

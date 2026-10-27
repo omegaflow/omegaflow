@@ -80,7 +80,7 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let m: u32 = dp.next()?.parse().ok()?;
     let d: u32 = dp.next()?.parse().ok()?;
     let t = time
-        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .split(['.', 'Z', 'z'])
         .next()?;
     let mut tp = t.split(':');
     let hh: i64 = tp.next()?.parse().ok()?;
@@ -185,7 +185,7 @@ fn l1_sync_series(series: &[(f64, f64)], wind: &[(f64, f64)], tolerance_s: f64) 
         let mut best: Option<(f64, f64)> = None;
         for &(tw, vw) in wind {
             let dt = (tw - t).abs();
-            if dt <= tolerance_s && best.map_or(true, |(b, _)| dt < b) {
+            if dt <= tolerance_s && best.is_none_or(|(b, _)| dt < b) {
                 best = Some((dt, vw));
             }
         }
@@ -322,8 +322,8 @@ fn m1_table(name: &str, x: &[f32], y: &[f32], lag: usize, cell: &mut u64) {
     }
     println!("{name} (n = {}, lag {})", x.len(), lag);
     println!(
-        " {:>7} | {:>10} | {:>12} | {:>12} | {}",
-        "factor", "TE(h)", "thr(h)", "excess", "verdict"
+        " {:>7} | {:>10} | {:>12} | {:>12} | verdict",
+        "factor", "TE(h)", "thr(h)", "excess"
     );
     for f in FACTORS {
         let seed = seed_next(cell);
@@ -348,8 +348,8 @@ fn m2_table(name: &str, x: &[f32], y: &[f32], lags: &[usize], cell: &mut u64) {
     }
     println!("{name} (n = {})", x.len());
     println!(
-        " {:>5} | {:>10} | {:>12} | {:>12} | {}",
-        "lag", "TE", "thr", "excess", "verdict"
+        " {:>5} | {:>10} | {:>12} | {:>12} | verdict",
+        "lag", "TE", "thr", "excess"
     );
     let mut best: Option<(usize, f64)> = None;
     let mut verdict0: Option<bool> = None;
@@ -368,7 +368,7 @@ fn m2_table(name: &str, x: &[f32], y: &[f32], lags: &[usize], cell: &mut u64) {
                 } else {
                     verdict0 = Some(verdict);
                 }
-                if best.map_or(true, |(_, e)| t - h > e) {
+                if best.is_none_or(|(_, e)| t - h > e) {
                     best = Some((lag, t - h));
                 }
                 println!(

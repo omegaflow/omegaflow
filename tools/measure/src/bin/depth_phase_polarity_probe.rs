@@ -193,12 +193,11 @@ fn main() {
         let v = ndk::rp(&m, &r);
         rp_min = rp_min.min(v);
         rp_max = rp_max.max(v);
-        if let Some(p) = prev {
-            if (p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0) {
+        if let Some(p) = prev
+            && ((p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0)) {
                 let frac = p / (p - v);
                 nodal.push(prev_az + frac);
             }
-        }
         prev = Some(v);
         prev_az = a;
     }
@@ -252,13 +251,12 @@ fn find_pp_zero() -> Option<f64> {
     let mut p = 0.0;
     while p < 1.0 / alpha {
         let r = free_surface_pp(p)?;
-        if let Some((pp, rr)) = prev {
-            if rr < 0.0 && r > 0.0 {
+        if let Some((pp, rr)) = prev
+            && rr < 0.0 && r > 0.0 {
                 let frac = rr / (rr - r);
                 let p_zero = pp + frac * (p - pp);
                 return Some((p_zero * alpha).asin().to_degrees());
             }
-        }
         prev = Some((p, r));
         p += 0.0005;
     }

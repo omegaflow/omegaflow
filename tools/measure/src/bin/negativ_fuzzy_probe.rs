@@ -201,7 +201,7 @@ fn negative_test(run: &Run, resid: &[f32]) -> Vec<TestRow> {
     let mut surr_seed = run.seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
     for w in &run.witnesses {
         let sdw = stddev(&w.values);
-        if sdw.map_or(true, |s| s <= 1e-30) {
+        if sdw.is_none_or(|s| s <= 1e-30) {
             continue;
         }
         for lag in 0..=run.lag_max {
@@ -343,7 +343,7 @@ fn run_probe(run: &Run, out_path: &str) -> Result<String, String> {
     let informative: Vec<&Series> = run
         .witnesses
         .iter()
-        .filter(|w| stddev(&w.values).map_or(false, |s| s > 1e-30))
+        .filter(|w| stddev(&w.values).is_some_and(|s| s > 1e-30))
         .collect();
     if informative.is_empty() {
         out.push_str(
@@ -364,9 +364,7 @@ fn run_probe(run: &Run, out_path: &str) -> Result<String, String> {
 
     let rows = negative_test(run, &resid);
     let fam = fam_bound(&rows);
-    out.push_str(&format!(
-        "stage-2 negative test on the residue (both directions, per lag; surrogate mean+2sigma per test, fam = strongest per-test null threshold over the whole run):\n"
-    ));
+    out.push_str(&"stage-2 negative test on the residue (both directions, per lag; surrogate mean+2sigma per test, fam = strongest per-test null threshold over the whole run):\n".to_string());
     out.push_str(&format!(
         "  fam = {}\n",
         fam.map_or("n/a".to_string(), |f| format!("{:.4e}", f))
@@ -375,7 +373,7 @@ fn run_probe(run: &Run, out_path: &str) -> Result<String, String> {
     for r in &rows {
         let word = match (r.te, r.thr) {
             (Some(te), Some(thr)) => {
-                if fam.map_or(false, |f| te > f.max(thr)) {
+                if fam.is_some_and(|f| te > f.max(thr)) {
                     carried.push(format!("{} {}", r.witness, r.direction));
                     "carried".to_string()
                 } else if te > thr {
@@ -397,7 +395,7 @@ fn run_probe(run: &Run, out_path: &str) -> Result<String, String> {
         ));
     }
 
-    out.push_str("\n");
+    out.push('\n');
     if carried.is_empty() {
         out.push_str("VERDICT: not carried\n");
         out.push_str(

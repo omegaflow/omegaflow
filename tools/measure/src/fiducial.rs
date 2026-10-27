@@ -407,15 +407,12 @@ fn chaninfo_array(arrays: &[MatArray]) -> Option<&MatArray> {
         return Some(a);
     }
     for a in arrays {
-        if a.name == "EEG" {
-            if let MatData::Struct(fields) = &a.data {
-                if let Some(ci) = fields.iter().find(|f| f.name == "chaninfo") {
-                    if let Some(first) = ci.values.first() {
+        if a.name == "EEG"
+            && let MatData::Struct(fields) = &a.data
+                && let Some(ci) = fields.iter().find(|f| f.name == "chaninfo")
+                    && let Some(first) = ci.values.first() {
                         return Some(first);
                     }
-                }
-            }
-        }
     }
     None
 }
@@ -541,7 +538,7 @@ fn montage_fiducial_point(
         .iter()
         .find(|(l, _)| {
             l.as_deref()
-                .map_or(false, |s| s.to_lowercase().contains(&needle))
+                .is_some_and(|s| s.to_lowercase().contains(&needle))
         })
         .map(|(_, p)| *p)
 }
@@ -626,7 +623,7 @@ mod tests {
     }
 
     fn pad_body(body: &mut Vec<u8>) {
-        while body.len() % 8 != 0 {
+        while !body.len().is_multiple_of(8) {
             body.push(0);
         }
     }

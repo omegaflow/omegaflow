@@ -106,12 +106,11 @@ fn q_of(s: f64, b: &[Option<i64>; 3]) -> u8 {
     let sv = s as i64;
     let mut q = 4u8;
     for (k, cut) in b.iter().enumerate() {
-        if let Some(c) = cut {
-            if sv <= *c {
+        if let Some(c) = cut
+            && sv <= *c {
                 q = (k + 1) as u8;
                 break;
             }
-        }
     }
     q
 }
@@ -204,14 +203,11 @@ fn main() {
     out.push(format!("  days after lock exclusion: {}", day_set.len()));
     let dl = day_set.iter().min().copied();
     let dh = day_set.iter().max().copied();
-    match (dl, dh) {
-        (Some(a), Some(b)) => out.push(format!(
-            "  span: {} .. {}",
-            jd_date(a as f64 * DAY_S),
-            jd_date(b as f64 * DAY_S)
-        )),
-        _ => {}
-    }
+    if let (Some(a), Some(b)) = (dl, dh) { out.push(format!(
+        "  span: {} .. {}",
+        jd_date(a as f64 * DAY_S),
+        jd_date(b as f64 * DAY_S)
+    )) }
     let per_day: Vec<f64> = {
         let mut m: BTreeMap<i64, usize> = BTreeMap::new();
         for d in &days {
@@ -270,20 +266,14 @@ fn main() {
         .iter()
         .max_by_key(|(_, c)| **c)
         .map(|(v, c)| (*v, *c));
-    match minv {
-        Some((v, c)) => out.push(format!(
-            "  weakest non-zero strength: {v} ({c} samples, {:.2} % of non-zero)",
-            100.0 * c as f64 / nonzero as f64
-        )),
-        None => {}
-    }
-    match maxc {
-        Some((v, c)) => out.push(format!(
-            "  most frequent non-zero strength: {v} ({c} samples, {:.2} % of non-zero)",
-            100.0 * c as f64 / nonzero as f64
-        )),
-        None => {}
-    }
+    if let Some((v, c)) = minv { out.push(format!(
+        "  weakest non-zero strength: {v} ({c} samples, {:.2} % of non-zero)",
+        100.0 * c as f64 / nonzero as f64
+    )) }
+    if let Some((v, c)) = maxc { out.push(format!(
+        "  most frequent non-zero strength: {v} ({c} samples, {:.2} % of non-zero)",
+        100.0 * c as f64 / nonzero as f64
+    )) }
 
     let mut agg_day: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
     let mut agg_q: BTreeMap<(i64, u8), Vec<f64>> = BTreeMap::new();

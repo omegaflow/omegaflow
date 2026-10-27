@@ -526,7 +526,7 @@ fn main() {
             .filter(|r| r.mode == mode)
             .map(|r| r.station)
             .collect();
-        for (&(m, st, _), _) in &stday {
+        for &(m, st, _) in stday.keys() {
             if m == mode {
                 sts.insert(st);
             }
@@ -593,11 +593,10 @@ fn main() {
             let Some((eps, _, _)) = geo.get(day) else {
                 continue;
             };
-            if region(*eps) == "CONJ" {
-                if let Some(rr) = rms(x) {
+            if region(*eps) == "CONJ"
+                && let Some(rr) = rms(x) {
                     v.push(rr);
                 }
-            }
         }
         median(&v)
     };
@@ -629,8 +628,8 @@ fn main() {
             out.push(format!("      {dt}  {rr:8.2} Hz  n {nn}"));
         }
         let mut ratio = String::new();
-        if let Some(c) = cm {
-            if c > 0.0 {
+        if let Some(c) = cm
+            && c > 0.0 {
                 ratio = match (med, m1, m2) {
                     (Some(md), Some(a), Some(b)) => format!(
                         "  med/conj {:.2}x  med-minus-1/conj {:.2}x  med-minus-2/conj {:.2}x",
@@ -641,7 +640,6 @@ fn main() {
                     _ => String::new(),
                 };
             }
-        }
         out.push(format!(
             "  mode {mode}: n {n}  med {}  med-minus-1 {}  med-minus-2 {}  med-minus-3 {}  max {mx:.2} Hz  conj_med {}",
             fmt_o(med),
@@ -765,19 +763,17 @@ fn main() {
                     "OPP" => opp.push(r.rms),
                     "CONJ" => {
                         conj.push(r.rms);
-                        if let Some(dd) = nearest_opp(r.day) {
-                            if dd <= NEAR_DAYS {
+                        if let Some(dd) = nearest_opp(r.day)
+                            && dd <= NEAR_DAYS {
                                 near.push(r.rms);
                             }
-                        }
                     }
                     _ => {
                         mid.push(r.rms);
-                        if let Some(dd) = nearest_opp(r.day) {
-                            if dd <= NEAR_DAYS {
+                        if let Some(dd) = nearest_opp(r.day)
+                            && dd <= NEAR_DAYS {
                                 near.push(r.rms);
                             }
-                        }
                     }
                 }
             }

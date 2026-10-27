@@ -189,18 +189,16 @@ fn cache_zustand_dir() -> std::path::PathBuf {
 }
 
 fn token_from(key: &str) -> Option<String> {
-    if let Ok(t) = std::env::var(key) {
-        if !t.is_empty() {
+    if let Ok(t) = std::env::var(key)
+        && !t.is_empty() {
             return Some(t);
         }
-    }
     let body = std::fs::read_to_string(cache_zustand_dir().join(".secrets.local")).ok()?;
     for line in body.lines() {
-        if let Some((k, v)) = line.split_once('=') {
-            if k.trim() == key && !v.trim().is_empty() {
+        if let Some((k, v)) = line.split_once('=')
+            && k.trim() == key && !v.trim().is_empty() {
                 return Some(v.trim().to_string());
             }
-        }
     }
     None
 }
@@ -355,11 +353,10 @@ where
     };
     let direct = probe(None);
     let direct_code = fetch_code(&direct);
-    if let Some((code, body)) = &direct {
-        if code == "200" {
+    if let Some((code, body)) = &direct
+        && code == "200" {
             return lasair_cone_line(ra, dec, code, body, token_word, "");
         }
-    }
     if !route_down(&direct) {
         let note = format!(
             "the direct route answered HTTP {direct_code} — a non-200 cone read is no negative; excluded from the verdict (0 honored); {token_word}"
@@ -384,14 +381,13 @@ where
     }
     let tunnel = probe(Some(LAS_TUNNEL_IFACE));
     let tunnel_code = fetch_code(&tunnel);
-    if let Some((code, body)) = &tunnel {
-        if code == "200" {
+    if let Some((code, body)) = &tunnel
+        && code == "200" {
             let route_lead = format!(
                 "the direct route read {direct_code} — the {LAS_TUNNEL_IFACE} tunnel carried the 200 — "
             );
             return lasair_cone_line(ra, dec, code, body, token_word, &route_lead);
         }
-    }
     if !route_down(&tunnel) {
         let note = format!(
             "the direct route read {direct_code}; the {LAS_TUNNEL_IFACE} tunnel answered HTTP {tunnel_code} — a non-200 cone read is no negative; excluded from the verdict (0 honored); {token_word}"
@@ -1173,12 +1169,12 @@ fn main() {
             "--pos" => {
                 if let Some(spec) = args.get(i + 1) {
                     let p: Vec<&str> = spec.split(',').collect();
-                    if p.len() == 2 {
-                        if let (Some(ra), Some(dec)) = (
+                    if p.len() == 2
+                        && let (Some(ra), Some(dec)) = (
                             p[0].trim().parse::<f64>().ok(),
                             p[1].trim().parse::<f64>().ok(),
-                        ) {
-                            if ra.is_finite()
+                        )
+                            && ra.is_finite()
                                 && dec.is_finite()
                                 && (0.0..360.0).contains(&ra)
                                 && (-90.0..=90.0).contains(&dec)
@@ -1186,8 +1182,6 @@ fn main() {
                                 pos_list.push((ra, dec));
                                 i += 1;
                             }
-                        }
-                    }
                 }
             }
             "--object" => {

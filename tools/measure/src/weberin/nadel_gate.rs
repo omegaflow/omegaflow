@@ -197,10 +197,7 @@ pub fn allwise_read(dia: &str, ra: f64, dec: f64) -> WiseRead {
         );
         return WiseRead::NoSource;
     };
-    let des = match m.designation.as_deref() {
-        Some(d) => d,
-        None => "AllWISE",
-    };
+    let des = m.designation.as_deref().unwrap_or("AllWISE");
     let sep = m.sep_arcsec;
     if matches.len() > 1 {
         println!(

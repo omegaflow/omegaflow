@@ -294,7 +294,7 @@ fn main() {
             continue;
         }
         let mode = r[3] as i64;
-        if mode < 1 || mode > 3 {
+        if !(1..=3).contains(&mode) {
             continue;
         }
         let st = r[2] as i64;
@@ -510,7 +510,7 @@ fn main() {
          -> (usize, Option<f64>, Option<(f64, f64)>) {
             let vals: Vec<f64> = days
                 .iter()
-                .filter_map(|d| day_geo.get(d).and_then(|g| sel(g)))
+                .filter_map(|d| day_geo.get(d).and_then(&sel))
                 .collect();
             (vals.len(), median(&vals), lo_hi(&vals))
         };
@@ -658,11 +658,10 @@ fn main() {
             let ga = day_geo.get(&a.0);
             let gb = day_geo.get(&b.0);
             if let (Some(ga), Some(gb)) = (ga, gb) {
-                if let (Some(ua), Some(ub)) = (ga.u, gb.u) {
-                    if let Some(sa) = angle_deg(ua, ub) {
+                if let (Some(ua), Some(ub)) = (ga.u, gb.u)
+                    && let Some(sa) = angle_deg(ua, ub) {
                         steps_sky.push(sa);
                     }
-                }
                 if let (Some(xa), Some(xb)) = (ga.r_e_au, gb.r_e_au) {
                     steps_re.push((xb - xa).abs());
                 }
@@ -711,8 +710,8 @@ fn main() {
             let ga = day_geo.get(&a.0);
             let gb = day_geo.get(&b.0);
             if let (Some(ga), Some(gb)) = (ga, gb) {
-                if let (Some(ua), Some(ub)) = (ga.u, gb.u) {
-                    if let Some(sa) = angle_deg(ua, ub) {
+                if let (Some(ua), Some(ub)) = (ga.u, gb.u)
+                    && let Some(sa) = angle_deg(ua, ub) {
                         all_sky.push(sa);
                         if sa < 1.0 {
                             lt1 += 1;
@@ -724,7 +723,6 @@ fn main() {
                             lt5 += 1;
                         }
                     }
-                }
                 if let (Some(xa), Some(xb)) = (ga.r_e_au, gb.r_e_au) {
                     all_re.push((xb - xa).abs());
                 }
@@ -815,8 +813,8 @@ fn main() {
     let mut monthly_min: BTreeMap<(i64, i64), (i64, f64)> = BTreeMap::new();
     let mut dd = d0;
     while dd <= d1 {
-        if let Some(g) = day_geo.get(&dd) {
-            if let Some(jrj) = g.jrj {
+        if let Some(g) = day_geo.get(&dd)
+            && let Some(jrj) = g.jrj {
                 let ym = ym_of_daycell(dd);
                 let upd = match monthly_min.get(&ym) {
                     Some((_, v)) => jrj < *v,
@@ -826,7 +824,6 @@ fn main() {
                     monthly_min.insert(ym, (dd, jrj));
                 }
             }
-        }
         dd += 1;
     }
     for ((y, m), (day, v)) in &monthly_min {

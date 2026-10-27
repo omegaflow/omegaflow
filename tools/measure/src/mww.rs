@@ -49,8 +49,8 @@ pub fn element_slices<'a>(xml: &'a str, name: &str) -> Vec<&'a str> {
             .as_bytes()
             .get(start + needle.len())
             .is_some_and(|c| boundary(*c));
-        if at_boundary {
-            if let Some(gt_rel) = xml[start..].find('>') {
+        if at_boundary
+            && let Some(gt_rel) = xml[start..].find('>') {
                 let body_start = start + gt_rel + 1;
                 if let Some(crel) = xml[body_start..].find(&close) {
                     let end = body_start + crel;
@@ -59,7 +59,6 @@ pub fn element_slices<'a>(xml: &'a str, name: &str) -> Vec<&'a str> {
                     continue;
                 }
             }
-        }
         from = start + needle.len();
     }
     out
@@ -102,15 +101,14 @@ pub fn attr_value<'a>(element: &'a str, attr: &str) -> Option<&'a str> {
 }
 
 pub fn select_by_public_id<'a>(items: &[&'a str], preferred: Option<&str>) -> Option<&'a str> {
-    if let Some(id) = preferred {
-        if let Some(item) = items
+    if let Some(id) = preferred
+        && let Some(item) = items
             .iter()
             .copied()
             .find(|it| attr_value(it, "publicID") == Some(id))
         {
             return Some(item);
         }
-    }
     items.first().copied()
 }
 
@@ -123,7 +121,7 @@ pub fn iso_to_unix(s: &str) -> Option<f64> {
     let d: i64 = dp.next()?.parse().ok()?;
     let days = days_from_civil(y, m, d)? as f64;
     let t = time
-        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .split(['.', 'Z', 'z'])
         .next()?;
     let mut tp = t.split(':');
     let hh: f64 = tp.next()?.parse().ok()?;

@@ -212,12 +212,9 @@ fn compute_residue(
     for d in first..=last {
         let jd = d as f64 + JD_UNIX_EPOCH;
         let tdb = (jd - J2000_EPOCH) * DAY;
-        match body_barycenter_position(&key, tdb, eph) {
-            Some(r) => {
-                days.push(d);
-                pos.push(r);
-            }
-            None => {}
+        if let Some(r) = body_barycenter_position(&key, tdb, eph) {
+            days.push(d);
+            pos.push(r);
         }
     }
     let mut out = Residue {
@@ -427,7 +424,7 @@ fn mean_sd(v: &[f32]) -> (f64, f64) {
 
 fn transform(v: &[f32], mode: u8) -> Vec<f32> {
     match mode {
-        1 => v.iter().map(|&x| x.ln() as f32).collect(),
+        1 => v.iter().map(|&x| x.ln()).collect(),
         2 => {
             let (m, s) = mean_sd(v);
             let sd = if s > 0.0 { s } else { 1.0 };
@@ -476,8 +473,8 @@ fn log_pair(a: &[f32], b: &[f32]) -> Option<(Vec<f32>, Vec<f32>)> {
     let mut lb = Vec::new();
     for (&x, &y) in a.iter().zip(b) {
         if x > 0.0 && y > 0.0 {
-            la.push(x.ln() as f32);
-            lb.push(y.ln() as f32);
+            la.push(x.ln());
+            lb.push(y.ln());
         }
     }
     if la.len() < 24 { None } else { Some((la, lb)) }

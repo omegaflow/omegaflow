@@ -398,7 +398,7 @@ pub fn correlate_window(
             let above_right = i + 1 == surf.len() || surf[i].abs() >= surf[i + 1].abs();
             if above_left && above_right {
                 let v = surf[i].abs();
-                if best.map_or(true, |b| v > b) {
+                if best.is_none_or(|b| v > b) {
                     best = Some(v);
                 }
             }
@@ -660,11 +660,10 @@ fn p_p_lag_decreases_in_window(delta_deg: f64, depth_km: f64, half_width_deg: f6
     let mut d = delta_deg - half_width_deg;
     while d <= delta_deg + half_width_deg {
         if let Some(lag) = p_p_lag(d, depth_km) {
-            if let Some(p) = prev {
-                if lag < p - 1e-9 {
+            if let Some(p) = prev
+                && lag < p - 1e-9 {
                     return Some(true);
                 }
-            }
             prev = Some(lag);
             n += 1;
         }
@@ -1715,14 +1714,11 @@ mod tests {
     fn a_quiet_long_period_trace_reads_below_the_m9_gate() {
         let rate = 20.0;
         let samples = w_trace(rate, 2500.0, 1700.0, 0.0);
-        match w_phase_discriminate(&samples, rate, 1500.0, 1700.0) {
-            Some(p) => assert!(
-                !p.m9,
-                "no injected burst must sit below the gate, ratio {:.2}",
-                p.energy_ratio
-            ),
-            None => {}
-        }
+        if let Some(p) = w_phase_discriminate(&samples, rate, 1500.0, 1700.0) { assert!(
+            !p.m9,
+            "no injected burst must sit below the gate, ratio {:.2}",
+            p.energy_ratio
+        ) }
     }
 
     #[test]

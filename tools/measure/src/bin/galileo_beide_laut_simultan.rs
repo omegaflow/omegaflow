@@ -90,7 +90,7 @@ fn load() -> Option<(BTreeMap<(i64, i64), Vec<Sample>>, usize)> {
             continue;
         }
         per.entry((mode, st))
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(Sample { t: r[0], resid });
         kept += 1;
     }
@@ -158,7 +158,7 @@ fn match_pairs(a: &[Sample], b: &[Sample], tol: f64) -> Vec<Pair> {
         while j < a.len() && a[j].t <= sb.t + tol {
             if !used[j] {
                 let d = (a[j].t - sb.t).abs();
-                if best.map_or(true, |(_, bd)| d < bd) {
+                if best.is_none_or(|(_, bd)| d < bd) {
                     best = Some((j, d));
                 }
             }
@@ -520,7 +520,7 @@ fn main() {
                 }
                 let cc = c.lo + (k as f64 + 0.5) * step;
                 let d = (s.t - cc).abs();
-                if g[k].map_or(true, |x| d < x.0) {
+                if g[k].is_none_or(|x| d < x.0) {
                     g[k] = Some((d, s.resid));
                 }
             }

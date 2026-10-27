@@ -14,7 +14,7 @@ struct SegStat {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.is_empty() || args.len() % 4 != 0 {
+    if args.is_empty() || !args.len().is_multiple_of(4) {
         eprintln!("galileo ODR open-loop probe: <odr> <label> <h0> <h1> [...] (4 tokens per file)");
         return;
     }
