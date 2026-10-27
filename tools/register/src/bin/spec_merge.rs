@@ -7151,7 +7151,7 @@ fn claim_verify(args: &[String]) {
                     if chosen.is_none() {
                         let plain = types
                             .get(&url)
-                            .map(|t| matches!(t.as_str(), "pdftotext" | "raw" | "gzip" | "cp1251" | "browser"))
+                            .map(|t| matches!(t.as_str(), "pdftotext" | "raw" | "gzip" | "cp1251" | "browser" | "try_direct" | "try_jina" | "manual"))
                             .unwrap_or(false);
                         if plain {
                             if let Some(d) = doc {

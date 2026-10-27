@@ -17138,6 +17138,7 @@ doc https://supermag.jhuapl.edu/info/
   claim stationen keine eigenen Stationen ""SuperMAG does not currently operate any ground based stations""
   claim umfang mehr als 10 Millionen Dateien ""SuperMAG is managing a staggering >10 million files""
   claim datenfluss Kalibrierung und Qualitätsprüfung je Verarbeitungsschritt ""a number of validation routines check the quality of the data after each""
+  claim device magnetometer ""SuperMAG is a worldwide collaboration of organizations and national agencies who over the last 6 decades have operated and maintained nearly 600 ground based magnetometers.""
 
 doc https://tapvizier.cds.unistra.fr/TAPVizieR/tap/capabilities
   title VOSI-Capabilities des TAP-Dienstes TAPVizieR
@@ -18124,6 +18125,7 @@ doc https://en.wikipedia.org/wiki/Mariner_10
   claim experimente sieben ""Mariner 10 conducted seven experiments at Venus and Mercury.""
   claim instrumente sechs mit eigener Hardware ""Six of these experiments had a dedicated scientific instrument to collect data.""
   claim preis 98 Millionen US-Dollar ""NASA set a strict limit of US$98 million for Mariner 10's total cost""
+  claim device vidicon ""The imaging system, the Television Photography Experiment, consisted of two 15 centimeters (5.9 in) Cassegrain telescopes feeding vidicon tubes.""
 
 doc https://en.wikipedia.org/wiki/Samuel_Oschin_Telescope
   title Samuel Oschin Telescope
@@ -19888,6 +19890,7 @@ doc https://www.mpifr-bonn.mpg.de/en/effelsberg
   claim durchmesser 100 Meter "With a diameter of 100 meters, the Radio Telescope Effelsberg is one of the largest fully steerable radio telescopes on earth."
   claim inbetriebnahme 12. Mai 1971 "Its inauguration took place on May 12, 1971."
   claim betrieb seit 1972 "Since the full start of operations in 1972, the technology has been continually improved…"
+  claim device Effelsberg 100-m ""Effelsberg is an important part of the worldwide network of radio telescopes.""
 
 doc https://www.fdsn.org/station_book/II/OBN/obn_3.html
   title OBN - Obninsk, Russia — Station Instrumentation
