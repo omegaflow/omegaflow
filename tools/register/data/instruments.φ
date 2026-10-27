@@ -25981,9 +25981,9 @@ host gml.noaa.gov
   api_cite https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
   api_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. CH4 monatliche globale Mittel — ch4_mm_gl.txt."
   api_quote "# CH4 expressed as a mole fraction in dry air, nanomol/mol, abbreviated as ppb"
-  instrument_cite https://gml.noaa.gov/ccgg/trends_ch4/
-  instrument_ref "NOAA GML; Lan, Thoning & Dlugokencky. Trends in CH4 - NOAA Global Monitoring Laboratory."
-  instrument_quote "The Global Monitoring Division of NOAA’s Earth System Research Laboratory has measured methane since 1983 at a globally distributed network of air sampling sites."
+  instrument_cite https://gml.noaa.gov/ccgg/flask.html
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
+  instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/ccgg/trends_ch4/
   host_ref "NOAA GML; Lan, Thoning & Dlugokencky. Trends in CH4 - NOAA Global Monitoring Laboratory."
   host_quote "are updated every month as new samples are returned to Boulder, measured for CH<sub>4</sub>, and added to the analysis"
@@ -26003,9 +26003,9 @@ host gml.noaa.gov
   api_cite https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
   api_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. N2O monatliche globale Mittel — n2o_mm_gl.txt."
   api_quote "# N2O expressed as a mole fraction in dry air, nanomol/mol, abbreviated as ppb"
-  instrument_cite https://gml.noaa.gov/ccgg/trends_n2o/
-  instrument_ref "NOAA Global Monitoring Laboratory (GML), Carbon Cycle Greenhouse Gases Group. Trends in Atmospheric Nitrous Oxide (N2O) - globale Monatsmittel."
-  instrument_quote "The Global Monitoring Laboratory has measured nitrous oxide since 1997 at a globally distributed network of air sampling sites."
+  instrument_cite https://gml.noaa.gov/ccgg/flask.html
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
+  instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/ccgg/trends_n2o/
   host_ref "NOAA Global Monitoring Laboratory (GML), Carbon Cycle Greenhouse Gases Group. Trends in Atmospheric Nitrous Oxide (N2O) - globale Monatsmittel."
   host_quote "globally averaged monthly mean values centered on the middle of each month"
@@ -26025,9 +26025,9 @@ host gml.noaa.gov
   api_cite https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
   api_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. SF6 monatliche globale Mittel — sf6_mm_gl.txt."
   api_quote "# SF6 expressed as a mole fraction in dry air, picomol/mol, abbreviated as ppt"
-  instrument_cite https://gml.noaa.gov/ccgg/trends_sf6/
-  instrument_ref "NOAA Global Monitoring Laboratory (GML), Carbon Cycle Greenhouse Gases Group. Trends in Atmospheric Sulfur Hexafluoride (SF6) - globale Monatsmittel."
-  instrument_quote "The Global Monitoring Laboratory has measured sulfur hexafluoride since 1997 at a globally distributed network of air sampling sites."
+  instrument_cite https://gml.noaa.gov/ccgg/flask.html
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
+  instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/ccgg/trends_sf6/
   host_ref "NOAA Global Monitoring Laboratory (GML), Carbon Cycle Greenhouse Gases Group. Trends in Atmospheric Sulfur Hexafluoride (SF6) - globale Monatsmittel."
   host_quote "globally averaged monthly mean values centered on the middle of each month"
@@ -28610,7 +28610,7 @@ host gml.noaa.gov
   api_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. CH4 monatliche globale Mittel — ch4_mm_gl.txt."
   api_quote "# CH4 expressed as a mole fraction in dry air, nanomol/mol, abbreviated as ppb … # year   month       decimal       average   average_unc         trend     trend_unc"
   instrument_cite https://gml.noaa.gov/ccgg/flask.html
-  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group (CCGG). Cooperative Air Sampling Network."
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
   instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/ccgg/trends_ch4/
   host_ref "NOAA GML; Lan, Thoning & Dlugokencky. Trends in CH4 - NOAA Global Monitoring Laboratory."
@@ -28629,7 +28629,7 @@ host gml.noaa.gov
   api_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. N2O monatliche globale Mittel — n2o_mm_gl.txt."
   api_quote "# N2O expressed as a mole fraction in dry air, nanomol/mol, abbreviated as ppb … # year   month       decimal       average   average_unc         trend     trend_unc"
   instrument_cite https://gml.noaa.gov/ccgg/flask.html
-  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group (CCGG). Cooperative Air Sampling Network."
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
   instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/ccgg/trends/
   host_ref "NOAA Global Monitoring Laboratory (GML), Carbon Cycle Greenhouse Gases Group (Keeling-Kurve, ab 1958). Trends in Atmospheric Carbon Dioxide - Mauna Loa CO2 monthly mean."
@@ -28648,7 +28648,7 @@ host gml.noaa.gov
   api_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. SF6 monatliche globale Mittel — sf6_mm_gl.txt."
   api_quote "# SF6 expressed as a mole fraction in dry air, picomol/mol, abbreviated as ppt … # year   month       decimal       average   average_unc         trend     trend_unc"
   instrument_cite https://gml.noaa.gov/ccgg/flask.html
-  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group (CCGG). Cooperative Air Sampling Network."
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
   instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
   host_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. SF6 monatliche globale Mittel — sf6_mm_gl.txt."
@@ -32490,9 +32490,9 @@ host gml.noaa.gov
   api_cite https://gml.noaa.gov/ccgg/trends_ch4/
   api_ref "NOAA GML; Lan, Thoning & Dlugokencky. Trends in CH4 - NOAA Global Monitoring Laboratory."
   api_quote "The graphs show globally-averaged, monthly mean atmospheric methane abundance determined from marine surface sites"
-  instrument_cite https://gml.noaa.gov/ccgg/trends_ch4/
-  instrument_ref "NOAA GML; Lan, Thoning & Dlugokencky. Trends in CH4 - NOAA Global Monitoring Laboratory."
-  instrument_quote "The graphs show globally-averaged, monthly mean atmospheric methane abundance determined from marine surface sites."
+  instrument_cite https://gml.noaa.gov/ccgg/flask.html
+  instrument_ref "NOAA GML, Carbon Cycle Greenhouse Gases Group. Cooperative Air Sampling Network."
+  instrument_quote "Air samples are collected approximately weekly from a globally distributed network of sites."
   host_cite https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
   host_ref "NOAA GML, globales Kooperationsnetz atmosphaerischer Probenahme; Kontakt Xin Lan; Datei erzeugt 9. Oktober 2026. CH4 monatliche globale Mittel — ch4_mm_gl.txt."
   host_quote "CH4 monatliche globale Mittel — ch4_mm_gl.txt"
