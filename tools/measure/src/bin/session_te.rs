@@ -28,7 +28,10 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let mut db = PathBuf::from(match env::var("HOME") {
         Ok(h) => h,
-        Err(_) => String::new(),
+        Err(e) => {
+            eprintln!("HOME: {e} — the database path stays unknown");
+            std::process::exit(2)
+        }
     })
     .join(".local/share/opencode/opencode.db");
     let mut surrogate = "phase";
