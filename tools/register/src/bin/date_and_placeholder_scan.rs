@@ -13,45 +13,71 @@ fn apply(template: &str, markers: &[(String, String)]) -> String {
     out
 }
 
-fn scan(text: &str, env: &HashMap<String, String>) -> Vec<String> {
-    let markers: Vec<(String, String)> = live_markers();
-    let mut findings = Vec::new();
-    let mut probes = 0usize;
-    let mut block_line = 0usize;
-    let mut has_compiler = false;
+struct Block {
+    line: usize,
+    url: String,
+    has_compiler: bool,
+}
 
-    let mut flush = |url: &str, line: usize, has_compiler: bool| {
-        if has_compiler {
-            return;
-        }
-        probes += 1;
-        let coords = COORD_MARKERS
-            .iter()
-            .map(|m| (m.to_string(), "0.0".to_string()))
-            .collect::<Vec<_>>();
-        let rendered = apply(&apply(url, &markers), &coords);
-        if let Some(key) = unresolved_key(&rendered, env) {
-            findings.push(format!("line {line}: {{{key}}} is neither a marker nor an environment key"));
-        }
-    };
-
+fn blocks(text: &str) -> Vec<Block> {
+    let mut out: Vec<Block> = Vec::new();
     for (i, line) in text.lines().enumerate() {
         let trimmed = line.trim_start();
-        if trimmed.starts_with("source ") || trimmed.starts_with("block ") {
-            block_line = i + 1;
-            has_compiler = false;
+        if let Some(rest) = trimmed.strip_prefix("url ") {
+            out.push(Block {
+                line: i + 1,
+                url: rest.trim().to_string(),
+                has_compiler: false,
+            });
             continue;
         }
-        if trimmed.starts_with("compiler ") || trimmed.starts_with("format ") {
-            has_compiler = true;
+        if let Some(last) = out.last_mut()
+            && trimmed.starts_with("compiler ")
+        {
+            last.has_compiler = true;
+        }
+    }
+    out
+}
+
+fn scan(text: &str, env: &HashMap<String, String>) -> Vec<String> {
+    let markers = live_markers();
+    let coords: Vec<(String, String)> = COORD_MARKERS
+        .iter()
+        .map(|m| (m.to_string(), "0.0".to_string()))
+        .collect();
+    let mut findings = Vec::new();
+    let mut probes = 0usize;
+    for block in blocks(text) {
+        if block.has_compiler {
             continue;
         }
-        if let Some(url) = trimmed.strip_prefix("url ") {
-            flush(url.trim(), if block_line > 0 { block_line } else { i + 1 }, has_compiler);
+        probes += 1;
+        let rendered = apply(&apply(&block.url, &markers), &coords);
+        let mut unknown: Vec<String> = Vec::new();
+        let mut rest = rendered.as_str();
+        while let Some(start) = rest.find('{') {
+            let Some(end) = rest[start..].find('}') else {
+                break;
+            };
+            let name = &rest[start + 1..start + end];
+            let is_secret = name
+                .chars()
+                .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_');
+            if !is_secret {
+                unknown.push(name.to_string());
+            }
+            rest = &rest[start + end + 1..];
+        }
+        for name in unknown {
+            findings.push(format!(
+                "line {}: {{{name}}} is neither a marker nor an environment key",
+                block.line
+            ));
         }
     }
     println!(
-        "date_and_placeholder_scan: {probes} probe url(s), {} finding(s)",
+        "date_and_placeholder_scan: {probes} probe block(s), {} finding(s)",
         findings.len()
     );
     findings
@@ -87,20 +113,15 @@ fn main() {
 mod tests {
     use super::*;
 
-    fn markers() -> Vec<(String, String)> {
-        live_markers()
-    }
-
     #[test]
-    fn a_probe_with_a_marker_passes_after_the_markers_are_applied() {
-        let text = "block a\nurl https://example.org/data?start={now}&stop={today}\n";
-        let findings = scan(text, &HashMap::new());
-        assert!(findings.is_empty(), "{findings:?}");
+    fn a_probe_with_markers_passes_once_they_are_applied() {
+        let text = "url https://example.org/data?start={now}&stop={today}\nterms x https://e.org\n";
+        assert!(scan(text, &HashMap::new()).is_empty());
     }
 
     #[test]
     fn a_probe_with_an_unknown_placeholder_is_named() {
-        let text = "block a\nurl https://example.org/{nwo}\n";
+        let text = "url https://example.org/{nwo}\nterms x https://e.org\n";
         let findings = scan(text, &HashMap::new());
         assert_eq!(findings.len(), 1, "{findings:?}");
         assert!(findings[0].contains("nwo"), "{findings:?}");
@@ -108,7 +129,14 @@ mod tests {
 
     #[test]
     fn a_compiler_block_is_not_checked() {
-        let text = "block a\ncompiler euvi\nurl https://example.org/{YYYY}/{DDD}/\n";
+        let text = "url https://example.org/{YYYY}/{DDD}/\nformat euvi\ncompiler tools/harvest/src/bin/euvi_compiler.rs\n";
         assert!(scan(text, &HashMap::new()).is_empty());
+    }
+
+    #[test]
+    fn two_blocks_are_two_probes() {
+        let text = "url https://a.example/{now}\nurl https://b.example/{today}\n";
+        let found = blocks(text);
+        assert_eq!(found.len(), 2, "{}", found.len());
     }
 }
