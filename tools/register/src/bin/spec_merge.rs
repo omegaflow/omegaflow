@@ -7272,6 +7272,65 @@ fn set_slot(args: &[String]) {
     println!("set-slot: {changed} Zeilen {slot} fuer {url}");
 }
 
+fn einholen_reg(args: &[String]) {
+    use std::collections::BTreeSet;
+    let src = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("einholen-reg: needs a source file and a list of block keys");
+            return;
+        }
+    };
+    let list_path = match args.get(1) {
+        Some(p) => p.clone(),
+        None => return,
+    };
+    let list = match fs::read_to_string(&list_path) {
+        Ok(t) => t,
+        Err(_) => {
+            println!("einholen-reg: {list_path} nicht lesbar");
+            return;
+        }
+    };
+    let mut wanted: BTreeSet<usize> = BTreeSet::new();
+    for line in list.lines() {
+        if let Ok(n) = line.split('\t').next().unwrap_or("").trim().parse::<usize>() {
+            wanted.insert(n);
+        }
+    }
+    let s_text = match fs::read_to_string(&src) {
+        Ok(t) => t,
+        Err(_) => return,
+    };
+    let r_text = fs::read_to_string(REG).expect("register");
+    let mut back: Vec<String> = Vec::new();
+    let mut keep: Vec<String> = Vec::new();
+    let mut n = 0usize;
+    for (start, b) in blocks(&s_text) {
+        if wanted.contains(&start) {
+            back.extend(b);
+            back.push(String::new());
+            n += 1;
+        } else {
+            keep.extend(b);
+            keep.push(String::new());
+        }
+    }
+    if back.is_empty() {
+        println!("einholen-reg: kein Block passt zu den Schluesseln");
+        return;
+    }
+    let mut reg = r_text;
+    if !reg.ends_with('\n') {
+        reg.push('\n');
+    }
+    reg.push_str(&back.join("\n"));
+    reg.push('\n');
+    write_out(REG, reg, "instruments");
+    write_out(&src, keep.join("\n"), "quelle");
+    println!("einholen-reg: {n} Bloecke zurueck aus {src}");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
@@ -7802,6 +7861,7 @@ fn main() {
         Some("claim-import") if args.len() >= 4 => claim_import(&args[2..]),
         Some("claim-verify") if args.len() >= 5 => claim_verify(&args[2..]),
         Some("set-slot") if args.len() >= 5 => set_slot(&args[2..]),
+        Some("einholen-reg") if args.len() >= 4 => einholen_reg(&args[2..]),
         Some("field-align") => field_align(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
         Some("replace-cite") if args.len() >= 4 => replace_cite(&args[2..]),

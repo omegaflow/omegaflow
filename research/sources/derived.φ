@@ -102,6 +102,7 @@ host zeus.wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "42-44 i 3 Depth in kilometers."
 kind data
+
 host doi.pangaea.de
   zustand gemessen
   api_cite https://doi.pangaea.de/10.1594/PANGAEA.981231
@@ -168,42 +169,6 @@ host data.earthscope.org
   applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin line=13093
   note Wie 13084; Variable `dvp`, Einheit aus dem Quell-Dateinamen (percent).
 
-host pds-ppi.igpp.ucla.edu
-  api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  instrument_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  probe 2026-10-25T14:50:44Z 200 https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  applies https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT id=19825
-  zustand gemessen
-  note Das PDS3-Label ist Datendoku und Instrumentendoku in einem: TABLE mit 37 Spalten, 3126 Zeilen, 152 Byte je Zeile, 7 Positionsspalten in km und 11 Winkelspalten in degree, Zeit in Sekunden seit 1966-01-01; Start 1974-03-29T20:27:29.892, Stop 1974-03-31T15:57:25.376. Dieselbe Datei setzt INSTRUMENT_NAME = "N/A": der Datensatz ist eine SEDR-Trajektorie (Sekundaerprodukt), es gibt kein Instrument. Die Instrumentenzeile traegt deshalb `none`; die Existenz eines Instruments ist damit belegt absent, nicht offen.
-
-host pds-ppi.igpp.ucla.edu
-  api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  instrument_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  probe 2026-10-25T14:50:44Z 200 https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  applies https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT id=19825
-  zustand gemessen
-  note Das PDS3-Label ist Datendoku und Instrumentendoku in einem: TABLE mit 37 Spalten, 3126 Zeilen, 152 Byte je Zeile, 7 Positionsspalten in km und 11 Winkelspalten in degree, Zeit in Sekunden seit 1966-01-01; Start 1974-03-29T20:27:29.892, Stop 1974-03-31T15:57:25.376. Dieselbe Datei setzt INSTRUMENT_NAME = "N/A": der Datensatz ist eine SEDR-Trajektorie (Sekundaerprodukt), es gibt kein Instrument. Die Instrumentenzeile traegt deshalb `none`; die Existenz eines Instruments ist damit belegt absent, nicht offen.
-
-host pds-ppi.igpp.ucla.edu
-  api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  instrument_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  probe 2026-10-25T14:50:44Z 200 https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  applies https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT id=19832
-  zustand gemessen
-  note Das PDS3-Label ist Datendoku und Instrumentendoku in einem: TABLE mit 37 Spalten, 3126 Zeilen, 152 Byte je Zeile, 7 Positionsspalten in km und 11 Winkelspalten in degree, Zeit in Sekunden seit 1966-01-01; Start 1974-03-29T20:27:29.892, Stop 1974-03-31T15:57:25.376. Dieselbe Datei setzt INSTRUMENT_NAME = "N/A": der Datensatz ist eine SEDR-Trajektorie (Sekundaerprodukt), es gibt kein Instrument. Die Instrumentenzeile traegt deshalb `none`; die Existenz eines Instruments ist damit belegt absent, nicht offen.
-
 host ftp.imcce.fr
   keine_messung "Vergleich numerischer Ephemeriden (INPOP19a/EPM2021), kein Sensor"
   api_cite https://ftp.imcce.fr/pub/ephem/planets/inpop19a/
@@ -255,39 +220,6 @@ host oderest.rsl.wustl.edu
   zustand absent
   note ODEREST/live2 liefert Produktzaehlungen und Metadaten (Query, Target, Product-Typ), keine Messwerte. Die Messung liegt in den PDS-Produkten, nicht im Index. Kein Geraet, keine Messzeile.
 
-host pds-ppi.igpp.ucla.edu
-  api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  instrument_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  host_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  host_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  host_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  ttl 604800
-  probe 2026-10-25T18:41:28Z 206 https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  applies https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.DAT line=20168
-  zustand gemessen
-  note Das PDS3-Label ist Datendoku und Instrumentendoku in einem: TABLE mit 37 Spalten, 3126 Zeilen, 152 Byte je Zeile, 7 Positionsspalten in km und 11 Winkelspalten in degree, Zeit in Sekunden seit 1966-01-01; Start 1974-03-29T20:27:29.892, Stop 1974-03-31T15:57:25.376. INSTRUMENT_NAME = "N/A": der Datensatz ist eine SEDR-Trajektorie, kein Instrument. Die Instrumentenzeile traegt deshalb `none`; die Existenz eines Instruments ist damit belegt absent, nicht offen.
-
-host pds-ppi.igpp.ucla.edu
-  keine_messung "PDS3-Label (Metadaten) desselben POS-Datensatzes, keine eigene Messreihe"
-  api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  instrument_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  host_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  host_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  host_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  ttl 604800
-  probe 2026-10-25T18:41:28Z 206 https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  applies https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.LBL line=20175
-  zustand absent
-  note Der Block ist das Label zum DAT-Block (line 20168); er traegt die Spaltenbeschreibung, aber keine eigenen Werte. EINE Messzeile steht im DAT-Block; das Label bekommt keine zweite, erfundene Zeile.
-
 host data.giss.nasa.gov
   status referenz
   api_cite https://data.giss.nasa.gov/modelforce/strataer/
@@ -301,94 +233,6 @@ host data.giss.nasa.gov
   probe 2026-10-25T21:21:48Z 000 https://data.giss.nasa.gov/modelforce/strataer/data/tau_reff_Sato-Lacis.nc
   applies https://github.com/omegaflow/sources/releases/download/data.giss.nasa.gov/gistemp_aod550_global_mean.txt
   note REFERENZ: Forcing-Produkt aus Sato/Lacis, GloSSAC und Exeter, auf das GISS-Raster interpoliert; kein Messgerät. Host antwortet in diesem Lauf nicht (curl 7 / ECONNREFUSED, Probe 000); die Zitate stammen aus dem Registerlauf 2026-10-25 13:xxZ, der 206 maß.
-
-host pds-ppi.igpp.ucla.edu
-  status referenz
-  api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position information covering the Mercury 1 encounter."
-  instrument_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  instrument_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  instrument_quote "The file is an IEEE binary table in MSB byte order."
-  host_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  host_ref "PDS PPI UCLA node, Mariner 10 POS-6 trajectory product label. PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)."
-  host_quote "PDS3 label, Mariner 10 trajectory POS_M1_ENC_42SEC (MERCURY ENCOUNTER I)"
-  probe 2026-10-25T21:14:01Z 200 https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  applies https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.LBL
-  note REFERENZ: Der Block ist das PDS-Label, nicht die Tabelle (^TABLE = POS_M1_ENC_42SEC.DAT); das Label selbst setzt INSTRUMENT_NAME = "N/A". Die Bahnwerte liegen im .DAT-Block.
-
-host ssd.jpl.nasa.gov
-  status referenz
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  host_cite https://ssd.jpl.nasa.gov/dat/planets/ccd_mpc.txt
-  host_quote "# collected MPC observations 10/13/03"
-  probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/ccd_mpc.txt
-  applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd_mpc.txt
-  note REFERENZ: MPC-Astometrie-Sammlung vieler Observatorien; das Format führt eine Spalte "observatory/telescope #", je Wert ein anderes Gerät. Ohne Gerätespalte je Block kein Messblock.
-
-host ssd.jpl.nasa.gov
-  status referenz
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/goldstone_format.txt
-  api_ref "JPL Goldstone; Jahr nicht genannt. Format for Radar Observations of Mercury and Venus from Goldstone, CA."
-  api_quote "Format for Radar Observations of Mercury and Venus from Goldstone, CA"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/goldstone_format.txt
-  instrument_ref "JPL Goldstone; Jahr nicht genannt. Format for Radar Observations of Mercury and Venus from Goldstone, CA."
-  instrument_quote "columns   format                content"
-  host_cite https://ssd.jpl.nasa.gov/dat/planets/goldstone_format.txt
-  host_ref "JPL Goldstone; Jahr nicht genannt. Format for Radar Observations of Mercury and Venus from Goldstone, CA."
-  host_quote "Format for Radar Observations of Mercury and Venus from Goldstone, CA"
-  probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/goldstone_format.txt
-  applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/goldstone_format.txt
-  note REFERENZ: Das Asset ist das Formatdokument (Spalten 44-58 "observed round-trip light time (microseconds)"), keine Datenreihe. Feld und Einheit sind dokumentiert, der Block trägt aber keine Werte.
-
-host ssd.jpl.nasa.gov
-  status referenz
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  host_cite https://ssd.jpl.nasa.gov/dat/planets/miscastrom.txt
-  host_quote "P7002437382391145 08908886 0941281689 143854649 1961 089"
-  probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/miscastrom.txt
-  applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/miscastrom.txt
-  note REFERENZ: Sammlung fotografischer Astrometrie verschiedener Observatorien im O'Handley-Kartenformat; Gerät steht je Zeile nur als Observatoriums-/Teleskop-Code.
-
-host ssd.jpl.nasa.gov
-  status referenz
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
-  api_ref "JPL Solar System Dynamics, o. J. Format for Viking and Pathfinder Differenced Range observations."
-  api_quote "Format for Viking and Pathfinder Differenced Range observations 2 Spacecraft Number : 1 - Viking 1 2 - Viking 2 3 - Pathfinder"
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
-  instrument_ref "JPL Solar System Dynamics, o. J. Format for Viking and Pathfinder Differenced Range observations."
-  instrument_quote "Format for Viking and Pathfinder Differenced Range observations"
-  host_cite https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
-  host_ref "JPL Solar System Dynamics, o. J. Format for Viking and Pathfinder Differenced Range observations."
-  host_quote "Format for Viking and Pathfinder Differenced Range observations"
-  probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
-  applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mscdop_format.txt
-  note REFERENZ: Formatdokument (Differenced Range, km/sec), keine Datenreihe. Die Integrationszeit ist eine Spalte des Formats, kein fester Takt.
-
-host ssd.jpl.nasa.gov
-  status referenz
-  api_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  api_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  api_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  instrument_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  instrument_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  instrument_quote "O'Handley, D. A. 1968 : "Card Format for Optical and Radar Planetary Data", JPL Technical Report 32-1296, Pasadena, CA."
-  host_cite https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  host_ref "O'Handley, D. A. 1968 : \"Card Format for Optical and Radar Planetary Data\", JPL Technical Report 32-1296. Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  host_quote "Format for Optical Transit, Photoelectric Transit, Photographic, and CCD Observations."
-  probe 2026-10-25T21:14:01Z 200 https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
-  applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/optical_format.txt
-  note REFERENZ: Formatdokument für optische und Radar-Beobachtungen; es beschreibt Spalten, enthält aber keine Messwerte.
 
 host web.archive.org
   status referenz
