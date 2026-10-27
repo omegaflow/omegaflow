@@ -307,7 +307,7 @@ host ndbc.noaa.gov
   api_cite https://www.ndbc.noaa.gov/faq/measdes.shtml
   api_ref "NOAA National Data Buoy Center, measurement description page. Measurement descriptions — Standard Meteorological Data."
   api_quote "WSPD Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly."
-  instrument_cite https://www.ndbc.noaa.gov/faq/rsa.shtml
+  instrument_cite https://archive.org/stream/DTIC_ADA497834/DTIC_ADA497834_djvu.txt
   instrument_ref "NOAA National Data Buoy Center (NDBC), FAQ-Seite. What are the sensor reporting, sampling, and accuracy readings?."
   host_cite https://www.ndbc.noaa.gov/data/realtime2/46092.txt
   host_quote "#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE"
@@ -317,6 +317,7 @@ host ndbc.noaa.gov
   fields WSPD
   applies https://www.ndbc.noaa.gov/data/realtime2/46092.txt
   note nur dieser Met-Pfad; der DART-Pfad (21414.dart) traegt Wassersaeule in m und einen Bodendrucksensor
+  instrument_quote "The propeller-vane anemometers deployed by NDBC measure wind direction relative to the buoy’s hull."
 
 host gml.noaa.gov
   instrument crds
@@ -27424,6 +27425,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2001_ima.txt id=26362
   note aa 2001 im IMA-Format (Kopfzeile "12001 18 31" = year/18=aa/days); 8 Werte je Tag -> 10800 s.
   instrument magnetometer
+  instrument_quote "The planetary 3-hour-range index Kp is the mean standardized K-index from 13 geomagnetic observatories"
 
 host wdcb.ru
   instrument seismograph
@@ -32369,7 +32371,7 @@ host ndbc.noaa.gov
   api_cite https://www.ndbc.noaa.gov/faq/measdes.shtml
   api_ref "NOAA National Data Buoy Center, measurement description page. Measurement descriptions — Standard Meteorological Data."
   api_quote "Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations.  Reported Hourly."
-  instrument_cite https://www.ndbc.noaa.gov/faq/rsa.shtml
+  instrument_cite https://archive.org/stream/DTIC_ADA497834/DTIC_ADA497834_djvu.txt
   instrument_ref "NOAA National Data Buoy Center (NDBC), FAQ-Seite. What are the sensor reporting, sampling, and accuracy readings?."
   instrument_quote "Wind Speed 0 to 62 m/s 1.71 Hz 2/8 min * 0.1 m/s +/- 1.0 m/s"
   host_cite https://www.ndbc.noaa.gov/data/realtime2/51003.txt
@@ -33971,6 +33973,7 @@ host zeus.wdcb.ru
   zustand gemessen
   note Aa-Monatsmittel in nT aus derselben Fluxgate-Reihe; magnetic ist die Klassenbezeichnung.
   instrument magnetometer
+  instrument_quote "The planetary 3-hour-range index Kp is the mean standardized K-index from 13 geomagnetic observatories"
 
 host zeus.wdcb.ru
   instrument AMG
@@ -34313,6 +34316,7 @@ host zeus.wdcb.ru
   zustand gemessen
   note aa2001_ima.txt: aa-Index 2001 in nT, 10800 s; aa ist der Dateiname, das Geraet ist das Fluxgate.
   instrument magnetometer
+  instrument_quote "The planetary 3-hour-range index Kp is the mean standardized K-index from 13 geomagnetic observatories"
 
 host wdcb.ru
   instrument gps
@@ -35701,6 +35705,7 @@ host zeus.wdcb.ru
   zustand gemessen
   note Aa-Monatsmittel in nT aus derselben Fluxgate-Reihe; magnetic ist die Klassenbezeichnung.
   instrument magnetometer
+  instrument_quote "The planetary 3-hour-range index Kp is the mean standardized K-index from 13 geomagnetic observatories"
 
 host zeus.wdcb.ru
   instrument AMG
@@ -36043,6 +36048,7 @@ host zeus.wdcb.ru
   zustand gemessen
   note aa2001_ima.txt: aa-Index 2001 in nT, 10800 s; aa ist der Dateiname, das Geraet ist das Fluxgate.
   instrument magnetometer
+  instrument_quote "The planetary 3-hour-range index Kp is the mean standardized K-index from 13 geomagnetic observatories"
 
 host wdcb.ru
   instrument gps
