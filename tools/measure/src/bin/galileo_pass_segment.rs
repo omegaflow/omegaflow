@@ -231,11 +231,11 @@ fn q_of(s: f64, b: &[Option<i64>; 3]) -> u8 {
     let sv = s as i64;
     let mut q = 4u8;
     for (k, cut) in b.iter().enumerate() {
-        if let Some(c) = cut {
-            if sv <= *c {
-                q = (k + 1) as u8;
-                break;
-            }
+        if let Some(c) = cut
+            && sv <= *c
+        {
+            q = (k + 1) as u8;
+            break;
         }
     }
     q
@@ -354,23 +354,24 @@ fn main() {
         if boundary {
             finish_pass(g.open.take(), &mut passmap, key);
         }
-        match g.prev {
-            Some(p) => {
-                let d = t - p;
-                let dv = if d >= 0.0 { d } else { 0.0 };
-                dts.push(dv);
-                let mut bin = 0usize;
-                for (bi, ed) in dt_edges.iter().enumerate().skip(1) {
-                    if dv >= *ed {
-                        bin = bi - 1;
-                    }
+        if let Some(p) = g.prev {
+            let d = t - p;
+            let dv = if d >= 0.0 { d } else { 0.0 };
+            dts.push(dv);
+            let mut bin = 0usize;
+            for (bi, ed) in dt_edges.iter().enumerate().skip(1) {
+                if dv >= *ed {
+                    bin = bi - 1;
                 }
-                if dv >= 3.0 * DAY_S {
-                    bin = 14;
-                }
-                dtbins[bin] += 1;
             }
-            None => {}
+            if dv >= 3.0 * DAY_S {
+                bin = 14;
+            }
+            dtbins[bin] += 1;
+        } else {
+            eprintln!(
+                "mode {mode} station {station}: the first record of this key has no predecessor — no dt"
+            );
         }
         let o = g.open.get_or_insert_with(|| Open::start(t));
         o.t_last = t;
@@ -514,7 +515,15 @@ fn main() {
     );
     for mode in [1i64, 2] {
         for station in STATIONS {
-            let samples = sm_samples.get(&(mode, station)).copied().map_or(0, |v| v);
+            let samples = match sm_samples.get(&(mode, station)) {
+                Some(v) => *v,
+                None => {
+                    eprintln!(
+                        "mode {mode} station {station}: no sample count in the station-minute table — the column stays at 0"
+                    );
+                    0
+                }
+            };
             let days = sm_days
                 .get(&(mode, station))
                 .map_or(0, |d| d.len());
@@ -594,11 +603,11 @@ fn main() {
                     continue;
                 };
                 let band = (eps / 30.0).floor() as i64;
-                if let Some(r) = c.rms() {
-                    if r.is_finite() {
-                        bands.entry(band).or_default().push(r);
-                        band_days.entry(band).or_default().insert(*day);
-                    }
+                if let Some(r) = c.rms()
+                    && r.is_finite()
+                {
+                    bands.entry(band).or_default().push(r);
+                    band_days.entry(band).or_default().insert(*day);
                 }
             }
             for (band, v) in &bands {
@@ -676,7 +685,9 @@ fn main() {
             jd_date(a as f64 * DAY_S),
             jd_date(b as f64 * DAY_S)
         )),
-        _ => {}
+        (a, b) => eprintln!(
+            "span: first day {a:?} or last day {b:?} is absent — the records carry no day"
+        ),
     }
 
     let body = out.join("\n") + "\n";

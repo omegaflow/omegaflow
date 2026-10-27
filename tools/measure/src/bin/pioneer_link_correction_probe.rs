@@ -1303,11 +1303,13 @@ fn main() {
         for i in 0..n {
             cnt[cell0[i]] += 1;
         }
-        cnt.iter()
-            .copied()
-            .filter(|&c| c > 0)
-            .min()
-            .map_or(0, |v| v)
+        match cnt.iter().copied().filter(|&c| c > 0).min() {
+            Some(v) => v,
+            None => {
+                eprintln!("min n/cell: every epoch×file cell is empty — the count stays 0");
+                0
+            }
+        }
     };
     let max_off = offset0
         .iter()
