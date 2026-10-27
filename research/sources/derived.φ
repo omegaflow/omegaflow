@@ -101,3 +101,69 @@ host noise.discomap.eea.europa.eu
 host zeus.wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
   api_quote "42-44 i 3 Depth in kilometers."
+kind data
+host doi.pangaea.de
+  zustand gemessen
+  api_cite https://doi.pangaea.de/10.1594/PANGAEA.981231
+  api_ref "National Geophysical Data Center / World Data Service (NGDC/WDS) (2025). Seismicity catalog collection, 2150 BC to 1996 AD. PANGAEA."
+  api_quote "The Seismicity Catalog Collection is a compilation dataset on over four million earthquakes dating from 2150 BC to 1996 AD"
+  host_cite https://doi.pangaea.de/10.1594/PANGAEA.981231
+  host_quote "Data Publisher for Earth & Environmental Science"
+  ttl 0
+  applies https://doi.pangaea.de/10.1594/PANGAEA.981231
+  note Kompilation der NGDC-Erdbebenkataloge, 1996 als CD erschienen; ueber vier Millionen Ereignisse, kein Stationsnetz, deshalb derived
+
+host data.earthscope.org
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP22-MASK-3D.r0.0-n4c.nc
+  api_ref "Alistair Boyce, University of Cambridge; EarthScope EMC, DOI 10.17611/dp/emc.2023.afrp22.1, Revision r0.0. AFRP22: An absolute P-wave tomographic model mask for Africa."
+  instrument_cite https://ds.iris.edu/ds/products/emc/
+  instrument_ref "EarthScope Data Services (DS), ds.iris.edu — Produktseite des Repository für abgeleitete Produkte. NSF NGF Data Products."
+  instrument_quote "Earth Model Collaboration (EMC)"
+  host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP22-MASK-3D.r0.0-n4c.volume.bin
+  host_quote "model AFRP22 … data_revision r0.0"
+  applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP22-MASK-3D.r0.0-n4c.volume.bin line=13039
+  note Wie 13030: Variable `mask` (1/0) im NetCDF-Kopf; model_subtype "Absolute P-wave speed". Statisch.
+
+host data.earthscope.org
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/BBNAP19-MASK-3D.r0.0-n4c.nc
+  api_ref "Alistair Boyce, University of Cambridge; EarthScope EMC, DOI 10.17611/dp/emcbbnap19, Revision r0.0. Resolution mask for An absolute P-wave tomographic model with focus on eastern North American upper mantle structure (BBNAP19)."
+  instrument_cite https://ds.iris.edu/ds/products/emc/
+  instrument_ref "EarthScope Data Services (DS), ds.iris.edu — Produktseite des Repository für abgeleitete Produkte. NSF NGF Data Products."
+  instrument_quote "Earth Model Collaboration (EMC)"
+  host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/BBNAP19-MASK-3D.r0.0-n4c.volume.bin
+  host_quote "model BBNAP19 … data_revision r0.0"
+  applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/BBNAP19-MASK-3D.r0.0-n4c.volume.bin line=13048
+  note Wie 13030; Variable `mask`.
+
+host data.earthscope.org
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/CAP22-MASK-5deg-3D.r0.0-n4c.nc
+  api_ref "Alistair Boyce, University of Cambridge; EarthScope EMC, DOI 10.17611/dp/emc.2023.cap22.1, Revision r0.0. CAP22: An absolute P-wave tomographic model for North America with focus on Canadian and Alaskan mantle structure, excluding crustal correction."
+  instrument_cite https://ds.iris.edu/ds/products/emc/
+  instrument_ref "EarthScope Data Services (DS), ds.iris.edu — Produktseite des Repository für abgeleitete Produkte. NSF NGF Data Products."
+  instrument_quote "Earth Model Collaboration (EMC)"
+  host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin
+  host_quote "model CAP22 … data_revision r0.0"
+  applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin line=13057
+  note Wie 13030; Variable `mask`, Raster 5 Grad.
+
+host data.earthscope.org
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUM_percent.r0.0-n4c.nc
+  api_ref "EarthScope EMC, Modell GYPSUM, Revision r0.0, Metadaten 2025. A joint tomographic model of mantle density and seismic wave speeds (GYPSUM)."
+  instrument_cite https://ds.iris.edu/ds/products/emc/
+  instrument_ref "EarthScope Data Services (DS), ds.iris.edu — Produktseite des Repository für abgeleitete Produkte. NSF NGF Data Products."
+  instrument_quote "Earth Model Collaboration (EMC)"
+  host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUM_percent.r0.0-n4c.volume.bin
+  host_quote "model GyPSuM … data_revision r0.0"
+  applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUM_percent.r0.0-n4c.volume.bin line=13084
+  note Variablen `dvs`/`dvp` im NetCDF-Kopf; die Einheit steht als "percent" im Dateinamen der Quelle (GYPSUM_percent), nicht als units-Attribut der Variablen — ausgewiesen, nicht geglaettet.
+
+host data.earthscope.org
+  api_cite https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc
+  api_ref "EarthScope EMC, Modell TX2019slab, Revision r0.0, Metadaten 2025. A new P and S tomography model incorporating subducting slabs (TX2019slab)."
+  instrument_cite https://ds.iris.edu/ds/products/emc/
+  instrument_ref "EarthScope Data Services (DS), ds.iris.edu — Produktseite des Repository für abgeleitete Produkte. NSF NGF Data Products."
+  instrument_quote "Earth Model Collaboration (EMC)"
+  host_cite https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin
+  host_quote "model TX2019slab … data_revision r0.0"
+  applies https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin line=13093
+  note Wie 13084; Variable `dvp`, Einheit aus dem Quell-Dateinamen (percent).
