@@ -8287,9 +8287,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "ASKAP = The Australian Square Kilometre Array Pathfinder (32 occurrences)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8303,9 +8303,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "CHIME/FRB = The Canadian Hydrogen Intensity Mapping Experiment (30 occurrences) - see http://chime-experiment.ca/"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8319,9 +8319,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "Parkes = The Parkes radio telescope (28 occurrences) Pushchino = The Pushchino Radio Astronomy Observatory (11 occurrences)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8334,9 +8334,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "Pushchino = The Pushchino Radio Astronomy Observatory (11 occurrences) - see http://www.frb.su/catalogue-prao-frb"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8349,9 +8349,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "UTMOST = The Molonglo Radio Telescope (9 occurrences) - see http://astronomy.swin.edu.au/research/utmost/"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8364,9 +8364,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "GBT = The Green Bank telescopes (2 occurrences)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8379,9 +8379,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "arecibo = The Arecibo telescope (2 occurrences) VLA = The Very Large Array radio telescope (1 occurrence)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8394,9 +8394,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "VLA = The Very Large Array radio telescope (1 occurrence)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8409,9 +8409,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "FAST = The Five-hundred-meter Aperture Spherical radio Telescope (1 occurrence)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8424,9 +8424,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "DSA-10 = The Deep Synoptic Array ten-antenna prototype (1 occurrence)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -8440,9 +8440,9 @@ host tapvizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/other/PASA/33.45?format=html
   api_ref "CDS VizieR, ReadMe for the PASA 33.45 catalogue. VizieR ReadMe J/other/PASA/33.45 — FRB catalogue, byte-by-byte description (frbcat.dat)."
   api_quote "244- 251 F8.3 cm-3.pc DM [103.5/2596.1] Measured dispersion measure of the FRB (6)"
-  instrument_cite https://cdsarc.cds.unistra.fr/ftp/J/other/PASA/33.45/ReadMe
+  instrument_cite https://api.crossref.org/works/10.1017/pasa.2020.41
   instrument_ref "CDS VizieR, plain-text ReadMe. VizieR ReadMe J/other/PASA/33.45 (ftp plain text) — frbcat.dat."
-  instrument_quote "Apertif = The Apertif Radio Transient System (ARTS) for the Westerbork Synthesis Radio Telescope (WSRT) (1 occurrence)"
+  instrument_quote "The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope"
   probe 2026-10-25T11:56:25Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+%22J/other/PASA/33.45/frbcat%22
   fields teff gmag
   applies https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -38347,3 +38347,4 @@ host ngdc.noaa.gov
   probe 2026-10-27T10:22:00Z 200 https://www.ngdc.noaa.gov/hazard/earthqk.shtml
   zustand gemessen
   note Zusammenstellung zerstoererischer Beben mit Toten, Schaeden und Intensitaet; kein Stationsnetz, berichtete Groessen; DOI 10.7289/V5TD9V7K
+

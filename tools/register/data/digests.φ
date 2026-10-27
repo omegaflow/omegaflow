@@ -23897,6 +23897,15 @@ doc https://www.ztf.caltech.edu/
   claim datenfreigabe alle zwei Monate "ZTF delivers bi-monthly public data releases of high quality and reliable data products"
   claim betrieb seit 2018 "has been continuously scanning the entire Northern sky every two days since 2018"
 
+doc https://api.crossref.org/works/10.1017/pasa.2020.41
+  title The Rapid ASKAP Continuum Survey I: Design and first results
+  source McConnell et al. (2020), Publications of the Astronomical Society of Australia, DOI 10.1017/pasa.2020.41
+  kind instrument
+  claim geraet RACS ist die erste grosse Durchmusterung mit dem vollen 36-Antennen-ASKAP-Teleskop ""The Rapid ASKAP Continuum Survey (RACS) is the first large-area survey to be conducted with the full 36-antenna Australian Square Kilometre Array Pathfinder (ASKAP) telescope""
+  claim band 700 bis 1800 MHz ""cover the full ASKAP band of 700–1800 MHz""
+  claim standort ASKAP-Standort in Westaustralien ""the whole sky visible from the ASKAP site in Western Australia""
+  claim frame ICRS ""
+
 doc https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html
   title Electroencephalography (EEG) — BIDS Specification
   source Brain Imaging Data Structure (BIDS), Modality-specific files, EEG
