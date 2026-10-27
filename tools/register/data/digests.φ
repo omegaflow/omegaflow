@@ -2051,6 +2051,7 @@ doc https://www.euclid-ec.org/public/mission/vis/
   claim Belichtung 565 sec "During this time four nominal duration exposures of 565 sec and two shorter exposures of 100 sec are taken"
   claim Band 550-950 nm "VIS observes in only a single broad band from 550nm to 950nm."
   claim device VIS ""VIS slightly under-samples the telescope point spread function, but this is recovered through multiple exposures, so its effective angular resolution is 0.18 arcsec.""
+  claim device VIS ""The VIS instrument is one of two instruments on Euclid.""
 
 doc https://www.fdsn.org/networks/detail/IV/
   title IV: Italian National Seismic Network
@@ -3421,6 +3422,7 @@ doc https://lgpress.clemson.edu/publication/streamflow-what-is-it-and-how-do-we-
   claim Teilquerschnitte 25 bis 30 "The USGS recommends using between twenty-five to thirty subsections"
   claim Anteil je Teilquerschnitt maximal 10 Prozent "no more than 10 percent."
   claim Beispiel Mississippi 308000 bis 843000 cfs "the average discharge in the Mississippi River at Baton Rouge, Louisiana, ranges between 308,000 and 843,000 ft3/s"
+  claim device current meter ""Mechanical methods include the Pygmy current meter and USGS Type AA current meter or Price-Type current meter.""
 
 doc https://sbnarchive.psi.edu/pds3/dawn/grav/DWNCGRS_0/DOCUMENT/T2-18-L5.PDF
   title TRK-2-18 Tracking System Interfaces — Orbit Data File Interface (JPL D-16765, Revision E)
@@ -3777,6 +3779,7 @@ doc https://en.wikipedia.org/wiki/Seismometer
   claim Geophon-Bereich down to 1 Hz "They receive frequencies from several hundred hertz down to 1 Hz."
   claim device seismometer ""Early seismometers used optical levers or mechanical linkages to amplify the small motions involved, recording on soot-covered paper or photographic paper.""
   claim device seismometer ""Early seismometers used optical levers or mechanical linkages to amplify the small motions involved, recording on soot-covered paper or photographic paper.""
+  claim device seismometer ""A seismometer is an instrument that responds to ground displacement and shaking caused by quakes, volcanic eruptions, and explosions.""
 
 doc https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
   title SIGNIFICANT EARTHQUAKES OF THE WORLD, 2000
@@ -5548,6 +5551,7 @@ doc https://safecast.org/devices/bgeigie-nano/
   claim Standmessung auch für ortsfeste Messungen und Kontaminationssuche ""It can also be used for taking static readings and contamination findings.""
   claim Takt im Logbetrieb eine Messung alle 5 Sekunden mit Zeit und Ort ""In logging mode, the Nano takes a measurement every 5 seconds and logs the time and location coordinates.""
   claim device bGeigie ""Kits bGeigieZen (as kit or fully assembled).""
+  claim device bGeigie ""The Safecast bGeigie Nano is a mobile, GPS enabled, logging, radiation sensor.""
 
 doc https://sbuv.gsfc.nasa.gov/solar/compositev2/
   title Verzeichnis solar/compositev2, solare Spektren in 1-nm-Bins
@@ -7249,6 +7253,7 @@ doc https://ogle.astrouw.edu.pl/main/general.html
   claim auslese 98 Sekunden Auslesezeit, 6 bis 9 e Rauschen "The readout time of the camera is 98 seconds with readout noise of 6-9 e (depending on chip) and the gain of 1.3 e/ADU."
   claim ziele Magellansche Wolken und galaktisches Bulge als Felder "The Magellanic Clouds and the Galactic Bulge are the most natural locations to conduct such search …"
   claim device CCD ""The first 'electronic light', taken with the main CCD camera was registered on July 18, 1996.""
+  claim device CCD ""Observations are collected with the new 'second generation' CCD mosaic camera, commisioned in May 2001.""
 
 doc https://open-meteo.com/en/docs#current-conditions
   title Open-Meteo Forecast API (Dokumentation, Abschnitt Current Conditions)
@@ -8021,6 +8026,7 @@ doc https://lasp.colorado.edu/instruments/see/
   claim Instrument Solar EUV Experiment an Bord von TIMED ""The Solar EUV Experiment (SEE) is one of the four scientific instruments aboard the TIMED spacecraft.""
   claim Zielgrösse EUV-Irradianz als Energiequelle der oberen Atmosphäre ""The SEE instrument is determining the irradiance of the highly variable solar extreme ultraviolet (EUV) radiation, one of the major energy sources for the upper atmosphere.""
   claim Messart Fernerkundung im Ultraviolett ""Instrument Type: Remote Sensing: Ultraviolet""
+  claim device SEE ""The Solar EUV Experiment (SEE) is one of the four scientific instruments aboard the TIMED spacecraft.""
 
 doc https://lasp.colorado.edu/tsis/data/ssi-data
   title TSIS-1 SIM Solar Spectral Irradiance Data
@@ -8400,6 +8406,7 @@ doc https://www.darkenergysurvey.org/the-des-project/instrument/
   claim ccd_dicke etwa zehnmal dicker als übliche CCDs ""DES CCDs are about 10 times thicker than conventional CCDs""
   claim betrieb First Light am 12. September 2012 ""The “Official First Light” images were taken on September 12, 2012.""
   claim spiegel 4 m Durchmesser, 34.000 Pfund ""the Blanco telescope has a 4-meter (13 feet) diameter aluminum-coated primary mirror""
+  claim device DECam ""DECam can be read out in fewer than 30 seconds, faster than most CCD cameras currently in use in astronomy.""
 
 doc https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   title MGG-Datei DME06, Forschungsreise des Schiffes "DMITRIJ MENDELEEV" 1971
@@ -8930,6 +8937,7 @@ doc https://irsa.ipac.caltech.edu/Missions/planck.html
   claim instrumente HFI und LFI "High Frequency Instrument (HFI): 100, 143, 217, 353, 545 and 857 GHz"
   claim betrieb Start Erster Himmelsdurchmusterung August 2009 "Start of First All Sky Survey: August 2009"
   claim datenfreigabe Public Data Release 3 im Januar 2020 "Jan 2020: Public Data Release 3"
+  claim device HFI ""Instruments: * High Frequency Instrument (HFI): 100, 143, 217, 353, 545 and 857 GHz * Low Frequency Instrument (LFI): 30, 44, and 70 GHz""
 
 doc src/archivar/itrf_sinex.rs
   title Parser fuer ITRF-SINEX nach das interne Binaerformat "IRF"
@@ -8973,6 +8981,7 @@ doc https://www.jmmc.fr/
   claim instrument PIONIER "the PIONIER, GRAVITY and MATISSE data reduction"
   claim instrument GRAVITY "the PIONIER, GRAVITY and MATISSE data reduction"
   claim instrument MATISSE "the PIONIER, GRAVITY and MATISSE data reduction"
+  claim device interferometers ""The JMMC is commited to provide support to the users of the VLTI and other interferometers.""
 
 doc https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
   title Format for Spacecraft 3-D Normal Point Observations
@@ -9422,6 +9431,7 @@ doc https://en.wikipedia.org/wiki/Moderate_Resolution_Imaging_Spectroradiometer
   claim device MODIS ""For other uses, see Modis.""
   claim device MODIS ""For other uses, see Modis.""
   claim device MODIS ""For other uses, see Modis.""
+  claim device MODIS ""The Moderate Resolution Imaging Spectroradiometer (MODIS) is a satellite-based sensor used for earth and climate measurements.""
 
 doc http://mag.gcras.ru/obs-MOS.html
   title Moskva Observatory (MOS) - Analytical Geomagnetic Data Center
@@ -12621,6 +12631,7 @@ doc https://en.wikipedia.org/wiki/Moon_Mineralogy_Mapper
   claim abdeckung ueber 95 Prozent im Globalmodus ""M3 was used to map over 95% of the lunar surface in its low-resolution Global mode""
   claim missionsdauer 312 Tage statt geplanter zwei Jahre ""Chandrayaan-1 operated for 312 days as opposed to the intended two years""
   claim device M3 ""HVM3[edit] The design of the M3 instrument was used as the basis for the HVM3 instrument on the unsuccessful Lunar Trailblazer mission.""
+  claim device M3 ""M3 was aimed at providing the first mineral map of the entire lunar surface.""
 
 doc https://en.wikipedia.org/wiki/Magellan_(spacecraft)
   title Magellan (Venus Radar Mapper)
@@ -13054,6 +13065,7 @@ doc https://doi.pangaea.de/10.1594/PANGAEA.967167?format=textfile
   claim column AUDIO Dateiname .tar null ""* METHOD/DEVICE: Passive acoustic recorder Sono.Vault, develogic GmbH""
   claim column AUDIO (Size) Bytes, im Feld als GBytes geschrieben null ""Audio file (File Size) [Bytes] (AUDIO (Size))""
   claim frame geographic ""
+  claim device Sono.Vault ""After modifications of the hardware setup in December 2014, PALAOA collected passive acoustic data using a Sono.Vault recorder (manufactured by develogic GmbH, Hamburg, Germany).""
 
 doc https://doi.pangaea.de/10.1594/PANGAEA.967167
   title PALAOA 2021: passive akustische Aufnahmen, Datensatzseite
@@ -15440,6 +15452,7 @@ doc https://arxiv.org/abs/1101.2039
   claim device HFI ""View a PDF of the paper titled Planck early results: first assessment of the High Frequency Instrument in-flight performance, by Planck HFI Core Team: P.""
   claim device HFI ""View a PDF of the paper titled Planck early results: first assessment of the High Frequency Instrument in-flight performance, by Planck HFI Core Team: P.""
   claim device HFI ""View a PDF of the paper titled Planck early results: first assessment of the High Frequency Instrument in-flight performance, by Planck HFI Core Team: P.""
+  claim device HFI ""HFI has been operating flawlessly since launch on 14 May 2009.""
 
 doc https://arxiv.org/abs/1605.01054
   title An Open Catalog for Supernova Data
@@ -17102,6 +17115,7 @@ doc https://en.wikipedia.org/wiki/SuperDARN
   claim hoehe F-Region 300 km ""a map of high-latitude plasma velocity at F region altitudes (300 km)""
   claim frame geographic ""
   claim device SuperDARN ""This work led to SuperDARN, a network of HF radars with pairs of radars having overlapping fields of view.""
+  claim device SuperDARN ""SuperDARN radars are primarily used to map high-latitude plasma convection in the F region of the ionosphere.""
 
 doc https://supermag.jhuapl.edu/info/
   title SuperMAG: About SuperMAG — Netz bodengestützter Magnetometer
@@ -18024,6 +18038,7 @@ doc https://en.wikipedia.org/wiki/Global_Positioning_System
   claim offset 19 Sekunden gegen TAI ""The lack of corrections means that GPS time remains at a constant offset with International Atomic Time (TAI) (TAI – GPS = 19 seconds).""
   claim device GPS ""For other uses, see GPS (disambiguation).""
   claim device GPS ""For other uses, see GPS (disambiguation).""
+  claim device GPS ""The Global Positioning System (GPS) is a satellite-based hyperbolic navigation system owned by the United States Space Force and operated by Mission Delta 31.""
 
 doc https://en.wikipedia.org/wiki/High_Altitude_Water_Cherenkov_Observatory
   title High Altitude Water Cherenkov Observatory
@@ -18057,6 +18072,7 @@ doc https://en.wikipedia.org/wiki/IceCube_Neutrino_Observatory
   claim upgrade 5 zusaetzliche Strings ""added five more closely spaced and denser instrumented strings of light sensors at bottom center of the 86 existing strings""
   claim device IceCube ""For the satellite, see IceCube (spacecraft).""
   claim device IceCube ""For the satellite, see IceCube (spacecraft).""
+  claim device IceCube ""IceCube is designed to look for point sources of neutrinos in the teraelectronvolt (TeV) range to explore the highest-energy astrophysical processes.""
 
 doc https://en.wikipedia.org/wiki/Integrated_Forecasting_System
   title Integrated Forecasting System
@@ -18528,6 +18544,7 @@ doc https://irsa.ipac.caltech.edu/Missions/ztf.html
   claim filter ZTF_g, ZTF_r, ZTF_i ""ZTF_g, ZTF_r, ZTF_i""
   claim release Data Release 24 vom 22. Januar 2026 ""Latest: Data Release 24, 2026-01-22""
   claim zugang Katalogabfrage, Bildzugriff, HATS-Parquet ""Interactive access to ZTF data.""
+  claim device ZTF ""ZTF is a fully-automated, wide-field survey aimed at a systematic exploration of the optical transient sky.""
 
 doc https://lasair-ztf.lsst.ac.uk/
   title Lasair — ZTF Transient Alerts (Startseite)
@@ -20950,6 +20967,7 @@ doc https://www.goes-r.gov/spacesegment/mag.html
   claim ausleger Magnetometer-Ausleger entfaltet sich nach dem Start ""The Magnetometer boom deploys after the spacecraft launches""
   claim produkt Datenprodukt MAG beim NCEI ""MAG_Data_Product""
   claim device MAG ""/* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; }/* Transition effect.""
+  claim device MAG ""The MAG requirements are similar to the tri-axial fluxgates that have previously flown.""
 
 doc https://zenodo.org/api/records/21380428/files/GRBR%20input%20data.zip/content
   title GRBR C/NOFS Data Year 2012-2014 and GTEX Data Year 2014
@@ -21454,6 +21472,7 @@ doc https://www.ndbc.noaa.gov/dart/dart.shtml
   claim rueckkehr Standardmodus nach vier Stunden ohne Ereignis ""The system returns to standard transmission after 4 hours of 1-minute real-time transmissions if no further events are detected.""
   claim archiv Archiv beim NCEI ""National Centers for Environmental Information (NCEI) is the long-term archive center for recovered DART® data""
   claim device bpr ""An acoustic link transmits data from the BPR on the seafloor to the surface buoy.""
+  claim device bottom pressure recorder ""An acoustic link transmits data from the BPR on the seafloor to the surface buoy.""
 
 doc https://www.ndbc.noaa.gov/faq/rsa.shtml
   title What are the sensor reporting, sampling, and accuracy readings?
@@ -23786,6 +23805,7 @@ doc http://web.archive.org/web/20260614190221/https://www.aoml.noaa.gov/hrd/form
   claim korrektur 2015er Operationsalgorithmus "Reprocessed using 2015 operational algorithm"
   claim frame geographic ""
   claim timescale UTC ""
+  claim device SFMR ""'_SFMR' denotes a Stepped Frequncy Microwave Radiometer file.""
 
 doc https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
   title Files produced by MATLAB script that selects negative bay onsets corresponding to the onset of a magnetospheric substorm expansion
@@ -24032,6 +24052,24 @@ doc https://www.ign.es/web/ign/portal/sis-catalogo-terremotos
   claim phasen zu jedem Beben sind die Phasen abrufbar ""Si selecciona "Sí", verá un enlace en la página siguiente desde el cual podrá ver las fases de todos los terremotos que cumplan los requisitos introducidos en la búsqueda""
   claim tiefe Tiefe und Phasen sind waehlbare Merkmale der Suche ""Profundidad y fases""
   claim frame geographic ""
+
+doc https://www.isc.ac.uk/about/history
+  title History — International Seismological Centre
+  source International Seismological Centre (ISC), About, History
+  kind instrument
+  claim netz das ISS entstand nach dem Ersten Weltkrieg aus Milnes Arbeit zum internationalen Austausch von Messwerten ""The need for international exchange of readings was soon recognised by Professor John Milne, whose work resulted in the International Seismological Summary""
+  claim betrieb nach Milnes Tod finanzierte sich der ISS vor allem aus Colleges ""After Milne's death, the International Seismological Summary operated with funding principally from colleges""
+  claim frame geographic ""
+
+doc http://www.koeri.boun.edu.tr/new/en/history
+  title History — Kandilli Observatory and Earthquake Research Institute (KOERI)
+  source Bogazici University, Kandilli Observatory and Earthquake Research Institute
+  kind instrument
+  claim geraet zwei Seismographen zu je 3200 Franken beschafft ""Two seismographs were purchased at 3,200 Franks each""
+  claim geraet Seismographen in Istanbul aufgestellt und Seismologie gelehrt ""He installed a number of seismographs in Istanbul, and taught seismology to young students""
+  claim beschaffung nach einer Suche in Italien in Auftrag gegeben ""It was intended to purchase these, and following a search, the seismographs were commissioned from Italy""
+  claim frame geographic ""
+  claim device seismograph ""Two seismographs were purchased at 3,200 Franks each""
 
 doc https://minorplanetcenter.net/mpcops/documentation/ades/
   title ADES — Astrometry Data Exchange Standard
@@ -25497,6 +25535,7 @@ doc https://themis.ssl.berkeley.edu/instrument_asi.shtml
   claim institution UCB und UofC "University of California, Berkeley (UCB) and University of Calgary (UofC), Canada"
   claim timescale UTC ""
   claim device ASI ""The ASI array consists of 20 cameras covering a large section of the auroral oval with one-kilometer resolution.""
+  claim device ASI ""The THEMIS ground-based All-Sky Imager (ASI) array observes the white light aurora over the North American continent from Canada to Alaska.""
 
 doc https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf
   title thg_l1_ast_fsim_20220131_v01.cdf (THEMIS GBO, All-Sky Imager FSIM)
@@ -25650,6 +25689,7 @@ doc https://science.nasa.gov/mission/webb/nirspec/
   claim frame none ""
   claim device NIRSpec ""The NIRSpec is the first spectrograph in space that has this remarkable multi-object capability.""
   claim device NIRSpec ""The NIRSpec is the first spectrograph in space that has this remarkable multi-object capability.""
+  claim device NIRSpec ""NIRSpec operates over a wavelength range of 0.6 to 5 microns.""
 
 doc https://s3.amazonaws.com/openneuro.org/ds007471/sub-23/eeg/sub-23_task-jointaction_eeg.json
   title EEG-Sidecar sub-23 task-jointaction
