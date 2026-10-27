@@ -118,7 +118,7 @@ host archives.esac.esa.int
   api_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.LBL
   api_quote "MAGNETIC FIELD DATA (8 SEC) IN A HALLEY CENTERED SOLAR ECLIPTIC COORDINATE SYSTEM"
   instrument_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/AAREADME.TXT
-  instrument_quote INSTRUMENT_TYPE = "RADIO SCIENCE"
+  instrument_quote "The data contained in this dataset contains the data taken by the Giotto FLUXGATE MAGNETOMETER Experiment (MAG)."
   host_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
   host_quote "HTTP last-modified: Tue, 01 Feb 2005 16:33:32 GMT"
   probe 2026-10-24T23:27:17Z 206 https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
@@ -207,7 +207,7 @@ host archives.esac.esa.int
   api_cite https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/DATASET.CAT
   api_quote "For X-Band we usually have values of about -50/-70 dBm, for S-Band of about -70/-80 dBm. The fluctuation range should not exceed 1 dBm."
   instrument_cite https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/INST.CAT
-  instrument_quote INSTRUMENT_TYPE = "RADIO SCIENCE"
+  instrument_quote "Rosetta (RO) Radio Science Investigations utilized instrumentation with elements on both the spacecraft and ground (Earth)."
   host_cite https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
   host_quote "HTTP last-modified: Tue, 01 Feb 2005 16:33:32 GMT"
   probe 2026-10-24T23:40:18Z 206 https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-C-RSI-1-2-3-ESC1-0446-V1.0/CATALOG/DATASET.CAT
@@ -1793,7 +1793,7 @@ host api.dataplatform.knmi.nl
   unit K
   interval 600
   api_cite https://developer.dataplatform.knmi.nl/edr-api
-  api_quote "10-minute-in-situ-meteorological-observations"
+  api_quote "Near real-time 10-minute automated in-situ ground-based meteorological observations in the Netherlands"
   instrument_cite https://english.knmidata.nl/open-data/actuele10mindataknmistations
   instrument_quote "KNMI collects observations from the automatic weather stations situated in the Netherlands and BES islands on locations such as aerodromes and North Sea platforms."
   fields knmi_air_temperature
@@ -1805,7 +1805,7 @@ host api.dataplatform.knmi.nl
   unit m/s
   interval 600
   api_cite https://developer.dataplatform.knmi.nl/edr-api
-  api_quote "10-minute-in-situ-meteorological-observations"
+  api_quote "Near real-time 10-minute automated in-situ ground-based meteorological observations in the Netherlands"
   instrument_cite https://english.knmidata.nl/open-data/actuele10mindataknmistations
   instrument_quote "The weather stations report every 10 minutes meteorological parameters such as temperature, relative humidity, wind, air pressure, visibility, precipitation and cloud cover."
   fields knmi_air_temperature
@@ -1817,7 +1817,7 @@ host api.dataplatform.knmi.nl
   unit m/s
   interval 600
   api_cite https://developer.dataplatform.knmi.nl/edr-api
-  api_quote "10-minute-in-situ-meteorological-observations"
+  api_quote "Near real-time 10-minute automated in-situ ground-based meteorological observations in the Netherlands"
   instrument_cite https://english.knmidata.nl/open-data/actuele10mindataknmistations
   instrument_quote "| ff | Wind Speed at 10m 10 Min Average with MD | m/s | 1 |"
   fields knmi_air_temperature
@@ -3071,7 +3071,7 @@ host vizier.cds.unistra.fr
   api_cite https://cdsarc.cds.unistra.fr/ftp/II/346/ReadMe
   api_quote "225-233  F9.6  mas     LDD       ?=-1 Limb-Darkened Disk diameter"
   instrument_cite https://cdsarc.cds.unistra.fr/viz-bin/cat/II/346
-  instrument_quote "techniques: interferometric"
+  instrument_quote "SearchCal creates a dynamical catalogue of stars suitable to calibrate Optical Long-Baseline Interferometry (OLBI) observations from on-line queries of CDS catalogues, according to observational parameters."
   probe 2026-10-25T09:52:15Z 200 https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
   fields LDD
   applies https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
@@ -3225,7 +3225,7 @@ host dataverse.harvard.edu
   api_cite https://dataverse.harvard.edu/api/access/datafile/7502710
   api_quote "ICECAT"
   instrument_cite https://dataverse.harvard.edu/
-  instrument_quote "Harvard Dataverse"
+  instrument_quote "Harvard Dataverse is a repository for research data."
   probe 2026-10-25T09:58:26Z 206 https://dataverse.harvard.edu/api/access/datafile/7502710
   fields icecat_sky1
   applies https://dataverse.harvard.edu/api/access/datafile/7502710
@@ -3261,7 +3261,7 @@ host gracedb.ligo.org
   unit 1
   interval 31536000
   api_cite https://ligo-gracedb.readthedocs.io/en/latest/api.html
-  api_quote "GraceDb.api_versions"
+  api_quote "List of available API versions on the server."
   instrument_cite https://emfollow.docs.ligo.org/userguide/content.html
   instrument_quote "The sky localization is saved in a FITS file as a HEALPix all-sky image."
   probe 2026-10-25T09:58:37Z 206 https://gracedb.ligo.org/api/superevents/S250207bg/files/bayestar.multiorder.fits
@@ -3276,7 +3276,7 @@ host metoffice.gov.uk
   api_cite https://www.metoffice.gov.uk/hadobs/hadisst/
   api_quote "HadISST1 is a combination of monthly globally-complete fields of SST and sea ice concentration"
   instrument_cite https://www.metoffice.gov.uk/hadobs/hadiod/
-  instrument_quote "HadIOD"
+  instrument_quote "HadIOD provides in situ observations only and gridded or interpolated fields are not provided."
   host_cite https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
   host_quote "HTTP cache-control: max-age=3600"
   probe 2026-10-25T09:58:39Z 206 https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
@@ -3291,7 +3291,7 @@ host esaskylegacy.esac.esa.int
   api_cite https://cdsarc.cds.unistra.fr/ftp/I/239/ReadMe
   api_quote "Vmag"
   instrument_cite https://www.cosmos.esa.int/web/hipparcos
-  instrument_quote "Hipparcos"
+  instrument_quote "Calculations from observations by the main instrument generated the Hipparcos Catalogue of 118,218 stars charted with the highest precision."
   host_cite http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
   host_quote "HTTP cache-control: no-cache, no-store, max-age=0, must-revalidate"
   fields mag_v
@@ -3303,9 +3303,9 @@ host api.v2.sondehub.org
   unit °C
   interval 3600
   api_cite https://sondehub.org/
-  api_quote "SondeHub"
+  api_quote "This site uses data from the SondeHub database."
   instrument_cite https://www.vaisala.com/en/products/weather-environmental-sensors/upper-air-radiosondes-rs41-rs41-e-models
-  instrument_quote "RS41"
+  instrument_quote "Vaisala RS41 Upper Air Radiosondes provide world-class data to meteorological institutes and organizations, and are known for their accuracy, reliability, and ruggedness."
   probe 2026-10-25T09:59:06Z 206 https://api.v2.sondehub.org/sonde/Y3313219
   fields temp vel_h vel_v heading pressure humidity
   applies https://api.v2.sondehub.org/sonde/Y3313219
@@ -3544,7 +3544,7 @@ host noaa-oar-hourly-gdp-pds.s3.amazonaws.com
   api_cite https://www.aoml.noaa.gov/phod/gdp/
   api_quote "Global Drifter Program"
   instrument_cite https://gdp.ucsd.edu/
-  instrument_quote "drifting buoys"
+  instrument_quote "The Lagrangian Drifter Laboratory innovates drifter and sensor designs as demanded by science applications and evolving requirements."
   fields sst
   applies https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr
   note Zarr-Pfad liefert 404 (Version/Alias nicht vorhanden); SST in K, 6-min-Raster (360 s Blockwert).
@@ -3556,7 +3556,7 @@ host nmdb.eu
   api_cite https://www.nmdb.eu/nest/
   api_quote "Real-Time Database for high-resolution Neutron Monitor measurements"
   instrument_cite https://www.nmdb.eu/
-  instrument_quote "Neutron Monitor"
+  instrument_quote "NMDB provides access to Neutron Monitor measurements from stations around the world."
   probe 2026-10-25T10:01:42Z absent https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
   fields 1
   applies https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
@@ -3569,7 +3569,7 @@ host nmdb.eu
   api_cite https://www.nmdb.eu/nest/
   api_quote "Real-Time Database for high-resolution Neutron Monitor measurements"
   instrument_cite https://www.nmdb.eu/
-  instrument_quote "Neutron Monitor"
+  instrument_quote "NMDB provides access to Neutron Monitor measurements from stations around the world."
   probe 2026-10-25T10:03:13Z absent https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
   fields 1
   applies https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
@@ -3715,7 +3715,7 @@ host dd.weather.gc.ca
   api_cite https://eccc-msc.github.io/open-data/msc-data/nwp_gdps/readme_gdps_en/
   api_quote "Global Deterministic Prediction System"
   instrument_cite https://weather.gc.ca/
-  instrument_quote "GDPS"
+  instrument_quote "Access environmental analysis and model data for different time horizons and application areas as well as geospatial web services."
   probe 2026-10-25T10:03:32Z 206 https://dd.weather.gc.ca/20261025/WXO-DD/model_gdps/15km/
   fields air_temperature mslp wind_speed
   applies https://dd.weather.gc.ca/{today_yyyymmdd}/WXO-DD/model_gdps/15km/
@@ -3739,9 +3739,9 @@ host swarm-diss.eo.esa.int
   unit TECU
   interval 86400
   api_cite https://swarm-diss.eo.esa.int/
-  api_quote "SW_OPER_TECATMS_2F"
+  api_quote "Users accessing Swarm products are intrinsically acknowledging and accepting the above."
   instrument_cite https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm
-  instrument_quote "Swarm"
+  instrument_quote "Although invisible, the magnetic field and electric currents in and around Earth generate complex forces that have immeasurable impact on everyday life."
   probe 2026-10-25T10:03:35Z 200 https://swarm-diss.eo.esa.int/?do=download&file=swarm/Level2daily/Entire_mission_data/TEC/TMS/Sat_A/SW_OPER_TECATMS_2F_20131125T000000_20131125T235959_0502.ZIP
   fields absolute_vtec_tecu
   applies https://swarm-diss.eo.esa.int/?do=download&file=swarm/Level2daily/Entire_mission_data/TEC/TMS/Sat_A/SW_OPER_TECATMS_2F_20131125T000000_20131125T235959_0502.ZIP
@@ -3769,7 +3769,7 @@ host ncdc.noaa.gov
   api_cite https://www.ncei.noaa.gov/cdo-web/webservices/v2
   api_quote "Climate Data Online"
   instrument_cite https://www.ncei.noaa.gov/cdo-web/
-  instrument_quote "station"
+  instrument_quote "Climate Data Online (CDO) provides free access to NCDC's archive of global historical weather and climate data in addition to station history information."
   fields results.value
   applies https://www.ncdc.noaa.gov/cdo-web/api/v2/data
   note API verlangt Token und Datensatz/Datentyp-Parameter, daher 400; Tagesmaximum in C.
@@ -3781,7 +3781,7 @@ host data.openei.org
   api_cite https://data.openei.org/files/6458/Outage_Dataset_R1.zip
   api_quote "Outage_Dataset_R1"
   instrument_cite https://figshare.com/articles/dataset/EAGLE-I_Power_Outage_Data/24237376
-  instrument_quote "EAGLE-I"
+  instrument_quote "collected from utility’s public outage maps on their websites by the EAGLE-I program at ORNL"
   host_cite https://data.openei.org/files/6458/Outage_Dataset_R1.zip
   host_quote "HTTP last-modified: Thu, 24 Apr 2025 22:05:06 GMT"
   probe 2026-10-25T10:03:46Z 206 https://data.openei.org/files/6458/Outage_Dataset_R1.zip
@@ -3794,9 +3794,9 @@ host ndownloader.figshare.com
   unit count
   interval 900
   api_cite https://figshare.com/articles/dataset/EAGLE-I_Power_Outage_Data/24237376
-  api_quote "EAGLE-I"
+  api_quote "collected from utility’s public outage maps on their websites by the EAGLE-I program at ORNL"
   instrument_cite https://figshare.com/articles/dataset/EAGLE-I_Power_Outage_Data/24237376
-  instrument_quote "EAGLE-I"
+  instrument_quote "collected from utility’s public outage maps on their websites by the EAGLE-I program at ORNL"
   host_cite https://ndownloader.figshare.com/files/42547717
   host_quote "HTTP cache-control: public, must-revalidate, proxy-revalidate"
   probe 2026-10-25T10:03:48Z 206 https://ndownloader.figshare.com/files/42547717
@@ -4580,7 +4580,7 @@ host maia.usno.navy.mil
   api_cite https://maia.usno.navy.mil/ser7/readme.finals2000A
   api_quote "59-68    F10.7   Bull. A UT1-UTC (sec. of time)"
   instrument_cite https://crf.usno.navy.mil/ut1-utc
-  instrument_quote "UT1-UTC (VLBI)"
+  instrument_quote "It is a quick and intensive measurement of just the one Earth orientation parameter, UT1−UTC."
   host_cite https://maia.usno.navy.mil/ser7/finals2000A.all
   host_quote "HTTP cache-control: no-cache"
   probe 2026-10-25T09:57:33Z 206 https://maia.usno.navy.mil/ser7/finals2000A.all
@@ -6279,7 +6279,7 @@ host erddap.aoml.noaa.gov
   sampling 3600
   interval 3600
   api_cite https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.html
-  api_quote "sst (Kelvin)"
+  api_quote "Hourly location, current velocity, and temperature collected from Global Drifter Program drifters world-wide."
   instrument_cite https://www.aoml.noaa.gov/phod/gdp/faq.php
   instrument_quote "All drifters are equipped with a sea surface temperature sensor at the bottom of the surface float, which sits approximately 15cm below the ocean surface."
   probe 2026-10-25T11:03:58Z 200 https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst
@@ -8105,7 +8105,7 @@ host api.p2pquake.net
   unit km
   sampling 0.002
   api_cite https://www.p2pquake.net/swagger-ui/specification.yaml
-  api_quote "深さ(km)。「ごく浅い」は0、震源情報が存在しない場合は-1となります。"
+  api_quote "depth: type: integer format: int32 description: 深さ(km)。「ごく浅い」は0、震源情報が存在しない場合は-1となります。"
   instrument_cite https://en.wikipedia.org/wiki/Seismometer
   instrument_quote "Some seismometers can measure motions with frequencies from 500 Hz to 0.00118 Hz (1/500 = 0.002 seconds per cycle, to 1/0.00118 = 850 seconds per"
   probe 2026-10-25T12:54:46Z 200 https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
@@ -8314,7 +8314,7 @@ host space.fmi.fi
   api_cite https://space.fmi.fi/gic/index.php?page=gasum_final
   api_quote "Top panel: GIC at Mäntsälä as 10-s values."
   instrument_cite https://www.geophysica.fi/pdf/geophysica_2010_46_1-2_059_viljanen.pdf
-  instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about 40 km southwest ... GIC values are saved as 10 s averages, and magnetic field data at the same sampling rate are available from Nurmijärvi."
+  instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about"
   probe 2026-10-25T13:00:51Z 200 https://space.fmi.fi/gic/man_ascii
   fields fmi_gic_a
   applies https://space.fmi.fi/gic/man_ascii
@@ -8328,7 +8328,7 @@ host space.fmi.fi
   api_cite https://space.fmi.fi/gic/index.php?page=gasum_final
   api_quote "Top panel: GIC at Mäntsälä as 10-s values."
   instrument_cite https://www.geophysica.fi/pdf/geophysica_2010_46_1-2_059_viljanen.pdf
-  instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about 40 km southwest ... GIC values are saved as 10 s averages, and magnetic field data at the same sampling rate are available from Nurmijärvi."
+  instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about"
   probe 2026-10-25T13:00:54Z 206 https://space.fmi.fi/gic/man_ascii/man2010.zip
   fields fmi_gic_a
   applies https://space.fmi.fi/gic/man_ascii
@@ -8484,7 +8484,7 @@ host craam-files-bucket.s3.amazonaws.com
   api_cite https://heliophysicsdata.gsfc.nasa.gov/WS/hdp/1/Spase?ResourceID=spase%3A%2F%2FISWI%2FNumericalData%2FAWESOME%2FVLF%2FPT0.02S
   api_quote "Narrowband data are the amplitudes and phase of specific frequencies, usually corresponding to VLF transmitters that are used for communications and navigation."
   instrument_cite https://heliophysicsdata.gsfc.nasa.gov/WS/hdp/1/Spase?ResourceID=spase%3A%2F%2FISWI%2FNumericalData%2FAWESOME%2FVLF%2FPT0.00001S
-  instrument_quote "The Very Low Frequency Atmospheric Weather Electromagnetic System for Observation, Modeling, and Education, or VLF AWESOME, completed in 2004 provides high sensitivity broadband radio measurements ... Broadband data contain direct samples of the receiver output, usually at 100 kHz or 1 MHz sampling frequency."
+  instrument_quote "The Very Low Frequency Atmospheric Weather Electromagnetic System for Observation, Modeling, and Education, or VLF AWESOME, completed in 2004 provides high sensitivity broadband radio measurements"
   probe 2026-10-25T13:05:53Z 206 https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
   fields vlf_awesome_narrowband_amp
   applies https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
@@ -8533,7 +8533,7 @@ host data.ghrc.earthdata.nasa.gov
   api_cite https://ghrc.earthdata.nasa.gov/pub/isslis_v3_fin__3/docs/isslis_v3_fin_dataset.pdf
   api_quote "radiance lightning_event_radiance Event calibrated radiance float uJ/sr/m²/um"
   instrument_cite https://space.oscar.wmo.int/instruments/view/lis_iss
-  instrument_quote "Acronym LIS (ISS) Full name Lightning Imaging Sensor ... Pushbroom, matrix array of 128 x 128 detectors, swath 600 km; each earth location observed continuously (every 2 ms) for about 90 s"
+  instrument_quote "Acronym LIS (ISS) Full name Lightning Imaging Sensor"
   probe 2026-10-25T13:09:52Z 206 https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/isslis_v3_fin__3/ISS_LIS_SC_V3.0_20170301_011617_FIN.hdf
   fields iss_lis_flash_radiance_uj_sr_m2_um
   applies https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/isslis_v3_fin__3/
@@ -8547,7 +8547,7 @@ host data.ghrc.earthdata.nasa.gov
   api_cite https://www.earthdata.nasa.gov/s3fs-public/2025-02/LISOTDSoftwareGuide.pdf
   api_quote "net radiance float32 1 uJ/ster"
   instrument_cite https://space.oscar.wmo.int/instruments/view/otd
-  instrument_quote "Acronym OTD Full name Optical Transient Detector ... Pushbroom, matrix array of 128 x 128 detectors, swath 1300 km; each earth location observed continuously (every 2 ms) for about 3 min"
+  instrument_quote "Pushbroom, matrix array of 128 x 128 detectors, swath 1300 km;"
   probe 2026-10-25T13:08:57Z 206 https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/otdlip_1995.103_daily.tar
   fields rad
   applies https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/
@@ -8561,7 +8561,7 @@ host data.ghrc.earthdata.nasa.gov
   api_cite https://ghrc.earthdata.nasa.gov/pub/lislip__4/docs/lislip_dataset.pdf
   api_quote "radiance lightning_event_radiance Event calibrated radiance float uJ/sr/m²/um"
   instrument_cite https://space.oscar.wmo.int/instruments/view/lis
-  instrument_quote "Acronym LIS Full name Lightning Imaging Sensor ... Pushbroom, matrix array of 128 x 128 detectors, swath 600 km; each earth location observed continuously (every 2 ms) for about 90 s"
+  instrument_quote "Pushbroom, matrix array of 128 x 128 detectors, swath 600 km;"
   probe 2026-10-25T13:08:15Z 206 https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/TRMM_LIS_SC.04.1_1998.001.00539.nc
   fields trmm_lis_flash_radiance_uj_sr_m2_um
   applies https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/
@@ -8589,7 +8589,7 @@ host data.mendeley.com
   api_cite https://data.mendeley.com/public-files/datasets/6mmd96j5bg/files/4e692227-06b1-4c81-87c4-fcba8cf25c24/file_downloaded
   api_quote ";ENERGY= 0.0135 keV x CHANNEL"
   instrument_cite https://www.ias.ac.in/article/fulltext/joaa/046/0027
-  instrument_quote "Although a single spectrum from CLASS typically has 8s exposure (binned on the ground), which corresponds to 12.5 km FWHM, spectra are generated by adding them in time, depending on the solar activity level. … CLASS counts are at 100s cadence, while XSM is at 60 s."
+  instrument_quote "Although a single spectrum from CLASS typically has 8s exposure (binned on the ground), which corresponds to 12.5 km FWHM, spectra are generated by adding"
   probe 2026-10-25T13:17:11Z 206 https://data.mendeley.com/public-files/datasets/6mmd96j5bg/files/4e692227-06b1-4c81-87c4-fcba8cf25c24/file_downloaded
   fields counts energy_ev
   applies url=https://data.mendeley.com/public-files/datasets/6mmd96j5bg/files/4e692227-06b1-4c81-87c4-fcba8cf25c24/file_downloaded
@@ -8825,7 +8825,7 @@ host api.p2pquake.net
   unit km
   sampling 0.002
   api_cite https://www.p2pquake.net/swagger-ui/specification.yaml
-  api_quote "深さ(km)。「ごく浅い」は0、震源情報が存在しない場合は-1となります。"
+  api_quote "depth: type: integer format: int32 description: 深さ(km)。「ごく浅い」は0、震源情報が存在しない場合は-1となります。"
   instrument_cite https://en.wikipedia.org/wiki/Seismometer
   instrument_quote "Some seismometers can measure motions with frequencies from 500 Hz to 0.00118 Hz (1/500 = 0.002 seconds per cycle, to 1/0.00118 = 850 seconds per"
   probe 2026-10-25T12:54:46Z 200 https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
@@ -8943,7 +8943,7 @@ host gportal.jaxa.jp
   unit W
   sampling 0.000235
   api_cite https://www.eorc.jaxa.jp/GPM/doc/product/format/en/02.GPM_DPR_L1_Product_Format_Documentation_E.pdf
-  api_quote "echoPower Type Array Unit 0.01 dBm ... The range is -120 dBm to -20 dBm which corresponds to values in the file from -12000 to -2000."
+  api_quote "The range is -120 dBm to -20 dBm which corresponds to values in the file from -12000 to -2000."
   instrument_cite https://gpm.nasa.gov/missions/GPM/DPR
   instrument_quote "Pulse Repetition Freq. (In nominal operations mode) 4100 to 4400 Hertz"
   probe 2026-10-25T13:12:10Z 200 https://gportal.jaxa.jp/gpr/search/catalog_records.json
@@ -8984,7 +8984,7 @@ host wso.stanford.edu
   api_cite http://wso.stanford.edu/Polar.html
   api_quote "The Sun's Polar Field strength is measured in the polemost 3' apertures at WSO each day, north and south."
   instrument_cite http://wso.stanford.edu/words/Description.ps
-  instrument_quote "WSO's Babcock solar magnetograph measures the line-of-sight component of the photospheric magnetic field using the Zeeman splitting of the 5250.2 A Fe I spectral line. … the integration time for each of the 195 points on the solar disk is 15 seconds"
+  instrument_quote "WSO's Babcock solar magnetograph measures the line-of-sight component of the photospheric magnetic field using the Zeeman splitting of the 5250.2 A Fe I spectral line."
   probe 2026-10-25T12:37:37Z 200 http://wso.stanford.edu/Polar.html
   fields wso_polar_north_t wso_polar_south_t wso_polar_avg_t
   applies http://wso.stanford.edu/Polar.html
@@ -9374,7 +9374,7 @@ host space.fmi.fi
   api_cite https://space.fmi.fi/gic/man_ascii
   api_quote "% Next rows: hour, minute, second, GIC [A] (time in UT)"
   instrument_cite https://www.geophysica.fi/pdf/geophysica_2010_46_1-2_059_viljanen.pdf
-  instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about 40 km southwestward of Mäntsälä ... GIC values are saved as 10 s averages, and magnetic field data at the same sampling rate are available from Nurmijärvi."
+  instrument_quote "The measurement of GIC is based on the use of two magnetometers, one just above the pipe and another at the Nurmijärvi Geophysical Observatory about"
   probe 2026-10-26T00:00:00Z 200 https://space.fmi.fi/gic/man_ascii
   fields fmi_gic_a
   applies https://space.fmi.fi/gic/man_ascii line=12034
@@ -13585,7 +13585,7 @@ host zeus.wdcb.ru
   api_cite https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
   api_quote "long T[10];       // Измеряемые интервалы времени (мс). double G;         // Расчетное значение G ( см*см/(c*c*г) )."
   instrument_cite https://web.archive.org/web/20020814074047id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/welcome_en.html
-  instrument_quote "Each of these values was obtained using the special system which consists of the torsion balance itself housed in the vacuum chamber, the test mass consisted of a cylindrical beam 23 cm long and 1.8 mm in diameter with its axis horizontal and with a 1.6 g sperical mass of diameter 7.2 mm at each end ..."
+  instrument_quote "Each of these values was obtained using the special system which consists of the torsion balance itself housed in the vacuum chamber, the test mass"
   field G gravconst_g_cm3_g_s2 inverse-square gravity cm3/g/s2 0 0.0 0.0
   probe 2026-10-25T14:49:57Z 200 https://web.archive.org/web/20030329170752id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/851211.dat
   probe 2026-10-25T14:49:59Z 200 https://web.archive.org/web/20030329171149id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/860326.dat
@@ -13684,7 +13684,7 @@ host zeus.wdcb.ru
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values."
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer; Wild T-2 Theodolite with a D&I Bartington Instruments fluxgate magnetometer Mag-01H"
   field H msk_h_nt inverse-square em nT 60 0.0 0.0
@@ -13847,7 +13847,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   field aa_star aa_star_nt inverse-square em nT 10800 0.0 0.0
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "Greenwich 1868-1925 1.007 Northern. The 3-hourly aa-index is a simple global geomagnetic activity index."
@@ -13863,7 +13863,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   field aa_star aa_star_nt inverse-square em nT 10800 0.0 0.0
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "Abinger 1926-1956 0.934 Northern. The 3-hourly aa-index is a simple global geomagnetic activity index."
@@ -13879,7 +13879,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   field aa_star aa_star_nt inverse-square em nT 10800 0.0 0.0
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "Hartland 1957- 1.059 Northern. The 3-hourly aa-index is a simple global geomagnetic activity index."
@@ -13895,7 +13895,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   field aa_star aa_star_nt inverse-square em nT 10800 0.0 0.0
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "Melbourne 1868-1919 0.967 Southern. The 3-hourly aa-index is a simple global geomagnetic activity index."
@@ -13911,7 +13911,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   field aa_star aa_star_nt inverse-square em nT 10800 0.0 0.0
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "Toolangi 1920-1979 1.033 Southern. The 3-hourly aa-index is a simple global geomagnetic activity index."
@@ -13927,7 +13927,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   field aa_star aa_star_nt inverse-square em nT 10800 0.0 0.0
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "Canberra 1980- 1.084 Southern. The 3-hourly aa-index is a simple global geomagnetic activity index."
@@ -14305,7 +14305,7 @@ host stac.itslive.cloud
   api_cite https://stac.itslive.cloud/collections
   api_quote "\"description\":\"Ice velocity measurement in meters per year\""
   instrument_cite https://www.usgs.gov/landsat-missions/landsat-8
-  instrument_quote "Landsat 8’s Operational Land Imager (OLI) sensor was developed and built here by the Ball Aerospace & Technologies Corp. … Has a 16-day repeat cycle with an equatorial crossing time of 10:12 a.m. +/- 5 minutes"
+  instrument_quote "Landsat 8’s Operational Land Imager (OLI) sensor was developed and built here by the Ball Aerospace & Technologies Corp."
   field itslive_velocity_m_yr itslive_velocity_m_yr gaussian-inverse-square advective m/yr 2592000 0.0 0.0
   probe 2026-10-25T14:54:54Z 200 https://stac.itslive.cloud
   fields v
@@ -18156,7 +18156,7 @@ host zenodo.org
   api_cite https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
   api_quote "add = [amplitude (nT), bay decrease (nT), bay duration(minutes), bay width (minutes)]"
   instrument_cite https://supermag.jhuapl.edu/info/
-  instrument_quote "SuperMAG is a worldwide collaboration of organizations and national agencies who over the last 6 decades have operated and maintained nearly 600 ground based magnetometers. [...] SuperMAG service includes data with two different temporal resolution, 1-min and 1-sec."
+  instrument_quote "SuperMAG is a worldwide collaboration of organizations and national agencies who over the last 6 decades have operated and maintained nearly 600 ground based magnetometers."
   host_cite https://zenodo.org/api/records/22711679
   host_quote "\"publication_date\": \"2026-09-11\""
   ttl null
@@ -18713,7 +18713,7 @@ host s3.amazonaws.com/openneuro.org
   api_cite https://s3.amazonaws.com/openneuro.org/ds008192/sub-101/ses-02/nirs/sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.json
   api_quote "\"SamplingFrequency\": 4.975124378109454"
   instrument_cite https://www.bionic-france.fr/Cortivision
-  instrument_quote "Cortivision PHOTON CAP is the first fully integrated environment to combine NIRS technology with Virtual Reality (VR) for scientific research and training applications. … Sampling rate: variable, up to 86 Hz."
+  instrument_quote "Cortivision PHOTON CAP is the first fully integrated environment to combine NIRS technology with Virtual Reality (VR) for scientific research and training applications."
   host_cite https://openneuro.org/datasets/ds008192
   host_quote "\"DatasetDOI\": \"doi:10.18112/openneuro.ds008192.v1.0.2\""
   ttl null
@@ -19163,7 +19163,7 @@ host stac.itslive.cloud
   api_cite https://stac.itslive.cloud/collections
   api_quote "\"description\":\"Ice velocity measurement in meters per year\""
   instrument_cite https://www.usgs.gov/landsat-missions/landsat-8
-  instrument_quote "Landsat 8’s Operational Land Imager (OLI) sensor was developed and built here by the Ball Aerospace & Technologies Corp. … Has a 16-day repeat cycle with an equatorial crossing time of 10:12 a.m. +/- 5 minutes"
+  instrument_quote "Landsat 8’s Operational Land Imager (OLI) sensor was developed and built here by the Ball Aerospace & Technologies Corp."
   host_cite https://its-live.jpl.nasa.gov/
   host_quote "Frequency: Variable, Monthly, Annual"
   ttl 2592000
@@ -19898,7 +19898,7 @@ host zeus.wdcb.ru
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values. ... Data on this CD are written in monthly ASCII files as (code)YYMM"
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Observatory technical equipment: Moskva-1 analogue variometric station performing records on phgotographic paper, registering the D, H, Z and F components using Bobrov's system vector magnetometers;"
   host_cite https://web.archive.org/web/20030609191132id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/
@@ -19985,7 +19985,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
   instrument_cite https://swe.bgs.ac.uk/bgs/indices.shtml?index=kpindex
   instrument_quote "The 3-hourly aa-index is a simple global geomagnetic activity index."
   host_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
@@ -20003,7 +20003,7 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
+  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval."
   instrument_cite https://gi.copernicus.org/articles/6/367/2017/gi-6-367-2017.pdf
   instrument_quote "At this date, two La Cour type magnetographs were provided by the International Polar Year Commission to the National Observatory of Brazil (Gama, 1955)."
   host_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
@@ -20032,7 +20032,7 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
+  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval."
   instrument_cite https://gi.copernicus.org/articles/6/367/2017/gi-6-367-2017.pdf
   instrument_quote "At this date, two La Cour type magnetographs were provided by the International Polar Year Commission to the National Observatory of Brazil (Gama, 1955)."
   host_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
@@ -20061,7 +20061,7 @@ host vizier.cfa.harvard.edu
   sampling none
   interval 0
   api_cite https://cdsarc.cds.unistra.fr/ftp/J/A+A/582/A8/ReadMe
-  api_quote "1- 16  F16.8 d       JD        UTC instant of the satellite position (JD) ... 20- 21  I2    h       RAh       Right ascension (J2000) of satellite at date ... 49- 51  I3    mas   e_RAs       Error in RA (J2000) at date (1)"
+  api_quote "1- 16 F16.8 d JD UTC instant of the satellite position (JD)"
   instrument_cite https://arxiv.org/pdf/1508.02997
   instrument_quote "from CCD observations carried out at the Pico dos Dias Observatory in the period 1992-2011"
   host_cite https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
@@ -21030,7 +21030,7 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
+  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval."
   instrument_cite https://gi.copernicus.org/articles/6/367/2017/gi-6-367-2017.pdf
   instrument_quote "At this date, two La Cour type magnetographs were provided by the International Polar Year Commission to the National Observatory of Brazil (Gama, 1955)."
   host_cite https://web.archive.org/web/20020708091700id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
@@ -21087,7 +21087,7 @@ host zeus.wdcb.ru
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values. ... Data on this CD are written in monthly ASCII files as (code)YYMM"
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Observatory technical equipment: Moskva-1 analogue variometric station performing records on phgotographic paper, registering the D, H, Z and F components using Bobrov's system vector magnetometers;"
   host_cite https://web.archive.org/web/20030608080009id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/
@@ -21107,7 +21107,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
-  api_quote "DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES  TREE HOURLY  VALUES ... 2-9 1-32 I4 248 tree Hourly Values for the month. Values are in nanoTeslas  A missing value is identified by -1."
+  api_quote "DIGITAL IMA EXCHANGE FORMAT FOR AM,AA INDICES TREE HOURLY VALUES"
   instrument_cite http://www.wdcb.ru/stp/geomag/geomagn_aa_Aa_ind.html
   instrument_quote "The index aa is measured in nanoTeslas (nT)."
   host_cite https://web.archive.org/web/20030831055015id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/
@@ -21351,11 +21351,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32206
   field energy_class regional_energy_class 1 0
@@ -21370,11 +21370,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32230
   field energy_class regional_energy_class 1 0
@@ -21389,11 +21389,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32222
   field energy_class regional_energy_class 1 0
@@ -21408,11 +21408,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32166
   field energy_class regional_energy_class 1 0
@@ -21427,11 +21427,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32198
   field energy_class regional_energy_class 1 0
@@ -21446,11 +21446,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32214
   field energy_class regional_energy_class 1 0
@@ -21465,11 +21465,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32174
   field energy_class regional_energy_class 1 0
@@ -21484,11 +21484,11 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  api_quote "35-37 Depth of hypocenter in kilometers (i3) ... 40-43 Energy class of earthquake (f4.1) ... 47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  api_quote "40-43 Energy class of earthquake (f4.1)"
   instrument_cite https://www.rand.org/pubs/reports/R1647.html
   instrument_quote "Long-period seismometers are not as mechanically and geometrically precise as modern U.S. types."
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl no-sampling
   block 32190
   field energy_class regional_energy_class 1 0
@@ -21782,7 +21782,7 @@ host www.carisma.ca
   sampling 8
   interval 1
   api_cite https://donnees-data.asc-csa.gc.ca/users/OpenData_DonneesOuvertes/pub/CARISMA/carisma_csv/mag/daily/2009/DAWS/20090105DAWS.MAG.csv
-  api_quote "# Site Lat Long yyyymmdd CoordSys Units no of records ... DAWS  64.048 220.890 20090105 GEODETIC nT  1Hz ... # Date(dd/mm/yyyy),time(hh:mi:ss),X,Y,Z,F=. if the data is valid anything else the data is suspect."
+  api_quote "# Site Lat Long yyyymmdd CoordSys Units no of records"
   instrument_cite https://carisma.ca/backgrounder/sensing-magnetic-fields
   instrument_quote "It is this asymmetry which is measured and is the basis for the fluxgate magnetometer."
   host_cite https://carisma.ca/carisma-data/fgm-data-format
@@ -21855,7 +21855,7 @@ host zenodo.org
   sampling 60
   interval 60
   api_cite https://zenodo.org/api/records/13309040/files/00readme.txt/content
-  api_quote "Both data sets provide a substantial number of 60 second interval Doppler data. ... CMPTIM is the “compression” time, or the integration interval for the Doppler data."
+  api_quote "Both data sets provide a substantial number of 60 second interval Doppler data."
   instrument_cite https://ntrs.nasa.gov/api/citations/19880021170/downloads/19880021170.pdf
   instrument_quote "Deep Space Network operates and maintains the Earth-based two-way communications link for unmanned spacecraft exploring the solar system"
   host_cite https://zenodo.org/records/13309040
@@ -21962,7 +21962,7 @@ host rpw-lira.obspm.fr
   sampling 10
   interval 10
   api_cite https://www.cosmos.esa.int/documents/3689933/11863517/ROC-PRO-DAT-NTT-00075-LES_Iss01_Rev03_%28RPW-Data-Product-Description-Document%29.pdf
-  api_quote "4.1.4.6 SOLO_L3_RPW-BIA-EFIELD-10-SECONDS data product Calibrated electric vector in SRF ... The data has been downsampled to uninterrupted 10 second time resolution (median) ... EDC_SRF UNITS CDF_CHAR mV/m ... EDC_SRF SI_CONVERSION CDF_CHAR 1.0e-3>V/m"
+  api_quote "4.1.4.6 SOLO_L3_RPW-BIA-EFIELD-10-SECONDS data product Calibrated electric vector in SRF"
   instrument_cite https://web.archive.org/web/20240301153200id_/https://www.aanda.org/articles/aa/full_html/2020/10/aa36214-19/aa36214-19.html
   instrument_quote "This instrument is designed to measure in-situ magnetic and electric fields and waves from the continuous to a few hundreds of kHz."
   host_cite https://www.cosmos.esa.int/documents/3689933/11863517/ROC-PRO-DAT-NTT-00075-LES_Iss01_Rev03_%28RPW-Data-Product-Description-Document%29.pdf
@@ -22102,7 +22102,7 @@ host product.gosat-gw.nies.go.jp
   instrument_cite https://link.springer.com/article/10.1186/s40645-025-00684-9
   instrument_quote "TANSO-3 is a high-resolution grating spectrometer designed to measure reflected sunlight in the visible to short-wave infrared spectral ranges."
   host_cite https://product.gosat-gw.nies.go.jp
-  host_quote "GOSAT-GW TANSO-3 Product Archive (G3PA) service has been suspended due to the system maintenance. ... 6:00 AM on Thursday, October 22, 2026 to 8:00 AM on Thursday, October 29, 2026 (UTC)"
+  host_quote "GOSAT-GW TANSO-3 Product Archive (G3PA) service has been suspended due to the system maintenance."
   probe 2026-10-25T18:50:55Z 200 https://product.gosat-gw.nies.go.jp
   fields gosat_tanso3_radiance_focus_band1_w_m2_sr_um gosat_tanso3_radiance_focus_band2_w_m2_sr_um gosat_tanso3_radiance_focus_band3_w_m2_sr_um gosat_tanso3_radiance_wide_band1_w_m2_sr_um gosat_tanso3_radiance_wide_band2_w_m2_sr_um gosat_tanso3_radiance_wide_band3_w_m2_sr_um
   applies https://product.gosat-gw.nies.go.jp
@@ -22170,7 +22170,7 @@ host dc.g-vo.org
   instrument_cite https://www.isc.ac.uk/about/
   instrument_quote "The International Seismological Centre (ISC) was set up in 1964 with the assistance of UNESCO as a successor to the International Seismological Summary (ISS) to"
   host_cite https://dc.g-vo.org
-  host_quote "HTTP/2 200"
+  host_quote "Welcome to the GAVO data center, provided by Zentrum für Astronomie Heidelberg on behalf of the German Astrophysical Virtual Observatory."
   probe 2026-10-25T18:51:00Z 200 https://dc.g-vo.org
   fields flux_dens_red flux_dens_blue
   applies https://dc.g-vo.org
@@ -22455,7 +22455,7 @@ host docs.datacentral.org.au
   sampling none
   interval 1814400
   api_cite https://arxiv.org/abs/2412.01148
-  api_quote "The timing residuals (blue) of PSR J1909−3744 with no removal of noise processes. ... the y-axis has been enlarged to better identify the sub-microsecond structures of the noise processes."
+  api_quote "The timing residuals (blue) of PSR J1909−3744 with no removal of noise processes."
   instrument_cite https://www.sarao.ac.za/science/meerkat/
   instrument_quote "Array Release 1 (AR1) provides 16 of an eventual 64 dishes integrated into a working telescope array."
   host_cite https://docs.datacentral.org.au/meerkat-pulsar-timing-array/45-year/accessing-the-data/
@@ -22723,7 +22723,7 @@ host gracedb.ligo.org
   sampling none
   interval none
   api_cite https://ligo-gracedb.readthedocs.io/en/latest/api.html
-  api_quote "GraceDb.api_versions"
+  api_quote "List of available API versions on the server."
   instrument_cite https://emfollow.docs.ligo.org/userguide/content.html
   instrument_quote "The sky localization is saved in a FITS file as a HEALPix all-sky image."
   host_cite https://gracedb.ligo.org/api/superevents/S250207bg/files/
@@ -24051,7 +24051,7 @@ host wdcb.ru
   sampling 0
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  api_quote "Length of logical recor - 95 byte ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  api_quote "The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_ISS.html
@@ -24433,7 +24433,7 @@ host wdcb.ru
   sampling 0
   interval 0
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  api_quote "Earthquakes in the USSR from 1962 to 1991 ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  api_quote "Earthquakes in the USSR from 1962 to 1991"
 
 host wdcb.ru
   instrument_cite http://www.wdcb.ru/sep/seismology/global_hypoc.html
@@ -24735,7 +24735,7 @@ host km3net.org
   instrument_cite https://arxiv.org/pdf/1104.1607
   instrument_quote "commercially available models of large hemispherical photomultipliers"
   host_cite https://vo.km3net.de/ant20_01/nu/cone/form
-  host_quote "Created 2020-06-01T00:00:00Z"
+  host_quote "The ANTARES neutrino telescope aims for the identification of neutrinos from cosmic accelerators."
   ttl 0
   probe 2026-10-26T00:00:00Z 200 https://vo.km3net.de/ant20_01/nu/cone/form
   fields antares_events_2007_2017
@@ -25019,7 +25019,7 @@ host earthquake.usgs.gov
   api_cite https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php
   api_quote "properties: { mag: Decimal, place: String, time: Long Integer, updated: Long Integer, tz: Integer, … magType: String"
   instrument_cite https://earthquake.usgs.gov/fdsnws/event/1/
-  instrument_quote "https://earthquake.usgs.gov/fdsnws/event/1/query?format=xml&starttime=2014-01-01&endtime=2014-01-02&minmagnitude=5"
+  instrument_quote "This is an implementation of the FDSN Event Web Service Specification, and allows custom searches for earthquake information using a variety of parameters."
   host_cite https://earthquake.usgs.gov/fdsnws/event/1/
   host_quote "Limit to events updated after the specified time."
   fields depth
@@ -25198,7 +25198,7 @@ host api.opentopodata.org
   sampling 0
   interval null
   api_cite https://www.opentopodata.org/datasets/gebco2020/
-  api_quote "the 2020 dataset (released in May 2020) covers the entire globe at a 15 arc-second resolution, corresponding to 450m resolution at the equator … \"elevation\": 3405.0"
+  api_quote "the 2020 dataset (released in May 2020) covers the entire globe at a 15 arc-second resolution, corresponding to 450m resolution at the equator"
   instrument_cite https://www.opentopodata.org/datasets/gebco2020/
   instrument_quote "Render of GEBCO 2020 elevation."
   host_cite https://www.opentopodata.org/datasets/gebco2020/
@@ -25218,7 +25218,7 @@ host cdsarc.cds.unistra.fr
   instrument_cite https://arxiv.org/abs/1504.02900
   instrument_quote "The Dark Energy Camera is a new imager with a 2.2-degree diameter field of view mounted at the prime focus"
   host_cite https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/ReadMe
-  host_quote "J/ApJS/258/41"
+  host_quote "A search of the full six years of the Dark Energy Survey for outer solar system objects."
   fields a
   applies https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin line=15137
   field a des_y6_semimajor_axis_au au null
@@ -25246,7 +25246,7 @@ host content.cld.iop.org
   sampling 0
   interval null
   api_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
-  api_quote "Table: Values and coordinates of spectral reflectance measurements … 71- 81 F11.9  ---   UVave      UV filter spectral reflectance average … 43- 55 F13.8  deg   Long       Longitude; degrees East"
+  api_quote "Table: Values and coordinates of spectral reflectance measurements"
   instrument_cite https://api.crossref.org/works/10.1007/s11214-007-9264-5
   instrument_quote "MASCS consists of a small Cassegrain telescope with 257-mm effective focal length and a 50-mm aperture"
   host_cite https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
@@ -25262,7 +25262,7 @@ host pds-ppi.igpp.ucla.edu
   sampling 42
   interval 42
   api_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
-  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position … NAME = \"DIST S/C TO EARTH\" … UNIT = \"km\" … NAME = \"Time\" … UNIT = \"seconds\""
+  api_quote "POS_M1_ENC_42SEC.DAT contains 42 second samples of Mariner 10 position"
   instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/203/203C.pdf
   instrument_quote "The DSN ranging system measures the round-trip phase delay of a ranging signal"
   host_cite https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
@@ -25278,7 +25278,7 @@ host ssd.jpl.nasa.gov
   sampling 0
   interval 0
   api_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
-  api_quote "# Range measurements to Juno spacecraft. … 32- 48  F17.10 sec     rtlt     Round trip light time … 11- 14  I4     ---     yyyy     Year of measurement time (UTC)"
+  api_quote "32- 48 F17.10 sec rtlt Round trip light time"
   instrument_cite https://deepspace.jpl.nasa.gov/dsndocs/810-005/203/203C.pdf
   instrument_quote "The DSN ranging system measures the round-trip phase delay of a ranging signal"
   host_cite https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
@@ -25358,7 +25358,7 @@ host services.swpc.noaa.gov
   sampling 10.24
   interval 60
   api_cite https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs/GOES_13-15_EUVS_Lyman_alpha_Science-Quality_Data_Readme.pdf
-  api_quote "Irradiance [W/m 2] = (( Counts − B[counts ]) · G[A/count ] − V [A]) /C [A/ (W/m 2]) ... This process provides corrected 1-minute Lyman α irradiances with a residual from this scaling of a few percent or less."
+  api_quote "Irradiance [W/m 2] = (( Counts − B[counts ]) · G[A/count ] − V [A]) /C [A/ (W/m 2])"
   instrument_cite https://www.nesdis.noaa.gov/our-satellites/currently-flying/goes-east-west/extreme-ultraviolet-and-x-ray-irradiance-sensors-exis
   instrument_quote "On board EXIS are two main sensors, the Extreme Ultraviolet Sensor (EUVS) and the X-Ray Sensor (XRS), which help scientists monitor activity on the sun."
   host_cite https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
@@ -26756,7 +26756,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20170409034634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku03.dat
   instrument_quote "GRAF-ASKANIA AND GAL/GAL-F/GAL-M"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -26774,7 +26774,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20170409034956id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku15.dat
   instrument_quote "2*GSS-2                                 IFZ"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -26792,7 +26792,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
   instrument_quote "Гравиметрические измерения на акватории Мирового Океана"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -26812,11 +26812,11 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   instrument_quote "3*AMG,MMP-P                             IFZ"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
-  host_quote "DME06 1971 4757 4238 ... DME09 1973 9535 4793 ... DME10 1973 4477 4424 ... DME24 1980 7778 6554 ... DME28 1982 7344 4009 ... DME30 1982-1983 - 4899"
+  host_quote "DME09 1973 9535 4793"
   ttl null
   probe 2026-10-25T19:24:59Z 200 https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   fields gravity_free_air_anomaly
@@ -26840,7 +26840,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20100206214913id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme07.dat
   instrument_quote "3*GMKP,MMP-P                            VNIIGEOPH, TAPE"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -26858,7 +26858,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
   instrument_quote "2*GSS2                                  GAIS MOSCOW,CATALOGUE"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -26876,7 +26876,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "FREE-AIR ANOMALY ... In tenths of milligals. Free-air Anomaly = G(observed) - G(theoretical) ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Free-air Anomaly = G(observed) - G(theoretical)"
   instrument_cite https://web.archive.org/web/20170409035034id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme37.dat
   instrument_quote "3*AMG (IFZ AN USSR)                     IFZ AN (MAGNETIC TAPE)"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -26916,7 +26916,7 @@ host web.archive.org
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values."
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite https://web.archive.org/web/2020id_/http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer; Wild T-2 Theodolite with a D&I Bartington Instruments fluxgate magnetometer Mag-01H"
   host_cite http://www.wdcb.ru/stp/geomag/geomagnetic_minute.html
@@ -27113,7 +27113,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27155,7 +27155,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27178,7 +27178,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27201,7 +27201,7 @@ host zeus.wdcb.ru
   sampling 10800
   interval 10800
   api_cite https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
-  api_quote "An AA* of  60 will indicate disturbance onset. ... IN THESE TABLES, UT TIMES REPRESENT INTERVALS. i.e., 0000 UT represents 0000 - 0259 UT, and 0300 UT represents 0300 - 0559 UT. ... End of Data.... 47847 records read."
+  api_quote "An AA* of 60 will indicate disturbance onset."
 
 host zeus.wdcb.ru
   instrument_cite https://intermagnet.org/yearbooks/Australia_2017_2021.pdf
@@ -27226,9 +27226,9 @@ host zeus.wdcb.ru
   api_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.pdf
   api_quote "40-43 Energy class of earthquake (f4.1) ... 35-37 Depth of hypocenter in kilometers (i3), low value, if depth interval is defined"
   instrument_cite http://www.wdcb.ru/sep/seismology/cat_USSR_format.html
-  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices ... 50-52 Magnitude MPVA (f3.1), defined by vertical component of P-wave [MPSP] after shot-period devices"
+  instrument_quote "47-49 Magnitude MLHB (f3.1), defined by horizontal component of surface wave [MLH, MS] after intermediate-period and long-period devices"
   host_cite http://www.wdcb.ru/sep/seismology/cat_USSR.html
-  host_quote "Catalogs for all regions have the same format. ... The regional catalogues include the hypocenter parameters - geographical coordinates, depth, time, as well as energetic class and magnitude."
+  host_quote "Catalogs for all regions have the same format."
   ttl null
   probe 2026-10-25T18:41:03Z 206 https://web.archive.org/web/20160428111806id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT.dat
   fields energy_class
@@ -27250,7 +27250,7 @@ host zeus.wdcb.ru
   sampling null
   interval 0
   api_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
-  api_quote "DATE    ORIGIN TIME     GEOGRAPHIC      DEPTH  MAGNITUDES SD   NO.      REGION,  CONTRIBUTED  MAGNITUDES  AND  COMMENTS / UTC  COORDINATES  GS  STA / HR MN SEC  LAT  LONG  MB  Msz  USED ... SIGNIFICANT EARTHQUAKES OF THE WORLD, 2000"
+  api_quote "DATE ORIGIN TIME GEOGRAPHIC DEPTH MAGNITUDES SD NO."
   instrument_cite https://en.wikipedia.org/wiki/National_Earthquake_Information_Center
   instrument_quote "the NEIC collects and provides to scientists and to the public an extensive seismic database that serves as a solid foundation for scientific research, principally"
   host_cite https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
@@ -27365,7 +27365,7 @@ host www.carisma.ca
   sampling 8
   interval 1
   api_cite https://donnees-data.asc-csa.gc.ca/users/OpenData_DonneesOuvertes/pub/CARISMA/carisma_csv/mag/daily/2009/DAWS/20090105DAWS.MAG.csv
-  api_quote "# Site Lat Long yyyymmdd CoordSys Units no of records ... DAWS  64.048 220.890 20090105 GEODETIC nT  1Hz ... # Date(dd/mm/yyyy),time(hh:mi:ss),X,Y,Z,F=. if the data is valid anything else the data is suspect."
+  api_quote "# Site Lat Long yyyymmdd CoordSys Units no of records"
   instrument_cite https://carisma.ca/backgrounder/sensing-magnetic-fields
   instrument_quote "It is this asymmetry which is measured and is the basis for the fluxgate magnetometer."
   host_cite https://carisma.ca/carisma-data/fgm-data-format
@@ -27600,7 +27600,7 @@ host zeus.wdcb.ru
   sampling none
   interval 0
   api_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
-  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval. ... 6. The intensity of Pc1 characterised by the averaged amplitude in mnT for the given time interval."
+  api_quote "4. The period of Pc1 in seconds (T sec) is determinated as averaged prevailing in the given time interval."
   instrument_cite https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
   instrument_quote "From 1971 to 1992 the pulsation recording was made by inductive magnitograph"
   host_cite https://web.archive.org/web/20020708091700id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/
@@ -28055,7 +28055,7 @@ host zeus.wdcb.ru
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes"
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Observatory technical equipment: Moskva-1 analogue variometric station ... Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer"
   host_cite https://web.archive.org/web/20030608080009id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/
@@ -28681,7 +28681,7 @@ host download.geofabrik.de
   api_cite https://download.geofabrik.de/europe/monaco.html
   api_quote "Do you find OpenStreetMap data useful? Consider giving something back to the OSMF's funding campaign!"
   instrument_cite https://download.geofabrik.de/
-  instrument_quote "OpenStreetMap data"
+  instrument_quote "This server has data extracts from the OpenStreetMap project which are normally updated every day."
   host_cite https://download.geofabrik.de/europe/monaco-latest.osm.pbf
   host_quote "HTTP last-modified: Sat, 24 Oct 2026 23:13:57 GMT"
   probe 2026-10-25T21:14:01Z 200 https://download.geofabrik.de/europe/monaco-latest.osm.pbf
@@ -28836,7 +28836,7 @@ host ssd-api.jpl.nasa.gov
   api_cite https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch&sb-kind=c&sb-class=HTC
   api_quote "\"description\" : \"absolute magnitude parameter\""
   instrument_cite https://ssd-api.jpl.nasa.gov/doc/sbdb_query.html
-  instrument_quote "sbdb_query.api"
+  instrument_quote "The SBDB (Small-Body DataBase) query API provides a method of requesting data for a set of asteroids and/or comets matching specified constraints."
   host_cite https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
   host_quote "HTTP last-modified: Sun, 25 Oct 2026 12:59:03 GMT"
   probe 2026-10-25T21:21:13Z 200 https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch&sb-kind=c&sb-class=HTC
@@ -28896,7 +28896,7 @@ host github.com
   api_cite https://github.com/gammapy/gamma-cat
   api_quote "An open data collection and source catalog for gamma-ray astronomy"
   instrument_cite https://gamma-cat.readthedocs.io/use/terms.html
-  instrument_quote "gamma-cat"
+  instrument_quote "This research made use of gamma-cat (https://github.com/gammapy/gamma-cat), an open data collection and source catalog for gamma-ray astronomy."
   host_cite https://github.com/gammapy/gamma-cat/raw/master/output/gammacat.fits.gz
   host_quote "HTTP 200, application/octet-stream, 43614 B"
   probe 2026-10-25T21:14:01Z 200 https://github.com/gammapy/gamma-cat/raw/master/output/gammacat.fits.gz
@@ -29196,7 +29196,7 @@ host tapvizier.cds.unistra.fr
   instrument_cite https://arxiv.org/html/1502.01598v1
   instrument_quote The Planck High-Frequency Instrument (HFI) is unique in providing high-precision data for both the increment and the decrement across the whole sky.
   host_cite https://cdsarc.cds.unistra.fr/viz-bin/cat/J/A+A/594/A27
-  host_quote "09-Apr-2018"
+  host_quote "We present the all-sky Planck catalogue of Sunyaev-Zeldovich (SZ) sources detected from the 29 month full-mission data."
   probe 2026-10-25T21:21:54Z 200 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2+*+FROM+%22J%2FA%2BA%2F594%2FA27%2Fpsz2%22
   applies https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/psz2_clusters.json
   fields MSZ
@@ -30080,11 +30080,11 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   instrument_quote "3*AMG,MMP-P                             IFZ"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
-  host_quote "DME06 1971 4757 4238 ... DME09 1973 9535 4793 ... DME10 1973 4477 4424 ... DME24 1980 7778 6554 ... DME28 1982 7344 4009 ... DME30 1982-1983 - 4899"
+  host_quote "DME09 1973 9535 4793"
   ttl no-sampling
   probe 2026-10-25T19:24:59Z 200 https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme06.dat line=25687
@@ -30099,7 +30099,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20100206214913id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme07.dat
   instrument_quote "3*GMKP,MMP-P                            VNIIGEOPH, TAPE"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -30183,7 +30183,7 @@ host web.archive.org
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values."
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite https://web.archive.org/web/2020id_/http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer; Wild T-2 Theodolite with a D&I Bartington Instruments fluxgate magnetometer Mag-01H"
   host_cite http://www.wdcb.ru/stp/geomag/geomagnetic_minute.html
@@ -30203,7 +30203,7 @@ host web.archive.org
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values."
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite https://web.archive.org/web/2020id_/http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer; Wild T-2 Theodolite with a D&I Bartington Instruments fluxgate magnetometer Mag-01H"
   host_cite http://www.wdcb.ru/stp/geomag/geomagnetic_minute.html
@@ -30414,7 +30414,7 @@ host zenodo.org
   instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
   instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/records/10673982
-  host_quote "2018-12_RBN.gz"
+  host_quote "This dataset contains monthy GZipped Comma Separated Value (CSV) files of data aggregated from the following amateur radio spotting networks"
   ttl no-sampling
   probe 2026-10-25T14:59:02Z 206 https://zenodo.org/api/records/10673982/files/2018-12_RBN.gz/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-12_RBN.gz line=27256
@@ -30719,7 +30719,7 @@ host ws-uv.canfar.net
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
   host_cite https://science.nrao.edu/vlass/data-access/vlass-epoch-1-quick-look-users-guide
-  host_quote "VLASS"
+  host_quote "CADC also supports VO services for VLASS images such as SIA and SODA."
   ttl no-sampling
   probe 2026-10-26T00:00:00Z 200 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   fields Total_flux Peak_flux
@@ -31612,11 +31612,11 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   instrument_quote "3*AMG,MMP-P                             IFZ"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
-  host_quote "DME06 1971 4757 4238 ... DME09 1973 9535 4793 ... DME10 1973 4477 4424 ... DME24 1980 7778 6554 ... DME28 1982 7344 4009 ... DME30 1982-1983 - 4899"
+  host_quote "DME09 1973 9535 4793"
   ttl no-sampling
   probe 2026-10-25T19:24:59Z 200 https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme06.dat line=25687
@@ -31631,7 +31631,7 @@ host web.archive.org
   sampling null
   interval 0
   api_cite https://www.ngdc.noaa.gov/mgg/gravity/1999/document/html/mgd77.html
-  api_quote "OBSERVED GRAVITY ... In tenths of milligals. Corrected for Eotvos, drift, and tares ... GENERAL SAMPLING RATE OF GRAVITY In seconds. This rate is instrumentation dependent."
+  api_quote "In tenths of milligals. Corrected for Eotvos, drift, and tares"
   instrument_cite https://web.archive.org/web/20100206214913id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme07.dat
   instrument_quote "3*GMKP,MMP-P                            VNIIGEOPH, TAPE"
   host_cite http://www.wdcb.ru/sep/gravimetry/grav_marine.ru.html
@@ -31715,7 +31715,7 @@ host web.archive.org
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values."
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite https://web.archive.org/web/2020id_/http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer; Wild T-2 Theodolite with a D&I Bartington Instruments fluxgate magnetometer Mag-01H"
   host_cite http://www.wdcb.ru/stp/geomag/geomagnetic_minute.html
@@ -31735,7 +31735,7 @@ host web.archive.org
   sampling 60
   interval 60
   api_cite https://web.archive.org/web/2003id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
-  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour. ... H, Z, X, Y, or F to the nearest nanotesla and D in the tenth-minutes (e.g. 612 = 1 degree 1.2 minutes), each in a six character field. HR MEAN is the average of the proceeding 60 one-minute values."
+  api_quote "DATA-1..DATA-60 are one-minute values of the given element for that data hour."
   instrument_cite https://web.archive.org/web/2020id_/http://mag.gcras.ru/obs-MOS.html
   instrument_quote "Quartz series digital variometers; DMI fluxgate variometer; DTU Space FGE vector magnetometer; Wild T-2 Theodolite with a D&I Bartington Instruments fluxgate magnetometer Mag-01H"
   host_cite http://www.wdcb.ru/stp/geomag/geomagnetic_minute.html
@@ -31946,7 +31946,7 @@ host zenodo.org
   instrument_cite https://cms.reversebeacon.net/sites/cms.reversebeacon.net/files/2018-04/The%20RBN%20and%20You.pdf
   instrument_quote "2008-9 - SDR-IQ and QS1R receivers introduced."
   host_cite https://zenodo.org/records/10673982
-  host_quote "2018-12_RBN.gz"
+  host_quote "This dataset contains monthy GZipped Comma Separated Value (CSV) files of data aggregated from the following amateur radio spotting networks"
   ttl no-sampling
   probe 2026-10-25T14:59:02Z 206 https://zenodo.org/api/records/10673982/files/2018-12_RBN.gz/content
   applies https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-12_RBN.gz line=27256
@@ -32251,7 +32251,7 @@ host ws-uv.canfar.net
   instrument_cite https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/vlass/
   instrument_quote "Very Large Array Sky Survey (VLASS)"
   host_cite https://science.nrao.edu/vlass/data-access/vlass-epoch-1-quick-look-users-guide
-  host_quote "VLASS"
+  host_quote "CADC also supports VO services for VLASS images such as SIA and SODA."
   ttl no-sampling
   probe 2026-10-26T00:00:00Z 200 https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
   fields Total_flux Peak_flux
@@ -33424,7 +33424,7 @@ host download1.bayernwolke.de
   api_cite https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif
   api_quote "TIFF image data"
   instrument_cite https://www.geodaten.bayern.de/odd/m/3/html/nutzungsbedingungen.html
-  instrument_quote "Digitales Oberflächenmodell"
+  instrument_quote "Eine Anfrage oder der Abschluss einer Nutzungsvereinbarung zur Nutzung dieser Daten ist nicht erforderlich"
   host_cite https://www.geodaten.bayern.de/odd/m/3/html/nutzungsbedingungen.html
   host_quote "Creative Commons Namensnennung 4.0 International (CC BY 4.0)"
   ttl no-sampling

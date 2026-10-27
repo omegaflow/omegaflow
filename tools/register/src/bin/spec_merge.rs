@@ -5170,7 +5170,7 @@ fn quote_trim(args: &[String]) {
                 if !t.starts_with(prefix) {
                     continue;
                 }
-                let q = match quoted(t) {
+                let mut q = match quoted(t) {
                     Some(q) => q,
                     None => continue,
                 };
@@ -5178,21 +5178,51 @@ fn quote_trim(args: &[String]) {
                     continue;
                 }
                 if q.contains('\u{2026}') || q.contains("...") {
-                    left += 1;
-                    out.push(line.clone());
-                    hit = true;
-                    break;
+                    let sep = if q.contains('\u{2026}') { '\u{2026}' } else { '.' };
+                    let parts: Vec<&str> = if sep == '.' {
+                        q.split("...").collect()
+                    } else {
+                        q.split('\u{2026}').collect()
+                    };
+                    let first: Vec<&str> = match parts.first() {
+                        Some(p) => p.split_whitespace().collect(),
+                        None => Vec::new(),
+                    };
+                    let second: Vec<&str> = match parts.get(1) {
+                        Some(p) => p.split_whitespace().collect(),
+                        None => Vec::new(),
+                    };
+                    let chosen: Vec<&str> = if first.len() >= 8 || second.is_empty() {
+                        first
+                    } else {
+                        second
+                    };
+                    let mut kept: Vec<&str> = Vec::new();
+                    for w in chosen {
+                        if kept.len() == 25 {
+                            break;
+                        }
+                        kept.push(w);
+                        if kept.len() >= 8 && (w.ends_with('.') || w.ends_with(';')) {
+                            break;
+                        }
+                    }
+                    q = kept.join(" ");
                 }
                 let w: Vec<&str> = q.split_whitespace().collect();
-                let mut cut = 25usize;
-                for i in (8..=25).rev() {
-                    let last = w[i - 1];
-                    if last.ends_with('.') || last.ends_with(';') || last.ends_with(':') {
-                        cut = i;
-                        break;
+                let short = if w.len() <= 25 {
+                    w.join(" ")
+                } else {
+                    let mut cut = 25usize;
+                    for i in (8..=25).rev() {
+                        let last = w[i - 1];
+                        if last.ends_with('.') || last.ends_with(';') || last.ends_with(':') {
+                            cut = i;
+                            break;
+                        }
                     }
-                }
-                let short = w[..cut].join(" ");
+                    w[..cut].join(" ")
+                };
                 out.push(format!("  {}\"{}\"", prefix, short.replace('"', "\\\"")));
                 trimmed += 1;
                 hit = true;
