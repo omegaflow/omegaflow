@@ -1,0 +1,52 @@
+#!/bin/sh
+# host-quote-from-text — ersetzt Kopfzeilen-Zitate durch den ersten Satz des Host-Dokuments.
+#
+#   bin/host-quote-from-text <cachedir> > /tmp/hostfix.tsv
+#
+# Ausgabe: url <TAB> slot <TAB> altes_zitat <TAB> neues_zitat  (für spec_merge set-quote)
+# Die Kopfzeile (HTTP ...) steht in keiner Datei; der Satz kommt aus der Textschicht,
+# die im Cache unter derselben Adresse liegt.
+set -u
+dir="$1"
+index="$dir/index.tsv"
+reg="${2:-tools/register/data/instruments.φ}"
+
+[ -f "$index" ] || { echo "host-quote-from-text: kein Index in $dir" >&2; exit 2; }
+[ -f "$reg" ] || { echo "host-quote-from-text: kein Register $reg" >&2; exit 2; }
+
+awk -F'\t' '
+    NR==FNR { if ($2 != "-") file[$1]=$2; next }
+    /^host / { host=$2; next }
+    /^  host_cite / { sub(/^  host_cite /, ""); cite=$0; next }
+    /^  host_quote "HTTP / {
+        q=$0; sub(/^  host_quote "/, "", q); sub(/"$/, "", q);
+        if (cite != "" && (cite in file)) {
+            print cite "\t" host "\t" q "\t" file[cite];
+            cite="";
+        }
+        next
+    }
+' "$index" "$reg" |
+while IFS="$(printf '\t')" read -r cite host old path; do
+    [ -s "$path" ] || continue
+    # ersten Satz mit mindestens fünf Wörtern nehmen, höchstens 25 Wörter
+    sent="$(tr -s ' \r\n' ' ' < "$path" | tr '.' '\n' | sed -n '/[A-Za-zА-Яа-я]\{3,\}/p' |
+        sed 's/^ *//; s/ *$//' |
+        while IFS= read -r line; do
+            n=$(printf '%s' "$line" | wc -w)
+            if [ "$n" -ge 5 ]; then
+                printf '%s' "$line" | cut -c1-400
+                break
+            fi
+        done)"
+    [ -n "$sent" ] || continue
+    # auf 25 Wörter kappen, an Wortgrenze
+    words=$(printf '%s' "$sent" | wc -w)
+    if [ "$words" -gt 25 ]; then
+        sent="$(printf '%s\n' "$sent" | tr ' ' '\n' | sed -n '1,25p' | tr '\n' ' ' | sed 's/ *$//')"
+    fi
+    # Anführungszeichen im Zitat sind im Register nicht erlaubt
+    sent="$(printf '%s' "$sent" | tr '"' "'")"
+    [ -n "$sent" ] || continue
+    printf '%s\t%s\t%s\t%s\n' "$cite" host "$old" "$sent"
+done

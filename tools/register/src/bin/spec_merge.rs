@@ -5372,10 +5372,398 @@ fn write_refs(args: &[String]) {
     println!("write-refs: {written} ref lines written");
 }
 
+fn url_key(url: &str) -> String {
+    let mut h: u64 = 0xcbf29ce484222325;
+    for b in url.as_bytes() {
+        h ^= *b as u64;
+        h = h.wrapping_mul(0x100000001b3);
+    }
+    format!("{h:016x}")
+}
+
+fn text_one(args: &[String]) {
+    use std::io::Write;
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let url = match args.get(1) {
+        Some(u) => u.clone(),
+        None => return,
+    };
+    let _ = fs::create_dir_all(&dir);
+    let index = format!("{dir}/index.tsv");
+    let existing = match fs::read_to_string(&index) { Ok(t) => t, Err(_) => String::new() };
+    if existing.lines().any(|l| l.split('\t').next() == Some(url.as_str())) {
+        return;
+    }
+    let head = Command::new("curl")
+        .args(["-sSI", "-L", "-A", "Mozilla/5.0", "--max-time", "30", &url])
+        .output();
+    if let Ok(o) = &head {
+        let h = String::from_utf8_lossy(&o.stdout);
+        for line in h.lines() {
+            if let Some(v) = line.to_lowercase().strip_prefix("content-length:") {
+                if let Ok(n) = v.trim().parse::<u64>() {
+                    if n > 60_000_000 {
+                        let _ = fs::write(
+                            format!("{dir}/{}.skip", url_key(&url)),
+                            format!("zu gross: {n} Bytes"),
+                        );
+                        let mut idx = fs::OpenOptions::new()
+                            .create(true)
+                            .append(true)
+                            .open(&index)
+                            .ok();
+                        if let Some(f) = idx.as_mut() {
+                            let _ = writeln!(f, "{url}\t-\tskip\t{n}");
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    let out = Command::new("curl")
+        .args(["-sSL", "-A", "Mozilla/5.0", "--max-time", "120", &url])
+        .output();
+    let raw = match out {
+        Ok(o) => o.stdout,
+        Err(_) => Vec::new(),
+    };
+    if raw.is_empty() {
+        return;
+    }
+    let tmp = std::env::temp_dir().join(format!("tc-{}-{}", std::process::id(), url_key(&url)));
+    let _ = fs::write(&tmp, &raw);
+    let mut method = "raw";
+    let mut text = String::from_utf8_lossy(&raw).to_string();
+    let lower = url.to_lowercase();
+    if raw.starts_with(b"%PDF") || lower.ends_with(".pdf") {
+        method = "pdftotext";
+        if let Ok(o) = Command::new("pdftotext")
+            .args(["-layout", &tmp.to_string_lossy(), "-"])
+            .output()
+        {
+            text = String::from_utf8_lossy(&o.stdout).to_string();
+        }
+    } else if raw.starts_with(b"\x1f\x8b") || lower.ends_with(".gz") {
+        method = "gzip";
+        if let Ok(o) = Command::new("gzip").args(["-dc", &tmp.to_string_lossy()]).output() {
+            let cut = o.stdout.len().min(5_000_000);
+            text = String::from_utf8_lossy(&o.stdout[..cut]).to_string();
+        }
+    } else if looks_html(&text) {
+        method = "html";
+        text = strip_markup(&text);
+    }
+    let _ = fs::remove_file(&tmp);
+    let file = format!("{dir}/{}.txt", url_key(&url));
+    let _ = fs::write(&file, &text);
+    if let Ok(mut f) = fs::OpenOptions::new().create(true).append(true).open(&index) {
+        let _ = writeln!(f, "{url}\t{file}\t{method}\t{}", text.len());
+    }
+}
+
+fn quote_expand(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) { Ok(t) => t, Err(_) => String::new() };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        if let Ok(t) = fs::read_to_string(c[1]) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut expanded = 0usize;
+    let mut seen_short = 0usize;
+    let mut no_doc = 0usize;
+    for (_, b) in blocks(&reg) {
+        let mut cur: BTreeMap<String, String> = BTreeMap::new();
+        for line in &b {
+            let t = line.trim_start();
+            let mut is_cite = false;
+            for (key, prefix) in [
+                ("api", "api_cite "),
+                ("instrument", "instrument_cite "),
+                ("host", "host_cite "),
+            ] {
+                if t.starts_with(prefix) {
+                    cur.insert(key.to_string(), t[prefix.len()..].trim().to_string());
+                    is_cite = true;
+                    break;
+                }
+            }
+            if is_cite {
+                out.push(line.clone());
+                continue;
+            }
+            let mut done = false;
+            for (key, prefix) in [
+                ("api", "api_quote "),
+                ("instrument", "instrument_quote "),
+                ("host", "host_quote "),
+            ] {
+                if !t.starts_with(prefix) {
+                    continue;
+                }
+                done = true;
+                let q = match quoted(t) {
+                    Some(q) => q,
+                    None => break,
+                };
+                if words(&q) > 10 || words(&q) < 2 {
+                    out.push(line.clone());
+                    break;
+                }
+                seen_short += 1;
+                let url = match cur.get(key) {
+                    Some(u) => u.clone(),
+                    None => String::new(),
+                };
+                let text = match cache.get(&url) {
+                    Some(t) => t,
+                    None => {
+                        no_doc += 1;
+                        out.push(line.clone());
+                        break;
+                    }
+                };
+                let hay: Vec<&str> = text.split_whitespace().collect();
+                let needle: Vec<&str> = q.split_whitespace().collect();
+                if needle.is_empty() {
+                    out.push(line.clone());
+                    break;
+                }
+                let mut found: Option<usize> = None;
+                if hay.len() >= needle.len() {
+                    'outer: for i in 0..=(hay.len() - needle.len()) {
+                        for j in 0..needle.len() {
+                            if hay[i + j] != needle[j] {
+                                continue 'outer;
+                            }
+                        }
+                        found = Some(i);
+                        break;
+                    }
+                }
+                let start = match found {
+                    Some(s) => s,
+                    None => {
+                        out.push(line.clone());
+                        break;
+                    }
+                };
+                let mut lo = start;
+                while lo > 0 {
+                    let prev = hay[lo - 1];
+                    if prev.ends_with('.') || prev.ends_with('!') || prev.ends_with('?') {
+                        break;
+                    }
+                    lo -= 1;
+                }
+                let mut hi = start + needle.len();
+                while hi < hay.len() {
+                    let w = hay[hi - 1];
+                    if w.ends_with('.') || w.ends_with('!') || w.ends_with('?') {
+                        break;
+                    }
+                    hi += 1;
+                }
+                let mut span: Vec<&str> = hay[lo..hi.min(hay.len())].to_vec();
+                while span.len() > 25 && lo < start {
+                    lo += 1;
+                    span = hay[lo..hi.min(hay.len())].to_vec();
+                }
+                if span.len() > 25 || span.len() <= needle.len() {
+                    out.push(line.clone());
+                    break;
+                }
+                let new = span.join(" ");
+                expanded += 1;
+                out.push(format!("  {}\"{}\"", prefix, new.replace('"', "\\\"")));
+                break;
+            }
+            if !done {
+                out.push(line.clone());
+            }
+        }
+        out.push(String::new());
+    }
+    if dry {
+        println!(
+            "dry-run: quote-expand {expanded} von {seen_short} kurzen Zitaten, {no_doc} ohne Text im Cache"
+        );
+        return;
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!(
+        "quote-expand: {expanded} von {seen_short} kurzen Zitaten ergaenzt, {no_doc} ohne Text im Cache"
+    );
+}
+
+fn host_quote_title(args: &[String]) {
+    let dir = match args.first() {
+        Some(d) => d.clone(),
+        None => return,
+    };
+    let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) { Ok(t) => t, Err(_) => String::new() };
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    for line in index.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 2 || c[1] == "-" {
+            continue;
+        }
+        if let Ok(t) = fs::read_to_string(c[1]) {
+            cache.insert(c[0].to_string(), t);
+        }
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let (mut changed, mut left) = (0usize, 0usize);
+    for (_, mut b) in blocks(&reg) {
+        let hq = or_empty(field(&b, "host_quote"));
+        if !hq.starts_with("HTTP ") {
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
+        let url = or_empty(field(&b, "host_cite"));
+        let text = match cache.get(&url) {
+            Some(t) => t,
+            None => {
+                left += 1;
+                out.extend(b);
+                out.push(String::new());
+                continue;
+            }
+        };
+        let mut candidate = String::new();
+        for line in text.lines() {
+            let l = line.trim();
+            if l.len() < 12 {
+                continue;
+            }
+            let low = l.to_lowercase();
+            if low.starts_with("skip")
+                || low.starts_with("menu")
+                || low.starts_with("home")
+                || low.starts_with("javascript")
+                || low.starts_with("var ")
+            {
+                continue;
+            }
+            let mut sent = String::new();
+            for w in l.split_whitespace() {
+                if sent.split_whitespace().count() == 25 {
+                    break;
+                }
+                sent.push_str(w);
+                sent.push(' ');
+                if w.ends_with('.') || w.ends_with(':') {
+                    break;
+                }
+            }
+            let s = sent.trim().to_string();
+            if s.split_whitespace().count() >= 5 {
+                candidate = s;
+                break;
+            }
+        }
+        if candidate.is_empty() {
+            left += 1;
+            out.extend(b);
+            out.push(String::new());
+            continue;
+        }
+        set_row_key(&mut b, "host_quote", &format!("\"{}\"", candidate.replace('"', "\\\"")));
+        changed += 1;
+        out.extend(b);
+        out.push(String::new());
+    }
+    if dry {
+        println!("dry-run: host-quote-title {changed} Kopfzeilen durch Dokumenttitel ersetzt, {left} ohne Text");
+        return;
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!("host-quote-title: {changed} Kopfzeilen ersetzt, {left} ohne Text");
+}
+
+fn set_field(args: &[String]) {
+    let path = match args.first() {
+        Some(p) => p.clone(),
+        None => {
+            println!("set-field: needs a tsv (cite, alte Zeile, neue Zeile)");
+            return;
+        }
+    };
+    let list = match fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(_) => {
+            println!("set-field: {path} not readable");
+            return;
+        }
+    };
+    let mut want: Vec<(String, String, String)> = Vec::new();
+    for line in list.lines() {
+        let c: Vec<&str> = line.split('\t').collect();
+        if c.len() < 3 {
+            continue;
+        }
+        want.push((
+            c[0].trim().to_string(),
+            c[1].trim().to_string(),
+            c[2].trim().to_string(),
+        ));
+    }
+    let reg = fs::read_to_string(REG).expect("register");
+    let mut out: Vec<String> = Vec::new();
+    let mut changed = 0usize;
+    for (_, b) in blocks(&reg) {
+        let cites = [
+            or_empty(field(&b, "api_cite")),
+            or_empty(field(&b, "instrument_cite")),
+            or_empty(field(&b, "host_cite")),
+        ];
+        let mut body: Vec<String> = Vec::new();
+        for line in &b {
+            let mut newline = line.clone();
+            for (cite, old, new) in &want {
+                if !cites.iter().any(|c| c == cite) {
+                    continue;
+                }
+                if line.trim() == old {
+                    newline = format!("  {new}");
+                    changed += 1;
+                }
+            }
+            body.push(newline);
+        }
+        out.extend(body);
+        out.push(String::new());
+    }
+    write_out(REG, out.join("\n"), "instruments");
+    println!("set-field: {changed} Feldzeilen ersetzt");
+}
+
 fn quote_short(args: &[String]) {
     let limit = match args.first() {
         Some(v) => v.parse::<usize>().unwrap_or(2),
         None => 2,
+    };
+    let min = match args.get(1).map(|v| v.parse::<usize>()) {
+        Some(Ok(n)) => n,
+        _ => 1,
     };
     let text = fs::read_to_string(REG).expect("register");
     let mut n = 0usize;
@@ -5405,7 +5793,8 @@ fn quote_short(args: &[String]) {
                     Some(q) => q,
                     None => continue,
                 };
-                if words(&q) > limit {
+                let w = words(&q);
+                if w > limit || w < min {
                     continue;
                 }
                 let url = match cur.get(key) {
@@ -5882,6 +6271,10 @@ fn main() {
         Some("specs-to-digests") if args.len() >= 3 => specs_to_digests(&args[2]),
         Some("quote-widen") => quote_widen(&args[2..]),
         Some("quote-short") => quote_short(&args[2..]),
+        Some("text-one") if args.len() >= 4 => text_one(&args[2..]),
+        Some("quote-expand") => quote_expand(&args[2..]),
+        Some("host-quote-title") => host_quote_title(&args[2..]),
+        Some("set-field") if args.len() >= 3 => set_field(&args[2..]),
         Some("set-quote") if args.len() >= 3 => set_quote(&args[2..]),
         Some("quote-trim") => quote_trim(&args[2..]),
         Some("aussondern-reg") if args.len() >= 4 => aussondern_reg(&args[2..]),
