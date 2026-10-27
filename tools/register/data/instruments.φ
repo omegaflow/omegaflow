@@ -8016,6 +8016,7 @@ host datacentral.org.au
   api_ref "GALAH Survey (GALactic Archaeology with HERMES), Data Release 3. Table Schema — GALAH Third Data Release."
   api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
+  instrument_quote "The GALAH survey uses the Two-Degree Field (2dF) fibre positioner with the HERMES spectrograph at the Anglo-Australian Telescope."
 
 host erddap.marine.ie
   instrument SBE 16plus
@@ -9316,6 +9317,7 @@ host archives.ia2.inaf.it
   applies http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL line=10131
   note Katalog (interval none). Das TAP-Schema deklariert flux als mJy — die Register-Einheit Jy ist also eine Skalierung 1/1000, keine Anbieter-Schreibweise. Die Block-Query selbst antwortet 400 (TOP 5000, unquotierter Tabellenname); die Einheit ist über die TAP_SCHEMA-Abfrage belegt (200). TAP dieses Endpunkts kennt nur doQuery/getCapabilities, kein VOSI GetTable.
   instrument HFI
+  instrument_quote "The Planck High Frequency Instrument (HFI) is designed to measure the temperature and polarization anisotropies of the Cosmic Microwave Background"
 
 host arclink.ethz.ch
   instrument seismometer
@@ -9772,6 +9774,7 @@ host datacentral.org.au
   api_ref "GALAH Survey (GALactic Archaeology with HERMES), Data Release 3. Table Schema — GALAH Third Data Release."
   api_quote "This page gives the schema (or data model) for the GALAH DR3 main and value-added catalogues"
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
+  instrument_quote "The GALAH survey uses the Two-Degree Field (2dF) fibre positioner with the HERMES spectrograph at the Anglo-Australian Telescope."
 
 host data.ghrc.earthdata.nasa.gov
   instrument LIS
@@ -24974,6 +24977,7 @@ host www.gmrt.org
   applies https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff id=34005
   note Statisches Gitter (Bathymetrie), daher interval 0. Drei Blöcke teilen dieselbe Senke: zwei Live-Endpunkte (esriascii, geotiff) und ein CDN-Artefakt derselben Abfrage. Einheit m ist die Einheit der Bathymetrie; das ESRI-ASCII-Headerfeld traegt Zellgroesse/NODATA, keinen Einheitentext.
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host www.jma.go.jp
   instrument seismograph
@@ -29146,6 +29150,7 @@ host archives.ia2.inaf.it
   field flux planck_ercsc_857ghz_flux_jy inverse-square em Jy 604800
   note TAP-Schema deklariert flux als mJy (Anbieterschreibweise im Zitat), Register-Token Jy = Skalierung 1/1000. Katalog, kein Zeitraster. Die Block-Query antwortet 400 (TOP 5000, unquotierter Tabellenname); die TAP_SCHEMA-Abfrage 200.
   instrument HFI
+  instrument_quote "The Planck High Frequency Instrument (HFI) is designed to measure the temperature and polarization anisotropies of the Cosmic Microwave Background"
 
 host datacentral.org.au
   instrument HERMES
@@ -29166,6 +29171,7 @@ host datacentral.org.au
   quantity teff galah_dr3_effective_temp_k erfc source-parameter K 604800 0.0 0.0
   note GALAH-DR3-Schema: teff in K. HERMES (R=28000) am Anglo-Australian Telescope. Katalogstern, kein Zeitraster (Blockwert 604800).
   instrument HERMES
+  instrument_quote "The GALAH survey uses the Two-Degree Field (2dF) fibre positioner with the HERMES spectrograph at the Anglo-Australian Telescope."
 
 host alasky.cds.unistra.fr
   instrument MoRIC
@@ -29431,6 +29437,7 @@ host www.gmrt.org
   field elevation gmrt_elevation_m m 0
   note Statisches Bathymetrie-Gitter (GMRT-Synthese aus Faecherecholot-Vermessungen), daher interval 0. Einheit m. Block-Instrument "none" ersetzt durch multibeam sonar.
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host itrf.ign.fr
   instrument VLBI
@@ -31009,6 +31016,7 @@ host www.gmrt.org
   field elevation gmrt_elevation_m m 0
   note Der TSV-Block trägt Instrument "seismograph" und Feld jma_magnitude, die URL ist aber GMRT-GridServer (Bathymetrie). Aus der Doku korrigiert: Gerät multibeam sonar, Feld elevation in m. Statisches Gitter, interval 0; ttl null.
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host web.archive.org
   instrument river gauge
@@ -31140,6 +31148,7 @@ host archives.ia2.inaf.it
   applies http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL id=10106
   note TAP-Schema deklariert `flux` als DOUBLE mit unit "mJy"; die TSV-Einheit Jy ist Faktor 1000 daneben, korrigiert auf mJy (Feldname bleibt ..._jy). Katalog, kein Zeitraster (interval 0). Instrument: HFI-Bolometer, TOI mit 180.3737 Hz abgetastet; der Katalog selbst traegt keine Kadenz.
   instrument HFI
+  instrument_quote "The Planck High Frequency Instrument (HFI) is designed to measure the temperature and polarization anisotropies of the Cosmic Microwave Background"
 
 host datacentral.org.au
   instrument HERMES spectrograph
@@ -31161,6 +31170,7 @@ host datacentral.org.au
   applies https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL id=10221
   note TAP-Metadaten: `teff` = "Spectroscopic effective temperature (used for fitting)", unit K. Katalog, kein Zeitraster (interval 0). Instrument: HERMES am Anglo-Australian Telescope, vier Kameras je Stern (Spektren). Fester Release-Bestand.
   instrument HERMES
+  instrument_quote "The GALAH survey uses the Two-Degree Field (2dF) fibre positioner with the HERMES spectrograph at the Anglo-Australian Telescope."
 
 host archives.esac.esa.int
   instrument ACS-NIR
@@ -31251,6 +31261,7 @@ host www.gmrt.org
   note Statisches Bathymetrie-Gitter (elevation in m), interval 0. Block 28729 trug in der TSV Instrument "seismograph" und Feld jma_magnitude, die URL ist aber derselbe GMRT-GridServer; aus der Doku korrigiert auf multibeam sonar / elevation.
 # ---------------------------------------------------------------- VERITAS VTSCat (15029)
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host github.com/VERITAS-Observatory
   instrument VERITAS
@@ -33164,6 +33175,7 @@ host www.gmrt.org
   applies https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=esriascii
   note Statisches Bathymetrie-Gitter. Key `elevation` ist der Spaltenname des ESRI-ASCII-Gitters; die Serviceseite nennt Meter nur als Knotenauflösung ("100 meters per node"), nicht als Werteeinheit — die Einheit m folgt aus der GMRT-Synthesis (Bathymetrie) und ist hier ausgewiesen, nicht wörtlich belegt. sha256 = die 1719152 B der ASCII-Antwort.
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host nsdb.imcce.fr
   status referenz
@@ -36699,6 +36711,7 @@ host datacentral.org.au
   zustand gemessen
   note TAP-Metadaten: `teff` = "Spectroscopic effective temperature (used for fitting)", unit K. Katalog, kein Zeitraster. Geraet HERMES am AAT, vier Kameras je Stern. Fester Release-Bestand.
   instrument HERMES
+  instrument_quote "The GALAH survey uses the Two-Degree Field (2dF) fibre positioner with the HERMES spectrograph at the Anglo-Australian Telescope."
 
 host www.waterqualitydata.us
   instrument multiparameter sonde
@@ -36742,6 +36755,7 @@ host www.gmrt.org
   zustand gemessen
   note GeoTIFF 457x601, float32, ein Band; GMRT liefert ein Gitter (kein Zeitraster, interval 0). Instrument ist Fächerecholot (multibeam sonar), kein Punkt-Sensor. Der alte Block hatte instrument none.
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host github.com
   instrument VERITAS
@@ -37709,6 +37723,7 @@ host www.gmrt.org
   zustand gemessen
   note Zeile 28729 zeigt auf dieselbe URL wie 13213. TSV-Feld jma_magnitude und Instrument seismograph waren falsch; die Quelle liefert ein bathymetrisches Gitter, Messspalte elevation/m. Eigene Registerzeile, derselbe Block.
   instrument multibeam sonar
+  instrument_quote "cleaning and processing ship-based multibeam sonar data acquired by the U.S. Academic Research Fleet (ARF)"
 
 host download1.bayernwolke.de
   instrument lidar
