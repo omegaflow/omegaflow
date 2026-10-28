@@ -142,6 +142,12 @@ pub fn fetch_raw_bytes_with(
         return super::range::fetch_s3_whole(url);
     }
     let mut cmd = curl_base(retry, transfer_bound_s, 0);
+    if let Ok(token) = std::env::var("GH_TOKEN")
+        && !token.is_empty()
+        && url.contains("/releases/download/")
+    {
+        cmd.arg("-H").arg(format!("Authorization: Bearer {token}"));
+    }
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
@@ -167,6 +173,12 @@ pub fn fetch_raw_to_file_with(
     let mut attempt = 0u64;
     loop {
         let mut cmd = curl_base(retry, transfer_bound_s, 0);
+        if let Ok(token) = std::env::var("GH_TOKEN")
+            && !token.is_empty()
+            && url.contains("/releases/download/")
+        {
+            cmd.arg("-H").arg(format!("Authorization: Bearer {token}"));
+        }
         cmd.arg("-C").arg("-");
         cmd.arg("-o").arg(path);
         cmd.arg(url);
