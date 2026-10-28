@@ -1,6 +1,23 @@
 use super::*;
 use crate::force::quantity_kind_of;
 
+pub(crate) fn pipeline_root() -> String {
+    let work = match std::env::var_os("OMEGAFLOW_WORK") {
+        Some(w) => std::path::PathBuf::from(w),
+        None => match std::env::var_os("HOME") {
+            Some(h) => std::path::PathBuf::from(h).join("projects/omegaflow-work"),
+            None => std::path::PathBuf::new(),
+        },
+    };
+    work.join("research/sources/pipeline")
+        .to_string_lossy()
+        .into_owned()
+}
+
+pub(crate) fn pipeline_path(rel: &str) -> String {
+    format!("{}/{}", pipeline_root(), rel)
+}
+
 pub fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     let r1 = lat1.to_radians();
     let r2 = lat2.to_radians();
@@ -892,8 +909,8 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
             ),
         });
     }
-    if let Err(e) = std::fs::write("phi/pipeline/stage/recheck_live.φ", lines.join("\n") + "\n") {
-        eprintln!("reverify: write phi/pipeline/stage/recheck_live.φ: {}", e);
+    if let Err(e) = std::fs::write(pipeline_path("stage/recheck_live.φ"), lines.join("\n") + "\n") {
+        eprintln!("reverify: write {}: {}", pipeline_path("stage/recheck_live.φ"), e);
         return 1;
     }
     0
@@ -1006,20 +1023,23 @@ pub fn probe_mode(
     let declined = declined.load(std::sync::atomic::Ordering::Relaxed);
     let out = out_lock.into_inner().unwrap();
     let dead = dead_lock.into_inner().unwrap();
-    std::fs::create_dir_all("phi/pipeline").ok();
-    if std::fs::write("phi/pipeline/probe_survivors.φ", &out).is_err() {
-        eprintln!("write phi/pipeline/probe_survivors.φ: the register does not remember");
+    std::fs::create_dir_all(pipeline_root()).ok();
+    if std::fs::write(pipeline_path("probe_survivors.φ"), &out).is_err() {
+        eprintln!("write {}: the register does not remember", pipeline_path("probe_survivors.φ"));
     }
     let per_input = format!("{}.survivors.φ", path);
     if std::fs::write(&per_input, &out).is_err() {
         eprintln!("write {}: the register does not remember", per_input);
     }
-    if std::fs::write("phi/pipeline/probe_void.txt", &dead).is_err() {
-        eprintln!("write phi/pipeline/probe_void.txt: the register does not remember");
+    if std::fs::write(pipeline_path("probe_void.txt"), &dead).is_err() {
+        eprintln!("write {}: the register does not remember", pipeline_path("probe_void.txt"));
     }
     eprintln!(
-        "probe: wrote phi/pipeline/probe_survivors.φ ({} verified) and phi/pipeline/probe_void.txt ({} declined)",
-        accepted, declined
+        "probe: wrote {} ({} verified) and {} ({} declined)",
+        pipeline_path("probe_survivors.φ"),
+        accepted,
+        pipeline_path("probe_void.txt"),
+        declined
     );
     0
 }
@@ -3737,18 +3757,20 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
         }
     });
     let drafted = drafted.load(std::sync::atomic::Ordering::Relaxed);
-    std::fs::create_dir_all("phi/pipeline").ok();
+    std::fs::create_dir_all(pipeline_root()).ok();
     std::fs::write(
-        "phi/pipeline/probe_drafts.φ",
+        pipeline_path("probe_drafts.φ"),
         out_lock.into_inner().unwrap(),
     )
     .ok();
     let learned = learned_lock.into_inner().unwrap();
     eprintln!(
-        "--draft: {} candidates, {} blocks drafted, {} frames learned → phi/pipeline/probe_drafts.φ + phi/pipeline/frame_learned.φ",
+        "--draft: {} candidates, {} blocks drafted, {} frames learned → {} + {}",
         total,
         drafted,
-        learned.len()
+        learned.len(),
+        pipeline_path("probe_drafts.φ"),
+        pipeline_path("frame_learned.φ")
     );
     learn_frames(&learned);
     0
@@ -3780,12 +3802,12 @@ pub fn draft_context_mode(path: &str) -> i32 {
         }
     };
     let mut context_map: HashMap<String, String> = HashMap::new();
-    for dir in ["phi/pipeline/catalog", "phi/pipeline"] {
-        if let Ok(rd) = std::fs::read_dir(dir) {
+    for dir in [pipeline_path("catalog"), pipeline_root()] {
+        if let Ok(rd) = std::fs::read_dir(&dir) {
             for e in rd.flatten() {
                 let name = e.file_name().to_string_lossy().to_string();
-                let relevant = (dir == "phi/pipeline/catalog" && name.ends_with(".φ"))
-                    || (dir == "phi/pipeline"
+                let relevant = (dir == pipeline_path("catalog") && name.ends_with(".φ"))
+                    || (dir == pipeline_root()
                         && name.starts_with("weights_")
                         && name.ends_with(".txt"));
                 if !relevant {
@@ -3820,8 +3842,8 @@ pub fn draft_context_mode(path: &str) -> i32 {
     for (nl, f) in reg_keys {
         reg.push_str(&format!("{} | {}\n", nl, f));
     }
-    if std::fs::write("phi/pipeline/frame_registry.φ", reg).is_err() {
-        eprintln!("write phi/pipeline/frame_registry.φ: the register does not remember");
+    if std::fs::write(pipeline_path("frame_registry.φ"), reg).is_err() {
+        eprintln!("write {}: the register does not remember", pipeline_path("frame_registry.φ"));
     }
     let mut out = String::new();
     let mut celestial = 0usize;
@@ -3876,16 +3898,17 @@ pub fn draft_context_mode(path: &str) -> i32 {
         out.push_str(&lines.join("\n"));
         out.push_str("\n\n");
     }
-    std::fs::create_dir_all("phi/pipeline").ok();
-    if std::fs::write("phi/pipeline/probe_drafts_enriched.φ", out).is_err() {
-        eprintln!("write phi/pipeline/probe_drafts_enriched.φ: the register does not remember");
+    std::fs::create_dir_all(pipeline_root()).ok();
+    if std::fs::write(pipeline_path("probe_drafts_enriched.φ"), out).is_err() {
+        eprintln!("write {}: the register does not remember", pipeline_path("probe_drafts_enriched.φ"));
     }
     eprintln!(
-        "--draft-context: {} pending → {} celestial, {} terrestrial, {} stay pending → phi/pipeline/probe_drafts_enriched.φ",
+        "--draft-context: {} pending → {} celestial, {} terrestrial, {} stay pending → {}",
         celestial + terrestrial + pending,
         celestial,
         terrestrial,
-        pending
+        pending,
+        pipeline_path("probe_drafts_enriched.φ")
     );
     0
 }
@@ -3931,8 +3954,8 @@ pub fn gate_learn_mode() -> i32 {
     for (w, f, tag) in &delta {
         d.push_str(&format!("{} {} {}\n", w, f, tag));
     }
-    if std::fs::write("phi/pipeline/library_gate_delta.φ", d).is_err() {
-        eprintln!("write phi/pipeline/library_gate_delta.φ: the register does not remember");
+    if std::fs::write(pipeline_path("library_gate_delta.φ"), d).is_err() {
+        eprintln!("write {}: the register does not remember", pipeline_path("library_gate_delta.φ"));
     }
     let library = match std::fs::read_to_string("tools/utils/data/library.φ") {
         Ok(c) => c,
@@ -4050,20 +4073,24 @@ pub fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     });
     let live = live.load(std::sync::atomic::Ordering::Relaxed);
     let void = void.load(std::sync::atomic::Ordering::Relaxed);
-    std::fs::create_dir_all("phi/pipeline").ok();
+    std::fs::create_dir_all(pipeline_root()).ok();
     std::fs::write(
-        "phi/pipeline/probe_live.txt",
+        pipeline_path("probe_live.txt"),
         live_lock.into_inner().unwrap(),
     )
     .ok();
     std::fs::write(
-        "phi/pipeline/probe_url_void.txt",
+        pipeline_path("probe_url_void.txt"),
         void_lock.into_inner().unwrap(),
     )
     .ok();
     eprintln!(
-        "--urls: {} checked, {} live, {} void → phi/pipeline/probe_live.txt + probe_url_void.txt",
-        total, live, void
+        "--urls: {} checked, {} live, {} void → {} + {}",
+        total,
+        live,
+        void,
+        pipeline_path("probe_live.txt"),
+        pipeline_path("probe_url_void.txt")
     );
     0
 }

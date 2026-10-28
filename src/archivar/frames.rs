@@ -45,7 +45,7 @@ pub fn build_frame_registry() -> HashMap<String, String> {
             }
         }
     }
-    if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
+    if let Ok(content) = std::fs::read_to_string(crate::archivar::port::pipeline_path("frame_learned.φ")) {
         for line in content.lines() {
             let t = line.trim();
             if t.is_empty() || t.starts_with('#') {
@@ -66,7 +66,7 @@ pub fn build_frame_registry() -> HashMap<String, String> {
 
 pub fn learn_frames(new: &HashMap<String, String>) {
     let mut map: HashMap<String, String> = HashMap::new();
-    if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
+    if let Ok(content) = std::fs::read_to_string(crate::archivar::port::pipeline_path("frame_learned.φ")) {
         for line in content.lines() {
             let t = line.trim();
             if t.is_empty() || t.starts_with('#') {
@@ -89,8 +89,8 @@ pub fn learn_frames(new: &HashMap<String, String>) {
     for (nl, frame) in keys {
         out.push_str(&format!("{} | {}\n", nl, frame));
     }
-    std::fs::create_dir_all("phi/pipeline").ok();
-    if std::fs::write("phi/pipeline/frame_learned.φ", out).is_err() {
+    std::fs::create_dir_all(crate::archivar::port::pipeline_root()).ok();
+    if std::fs::write(crate::archivar::port::pipeline_path("frame_learned.φ"), out).is_err() {
         eprintln!("write phi/pipeline/frame_learned.φ: the register does not remember");
     }
 }
