@@ -103,6 +103,7 @@ pub(crate) fn field_model() -> &'static std::collections::HashMap<&'static str, 
 
 pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut sources = Vec::new();
+    let mut unmodelled: usize = 0;
 
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
@@ -758,6 +759,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     .copied()
                     .or_else(|| field_model().get(parts[2]).copied())
                 else {
+                    unmodelled += 1;
                     continue;
                 };
                 let Some(kernel) = kernel_id_of(kernel_s) else {
@@ -2701,6 +2703,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
         }
     }
     flush!();
+    if unmodelled > 0 {
+        eprintln!(
+            "field model: {unmodelled} field line(s) skipped — key and name stand in no row of field_model.tsv, so the archive reads nothing for them"
+        );
+    }
     sources
 }
 

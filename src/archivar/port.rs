@@ -1825,6 +1825,7 @@ fn register_maps() -> &'static RegisterMaps {
         let mut field_names: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
         let mut field_columns: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
         let mut quantities: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
+        let mut unmodelled: usize = 0;
         for line in include_str!("../../phi/sources.φ").lines() {
             let p: Vec<&str> = register_tokens(line);
             let Some(head) = p.first().copied() else {
@@ -1842,6 +1843,7 @@ fn register_maps() -> &'static RegisterMaps {
                     .copied()
                     .or_else(|| crate::archivar::parse::field_model().get(p[2]).copied())
                 else {
+                    unmodelled += 1;
                     continue;
                 };
                 let entry = (force, p[3], tau);
@@ -1882,6 +1884,11 @@ fn register_maps() -> &'static RegisterMaps {
         }
         for (key, value) in field_columns {
             field_names.entry(key).or_insert(value);
+        }
+        if unmodelled > 0 {
+            eprintln!(
+                "field model: {unmodelled} field line(s) skipped — key and name stand in no row of field_model.tsv, so the probe reads nothing for them"
+            );
         }
         RegisterMaps {
             fields: field_names,
