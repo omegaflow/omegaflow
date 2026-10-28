@@ -96,7 +96,7 @@ fn main() {
         }
     };
     let mut file = mf;
-    let npix = (12 * NSIDE_HUNT * NSIDE_HUNT);
+    let npix = 12 * NSIDE_HUNT * NSIDE_HUNT;
     let mut hits: Vec<Sight> = Vec::new();
     let mut n_leaf = 0usize;
     for pix in 0..npix {
