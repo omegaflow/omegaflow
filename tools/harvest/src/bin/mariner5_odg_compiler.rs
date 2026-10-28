@@ -99,6 +99,10 @@ pub fn decode(payload: &[u8], packing: Packing) -> (Vec<Row>, usize) {
             skipped += 1;
             continue;
         }
+        if w[0] != 0x1c_0000 {
+            skipped += 1;
+            continue;
+        }
         for k in 0..LOGICAL_PER_RECORD {
             let b = k * WORDS_PER_LOGICAL;
             let Some(t) = unix_from_words(w[b + 1], w[b + 2]) else {
@@ -259,5 +263,15 @@ mod tests {
         bytes.extend_from_slice(&[0u8; 100]);
         let (rows, _) = decode(&bytes, Packing::Unpacked);
         assert!(rows.is_empty(), "{rows:?}");
+    }
+
+    #[test]
+    fn a_label_record_is_not_a_data_record() {
+        let mut rec = Vec::new();
+        rec.extend_from_slice(&1206u16.to_be_bytes());
+        rec.extend_from_slice(&[0u8; 1206]);
+        let (rows, skipped) = decode(&rec, Packing::Unpacked);
+        assert!(rows.is_empty(), "{rows:?}");
+        assert_eq!(skipped, 1);
     }
 }
