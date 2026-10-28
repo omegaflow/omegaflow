@@ -274,11 +274,12 @@ fn main() {
     }
 
     print!("{report}");
-    if let Err(e) = std::fs::create_dir_all("state/reports") {
+    let report_dir = omegaflow::archivar::asset_path::work_root().join("state/reports");
+    if let Err(e) = std::fs::create_dir_all(&report_dir) {
         eprintln!("neptune-center-rift: report dir stays unbuilt — {e}");
     }
-    let report_path = "state/reports/neptune_center_rift.txt";
-    if let Err(e) = std::fs::write(report_path, &report) {
+    let report_path = report_dir.join("neptune_center_rift.txt");
+    if let Err(e) = std::fs::write(&report_path, &report) {
         eprintln!("neptune-center-rift: report write void — {e}");
     }
     let series_path = "state/reports/neptune_center_rift_series.tsv";
@@ -304,5 +305,5 @@ fn main() {
         eprintln!("neptune-center-rift: series write void — {e}");
     }
     println!("series: {series_path}");
-    println!("report: {report_path}");
+    println!("report: {}", report_path.display());
 }

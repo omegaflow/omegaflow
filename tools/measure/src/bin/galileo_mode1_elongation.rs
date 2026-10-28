@@ -177,9 +177,11 @@ fn main() {
         day_resid.len()
     ));
 
-    std::fs::create_dir_all("reports").ok();
+    let report_dir = omegaflow::archivar::asset_path::work_root().join("state/reports");
+    std::fs::create_dir_all(&report_dir).ok();
     let body = out.join("\n") + "\n";
-    match std::fs::write("state/reports/galileo_mode1_elongation.txt", &body) {
+    let report = report_dir.join("galileo_mode1_elongation.txt");
+    match std::fs::write(&report, &body) {
         Ok(()) => {
             eprintln!("galileo: mode 1 elongation report written");
         }

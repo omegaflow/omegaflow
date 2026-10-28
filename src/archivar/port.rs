@@ -3988,8 +3988,10 @@ pub fn gate_learn_mode() -> i32 {
             out.push('\n');
         }
     }
-    if std::fs::write("tools/utils/data/library.φ", out).is_err() {
-        eprintln!("write tools/utils/data/library.φ: the register does not remember");
+    let library = crate::archivar::asset_path::work_root()
+        .join("tools/utils/data/library.φ");
+    if std::fs::write(&library, out).is_err() {
+        eprintln!("write {}: the register does not remember", library.display());
     }
     eprintln!(
         "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
