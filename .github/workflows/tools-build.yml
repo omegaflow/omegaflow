@@ -124,7 +124,8 @@ jobs:
     - uses: taiki-e/install-action@cargo-cyclonedx
     - name: Stückliste — SBOM des Werkzeug-Baums
       run: |
-        cargo cyclonedx --format json --output-cdx sbom.cdx.json --all-features
+        cargo cyclonedx --format json --all-features
+        mv bom.json sbom.cdx.json
         echo "sbom: $(jq '.components | length' sbom.cdx.json) components"
     - name: Sign the assets — the origin is proven, not asserted
       env:
