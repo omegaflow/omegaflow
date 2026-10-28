@@ -299,6 +299,7 @@ pub mod refusal;
 pub mod relay;
 pub mod render;
 pub mod skymap;
+pub mod small_bodies;
 pub mod sniff;
 pub mod snirf;
 pub mod spatial;
