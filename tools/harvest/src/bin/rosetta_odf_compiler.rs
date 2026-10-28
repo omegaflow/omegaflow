@@ -242,7 +242,6 @@ fn main() {
         return;
     }
     merged.sort_by(|a, b| a.0.total_cmp(&b.0));
-    std::fs::create_dir_all("data/archives.esac.esa.int").ok();
 
     let shard_records = (odf::PODF_SHARD_BUDGET - 8) / RECORD_BYTES;
     let mut names: Vec<String> = Vec::new();

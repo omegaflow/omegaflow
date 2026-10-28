@@ -180,7 +180,6 @@ fn main() {
     let rels = files_of();
     eprintln!("mro-m-rss-1-magr-v1/mrors_0xxx/odf: {} files", rels.len());
     let urls: Vec<String> = rels.iter().map(|rel| format!("{BASE}{rel}")).collect();
-    std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
 
     let shard_records = (odf::PODF_SHARD_BUDGET - 8) / 72;
     let mut buffer: Vec<[f64; 9]> = Vec::with_capacity(shard_records);

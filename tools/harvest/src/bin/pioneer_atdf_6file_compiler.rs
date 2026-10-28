@@ -44,7 +44,6 @@ fn main() {
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
     let out = "sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq_6file.bin";
-    std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
     let bin = write_bin(&merged);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");

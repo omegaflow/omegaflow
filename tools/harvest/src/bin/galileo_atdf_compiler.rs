@@ -92,7 +92,6 @@ fn main() {
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
     let out = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
-    std::fs::create_dir_all("data/pds-ppi.igpp.ucla.edu").ok();
     let bin = write_resid_bin(&merged);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");

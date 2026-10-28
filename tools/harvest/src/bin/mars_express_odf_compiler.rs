@@ -229,7 +229,6 @@ fn main() {
     paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
     let (merged, uplink_bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
     let out = "sources/archives.esac.esa.int/mars_express_odf.bin";
-    std::fs::create_dir_all("data/archives.esac.esa.int").ok();
     let bin = odf::write_podf_bin_bands(&merged, &uplink_bands);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");

@@ -1038,7 +1038,6 @@ fn main() {
 
     let mut bytes = std::fs::read(&arc_path).ok();
     if bytes.is_none() {
-        std::fs::create_dir_all("data/ssd.jpl.nasa.gov").ok();
         bytes = fetch_raw_bytes(&body_url("juice"));
         if let Some(b) = &bytes {
             std::fs::write(&arc_path, b).ok();
@@ -1081,7 +1080,6 @@ fn main() {
             "no tube built from the unsealed arc — the riss stands with both witnesses (verdict {})",
             verdict.word()
         );
-        std::fs::create_dir_all("data/flyby2").ok();
         if std::fs::write(&tube_path, riss_json(&measured_sha, bytes.len(), line)).is_ok() {
             println!("riss register: {tube_path}");
         }
@@ -1266,7 +1264,6 @@ fn main() {
         cell_channels.push(fragments);
     }
 
-    std::fs::create_dir_all("data/flyby2").ok();
     let json = tube_json(
         verdict,
         &measured_sha,

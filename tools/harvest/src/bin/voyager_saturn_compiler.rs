@@ -129,7 +129,6 @@ fn main() {
         return;
     }
     let out = "sources/spdf.gsfc.nasa.gov/voyager_saturn.bin";
-    std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
     let bin = voyager_saturn::write_vsat_bin(&rows);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");

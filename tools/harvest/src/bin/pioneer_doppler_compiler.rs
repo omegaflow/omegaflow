@@ -124,7 +124,6 @@ fn main() {
             continue;
         }
         let out = format!("sources/spdf.gsfc.nasa.gov/{name}_doppler.bin");
-        std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
         let bin = write_bin(&records);
         if std::fs::write(&out, &bin).is_err() {
             eprintln!("{name}: write {out} void");

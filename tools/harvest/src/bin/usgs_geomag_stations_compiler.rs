@@ -106,7 +106,9 @@ fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(args, "--out") {
         Some(v) => v,
-        None => format!("data/{NETLOC}/observatories.txt"),
+        None => omegaflow::archivar::asset_path::raw(NETLOC, "observatories.txt")
+            .to_string_lossy()
+            .into_owned(),
     };
 
     let body = curl(URL).ok_or_else(|| format!("{URL}: fetch void"))?;

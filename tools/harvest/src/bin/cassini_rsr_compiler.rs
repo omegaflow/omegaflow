@@ -224,7 +224,6 @@ fn main() {
     }
     rows.sort_by(|a, b| a.0.total_cmp(&b.0));
 
-    std::fs::create_dir_all("data/atmos.nmsu.edu").ok();
     let per_shard = cassini_rsr::SHARD_BUDGET / 20;
     let chunks: Vec<&[(f64, f64, u32)]> = rows.chunks(per_shard).collect();
     let multi = chunks.len() > 1;

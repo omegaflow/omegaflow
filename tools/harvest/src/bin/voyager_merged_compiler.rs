@@ -22,7 +22,6 @@ fn main() {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
     };
-    std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
     let mut all_ok = true;
     for (rel, out) in HOUSES {
         let sc = rel.split('_').next().unwrap_or("voyager");

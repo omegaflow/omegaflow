@@ -768,7 +768,6 @@ fn main() {
             }
         }
         let path = "sources/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin";
-        let _ = std::fs::create_dir_all("data/ssd.jpl.nasa.gov");
         write_binary(&path, "uranus_c", &granules, &[], None);
         if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
             eprintln!("upload: {} did not reach the CDN", path);
@@ -874,7 +873,6 @@ fn main() {
             }
         }
         let path = "sources/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin";
-        let _ = std::fs::create_dir_all("data/ssd.jpl.nasa.gov");
         write_binary(&path, "neptune_c", &granules, &[], None);
         if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
             eprintln!("upload: {} did not reach the CDN", path);

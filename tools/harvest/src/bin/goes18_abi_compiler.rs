@@ -162,7 +162,6 @@ fn main() {
         std::process::exit(1);
     };
     let out = "data/noaa-goes18.s3.amazonaws.com/goes18_abi.bin";
-    std::fs::create_dir_all("data/noaa-goes18.s3.amazonaws.com").ok();
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");
         std::process::exit(1);

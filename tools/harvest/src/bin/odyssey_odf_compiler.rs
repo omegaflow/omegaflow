@@ -220,7 +220,6 @@ fn main() {
     let mut paired: Vec<([f64; 9], Option<i64>)> = merged.into_iter().zip(uplink_bands).collect();
     paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
     let (merged, uplink_bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
-    std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
     let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
     if ranges.len() == 1 {
         let out = format!("sources/pds-geosciences.wustl.edu/{PREFIX}.bin");

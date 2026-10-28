@@ -41,7 +41,6 @@ fn main() {
         return;
     }
     merged.sort_by(|a, b| a.0.total_cmp(&b.0));
-    std::fs::create_dir_all("data/ssd.jpl.nasa.gov").ok();
     let bin = viking_text::write_series(&merged);
     if std::fs::write(OUT, &bin).is_err() {
         eprintln!("write {OUT} void");
