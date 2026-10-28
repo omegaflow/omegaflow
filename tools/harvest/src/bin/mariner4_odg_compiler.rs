@@ -13,6 +13,7 @@ const URLS: &[&str] = &[
 ];
 
 const HEADER_RECORDS: usize = 3;
+const DATA_RECORD_MARKER: u64 = 0x1c_0000;
 const WORDS_PER_DATA_RECORD: usize = 200;
 const LOGICAL_RECORD_WORDS: usize = 8;
 
@@ -51,11 +52,11 @@ fn unix_from_words(w1: u64, w2: u64) -> Option<f64> {
     Some(epoch1950 + seconds)
 }
 
-fn hex_single(w: u64) -> f64 {
+fn single(w: u64) -> f64 {
     let sign = if (w >> 35) & 1 == 1 { -1.0 } else { 1.0 };
-    let exp = ((w >> 28) & 0x7F) as i32;
-    let frac = (w & 0x0FFF_FFFF) as f64 / (2f64.powi(28));
-    sign * frac * 16f64.powi(exp - 64)
+    let exp = ((w >> 27) & 0xFF) as i32;
+    let frac = (w & 0x07FF_FFFF) as f64 / (2f64.powi(27));
+    sign * frac * 2f64.powi(exp - 128)
 }
 
 fn datatype_of(code: u64) -> Option<u32> {
@@ -105,6 +106,11 @@ fn parse_tar(raw: &[u8], rows: &mut Vec<(f64, f64, u32)>, skipped: &mut usize) {
             }
             if index >= HEADER_RECORDS {
                 let words = words_of(&data[payload..end]);
+                if words.first() != Some(&DATA_RECORD_MARKER) {
+                    off = end;
+                    index += 1;
+                    continue;
+                }
                 for base in (0..WORDS_PER_DATA_RECORD).step_by(LOGICAL_RECORD_WORDS) {
                     let Some(code) = words.get(base + 5).copied() else {
                         break;
@@ -127,7 +133,7 @@ fn parse_tar(raw: &[u8], rows: &mut Vec<(f64, f64, u32)>, skipped: &mut usize) {
                     let Some(&obs) = words.get(base + 6) else {
                         break;
                     };
-                    rows.push((t, hex_single(obs), dtype));
+                    rows.push((t, single(obs), dtype));
                 }
             }
             off = end;
