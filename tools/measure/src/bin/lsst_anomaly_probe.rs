@@ -3800,8 +3800,8 @@ mod tests {
         let as_utc = mjd_to_unix(mjd_tai);
         let expected = as_utc + 32.184 - 946_728_000.0;
         assert!(
-            (tdb - expected).abs() < 1e-6,
-            "leap cancels: the TAI label overstates the UTC unix by the leap, which unix_to_tdb restores — tdb {tdb}, expected {expected}"
+            (tdb - expected).abs() < 2e-3,
+            "the leap cancels, but TDB-TT does not: its periodic term reaches 1.7 ms, so a model of unix plus leap holds only to that order — tdb {tdb}, model {expected}"
         );
         assert!(
             (tdb - 819_050_080.769_833).abs() < 1e-3,
