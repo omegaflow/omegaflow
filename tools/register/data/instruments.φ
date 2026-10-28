@@ -27218,7 +27218,7 @@ host wdcb.ru
   interval 60
   api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
   api_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
-  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
+  instrument_cite https://vniio.ru/services/Marinemagnaticsurvey/
   instrument_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
@@ -27229,7 +27229,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku31.dat id=25574
   note MGD77-Schiffsprofil AKU-31; MAG in Zehntel-nT, Digitisierrate 1 min -> 60 s.
   instrument magnetometer (model not named in MGD77 header)
-  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
+  instrument_quote "Буксируемый морской протонный магнитометр Sea Spy предназначен для измерения модуля магнитной индукции постоянного магнитного поля в водной среде."
 
 host wdcb.ru
   instrument magnetometer
@@ -27258,7 +27258,7 @@ host wdcb.ru
   interval 60
   api_cite https://www.jodc.go.jp/data_format/mgd77-1998-format.html
   api_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
-  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
+  instrument_cite https://vniio.ru/services/Marinemagnaticsurvey/
   instrument_ref "JODC, MGD77 data file format description. MGD77 Data File Format (August 1998, Revised)."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
@@ -27269,7 +27269,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme21.dat id=25661
   note MGD77, Fahrt 21 (Wladiwostok 1978); Magnetometer NEL-6 im Kopf.
   instrument magnetometer (model not named in MGD77 header)
-  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
+  instrument_quote "Буксируемый морской протонный магнитометр Sea Spy предназначен для измерения модуля магнитной индукции постоянного магнитного поля в водной среде."
 
 host wdcb.ru
   instrument magnetometer
