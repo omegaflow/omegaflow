@@ -196,4 +196,42 @@ mod tests {
         assert!(parse("<root></root>").is_none());
         assert!(parse("").is_none());
     }
+
+    const GEOFON: &str = include_str!("kernels/stationxml/GE_APE_BHZ.xml");
+    const RESIF: &str = include_str!("kernels/stationxml/FR_ZELS_BHZ.xml");
+
+    #[test]
+    fn three_operators_supply_the_same_fields() {
+        let iris = parse(ANMO).expect("IRIS");
+        let geofon = parse(GEOFON).expect("GEOFON");
+        let resif = parse(RESIF).expect("RESIF");
+        assert_eq!(iris.code, "IU");
+        assert_eq!(geofon.code, "GE");
+        assert_eq!(resif.code, "FR");
+        let ape = geofon
+            .stations
+            .iter()
+            .find(|s| s.code == "APE")
+            .expect("GE.APE");
+        assert!((ape.latitude - 37.07274).abs() < 1e-6, "{}", ape.latitude);
+        assert!((ape.longitude - 25.52301).abs() < 1e-6, "{}", ape.longitude);
+        let ape_bhz = ape.channels.iter().find(|c| c.code == "BHZ").expect("BHZ");
+        assert!((ape_bhz.sample_rate_hz - 20.0).abs() < 1e-9);
+        let ape_sens = ape_bhz.sensitivity.as_ref().expect("sensitivity");
+        assert!((ape_sens.value - 5.88e8).abs() < 1.0, "{}", ape_sens.value);
+        let zels = resif
+            .stations
+            .iter()
+            .find(|s| s.code == "ZELS")
+            .expect("FR.ZELS");
+        assert!((zels.latitude - 48.302306).abs() < 1e-6, "{}", zels.latitude);
+        let zels_bhz = zels.channels.iter().find(|c| c.code == "BHZ").expect("BHZ");
+        assert!((zels_bhz.sample_rate_hz - 20.0).abs() < 1e-9);
+        let zels_sens = zels_bhz.sensitivity.as_ref().expect("sensitivity");
+        assert!(
+            (zels_sens.value - 5.04364575e8).abs() < 1.0,
+            "{}",
+            zels_sens.value
+        );
+    }
 }
