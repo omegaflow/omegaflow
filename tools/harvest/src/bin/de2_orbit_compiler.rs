@@ -1,12 +1,18 @@
+use omegaflow::archivar::parse_ephemeris_binary;
 use omegaflow::cdf::{CdfFile, cdf_epoch_unix, tt2000_unix};
 use omegaflow::ephemeris::{CHEBYSHEV_DEGREE, chebyshev_fit, write_binary};
 use omegaflow::pck::PckBody;
 use std::fs;
 
 const R_EARTH_KM: f64 = 6371.0;
-const GRANULE_SECONDS: f64 = 32.0 * 86400.0;
+const GRANULE_DAYS: f64 = 32.0;
 const DE2_NAIF: i32 = -17;
 const ALTITUDE_TOLERANCE_KM: f64 = 50.0;
+const UNIX_TO_JD: f64 = 2440587.5;
+
+fn jd_of_unix(unix_s: f64) -> f64 {
+    unix_s / 86400.0 + UNIX_TO_JD
+}
 
 fn var_values(file: &CdfFile, bytes: &[u8], name: &str) -> Option<Vec<Vec<f64>>> {
     let var = file.var(name)?;
@@ -37,8 +43,85 @@ fn epoch_seconds(file: &CdfFile, bytes: &[u8], name: &str) -> Option<Vec<f64>> {
     Some(out)
 }
 
+fn check(bin_path: &str, cdf_path: Option<&str>) {
+    let bytes = match fs::read(bin_path) {
+        Ok(b) => b,
+        Err(e) => {
+            eprintln!("{bin_path}: {e}");
+            std::process::exit(2);
+        }
+    };
+    let eph = match omegaflow::archivar::parse_ephemeris_binary(&bytes) {
+        Some(e) => e,
+        None => {
+            eprintln!("{bin_path}: parse_ephemeris_binary liest die Datei nicht");
+            std::process::exit(3);
+        }
+    };
+    if eph.granules.is_empty() {
+        eprintln!("{bin_path}: keine Granulen");
+        std::process::exit(3);
+    }
+    if !eph.rotation_matrices.is_empty() {
+        eprintln!(
+            "{bin_path}: {} Rotationsmatrizen, erwartet 0",
+            eph.rotation_matrices.len()
+        );
+        std::process::exit(3);
+    }
+    let mut bad = 0usize;
+    for (i, g) in eph.granules.iter().enumerate() {
+        let finite = g.t0_jd.is_finite()
+            && g.dt_jd.is_finite()
+            && g.dt_jd > 0.0
+            && g.cx.iter().all(|c| c.is_finite())
+            && g.cy.iter().all(|c| c.is_finite())
+            && g.cz.iter().all(|c| c.is_finite());
+        if !finite {
+            eprintln!("granule {i}: nicht endlich oder dt <= 0");
+            bad += 1;
+        }
+    }
+    let lo = eph.granules[0].t0_jd;
+    let hi = eph.granules[eph.granules.len() - 1].t0_jd + eph.granules[eph.granules.len() - 1].dt_jd;
+    println!(
+        "{bin_path}: {} Granulen, JD {lo:.3} bis {hi:.3}, Rotationen 0",
+        eph.granules.len()
+    );
+    if let Some(cdf) = cdf_path {
+        if let Ok(cbytes) = fs::read(cdf) {
+            if let Ok(file) = CdfFile::parse(&cbytes) {
+                if let Some(t) = epoch_seconds(&file, &cbytes, "Epoch") {
+                    let first = jd_of_unix(t[0]);
+                    let last = jd_of_unix(t[t.len() - 1]);
+                    let covered = lo <= first + 1e-6 && hi + 1e-6 >= last;
+                    println!(
+                        "cdf: JD {first:.3} bis {last:.3} — {}",
+                        if covered { "gedeckt" } else { "NICHT gedeckt" }
+                    );
+                    if !covered {
+                        bad += 1;
+                    }
+                }
+            }
+        } else {
+            eprintln!("{cdf}: nicht lesbar");
+            bad += 1;
+        }
+    }
+    if bad > 0 {
+        eprintln!("{bin_path}: {bad} Befund(e)");
+        std::process::exit(3);
+    }
+    println!("{bin_path}: lesbar, Deckung stimmt");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+    if args.len() >= 3 && args[1] == "--check" {
+        check(&args[2], args.get(3).map(String::as_str));
+        return;
+    }
     if args.len() < 3 {
         eprintln!("usage: de2_orbit_compiler <cdf> <out.bin> [--dry]");
         std::process::exit(2);
@@ -117,22 +200,23 @@ fn main() {
 
     let mut granules = Vec::new();
     let mut start = 0usize;
-    let t_end = t[n - 1];
+    let jd_end = jd_of_unix(t[n - 1]);
     while start < n {
-        let t0 = t[start];
-        let stop = (t0 + GRANULE_SECONDS).min(t_end);
+        let t0 = jd_of_unix(t[start]);
+        let stop = (t0 + GRANULE_DAYS).min(jd_end);
         let mut samples: Vec<(f64, f64, f64)> = Vec::new();
         let mut zs: Vec<(f64, f64, f64)> = Vec::new();
         let mut i = start;
-        while i < n && t[i] <= stop {
+        while i < n && jd_of_unix(t[i]) <= stop {
             if let (Some(x), Some(y), Some(z)) = (
                 px[i].first().copied(),
                 py[i].first().copied(),
                 pz[i].first().copied(),
             ) {
                 if x.is_finite() && y.is_finite() && z.is_finite() {
-                    samples.push((t[i], x, y));
-                    zs.push((t[i], z, 0.0));
+                    let jd = jd_of_unix(t[i]);
+                    samples.push((jd, x, y));
+                    zs.push((jd, z, 0.0));
                 }
             }
             i += 1;
@@ -170,7 +254,7 @@ fn main() {
         "{}: {n} Punkte, {} Granule, {:.1} Tage, NAIF {DE2_NAIF}",
         cdf_path,
         granules.len(),
-        (t_end - t[0]) / 86400.0
+        jd_end - jd_of_unix(t[0])
     );
     if dry {
         println!("dry: nichts geschrieben");
