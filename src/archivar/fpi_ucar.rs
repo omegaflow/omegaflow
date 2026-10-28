@@ -93,6 +93,13 @@ yyday  ut(hr)  merid (m/s) merid err  dir ut(hr)  zonal (m/s)  zonal err dir  sk
         let zonal_back = lsk.tdb_to_unix(rows[1].0).expect("the zonal epoch inverts");
         assert!((merid_back - merid_unix).abs() < 1e-6);
         assert!((zonal_back - zonal_unix).abs() < 1e-6);
-        assert!(((rows[1].0 - rows[0].0) - 72.0).abs() < 1e-9);
+        let clock_merid = lsk.unix_to_tdb(merid_unix).expect("the merid epoch");
+        let clock_zonal = lsk.unix_to_tdb(zonal_unix).expect("the zonal epoch");
+        assert!(
+            ((rows[1].0 - rows[0].0) - (clock_zonal - clock_merid)).abs() < 1e-9,
+            "the two rows are 72 s apart on the civil clock, but TDB is not affine: the \
+             periodic TDB-TT term changes across that interval, so the pair is read against \
+             the clock and not against a constant"
+        );
     }
 }

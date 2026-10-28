@@ -3252,8 +3252,10 @@ mod tests {
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0][TNF_ROW_FORMAT], 16.0);
         assert!(
-            (rows[0][TNF_ROW_TDB] - 509_180_757.685_197).abs() < 1e-6,
-            "DT16 tdb {} is not the SFDU time-tag tdb",
+            (rows[0][TNF_ROW_TDB] - 509_180_757.685_216_6).abs() < 1e-6,
+            "DT16 tdb {} is not the SFDU time-tag tdb; the pin moved 19.6 us when the \
+             conversion took the full Fairhead-Bretagnon series, which is the size the \
+             two-term formula was off by at this epoch",
             rows[0][TNF_ROW_TDB]
         );
     }
