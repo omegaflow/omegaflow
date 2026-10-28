@@ -566,6 +566,30 @@ mod tests {
     }
 
     #[test]
+    fn proj_gie_runs_the_builtins_suite() {
+        let gie = std::env::var("PROJ_GIE").unwrap_or_else(|_| "gie".to_string());
+        let file = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/src/archivar/kernels/proj_builtins.gie"
+        );
+        let out = std::process::Command::new(&gie).arg(file).output();
+        let Ok(out) = out else {
+            eprintln!("gie absent: {gie} is not runnable here, PROJ is not installed");
+            return;
+        };
+        let text = String::from_utf8_lossy(&out.stdout);
+        assert!(
+            out.status.success(),
+            "gie exited {:?}: {text}",
+            out.status.code()
+        );
+        assert!(
+            text.contains("0 tests failed"),
+            "gie suite did not pass: {text}"
+        );
+    }
+
+    #[test]
     fn the_inverse_returns_what_proj4rs_projects() {
         let utm = proj4rs::proj::Proj::from_proj_string(
             "+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs",
