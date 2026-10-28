@@ -343,9 +343,8 @@ fn iso_to_unix(text: &str) -> Option<f64> {
     let mut t = clock.split(':');
     let h: i64 = t.next()?.parse().ok()?;
     let mi: i64 = t.next()?.parse().ok()?;
-    let base = days_from_civil(y, mo, da)? as f64 * SECS_PER_DAY
-        + h as f64 * 3600.0
-        + mi as f64 * 60.0;
+    let base =
+        days_from_civil(y, mo, da)? as f64 * SECS_PER_DAY + h as f64 * 3600.0 + mi as f64 * 60.0;
     Some(match t.next() {
         Some(x) => base + x.parse::<f64>().ok()?,
         None => base,

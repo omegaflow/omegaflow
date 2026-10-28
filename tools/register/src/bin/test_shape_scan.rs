@@ -209,7 +209,10 @@ mod tests {
         );
         let findings = scan(&dir, false);
         assert_eq!(findings.len(), 1, "{findings:?}");
-        assert!(findings[0].contains("asserts existence only"), "{findings:?}");
+        assert!(
+            findings[0].contains("asserts existence only"),
+            "{findings:?}"
+        );
     }
 
     #[test]

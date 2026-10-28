@@ -2526,7 +2526,11 @@ fn run_stats() -> Vec<String> {
             Ok(v) => v,
             Err(_) => continue,
         };
-        let h = if mode == "probe" && h == 0 && n > 0 { 1 } else { h };
+        let h = if mode == "probe" && h == 0 && n > 0 {
+            1
+        } else {
+            h
+        };
         let e = runs.entry(mode).or_insert((0, 0, 0, 0));
         e.0 += 1;
         e.1 += h;
@@ -2767,10 +2771,8 @@ fn usage_full() {
     eprintln!(
         "  --firecrawl Firecrawl search (api.firecrawl.dev/v1/search, Bearer; OSS self-host fallback); url + title/description"
     );
-    eprintln!(
-    );
-    eprintln!(
-    );
+    eprintln!();
+    eprintln!();
     eprintln!(
         "  --oeis      OEIS integer-sequence search (oeis.org/search?fmt=json), keyless; url + title/data"
     );
@@ -2789,8 +2791,7 @@ fn usage_full() {
     eprintln!(
         "  --sourcegraph Sourcegraph code search (sourcegraph.com/.api/search/stream), keyless; repo/path/line/match"
     );
-    eprintln!(
-    );
+    eprintln!();
     eprintln!(
         "  --wikidata  Wikidata entity search (wikidata.org/w/api.php wbsearchentities), keyless; id/label/description"
     );
@@ -2917,8 +2918,7 @@ fn usage_full() {
     eprintln!(
         "  --opencitations OpenCitations citation count (opencitations.net/index/api/v1, DOI only), keyless; doi + citations"
     );
-    eprintln!(
-    );
+    eprintln!();
     eprintln!(
         "  --scholexplorer OpenAIRE Scholexplorer links (api.scholexplorer.openaire.eu/v3/Links, DOI/PMID), keyless; target + relation type"
     );
@@ -3012,8 +3012,7 @@ fn usage_full() {
     eprintln!(
         "  --exa       Exa Search API (api.exa.ai), EXA_API_KEY; url + title/author/published/text"
     );
-    eprintln!(
-    );
+    eprintln!();
     eprintln!(
         "  --lasair    Lasair LSST object query (api.lasair.lsst.ac.uk), LASAIR_LSST_TOKEN; objectId -> present diaObject fields (direct, then socks5h 127.0.0.1:25344)"
     );

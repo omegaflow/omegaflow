@@ -320,7 +320,9 @@ mod tmcoords {
             }
             n += 1;
         }
-        eprintln!("bands 0-90 deg: {bands:?}, near worst {near:.3e} at {near_at}, n {n}, skipped {skipped}");
+        eprintln!(
+            "bands 0-90 deg: {bands:?}, near worst {near:.3e} at {near_at}, n {n}, skipped {skipped}"
+        );
         assert!(n > 6000, "sample carried {n} points");
         assert!(
             near < 1e-6,

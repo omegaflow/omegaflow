@@ -196,7 +196,8 @@ mod tests {
         assert_eq!(
             tdb,
             32.184 + 0.0 - 946728000.0
-                + crate::archivar::lsk::tdb_minus_tt_seconds(0.0).expect("the frozen series parses")
+                + crate::archivar::lsk::tdb_minus_tt_seconds(0.0)
+                    .expect("the frozen series parses")
         );
     }
 

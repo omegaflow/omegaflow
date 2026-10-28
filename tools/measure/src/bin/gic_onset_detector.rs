@@ -181,17 +181,19 @@ fn match_onsets(a: &[f64], b: &[f64], tol: f64) -> (usize, usize, Option<f64>) {
     let mut matched_a = 0usize;
     for &x in a {
         if let Some(dt) = nearest(b, x)
-            && dt <= tol {
-                matched_a += 1;
-                dts.push(dt);
-            }
+            && dt <= tol
+        {
+            matched_a += 1;
+            dts.push(dt);
+        }
     }
     let mut matched_b = 0usize;
     for &x in b {
         if let Some(dt) = nearest(a, x)
-            && dt <= tol {
-                matched_b += 1;
-            }
+            && dt <= tol
+        {
+            matched_b += 1;
+        }
     }
     (matched_a, matched_b, median(&mut dts))
 }

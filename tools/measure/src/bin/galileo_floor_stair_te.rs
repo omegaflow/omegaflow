@@ -199,9 +199,10 @@ fn split_test(y: &[f64], a: usize, b: usize) -> Option<(usize, f64, f64)> {
     let mut cnt = 0usize;
     for _ in 0..N_PERM {
         if let Some(pg) = perm_max_gap(y, a, b, &mut rng)
-            && pg >= gap {
-                cnt += 1;
-            }
+            && pg >= gap
+        {
+            cnt += 1;
+        }
     }
     let p = (cnt as f64 + 1.0) / (N_PERM as f64 + 1.0);
     Some((s, gap, p))
@@ -258,17 +259,20 @@ fn row_marks(
     let (te, ph, bl, cte, cth) = r;
     let mut s = String::new();
     if let (Some(t), Some(h)) = (te, ph)
-        && t > h {
-            s.push('P');
-        }
+        && t > h
+    {
+        s.push('P');
+    }
     if let (Some(t), Some(h)) = (te, bl)
-        && t > h {
-            s.push('B');
-        }
+        && t > h
+    {
+        s.push('B');
+    }
     if let (Some(t), Some(h)) = (cte, cth)
-        && t > h {
-            s.push('C');
-        }
+        && t > h
+    {
+        s.push('C');
+    }
     s
 }
 
@@ -598,12 +602,13 @@ fn main() {
             tot_steps += steps;
             tot_short += short;
             if segs.len() == 1
-                && let Some((sp, gap, p)) = split_test(&y, 0, nrun - 1) {
-                    println!(
-                        "      top-level split candidate: {} | gap {gap:.3} log10 | p {p:.3} (> 0.05: not a persistent step)",
-                        fmt_day(s.day(a + sp))
-                    );
-                }
+                && let Some((sp, gap, p)) = split_test(&y, 0, nrun - 1)
+            {
+                println!(
+                    "      top-level split candidate: {} | gap {gap:.3} log10 | p {p:.3} (> 0.05: not a persistent step)",
+                    fmt_day(s.day(a + sp))
+                );
+            }
             println!(
                 "      -> steps (persistent boundary, both sides >= {K_LEVEL} d) {steps}; short segments (< {K_LEVEL} d) {short}\n"
             );

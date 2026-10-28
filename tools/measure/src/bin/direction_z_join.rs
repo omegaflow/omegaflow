@@ -389,21 +389,22 @@ fn main() {
             let mut resumed = 0usize;
             if let Some(out) = &out_path
                 && let Ok(prior_bytes) = std::fs::read(out)
-                    && let Some(prior) = parse_bin(&prior_bytes)
-                        && prior.len() == working.len() {
-                            for (i, d) in prior.iter().enumerate() {
-                                if let Some(z) = d.redshift {
-                                    working[i].redshift = Some(z);
-                                    done[i] = true;
-                                    resumed += 1;
-                                }
-                            }
-                            if resumed > 0 {
-                                println!(
-                                    "Direction-redshift join: {out} resumed with {resumed} direction(s) already carrying a measured redshift — those stay placed, never re-queried"
-                                );
-                            }
-                        }
+                && let Some(prior) = parse_bin(&prior_bytes)
+                && prior.len() == working.len()
+            {
+                for (i, d) in prior.iter().enumerate() {
+                    if let Some(z) = d.redshift {
+                        working[i].redshift = Some(z);
+                        done[i] = true;
+                        resumed += 1;
+                    }
+                }
+                if resumed > 0 {
+                    println!(
+                        "Direction-redshift join: {out} resumed with {resumed} direction(s) already carrying a measured redshift — those stay placed, never re-queried"
+                    );
+                }
+            }
             let mut since_checkpoint = 0usize;
             for i in 0..working.len() {
                 if done[i] {

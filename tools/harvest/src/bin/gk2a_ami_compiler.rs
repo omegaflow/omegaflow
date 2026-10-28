@@ -459,9 +459,7 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
     let esun = match scalar_f64(&file, "esun") {
         Some(v) => v as f32,
         None => {
-            return Err(
-                "esun absent — the solar irradiance scale stays undeclared".to_string(),
-            );
+            return Err("esun absent — the solar irradiance scale stays undeclared".to_string());
         }
     };
     let kappa0 = match scalar_f64(&file, "kappa0") {

@@ -185,9 +185,10 @@ fn cut_events(
                     break;
                 }
                 if let Some(pv) = trig[peak]
-                    && v > pv {
-                        peak = j;
-                    }
+                    && v > pv
+                {
+                    peak = j;
+                }
             }
             j += 1;
         }
@@ -532,8 +533,12 @@ fn main() {
         eprintln!("--year <aia_lines.bin> <goes-dir> absent (repeat per year)");
         return;
     }
-    let max_lag: usize = arg_value(&args, "--max-lag").and_then(|s| s.parse().ok()).unwrap_or(8);
-    let n_surr: usize = arg_value(&args, "--n-surr").and_then(|s| s.parse().ok()).unwrap_or(10);
+    let max_lag: usize = arg_value(&args, "--max-lag")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(8);
+    let n_surr: usize = arg_value(&args, "--n-surr")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10);
     let confound_name = match arg_value(&args, "--confound") {
         Some(n) => n,
         None => "goes".to_string(),
@@ -745,13 +750,15 @@ fn main() {
                     rev_sum[p][lagi] += te_rev;
                     d_cnt[p][lagi] += 1;
                     if let Some((_, _, thr)) = n_fwd
-                        && te_fwd > thr {
-                            fwd_arrow[p][lagi] += 1;
-                        }
+                        && te_fwd > thr
+                    {
+                        fwd_arrow[p][lagi] += 1;
+                    }
                     if let Some((_, _, thr)) = n_rev
-                        && te_rev > thr {
-                            rev_arrow[p][lagi] += 1;
-                        }
+                        && te_rev > thr
+                    {
+                        rev_arrow[p][lagi] += 1;
+                    }
                     if let Some(pe) = pe_x {
                         pe_hi[p][lagi].push(pe);
                     }
@@ -764,22 +771,23 @@ fn main() {
             }
         }
         if let Some(path) = &checkpoint_path
-            && (ei + 1).is_multiple_of(25) {
-                save_checkpoint(
-                    path,
-                    ei + 1,
-                    n_pairs,
-                    &d_sum,
-                    &fwd_sum,
-                    &rev_sum,
-                    &d_cnt,
-                    &fwd_arrow,
-                    &rev_arrow,
-                    &deltas,
-                    &pe_hi,
-                    &pe_lo,
-                );
-            }
+            && (ei + 1).is_multiple_of(25)
+        {
+            save_checkpoint(
+                path,
+                ei + 1,
+                n_pairs,
+                &d_sum,
+                &fwd_sum,
+                &rev_sum,
+                &d_cnt,
+                &fwd_arrow,
+                &rev_arrow,
+                &deltas,
+                &pe_hi,
+                &pe_lo,
+            );
+        }
     }
     for p in 0..n_pairs {
         for lagi in 0..LAGS.len() {
@@ -865,9 +873,10 @@ fn main() {
             let mut best: Option<(usize, f64)> = None;
             for (lagi, _) in LAGS.iter().enumerate() {
                 if let Some(v) = d[lagi]
-                    && best.is_none_or(|(_, bv)| v.abs() > bv) {
-                        best = Some((lagi, v.abs()));
-                    }
+                    && best.is_none_or(|(_, bv)| v.abs() > bv)
+                {
+                    best = Some((lagi, v.abs()));
+                }
             }
             if let Some((lagi, _)) = best {
                 tau_star[p].push(LAGS[lagi] as f64 * DT);

@@ -133,7 +133,9 @@ fn main() {
     omegaflow::archivar::cdn::require_ci();
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: inpop_compiler <bsp|spice.tar.gz>... [--pck <body.tpc>]... [--bpc <satellite.bpc>]... [--fk <frame.tf>]... [--ci-mode]");
+        eprintln!(
+            "usage: inpop_compiler <bsp|spice.tar.gz>... [--pck <body.tpc>]... [--bpc <satellite.bpc>]... [--fk <frame.tf>]... [--ci-mode]"
+        );
         eprintln!("  emits data/ftp.imcce.fr/ephemeris_inpop_<body>.bin");
         eprintln!(
             "  --pck passes a NAIF body PCK text (POLE/RADII); absent, pck00010+pck00011 are fetched"
@@ -268,8 +270,15 @@ fn main() {
             if !has_coverage {
                 continue;
             }
-            let (g, r, n) =
-                extract_granules(spk, &spk_files, target, &wgccre, &bpc_files, &fk, GRANULE_DAYS);
+            let (g, r, n) = extract_granules(
+                spk,
+                &spk_files,
+                target,
+                &wgccre,
+                &bpc_files,
+                &fk,
+                GRANULE_DAYS,
+            );
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);

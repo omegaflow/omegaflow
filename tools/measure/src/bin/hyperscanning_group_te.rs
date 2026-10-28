@@ -335,9 +335,10 @@ fn run_merge(paths: &[String], pct: f64, nominees_out: Option<&str>) {
     }
 
     if let Some(path) = nominees_out
-        && !write_nominees(path, &nominees) {
-            exit(2);
-        }
+        && !write_nominees(path, &nominees)
+    {
+        exit(2);
+    }
 }
 
 fn load_series(
@@ -349,15 +350,17 @@ fn load_series(
         .or_else(|| open_set_mat(path))
         .or_else(|| open_set_bin(path))?;
     if set.labels.is_empty()
-        && let Some(labels) = labels_from_channels_tsv(path) {
-            set.labels = labels;
-        }
+        && let Some(labels) = labels_from_channels_tsv(path)
+    {
+        set.labels = labels;
+    }
     let ch = resolve_channel(&set, channel)?;
     let mut series = channel_series(&samples, &set, ch)?;
     if let Some(cap) = max_points
-        && series.len() > cap {
-            series.truncate(cap);
-        }
+        && series.len() > cap
+    {
+        series.truncate(cap);
+    }
     if series.len() < MIN_N {
         return None;
     }
@@ -387,9 +390,10 @@ fn family_max(series: &[Vec<f32>], dim: usize) -> Option<f64> {
                 continue;
             }
             if let Some(est) = topological_te_estimate(&series[j], &series[i], dim)
-                && best.is_none_or(|b| est.te > b) {
-                    best = Some(est.te);
-                }
+                && best.is_none_or(|b| est.te > b)
+            {
+                best = Some(est.te);
+            }
         }
     }
     best

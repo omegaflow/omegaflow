@@ -317,7 +317,8 @@ impl FkFile {
         let m3 = r(axes[2], angles[2]);
         let built = matmul(&matmul(&m3, &m2), &m1);
         let rot = [
-            built[0], built[3], built[6], built[1], built[4], built[7], built[2], built[5], built[8],
+            built[0], built[3], built[6], built[1], built[4], built[7], built[2], built[5],
+            built[8],
         ];
         Some((rot, format!("ANGLES via {}", relative_name)))
     }

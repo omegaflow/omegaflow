@@ -52,7 +52,10 @@ pub(crate) fn tdb_minus_tt_full(
     u: f64,
     v: f64,
 ) -> Option<f64> {
-    if ![date1, date2, ut, elong, u, v].iter().all(|x| x.is_finite()) {
+    if ![date1, date2, ut, elong, u, v]
+        .iter()
+        .all(|x| x.is_finite())
+    {
         return None;
     }
     let s = tdb_series()?;
@@ -139,8 +142,8 @@ impl LeapSeconds {
         for &(offset, _) in self.deltas.iter().rev() {
             let mut unix = tdb - self.delta_t_a - offset + J2000_UNIX_OFFSET;
             for _ in 0..2 {
-                unix = tdb - self.delta_t_a - offset - tdb_minus_tt_seconds(unix)?
-                    + J2000_UNIX_OFFSET;
+                unix =
+                    tdb - self.delta_t_a - offset - tdb_minus_tt_seconds(unix)? + J2000_UNIX_OFFSET;
             }
             if self.leap_at(unix) == Some(offset) {
                 return Some(unix);
@@ -279,7 +282,9 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         assert!((lsk.delta_t_a - 32.184).abs() < 1e-12);
         let now = 1700000000.0;
         assert_eq!(lsk.leap_at(now), Some(37.0));
-        let tdb = lsk.unix_to_tdb(now).expect("a post-1972 unix carries a tdb");
+        let tdb = lsk
+            .unix_to_tdb(now)
+            .expect("a post-1972 unix carries a tdb");
         let tt = now + 69.184 - J2000_UNIX_OFFSET;
         assert!(
             (tdb - tt).abs() < 1.8e-3,
@@ -335,9 +340,7 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         let tdb_1968 = lsk
             .unix_to_tdb(unix_1968)
             .expect("a 1968 UT1 epoch resolves through the Delta T polynomial");
-        let expect_1968 = unix_1968
-            + delta_t_at_unix(unix_1968)
-            - J2000_UNIX_OFFSET
+        let expect_1968 = unix_1968 + delta_t_at_unix(unix_1968) - J2000_UNIX_OFFSET
             + tdb_minus_tt_seconds(unix_1968).expect("the frozen series parses");
         assert!(
             (tdb_1968 - expect_1968).abs() < 1e-9,

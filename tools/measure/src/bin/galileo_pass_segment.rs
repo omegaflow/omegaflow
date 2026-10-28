@@ -524,9 +524,7 @@ fn main() {
                     0
                 }
             };
-            let days = sm_days
-                .get(&(mode, station))
-                .map_or(0, |d| d.len());
+            let days = sm_days.get(&(mode, station)).map_or(0, |d| d.len());
             let passes_all = passmap.get(&(mode, station)).map_or(0, |v| v.len());
             let day_rms: Vec<f64> = stationday
                 .iter()

@@ -2,8 +2,8 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
-use omegaflow::spectral::civil_from_days;
 use omegaflow::odp::dsn_host;
+use omegaflow::spectral::civil_from_days;
 use omegaflow_measure::absent;
 
 const DAY_S: f64 = 86400.0;
@@ -312,17 +312,17 @@ fn main() {
             if let (Some(p), Some(e)) = (
                 body_barycenter_position("galileo_daily", t, &eph),
                 body_barycenter_position(host, t, &eph),
-            )
-                && let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p)) {
-                    geo.insert(
-                        d,
-                        Geo {
-                            r: norm(p) / AU_M,
-                            eps: ep,
-                            alpha: al,
-                        },
-                    );
-                }
+            ) && let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p))
+            {
+                geo.insert(
+                    d,
+                    Geo {
+                        r: norm(p) / AU_M,
+                        eps: ep,
+                        alpha: al,
+                    },
+                );
+            }
         }
     }
 
@@ -423,7 +423,10 @@ fn main() {
                     fmt_opt_t0(ssub.iter().map(|c| c.t0).min_by(f64::total_cmp)),
                     fmt_opt_t0(ssub.iter().map(|c| c.t0).max_by(f64::total_cmp)),
                     absent::number(median(&srms), 4),
-                    absent::number(median(&ssub.iter().map(|c| c.n as f64).collect::<Vec<f64>>()), 0)
+                    absent::number(
+                        median(&ssub.iter().map(|c| c.n as f64).collect::<Vec<f64>>()),
+                        0
+                    )
                 ));
             }
         }
@@ -524,9 +527,10 @@ fn main() {
             let mut cur: Vec<&Cell> = Vec::new();
             for c in &srows {
                 if let Some(last) = cur.last()
-                    && c.day - last.day > 1 {
-                        runs.push(std::mem::take(&mut cur));
-                    }
+                    && c.day - last.day > 1
+                {
+                    runs.push(std::mem::take(&mut cur));
+                }
                 cur.push(c);
             }
             if !cur.is_empty() {

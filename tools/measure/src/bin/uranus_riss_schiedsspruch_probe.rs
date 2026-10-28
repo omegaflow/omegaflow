@@ -363,13 +363,14 @@ fn main() {
         for a in 0..3 {
             for b in (a + 1)..3 {
                 if let (Some(pa), Some(pb)) = (&preds[a], &preds[b])
-                    && let Some(d) = separation_rad(pa.unit, pb.unit) {
-                        let m = d * MAS_PER_RAD;
-                        div_max = Some(match div_max {
-                            Some(cur) => cur.max(m),
-                            None => m,
-                        });
-                    }
+                    && let Some(d) = separation_rad(pa.unit, pb.unit)
+                {
+                    let m = d * MAS_PER_RAD;
+                    div_max = Some(match div_max {
+                        Some(cur) => cur.max(m),
+                        None => m,
+                    });
+                }
             }
         }
         if let Some(m) = div_max {

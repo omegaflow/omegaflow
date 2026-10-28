@@ -354,12 +354,13 @@ fn main() {
             ("DE-INPOP", &de, &inpop),
         ] {
             if let (Some(ma), Some(mb)) = (a, b)
-                && let Some(v) = diff_vec_km(ma, mb, &body, t) {
-                    println!(
-                        "vec {w} ({body}) at perigee: {:.4} {:.4} {:.4} km",
-                        v[0], v[1], v[2]
-                    );
-                }
+                && let Some(v) = diff_vec_km(ma, mb, &body, t)
+            {
+                println!(
+                    "vec {w} ({body}) at perigee: {:.4} {:.4} {:.4} km",
+                    v[0], v[1], v[2]
+                );
+            }
         }
     }
 

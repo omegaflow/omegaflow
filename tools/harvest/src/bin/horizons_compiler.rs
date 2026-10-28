@@ -701,7 +701,9 @@ fn main() {
             eprintln!("--uranus-c-spk: ephemeris_uranus.bin does not parse to a BodyEphemeris");
             std::process::exit(1);
         };
-        let Some(body) = omegaflow::ephemeris::body_table().get(&799).map(|b| b.name.clone())
+        let Some(body) = omegaflow::ephemeris::body_table()
+            .get(&799)
+            .map(|b| b.name.clone())
         else {
             eprintln!("--uranus-c-spk: target 799 carries no body name in the body table");
             std::process::exit(1);
@@ -798,7 +800,9 @@ fn main() {
             eprintln!("--neptune-c-spk: ephemeris_neptune.bin does not parse to a BodyEphemeris");
             std::process::exit(1);
         };
-        let Some(body) = omegaflow::ephemeris::body_table().get(&899).map(|b| b.name.clone())
+        let Some(body) = omegaflow::ephemeris::body_table()
+            .get(&899)
+            .map(|b| b.name.clone())
         else {
             eprintln!("--neptune-c-spk: target 899 carries no body name in the body table");
             std::process::exit(1);

@@ -610,11 +610,12 @@ fn probe_color_brightness(
             _ => "n/a".to_string(),
         };
         if let Some(te) = r.te
-            && best_te.is_none_or(|b| te > b) {
-                best_te = Some(te);
-                best_desc = format!("{label} @ lag {}", r.lag);
-                best_idx = Some(i);
-            }
+            && best_te.is_none_or(|b| te > b)
+        {
+            best_te = Some(te);
+            best_desc = format!("{label} @ lag {}", r.lag);
+            best_idx = Some(i);
+        }
         println!(
             "      {label:<26} lag {} te {}  thr {}  | {word}",
             r.lag,
@@ -709,24 +710,25 @@ fn main() {
 
     let mut map_rows: Vec<(f64, f64, String, i64, String)> = Vec::new();
     if let Some(map_path) = &map
-        && let Ok(body) = std::fs::read_to_string(map_path) {
-            for (i, line) in body.lines().enumerate() {
-                if i == 0 {
-                    continue;
-                }
-                let f: Vec<&str> = line.split(',').collect();
-                if f.len() != 6 {
-                    continue;
-                }
-                if let (Ok(ra), Ok(dec), Ok(class)) = (
-                    f[1].trim().parse::<f64>(),
-                    f[2].trim().parse::<f64>(),
-                    f[4].trim().parse::<i64>(),
-                ) {
-                    map_rows.push((ra, dec, f[0].to_string(), class, f[5].trim().to_string()));
-                }
+        && let Ok(body) = std::fs::read_to_string(map_path)
+    {
+        for (i, line) in body.lines().enumerate() {
+            if i == 0 {
+                continue;
+            }
+            let f: Vec<&str> = line.split(',').collect();
+            if f.len() != 6 {
+                continue;
+            }
+            if let (Ok(ra), Ok(dec), Ok(class)) = (
+                f[1].trim().parse::<f64>(),
+                f[2].trim().parse::<f64>(),
+                f[4].trim().parse::<i64>(),
+            ) {
+                map_rows.push((ra, dec, f[0].to_string(), class, f[5].trim().to_string()));
             }
         }
+    }
     let cone_obj = |ra: f64, dec: f64| -> Option<&(f64, f64, String, i64, String)> {
         map_rows
             .iter()

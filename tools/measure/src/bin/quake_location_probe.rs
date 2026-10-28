@@ -388,8 +388,7 @@ fn main() {
         return;
     }
 
-    let surface_point =
-        |lat: f64, lon: f64| body_fixed_to_icrs(host, lat, lon, 0.0, t_ref, &map);
+    let surface_point = |lat: f64, lon: f64| body_fixed_to_icrs(host, lat, lon, 0.0, t_ref, &map);
 
     let Some((lat_all, lon_all, depth_all, res_all)) =
         locate_depth(&surface_point, &station_xyz, &arrival)

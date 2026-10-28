@@ -230,9 +230,11 @@ fn main() {
             "--floor" => {
                 i += 1;
                 if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok())
-                    && v.is_finite() && v > 0.0 {
-                        floor = v;
-                    }
+                    && v.is_finite()
+                    && v > 0.0
+                {
+                    floor = v;
+                }
             }
             other => {
                 eprintln!("techno_gas_register_probe: unknown argument {other} — refused");

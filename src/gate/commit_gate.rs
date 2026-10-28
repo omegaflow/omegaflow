@@ -1228,35 +1228,38 @@ impl Gate {
         for (line_idx, line) in content.lines().enumerate() {
             let t = line.trim_start();
             if t.starts_with("field")
-                && let Some((force, unit)) = field_line_force_unit(t) {
-                    if let Some(id) = force_id_of(&force)
-                        && unit == "1" && !allowed_units_for_force(id).contains(&"1") {
-                            return Some(Verdict {
-                                severity: Severity::Hard,
-                                rule: "dimensionless-force".to_string(),
-                                line: line_idx + 1,
-                                feedback: feedback("dimensionless-force").to_string(),
-                                quote: clip(t, 90),
-                            });
-                        }
-                    if !unit.is_empty()
-                        && unit != "1"
-                        && !self
-                            .force_unit_pairs
-                            .contains(&(force.clone(), unit.clone()))
-                    {
-                        return Some(Verdict {
-                            severity: Severity::Hard,
-                            rule: "force-unit-gate".to_string(),
-                            line: line_idx + 1,
-                            feedback: format!(
-                                "field line: the force \"{}\" with the unit \"{}\" is not in the registry",
-                                force, unit
-                            ),
-                            quote: clip(t, 90),
-                        });
-                    }
+                && let Some((force, unit)) = field_line_force_unit(t)
+            {
+                if let Some(id) = force_id_of(&force)
+                    && unit == "1"
+                    && !allowed_units_for_force(id).contains(&"1")
+                {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "dimensionless-force".to_string(),
+                        line: line_idx + 1,
+                        feedback: feedback("dimensionless-force").to_string(),
+                        quote: clip(t, 90),
+                    });
                 }
+                if !unit.is_empty()
+                    && unit != "1"
+                    && !self
+                        .force_unit_pairs
+                        .contains(&(force.clone(), unit.clone()))
+                {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "force-unit-gate".to_string(),
+                        line: line_idx + 1,
+                        feedback: format!(
+                            "field line: the force \"{}\" with the unit \"{}\" is not in the registry",
+                            force, unit
+                        ),
+                        quote: clip(t, 90),
+                    });
+                }
+            }
         }
         if is_code && !is_test_file_path(&path) {
             let prod = test_regions_stripped(&content);
@@ -1288,7 +1291,10 @@ impl Gate {
                     });
                 }
             }
-            if path.starts_with("tools/") && path.contains("/src/bin/") && prod.contains("upload_release(") {
+            if path.starts_with("tools/")
+                && path.contains("/src/bin/")
+                && prod.contains("upload_release(")
+            {
                 let mut public = false;
                 let mut rest = prod.as_str();
                 while let Some(start) = rest.find('"') {
@@ -1392,9 +1398,10 @@ impl Gate {
                 }
             }
             if let Some(home) = classify_home(&path)
-                && let Some(verdict) = home_drift(&content, home) {
-                    return Some(verdict);
-                }
+                && let Some(verdict) = home_drift(&content, home)
+            {
+                return Some(verdict);
+            }
         }
         None
     }
@@ -1933,9 +1940,10 @@ fn burn_reason_after(body: &str, cap_pos: usize) -> bool {
     let rest = &body[cap_pos + "cap".len()..];
     for marker in ["Grund:", "reason:"] {
         if let Some(p) = rest.find(marker)
-            && !rest[p + marker.len()..].trim().is_empty() {
-                return true;
-            }
+            && !rest[p + marker.len()..].trim().is_empty()
+        {
+            return true;
+        }
     }
     false
 }
@@ -2254,10 +2262,14 @@ fn trigger_has_proof(trigger: &str) -> bool {
 fn has_register_key(line: &str) -> bool {
     let chars: Vec<char> = line.chars().collect();
     for (i, &c) in chars.iter().enumerate() {
-        if c == '#' && i > 0 && i + 1 < chars.len()
-            && chars[i - 1].is_alphanumeric() && chars[i + 1].is_alphanumeric() {
-                return true;
-            }
+        if c == '#'
+            && i > 0
+            && i + 1 < chars.len()
+            && chars[i - 1].is_alphanumeric()
+            && chars[i + 1].is_alphanumeric()
+        {
+            return true;
+        }
     }
     false
 }
@@ -2381,23 +2393,23 @@ fn check_status_proof(
             ));
         }
     }
-    if lower == "descoped"
-        && !has_befund(block) {
-            out.push((
-                line,
-                "descoped-ohne-befund".to_string(),
-                feedback("descoped-ohne-befund").to_string(),
-            ));
-        }
+    if lower == "descoped" && !has_befund(block) {
+        out.push((
+            line,
+            "descoped-ohne-befund".to_string(),
+            feedback("descoped-ohne-befund").to_string(),
+        ));
+    }
     if let Some(lage) = field_value(block, "Lage")
-        && !lage.contains("(gemessen") {
-            out.push((
-                line,
-                "lage-unstamped".to_string(),
-                "the Lage carries no measurement stamp — name (gemessen <date/time> via <tool/source>)"
-                    .to_string(),
-            ));
-        }
+        && !lage.contains("(gemessen")
+    {
+        out.push((
+            line,
+            "lage-unstamped".to_string(),
+            "the Lage carries no measurement stamp — name (gemessen <date/time> via <tool/source>)"
+                .to_string(),
+        ));
+    }
 }
 
 pub fn ereignis_folge_violations(
@@ -3915,7 +3927,10 @@ mod tests {
                 g.check_tool_call("write", &args).map(|v| v.rule)
             );
         }
-        let args = tool_args(live, "Post An future steht\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean");
+        let args = tool_args(
+            live,
+            "Post An future steht\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
+        );
         assert!(g.check_tool_call("write", &args).is_none());
         let args = tool_args("docs/projects/auftrag-x.md", "An future:");
         let v = g.check_tool_call("write", &args).unwrap();

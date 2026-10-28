@@ -59,9 +59,10 @@ fn load_ephemerides(args: &[String]) -> HashMap<String, BodyEphemeris> {
             None => fetch_raw_bytes(url),
         };
         if let Some(b) = bytes
-            && let Some(e) = parse_ephemeris_binary(&b) {
-                eph.insert(name, e);
-            }
+            && let Some(e) = parse_ephemeris_binary(&b)
+        {
+            eph.insert(name, e);
+        }
     }
     eph
 }
@@ -88,17 +89,19 @@ fn main() {
     let mut f107 = read_f107(&f107_path);
     if f107.is_empty()
         && let Some(bytes) = fetch_raw_bytes(F107_CDN)
-            && bytes.len() >= 8 && bytes[0..4] == *b"F107" {
-                let n = u32::from_le_bytes(bytes[4..8].try_into().unwrap()) as usize;
-                f107 = (0..n)
-                    .filter_map(|i| {
-                        let o = 8 + i * 16;
-                        let d = i64::from_le_bytes(bytes[o..o + 8].try_into().ok()?);
-                        let v = f64::from_le_bytes(bytes[o + 8..o + 16].try_into().ok()?);
-                        Some((d, v))
-                    })
-                    .collect();
-            }
+        && bytes.len() >= 8
+        && bytes[0..4] == *b"F107"
+    {
+        let n = u32::from_le_bytes(bytes[4..8].try_into().unwrap()) as usize;
+        f107 = (0..n)
+            .filter_map(|i| {
+                let o = 8 + i * 16;
+                let d = i64::from_le_bytes(bytes[o..o + 8].try_into().ok()?);
+                let v = f64::from_le_bytes(bytes[o + 8..o + 16].try_into().ok()?);
+                Some((d, v))
+            })
+            .collect();
+    }
     if f107.is_empty() {
         eprintln!("{}: F107 absent or carries no F107 contract", f107_path);
         return;
@@ -196,9 +199,10 @@ fn main() {
             }
         }
         if let Some(v) = tf
-            && v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
-                best = Some((lag, v));
-            }
+            && v > best.map_or(f64::NEG_INFINITY, |(_, b)| b)
+        {
+            best = Some((lag, v));
+        }
         println!(
             "{:>4} | {:>11} | {:>11} | {:>11.4e}",
             lag,

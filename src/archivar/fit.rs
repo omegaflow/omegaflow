@@ -360,12 +360,7 @@ mod tests {
     }
 
     fn make_fit(records: &[u8]) -> Vec<u8> {
-        let mut f = vec![
-            0x0C,
-            0x10,
-            0x00,
-            0x00,
-        ];
+        let mut f = vec![0x0C, 0x10, 0x00, 0x00];
         f.extend_from_slice(&(records.len() as u32).to_le_bytes());
         f.extend_from_slice(b".FIT");
         f.extend_from_slice(records);

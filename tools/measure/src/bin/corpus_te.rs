@@ -73,9 +73,10 @@ fn collect_files(dir: &Path, filter: Option<&str>, out: &mut Vec<PathBuf>) -> us
             _ => continue,
         }
         if let Some(f) = filter
-            && !path.to_string_lossy().contains(f) {
-                continue;
-            }
+            && !path.to_string_lossy().contains(f)
+        {
+            continue;
+        }
         out.push(path);
     }
     skipped

@@ -125,15 +125,10 @@ fn report_object(
         let d_pc = 1000.0 / s.plx_mas;
         let (th, _) = icrs_to_galactic(s.ra_deg, s.dec_deg);
         let b = 90.0 - th.to_degrees();
-        
-        
+
         let (dust, dust_refused) = match map.at(s.ra_deg, s.dec_deg, d_pc) {
-            Some(h) => {
-                (Some(h), "")
-            }
-            None => {
-                (None, "no map leaf or distance outside the model grid")
-            }
+            Some(h) => (Some(h), ""),
+            None => (None, "no map leaf or distance outside the model grid"),
         };
         matched.push(MatchStar {
             star_idx: *k,

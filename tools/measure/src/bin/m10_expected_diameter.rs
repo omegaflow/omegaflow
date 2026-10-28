@@ -108,10 +108,11 @@ fn load_named(name: &str, explicit: Option<&str>, candidates: &[&str]) -> Option
     }
     for cand in candidates {
         if std::path::Path::new(cand).exists()
-            && let Some(e) = parse_file(cand) {
-                eprintln!("{name}: ephemeris {cand}");
-                return Some(e);
-            }
+            && let Some(e) = parse_file(cand)
+        {
+            eprintln!("{name}: ephemeris {cand}");
+            return Some(e);
+        }
     }
     let url = body_url(name);
     let bytes = match fetch_raw_bytes(&url) {

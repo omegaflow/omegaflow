@@ -269,9 +269,10 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, grid: &[Vec<Option<f32>>]) -
                     break;
                 }
                 if let Some(pv) = trig[peak]
-                    && v > pv {
-                        peak = j;
-                    }
+                    && v > pv
+                {
+                    peak = j;
+                }
             }
             j += 1;
         }
@@ -539,11 +540,12 @@ fn main() {
         }
     }
     if let Some(path) = &out_path
-        && let Ok(text) = std::fs::read_to_string(path) {
-            for line in text.lines() {
-                println!("{}", line);
-            }
+        && let Ok(text) = std::fs::read_to_string(path)
+    {
+        for line in text.lines() {
+            println!("{}", line);
         }
+    }
     if let Some(lsk) = &lsk {
         let hot_pair = n_pairs - 1;
         let hot_peak: Option<(usize, f64)> = {

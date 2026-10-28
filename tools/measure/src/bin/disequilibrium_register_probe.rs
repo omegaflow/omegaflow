@@ -359,16 +359,19 @@ fn main() {
             "--floor" => {
                 i += 1;
                 if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok())
-                    && v.is_finite() && v > 0.0 {
-                        floor = v;
-                    }
+                    && v.is_finite()
+                    && v > 0.0
+                {
+                    floor = v;
+                }
             }
             "--trials" => {
                 i += 1;
                 if let Some(v) = args.get(i).and_then(|s| s.parse::<usize>().ok())
-                    && v > 0 {
-                        trials = v;
-                    }
+                    && v > 0
+                {
+                    trials = v;
+                }
             }
             other => {
                 eprintln!("disequilibrium_register_probe: unknown argument {other} — refused");
@@ -1115,9 +1118,10 @@ fn run(
                 continue;
             }
             if let Some(slot) = slot_by_name.get(&species_perm[i])
-                && plan[*hid].as_ref().unwrap().frac[*slot] < floor {
-                    host_hit[*hid] = true;
-                }
+                && plan[*hid].as_ref().unwrap().frac[*slot] < floor
+            {
+                host_hit[*hid] = true;
+            }
         }
         let h = host_hit.iter().filter(|b| **b).count() as f64;
         hit_sum += h;

@@ -534,14 +534,16 @@ mod tests {
 
     #[test]
     fn utm18n_central_meridian_inverse() {
-        let (lat, lon) = utm18n_to_latlon(500000.0, 4649776.224884, 6378136.6, 1.0 / 298.254).unwrap();
+        let (lat, lon) =
+            utm18n_to_latlon(500000.0, 4649776.224884, 6378136.6, 1.0 / 298.254).unwrap();
         assert!((lat - 42.0).abs() < 1e-6);
         assert!((lon - (-75.0)).abs() < 1e-6);
     }
 
     #[test]
     fn utm18n_dd10045_extent_corner() {
-        let (lat, lon) = utm18n_to_latlon(368952.482, 4340727.52, 6378136.6, 1.0 / 298.254).unwrap();
+        let (lat, lon) =
+            utm18n_to_latlon(368952.482, 4340727.52, 6378136.6, 1.0 / 298.254).unwrap();
         assert!((lat - 39.2059397).abs() < 1e-4);
         assert!((lon - (-76.5177658)).abs() < 1e-4);
     }

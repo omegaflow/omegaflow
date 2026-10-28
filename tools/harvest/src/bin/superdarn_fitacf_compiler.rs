@@ -641,10 +641,12 @@ fn fitacf_record_rows(
             None => None,
         };
         let (lat, lon) = match (site, frang, rsep, beam) {
-            (Some(s), Some(fr), Some(rs), Some(bm)) => match gate_position(s, bm, fr, rs, gate, re_km) {
-                Some((la, lo)) => (Some(la), Some(lo)),
-                None => (None, None),
-            },
+            (Some(s), Some(fr), Some(rs), Some(bm)) => {
+                match gate_position(s, bm, fr, rs, gate, re_km) {
+                    Some((la, lo)) => (Some(la), Some(lo)),
+                    None => (None, None),
+                }
+            }
             _ => (None, None),
         };
         rows.push(FitGateRow {
@@ -1772,14 +1774,7 @@ fn bounce_files(start: &str, end: &str, radar: &str) -> Option<Vec<String>> {
     Some(names)
 }
 
-fn run_bounce(
-    start: &str,
-    end: &str,
-    radar: &str,
-    out: Option<&str>,
-    limit: usize,
-    re_km: f64,
-) {
+fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usize, re_km: f64) {
     let start_norm = bounce_date(start);
     let end_norm = bounce_date(end);
     let files = match bounce_files(&start_norm, &end_norm, radar) {

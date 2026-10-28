@@ -264,15 +264,16 @@ fn episodes_on(times: &[f64], resids: &[f64], gap_s: f64) -> Vec<Episode> {
                 }
             }
         } else if let Some((s, e, pk)) = open
-            && times[i] - times[e] > gap_s {
-                out.push(Episode {
-                    t0: times[s],
-                    t1: times[e],
-                    n: e - s + 1,
-                    peak: pk,
-                });
-                open = None;
-            }
+            && times[i] - times[e] > gap_s
+        {
+            out.push(Episode {
+                t0: times[s],
+                t1: times[e],
+                n: e - s + 1,
+                peak: pk,
+            });
+            open = None;
+        }
     }
     if let Some((s, e, pk)) = open {
         out.push(Episode {

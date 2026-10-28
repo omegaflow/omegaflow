@@ -322,7 +322,11 @@ fn handover_owner_loose(path: &str) -> Option<String> {
     }
     let tail = &rest[11..];
     let owner = tail.rsplit_once("-folge").map_or(tail, |(owner, _)| owner);
-    if owner.is_empty() { None } else { Some(owner.to_string()) }
+    if owner.is_empty() {
+        None
+    } else {
+        Some(owner.to_string())
+    }
 }
 
 fn handover_duplicate_lines() -> Vec<String> {
@@ -373,7 +377,6 @@ fn handover_duplicate_lines() -> Vec<String> {
         })
         .collect()
 }
-
 
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");

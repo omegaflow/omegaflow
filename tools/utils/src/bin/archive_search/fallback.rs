@@ -1,9 +1,4 @@
-const BLOCKED: &[&str] = &[
-    "brave",
-    "exa",
-    "tavily",
-    "googlecse",
-];
+const BLOCKED: &[&str] = &["brave", "exa", "tavily", "googlecse"];
 
 fn block_status(mode: &str, lines: &[String]) -> Option<String> {
     if !BLOCKED.contains(&mode) {

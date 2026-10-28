@@ -227,9 +227,10 @@ fn main() {
                     break;
                 }
                 if let Some(pv) = trig[peak]
-                    && v > pv {
-                        peak = j;
-                    }
+                    && v > pv
+                {
+                    peak = j;
+                }
             }
             j += 1;
         }

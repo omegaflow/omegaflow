@@ -106,9 +106,10 @@ fn physical_cores() -> usize {
             }
             let core_path = e.path().join("topology").join("core_id");
             if let Ok(id) = std::fs::read_to_string(&core_path)
-                && let Ok(id) = id.trim().parse::<usize>() {
-                    cores.insert(id);
-                }
+                && let Ok(id) = id.trim().parse::<usize>()
+            {
+                cores.insert(id);
+            }
         }
     }
     if !cores.is_empty() {

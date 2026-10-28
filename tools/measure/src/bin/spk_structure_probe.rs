@@ -38,7 +38,10 @@ fn run(path: &str) -> bool {
         }
         let span = s.end_et - s.start_et;
         if !span.is_finite() || span <= 0.0 {
-            println!("  T{} {} -> {}: empty span", s.data_type, s.target, s.center);
+            println!(
+                "  T{} {} -> {}: empty span",
+                s.data_type, s.target, s.center
+            );
             continue;
         }
         for k in 0..5 {
@@ -54,14 +57,21 @@ fn run(path: &str) -> bool {
                 continue;
             };
             if !mid.iter().all(|v| v.is_finite()) {
-                println!("  T{} {} -> {} at {et:.1}: non-finite state", s.data_type, s.target, s.center);
+                println!(
+                    "  T{} {} -> {} at {et:.1}: non-finite state",
+                    s.data_type, s.target, s.center
+                );
                 continue;
             }
             let mut num = [0.0f64; 3];
             for a in 0..3 {
                 num[a] = (right[a] - left[a]) / (2.0 * h);
             }
-            let scale = mid[3..6].iter().map(|v| v.abs()).fold(0.0f64, f64::max).max(1.0);
+            let scale = mid[3..6]
+                .iter()
+                .map(|v| v.abs())
+                .fold(0.0f64, f64::max)
+                .max(1.0);
             let mut d = 0.0f64;
             for a in 0..3 {
                 d = d.max((num[a] - mid[3 + a]).abs());
@@ -89,9 +99,7 @@ fn run(path: &str) -> bool {
         println!("  no Type 2/3 segment to check");
         return true;
     }
-    println!(
-        "  Type 2/3 checks {checked}, worst |v_fd - v| / |v| = {worst:.3e} ({worst_at})"
-    );
+    println!("  Type 2/3 checks {checked}, worst |v_fd - v| / |v| = {worst:.3e} ({worst_at})");
     for (t, (n, w, at)) in &per_type {
         println!("  T{t}: {n} checks, worst {w:.3e} ({at})");
     }

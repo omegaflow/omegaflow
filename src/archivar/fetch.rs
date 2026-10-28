@@ -78,7 +78,9 @@ pub fn fetch_raw_with(
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
     if let Ok(token) = std::env::var("GH_TOKEN")
-        && !headers.iter().any(|(k, _)| k.eq_ignore_ascii_case("authorization"))
+        && !headers
+            .iter()
+            .any(|(k, _)| k.eq_ignore_ascii_case("authorization"))
         && url.contains("/releases/download/")
     {
         cmd.arg("-H").arg(format!("Authorization: Bearer {token}"));

@@ -4128,10 +4128,7 @@ mod probe_classify_tests {
             probe_classify("magnetosphere_total_field_nt"),
             ("em", "nT", 60.0)
         );
-        assert_eq!(
-            probe_classify("intermagnet_xyz_x_nt"),
-            ("em", "nT", 60.0)
-        );
+        assert_eq!(probe_classify("intermagnet_xyz_x_nt"), ("em", "nT", 60.0));
         assert_eq!(
             probe_classify("hydrosphere_drifter_sst_k"),
             ("thermal", "K", 360.0)

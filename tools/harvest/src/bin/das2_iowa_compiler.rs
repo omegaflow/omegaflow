@@ -357,20 +357,21 @@ fn main() {
         std::process::exit(1);
     };
     let nchan = params.len().saturating_sub(1) as u32;
-    let mut final_records: Vec<(f64, f64, u32)> = if let Some(width) = decimate_s.filter(|w| *w > 0.0) {
-        let mut buckets: HashMap<(u32, i64), Vec<f64>> = HashMap::new();
-        for (t, val, comp) in collected {
-            let bucket = (t / width).floor() as i64;
-            buckets.entry((comp, bucket)).or_default().push(val);
-        }
-        let mut out = Vec::with_capacity(buckets.len());
-        for ((comp, bucket), mut vals) in buckets {
-            out.push(((bucket as f64 + 0.5) * width, median(&mut vals), comp));
-        }
-        out
-    } else {
-        collected
-    };
+    let mut final_records: Vec<(f64, f64, u32)> =
+        if let Some(width) = decimate_s.filter(|w| *w > 0.0) {
+            let mut buckets: HashMap<(u32, i64), Vec<f64>> = HashMap::new();
+            for (t, val, comp) in collected {
+                let bucket = (t / width).floor() as i64;
+                buckets.entry((comp, bucket)).or_default().push(val);
+            }
+            let mut out = Vec::with_capacity(buckets.len());
+            for ((comp, bucket), mut vals) in buckets {
+                out.push(((bucket as f64 + 0.5) * width, median(&mut vals), comp));
+            }
+            out
+        } else {
+            collected
+        };
     final_records.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.2.cmp(&b.2)));
     if final_records.is_empty() {
         eprintln!("{id}: no records — the bin stays unwritten (0 honored)");

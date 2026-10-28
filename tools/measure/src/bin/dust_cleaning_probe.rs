@@ -537,9 +537,11 @@ fn scan_cone(
         while l < 360.0 {
             let (ra, dec) = galactic_to_icrs((90.0 - b).to_radians(), l.to_radians());
             if let Some((av, _)) = pixel_of(dust, ra, dec)
-                && av.is_finite() && (AV_LO..=AV_HI).contains(&av) {
-                    passed.push((l, b, av));
-                }
+                && av.is_finite()
+                && (AV_LO..=AV_HI).contains(&av)
+            {
+                passed.push((l, b, av));
+            }
             l += SCAN_L_STEP;
         }
         b += SCAN_B_STEP;

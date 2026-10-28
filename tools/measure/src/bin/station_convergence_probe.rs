@@ -68,17 +68,11 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let y: i64 = dp.next()?.parse().ok()?;
     let m: i64 = dp.next()?.parse().ok()?;
     let d: i64 = dp.next()?.parse().ok()?;
-    let t = time
-        .split(['.', 'Z', 'z'])
-        .next()?;
+    let t = time.split(['.', 'Z', 'z']).next()?;
     let mut tp = t.split(':');
     let hh: i64 = tp.next()?.parse().ok()?;
-    let mm: i64 = tp.next().unwrap_or("0")
-    .parse()
-    .ok()?;
-    let ss: i64 = tp.next().unwrap_or("0")
-    .parse()
-    .ok()?;
+    let mm: i64 = tp.next().unwrap_or("0").parse().ok()?;
+    let ss: i64 = tp.next().unwrap_or("0").parse().ok()?;
     let a = (14 - m) / 12;
     let yy = y + 4800 - a;
     let jdn =
@@ -168,9 +162,10 @@ fn source_carries(src: &SourceConfig, field: &str) -> bool {
 fn register_station_point(sources: &[SourceConfig]) -> Option<(f64, f64)> {
     for src in sources {
         if source_carries(src, "intermagnet_xyz_x_nt")
-            && let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame() {
-                return Some((lat, lon));
-            }
+            && let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame()
+        {
+            return Some((lat, lon));
+        }
     }
     None
 }
@@ -635,9 +630,10 @@ fn station_blob_line(
 fn write_station_verdict(out: &str, line: &VerdictLine) -> bool {
     let path = PathBuf::from(out);
     if let Some(parent) = path.parent()
-        && !parent.as_os_str().is_empty() {
-            let _ = std::fs::create_dir_all(parent);
-        }
+        && !parent.as_os_str().is_empty()
+    {
+        let _ = std::fs::create_dir_all(parent);
+    }
     let mut lines = match std::fs::read(&path) {
         Ok(bytes) => parse_weberin_verdicts(&bytes),
         Err(_) => Vec::new(),

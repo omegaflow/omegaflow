@@ -175,12 +175,13 @@ fn house_line(
             (inpop_epm, p.inpop_epm_km),
         ] {
             if let (Some(c), Some(o)) = (cur, old)
-                && let Some(slope) = pair_slope_mm_s(o, c, dt) {
-                    if slope > m {
-                        m = slope;
-                    }
-                    seen = true;
+                && let Some(slope) = pair_slope_mm_s(o, c, dt)
+            {
+                if slope > m {
+                    m = slope;
                 }
+                seen = true;
+            }
         }
         if seen {
             tdot_max = Some(m);

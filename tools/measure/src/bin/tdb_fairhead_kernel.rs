@@ -110,7 +110,9 @@ fn main() {
         arg_value(&args, "--source"),
         arg_value(&args, "--source-sha256"),
     ) else {
-        eprintln!("usage: tdb_fairhead_kernel --dtdb-c <dtdb.c> --source <label> --source-sha256 <hex> --emit-tsv <tdb_fairhead.tsv>");
+        eprintln!(
+            "usage: tdb_fairhead_kernel --dtdb-c <dtdb.c> --source <label> --source-sha256 <hex> --emit-tsv <tdb_fairhead.tsv>"
+        );
         std::process::exit(2);
     };
     let text = match fs::read_to_string(&input) {
@@ -124,7 +126,9 @@ fn main() {
         eprintln!("{input} does not carry 787 fairhd triples — nothing written");
         std::process::exit(1);
     };
-    let got = dtdb(&series, TEST_DATE1, TEST_DATE2, TEST_UT, TEST_ELONG, TEST_U, TEST_V);
+    let got = dtdb(
+        &series, TEST_DATE1, TEST_DATE2, TEST_UT, TEST_ELONG, TEST_U, TEST_V,
+    );
     if (got - TEST_WANT).abs() > TEST_TOL {
         eprintln!(
             "the published eraDtdb vector is {TEST_WANT}, this series gives {got} — the parse or the arithmetic is wrong, nothing written"

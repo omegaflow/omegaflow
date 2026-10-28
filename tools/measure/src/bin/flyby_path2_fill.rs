@@ -390,13 +390,15 @@ fn parse_omni2_csv(text: &str) -> (Vec<(f64, f64)>, Vec<(f64, f64)>) {
             continue;
         };
         if let Ok(v) = parts[3].parse::<f64>()
-            && keep_b_fill(v) {
-                bz.push((t, v));
-            }
+            && keep_b_fill(v)
+        {
+            bz.push((t, v));
+        }
         if let Ok(v) = parts[7].parse::<f64>()
-            && keep_positive_fill(v, FILL_P, P_MAX_NPA) {
-                pressure.push((t, v));
-            }
+            && keep_positive_fill(v, FILL_P, P_MAX_NPA)
+        {
+            pressure.push((t, v));
+        }
     }
     (bz, pressure)
 }

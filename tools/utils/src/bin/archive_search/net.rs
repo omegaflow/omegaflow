@@ -2663,7 +2663,6 @@ fn firecrawl_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-
 pub fn oeis_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!("https://oeis.org/search?q={}&fmt=json", urlencode(query));
     let headers = ["-H", "Accept: application/json"];
@@ -3747,10 +3746,7 @@ pub fn shodan_lines(query: &str, token: &str, max: usize) -> Vec<String> {
                 Some(v) => shodan_internetdb_results(&v, target),
                 None => vec!["pending — the InternetDB response carries no JSON".to_string()],
             },
-            Some(f) => vec![format!(
-                "pending — InternetDB HTTP {}",
-                f.status_text()
-            )],
+            Some(f) => vec![format!("pending — InternetDB HTTP {}", f.status_text())],
             None => vec!["pending — no network".to_string()],
         };
     }

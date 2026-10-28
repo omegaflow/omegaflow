@@ -300,9 +300,7 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     if !excluded.is_empty() {
         for (f, t) in &excluded {
-            eprintln!(
-                "weave: WARNING {f} — terms '{t}' is not admitted (merged, but marked)"
-            );
+            eprintln!("weave: WARNING {f} — terms '{t}' is not admitted (merged, but marked)");
         }
     }
     if require_channel_ref {

@@ -60,10 +60,11 @@ fn load_named(name: &str, explicit: Option<&str>, candidates: &[&str]) -> Option
     }
     for cand in candidates {
         if std::path::Path::new(cand).exists()
-            && let Some(e) = parse_file(cand) {
-                eprintln!("{name}: ephemeris {cand}");
-                return Some(e);
-            }
+            && let Some(e) = parse_file(cand)
+        {
+            eprintln!("{name}: ephemeris {cand}");
+            return Some(e);
+        }
     }
     let url = body_url(name);
     let bytes = match fetch_raw_bytes(&url) {
@@ -456,9 +457,10 @@ fn main() {
     let mut cur: Vec<&CameraAngleFrame> = Vec::new();
     for f in &frames {
         if let Some(prev) = cur.last()
-            && f.jd - prev.jd > CLUSTER_GAP_D {
-                clusters.push(std::mem::take(&mut cur));
-            }
+            && f.jd - prev.jd > CLUSTER_GAP_D
+        {
+            clusters.push(std::mem::take(&mut cur));
+        }
         cur.push(f);
     }
     if !cur.is_empty() {

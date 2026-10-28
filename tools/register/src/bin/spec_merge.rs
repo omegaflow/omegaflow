@@ -1156,7 +1156,14 @@ fn aussondern_reg(args: &[String]) {
             let head = l.split_whitespace().next().unwrap_or("");
             if matches!(
                 head,
-                "field" | "fields" | "quantity" | "last" | "instrument" | "unit" | "sampling" | "interval"
+                "field"
+                    | "fields"
+                    | "quantity"
+                    | "last"
+                    | "instrument"
+                    | "unit"
+                    | "sampling"
+                    | "interval"
             ) {
                 continue;
             }
@@ -3876,14 +3883,22 @@ fn set_doc_quote(path: &str) {
                 if !beleg.is_empty() && beleg.starts_with("http") {
                     set_row_key(&mut b, "api_cite", &beleg);
                 }
-                set_row_key(&mut b, "api_quote", &format!("\"{}\"", q.replace('"', "\\\"")));
+                set_row_key(
+                    &mut b,
+                    "api_quote",
+                    &format!("\"{}\"", q.replace('"', "\\\"")),
+                );
             }
             if norm(&inst_cite) == norm(&doc) {
                 let beleg = beleg.clone();
                 if !beleg.is_empty() && beleg.starts_with("http") {
                     set_row_key(&mut b, "instrument_cite", &beleg);
                 }
-                set_row_key(&mut b, "instrument_quote", &format!("\"{}\"", q.replace('"', "\\\"")));
+                set_row_key(
+                    &mut b,
+                    "instrument_quote",
+                    &format!("\"{}\"", q.replace('"', "\\\"")),
+                );
             }
             rows += 1;
         }
@@ -4509,7 +4524,11 @@ fn replace_host(args: &[String]) {
     for (_, mut b) in blocks(&reg) {
         if or_empty(field(&b, "host_cite")) == old {
             set_row_key(&mut b, "host_cite", &new);
-            set_row_key(&mut b, "host_quote", &format!("\"{}\"", quote.replace('"', "\\\"")));
+            set_row_key(
+                &mut b,
+                "host_quote",
+                &format!("\"{}\"", quote.replace('"', "\\\"")),
+            );
             n += 1;
         }
         out.extend(b);
@@ -4616,9 +4635,7 @@ fn field_work(args: &[String]) {
                 _ => {}
             }
         }
-        let missing = keys
-            .iter()
-            .any(|k| claim_unit(&d_api.claims, k).is_none());
+        let missing = keys.iter().any(|k| claim_unit(&d_api.claims, k).is_none());
         if !missing {
             continue;
         }
@@ -4712,10 +4729,24 @@ fn check_blocks() {
         if d_api.is_none() || d_instr.is_none() {
             no_digest += 1;
             if d_api.is_none() {
-                println!("OHNE-AUSZUG\t{}\t{}\tdata\t{}\t{}\t{}", start + 1, host, api, or_empty(field(&b, "instrument")), start);
+                println!(
+                    "OHNE-AUSZUG\t{}\t{}\tdata\t{}\t{}\t{}",
+                    start + 1,
+                    host,
+                    api,
+                    or_empty(field(&b, "instrument")),
+                    start
+                );
             }
             if d_instr.is_none() {
-                println!("OHNE-AUSZUG\t{}\t{}\tinstrument\t{}\t{}\t{}", start + 1, host, instr, or_empty(field(&b, "instrument")), start);
+                println!(
+                    "OHNE-AUSZUG\t{}\t{}\tinstrument\t{}\t{}\t{}",
+                    start + 1,
+                    host,
+                    instr,
+                    or_empty(field(&b, "instrument")),
+                    start
+                );
             }
             continue;
         }
@@ -4989,17 +5020,27 @@ fn set_doc_slot(path: &str) {
         let key = or_empty(field(&b, "applies"));
         let mut hit = wanted.get(&(key.clone(), "data".to_string())).cloned();
         if hit.is_none() {
-            hit = wanted.get(&(key.clone(), "instrument".to_string())).cloned();
+            hit = wanted
+                .get(&(key.clone(), "instrument".to_string()))
+                .cloned();
         }
         match hit {
             Some((slot, cite, quote)) => {
                 if slot == "data" {
                     set_row_key(&mut b, "api_cite", &cite);
-                    set_row_key(&mut b, "api_quote", &format!("\"{}\"", quote.replace('"', "\\\"")));
+                    set_row_key(
+                        &mut b,
+                        "api_quote",
+                        &format!("\"{}\"", quote.replace('"', "\\\"")),
+                    );
                     nd += 1;
                 } else {
                     set_row_key(&mut b, "instrument_cite", &cite);
-                    set_row_key(&mut b, "instrument_quote", &format!("\"{}\"", quote.replace('"', "\\\"")));
+                    set_row_key(
+                        &mut b,
+                        "instrument_quote",
+                        &format!("\"{}\"", quote.replace('"', "\\\"")),
+                    );
                     ni += 1;
                 }
             }
@@ -5201,12 +5242,21 @@ fn set_ttl(args: &[String]) {
         out.push(String::new());
     }
     write_out(PHI, out.join("\n") + "\n", "phi");
-    println!("set-ttl: {changed} blocks set to {value} (host {host_pat}, old '{}')", if old.is_empty() { "*" } else { &old });
+    println!(
+        "set-ttl: {changed} blocks set to {value} (host {host_pat}, old '{}')",
+        if old.is_empty() { "*" } else { &old }
+    );
 }
 
 fn replace_cite(args: &[String]) {
-    let old = match args.first() { Some(v) => v.clone(), None => String::new() };
-    let new = match args.get(1) { Some(v) => v.clone(), None => String::new() };
+    let old = match args.first() {
+        Some(v) => v.clone(),
+        None => String::new(),
+    };
+    let new = match args.get(1) {
+        Some(v) => v.clone(),
+        None => String::new(),
+    };
     if old.is_empty() || new.is_empty() {
         println!("replace-cite: old and new required");
         return;
@@ -5221,7 +5271,9 @@ fn replace_cite(args: &[String]) {
                 let indent = &line[..line.len() - t.len()];
                 *line = format!("{indent}api_cite {new}");
                 na += 1;
-            } else if t.starts_with("instrument_cite ") && t["instrument_cite ".len()..].trim() == old {
+            } else if t.starts_with("instrument_cite ")
+                && t["instrument_cite ".len()..].trim() == old
+            {
                 let indent = &line[..line.len() - t.len()];
                 *line = format!("{indent}instrument_cite {new}");
                 ni += 1;
@@ -5235,7 +5287,10 @@ fn replace_cite(args: &[String]) {
 }
 
 fn clear_cite(args: &[String]) {
-    let old = match args.first() { Some(v) => v.clone(), None => String::new() };
+    let old = match args.first() {
+        Some(v) => v.clone(),
+        None => String::new(),
+    };
     if old.is_empty() {
         println!("clear-cite: url required");
         return;
@@ -5251,7 +5306,8 @@ fn clear_cite(args: &[String]) {
                 let t = l.trim_start();
                 !(t.starts_with("api_cite ") && t["api_cite ".len()..].trim() == old)
                     && !(t.starts_with("api_quote ") && api == old)
-                    && !(t.starts_with("instrument_cite ") && t["instrument_cite ".len()..].trim() == old)
+                    && !(t.starts_with("instrument_cite ")
+                        && t["instrument_cite ".len()..].trim() == old)
                     && !(t.starts_with("instrument_quote ") && instr == old)
             });
             cleared += 1;
@@ -5393,8 +5449,14 @@ fn text_one(args: &[String]) {
     };
     let _ = fs::create_dir_all(&dir);
     let index = format!("{dir}/index.tsv");
-    let existing = match fs::read_to_string(&index) { Ok(t) => t, Err(_) => String::new() };
-    if existing.lines().any(|l| l.split('\t').next() == Some(url.as_str())) {
+    let existing = match fs::read_to_string(&index) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    if existing
+        .lines()
+        .any(|l| l.split('\t').next() == Some(url.as_str()))
+    {
         return;
     }
     let head = Command::new("curl")
@@ -5449,7 +5511,10 @@ fn text_one(args: &[String]) {
         }
     } else if raw.starts_with(b"\x1f\x8b") || lower.ends_with(".gz") {
         method = "gzip";
-        if let Ok(o) = Command::new("gzip").args(["-dc", &tmp.to_string_lossy()]).output() {
+        if let Ok(o) = Command::new("gzip")
+            .args(["-dc", &tmp.to_string_lossy()])
+            .output()
+        {
             let cut = o.stdout.len().min(5_000_000);
             text = String::from_utf8_lossy(&o.stdout[..cut]).to_string();
         }
@@ -5460,7 +5525,11 @@ fn text_one(args: &[String]) {
     let _ = fs::remove_file(&tmp);
     let file = format!("{dir}/{}.txt", url_key(&url));
     let _ = fs::write(&file, &text);
-    if let Ok(mut f) = fs::OpenOptions::new().create(true).append(true).open(&index) {
+    if let Ok(mut f) = fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&index)
+    {
         let _ = writeln!(f, "{url}\t{file}\t{method}\t{}", text.len());
     }
 }
@@ -5471,14 +5540,21 @@ fn quote_expand(args: &[String]) {
         None => return,
     };
     let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
-    let index = match fs::read_to_string(format!("{dir}/index.tsv")) { Ok(t) => t, Err(_) => String::new() };
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
     let mut cache: BTreeMap<String, String> = BTreeMap::new();
     for line in index.lines() {
         let c: Vec<&str> = line.split('\t').collect();
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -5618,14 +5694,21 @@ fn host_quote_title(args: &[String]) {
         None => return,
     };
     let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
-    let index = match fs::read_to_string(format!("{dir}/index.tsv")) { Ok(t) => t, Err(_) => String::new() };
+    let index = match fs::read_to_string(format!("{dir}/index.tsv")) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
     let mut cache: BTreeMap<String, String> = BTreeMap::new();
     for line in index.lines() {
         let c: Vec<&str> = line.split('\t').collect();
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -5651,7 +5734,9 @@ fn host_quote_title(args: &[String]) {
     let mut out: Vec<String> = Vec::new();
     let (mut changed, mut left) = (0usize, 0usize);
     for (_, mut b) in blocks(&reg) {
-        let hq = or_empty(field(&b, "host_quote")).trim_matches('"').to_string();
+        let hq = or_empty(field(&b, "host_quote"))
+            .trim_matches('"')
+            .to_string();
         if !hq.starts_with("HTTP") {
             out.extend(b);
             out.push(String::new());
@@ -5716,13 +5801,19 @@ fn host_quote_title(args: &[String]) {
             out.push(String::new());
             continue;
         }
-        set_row_key(&mut b, "host_quote", &format!("\"{}\"", candidate.replace('"', "\\\"")));
+        set_row_key(
+            &mut b,
+            "host_quote",
+            &format!("\"{}\"", candidate.replace('"', "\\\"")),
+        );
         changed += 1;
         out.extend(b);
         out.push(String::new());
     }
     if dry {
-        println!("dry-run: host-quote-title {changed} Kopfzeilen durch Dokumenttitel ersetzt, {left} ohne Text");
+        println!(
+            "dry-run: host-quote-title {changed} Kopfzeilen durch Dokumenttitel ersetzt, {left} ohne Text"
+        );
         return;
     }
     write_out(REG, out.join("\n"), "instruments");
@@ -5846,7 +5937,12 @@ fn field_align(args: &[String]) {
             let mut hits: Vec<String> = Vec::new();
             for c in &cols {
                 let nc = norm_id(c);
-                if !c.chars().next().map(|ch| ch.is_alphanumeric()).unwrap_or(false) {
+                if !c
+                    .chars()
+                    .next()
+                    .map(|ch| ch.is_alphanumeric())
+                    .unwrap_or(false)
+                {
                     continue;
                 }
                 if nc.is_empty() {
@@ -5887,7 +5983,8 @@ fn field_align(args: &[String]) {
                         changed += 1;
                     }
                 } else if t.starts_with("fields ") {
-                    let toks: Vec<String> = newline.split_whitespace().map(|s| s.to_string()).collect();
+                    let toks: Vec<String> =
+                        newline.split_whitespace().map(|s| s.to_string()).collect();
                     if toks.len() > 1 {
                         let mut nt = toks.clone();
                         let mut hit = false;
@@ -5914,11 +6011,15 @@ fn field_align(args: &[String]) {
         println!("ALIGN\t{r}");
     }
     if dry {
-        println!("dry-run: field-align {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate");
+        println!(
+            "dry-run: field-align {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate"
+        );
         return;
     }
     write_out(REG, out.join("\n"), "instruments");
-    println!("field-align: {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate");
+    println!(
+        "field-align: {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate"
+    );
 }
 
 fn toks(text: &str) -> Vec<String> {
@@ -5986,7 +6087,11 @@ fn quote_repair(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -6106,7 +6211,11 @@ fn quote_repair(args: &[String]) {
                         continue;
                     }
                     let hit = qw.iter().filter(|w| sw.contains(w)).count();
-                    let distinctive = qw.iter().filter(|w| w.chars().count() >= 5 && sw.contains(w)).count() >= 2;
+                    let distinctive = qw
+                        .iter()
+                        .filter(|w| w.chars().count() >= 5 && sw.contains(w))
+                        .count()
+                        >= 2;
                     if !distinctive {
                         continue;
                     }
@@ -6168,7 +6277,11 @@ fn quote_retarget(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -6205,7 +6318,11 @@ fn quote_retarget(args: &[String]) {
             }
         }
         let mut topic: Vec<String> = Vec::new();
-        for k in keys.iter().chain(std::iter::once(&instrument)).chain(std::iter::once(&unit)) {
+        for k in keys
+            .iter()
+            .chain(std::iter::once(&instrument))
+            .chain(std::iter::once(&unit))
+        {
             for w in k.split(|c: char| !c.is_alphanumeric()) {
                 let lw: String = w.chars().flat_map(|c| c.to_lowercase()).collect();
                 if lw.chars().count() >= 5 && !topic.contains(&lw) {
@@ -6291,7 +6408,12 @@ fn quote_retarget(args: &[String]) {
                 match best {
                     Some((h, s)) => {
                         taken += 1;
-                        report.push(format!("{}\t{}\t{}", start, h, s.chars().take(90).collect::<String>()));
+                        report.push(format!(
+                            "{}\t{}\t{}",
+                            start,
+                            h,
+                            s.chars().take(90).collect::<String>()
+                        ));
                         body.push(format!("  {}\"{}\"", prefix, s.replace('"', "\\\"")));
                     }
                     None => {
@@ -6312,11 +6434,15 @@ fn quote_retarget(args: &[String]) {
         println!("RETARGET\t{r}");
     }
     if dry {
-        println!("dry-run: quote-retarget {taken} quotes re-grounded, {left} without sentence, {nodoc} without text");
+        println!(
+            "dry-run: quote-retarget {taken} quotes re-grounded, {left} without sentence, {nodoc} without text"
+        );
         return;
     }
     write_out(REG, out.join("\n"), "instruments");
-    println!("quote-retarget: {taken} quotes re-grounded, {left} without sentence, {nodoc} without text");
+    println!(
+        "quote-retarget: {taken} quotes re-grounded, {left} without sentence, {nodoc} without text"
+    );
 }
 
 fn phi_replace(args: &[String]) {
@@ -6449,8 +6575,6 @@ fn class_table(args: &[String]) {
             || instr.contains("concepts")
             || instr.contains("/doc/")
             || instr.contains("/docs/")
-
-
             || instr.contains("dictionary");
         let mut klasse: Option<&str> = None;
         if !api.is_empty() && api == instr {
@@ -6460,15 +6584,16 @@ fn class_table(args: &[String]) {
             klasse = Some("formatdokument");
             n_fmt += 1;
         } else if let (Some(d_api), Some(d_instr)) = (digests.get(&api), digests.get(&instr)) {
-            let all_keys = !keys.is_empty() && keys.iter().all(|k| claim_unit(&d_api.claims, k).is_some());
+            let all_keys =
+                !keys.is_empty() && keys.iter().all(|k| claim_unit(&d_api.claims, k).is_some());
             if !all_keys {
                 continue;
             }
             let device = or_empty(field(&b, "instrument")).to_lowercase();
             let devices = claims_device(&d_instr.claims);
-            let hit = devices
-                .iter()
-                .any(|dv| !dv.is_empty() && (device.contains(dv.as_str()) || dv.contains(device.as_str())));
+            let hit = devices.iter().any(|dv| {
+                !dv.is_empty() && (device.contains(dv.as_str()) || dv.contains(device.as_str()))
+            });
             let _ = d_api;
             if !hit && !device.is_empty() {
                 klasse = Some("geraet-nicht-benannt");
@@ -6504,7 +6629,12 @@ fn class_table(args: &[String]) {
             None => String::new(),
         };
         let mut suche = String::new();
-        for w in [instrument.as_str(), katalog.as_str(), keyword.as_str(), "instrument paper"] {
+        for w in [
+            instrument.as_str(),
+            katalog.as_str(),
+            keyword.as_str(),
+            "instrument paper",
+        ] {
             if !w.is_empty() {
                 if !suche.is_empty() {
                     suche.push_str(" | ");
@@ -6559,7 +6689,11 @@ fn device_claims(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -6604,7 +6738,8 @@ fn device_claims(args: &[String]) {
                 _ => {}
             }
         }
-        let all_keys = !keys.is_empty() && keys.iter().all(|k| claim_unit(&d_api.claims, k).is_some());
+        let all_keys =
+            !keys.is_empty() && keys.iter().all(|k| claim_unit(&d_api.claims, k).is_some());
         if !all_keys {
             continue;
         }
@@ -6668,7 +6803,11 @@ fn claim_import(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -6684,7 +6823,8 @@ fn claim_import(args: &[String]) {
                 } else if p.extension().map(|x| x == "spec").unwrap_or(false) {
                     if let Ok(t) = fs::read_to_string(&p) {
                         if let Some(l) = t.lines().find(|l| l.starts_with("doc\t")) {
-                            specs.insert(l[4..].trim().to_string(), p.to_string_lossy().to_string());
+                            specs
+                                .insert(l[4..].trim().to_string(), p.to_string_lossy().to_string());
                         }
                     }
                 }
@@ -6732,7 +6872,10 @@ fn claim_import(args: &[String]) {
             let needle = toks(quote).join(" ").to_lowercase();
             if !hay.contains(&needle) {
                 bad_quote += 1;
-                println!("NICHT_WOERTLICH\t{icite}\t{}", quote.chars().take(70).collect::<String>());
+                println!(
+                    "NICHT_WOERTLICH\t{icite}\t{}",
+                    quote.chars().take(70).collect::<String>()
+                );
                 continue;
             }
             let spec = match specs.get(icite) {
@@ -6749,7 +6892,9 @@ fn claim_import(args: &[String]) {
         }
     }
     if dry {
-        println!("dry-run: claim-import {ok} geprueft, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer");
+        println!(
+            "dry-run: claim-import {ok} geprueft, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer"
+        );
         return;
     }
     let mut applied = 0usize;
@@ -6761,7 +6906,9 @@ fn claim_import(args: &[String]) {
             }
         }
     }
-    println!("claim-import: {applied} Geraetezeilen eingetragen, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer");
+    println!(
+        "claim-import: {applied} Geraetezeilen eingetragen, {bad_quote} nicht woertlich, {no_text} ohne Text, {no_spec} ohne Auszug, {too_long} zu lang, {empty} leer"
+    );
 }
 
 fn norm(s: &str) -> String {
@@ -6911,11 +7058,46 @@ fn sentence_start_ok(first: &str) -> bool {
 
 fn has_verb_early(tokens: &[&str]) -> bool {
     const VERBS: [&str; 40] = [
-        "is", "are", "was", "were", "has", "have", "consists", "consist", "operates", "operate",
-        "measures", "measure", "provides", "provide", "observes", "observe", "collects", "collect",
-        "uses", "use", "detects", "detect", "records", "record", "covers", "cover", "comprises",
-        "comprise", "includes", "include", "mounts", "mount", "sits", "serves", "forms", "contains",
-        "contain", "tracks", "track", "produces",
+        "is",
+        "are",
+        "was",
+        "were",
+        "has",
+        "have",
+        "consists",
+        "consist",
+        "operates",
+        "operate",
+        "measures",
+        "measure",
+        "provides",
+        "provide",
+        "observes",
+        "observe",
+        "collects",
+        "collect",
+        "uses",
+        "use",
+        "detects",
+        "detect",
+        "records",
+        "record",
+        "covers",
+        "cover",
+        "comprises",
+        "comprise",
+        "includes",
+        "include",
+        "mounts",
+        "mount",
+        "sits",
+        "serves",
+        "forms",
+        "contains",
+        "contain",
+        "tracks",
+        "track",
+        "produces",
     ];
     tokens.iter().take(4).any(|t| {
         let w: String = t
@@ -7022,7 +7204,11 @@ fn claim_verify(args: &[String]) {
         if c.len() < 2 || c[1] == "-" {
             continue;
         }
-        let p = if c[1].starts_with('/') { std::path::PathBuf::from(c[1]) } else { std::path::PathBuf::from(&dir).join(c[1]) };
+        let p = if c[1].starts_with('/') {
+            std::path::PathBuf::from(c[1])
+        } else {
+            std::path::PathBuf::from(&dir).join(c[1])
+        };
         if let Ok(t) = fs::read_to_string(p) {
             cache.insert(c[0].to_string(), t);
         }
@@ -7069,7 +7255,9 @@ fn claim_verify(args: &[String]) {
         v.sort();
     }
     let mut rows: Vec<String> = Vec::new();
-    rows.push("datei\tabschnitt\turl\tinstrument\tblock\turteil\therkunft\twoerter\tzitat".to_string());
+    rows.push(
+        "datei\tabschnitt\turl\tinstrument\tblock\turteil\therkunft\twoerter\tzitat".to_string(),
+    );
     let (mut ok, mut no_dev, mut no_lit, mut no_text, mut no_block, mut no_spec) =
         (0usize, 0usize, 0usize, 0usize, 0usize, 0usize);
     let mut seen_blocks: BTreeSet<usize> = BTreeSet::new();
@@ -7151,13 +7339,29 @@ fn claim_verify(args: &[String]) {
                     if chosen.is_none() {
                         let plain = types
                             .get(&url)
-                            .map(|t| matches!(t.as_str(), "pdftotext" | "raw" | "gzip" | "cp1251" | "browser" | "try_direct" | "try_jina" | "manual"))
+                            .map(|t| {
+                                matches!(
+                                    t.as_str(),
+                                    "pdftotext"
+                                        | "raw"
+                                        | "gzip"
+                                        | "cp1251"
+                                        | "browser"
+                                        | "try_direct"
+                                        | "try_jina"
+                                        | "manual"
+                                )
+                            })
                             .unwrap_or(false);
                         if plain {
                             if let Some(d) = doc {
                                 for s in sentences_of(d) {
                                     let n = words(&s);
-                                    if n >= 4 && n <= 25 && !junk_sentence(&s) && names_device(&norm(&s), &instr) {
+                                    if n >= 4
+                                        && n <= 25
+                                        && !junk_sentence(&s)
+                                        && names_device(&norm(&s), &instr)
+                                    {
                                         chosen = Some((s, "satz"));
                                         break;
                                     }
@@ -7175,7 +7379,10 @@ fn claim_verify(args: &[String]) {
                         ));
                         if let Some(sp) = &spec {
                             let clean = q.replace('\t', " ").replace('"', "'");
-                            writes.push((sp.clone(), format!("claim\tdevice\t{instr}\t\"{clean}\"\n")));
+                            writes.push((
+                                sp.clone(),
+                                format!("claim\tdevice\t{instr}\t\"{clean}\"\n"),
+                            ));
                         }
                     }
                     None => {
@@ -7196,7 +7403,9 @@ fn claim_verify(args: &[String]) {
                             no_lit += 1;
                             ("nicht_woertlich", "nicht_woertlich")
                         };
-                        rows.push(format!("{f}\t{section}\t{url}\t{instr}\t{start}\t{urteil}\t{n}\t0\t"));
+                        rows.push(format!(
+                            "{f}\t{section}\t{url}\t{instr}\t{start}\t{urteil}\t{n}\t0\t"
+                        ));
                     }
                 }
             }
@@ -7294,7 +7503,13 @@ fn einholen_reg(args: &[String]) {
     };
     let mut wanted: BTreeSet<usize> = BTreeSet::new();
     for line in list.lines() {
-        if let Ok(n) = line.split('\t').next().unwrap_or("").trim().parse::<usize>() {
+        if let Ok(n) = line
+            .split('\t')
+            .next()
+            .unwrap_or("")
+            .trim()
+            .parse::<usize>()
+        {
             wanted.insert(n);
         }
     }
@@ -7406,7 +7621,11 @@ fn set_quote(args: &[String]) {
             continue;
         }
         want.insert(
-            (c[0].trim().to_string(), c[1].trim().to_string(), c[2].to_string()),
+            (
+                c[0].trim().to_string(),
+                c[1].trim().to_string(),
+                c[2].to_string(),
+            ),
             c[3].to_string(),
         );
     }
@@ -7497,7 +7716,11 @@ fn quote_trim(args: &[String]) {
                     continue;
                 }
                 if q.contains('\u{2026}') || q.contains("...") {
-                    let sep = if q.contains('\u{2026}') { '\u{2026}' } else { '.' };
+                    let sep = if q.contains('\u{2026}') {
+                        '\u{2026}'
+                    } else {
+                        '.'
+                    };
                     let parts: Vec<&str> = if sep == '.' {
                         q.split("...").collect()
                     } else {
@@ -7601,7 +7824,10 @@ fn quote_widen(args: &[String]) {
                 );
             } else if t.starts_with("host_cite ") {
                 slot = Some("host");
-                cur.insert("host".to_string(), t["host_cite ".len()..].trim().to_string());
+                cur.insert(
+                    "host".to_string(),
+                    t["host_cite ".len()..].trim().to_string(),
+                );
             }
             if slot.is_some() {
                 out.push(line.clone());
@@ -7652,13 +7878,7 @@ fn quote_widen(args: &[String]) {
                 match best {
                     Some(nq) => {
                         widened += 1;
-                        report.push(format!(
-                            "WEIT\t{}\t{}\t{}\t=>\t{}",
-                            start + 1,
-                            key,
-                            q,
-                            nq
-                        ));
+                        report.push(format!("WEIT\t{}\t{}\t{}\t=>\t{}", start + 1, key, q, nq));
                         out.push(format!("  {}\"{}\"", prefix, nq.replace('"', "'")));
                     }
                     None => {
@@ -7686,11 +7906,15 @@ fn quote_widen(args: &[String]) {
         final_text.push('\n');
     }
     if dry {
-        println!("dry-run: quote-widen {widened} of {short} short quotes, {nohit} without longer sentence");
+        println!(
+            "dry-run: quote-widen {widened} of {short} short quotes, {nohit} without longer sentence"
+        );
         return;
     }
     write_out(REG, final_text, "instruments");
-    println!("quote-widen: {widened} of {short} short quotes widened, {nohit} without longer sentence");
+    println!(
+        "quote-widen: {widened} of {short} short quotes widened, {nohit} without longer sentence"
+    );
 }
 
 fn specs_to_digests(dir: &str) {
@@ -7783,7 +8007,9 @@ fn specs_to_digests(dir: &str) {
         out.extend(lines);
         out.push(String::new());
     }
-    let mut text = String::from("# digests - Aussagen je Dokument (Feld, Einheit, Takt, Geraet) mit woertlichem Zitat\n");
+    let mut text = String::from(
+        "# digests - Aussagen je Dokument (Feld, Einheit, Takt, Geraet) mit woertlichem Zitat\n",
+    );
     text.push_str(&out.join("\n"));
     text.push('\n');
     write_out(DIGESTS, text, "digests");

@@ -128,10 +128,17 @@ fn list_of(obj: &JsonVal, key: &str) -> Option<Vec<f64>> {
     obj_str(obj, key).map(|s| parse_bracket_list(&s))
 }
 
-fn civil_unix(yr: i64, mo: u32, dy: u32, hr: u32, mt: u32, sc: u32, us: Option<u32>) -> Option<f64> {
+fn civil_unix(
+    yr: i64,
+    mo: u32,
+    dy: u32,
+    hr: u32,
+    mt: u32,
+    sc: u32,
+    us: Option<u32>,
+) -> Option<f64> {
     let days = ymd_to_days(yr, mo, dy)?;
-    let second =
-        days as f64 * 86400.0 + hr as f64 * 3600.0 + mt as f64 * 60.0 + sc as f64;
+    let second = days as f64 * 86400.0 + hr as f64 * 3600.0 + mt as f64 * 60.0 + sc as f64;
     Some(match us {
         Some(us) => second + us as f64 / 1e6,
         None => second,
@@ -147,13 +154,7 @@ fn time_unix(obj: &JsonVal) -> Option<f64> {
     let sc = obj_num(obj, "time.sc")?;
     let us = obj_num(obj, "time.us").map(|v| v.max(0.0) as u32);
     civil_unix(
-        yr as i64,
-        mo as u32,
-        dy as u32,
-        hr as u32,
-        mt as u32,
-        sc as u32,
-        us,
+        yr as i64, mo as u32, dy as u32, hr as u32, mt as u32, sc as u32, us,
     )
 }
 
@@ -265,7 +266,8 @@ fn gather(
                 skipped += 1;
                 continue;
             };
-            let Some((lat, lon)) = destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
+            let Some((lat, lon)) =
+                destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
             else {
                 skipped += 1;
                 continue;

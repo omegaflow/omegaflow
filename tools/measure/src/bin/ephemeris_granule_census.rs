@@ -161,9 +161,7 @@ fn series(center_jd: f64, half_days: f64) {
     for k in 0..=n {
         let jd = center_jd - half_days + k as f64 * step;
         let tdb = (jd - J2000_EPOCH) * DAY;
-        let p = |m: &HashMap<String, BodyEphemeris>| {
-            body_barycenter_position(dsn_host()?, tdb, m)
-        };
+        let p = |m: &HashMap<String, BodyEphemeris>| body_barycenter_position(dsn_host()?, tdb, m);
         let (Some(a), Some(b), Some(c)) = (p(&de), p(&inpop), p(&epm)) else {
             continue;
         };

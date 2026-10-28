@@ -287,8 +287,15 @@ fn main() {
             if !has_coverage {
                 continue;
             }
-            let (g, r, n) =
-                extract_granules(spk, &spk_files, target, &wgccre, &bpc_files, &fk, GRANULE_DAYS);
+            let (g, r, n) = extract_granules(
+                spk,
+                &spk_files,
+                target,
+                &wgccre,
+                &bpc_files,
+                &fk,
+                GRANULE_DAYS,
+            );
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);

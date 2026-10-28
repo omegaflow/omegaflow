@@ -64,9 +64,10 @@ fn series(
             continue;
         }
         if let Some(g) = &gc_raw
-            && g[i] != 0 {
-                continue;
-            }
+            && g[i] != 0
+        {
+            continue;
+        }
         let Some(v) = decode_f32(&v_raw, i * 4, Endian::Le) else {
             continue;
         };

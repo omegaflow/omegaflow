@@ -763,7 +763,9 @@ fn main() {
         .enumerate()
         .filter(|(_, s)| {
             s.format == "ephemeris_binary"
-                && model_bodies.iter().any(|m| Some(m.as_str()) == s.body.as_deref())
+                && model_bodies
+                    .iter()
+                    .any(|m| Some(m.as_str()) == s.body.as_deref())
         })
         .map(|(idx, s)| {
             (

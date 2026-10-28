@@ -85,7 +85,8 @@ pub fn load_sources() -> Vec<SourceConfig> {
     refuse_shard_overlaps(parse_sources(&content))
 }
 
-pub(crate) fn field_model() -> &'static std::collections::HashMap<&'static str, (&'static str, &'static str)> {
+pub(crate) fn field_model()
+-> &'static std::collections::HashMap<&'static str, (&'static str, &'static str)> {
     static MODEL: std::sync::OnceLock<
         std::collections::HashMap<&'static str, (&'static str, &'static str)>,
     > = std::sync::OnceLock::new();

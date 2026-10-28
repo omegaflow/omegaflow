@@ -6,7 +6,8 @@ use std::fmt::Write as _;
 
 const TAG: &str = "pds-geosciences.wustl.edu";
 const BASE: &str = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx";
-const FMT: &str = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/label/lolardr.fmt";
+const FMT: &str =
+    "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/label/lolardr.fmt";
 const DEFAULT_SERIES: &str = "lro_es_01";
 const DEFAULT_SHARD_SIZE: usize = 16;
 const SPOTS: usize = 5;
@@ -202,9 +203,8 @@ fn main() {
         .map(|(i, c)| (c.name.as_str(), i))
         .collect();
 
-    let mut out = String::from(
-        "t_tt_s,spot,lat_deg,lon_deg,radius_m,selenoid_m,lola_elevation_m\n",
-    );
+    let mut out =
+        String::from("t_tt_s,spot,lat_deg,lon_deg,radius_m,selenoid_m,lola_elevation_m\n");
     let mut valid_spots = 0usize;
     let mut read_products = 0usize;
     for name in slice {
@@ -224,8 +224,7 @@ fn main() {
             }
         };
         let get = |row: &[Option<f64>], field: &str| -> Option<f64> {
-            idx.get(field)
-                .and_then(|i| row.get(*i).copied().flatten())
+            idx.get(field).and_then(|i| row.get(*i).copied().flatten())
         };
         for row in &rows {
             let (Some(raw_time), Some(selenoid)) =

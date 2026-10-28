@@ -809,7 +809,11 @@ mod tests {
         let mut seen: Vec<String> = Vec::new();
         for line in declaration.lines().skip(1).filter(|l| !l.trim().is_empty()) {
             let cols: Vec<&str> = line.split('\t').collect();
-            assert_eq!(cols.len(), 8, "body_models row is not eight columns: {line}");
+            assert_eq!(
+                cols.len(),
+                8,
+                "body_models row is not eight columns: {line}"
+            );
             let (body, naif, pck, model, kernel, frame_kernel, coverage, fallback) = (
                 cols[0], cols[1], cols[2], cols[3], cols[4], cols[5], cols[6], cols[7],
             );
@@ -820,7 +824,8 @@ mod tests {
             let naif: i32 = naif.parse().unwrap_or_else(|_| panic!("{body}: naif id"));
             assert_eq!(
                 pck_id_of(naif),
-                pck.parse::<i32>().unwrap_or_else(|_| panic!("{body}: pck id")),
+                pck.parse::<i32>()
+                    .unwrap_or_else(|_| panic!("{body}: pck id")),
                 "{body}: the pck id does not follow from the naif id"
             );
             let listed = body_table()
@@ -842,9 +847,15 @@ mod tests {
                     assert!(fallback != "absent", "{body}: a fallback must be named");
                 }
                 "iau-tpc" => assert!(kernel.ends_with(".tpc"), "{body}: an iau tpc is required"),
-                _ => assert!(kernel.ends_with(".tsv"), "{body}: the eop kernel is the table"),
+                _ => assert!(
+                    kernel.ends_with(".tsv"),
+                    "{body}: the eop kernel is the table"
+                ),
             }
-            assert!(!seen.contains(&body.to_string()), "{body} is declared twice");
+            assert!(
+                !seen.contains(&body.to_string()),
+                "{body} is declared twice"
+            );
             seen.push(body.to_string());
         }
         for body in &woven {

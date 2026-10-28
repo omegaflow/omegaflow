@@ -44,7 +44,9 @@ pub fn pdf_text(bytes: &[u8]) -> Option<String> {
     if !joined.is_empty() {
         return Some(joined);
     }
-    if page_nums.is_empty() && let Some(text) = legacy_streams(bytes) {
+    if page_nums.is_empty()
+        && let Some(text) = legacy_streams(bytes)
+    {
         return Some(text);
     }
     pdftotext_external(bytes)

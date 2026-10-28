@@ -163,7 +163,10 @@ mod tests {
         assert!((e.pm_y_arcsec - 0.2130).abs() < 1e-9);
         let (lod, dx, dy) = s.lod_dx_dy(37665.0).expect("first row extras");
         assert!((lod - 0.0017230).abs() < 1e-10, "{lod}");
-        assert!(dx.abs() < 1e-12 && dy.abs() < 1e-12, "1962 has no pole offset");
+        assert!(
+            dx.abs() < 1e-12 && dy.abs() < 1e-12,
+            "1962 has no pole offset"
+        );
     }
 
     #[test]
@@ -216,7 +219,11 @@ mod tests {
         let a_tai = -0.4077697 - 36.0;
         let b_tai = 0.5912870 - 37.0;
         let want = (a_tai + b_tai) / 2.0 + 36.0;
-        assert!((e.ut1_utc_s - want).abs() < 1.0e-9, "{} vs {want}", e.ut1_utc_s);
+        assert!(
+            (e.ut1_utc_s - want).abs() < 1.0e-9,
+            "{} vs {want}",
+            e.ut1_utc_s
+        );
         assert!(e.ut1_utc_s < 0.0, "the ramp came back: {}", e.ut1_utc_s);
     }
 }

@@ -154,9 +154,10 @@ fn surrogate_zs(
     for _ in 0..n_surr {
         let s = phase_randomized_surrogate(driver, &mut rng);
         if let Some(v) = transfer_entropy_lag(target, &s, lag)
-            && v.is_finite() {
-                vals.push(v);
-            }
+            && v.is_finite()
+        {
+            vals.push(v);
+        }
     }
     if vals.len() != n_surr {
         return None;
@@ -301,18 +302,21 @@ fn read_series(path: &str) -> Option<(Vec<f64>, Vec<f32>)> {
             .collect();
         if toks.len() == 1 {
             if let Ok(v) = toks.remove(0).parse::<f32>()
-                && v.is_finite() {
-                    flux.push(v);
-                }
+                && v.is_finite()
+            {
+                flux.push(v);
+            }
             continue;
         }
         let t = toks.remove(0);
         let v = toks.remove(0);
         if let (Ok(t), Ok(v)) = (t.parse::<f64>(), v.parse::<f32>())
-            && t.is_finite() && v.is_finite() {
-                times.push(t);
-                flux.push(v);
-            }
+            && t.is_finite()
+            && v.is_finite()
+        {
+            times.push(t);
+            flux.push(v);
+        }
     }
     if flux.is_empty() {
         return None;

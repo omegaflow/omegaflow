@@ -8,7 +8,9 @@ fn usage() {
     eprintln!("usage: register_ttl_apply <rules.tsv> [--write] [--path <register>]");
     eprintln!("  TSV columns: MATCH<TAB>VALUE");
     eprintln!("  MATCH = substring of the block's `url`; VALUE = `no-sampling` or seconds");
-    eprintln!("  first matching rule wins; rewrites the block's ttl/no-sampling line (or adds one)");
+    eprintln!(
+        "  first matching rule wins; rewrites the block's ttl/no-sampling line (or adds one)"
+    );
     eprintln!(
         "  without --write the register is only reported (source-first cadence verdict stays the owner's)"
     );

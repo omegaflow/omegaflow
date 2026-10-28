@@ -139,14 +139,16 @@ fn main() {
         for _ in 0..N_SURR {
             let ss = phase_randomized_surrogate(&s_series, &mut rng);
             if let Some(v) = transfer_entropy_lag(&f_series, &ss, lag)
-                && v > fam {
-                    fam = v;
-                }
+                && v > fam
+            {
+                fam = v;
+            }
         }
         if let Some(v) = sf
-            && v > best.map_or(f64::NEG_INFINITY, |(_, b)| b) {
-                best = Some((lag, v));
-            }
+            && v > best.map_or(f64::NEG_INFINITY, |(_, b)| b)
+        {
+            best = Some((lag, v));
+        }
         println!(
             "{:>4} | {:>11} | {:>11} | {:>11.4e}",
             lag,

@@ -91,7 +91,9 @@ fn run(args: &[String]) -> Result<(), String> {
     let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(d) => d.as_secs_f64(),
         Err(e) => {
-            eprintln!("system clock before the unix epoch: {e:?} — the future gate has no reference");
+            eprintln!(
+                "system clock before the unix epoch: {e:?} — the future gate has no reference"
+            );
             std::process::exit(1);
         }
     };

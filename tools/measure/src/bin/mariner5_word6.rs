@@ -59,7 +59,10 @@ fn points(d: &[u8]) -> Vec<Point> {
         }
         let rising = block.windows(2).all(|p| p[1] > p[0]);
         if !rising && ri < 3 {
-            eprintln!("  Kopf pruefen: Satz {ri} nicht steigend, erster Zeitwert {}", block[0]);
+            eprintln!(
+                "  Kopf pruefen: Satz {ri} nicht steigend, erster Zeitwert {}",
+                block[0]
+            );
         }
         for a in w8 {
             pts.push(Point { w: a.to_vec() });
@@ -154,11 +157,7 @@ fn run(name: &str, file: &str) {
     }
     let mut ts: Vec<(u64, usize)> = tsteps.into_iter().collect();
     ts.sort_by_key(|a| std::cmp::Reverse(a.1));
-    let top: Vec<String> = ts
-        .iter()
-        .take(6)
-        .map(|(s, n)| format!("{s}x{n}"))
-        .collect();
+    let top: Vec<String> = ts.iter().take(6).map(|(s, n)| format!("{s}x{n}")).collect();
     eprintln!("{name}: Zeitschritte haeufigste [{}]", top.join(" "));
     eprintln!(
         "{name}: Wort 6 erst {} letzt {}, Richtung auf {up} ab {down}",
@@ -252,10 +251,7 @@ fn run(name: &str, file: &str) {
             let dt = if i == 0 { 0 } else { t[i] - t[i - 1] };
             parts.push(format!(
                 "P{i} t={} dt={} w6={:.3e} hex={:09x}",
-                t[i],
-                dt,
-                w6[i] as f64,
-                w6[i]
+                t[i], dt, w6[i] as f64, w6[i]
             ));
         }
         eprintln!("{name}: {label} {}", parts.join(" | "));

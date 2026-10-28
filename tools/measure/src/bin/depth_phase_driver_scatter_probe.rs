@@ -340,9 +340,10 @@ fn column_mean_dlnvp(vol: &Volume, lat: f64, lon: f64, depth_km: f64) -> Option<
     let mut prev: Option<f64> = None;
     for z in levels {
         if let Some(p) = prev
-            && (z - p).abs() < 1e-9 {
-                continue;
-            }
+            && (z - p).abs() < 1e-9
+        {
+            continue;
+        }
         let v = vol.sample_at([z, lat, lon])?;
         zs.push(z);
         vs.push(v);

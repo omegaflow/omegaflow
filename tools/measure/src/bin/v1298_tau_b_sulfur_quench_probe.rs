@@ -184,10 +184,8 @@ fn run_report() -> Result<String, String> {
     let names = sulfur_gas_names();
     let slots = slot_lookup(&names);
 
-    let b_obs =
-        observed_budget(OBSERVED_LOGZ, OBSERVED_C_O).ok_or("observed budget refused")?;
-    let b_solar =
-        observed_budget(SOLAR_LOGZ, OBSERVED_C_O).ok_or("solar budget refused")?;
+    let b_obs = observed_budget(OBSERVED_LOGZ, OBSERVED_C_O).ok_or("observed budget refused")?;
+    let b_solar = observed_budget(SOLAR_LOGZ, OBSERVED_C_O).ok_or("solar budget refused")?;
 
     out.push_str("== Equilibrium table at the observed budget (logZ +0.6, C/O 0.22), 1 bar ==\n");
     out.push_str(&observed_layer_table(OBSERVED_LOGZ).ok_or("layer table refused")?);

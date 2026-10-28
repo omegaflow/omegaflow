@@ -744,9 +744,7 @@ fn main() {
                     Some(e) => {
                         let dev = (e.ground_f - e.swarm_f).abs();
                         let sigma_tol = match (e.ground_sigma, e.swarm_sigma) {
-                            (Some(g), Some(s)) => {
-                                Some(SIGMA_K * (g * g + s * s).sqrt())
-                            }
+                            (Some(g), Some(s)) => Some(SIGMA_K * (g * g + s * s).sqrt()),
                             _ => None,
                         };
                         let tol = tol_arg.or(sigma_tol);

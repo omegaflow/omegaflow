@@ -535,7 +535,8 @@ fn gather(blocks: &[DmapBlock], site: &RadarSite, lsk: &LeapSeconds, re_km: f64)
                 skipped += 1;
                 continue;
             };
-            let Some((lat, lon)) = destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
+            let Some((lat, lon)) =
+                destination(site.lat_deg, site.lon_deg, bearing, ground_km, re_km)
             else {
                 skipped += 1;
                 continue;

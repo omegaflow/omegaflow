@@ -53,7 +53,10 @@ fn data_len(h: &FitsHeader) -> Option<usize> {
     if naxis == 0 {
         return Some(0);
     }
-    let groups = h.value("GROUPS").map(|v| v.starts_with('T')).unwrap_or(false);
+    let groups = h
+        .value("GROUPS")
+        .map(|v| v.starts_with('T'))
+        .unwrap_or(false);
     let mut n = 1usize;
     for k in 1..=naxis {
         if groups && k == 1 {
@@ -112,9 +115,7 @@ fn check_file(path: &str) -> bool {
         let naxis = keyword(&h, "NAXIS", 0);
         let checksum = h.value("CHECKSUM");
         let datasum = h.value("DATASUM");
-        let mut line = format!(
-            "{path}: HDU {hdu} {ext} BITPIX {bitpix} NAXIS {naxis}"
-        );
+        let mut line = format!("{path}: HDU {hdu} {ext} BITPIX {bitpix} NAXIS {naxis}");
         if let Some(cs) = checksum {
             let total = sum32(&buf[start..end]);
             let pass = total == u32::MAX;

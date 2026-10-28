@@ -350,7 +350,8 @@ mod tests {
     }
 
     #[test]
-    fn ang2pix_roundtrip_all_nside() {        for n in [1i64, 2, 4, 8] {
+    fn ang2pix_roundtrip_all_nside() {
+        for n in [1i64, 2, 4, 8] {
             for p in 0..(12 * n * n) {
                 let (theta, phi) = pix2ang_nest(n, p).unwrap();
                 let back = ang2pix_nest(n, theta, phi).unwrap();

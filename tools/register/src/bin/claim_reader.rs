@@ -151,7 +151,9 @@ fn claim_word(text: &str) -> &'static str {
 
 fn contains_open_word(text: &str) -> bool {
     let low = text.to_lowercase();
-    CLAIM_MARKERS.lines().any(|m| !m.is_empty() && low.contains(m))
+    CLAIM_MARKERS
+        .lines()
+        .any(|m| !m.is_empty() && low.contains(m))
 }
 
 const CLAIM_MARKERS: &str = include_str!("../data/claim_markers.txt");

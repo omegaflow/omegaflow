@@ -1111,13 +1111,14 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         let mut i = 0usize;
         while i < args.len() {
             if args[i] == "--cond"
-                && let Some(n) = args.get(i + 1) {
-                    out.push(Arm {
-                        name: n.to_string(),
-                        state: State::Built,
-                    });
-                    i += 1;
-                }
+                && let Some(n) = args.get(i + 1)
+            {
+                out.push(Arm {
+                    name: n.to_string(),
+                    state: State::Built,
+                });
+                i += 1;
+            }
             i += 1;
         }
         out
@@ -1529,9 +1530,10 @@ fn witness_series(w: &WitnessRecord) -> Result<Vec<(f64, f64)>, String> {
     let mut out = Vec::new();
     for unix in stamps {
         if let Some(t) = lsk.unix_to_tdb(unix)
-            && t.is_finite() {
-                out.push((t, 1.0));
-            }
+            && t.is_finite()
+        {
+            out.push((t, 1.0));
+        }
     }
     if out.is_empty() {
         return Err(format!(
@@ -1708,17 +1710,19 @@ fn object_key_scalar(body: &str, keys: &[&str]) -> Option<f64> {
     for key in keys {
         let quoted = format!("\"{key}\"");
         if let Some(pos) = body.find(&quoted)
-            && let Some(v) = scalar_after(&body[pos + quoted.len()..]) {
-                return Some(v);
-            }
+            && let Some(v) = scalar_after(&body[pos + quoted.len()..])
+        {
+            return Some(v);
+        }
     }
     let lower = body.to_ascii_lowercase();
     for key in keys {
         let pat = format!("{key}=");
         if let Some(pos) = lower.find(&pat)
-            && let Some(v) = scalar_after(&body[pos + key.len()..]) {
-                return Some(v);
-            }
+            && let Some(v) = scalar_after(&body[pos + key.len()..])
+        {
+            return Some(v);
+        }
     }
     None
 }
@@ -2605,9 +2609,10 @@ fn load_field(
         return Ok(out);
     }
     if src.format == "text"
-        && let Some(series) = load_text_rows(src, fc, &bytes) {
-            return Ok(series);
-        }
+        && let Some(series) = load_text_rows(src, fc, &bytes)
+    {
+        return Ok(series);
+    }
     if let Some(filtered) = text_source_for_field(src, &fc.name) {
         let Some(lsk) = embedded_lsk() else {
             return Err(format!(
@@ -2847,11 +2852,12 @@ fn deseasonalize(series: &[Option<f64>]) -> Vec<Option<f64>> {
     let mut counts = [0u32; CAL_MONTHS];
     for (i, v) in series.iter().enumerate() {
         if let Some(x) = v
-            && x.is_finite() {
-                sums[i % CAL_MONTHS] += x;
-                sumsq[i % CAL_MONTHS] += x * x;
-                counts[i % CAL_MONTHS] += 1;
-            }
+            && x.is_finite()
+        {
+            sums[i % CAL_MONTHS] += x;
+            sumsq[i % CAL_MONTHS] += x * x;
+            counts[i % CAL_MONTHS] += 1;
+        }
     }
     let mut means = [0.0f64; CAL_MONTHS];
     let mut sds = [0.0f64; CAL_MONTHS];
@@ -2930,10 +2936,11 @@ fn align(
             let mut start = d0.max(t0);
             let mut end = d1.min(t1);
             if let Some(c) = cond
-                && let (Some(c0), Some(c1)) = (c.first().map(|p| p.0), c.last().map(|p| p.0)) {
-                    start = start.max(c0);
-                    end = end.min(c1);
-                }
+                && let (Some(c0), Some(c1)) = (c.first().map(|p| p.0), c.last().map(|p| p.0))
+            {
+                start = start.max(c0);
+                end = end.min(c1);
+            }
             if !(end > start) {
                 return Err("bin window carries no overlap between the arms".into());
             }
@@ -3007,10 +3014,12 @@ fn pair2(a: &[Option<f64>], b: &[Option<f64>]) -> (Vec<f32>, Vec<f32>) {
     let mut bv = Vec::new();
     for (x, y) in a.iter().zip(b.iter()) {
         if let (Some(x), Some(y)) = (x, y)
-            && x.is_finite() && y.is_finite() {
-                av.push(*x as f32);
-                bv.push(*y as f32);
-            }
+            && x.is_finite()
+            && y.is_finite()
+        {
+            av.push(*x as f32);
+            bv.push(*y as f32);
+        }
     }
     (av, bv)
 }
@@ -3025,11 +3034,14 @@ fn pair3(
     let mut cv = Vec::new();
     for ((x, y), z) in a.iter().zip(b.iter()).zip(c.iter()) {
         if let (Some(x), Some(y), Some(z)) = (x, y, z)
-            && x.is_finite() && y.is_finite() && z.is_finite() {
-                av.push(*x as f32);
-                bv.push(*y as f32);
-                cv.push(*z as f32);
-            }
+            && x.is_finite()
+            && y.is_finite()
+            && z.is_finite()
+        {
+            av.push(*x as f32);
+            bv.push(*y as f32);
+            cv.push(*z as f32);
+        }
     }
     (av, bv, cv)
 }
@@ -3576,10 +3588,9 @@ fn execute(
     if target_count {
         print_count_arm("target", &aligned.target);
     }
-    if cond_count
-        && let Some(c) = &aligned.cond {
-            print_count_arm("cond", c);
-        }
+    if cond_count && let Some(c) = &aligned.cond {
+        print_count_arm("cond", c);
+    }
     let (target_s, driver_s) = pair2(&aligned.target, &aligned.driver);
     let cond_triple = aligned
         .cond
@@ -3723,17 +3734,19 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         cte_word
     );
     if result.d2t.best_lag == Some(REC_D2T_LAG)
-        && let Some(te) = result.d2t.best_te {
-            println!(
-                "Bz->SST lag/TE drift: recorded lag {REC_D2T_LAG} TE {REC_D2T_TE:.4e} vs core lag {REC_D2T_LAG} TE {te:.4e}"
-            );
-        }
+        && let Some(te) = result.d2t.best_te
+    {
+        println!(
+            "Bz->SST lag/TE drift: recorded lag {REC_D2T_LAG} TE {REC_D2T_TE:.4e} vs core lag {REC_D2T_LAG} TE {te:.4e}"
+        );
+    }
     if result.t2d.best_lag == Some(REC_T2D_LAG)
-        && let Some(te) = result.t2d.best_te {
-            println!(
-                "SST->Bz lag/TE drift: recorded lag {REC_T2D_LAG} TE {REC_T2D_TE:.4e} vs core lag {REC_T2D_LAG} TE {te:.4e}"
-            );
-        }
+        && let Some(te) = result.t2d.best_te
+    {
+        println!(
+            "SST->Bz lag/TE drift: recorded lag {REC_T2D_LAG} TE {REC_T2D_TE:.4e} vs core lag {REC_T2D_LAG} TE {te:.4e}"
+        );
+    }
     if d2t_ok && t2d_ok && cte_ok {
         println!("PARITY: GLEICH — the core reproduces the recorded ENSO Blatt I verdict");
         0
@@ -3975,10 +3988,12 @@ fn driver_decorrelation_s(driver: &[(f64, f64)]) -> Option<f64> {
         let mut cnt = 0usize;
         for i in 0..(n - lag) {
             if let (Some(a), Some(b)) = (grid[i], grid[i + lag])
-                && a.is_finite() && b.is_finite() {
-                    num += (a - mean) * (b - mean);
-                    cnt += 1;
-                }
+                && a.is_finite()
+                && b.is_finite()
+            {
+                num += (a - mean) * (b - mean);
+                cnt += 1;
+            }
         }
         if cnt == 0 {
             continue;
@@ -4133,9 +4148,10 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
     let mut observed = vec![0usize; q];
     for &(t, _) in &inside {
         if let Some(v) = sample_nearest(driver, t)
-            && let Some(b) = bin_of(v) {
-                observed[b] += 1;
-            }
+            && let Some(b) = bin_of(v)
+        {
+            observed[b] += 1;
+        }
     }
     let chi2 = |counts: &[usize]| -> f64 {
         counts
@@ -4190,9 +4206,10 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
         let mut counts = vec![0usize; q];
         for &(t, _) in &inside {
             if let Some(v) = sample_nearest(&shifted, t)
-                && let Some(b) = bin_of(v) {
-                    counts[b] += 1;
-                }
+                && let Some(b) = bin_of(v)
+            {
+                counts[b] += 1;
+            }
         }
         for (b, c) in counts.iter().enumerate() {
             null_counts[b].push(*c);
@@ -4756,10 +4773,11 @@ fn align_many(
             let mut best_dt = f64::NEG_INFINITY;
             for (i, a) in arms.iter().enumerate() {
                 if let Some(dt) = median_dt(a)
-                    && dt > best_dt {
-                        best_dt = dt;
-                        best_idx = i;
-                    }
+                    && dt > best_dt
+                {
+                    best_dt = dt;
+                    best_idx = i;
+                }
             }
             if !best_dt.is_finite() {
                 return Err("no arm cadence was measurable".into());
@@ -5349,25 +5367,26 @@ fn run_pair_matrix(
         let tau_d = native.get(di).copied().flatten();
         let tau_t = native.get(ti).copied().flatten();
         if let (Some(td), Some(tt)) = (tau_d, tau_t)
-            && !resolution_representable(grid_dt, td, tt) {
-                outcomes.push(MatrixCellOutcome {
-                    id,
-                    cond_n,
-                    n: 0,
-                    n_eff: None,
-                    scale: Some(grid_dt),
-                    te: None,
-                    p: 1.0,
-                    floor: true,
-                    res_pair: Some((td, tt)),
-                    alignment_absent: false,
-                    alignment_reason: None,
-                    pass: false,
-                    rungs: rungs.clone(),
-                    ladder: Vec::new(),
-                });
-                continue;
-            }
+            && !resolution_representable(grid_dt, td, tt)
+        {
+            outcomes.push(MatrixCellOutcome {
+                id,
+                cond_n,
+                n: 0,
+                n_eff: None,
+                scale: Some(grid_dt),
+                te: None,
+                p: 1.0,
+                floor: true,
+                res_pair: Some((td, tt)),
+                alignment_absent: false,
+                alignment_reason: None,
+                pass: false,
+                rungs: rungs.clone(),
+                ladder: Vec::new(),
+            });
+            continue;
+        }
         let cols: Vec<&[Option<f64>]> = cell_columns.iter().map(|c| c.as_slice()).collect();
         let joint = joint_columns(&cols);
         let Some(n) = joint.first().map(|c| c.len()) else {

@@ -683,9 +683,11 @@ fn main() {
             "wind   : absent — wind_orbit.bin carries no contract; L1 pairs stay without cone check"
         ),
     }
-    if let (Some(_), Some(_)) = (wind_gci, earth_pos_mid) { println!(
-        "wind ICRS = GCI + earth(t_mid) — the L1 address in the block (the GCI↔ICRS frame bias lies under the measurement width, named). The membrane itself carries the GCI record directly as the block address (finding in the register)."
-    ) }
+    if let (Some(_), Some(_)) = (wind_gci, earth_pos_mid) {
+        println!(
+            "wind ICRS = GCI + earth(t_mid) — the L1 address in the block (the GCI↔ICRS frame bias lies under the measurement width, named). The membrane itself carries the GCI record directly as the block address (finding in the register)."
+        )
+    }
     match wind_pos {
         Some(p) => println!("wind-ICRS : [{:.3e}, {:.3e}, {:.3e}] m", p[0], p[1], p[2]),
         None => println!("wind-ICRS : absent — the earth ephemeris does not carry the offset"),
@@ -1015,9 +1017,9 @@ fn main() {
                             }
                         );
                     }
-                    None => println!(
-                        "positive control: the em law carries no reach — FAILED (absent)"
-                    ),
+                    None => {
+                        println!("positive control: the em law carries no reach — FAILED (absent)")
+                    }
                 }
             }
             None => println!(

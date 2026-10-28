@@ -1,8 +1,8 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 
-use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::archivar::ephemeris::body_of_ephemeris_asset;
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::odp::dsn_host;
 use omegaflow::spectral::civil_from_days;
 
@@ -659,9 +659,10 @@ fn main() {
             let gb = day_geo.get(&b.0);
             if let (Some(ga), Some(gb)) = (ga, gb) {
                 if let (Some(ua), Some(ub)) = (ga.u, gb.u)
-                    && let Some(sa) = angle_deg(ua, ub) {
-                        steps_sky.push(sa);
-                    }
+                    && let Some(sa) = angle_deg(ua, ub)
+                {
+                    steps_sky.push(sa);
+                }
                 if let (Some(xa), Some(xb)) = (ga.r_e_au, gb.r_e_au) {
                     steps_re.push((xb - xa).abs());
                 }
@@ -711,18 +712,19 @@ fn main() {
             let gb = day_geo.get(&b.0);
             if let (Some(ga), Some(gb)) = (ga, gb) {
                 if let (Some(ua), Some(ub)) = (ga.u, gb.u)
-                    && let Some(sa) = angle_deg(ua, ub) {
-                        all_sky.push(sa);
-                        if sa < 1.0 {
-                            lt1 += 1;
-                        }
-                        if sa < 2.0 {
-                            lt2 += 1;
-                        }
-                        if sa < 5.0 {
-                            lt5 += 1;
-                        }
+                    && let Some(sa) = angle_deg(ua, ub)
+                {
+                    all_sky.push(sa);
+                    if sa < 1.0 {
+                        lt1 += 1;
                     }
+                    if sa < 2.0 {
+                        lt2 += 1;
+                    }
+                    if sa < 5.0 {
+                        lt5 += 1;
+                    }
+                }
                 if let (Some(xa), Some(xb)) = (ga.r_e_au, gb.r_e_au) {
                     all_re.push((xb - xa).abs());
                 }
@@ -814,16 +816,17 @@ fn main() {
     let mut dd = d0;
     while dd <= d1 {
         if let Some(g) = day_geo.get(&dd)
-            && let Some(jrj) = g.jrj {
-                let ym = ym_of_daycell(dd);
-                let upd = match monthly_min.get(&ym) {
-                    Some((_, v)) => jrj < *v,
-                    None => true,
-                };
-                if upd {
-                    monthly_min.insert(ym, (dd, jrj));
-                }
+            && let Some(jrj) = g.jrj
+        {
+            let ym = ym_of_daycell(dd);
+            let upd = match monthly_min.get(&ym) {
+                Some((_, v)) => jrj < *v,
+                None => true,
+            };
+            if upd {
+                monthly_min.insert(ym, (dd, jrj));
             }
+        }
         dd += 1;
     }
     for ((y, m), (day, v)) in &monthly_min {

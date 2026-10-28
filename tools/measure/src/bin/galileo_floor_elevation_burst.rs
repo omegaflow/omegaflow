@@ -292,10 +292,11 @@ fn episodes(
                     }
                 }
             } else if let Some((s, e, pk)) = open
-                && times[i] - times[e] > gap_s {
-                    out.push((times[s], times[e], e - s + 1, pk));
-                    open = None;
-                }
+                && times[i] - times[e] > gap_s
+            {
+                out.push((times[s], times[e], e - s + 1, pk));
+                open = None;
+            }
         }
         if let Some((s, e, pk)) = open {
             out.push((times[s], times[e], e - s + 1, pk));
@@ -491,9 +492,10 @@ fn main() {
             let mut t = lo;
             while t < hi {
                 if let Some(el) = elevation_at(t, st, &eph)
-                    && el > ceil {
-                        ceil = el;
-                    }
+                    && el > ceil
+                {
+                    ceil = el;
+                }
                 t += EL_STEP_S;
             }
             cells.push(CellStat {

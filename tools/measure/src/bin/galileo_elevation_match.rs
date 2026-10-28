@@ -594,13 +594,12 @@ fn main() {
             None => true,
             Some(prev) => t - prev > gap_s,
         };
-        if boundary
-            && let Some(mut pass) = ks.pass.take() {
-                let mut stat = finish_pass(&mut pass);
-                stat.mode = mode;
-                stat.station = station;
-                passmap.entry(key).or_default().push(stat);
-            }
+        if boundary && let Some(mut pass) = ks.pass.take() {
+            let mut stat = finish_pass(&mut pass);
+            stat.mode = mode;
+            stat.station = station;
+            passmap.entry(key).or_default().push(stat);
+        }
         let pass = ks.pass.get_or_insert_with(|| PassOpen::start(t, band_w));
         pass.t_last = t;
         if resid.abs() <= LOCK_HZ {

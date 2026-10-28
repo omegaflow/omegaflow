@@ -515,9 +515,10 @@ fn run_center_reduction(
             let worldline = |t: f64| -> Option<[f64; 3]> {
                 if use_center
                     && let Some(cm) = center
-                        && let Some(c) = body_barycenter_position("uranus_c", t, cm) {
-                            return Some(c);
-                        }
+                    && let Some(c) = body_barycenter_position("uranus_c", t, cm)
+                {
+                    return Some(c);
+                }
                 let bary = body_barycenter_position(
                     &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
                     t,
@@ -606,38 +607,38 @@ fn run_center_reduction(
             .iter()
             .find(|l| l.word == "de441")
             .and_then(|l| l.map.as_ref())
-        {
-            let mut mags: Vec<f64> = Vec::new();
-            for o in &obs {
-                let unix = (o.jd_utc - UNIX_JD_OFFSET) * 86400.0;
-                let Some(tdb) = lsk.unix_to_tdb(unix) else {
-                    continue;
-                };
-                let (Some(c), Some(b)) = (
-                    body_barycenter_position("uranus_c", tdb, cm),
-                    body_barycenter_position(
-                        &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
-                        tdb,
-                        de_map,
-                    ),
-                ) else {
-                    continue;
-                };
-                if let Some(m) = vec_len(vec_sub(c, b)) {
-                    mags.push(m);
-                }
+    {
+        let mut mags: Vec<f64> = Vec::new();
+        for o in &obs {
+            let unix = (o.jd_utc - UNIX_JD_OFFSET) * 86400.0;
+            let Some(tdb) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            let (Some(c), Some(b)) = (
+                body_barycenter_position("uranus_c", tdb, cm),
+                body_barycenter_position(
+                    &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
+                    tdb,
+                    de_map,
+                ),
+            ) else {
+                continue;
+            };
+            if let Some(m) = vec_len(vec_sub(c, b)) {
+                mags.push(m);
             }
-            if !mags.is_empty() {
-                let mean = mags.iter().sum::<f64>() / mags.len() as f64;
-                let max = mags.iter().cloned().fold(0.0, f64::max);
-                out.push_str(&format!(
+        }
+        if !mags.is_empty() {
+            let mean = mags.iter().sum::<f64>() / mags.len() as f64;
+            let max = mags.iter().cloned().fold(0.0, f64::max);
+            out.push_str(&format!(
                     "center: the carried wobble (planet center − Uranus-system barycenter, DE441) — mean {:.0} m, max {:.0} m over {} epochs (it holds the moon masses)\n",
                     mean,
                     max,
                     mags.len()
                 ));
-            }
         }
+    }
 
     out.push_str("\nCenter-anchored decomposition (the planet uranu_j against the center line):\n");
     let mut c0s: Vec<(&str, f64, f64)> = Vec::new();

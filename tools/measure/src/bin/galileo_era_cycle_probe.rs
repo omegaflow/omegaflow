@@ -228,12 +228,7 @@ fn main() {
             let rho = spearman(&days, &rms_v);
             let nd = days.len();
             if nd > 0 {
-                spe.push((
-                    rl.to_string(),
-                    rho,
-                    median(&rms_v),
-                    nd,
-                ));
+                spe.push((rl.to_string(), rho, median(&rms_v), nd));
             }
         }
         for (rl, rho, med, nd) in &spe {

@@ -252,12 +252,13 @@ impl Cog {
         }
         if width > 0
             && let Some(&gx_max) = gx.last()
-                && gx_max as usize + 1 != width {
-                    eprintln!(
-                        "{path}: gx-max {} != width {} (tolerated)",
-                        gx_max as usize, width
-                    );
-                }
+            && gx_max as usize + 1 != width
+        {
+            eprintln!(
+                "{path}: gx-max {} != width {} (tolerated)",
+                gx_max as usize, width
+            );
+        }
         let across = width.div_ceil(tw);
         Ok(Cog {
             path: path.to_string(),
@@ -419,9 +420,11 @@ impl Cog {
                     let x = self.gx[i] + u * (self.gx[i + 1] - self.gx[i]);
                     let y = self.gy[j] + v * (self.gy[j + 1] - self.gy[j]);
                     if let Some((lo, la)) = self.forward(x, y)
-                        && (lo - lon).abs() < 1e-6 && (la - lat).abs() < 1e-6 {
-                            return Some((x, y));
-                        }
+                        && (lo - lon).abs() < 1e-6
+                        && (la - lat).abs() < 1e-6
+                    {
+                        return Some((x, y));
+                    }
                 }
             }
         }
@@ -560,54 +563,54 @@ fn main() {
             let mut cell = None;
             if let (Some((px, py)), Some((vx, vy))) = (xp, xv)
                 && px >= 0.0
-                    && py >= 0.0
-                    && vx >= 0.0
-                    && vy >= 0.0
-                    && px < post.width as f64
-                    && py < post.height as f64
-                    && vx < vor.width as f64
-                    && vy < vor.height as f64
-                {
-                    let vp = match post.value_bilinear(px, py) {
-                        Ok(v) => v,
-                        Err(_) => {
-                            perr += 1;
-                            0.0
+                && py >= 0.0
+                && vx >= 0.0
+                && vy >= 0.0
+                && px < post.width as f64
+                && py < post.height as f64
+                && vx < vor.width as f64
+                && vy < vor.height as f64
+            {
+                let vp = match post.value_bilinear(px, py) {
+                    Ok(v) => v,
+                    Err(_) => {
+                        perr += 1;
+                        0.0
+                    }
+                };
+                let vv = match vor.value_bilinear(vx, vy) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        if verr < 3 {
+                            eprintln!("vor-err @({:.1},{:.1}): {e}", vx, vy);
                         }
-                    };
-                    let vv = match vor.value_bilinear(vx, vy) {
-                        Ok(v) => v,
-                        Err(e) => {
-                            if verr < 3 {
-                                eprintln!("vor-err @({:.1},{:.1}): {e}", vx, vy);
-                            }
-                            verr += 1;
-                            0.0
+                        verr += 1;
+                        0.0
+                    }
+                };
+                if vp > 0.0 && vv > 0.0 {
+                    let db = 20.0 * (vp / vv).log10();
+                    post_amps.push(vp);
+                    vor_amps.push(vv);
+                    cell = Some((vp, vv, db));
+                    n_valid += 1;
+                    sum_db += db;
+                    sum_vp += vp;
+                    sum_vv += vv;
+                    if db < -db_dark {
+                        n_dark += 1;
+                        dark_min_lon = dark_min_lon.min(lon);
+                        dark_max_lon = dark_max_lon.max(lon);
+                        dark_min_lat = dark_min_lat.min(lat);
+                        dark_max_lat = dark_max_lat.max(lat);
+                        if (lon - cp_lon).abs() < 0.02 && (lat - cp_lat).abs() < 0.02 {
+                            near_collapse_dark += 1;
                         }
-                    };
-                    if vp > 0.0 && vv > 0.0 {
-                        let db = 20.0 * (vp / vv).log10();
-                        post_amps.push(vp);
-                        vor_amps.push(vv);
-                        cell = Some((vp, vv, db));
-                        n_valid += 1;
-                        sum_db += db;
-                        sum_vp += vp;
-                        sum_vv += vv;
-                        if db < -db_dark {
-                            n_dark += 1;
-                            dark_min_lon = dark_min_lon.min(lon);
-                            dark_max_lon = dark_max_lon.max(lon);
-                            dark_min_lat = dark_min_lat.min(lat);
-                            dark_max_lat = dark_max_lat.max(lat);
-                            if (lon - cp_lon).abs() < 0.02 && (lat - cp_lat).abs() < 0.02 {
-                                near_collapse_dark += 1;
-                            }
-                        } else if db > db_bright {
-                            n_bright += 1;
-                        }
+                    } else if db > db_bright {
+                        n_bright += 1;
                     }
                 }
+            }
             row.push(cell);
         }
         cells.push(row);

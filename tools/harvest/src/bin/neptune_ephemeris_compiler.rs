@@ -87,7 +87,9 @@ fn main() {
     let body = match arg_value(&args, "--body") {
         Some(v) if !v.is_empty() => v,
         _ => {
-            eprintln!("neptune: --body <name> is required — the receiver body is declared, never defaulted");
+            eprintln!(
+                "neptune: --body <name> is required — the receiver body is declared, never defaulted"
+            );
             std::process::exit(1);
         }
     };

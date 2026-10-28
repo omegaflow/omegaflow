@@ -140,9 +140,11 @@ fn main() {
             "--floor" => {
                 i += 1;
                 if let Some(v) = args.get(i).and_then(|s| s.parse::<f64>().ok())
-                    && v.is_finite() && v > 0.0 {
-                        floor = v;
-                    }
+                    && v.is_finite()
+                    && v > 0.0
+                {
+                    floor = v;
+                }
             }
             other => {
                 eprintln!("hst_disequilibrium_survey_probe: unknown argument {other}");

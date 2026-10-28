@@ -29,10 +29,11 @@ fn arg_values(args: &[String], name: &str) -> Vec<String> {
     let mut i = 0usize;
     while i < args.len() {
         if args[i] == name
-            && let Some(v) = args.get(i + 1) {
-                out.push(v.clone());
-                i += 1;
-            }
+            && let Some(v) = args.get(i + 1)
+        {
+            out.push(v.clone());
+            i += 1;
+        }
         i += 1;
     }
     out
@@ -199,9 +200,10 @@ fn best_lead_r(
             y.push(b);
         }
         if let Some(r) = pearson(&x, &y)
-            && best.is_none_or(|(b, _, _)| r.abs() > b.abs()) {
-                best = Some((r, lead, x.len()));
-            }
+            && best.is_none_or(|(b, _, _)| r.abs() > b.abs())
+        {
+            best = Some((r, lead, x.len()));
+        }
     }
     best
 }
@@ -318,9 +320,10 @@ fn main() {
                     break;
                 }
                 if let Some(pv) = trig[peak]
-                    && v > pv {
-                        peak = j;
-                    }
+                    && v > pv
+                {
+                    peak = j;
+                }
             }
             j += 1;
         }
@@ -351,19 +354,20 @@ fn main() {
             best_hot = run_hot;
         }
         if best_cool.len() >= 100
-            && let Some(d) = te_pair(&best_cool, &best_hot, LAG96) {
-                events.push(Event {
-                    t: t0 + (peak as f64) * DT,
-                    d96: d,
-                });
-                let mut rng = (events.len() as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
-                for _ in 0..N_SURR_EVENT {
-                    let cs = phase_randomized_surrogate(&best_cool, &mut rng);
-                    if let Some(dn) = te_pair(&cs, &best_hot, LAG96) {
-                        null_pool.push(dn);
-                    }
+            && let Some(d) = te_pair(&best_cool, &best_hot, LAG96)
+        {
+            events.push(Event {
+                t: t0 + (peak as f64) * DT,
+                d96: d,
+            });
+            let mut rng = (events.len() as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            for _ in 0..N_SURR_EVENT {
+                let cs = phase_randomized_surrogate(&best_cool, &mut rng);
+                if let Some(dn) = te_pair(&cs, &best_hot, LAG96) {
+                    null_pool.push(dn);
                 }
             }
+        }
         i = j.max(i + REFRACTORY);
     }
     if events.is_empty() {
@@ -463,9 +467,10 @@ fn main() {
                 }
                 cme_count[d] += 1.0;
                 if let Some(s) = r.speed_kms
-                    && (!cme_speed[d].is_finite() || s > cme_speed[d]) {
-                        cme_speed[d] = s;
-                    }
+                    && (!cme_speed[d].is_finite() || s > cme_speed[d])
+                {
+                    cme_speed[d] = s;
+                }
             }
         }
     }
@@ -477,20 +482,21 @@ fn main() {
     let mut radio_common_days = 0usize;
     if let Some(path) = &radio_path
         && let Ok(bytes) = std::fs::read(path)
-            && let Some(records) = radio_burst::parse_bin(&bytes) {
-                radio_records = records.len();
-                for r in records {
-                    let td = lsk
-                        .as_ref()
-                        .and_then(|l| l.unix_to_tdb(r.t_unix))
-                        .unwrap_or(r.t_unix);
-                    let d = day_of(td).saturating_sub(day_min);
-                    if d < n_days {
-                        radio_common_days += 1;
-                        radio_count[d] += 1.0;
-                    }
-                }
+        && let Some(records) = radio_burst::parse_bin(&bytes)
+    {
+        radio_records = records.len();
+        for r in records {
+            let td = lsk
+                .as_ref()
+                .and_then(|l| l.unix_to_tdb(r.t_unix))
+                .unwrap_or(r.t_unix);
+            let d = day_of(td).saturating_sub(day_min);
+            if d < n_days {
+                radio_common_days += 1;
+                radio_count[d] += 1.0;
             }
+        }
+    }
     let radio_daily: Option<Vec<Option<f64>>> = if radio_common_days > 0 {
         Some(radio_count.iter().map(|&v| Some(v)).collect())
     } else {

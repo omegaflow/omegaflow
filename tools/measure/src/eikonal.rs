@@ -357,18 +357,18 @@ fn coord_values(file: &NetcdfFile, bytes: &[u8], names: &[&str]) -> Option<Vec<f
             NetcdfType::Char => None,
         };
         if let Some(vals) = vals
-            && vals.len() >= 2 {
-                return Some(vals);
-            }
+            && vals.len() >= 2
+        {
+            return Some(vals);
+        }
     }
     None
 }
 
 pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
     let host = omegaflow::odp::dsn_host().ok_or(EikonalNote::AbsentRadius)?;
-    let radius_m = omegaflow::cdn::body_mean_radius_km(host)
-        .map_err(|_| EikonalNote::AbsentRadius)?
-        * 1000.0;
+    let radius_m =
+        omegaflow::cdn::body_mean_radius_km(host).map_err(|_| EikonalNote::AbsentRadius)? * 1000.0;
     decode_etopo1_with_radius(bytes, radius_m)
 }
 

@@ -205,11 +205,7 @@ fn main() {
     if bodies.is_empty() {
         eprintln!(
             "unknown body — know {}",
-            table
-                .iter()
-                .map(|(n, _)| *n)
-                .collect::<Vec<_>>()
-                .join(", ")
+            table.iter().map(|(n, _)| *n).collect::<Vec<_>>().join(", ")
         );
         return;
     }

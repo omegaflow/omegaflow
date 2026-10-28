@@ -40,10 +40,11 @@ fn arg_values(args: &[String], name: &str) -> Vec<String> {
     let mut i = 0usize;
     while i < args.len() {
         if args[i] == name
-            && let Some(v) = args.get(i + 1) {
-                out.push(v.clone());
-                i += 1;
-            }
+            && let Some(v) = args.get(i + 1)
+        {
+            out.push(v.clone());
+            i += 1;
+        }
         i += 1;
     }
     out
@@ -189,9 +190,10 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, grid: &[Vec<Option<f32>>]) -
                     break;
                 }
                 if let Some(pv) = trig[peak]
-                    && v > pv {
-                        peak = j;
-                    }
+                    && v > pv
+                {
+                    peak = j;
+                }
             }
             j += 1;
         }
@@ -431,8 +433,12 @@ fn main() {
         eprintln!("--year <aia_lines.bin> <goes-dir> absent (repeat per year)");
         return;
     }
-    let max_lag: usize = arg_value(&args, "--max-lag").and_then(|s| s.parse().ok()).unwrap_or(8);
-    let h_factor: f64 = arg_value(&args, "--h").and_then(|s| s.parse().ok()).unwrap_or(1.0);
+    let max_lag: usize = arg_value(&args, "--max-lag")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(8);
+    let h_factor: f64 = arg_value(&args, "--h")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(1.0);
     let bins: usize = match arg_value(&args, "--bins").and_then(|s| s.parse().ok()) {
         Some(v) if v >= 2 => v,
         Some(_) => {
@@ -544,15 +550,16 @@ fn main() {
     }
     let mut events = all_events;
     if let Some(max_events) = max_events
-        && events.len() > max_events {
-            println!(
-                "max-events {}: first {} of {} events processed",
-                max_events,
-                max_events,
-                events.len()
-            );
-            events.truncate(max_events);
-        }
+        && events.len() > max_events
+    {
+        println!(
+            "max-events {}: first {} of {} events processed",
+            max_events,
+            max_events,
+            events.len()
+        );
+        events.truncate(max_events);
+    }
     let path_name = if ncond <= 1 {
         "kde-1"
     } else if ncond == 2 {
@@ -743,13 +750,15 @@ fn main() {
                 rev_sum[li][lagi] += te_rev;
                 d_cnt[li][lagi] += 1;
                 if let Some(thr) = thr_fwd
-                    && te_fwd > thr {
-                        fwd_arrow[li][lagi] += 1;
-                    }
+                    && te_fwd > thr
+                {
+                    fwd_arrow[li][lagi] += 1;
+                }
                 if let Some(thr) = thr_rev
-                    && te_rev > thr {
-                        rev_arrow[li][lagi] += 1;
-                    }
+                    && te_rev > thr
+                {
+                    rev_arrow[li][lagi] += 1;
+                }
             }
         }
     }

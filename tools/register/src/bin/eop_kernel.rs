@@ -82,7 +82,10 @@ fn main() {
             skipped += 1;
             continue;
         };
-        if ![mjd, xp, yp, ut1, dx, dy, lod].iter().all(|v| v.is_finite()) {
+        if ![mjd, xp, yp, ut1, dx, dy, lod]
+            .iter()
+            .all(|v| v.is_finite())
+        {
             skipped += 1;
             continue;
         }

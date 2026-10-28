@@ -276,9 +276,10 @@ fn zitter_vs_step(daily: &[(f64, f64)], center: usize) {
             continue;
         }
         if let Some(p) = prev
-            && dd * p < 0.0 {
-                flips += 1;
-            }
+            && dd * p < 0.0
+        {
+            flips += 1;
+        }
         prev = Some(dd);
     }
     let min = win.iter().cloned().fold(f64::INFINITY, f64::min);

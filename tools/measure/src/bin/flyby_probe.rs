@@ -848,9 +848,7 @@ fn main() {
         return;
     };
     let earth_j2 = planets.iter().find(|p| p.name == host).map(|p| p.j2);
-    let moon_in = planets
-        .iter()
-        .any(|p| !planet_bodies.contains(&p.name));
+    let moon_in = planets.iter().any(|p| !planet_bodies.contains(&p.name));
     match earth_j2 {
         Some(earth_j2) => println!(
             "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2} (from the ephemeris-bins), Leapfrog {MODEL_DT_S:.0} s"

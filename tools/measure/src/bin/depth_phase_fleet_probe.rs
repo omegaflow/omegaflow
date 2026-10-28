@@ -448,17 +448,18 @@ fn main() {
                 continue;
             }
             if let Some(p) = &m.p_p
-                && p.corr.abs() >= dp::SECONDARY_CORR_MIN {
-                    match m.p_p_sigma_s {
-                        Some(sigma) if sigma.is_finite() && sigma > 0.0 => {
-                            dual_deltas.push(m.delta_deg);
-                            dual_lags.push(p.lag_s);
-                            dual_weights.push(1.0 / (sigma * sigma));
-                            dual_phases.push(dp::DepthPhase::PP);
-                        }
-                        _ => {}
+                && p.corr.abs() >= dp::SECONDARY_CORR_MIN
+            {
+                match m.p_p_sigma_s {
+                    Some(sigma) if sigma.is_finite() && sigma > 0.0 => {
+                        dual_deltas.push(m.delta_deg);
+                        dual_lags.push(p.lag_s);
+                        dual_weights.push(1.0 / (sigma * sigma));
+                        dual_phases.push(dp::DepthPhase::PP);
                     }
+                    _ => {}
                 }
+            }
             if let Some(sp) = &m.s_p {
                 match sp_gate {
                     Some(g) if sp.corr.abs() >= g => match m.s_p_sigma_s {
@@ -895,10 +896,11 @@ fn upgoing_radiation(m: &[f64; 6], takeoff_up_deg: f64) -> (f64, f64, Vec<f64>) 
         rp_min = rp_min.min(v);
         rp_max = rp_max.max(v);
         if let Some(p) = prev
-            && ((p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0)) {
-                let frac = p / (p - v);
-                nodal.push(prev_az + frac);
-            }
+            && ((p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0))
+        {
+            let frac = p / (p - v);
+            nodal.push(prev_az + frac);
+        }
         prev = Some(v);
         prev_az = a;
     }

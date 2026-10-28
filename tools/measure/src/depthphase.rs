@@ -661,9 +661,10 @@ fn p_p_lag_decreases_in_window(delta_deg: f64, depth_km: f64, half_width_deg: f6
     while d <= delta_deg + half_width_deg {
         if let Some(lag) = p_p_lag(d, depth_km) {
             if let Some(p) = prev
-                && lag < p - 1e-9 {
-                    return Some(true);
-                }
+                && lag < p - 1e-9
+            {
+                return Some(true);
+            }
             prev = Some(lag);
             n += 1;
         }
@@ -1714,11 +1715,13 @@ mod tests {
     fn a_quiet_long_period_trace_reads_below_the_m9_gate() {
         let rate = 20.0;
         let samples = w_trace(rate, 2500.0, 1700.0, 0.0);
-        if let Some(p) = w_phase_discriminate(&samples, rate, 1500.0, 1700.0) { assert!(
-            !p.m9,
-            "no injected burst must sit below the gate, ratio {:.2}",
-            p.energy_ratio
-        ) }
+        if let Some(p) = w_phase_discriminate(&samples, rate, 1500.0, 1700.0) {
+            assert!(
+                !p.m9,
+                "no injected burst must sit below the gate, ratio {:.2}",
+                p.energy_ratio
+            )
+        }
     }
 
     #[test]

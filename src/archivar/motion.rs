@@ -556,7 +556,11 @@ pub fn mean_radius_m(props: &BodyProperties) -> Option<f64> {
     let b = props.radii_b.unwrap_or(props.radius_m);
     let c = props.radii_c.unwrap_or(b);
     let r = (props.radius_m * b * c).cbrt();
-    if r.is_finite() && r > 0.0 { Some(r) } else { None }
+    if r.is_finite() && r > 0.0 {
+        Some(r)
+    } else {
+        None
+    }
 }
 
 #[derive(Clone)]
@@ -907,5 +911,3 @@ mod tests {
         );
     }
 }
-
-

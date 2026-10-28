@@ -594,9 +594,10 @@ fn main() {
                 continue;
             };
             if region(*eps) == "CONJ"
-                && let Some(rr) = rms(x) {
-                    v.push(rr);
-                }
+                && let Some(rr) = rms(x)
+            {
+                v.push(rr);
+            }
         }
         median(&v)
     };
@@ -629,17 +630,18 @@ fn main() {
         }
         let mut ratio = String::new();
         if let Some(c) = cm
-            && c > 0.0 {
-                ratio = match (med, m1, m2) {
-                    (Some(md), Some(a), Some(b)) => format!(
-                        "  med/conj {:.2}x  med-minus-1/conj {:.2}x  med-minus-2/conj {:.2}x",
-                        md / c,
-                        a / c,
-                        b / c
-                    ),
-                    _ => String::new(),
-                };
-            }
+            && c > 0.0
+        {
+            ratio = match (med, m1, m2) {
+                (Some(md), Some(a), Some(b)) => format!(
+                    "  med/conj {:.2}x  med-minus-1/conj {:.2}x  med-minus-2/conj {:.2}x",
+                    md / c,
+                    a / c,
+                    b / c
+                ),
+                _ => String::new(),
+            };
+        }
         out.push(format!(
             "  mode {mode}: n {n}  med {}  med-minus-1 {}  med-minus-2 {}  med-minus-3 {}  max {mx:.2} Hz  conj_med {}",
             fmt_o(med),
@@ -764,16 +766,18 @@ fn main() {
                     "CONJ" => {
                         conj.push(r.rms);
                         if let Some(dd) = nearest_opp(r.day)
-                            && dd <= NEAR_DAYS {
-                                near.push(r.rms);
-                            }
+                            && dd <= NEAR_DAYS
+                        {
+                            near.push(r.rms);
+                        }
                     }
                     _ => {
                         mid.push(r.rms);
                         if let Some(dd) = nearest_opp(r.day)
-                            && dd <= NEAR_DAYS {
-                                near.push(r.rms);
-                            }
+                            && dd <= NEAR_DAYS
+                        {
+                            near.push(r.rms);
+                        }
                     }
                 }
             }

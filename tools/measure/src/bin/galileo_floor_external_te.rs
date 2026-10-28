@@ -407,9 +407,10 @@ fn main() {
                     continue;
                 }
                 if let Some(m) = median(v)
-                    && m.is_finite() {
-                        cells_of.push((*d, m));
-                    }
+                    && m.is_finite()
+                {
+                    cells_of.push((*d, m));
+                }
             }
             cells_of.sort_by_key(|&(d, _)| d);
             if cells_of.is_empty() {

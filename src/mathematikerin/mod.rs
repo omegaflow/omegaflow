@@ -1,4 +1,3 @@
-
 pub mod channel;
 pub mod dispersion;
 pub mod doppler;
@@ -24,4 +23,3 @@ pub mod wy_max_t;
 pub use orientation::*;
 pub use s2::*;
 pub use shaders::*;
-

@@ -825,7 +825,9 @@ fn curl_post_retry(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
         let resp = match curl_post_bytes(url, json_body) {
             Some(r) => r,
             None => {
-                eprintln!("{url}: attempt {attempt} carries no response — the retry loop ends here");
+                eprintln!(
+                    "{url}: attempt {attempt} carries no response — the retry loop ends here"
+                );
                 return None;
             }
         };

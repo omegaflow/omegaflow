@@ -300,11 +300,13 @@ pub fn build_star_index(bytes: &[u8]) -> StarIndex {
     let mut dec_max = f64::NEG_INFINITY;
     for chunk in bytes.chunks_exact(stride) {
         if let Some(rec) = parse_star_record(chunk)
-            && rec.ra_deg.is_finite() && rec.dec_deg.is_finite() {
-                dec_min = dec_min.min(rec.dec_deg);
-                dec_max = dec_max.max(rec.dec_deg);
-                stars.push(rec);
-            }
+            && rec.ra_deg.is_finite()
+            && rec.dec_deg.is_finite()
+        {
+            dec_min = dec_min.min(rec.dec_deg);
+            dec_max = dec_max.max(rec.dec_deg);
+            stars.push(rec);
+        }
     }
     if stars.is_empty() {
         return StarIndex {

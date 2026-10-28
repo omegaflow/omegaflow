@@ -95,10 +95,12 @@ pub fn normalize_name(raw: &str) -> String {
 
 fn strip_v_zeros(des: &str) -> String {
     if let Some(rest) = des.strip_prefix('V')
-        && !rest.is_empty() && rest.chars().all(|c| c.is_ascii_digit())
-            && let Ok(num) = rest.parse::<u64>() {
-                return format!("V{num}");
-            }
+        && !rest.is_empty()
+        && rest.chars().all(|c| c.is_ascii_digit())
+        && let Ok(num) = rest.parse::<u64>()
+    {
+        return format!("V{num}");
+    }
     des.to_string()
 }
 

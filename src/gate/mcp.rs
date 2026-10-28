@@ -69,13 +69,14 @@ pub fn mcp_leak_violations(cfg_json: &str) -> Vec<McpLeak> {
         }
 
         if let Some(path) = value_after(&argv, "--executablePath")
-            && !path.starts_with('/') {
-                out.push(McpLeak {
-                    rule: "mcp-executable-not-absolute",
-                    server: name.clone(),
-                    detail: format!("--executablePath {path} of {name} is not absolute"),
-                });
-            }
+            && !path.starts_with('/')
+        {
+            out.push(McpLeak {
+                rule: "mcp-executable-not-absolute",
+                server: name.clone(),
+                detail: format!("--executablePath {path} of {name} is not absolute"),
+            });
+        }
 
         if kind == "local" && !entry.contains_key("cwd") {
             out.push(McpLeak {

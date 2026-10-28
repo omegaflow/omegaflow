@@ -3,9 +3,9 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use omegaflow::archivar::motion::parse_ephemeris_binary;
+use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::bpc::BpcFile;
 use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
@@ -147,7 +147,9 @@ fn main() {
     let bodies: Vec<String> = match arg_value(&args, "--bodies") {
         Some(v) if !v.is_empty() => v.split(',').map(|s| s.trim().to_string()).collect(),
         _ => {
-            eprintln!("de: --bodies <name,...> is required — the body scope is declared, never defaulted");
+            eprintln!(
+                "de: --bodies <name,...> is required — the body scope is declared, never defaulted"
+            );
             std::process::exit(1);
         }
     };
@@ -307,8 +309,15 @@ fn main() {
             if !has_coverage {
                 continue;
             }
-            let (g, r, n) =
-                extract_granules(spk, &spk_files, target, &wgccre, &bpc_files, &fk, GRANULE_DAYS);
+            let (g, r, n) = extract_granules(
+                spk,
+                &spk_files,
+                target,
+                &wgccre,
+                &bpc_files,
+                &fk,
+                GRANULE_DAYS,
+            );
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);

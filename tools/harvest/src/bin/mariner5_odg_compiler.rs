@@ -142,7 +142,9 @@ fn arg(args: &[String], name: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("mariner5_odg_compiler --in <datei.phys> --out-bin <ziel> [--packing unpacked|packed]");
+        eprintln!(
+            "mariner5_odg_compiler --in <datei.phys> --out-bin <ziel> [--packing unpacked|packed]"
+        );
         return;
     }
     let Some(path) = arg(&args, "--in") else {
@@ -152,14 +154,18 @@ fn main() {
     let out_path = match arg(&args, "--out-bin") {
         Some(v) => v,
         None => {
-            eprintln!("mariner5_odg_compiler: --out-bin is missing — mariner5_odg.bin is written, named here instead of silent");
+            eprintln!(
+                "mariner5_odg_compiler: --out-bin is missing — mariner5_odg.bin is written, named here instead of silent"
+            );
             "mariner5_odg.bin".to_string()
         }
     };
     let packing_name = match arg(&args, "--packing") {
         Some(v) => v,
         None => {
-            eprintln!("mariner5_odg_compiler: --packing is missing — unpacked stands (Mariner 5), named here instead of silent");
+            eprintln!(
+                "mariner5_odg_compiler: --packing is missing — unpacked stands (Mariner 5), named here instead of silent"
+            );
             "unpacked".to_string()
         }
     };

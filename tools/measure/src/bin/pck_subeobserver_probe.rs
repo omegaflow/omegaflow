@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    BodyEphemeris, body_barycenter_position, body_fixed_to_icrs_smooth,
-    body_fixed_vector_to_icrs, embedded_lsk, body_fixed_to_icrs,
-    parse_ephemeris_binary,
+    BodyEphemeris, body_barycenter_position, body_fixed_to_icrs, body_fixed_to_icrs_smooth,
+    body_fixed_vector_to_icrs, embedded_lsk, parse_ephemeris_binary,
 };
 
 const HORIZONS_LON_DEG: f64 = 5.025824;
@@ -29,7 +28,9 @@ fn main() {
         arg_value(&args, "--body-bin"),
         arg_value(&args, "--origin-bin"),
     ) else {
-        println!("usage: pck_subeobserver_probe --body <name> --body-bin <bin> --origin <name> --origin-bin <bin>");
+        println!(
+            "usage: pck_subeobserver_probe --body <name> --body-bin <bin> --origin <name> --origin-bin <bin>"
+        );
         return;
     };
     let epoch_unix = arg_value(&args, "--unix")
@@ -106,7 +107,10 @@ fn main() {
     println!("geocentric astrometric RA {ra:.4} h DEC {dec:.4} deg");
     println!("distance {origin_body}-{body} {:.1} km", n / 1000.0);
     if let Some(e) = map.get(&body) {
-        println!("bin {body}: {} rotation matrices", e.rotation_matrices.len());
+        println!(
+            "bin {body}: {} rotation matrices",
+            e.rotation_matrices.len()
+        );
         if let Some(p) = e.props.as_ref() {
             let jd = tdb / 86400.0 + 2451545.0;
             if let Some((ra, dec, w)) = omegaflow::archivar::orientation_angles_at(p, jd) {
@@ -122,9 +126,7 @@ fn main() {
             }
         }
     }
-    println!(
-        "sub-{origin_body} point at unix {epoch_unix}: lon {lon:.6} lat {lat:.6} (ours)"
-    );
+    println!("sub-{origin_body} point at unix {epoch_unix}: lon {lon:.6} lat {lat:.6} (ours)");
     println!(
         "reference: lon {ref_lon:.6} lat {ref_lat:.6} → dlon {:.6} dlat {:.6} deg",
         lon - ref_lon,

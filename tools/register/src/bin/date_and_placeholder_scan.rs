@@ -34,7 +34,9 @@ fn blocks(text: &str) -> Vec<Block> {
             continue;
         }
         if let Some(last) = out.last_mut()
-            && (trimmed.starts_with("compiler ") || trimmed.starts_with("stations ") || trimmed.starts_with("fanout "))
+            && (trimmed.starts_with("compiler ")
+                || trimmed.starts_with("stations ")
+                || trimmed.starts_with("fanout "))
         {
             if trimmed.starts_with("compiler ") {
                 last.has_compiler = true;

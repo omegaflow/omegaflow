@@ -495,12 +495,16 @@ fn main() {
     for st in STATIONS {
         let mut by_year: BTreeMap<i64, (Vec<f64>, Vec<f64>)> = BTreeMap::new();
         for r in &pasf {
-            if r[6] as i64 == st && r[13] as i64 == 3 && r[3] < 10.0 && r[8].is_finite()
-                && let Some(y) = year_of(r[0]) {
-                    let e = by_year.entry(y).or_default();
-                    e.0.push(r[0]);
-                    e.1.push(r[8]);
-                }
+            if r[6] as i64 == st
+                && r[13] as i64 == 3
+                && r[3] < 10.0
+                && r[8].is_finite()
+                && let Some(y) = year_of(r[0])
+            {
+                let e = by_year.entry(y).or_default();
+                e.0.push(r[0]);
+                e.1.push(r[8]);
+            }
         }
         eprintln!("  rx {st}:");
         for y in &years {

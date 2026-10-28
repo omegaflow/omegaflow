@@ -527,12 +527,12 @@ fn main() {
                     .find(|c| c.0 == st && c.1 == mo && c.2 == start_day)
                     .map(|c| c.4)
                     && let Some(samples) = loud_samples.get(&(st, mo, start_day))
-                        && let Some(tl) = samples
-                            .iter()
-                            .find(|s| (s.1 - daymean).abs() >= LOUD_SAMPLE_HZ)
-                        {
-                            run_onset_hours.push(hour_of_day(tl.0));
-                        }
+                    && let Some(tl) = samples
+                        .iter()
+                        .find(|s| (s.1 - daymean).abs() >= LOUD_SAMPLE_HZ)
+                {
+                    run_onset_hours.push(hour_of_day(tl.0));
+                }
                 i = j + 1;
             }
         }

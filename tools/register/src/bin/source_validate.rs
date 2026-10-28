@@ -221,7 +221,12 @@ fn probe_admits(status: &str) -> bool {
 }
 
 fn origin_stem(url: &str) -> &str {
-    let cut = url.find('?').into_iter().chain(url.find('{')).min().unwrap_or(url.len());
+    let cut = url
+        .find('?')
+        .into_iter()
+        .chain(url.find('{'))
+        .min()
+        .unwrap_or(url.len());
     &url[..cut]
 }
 
@@ -371,7 +376,11 @@ fn url_id(url: &str) -> Option<String> {
     if id.is_empty() {
         None
     } else {
-        Some(id.replace("%40", "@").replace("%2F", "/").replace("%2f", "/"))
+        Some(
+            id.replace("%40", "@")
+                .replace("%2F", "/")
+                .replace("%2f", "/"),
+        )
     }
 }
 
@@ -379,8 +388,7 @@ fn applies_len(s: &Spec, url: &str) -> Option<usize> {
     s.applies
         .iter()
         .filter(|a| {
-            url.starts_with(a.as_str())
-                || url.split(';').any(|u| u.trim().starts_with(a.as_str()))
+            url.starts_with(a.as_str()) || url.split(';').any(|u| u.trim().starts_with(a.as_str()))
         })
         .map(|a| a.len())
         .max()
@@ -395,9 +403,7 @@ fn spec_for_inst<'a>(
 ) -> Result<&'a Spec, Vec<String>> {
     let keyed: Vec<&Spec> = specs
         .iter()
-        .filter(|s| {
-            !s.fields.is_empty() && keys.iter().any(|k| s.fields.contains(k))
-        })
+        .filter(|s| !s.fields.is_empty() && keys.iter().any(|k| s.fields.contains(k)))
         .collect();
     let cands: Vec<&Spec> = if keyed.is_empty() {
         specs
@@ -453,7 +459,12 @@ fn list_open_blocks(content: &str, specs: &[Spec]) {
             {
                 instruments.push((*t).to_string());
             }
-            if fname.is_empty() && matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last")) {
+            if fname.is_empty()
+                && matches!(
+                    p.first(),
+                    Some(&"field") | Some(&"quantity") | Some(&"last")
+                )
+            {
                 fname = field_name(&p);
                 if let Some((u, _)) = tail_unit_cadence(&p) {
                     unit = u.to_string();
@@ -495,7 +506,10 @@ fn list_without_fields(content: &str) {
     for (start, block) in blocks(content) {
         let has_fields = block.iter().any(|l| {
             let p: Vec<&str> = l.split_whitespace().collect();
-            matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
+            matches!(
+                p.first(),
+                Some(&"field") | Some(&"quantity") | Some(&"last")
+            )
         });
         if has_fields {
             continue;
@@ -727,8 +741,11 @@ fn main() {
             .iter()
             .filter_map(|l| {
                 let p: Vec<&str> = l.split_whitespace().collect();
-                matches!(p.first(), Some(&"field") | Some(&"quantity") | Some(&"last"))
-                    .then(|| field_name(&p))
+                matches!(
+                    p.first(),
+                    Some(&"field") | Some(&"quantity") | Some(&"last")
+                )
+                .then(|| field_name(&p))
             })
             .collect();
         let no_cadence = field_of(&block, "no-sampling").is_some();
@@ -746,7 +763,9 @@ fn main() {
             v
         };
         let origin_rest: Option<String> = field_of(&block, "origin").map(|p| p[1..].join(" "));
-        let origin_url = origin_rest.as_deref().and_then(|s| s.split_whitespace().next())
+        let origin_url = origin_rest
+            .as_deref()
+            .and_then(|s| s.split_whitespace().next())
             .or_else(|| {
                 let url = field_of(&block, "url").and_then(|p| p.get(1).copied())?;
                 (!url.starts_with("https://github.com/omegaflow/sources/releases/download/"))
@@ -981,10 +1000,20 @@ fn main() {
                 );
             }
             if !matched.is_empty() {
-                if !matched.iter().any(|e| e.units.is_empty() || e.units.contains(unit)) {
+                if !matched
+                    .iter()
+                    .any(|e| e.units.is_empty() || e.units.contains(unit))
+                {
                     push(
                         "combo_unit",
-                        format!("{tag}\t{name}\t{}\t{unit}", matched.iter().map(|e| e.instrument.as_str()).collect::<Vec<_>>().join(",")),
+                        format!(
+                            "{tag}\t{name}\t{}\t{unit}",
+                            matched
+                                .iter()
+                                .map(|e| e.instrument.as_str())
+                                .collect::<Vec<_>>()
+                                .join(",")
+                        ),
                         true,
                         &mut findings,
                         &mut hard,
@@ -998,7 +1027,14 @@ fn main() {
                 {
                     push(
                         "interval_mismatch",
-                        format!("{tag}\t{name}\t{}\t{c}", matched.iter().map(|e| e.instrument.as_str()).collect::<Vec<_>>().join(",")),
+                        format!(
+                            "{tag}\t{name}\t{}\t{c}",
+                            matched
+                                .iter()
+                                .map(|e| e.instrument.as_str())
+                                .collect::<Vec<_>>()
+                                .join(",")
+                        ),
                         true,
                         &mut findings,
                         &mut hard,

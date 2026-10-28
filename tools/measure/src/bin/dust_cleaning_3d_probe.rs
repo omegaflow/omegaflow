@@ -928,10 +928,7 @@ fn main() {
     };
     let (slice_lo, slice_hi) = match args.iter().position(|a| a == "--slice") {
         Some(i) if args.len() > i + 2 => {
-            let (Ok(lo), Ok(hi)) = (
-                args[i + 1].parse::<f64>(),
-                args[i + 2].parse::<f64>(),
-            ) else {
+            let (Ok(lo), Ok(hi)) = (args[i + 1].parse::<f64>(), args[i + 2].parse::<f64>()) else {
                 eprintln!("--slice <m_lo> <m_hi> carries no numbers");
                 std::process::exit(1);
             };

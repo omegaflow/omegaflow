@@ -14543,7 +14543,8 @@ fn every_timestamp_in_the_register_parses_as_rfc3339() {
         }
         let stamp = &text[i..end];
         assert!(
-            time::OffsetDateTime::parse(stamp, &time::format_description::well_known::Rfc3339).is_ok(),
+            time::OffsetDateTime::parse(stamp, &time::format_description::well_known::Rfc3339)
+                .is_ok(),
             "the register carries a timestamp that is not RFC 3339: {stamp}"
         );
         checked += 1;

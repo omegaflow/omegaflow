@@ -149,9 +149,10 @@ fn main() {
     let mut current: Vec<CameraAngleFrame> = Vec::new();
     for f in ordered {
         if let Some(prev) = current.last()
-            && f.jd - prev.jd > threshold {
-                clusters.push(std::mem::take(&mut current));
-            }
+            && f.jd - prev.jd > threshold
+        {
+            clusters.push(std::mem::take(&mut current));
+        }
         current.push(f);
     }
     if !current.is_empty() {
@@ -283,8 +284,9 @@ fn main() {
     print!("{out}");
 
     if let Some(path) = out_path
-        && let Err(e) = fs::write(&path, &out) {
-            eprintln!("output not writable: {path}: {e}");
-            exit(2);
-        }
+        && let Err(e) = fs::write(&path, &out)
+    {
+        eprintln!("output not writable: {path}: {e}");
+        exit(2);
+    }
 }

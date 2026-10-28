@@ -330,7 +330,9 @@ fn main() {
     let body = match arg_value(&args, "--body") {
         Some(b) if !b.is_empty() => b,
         _ => {
-            eprintln!("las: --body <name> is required — the receiver body is declared, never defaulted");
+            eprintln!(
+                "las: --body <name> is required — the receiver body is declared, never defaulted"
+            );
             std::process::exit(1);
         }
     };

@@ -357,9 +357,7 @@ fn fw06_angles(t: f64) -> [f64; 4] {
         * ARCSEC_TO_RAD;
     let phib = (84381.412819
         + (-46.811016
-            + (0.0511268
-                + (0.00053289 + (-0.000000440 + (-0.0000000176) * t) * t) * t)
-                * t)
+            + (0.0511268 + (0.00053289 + (-0.000000440 + (-0.0000000176) * t) * t) * t) * t)
             * t)
         * ARCSEC_TO_RAD;
     let psib = (-0.041775
@@ -1876,8 +1874,7 @@ fn mean_obliquity_06_rad(t: f64) -> f64 {
 fn luni_solar_arguments(t: f64) -> [f64; 5] {
     [
         mean_anomaly_moon(t),
-        (1287104.79305
-            + t * (129596581.0481 + t * (-0.5532 + t * (0.000136 + t * (-0.00001149)))))
+        (1287104.79305 + t * (129596581.0481 + t * (-0.5532 + t * (0.000136 + t * (-0.00001149)))))
             % TURNAS
             * ARCSEC_TO_RAD,
         moon_mean_argument_of_latitude(t),
@@ -2119,8 +2116,7 @@ fn cio_locator_s06(jd_tt: f64, x: f64, y: f64) -> Option<f64> {
     let w3 = S06_POLY[3] + s06_series(&S06_T3, &fa);
     let w4 = S06_POLY[4] + s06_series(&S06_T4, &fa);
     let w5 = S06_POLY[5];
-    let s = (w0 + (w1 + (w2 + (w3 + (w4 + w5 * t) * t) * t) * t) * t) * ARCSEC_TO_RAD
-        - x * y / 2.0;
+    let s = (w0 + (w1 + (w2 + (w3 + (w4 + w5 * t) * t) * t) * t) * t) * ARCSEC_TO_RAD - x * y / 2.0;
     if s.is_finite() { Some(s) } else { None }
 }
 
@@ -2133,7 +2129,11 @@ fn equation_of_origins(rnpb: &Mat3, jd_tt: f64) -> Option<f64> {
     let zs = -x;
     let p = rnpb[0][0] * xs + rnpb[0][1] * ys + rnpb[0][2] * zs;
     let q = rnpb[1][0] * xs + rnpb[1][1] * ys + rnpb[1][2] * zs;
-    let eo = if p != 0.0 || q != 0.0 { s - q.atan2(p) } else { s };
+    let eo = if p != 0.0 || q != 0.0 {
+        s - q.atan2(p)
+    } else {
+        s
+    };
     if eo.is_finite() { Some(eo) } else { None }
 }
 
@@ -2564,9 +2564,21 @@ mod tests {
         let p = bias_precession_nutation(2450124.4999).unwrap();
         let rnpb = p;
         let want = [
-            [0.999_999_583_279_420_5, 0.837_238_277_263_096_2e-3, 0.363_968_477_114_062_3e-3],
-            [-0.837_253_374_474_368_4e-3, 0.999_999_648_649_286_2, 0.413_290_594_461_101_9e-4],
-            [-0.363_933_746_962_946_5e-3, -0.416_337_760_591_066_4e-4, 0.999_999_932_909_426],
+            [
+                0.999_999_583_279_420_5,
+                0.837_238_277_263_096_2e-3,
+                0.363_968_477_114_062_3e-3,
+            ],
+            [
+                -0.837_253_374_474_368_4e-3,
+                0.999_999_648_649_286_2,
+                0.413_290_594_461_101_9e-4,
+            ],
+            [
+                -0.363_933_746_962_946_5e-3,
+                -0.416_337_760_591_066_4e-4,
+                0.999_999_932_909_426,
+            ],
         ];
         for (i, row) in rnpb.iter().enumerate() {
             for (j, c) in row.iter().enumerate() {
@@ -2585,7 +2597,10 @@ mod tests {
     fn equation_of_origins_matches_the_erfa_eo06a_reference() {
         let p = bias_precession_nutation(2453736.5).unwrap();
         let eo = equation_of_origins(&p, 2453736.5).unwrap();
-        assert!((eo - (-1.332_882_371_941_833_7e-3)).abs() < 1.0e-15, "eo {eo}");
+        assert!(
+            (eo - (-1.332_882_371_941_833_7e-3)).abs() < 1.0e-15,
+            "eo {eo}"
+        );
     }
 
     #[test]

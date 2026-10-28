@@ -807,7 +807,8 @@ mod tests {
     }
 
     fn corpus_distribution() -> Option<(BTreeMap<String, usize>, usize)> {
-        let text = fs::read_to_string(repo_root().join("docs/specs/bekannt-schlecht-korpus.md")).ok()?;
+        let text =
+            fs::read_to_string(repo_root().join("docs/specs/bekannt-schlecht-korpus.md")).ok()?;
         let mut dist: BTreeMap<String, usize> = BTreeMap::new();
         for line in text.lines() {
             let t = line.trim();

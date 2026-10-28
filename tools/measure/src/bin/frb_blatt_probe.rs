@@ -142,10 +142,11 @@ fn run_trains(trains: &[(String, Vec<f64>)]) -> (f64, Vec<TrainVerdict>) {
                 }
             }
             if let Some(te) = self_te(dts, distance)
-                && best.is_none_or(|(_, b)| te > b) {
-                    best = Some((distance, te));
-                    best_thr = mean_plus_2sigma(&surr);
-                }
+                && best.is_none_or(|(_, b)| te > b)
+            {
+                best = Some((distance, te));
+                best_thr = mean_plus_2sigma(&surr);
+            }
         }
         let (best_distance, te) = match best {
             Some(b) => b,
@@ -239,7 +240,8 @@ fn main() {
                 v.n,
                 v.best_distance,
                 te,
-                v.thr.map_or("absent".to_string(), |t| format!("{t:>10.4e}")),
+                v.thr
+                    .map_or("absent".to_string(), |t| format!("{t:>10.4e}")),
                 word
             ),
         }

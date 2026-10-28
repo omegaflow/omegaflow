@@ -2,13 +2,13 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::RwLock;
 
+use omegaflow::archivar::PresenceState;
 use omegaflow::archivar::{
     C_LIGHT, MembraneCtx, SampleRecord, anchor_uses, body_barycenter_position, body_in_enclosure,
     body_record_epoch, build_asteroid_samples, build_spatial_hash, build_star_samples,
     cache_fresh_cdn, catalog_sample_in_enclosure, content_cache, embedded_lsk, enclosure_presences,
     parse_ephemeris_binary, parse_sources, query_hash,
 };
-use omegaflow::archivar::PresenceState;
 
 const DEFAULT_DASTCOM_TTL: u64 = 86400;
 

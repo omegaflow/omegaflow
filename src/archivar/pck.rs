@@ -123,11 +123,7 @@ fn lunar_terms(id: i32, amplitudes: &[f64], cosine: bool) -> Option<Vec<[f64; 3]
             } else {
                 constant_deg
             };
-            [
-                *amp,
-                rate_deg_per_day * 36525.0 * deg,
-                phase_deg * deg,
-            ]
+            [*amp, rate_deg_per_day * 36525.0 * deg, phase_deg * deg]
         })
         .collect();
     if terms.is_empty() { None } else { Some(terms) }
@@ -189,7 +185,6 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
     }
     bodies
 }
-
 
 fn scan_entries(text: &str) -> HashMap<(i32, String), Vec<f64>> {
     let mut out = HashMap::new();
@@ -313,7 +308,10 @@ BODY301_NUT_PREC_PM = ( 3.5610 0.1208 -0.0642 0.0158 0.0252 -0.0066 -0.0047 -0.0
         assert!((dec - 65.641103).abs() < 1.0e-3, "dec {dec}");
         assert!((w - 41.195264).abs() < 1.0e-3, "w {w}");
         let compass = (w - 38.3213) + (ra - 269.9949) * 0.9165;
-        assert!(compass.abs() < 0.05, "the E terms must compensate: {compass}");
+        assert!(
+            compass.abs() < 0.05,
+            "the E terms must compensate: {compass}"
+        );
     }
 
     #[test]
@@ -369,7 +367,9 @@ BODY399_NUT_PREC_RA = ( -0.177596746667 -0.0178254 0.\n 0. 0. 0. )\n";
                 );
             }
         }
-        let claim_tokens = ["iau", "sofa", "erfa", "iers", "tdb", "icrs", "exact", "precise"];
+        let claim_tokens = [
+            "iau", "sofa", "erfa", "iers", "tdb", "icrs", "exact", "precise",
+        ];
         let mut missing: Vec<String> = Vec::new();
         for dir in ["src/archivar", "src/mathematikerin"] {
             let Ok(entries) = std::fs::read_dir(dir) else {

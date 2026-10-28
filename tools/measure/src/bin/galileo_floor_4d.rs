@@ -1,8 +1,8 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
-use omegaflow::spectral::civil_from_days;
 use omegaflow::odp::dsn_host;
+use omegaflow::spectral::civil_from_days;
 use omegaflow_measure::absent;
 
 const DAY_S: f64 = 86400.0;
@@ -657,17 +657,18 @@ fn main() {
             e.3 = r[0];
         }
         if mode == 1
-            && let Some(si) = st_idx(st) {
-                let mk = month_key(r[0]);
-                let win = if (1995 * 12 + 11..=1995 * 12 + 12).contains(&mk) {
-                    0usize
-                } else if (1996 * 12 + 6..=1997 * 12 + 2).contains(&mk) {
-                    1usize
-                } else {
-                    continue;
-                };
-                color[si * 4 + cls as usize * 2 + win].push((r[0], resid));
-            }
+            && let Some(si) = st_idx(st)
+        {
+            let mk = month_key(r[0]);
+            let win = if (1995 * 12 + 11..=1995 * 12 + 12).contains(&mk) {
+                0usize
+            } else if (1996 * 12 + 6..=1997 * 12 + 2).contains(&mk) {
+                1usize
+            } else {
+                continue;
+            };
+            color[si * 4 + cls as usize * 2 + win].push((r[0], resid));
+        }
     }
     drop(recs);
 

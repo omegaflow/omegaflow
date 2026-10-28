@@ -368,10 +368,11 @@ fn main() {
     if let Some(last) = m3_last {
         for name in &names {
             if let Some((d0, d1)) = name_span(name)
-                && d0 <= last {
-                    fetch_days.insert(d0);
-                    fetch_days.insert(d1);
-                }
+                && d0 <= last
+            {
+                fetch_days.insert(d0);
+                fetch_days.insert(d1);
+            }
         }
     }
     println!(

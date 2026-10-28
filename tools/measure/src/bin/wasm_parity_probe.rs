@@ -37,7 +37,9 @@ fn main() {
     let epoch = arg_f64(&args, "--epoch").unwrap_or(2000.0);
     let now = match arg_f64(&args, "--now") {
         Some(t) => t,
-        None => embedded_lsk().and_then(|l| l.system_now_tdb()).unwrap_or(8.443618e8),
+        None => embedded_lsk()
+            .and_then(|l| l.system_now_tdb())
+            .unwrap_or(8.443618e8),
     };
     let bytes = std::fs::read(&stars_path).expect("stars read");
     let samples = build_star_samples(&bytes, Some(epoch));

@@ -389,9 +389,10 @@ fn main() {
             let worldline = |t: f64| -> Option<[f64; 3]> {
                 if use_center
                     && let Some(cm) = &center_map
-                        && let Some(c) = body_barycenter_position("uranus_c", t, cm) {
-                            return Some(c);
-                        }
+                    && let Some(c) = body_barycenter_position("uranus_c", t, cm)
+                {
+                    return Some(c);
+                }
                 let bary = body_barycenter_position(&line.target, t, map)?;
                 let rel = spk.state(799, 7, t).ok()?;
                 Some([

@@ -565,7 +565,9 @@ fn main() {
 
     let (slat, slon) = (azim[0].lat, azim[0].lon);
     let Some(d) = distance_km(slat, slon, TONGA_LAT, TONGA_LON) else {
-        println!("cross-check pending: the receiver radius is absent — the distance stays unmeasured");
+        println!(
+            "cross-check pending: the receiver radius is absent — the distance stays unmeasured"
+        );
         return;
     };
     let c = 2.0 * std::f64::consts::PI * radius_km;

@@ -442,7 +442,8 @@ fn main() {
     }
     let band_run = arg_value(&args, "--band-run")
         .and_then(|s| s.parse::<usize>().ok())
-        .filter(|v| *v > 0).unwrap_or(16);
+        .filter(|v| *v > 0)
+        .unwrap_or(16);
     let optical_onset_arg = match arg_value(&args, "--optical-onset") {
         Some(s) => match iso_to_unix(&s) {
             Some(t) => Some(t),

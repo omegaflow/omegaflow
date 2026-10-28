@@ -409,10 +409,11 @@ fn chaninfo_array(arrays: &[MatArray]) -> Option<&MatArray> {
     for a in arrays {
         if a.name == "EEG"
             && let MatData::Struct(fields) = &a.data
-                && let Some(ci) = fields.iter().find(|f| f.name == "chaninfo")
-                    && let Some(first) = ci.values.first() {
-                        return Some(first);
-                    }
+            && let Some(ci) = fields.iter().find(|f| f.name == "chaninfo")
+            && let Some(first) = ci.values.first()
+        {
+            return Some(first);
+        }
     }
     None
 }

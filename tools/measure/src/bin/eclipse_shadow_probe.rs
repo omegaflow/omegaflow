@@ -308,9 +308,10 @@ fn print_curvature(line: &Line, t_great: f64) {
     for s in -10..=10 {
         let t = t_great + s as f64;
         if let Some((g, sun, moon)) = axis_state(line, t)
-            && let Some(h) = axis_geocenter_miss(g, sun, moon) {
-                vals.push((s as f64, h));
-            }
+            && let Some(h) = axis_geocenter_miss(g, sun, moon)
+        {
+            vals.push((s as f64, h));
+        }
     }
     let Some(h0) = vals.iter().find(|(s, _)| *s == 0.0).map(|(_, h)| *h) else {
         return;
@@ -368,9 +369,10 @@ fn best_time(lo: f64, hi: f64, cost: &dyn Fn(f64) -> Option<f64>) -> Option<(f64
     let mut t = lo;
     while t <= hi {
         if let Some(c) = cost(t)
-            && best.is_none_or(|(_, bc)| c < bc) {
-                best = Some((t, c));
-            }
+            && best.is_none_or(|(_, bc)| c < bc)
+        {
+            best = Some((t, c));
+        }
         t += SEARCH_COARSE_S;
     }
     let (tb, cb) = best?;
@@ -380,9 +382,10 @@ fn best_time(lo: f64, hi: f64, cost: &dyn Fn(f64) -> Option<f64>) -> Option<(f64
     let mut tf = fine_lo;
     while tf <= fine_hi {
         if let Some(c) = cost(tf)
-            && best2.is_none_or(|(_, bc)| c < bc) {
-                best2 = Some((tf, c));
-            }
+            && best2.is_none_or(|(_, bc)| c < bc)
+        {
+            best2 = Some((tf, c));
+        }
         tf += SEARCH_FINE_S;
     }
     let (t2, c2) = best2?;

@@ -41,17 +41,11 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let y: i64 = dp.next()?.parse().ok()?;
     let m: i64 = dp.next()?.parse().ok()?;
     let d: i64 = dp.next()?.parse().ok()?;
-    let t = time
-        .split(['.', 'Z', 'z'])
-        .next()?;
+    let t = time.split(['.', 'Z', 'z']).next()?;
     let mut tp = t.split(':');
     let hh: i64 = tp.next()?.parse().ok()?;
-    let mm: i64 = tp.next().unwrap_or("0")
-    .parse()
-    .ok()?;
-    let ss: i64 = tp.next().unwrap_or("0")
-    .parse()
-    .ok()?;
+    let mm: i64 = tp.next().unwrap_or("0").parse().ok()?;
+    let ss: i64 = tp.next().unwrap_or("0").parse().ok()?;
     let a = (14 - m) / 12;
     let yy = y + 4800 - a;
     let jdn =
@@ -233,13 +227,15 @@ fn storm_at(times: &[f64], kp: &[(f64, f64)], threshold: f64) -> Vec<bool> {
 
 fn in_window(t: f64, lo: Option<f64>, hi: Option<f64>) -> bool {
     if let Some(lo) = lo
-        && t < lo {
-            return false;
-        }
+        && t < lo
+    {
+        return false;
+    }
     if let Some(hi) = hi
-        && t >= hi {
-            return false;
-        }
+        && t >= hi
+    {
+        return false;
+    }
     true
 }
 
@@ -403,9 +399,10 @@ fn measure_round(label: &'static str, cols: &[Vec<f32>], n_surr: usize, threads:
         for (li, _) in LAGS.iter().enumerate() {
             let idx = pi * lag_n + li;
             if let Some((te, _, _)) = results[idx]
-                && best.is_none_or(|(_, b)| te > b) {
-                    best = Some((li, te));
-                }
+                && best.is_none_or(|(_, b)| te > b)
+            {
+                best = Some((li, te));
+            }
         }
         let (lag, te, thr) = match best {
             Some((li, te)) => {

@@ -9257,7 +9257,6 @@ pub fn series_channel_name(
     }
 }
 
-
 pub fn series_dbdt(series: &[(f64, [f64; 3])], bucket_s: f64) -> Vec<(f64, f64)> {
     let mut ordered: Vec<(f64, [f64; 3])> = series.to_vec();
     ordered.sort_by(|a, b| a.0.total_cmp(&b.0));

@@ -676,7 +676,12 @@ fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let body = match arg_value(args, "--body") {
         Some(v) => v,
-        None => return Err("--body <name> is required — the receiver body is declared, never defaulted".to_string()),
+        None => {
+            return Err(
+                "--body <name> is required — the receiver body is declared, never defaulted"
+                    .to_string(),
+            );
+        }
     };
     let root = match arg_value(args, "--root") {
         Some(v) => v,
@@ -727,8 +732,9 @@ fn run(args: &[String]) -> Result<(), String> {
     tsk.page_void += pv;
     let results = parse_results(&res_rows, &mut tsk);
 
-    let (records, skips, riss_lines) =
-        compile(&body, &results, &analysis, &sample, &location, &layer, &lsk, &eph);
+    let (records, skips, riss_lines) = compile(
+        &body, &results, &analysis, &sample, &location, &layer, &lsk, &eph,
+    );
     if records.is_empty() {
         return Err(format!(
             "no record left the harvest — {} result rows read; skips: no_analysis {}, no_sample {}, no_location {}, unjoined {}, riss_station {}, riss_witness {}, value {}, date {}, clock {}, frame {}",

@@ -153,14 +153,7 @@ fn station_offset_from_map(
     let tdb = (jd_utc - JD_J2000) * 86400.0;
     let dt = 1.0;
     let at = |t: f64| -> Option<[f64; 3]> {
-        let p = body_fixed_to_icrs(
-            &receiver,
-            OBS_LAT_DEG,
-            OBS_LON_DEG,
-            OBS_ALT_M,
-            t,
-            map,
-        )?;
+        let p = body_fixed_to_icrs(&receiver, OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M, t, map)?;
         let b = body_barycenter_position(&receiver, t, map)?;
         Some([p[0] - b[0], p[1] - b[1], p[2] - b[2]])
     };
@@ -519,9 +512,10 @@ fn main() {
             let worldline = |t: f64| -> Option<[f64; 3]> {
                 if use_center
                     && let Some(cm) = &center_map
-                        && let Some(c) = body_barycenter_position("uranus_c", t, cm) {
-                            return Some(c);
-                        }
+                    && let Some(c) = body_barycenter_position("uranus_c", t, cm)
+                {
+                    return Some(c);
+                }
                 let bary = body_barycenter_position(
                     &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
                     t,

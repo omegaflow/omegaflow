@@ -9,10 +9,34 @@ use omegaflow::archivar::{
 };
 
 const HORIZONS: [(f64, &str, f64, f64, bool); 4] = [
-    (946_728_000.0, "2000-01-01T12:00Z", 5.025824, -6.720739, true),
-    (1_104_537_600.0, "2005-01-01T00:00Z", 353.860514, -4.562844, false),
-    (1_262_304_000.0, "2010-01-01T00:00Z", 359.065600, -0.064924, false),
-    (1_577_836_800.0, "2020-01-01T00:00Z", 0.145555, 6.591897, false),
+    (
+        946_728_000.0,
+        "2000-01-01T12:00Z",
+        5.025824,
+        -6.720739,
+        true,
+    ),
+    (
+        1_104_537_600.0,
+        "2005-01-01T00:00Z",
+        353.860514,
+        -4.562844,
+        false,
+    ),
+    (
+        1_262_304_000.0,
+        "2010-01-01T00:00Z",
+        359.065600,
+        -0.064924,
+        false,
+    ),
+    (
+        1_577_836_800.0,
+        "2020-01-01T00:00Z",
+        0.145555,
+        6.591897,
+        false,
+    ),
 ];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -44,7 +68,10 @@ fn body_fixed_lonlat(rot_body_to_icrs: [f64; 9], d: [f64; 3]) -> (f64, f64) {
         rot_body_to_icrs[2] * d[0] + rot_body_to_icrs[5] * d[1] + rot_body_to_icrs[8] * d[2],
     ];
     let n = (bf[0] * bf[0] + bf[1] * bf[1] + bf[2] * bf[2]).sqrt();
-    (bf[1].atan2(bf[0]).to_degrees(), (bf[2] / n).asin().to_degrees())
+    (
+        bf[1].atan2(bf[0]).to_degrees(),
+        (bf[2] / n).asin().to_degrees(),
+    )
 }
 
 fn main() {
@@ -186,5 +213,4 @@ fn main() {
     if bins.is_empty() {
         println!("no bins given — the sub-Earth point stays unmeasured");
     }
-
 }
