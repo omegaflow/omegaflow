@@ -30,6 +30,10 @@ fn main() {
         if line.starts_with('#') {
             continue;
         }
+        if line.trim().is_empty() {
+            lines.push(String::new());
+            continue;
+        }
         let cols: Vec<&str> = line.split('\t').collect();
         if cols.len() < 2 {
             continue;
