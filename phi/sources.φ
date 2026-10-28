@@ -980,7 +980,7 @@ ttl 3600
 map current
 epoch time
 on earth 19.5 -155.6 3927
-field carbon_dioxide openmeteo_co2_ppm ppm 3600
+field carbon_dioxide openmeteo_co2_ppm point diffusion ppm 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
 format opensensemap_temperatur
