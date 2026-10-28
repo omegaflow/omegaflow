@@ -546,4 +546,60 @@ mod tests {
         assert!(lv95_inverse(0.0, f64::INFINITY).is_none());
         assert!(rd_new_inverse(f64::NAN, f64::NAN).is_none());
     }
+
+    #[test]
+    fn the_inverse_returns_what_ngs_ncat_publishes() {
+        let source = "NGS NCAT llh, 2026-10-28, NAD83(2011) both ways";
+        let cases: [(u16, f64, f64, f64, f64); 3] = [
+            (32617, 585_360.462, 4_428_236.065, 40.0, -80.0),
+            (32610, 552_619.097, 5_272_080.811, 47.6, -122.3),
+            (32617, 580_729.466, 2_765_185.945, 25.0, -80.2),
+        ];
+        for (epsg, e, n, lat, lon) in cases {
+            let (lat_out, lon_out) = utm_inverse(epsg, e, n, EARTH_A, EARTH_F_INV)
+                .unwrap_or_else(|| panic!("inverse at {e} {n}"));
+            assert!(
+                near(lat_out, lat, 1e-7) && near(lon_out, lon, 1e-7),
+                "{source}: {lat} {lon} gives {lat_out} {lon_out}"
+            );
+        }
+    }
+
+    #[test]
+    fn the_inverse_returns_what_proj4rs_projects() {
+        let utm = proj4rs::proj::Proj::from_proj_string(
+            "+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs",
+        )
+        .expect("proj4rs reads the UTM string");
+        let geog = proj4rs::proj::Proj::from_proj_string("+proj=longlat +datum=WGS84 +no_defs")
+            .expect("proj4rs reads the geographic string");
+        let utm_south = proj4rs::proj::Proj::from_proj_string(
+            "+proj=utm +zone=33 +south +datum=WGS84 +units=m +no_defs",
+        )
+        .expect("proj4rs reads the southern UTM string");
+        let cases: [(f64, f64, f64); 6] = [
+            (50.0, 15.0, 1e-8),
+            (45.0, 15.0, 1e-8),
+            (52.5, 13.4, 1e-8),
+            (-33.0, 13.0, 1e-8),
+            (60.0, 5.0, 4e-5),
+            (48.85, 2.35, 2e-4),
+        ];
+        for (lat, lon, tol) in cases {
+            let mut p = (lon.to_radians(), lat.to_radians(), 0.0);
+            let (source, epsg) = if lat < 0.0 {
+                (&utm_south, 32733)
+            } else {
+                (&utm, 32633)
+            };
+            proj4rs::transform::transform(&geog, source, &mut p).expect("forward");
+            let (lat_out, lon_out) = utm_inverse(epsg, p.0, p.1, EARTH_A, EARTH_F_INV)
+                .unwrap_or_else(|| panic!("inverse at {lat} {lon}"));
+            let d = (lat_out - lat).abs().max((lon_out - lon).abs());
+            assert!(
+                d < tol,
+                "proj4rs at {lat} {lon}: {d:.3e} deg off, tolerance {tol:.0e}"
+            );
+        }
+    }
 }

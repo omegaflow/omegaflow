@@ -32,6 +32,7 @@ commit_gate = []
 
 [dev-dependencies]
 cdshealpix = "0.10"
+proj4rs = "0.1.5"
 time = { version = "0.3", features = ["parsing"] }
 tungstenite = "0.30"
 
