@@ -37,6 +37,5 @@ jobs:
           {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s16.csv","args":"--series lro_es_01 --shard 16 --shard-size 16","timeout":360},
           {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s17.csv","args":"--series lro_es_01 --shard 17 --shard-size 16","timeout":360},
           {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s18.csv","args":"--series lro_es_01 --shard 18 --shard-size 16","timeout":360},
-          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s19.csv","args":"--series lro_es_01 --shard 19 --shard-size 16","timeout":360},
-          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s20.csv","args":"--series lro_es_01 --shard 20 --shard-size 16","timeout":360}
+          {"bin":"lola_rdr_series","netloc":"pds-geosciences.wustl.edu","asset":"lola_rdr_lro_es_01_s19.csv","args":"--series lro_es_01 --shard 19 --shard-size 16","timeout":360}
         ]
