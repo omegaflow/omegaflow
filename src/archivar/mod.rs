@@ -211,6 +211,7 @@ pub mod pds4_fits;
 pub mod pds4_img;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
+pub mod planet_positions;
 pub mod planetary_radar;
 pub mod poes19_meped;
 pub mod pradan_ch2;
