@@ -4629,7 +4629,7 @@ fn field_work(args: &[String]) {
                 Some("last") => {
                     let rest: Vec<&str> = it.collect();
                     if let Some(k) = rest.get(1) {
-                        keys.push(k.clone().to_string());
+                        keys.push((**k).to_string());
                     }
                 }
                 _ => {}
@@ -6311,7 +6311,7 @@ fn quote_retarget(args: &[String]) {
                 Some("last") => {
                     let rest: Vec<&str> = it.collect();
                     if let Some(k) = rest.get(1) {
-                        keys.push(k.clone().to_string());
+                        keys.push((**k).to_string());
                     }
                 }
                 _ => {}
@@ -6562,7 +6562,7 @@ fn class_table(args: &[String]) {
                 Some("last") => {
                     let rest: Vec<&str> = it.collect();
                     if let Some(k) = rest.get(1) {
-                        keys.push(k.clone().to_string());
+                        keys.push((**k).to_string());
                     }
                 }
                 _ => {}
@@ -6732,7 +6732,7 @@ fn device_claims(args: &[String]) {
                 Some("last") => {
                     let rest: Vec<&str> = it.collect();
                     if let Some(k) = rest.get(1) {
-                        keys.push(k.clone().to_string());
+                        keys.push((**k).to_string());
                     }
                 }
                 _ => {}
