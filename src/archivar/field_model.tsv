@@ -1571,3 +1571,4 @@ z	inverse-linear	em
 Z_WAVE	inverse-square	electric
 Z_WAVE	inverse-square	em
 amplitude	inverse-square	em
+ozone_tropospheric_vertical_column	point	diffusion

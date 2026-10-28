@@ -30544,3 +30544,13 @@ at earth frame=body datum=ICRS
 no-sampling
 field flux normalized_flux 1 0
 
+url https://meeo-s5p.s3.amazonaws.com/OFFL/L2__O3_TCL/2018/04/30/S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc
+terms free-open https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice
+origin https://meeo-s5p.s3.amazonaws.com/OFFL/L2__O3_TCL/2018/04/30/S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc
+instrument TROPOMI
+compiler tools/harvest/src/bin/meeo_o3_compiler.rs
+sha256 c2bb0590002ab882cf073b1ba35a1c5f5ce3ca58105078e485583ae3b00d0e53
+at earth
+no-sampling
+field ozone_tropospheric_vertical_column meeo_s5p_o3_tcl mol/m2 null
+
