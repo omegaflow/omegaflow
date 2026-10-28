@@ -975,6 +975,7 @@ url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-
 origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide&timezone=GMT
 instrument CAMS
 terms CC-BY-4.0 https://open-meteo.com/en/licence
+compiler none
 sha256 7893c01eaf3d45ac695d8f2971c72c48b5d46b7e8cc0626bb9809715068fa651
 ttl 3600
 map current
