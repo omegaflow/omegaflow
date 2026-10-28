@@ -27307,7 +27307,7 @@ host wdcb.ru
   probe 2026-10-26T00:00:00Z 200 https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
   fields MAG
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Pet12.dat id=26239
-  note MGD77, Fahrt 12 Akademik Petrov; Führend ist USGS OFR 94-7: optisch gepumptes Cäsium-Magnetometer, IZMIRAN. Der Kopf der Datei (Pos. 7) sagt dagegen PRECESSION MAGN. — er ist ein Freifeld und bei Aku03/Dme03 leer, also eine Notiz des Zusammenstellers. Auflösbar nur durch den russischen Fahrtbericht., 1-min-Rate.
+  note MGD77, Fahrt 12 Akademik Petrov; Führend: USGS OFR 94-7 (Cäsium, IZMIRAN, Betreiber Mayorshin) und USGS OFR 91-120 (16. Fahrt, dasselbe System, dort 1-min-Digitalisierung); diese Datei hat 5-min wie die 12. Fahrt. Kopf Pos. 7 PRECESSION MAGN. ist Notiz des Zusammenstellers (Freifeld, bei Aku03/Dme03 leer)., 1-min-Rate.
   instrument cesium magnetometer (IZMIRAN)
   instrument_quote "optical-pumped Cesium magnetometer built at USSR Academy of Sciences Institute of Terrestrial Magnetism, Moscow"
 
