@@ -1,0 +1,19 @@
+# Geoidhoehe an drei Stationen aus drei Schwerefeldmodellen, Grad 360.
+# EGM96   sources/icgem.gfz.de/EGM96.gfc    sha256 5247a9e9c316dd2c8f8fd491d53be0e163cb5cb3676b021754240cc9e44cb43b
+# EGM2008 sources/icgem.gfz.de/EGM2008.gfc  sha256 ab5b524da073e63b5bdceb7ca47a0de07a26dd44a1c5798f39fc98dc80af70fd
+# XGM2019e sources/icgem.gfz.de/XGM2019e.gfc sha256 bd436324c135f7ba021d96237da829442ce0ac101ca72059af81854cb4bca0ac
+# Synthese: geoid.rs, kugelfoermige Naeherung, Normalfeld WGS84 (C*20, C*40), alle Modelle bei Grad 360 abgeschnitten.
+# PROJ-Zeile: cs2cs/cct mit egm96_15.gtx (PROJ-Daten), unabhaengige Umsetzung desselben EGM96-Gitters.
+# station	lat_deg	lon_deg	model	geoid_m
+Berlin	52.52	13.40	EGM96	39.537
+Berlin	52.52	13.40	EGM2008	39.454
+Berlin	52.52	13.40	XGM2019e	39.421
+Berlin	52.52	13.40	PROJ EGM96 grid	39.529
+Honolulu	21.30	-157.86	EGM96	14.843
+Honolulu	21.30	-157.86	EGM2008	15.348
+Honolulu	21.30	-157.86	XGM2019e	15.380
+Honolulu	21.30	-157.86	PROJ EGM96 grid	14.876
+Kapstadt	-33.93	18.42	EGM96	31.368
+Kapstadt	-33.93	18.42	EGM2008	31.497
+Kapstadt	-33.93	18.42	XGM2019e	31.522
+Kapstadt	-33.93	18.42	PROJ EGM96 grid	31.050
