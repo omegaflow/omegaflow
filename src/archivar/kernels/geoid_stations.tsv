@@ -1,9 +1,8 @@
 # Geoidhoehe an drei Stationen aus drei Schwerefeldmodellen, Grad 360.
 # EGM96   sources/icgem.gfz.de/EGM96.gfc    sha256 5247a9e9c316dd2c8f8fd491d53be0e163cb5cb3676b021754240cc9e44cb43b
 # EGM2008 sources/icgem.gfz.de/EGM2008.gfc  sha256 ab5b524da073e63b5bdceb7ca47a0de07a26dd44a1c5798f39fc98dc80af70fd
-# XGM2019e sources/icgem.gfz.de/XGM2019e.gfc sha256 bd436324c135f7ba021d96237da829442ce0ac101ca72059af81854cb4bca0ac
-# ACHTUNG: diese XGM-Datei war ein Teil-Download (540.638.936 von 1.796.436.884 B, Ende mitten in Grad 3039).
-# Die Grad-360-Werte unten nutzen nur den intakten Kopf; das Asset ist erst nach vollstaendigem Laden manifestierbar.
+# XGM2019e sources/icgem.gfz.de/XGM2019e.gfc 1.796.436.884 B sha256 d51ca8315799d331ea3f4c6f1b763ec0b535866f7c7c86d6c87e0457af2e2139
+# (vollstaendig geladen, letzte Zeile gfc 5540 5540; die Grad-360-Werte wurden gegen die vollstaendige Datei nachgemessen und sind identisch)
 # Synthese: geoid.rs, kugelfoermige Naeherung, Normalfeld WGS84 (C*20, C*40), alle Modelle bei Grad 360 abgeschnitten.
 # PROJ-Zeile: cs2cs/cct mit egm96_15.gtx (PROJ-Daten), unabhaengige Umsetzung desselben EGM96-Gitters.
 # station	lat_deg	lon_deg	model	geoid_m
