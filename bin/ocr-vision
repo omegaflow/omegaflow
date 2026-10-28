@@ -19,7 +19,7 @@ for m in ${MODELS:-"deepseek-flash"}; do
         */*) url='https://api.deepinfra.com/v1/openai/chat/completions'; key="$di_key" ;;
         *)   url='https://api.deepseek.com/chat/completions'; key="$ds_key" ;;
     esac
-    printf '{"model":"%s","max_tokens":8000,"messages":[{"role":"user","content":[{"type":"text","text":"%s"},{"type":"image_url","image_url":{"url":"data:image/png;base64,%s"}}]}]}' \
+    printf '{"model":"%s","max_tokens":3000,"messages":[{"role":"user","content":[{"type":"text","text":"%s"},{"type":"image_url","image_url":{"url":"data:image/png;base64,%s"}}]}]}' \
         "$m" "$q" "$b64" > /tmp/req.json
     code="$(curl -sS -o "$out-$name.json" -w '%{http_code}' --max-time 240 \
         -H "Authorization: Bearer $key" -H 'Content-Type: application/json' \
