@@ -2502,7 +2502,7 @@ fn attr_number(a: &Hdf5Attribute) -> Option<f64> {
     }
 }
 
-fn decode_numeric(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Result<f64, Hdf5Note> {
+pub fn decode_numeric(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Result<f64, Hdf5Note> {
     let off = i * dt.size;
     match dt.class {
         0 => {

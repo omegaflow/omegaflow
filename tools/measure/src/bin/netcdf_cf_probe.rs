@@ -47,13 +47,57 @@ fn run(path: &str) -> bool {
         println!("{path}: unreadable");
         return false;
     };
-    let file = match NetcdfFile::parse(&buf) {
-        Ok(f) => f,
-        Err(e) => {
-            println!("{path}: {e:?}");
-            return false;
-        }
+    match omegaflow::archivar::netcdf::NetcdfFile::parse(&buf) {
+        Ok(file) => run_classic(path, &buf, &file),
+        Err(_) => run_netcdf4(path, &buf),
+    }
+}
+
+fn run_netcdf4(path: &str, buf: &[u8]) -> bool {
+    use omegaflow::archivar::hdf5::Hdf5File;
+    use omegaflow::archivar::nc4;
+    let Ok(file) = Hdf5File::parse(buf) else {
+        println!("{path}: neither classic NetCDF nor HDF5");
+        return false;
     };
+    let Ok(vars) = nc4::variables(&file) else {
+        println!("{path}: HDF5 without a variable table");
+        return false;
+    };
+    let mut packed = 0usize;
+    let mut listed = 0usize;
+    for v in &vars {
+        if v.is_dimension_scale {
+            continue;
+        }
+        listed += 1;
+        if !nc4::packed(&file, &v.name) {
+            continue;
+        }
+        packed += 1;
+        let scale = file.attr_f64(&v.name, "scale_factor");
+        let offset = file.attr_f64(&v.name, "add_offset");
+        match nc4::values(&file, &v.name) {
+            Ok(values) => {
+                let lo = values.iter().cloned().fold(f64::INFINITY, f64::min);
+                let hi = values.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+                println!(
+                    "{path}: {} scale {scale:?} offset {offset:?} n {} range [{lo:.6e}, {hi:.6e}]",
+                    v.name,
+                    values.len()
+                );
+            }
+            Err(e) => {
+                println!("{path}: {} values unread {e:?}", v.name);
+                return false;
+            }
+        }
+    }
+    println!("{path}: netcdf4, {listed} variables, {packed} packed");
+    true
+}
+
+fn run_classic(path: &str, buf: &[u8], file: &omegaflow::archivar::netcdf::NetcdfFile) -> bool {
     let mut checked = 0usize;
     let mut worst = 0.0f64;
     for var in &file.vars {
