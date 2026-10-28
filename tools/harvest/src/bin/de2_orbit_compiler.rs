@@ -1,4 +1,5 @@
-use omegaflow::archivar::parse_ephemeris_binary;
+use omegaflow::archivar::J2000_EPOCH;
+use omegaflow::archivar::motion::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::cdf::{CdfFile, cdf_epoch_unix, tt2000_unix};
 use omegaflow::ephemeris::{CHEBYSHEV_DEGREE, chebyshev_fit, write_binary};
 use omegaflow::pck::PckBody;
@@ -101,6 +102,54 @@ fn check(bin_path: &str, cdf_path: Option<&str>) {
                     );
                     if !covered {
                         bad += 1;
+                    }
+                    if let (Some(px), Some(py), Some(pz)) = (
+                        var_values(&file, &cbytes, "X_SC_Position_Vec"),
+                        var_values(&file, &cbytes, "Y_SC_Position_Vec"),
+                        var_values(&file, &cbytes, "Z_SC_Position_Vec"),
+                    ) {
+                        let mut map: std::collections::HashMap<String, BodyEphemeris> =
+                            std::collections::HashMap::new();
+                        map.insert("de2".to_string(), eph);
+                        let mut worst = 0.0f64;
+                        let mut compared = 0usize;
+                        let step = if t.len() > 50 { t.len() / 50 } else { 1 };
+                        let mut k = 0;
+                        while k < t.len() {
+                            let (Some(x), Some(y), Some(z)) = (
+                                px[k].first().copied(),
+                                py[k].first().copied(),
+                                pz[k].first().copied(),
+                            ) else {
+                                k += step;
+                                continue;
+                            };
+                            let tdb = (jd_of_unix(t[k]) - J2000_EPOCH) * 86400.0;
+                            match body_barycenter_position("de2", tdb, &map) {
+                                Some(p) => {
+                                    let d = ((p[0] - x).powi(2)
+                                        + (p[1] - y).powi(2)
+                                        + (p[2] - z).powi(2))
+                                    .sqrt();
+                                    if d > worst {
+                                        worst = d;
+                                    }
+                                    compared += 1;
+                                }
+                                None => {
+                                    eprintln!("epoche {k}: keine Position aus dem Bin");
+                                    bad += 1;
+                                }
+                            }
+                            k += step;
+                        }
+                        println!(
+                            "positionsvergleich: {compared} Epochen, max Abweichung {worst:.3} km"
+                        );
+                        if worst > 10.0 {
+                            eprintln!("positionsvergleich: Abweichung zu gross");
+                            bad += 1;
+                        }
                     }
                 }
             }
