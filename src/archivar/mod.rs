@@ -145,6 +145,7 @@ pub mod inflate;
 pub mod intermagnet;
 pub mod ionex;
 pub mod ionocal;
+pub mod ionosphere;
 pub mod ir;
 pub mod iris;
 pub mod itrf_sinex;

@@ -1,0 +1,11 @@
+# TEC an vier CHAMP-Spurenpunkten, 2010-09-03, 20:00-20:09 UTC.
+# CHAMP: VIRES HAPI, CH_OPER_TEC_TMS_2F, Absolute_VTEC, Mittel je Zeitstempel (5-7 PRNs).
+# IRI: IRI-2020 (irimodel.org/IRI-2020/00_iri.tar, gfortran-13, iritest), Integration 65-30000 km, UT.
+# Klobuchar: GPS-Broadcast-Koeffizienten aus brdc2460.10n (BKG IGS BRDC, 2010 Tag 246),
+#            ION ALPHA 0.6519E-08 0.1490E-07 -0.5960E-07 -0.1192E-06
+#            ION BETA  0.7782E+05 0.3277E+05 -0.6554E+05 -0.1966E+06, Zenit, L1.
+# time_utc	lat_deg	lon_deg	champ_vtec	iri_tec	klobuchar_tec
+2010-09-03T20:00:05.000Z	59.0763	-147.1823	7.063	8.500	11.372
+2010-09-03T20:03:05.000Z	71.0888	-144.4200	6.512	6.900	9.238
+2010-09-03T20:06:05.000Z	82.8254	-130.5579	7.061	6.300	9.238
+2010-09-03T20:09:05.000Z	83.8431	-0.9979	6.003	5.300	9.238
