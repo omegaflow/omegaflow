@@ -122,6 +122,7 @@ fn main() {
     };
     let mut seen: BTreeSet<String> = BTreeSet::new();
     let mut bad: Vec<(String, usize)> = Vec::new();
+    let mut numbers: Vec<(String, usize)> = Vec::new();
     let mut total = 0usize;
     for (n, line) in text.lines().enumerate() {
         let Some(rest) = line.strip_prefix("field ") else {
@@ -137,10 +138,34 @@ fn main() {
             continue;
         }
         let clean = strip_annotations(unit);
+        let prefix: String = clean
+            .chars()
+            .take_while(|c| c.is_ascii_digit() || *c == '.' || *c == 'e' || *c == 'E' || *c == '-' || *c == '+')
+            .collect();
+        let rest = &clean[prefix.len()..];
+        let number_then_unit = !prefix.is_empty()
+            && prefix != "1"
+            && prefix.parse::<f64>().is_ok()
+            && rest
+                .chars()
+                .next()
+                .map(|c| c.is_ascii_alphabetic())
+                .unwrap_or(false);
+        if number_then_unit {
+            numbers.push((unit.to_string(), n + 1));
+            continue;
+        }
         let mut ok = !clean.is_empty();
         for term in split_terms(&clean) {
             if term == "1" {
                 continue;
+            }
+            if let Some(rest) = term.strip_prefix("10*") {
+                if rest.parse::<i32>().is_ok() {
+                    continue;
+                }
+                ok = false;
+                break;
             }
             let (base, has_exp) = base_and_exp(&term);
             if base.is_empty() || (has_exp && !term.contains('(') && !term[base.len()..].chars().all(|c| c.is_ascii_digit() || c == '-' || c == '+')) {
@@ -165,10 +190,17 @@ fn main() {
     for (u, line) in &bad {
         println!("  not UCUM: {u} (line {line})");
     }
+    for (u, line) in &numbers {
+        println!("  Zahl in der Einheit: {u} (line {line})");
+    }
     println!(
         "{} of {} distinct units parse against UCUM 2.2",
-        seen.len() - bad.len(),
+        seen.len() - bad.len() - numbers.len(),
         seen.len()
     );
-    std::process::exit(if bad.is_empty() { 0 } else { 1 });
+    std::process::exit(if bad.is_empty() && numbers.is_empty() {
+        0
+    } else {
+        1
+    });
 }
