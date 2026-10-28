@@ -10,8 +10,8 @@
 
 > **Nicht mehr bindend (2026-10-24).** Dieses Dokument beschreibt den Stand von
 > v2. Bindend ist `bindend/` im Workshop-Repo (`omegaflow-work/bindend/`), heute
-> genau `sources-v3.md`; geprüft von `bin/bindend`. Die Arbeitsdatei ist
-> `research/sources/sources-v3.tsv`, `phi/sources.φ` ist der eingefrorene
+> genau `sources.md`; geprüft von `bin/bindend`. Die Arbeitsdatei ist
+> `research/sources/sources.tsv`, `phi/sources.φ` ist der eingefrorene
 > v2-Bestand. Dieses Dokument bleibt als Weg- und Pfadkarte lesbar.
 
 Selbsttragend. Interpretierbar von einer Session mit null Vorkontext. Dieses
