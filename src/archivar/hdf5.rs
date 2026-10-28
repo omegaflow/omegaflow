@@ -4945,6 +4945,35 @@ mod tests {
     }
 
     #[test]
+    fn two_real_files_carry_chunked_deflated_datasets() {
+        for (bytes, name, len) in [
+            (
+                include_bytes!("kernels/cf_air_packed4.nc").as_slice(),
+                "air",
+                252_288usize,
+            ),
+            (
+                include_bytes!("kernels/cf_uwnd_packed4.nc").as_slice(),
+                "uwnd",
+                504_576usize,
+            ),
+        ] {
+            let file = Hdf5File::parse(bytes).expect("hdf5");
+            let (obj, _, _) = file.dataset(name).expect("dataset");
+            assert!(
+                matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })),
+                "{name} is not chunked"
+            );
+            assert!(
+                obj.filters.iter().any(|f| f.id == 1),
+                "{name} carries no deflate filter"
+            );
+            let raw = file.read_dataset(name).expect("read");
+            assert_eq!(raw.len(), len, "{name} byte count");
+        }
+    }
+
+    #[test]
     fn contiguous_layout_reads_declared_extent() {
         fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
             let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
