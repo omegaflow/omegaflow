@@ -4974,6 +4974,31 @@ mod tests {
     }
 
     #[test]
+    fn the_reference_tools_deflate_file_reads_as_h5dump_says() {
+        let bytes = include_bytes!("kernels/h5repack_deflate.h5");
+        let file = Hdf5File::parse(bytes).expect("hdf5");
+        let (obj, _, _) = file.dataset("dset_deflate").expect("dataset");
+        assert!(
+            matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })),
+            "the reference tool wrote chunks"
+        );
+        assert!(
+            obj.filters.iter().any(|f| f.id == 1),
+            "the reference tool wrote deflate"
+        );
+        let raw = file.read_dataset("dset_deflate").expect("read");
+        assert_eq!(raw.len(), 3200, "40x20 int32");
+        for i in 0..800usize {
+            let v = i32::from_le_bytes(
+                raw[i * 4..i * 4 + 4]
+                    .try_into()
+                    .expect("four bytes per element"),
+            );
+            assert_eq!(v, i as i32, "element {i} differs from h5dump");
+        }
+    }
+
+    #[test]
     fn contiguous_layout_reads_declared_extent() {
         fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
             let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
