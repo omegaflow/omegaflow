@@ -1040,7 +1040,7 @@ fn orphan_docs_full(root: &Path) -> (Vec<String>, Vec<String>) {
     let mut out: Vec<String> = Vec::new();
     let mut terms_out: Vec<String> = Vec::new();
     for (dir, _) in REGISTER_DIRS {
-        if *dir == "docs/handover" {
+        if *dir == "docs/handover" || *dir == "handover" {
             continue;
         }
         let entries = match fs::read_dir(root.join(dir)) {
@@ -2892,7 +2892,7 @@ fn dropped_live_carriers() -> (BTreeMap<String, String>, String) {
     }
     let mut docs = String::new();
     for (dir, _) in REGISTER_DIRS {
-        if *dir == "docs/handover" {
+        if *dir == "docs/handover" || *dir == "handover" {
             continue;
         }
         let entries = match fs::read_dir(dir) {
