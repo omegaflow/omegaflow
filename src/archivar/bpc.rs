@@ -150,6 +150,11 @@ impl BpcFile {
 #[cfg(test)]
 mod tests {
     use super::cheby_val;
+    use super::BpcFile;
+
+    const SEGMENT_ONE_INIT: f64 = -14200747200.0;
+    const SEGMENT_ONE_RECORDS: f64 = 40000.0;
+    const SEGMENT_STEP: f64 = 691200.0;
 
     #[test]
     fn cheby_val_linear_combination() {
@@ -161,5 +166,52 @@ mod tests {
     fn cheby_val_constant() {
         let v = cheby_val(&[7.0], -0.3);
         assert!((v - 7.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn the_bundled_lunar_pck_holds_the_interval_the_table_declares() {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/src/archivar/kernels/moon_pa_de440_200625.bpc"
+        );
+        let bpc = BpcFile::open(path).expect("the bundled lunar pck opens");
+        let start = (2287184.5 - 2451545.0) * 86400.0;
+        let end = (2688976.5 - 2451545.0) * 86400.0;
+        for (name, et) in [
+            ("first instant", start + 1.0),
+            ("J2000", 0.0),
+            ("last instant", end - 1.0),
+        ] {
+            assert!(
+                bpc.orient(31008, 1, et).is_some(),
+                "{name}: the lunar pck answers nothing"
+            );
+        }
+        assert!(
+            bpc.orient(31008, 1, start - 86400.0).is_none(),
+            "before the interval the pck answers — the coverage is wider than declared"
+        );
+    }
+
+    #[test]
+    fn the_two_lunar_segments_meet_within_a_hundredth_of_a_degree() {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/src/archivar/kernels/moon_pa_de440_200625.bpc"
+        );
+        let bpc = BpcFile::open(path).expect("the bundled lunar pck opens");
+        let seam = SEGMENT_ONE_INIT + SEGMENT_ONE_RECORDS * SEGMENT_STEP;
+        let before = bpc.orient(31008, 1, seam - 1.0).expect("segment one answers");
+        let after = bpc.orient(31008, 1, seam).expect("segment two answers");
+        for (i, (a, b)) in [(before.0, after.0), (before.1, after.1), (before.2, after.2)]
+            .into_iter()
+            .enumerate()
+        {
+            let delta = (a - b).abs();
+            assert!(
+                delta < 1e-5,
+                "angle {i}: {delta:e} rad at the seam, measured was 1.52e-4 deg at most"
+            );
+        }
     }
 }
