@@ -20,7 +20,14 @@ pub fn or_temp(value: Option<&str>, name: &str) -> String {
 pub fn temp_path(name: &str) -> &'static str {
     let base = match std::env::var_os("TMPDIR") {
         Some(v) => std::path::PathBuf::from(v),
-        None => std::path::PathBuf::from("scratch"),
+        None => {
+            let house = std::path::PathBuf::from("scratch");
+            if house.is_dir() {
+                house
+            } else {
+                std::env::temp_dir()
+            }
+        }
     };
     Box::leak(
         base.join(name)
