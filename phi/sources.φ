@@ -26911,7 +26911,7 @@ sha256 777e7addb58f566cc11ca6aceba0068fd29e449c6dbc8a32ed60d0d3fdc0568f
 at earth
 no-sampling
 field mtf pet12_total_magnetic_field_nt nT null
-instrument precession magnetometer
+instrument cesium magnetometer (IZMIRAN)
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/Star1969.dat
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
