@@ -228,6 +228,8 @@ pub fn ang2pix_nest_deg(order: u32, ra_deg: f64, dec_deg: f64) -> Option<u64> {
 mod tests {
     use super::*;
 
+    const HEALPIX_C_CENTRES: &str = include_str!("healpix_chealpix.tsv");
+
     fn near(a: f64, b: f64, tol: f64) -> bool {
         (a - b).abs() < tol
     }
@@ -327,8 +329,7 @@ mod tests {
     }
 
     #[test]
-    fn ring_centres_match_the_reference_implementation() {
-        for nside in [1u32, 2, 4] {
+    fn ring_centres_match_the_reference_implementation() {        for nside in [1u32, 2, 4] {
             let npix = 12 * nside * nside;
             for ipix in 0..npix {
                 let (lon, lat) = cdshealpix::ring::center(nside, ipix as u64);
@@ -350,8 +351,49 @@ mod tests {
     }
 
     #[test]
-    fn ang2pix_roundtrip_all_nside() {
-        for n in [1i64, 2, 4, 8] {
+    fn centres_match_the_healpix_c_library() {
+        let mut ring = 0usize;
+        let mut nest = 0usize;
+        for line in HEALPIX_C_CENTRES.lines() {
+            if line.starts_with('#') || line.trim().is_empty() {
+                continue;
+            }
+            let cols: Vec<&str> = line.split('\t').collect();
+            assert_eq!(cols.len(), 5, "a fixture line carries five columns: {line}");
+            let nside: i64 = cols[0].parse().expect("nside");
+            let pixel: i64 = cols[2].parse().expect("pixel");
+            let ref_theta: f64 = cols[3].parse().expect("theta");
+            let ref_phi: f64 = cols[4].parse().expect("phi");
+            let (theta, phi) = match cols[1] {
+                "ring" => {
+                    ring += 1;
+                    pix2ang_ring(nside, pixel).expect("a valid ring pixel")
+                }
+                "nest" => {
+                    nest += 1;
+                    pix2ang_nest(nside, pixel).expect("a valid nest pixel")
+                }
+                other => panic!("unknown scheme {other}"),
+            };
+            assert!(
+                (theta - ref_theta).abs() < 1e-12,
+                "nside {nside} pixel {pixel} {}: theta {theta} vs chealpix {ref_theta}",
+                cols[1]
+            );
+            let dphi = (phi - ref_phi).rem_euclid(std::f64::consts::TAU);
+            let dphi = dphi.min(std::f64::consts::TAU - dphi);
+            assert!(
+                dphi < 1e-12,
+                "nside {nside} pixel {pixel} {}: phi {phi} vs chealpix {ref_phi}",
+                cols[1]
+            );
+        }
+        assert_eq!(ring, 252, "three nsides of ring pixels");
+        assert_eq!(nest, 252, "three nsides of nest pixels");
+    }
+
+    #[test]
+    fn ang2pix_roundtrip_all_nside() {        for n in [1i64, 2, 4, 8] {
             for p in 0..(12 * n * n) {
                 let (theta, phi) = pix2ang_nest(n, p).unwrap();
                 let back = ang2pix_nest(n, theta, phi).unwrap();
