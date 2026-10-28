@@ -941,10 +941,10 @@ fanout 40
 fanout_center receiver
 first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
 field air_temperature air_temperature degC 3600
-
 field air_temperature frost_air_temperature_degc degC 3600
 field value frost_air_temperature_c C 3600
 field air_temperature frost_air_temperature_degc degC 3600
+
 url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
 instrument wind_speed_sensor
 origin https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
@@ -1510,8 +1510,8 @@ field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 0.0 0.0
 field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
 field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
 
-instrument SuperDARN
 url https://api.bas.ac.uk/superdarn/mirror/v3/
+instrument SuperDARN
 origin https://api.bas.ac.uk/superdarn/mirror/v3/
 field v superdarn_los_velocity_ms m/s null
 terms OGL-UK-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
@@ -1606,8 +1606,8 @@ on earth 46.05 -125.0 0
 lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
 lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
 field surface_partial_pressure_of_carbon_dioxide_in_sea_water ooi_pco2_uatm uatm 1800
-
 field surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm uatm 8640
+
 url https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
 origin https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
 instrument radar
@@ -3941,8 +3941,8 @@ field bidsleep_mx_ms2 bidsleep_mx_ms2 gaussian-inverse-square advective m/s2 864
 field bidsleep_my_ms2 bidsleep_my_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 field bidsleep_mz_ms2 bidsleep_mz_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 
-instrument supernova_survey
 url https://github.com/omegaflow/sources/releases/download/sne.space/osc_transients.bin
+instrument supernova_survey
 terms MIT https://github.com/astrocatalogs/OACAPI
 format osc_transients
 origin https://sne.space/api/transients?format=json&limit=250&page=
@@ -12437,8 +12437,8 @@ dist_scale 1.495978707e11
 quantity H comet_h_mag gaussian-inverse-square source-parameter mag 604800 0.0 0.0
 quantity M1 comet_total_mag gaussian-inverse-square source-parameter mag 604800 0.0 0.0
 
-instrument Hipparcos
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-gaia/dr3_stars.bin
+instrument Hipparcos
 format catalog_tycho
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
@@ -24099,8 +24099,8 @@ instrument MDIS
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d4c0880c39d062994a6f02c0462ec6c87f60fdcc504546915e076e2cd472b1da
 no-sampling
-
 field I/F pds_mdis_bdr_if 1 0.0
+
 url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
@@ -24540,8 +24540,8 @@ no-sampling
 field ra niko_ra h null
 field dec niko_dec deg null
 instrument photographic telescope (Mykolaiv/Nikolaev)
-
 field dec. nikolaev_dec_deg deg 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/npts3d_format.txt
 terms PD-USGov https://ssd.jpl.nasa.gov/
 origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
@@ -24659,8 +24659,8 @@ at earth
 no-sampling
 field ra lapalma_ra_deg deg null
 field dec lapalma_dec_deg deg null
-
 field dec. lapalma_meridian_dec_deg deg 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnststokyo.txt
 terms PD-USGov https://ssd.jpl.nasa.gov/
 origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnststokyo.txt
@@ -24713,9 +24713,9 @@ at earth frame=body time_scale=UTC
 no-sampling
 field ra wash9_ra h null
 field dec wash9_dec deg null
-
 field dec. usno_nine_inch_dec_deg deg 0
 field dec. usno_nine_inch_dec_deg deg 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbaobs.txt
 field Declination ssd_vlbaobs_cassini_dec_arcsec arcsec 0.0
 terms PD-USGov https://ssd.jpl.nasa.gov/
@@ -24737,8 +24737,8 @@ at earth datum=WGS84 coverage=open
 ttl no-sampling
 field dRA vlbi_angular_correction mas 0
 instrument VLBI array (radio telescopes)
-
 field dRA vlbi_angular_correction mas 0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/auger_catalog.pao1
 terms CC-BY-SA-4.0 https://creativecommons.org/licenses/by-sa/4.0/
 format auger
@@ -24751,8 +24751,6 @@ at earth
 no-sampling
 field auger_sd1500 auger_sd1500 inverse-square em 1 31536000 0.0 0.0
 
-field count star_count_per_healpix_pixel 1 0
-field count star_count_per_healpix_pixel 1 0
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 field m10 abell_cluster_m10_mag mag 0.0
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -25790,8 +25788,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field G gravconst_g_cm3_g_s2 cm3/g/s2 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/950614.dat
+field G gravconst_g_cm3_g_s2 cm3/g/s2 0
 origin https://web.archive.org/web/20030505024129id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/950614.dat
 instrument torsion balance
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -25801,8 +25799,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field G gravconst_g_cm3_g_s2 cm3/g/s2 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/951019.dat
+field G gravconst_g_cm3_g_s2 cm3/g/s2 0
 origin https://web.archive.org/web/20030505024300id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/951019.dat
 instrument torsion balance
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -25834,8 +25832,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field G gravconst_g_cm3_g_s2 cm3/g/s2 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/960522.dat
+field G gravconst_g_cm3_g_s2 cm3/g/s2 0
 origin https://web.archive.org/web/20030505025022id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/960522.dat
 instrument torsion balance
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -26011,8 +26009,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument torsion balance
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/980918.dat
+instrument torsion balance
 origin https://web.archive.org/web/20030506213301id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980918.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 fd87007219a6d71426294dc69c042305e7008a431335675e8b6e4b085ee8aa3e
@@ -26090,8 +26088,8 @@ ttl no-sampling
 field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 instrument AMG
 
-field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku15.dat
+field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 instrument GSS-2
 origin https://web.archive.org/web/20170409034956id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku15.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -26101,8 +26099,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku20.dat
+field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 origin https://web.archive.org/web/20170409035001id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku20.dat
 instrument GSS-2 gravimeter
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -26112,8 +26110,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku23.dat
+field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 origin https://web.archive.org/web/20170409035006id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku23.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 5a96cb31750ef0ceaae01a296f27894fb41991fa6adeeec1137a347359b20f8f
@@ -26123,8 +26121,8 @@ no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 instrument shipborne gravimeter (model not named in MGD77 header)
 
-field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku28.dat
+field gravity_free_air_anomaly gravity_free_air_anomaly mGal 0
 origin https://web.archive.org/web/20170409035011id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku28.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 bac3999879872f68efd906e7b79f3e5f44a5996a6f2adf5e2a2cc6d6de8bbb32
@@ -26364,8 +26362,8 @@ field MAG total_magnetic_field nT 60
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument vector magnetometer (MIR)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9502M.WDC
+instrument vector magnetometer (MIR)
 origin https://web.archive.org/web/20030905064538id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9502M.WDC
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 deb31eba43d64feb28ab0817c5e2cedf870a390a15c5acbcd2b89868df939c14
@@ -26518,8 +26516,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument vector magnetometer (MIR)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9709M.WDC
+instrument vector magnetometer (MIR)
 origin https://web.archive.org/web/20030907053738id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9709M.WDC
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 504b548bd9b418bad8b1de2c581eb6b57bcb61e93aa76596614f4372be3effa4
@@ -26529,8 +26527,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument vector magnetometer (MIR)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9712M.WDC
+instrument vector magnetometer (MIR)
 origin https://web.archive.org/web/20030907054041id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9712M.WDC
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a37987724907dd95bd22bc40680c09d8f22323bcad98323538fff499dacf41b0
@@ -26684,8 +26682,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field H msk_h_nt nT 60
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9807.ZIP
+field H msk_h_nt nT 60
 origin https://web.archive.org/web/20030609191515id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9807.ZIP
 instrument MSK
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -26927,8 +26925,8 @@ ttl no-sampling
 field GRAV mgd77_gravity_mgal mGal 0
 instrument GSS2
 
-instrument magnetometer observatory (Hartland/Canberra)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1993.ima
+instrument magnetometer observatory (Hartland/Canberra)
 origin https://web.archive.org/web/20030926203948id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1993.ima
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 ad3566cb0c55aa4b50510ab3a38287d7cabf50ec9e117d8adb0a282e770936f4
@@ -26938,8 +26936,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument magnetometer observatory (Hartland/Canberra)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1994.ima
+instrument magnetometer observatory (Hartland/Canberra)
 origin https://web.archive.org/web/20030926204136id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1994.ima
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a7ec824c5d38e6c8d3fb3ce0dd8340aa2feea2cb27a7e358711d1730377bdb59
@@ -26949,8 +26947,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument magnetometer observatory (Hartland/Canberra)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1995.ima
+instrument magnetometer observatory (Hartland/Canberra)
 origin https://web.archive.org/web/20030926204439id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1995.ima
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 463147b7ddd1b7c46a12cbde5d8284293981f88c1695d8c739cc2fabafb8bc3e
@@ -26973,8 +26971,8 @@ at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-instrument magnetometer observatory (Hartland/Canberra)
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1999.ima
+instrument magnetometer observatory (Hartland/Canberra)
 origin https://web.archive.org/web/20030926204511id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1999.ima
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 393a0b653af9a4f6c39f3eb87d43f888fd9c94e3d4578091738521fc20df8cf7
@@ -27463,8 +27461,8 @@ no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 instrument seismograph (intermediate-period and long-period; short-period)
 
-field energy_class regional_energy_class 1 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CAU9200.dat
+field energy_class regional_energy_class 1 0
 origin https://web.archive.org/web/20161007182250id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CAU9200.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a51e04b73db62f5d2a6f63647a4ead5e109060a5b02e7be091ddfd4e8a1401d5
@@ -27486,8 +27484,8 @@ field MAG magnitude 1 0
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 
-field energy_class regional_energy_class 1 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CRP.dat
+field energy_class regional_energy_class 1 0
 origin https://web.archive.org/web/20160427192236id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRP.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 702c90a2bde9ec213db56c5a21631984018a2f3021809907d418473b113dd178
@@ -27820,8 +27818,8 @@ sha256 98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50
 field backscatter venus_venera_backscatter 1 0
 no-sampling
 
-instrument RSP2pro
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/WL7C_Zenodo_Upload_Diary.csv
+instrument RSP2pro
 field FreqRange wl7c_spot_frequency_range_khz kHz 0
 terms CC-BY-4.0 https://zenodo.org/records/1067790
 origin https://zenodo.org/api/records/1067790/files/WL7C_Zenodo_Upload_Diary.csv/content
@@ -27957,8 +27955,8 @@ no-sampling
 terms CC-BY-4.0 https://zenodo.org/records/7798617
 field cmonoc_continuous_velocity cmonoc_continuous_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210525042001_20210525043243_00011_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00011_echo_real none 5.65
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -27970,8 +27968,8 @@ sha256 1ff9af97e73a11b8d5c15a8920d4ea1049ef4b4719ffa50141b3a057515fe21a
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210528062805_20210528063800_00014_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00014_echo_real none 8.74
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -27983,8 +27981,8 @@ sha256 7d4113758f82f3db4108394f12cb5392d42bc861a380b97a4ba9e67db70899e6
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210530073623_20210530074230_00016_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00016_echo_real none 6.12
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -27996,8 +27994,8 @@ sha256 08fe20e18f8c467e04cd25ee8345d704a1f95dd3c0b1aa9abe7086293caee598
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210605100445_20210605101554_00022_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00022_echo_real none 3.36
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28009,8 +28007,8 @@ sha256 9793a27f5d72b8729fb29e0d784063130197ae1a2275cdde17dd51f34a3063e1
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210606104402_20210606105856_00023_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00023_echo_real none 4.97
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28022,8 +28020,8 @@ sha256 004f26a72dc3d1325434c1f1fa29267f382e7bdaa5f2f91bfae0ec24295bf976
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210607112519_20210607114327_00024_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00024_echo_real none 6.22
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28035,8 +28033,8 @@ sha256 4343d390612a3268a00aee5afb9cf12df378571b8669db9e2cd383c1a96d9d78
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210608120247_20210608122320_00025_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00025_echo_real none 6.04
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28048,8 +28046,8 @@ sha256 350d9b3b5418c237b0063032b43c2c74e34a6924f3ca9a516272d7fee4e73767
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210609124205_20210609130229_00026_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00026_echo_real none 6.15
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28061,8 +28059,8 @@ sha256 652d6f721237f2e70504a75c652836547b6f7030c8cc76602d54ffa6418e9b0b
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210610132123_20210610133816_00027_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00027_echo_real none 4.85
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28074,8 +28072,8 @@ sha256 0e44e6481f0b5a8f94c47c431222ebc08ef61dcb040255a5b9d2a356cb579d97
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210611140040_20210611142216_00028_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00028_echo_real none 4.58
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28087,8 +28085,8 @@ sha256 2419c28a9878e3ba769a8ea6d68ecc7d3262964e5be524a33a07a029399b5bc2
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210612143959_20210612150247_00029_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00029_echo_real none 4.13
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28100,8 +28098,8 @@ sha256 0459d821d7286225e252bf4e8a1796be22a04c18b2b4321429f9e927996efa99
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210613151917_20210613154608_00030_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00030_echo_real none 4.51
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28113,8 +28111,8 @@ sha256 a4a42406b2b38126237bdfa60b6a83eabd2e19b58a39a177d9d0b16d87264aa2
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210614155835_20210614162453_00031_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00031_echo_real none 4.42
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28126,8 +28124,8 @@ sha256 4a8de22eb4da9ff1eab4e0df64d219f582959824d0e8391d825f416dfe0c065e
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210616171702_20210616172557_00033_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00033_echo_real none 3.28
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28139,8 +28137,8 @@ sha256 5742b87f1c00fe7f52e6e1bb259c6f3ddb070ba4de6fd3fe3da8d287189e6d2f
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210617172542_20210617174251_00034_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00034_echo_real none 4.58
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28152,8 +28150,8 @@ sha256 a0a3c7acc43728d94e6cbd085b9293b4799fd44b665e4cc61da2e48c8376f5b3
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210618180500_20210618183135_00035_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00035_echo_real none 4.22
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28165,8 +28163,8 @@ sha256 2d924d5b883e210fbbe28241250d3a47f96b0493113991c024944aa830e0b7b1
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210619184419_20210619190603_00036_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00036_echo_real none 4.18
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28178,8 +28176,8 @@ sha256 d10015bb928e3e6b1d53c714a41ab92668ada39bc1f59deb21739d065fb2e841
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210623212136_20210623214627_00040_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00040_echo_real none 3.98
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28191,8 +28189,8 @@ sha256 9aba588a96f1e6e86145ca501783d98c61f80b4c853fe5e78be1ff912cb4163f
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210625224006_20210625224957_00042_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00042_echo_real none 2.74
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28204,8 +28202,8 @@ sha256 3f55ca589da4832f0922f707c2e0c08a6b92255fc25fb8a1e6a57fbac0f52180
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210627235846_20210628000439_00044_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00044_echo_real none 7.86
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28217,8 +28215,8 @@ sha256 93579996729f3e2d09c5ef2169fb9913b7a1390c2bc229858841f13e7a9a4392
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210630005145_20210630005917_00046_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hh_00046_echo_real none 8.88
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28230,8 +28228,8 @@ sha256 d80abbdc3a20902bb7ce9cd1f85d0e9cf8d9bfaf091f6801520635accb85efdc
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210525042001_20210525043243_00011_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00011_echo_real none 5.65
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28243,8 +28241,8 @@ sha256 b298725678f6725dcd6e313ad6628566c8c43bc4b83e2b08f0a4eb1a8e77095f
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210528062805_20210528063800_00014_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00014_echo_real none 8.74
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28256,8 +28254,8 @@ sha256 1177fabec000cf5760c8eafda6f3d2bcda5b3b79b2008fd94910702a18228b1f
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210530073623_20210530074230_00016_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00016_echo_real none 6.12
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28269,8 +28267,8 @@ sha256 726a91a2d231c4c27ca36f2db2ea265e114ef4a40600352df3c5480457f6d2ce
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210605100445_20210605101554_00022_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00022_echo_real none 3.36
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28282,8 +28280,8 @@ sha256 79b1d229edad12849b67a5bea71daa3f671dd40e93e1565304f1a2c0b30c196d
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210606104402_20210606105856_00023_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00023_echo_real none 4.97
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28295,8 +28293,8 @@ sha256 1dda1224c13b9297c4b9e5b0c23b0cc2283d67b669b71d5206562a688dac56b4
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210607112519_20210607114327_00024_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00024_echo_real none 6.22
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28308,8 +28306,8 @@ sha256 4eacf21ae7cc540fb498de027022f69b3f2ad17994b8084127cc33a717c72c4f
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210608120247_20210608122320_00025_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00025_echo_real none 6.04
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28321,8 +28319,8 @@ sha256 19b71fc8749a630032c53c3a5a40f803ca2b936bca26fcb1a66a76171213fca7
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210609124205_20210609130229_00026_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00026_echo_real none 6.15
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28334,8 +28332,8 @@ sha256 a20ff7de6dc9188fabf6ca909f1fa975e70a1426d64f7eb8bc7be90c95fa0874
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210610132123_20210610133816_00027_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00027_echo_real none 4.85
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28347,8 +28345,8 @@ sha256 d309066ee4a52b77d4c3243df2e81f70c7fdce1d91270991a446e710ef4e132b
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210611140040_20210611142216_00028_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00028_echo_real none 4.58
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28360,8 +28358,8 @@ sha256 72490c3e763ebddcdb9065710672bfa8099641ba821fbaaca45c12f437c5e71f
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210612143959_20210612150247_00029_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00029_echo_real none 4.13
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28373,8 +28371,8 @@ sha256 278208da9a7332a490d08654675309b997081e3a05e83305f7bdebb68920587a
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210613151917_20210613154608_00030_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00030_echo_real none 4.51
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28386,8 +28384,8 @@ sha256 1cbbdf8314ed0a0f8b3fe04781381402df731740ec19238232a71ae1dc5e509b
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210614155835_20210614162453_00031_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00031_echo_real none 4.42
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28399,8 +28397,8 @@ sha256 2b5f22cb31e67f59f563028e7cae7c1d120e10a2dcc1c8ac16addc8c7f05a783
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210616171702_20210616172557_00033_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00033_echo_real none 3.28
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28412,8 +28410,8 @@ sha256 e5c9afb65533119fbc08020225cc1d9d962b4db0951234724b32940261ae436b
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210617172542_20210617174251_00034_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00034_echo_real none 4.58
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28425,8 +28423,8 @@ sha256 861c16e8cdfab646759678c37293c29691d545184c29475b93b0d65c8ef67e85
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210618180500_20210618183135_00035_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00035_echo_real none 4.22
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28438,8 +28436,8 @@ sha256 5efec8e8ff63d4f76dd5107c34e188f7376bc478e45944a4b4d23686f25df322
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210619184419_20210619190603_00036_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00036_echo_real none 4.18
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28451,8 +28449,8 @@ sha256 2f6cf23360c8492dc673d0bf462e7343acaef8a57dd22ab139393c07fd935362
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210623212136_20210623214627_00040_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00040_echo_real none 3.98
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28479,8 +28477,8 @@ at mars
 no-sampling
 field streamflow grdc_caravan_streamflow_mm_day mm/day 86400
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210627235846_20210628000439_00044_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00044_echo_real none 7.86
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28493,8 +28491,8 @@ field streamflow grdc_caravan_streamflow_mm_day mm/day 86400
 at mars
 no-sampling
 
-instrument RoPeR
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210630005145_20210630005917_00046_a.bin
+instrument RoPeR
 field Scientific_Data_R gras_2c_hf_hv_00046_echo_real none 8.88
 terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
@@ -28728,8 +28726,8 @@ ttl no-sampling
 field OBSVBL pioneer_doppler_hz Hz 60
 instrument DSN
 
-instrument DSN
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer11_SC_24.asc
+instrument DSN
 terms CC-BY-4.0 https://zenodo.org/records/13309040
 origin https://zenodo.org/api/records/13309040/files/SC_24.asc/content
 field OBSVBL pioneer_doppler_hz Hz 60
@@ -28869,9 +28867,9 @@ ra ramean
 dec decmean
 field gmag lasair_gmag mag 0
 instrument ZTF
-
 field gmag lasair_object_gmag mag 86400
 field gmag g_magnitude mag 86400
+
 url https://madrigal.eiscat.se/madrigal/isprintService.py?file=/opt/madrigal/experiments/2024/tro/03jan24/MAD6400_2024-01-03_bella_60@uhf.hdf5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
 terms eiscat-rules-of-the-road https://madrigal.eiscat.se/
 format openmadrigal
@@ -29099,9 +29097,8 @@ quantity Plx gaia_dr2_opencluster_plx_mas inverse-square geometry mas 604800 0.0
 quantity Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square source-parameter mag 604800 0.0 0.0
 quantity BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square source-parameter mag 604800 0.0 0.0
 
-field RA source_ra deg 0
-field RA source_ra deg 0
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
+field RA source_ra deg 0
 origin https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
 instrument VLA
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
@@ -29112,7 +29109,6 @@ cmap .
 ra RA_Source
 dec DEC_Source
 field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
-field Eloss rixs_charge_energy_loss_mev meV 0
 field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
