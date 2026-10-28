@@ -32,6 +32,20 @@ case "$body" in
             exit 2
         fi ;;
 esac
+
+if [ "${OMEGAFLOW_LOCAL:-}" != "1" ]; then
+    case "$body" in
+        *"cargo test"*|*"cargo bench"*|*"cargo clippy"*|*"nextest"*)
+            echo "blocked: Tests, Benchmarks und Clippy laufen in CI — dispatch (gh workflow run), lokal nur cargo check" >&2
+            exit 2 ;;
+        *"cargo build"*|*"cargo run"*)
+            case "$body" in
+                *"--bin"*) ;;
+                *) echo "blocked: lokal nur ein benanntes Bin (--bin); ganze Crates und Release baut CI" >&2
+                   exit 2 ;;
+            esac ;;
+    esac
+fi
 if [ "${OMEGAFLOW_WRITE:-}" != "1" ]; then
     case "$body" in
         *"sed -i"*|*"perl -i"*|*"truncate"*)
