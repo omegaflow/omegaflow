@@ -27298,7 +27298,7 @@ host wdcb.ru
   interval 60
   api_cite https://cires.gitbook.io/the-marine-geophysical-data-exchange-format
   api_ref "CIRES / National Geophysical Data Center (NGDC); Workshop Januar 1977, Gitbook-Fassung v0.1.0. The Marine Geophysical Data Exchange Format (MGD77/MGD77T), v0.1.0."
-  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
+  instrument_cite https://www.izmiran.ru/IZMIRAN75/MEP/Lyubimov.pdf
   instrument_ref "IFZ AN SSSR (Institut für Physik der Erde, Akademie der Wissenschaften der UdSSR); Katalog unter den Programmen ARCHIV-GRAVIK, Moskau. PET-12 — Fahrt 12 des Forschungsschiffs AKADEMIK PETROV, 1989."
   host_cite http://www.wdcb.ru/sep/
   host_ref "WDC for SEP, GC RAS, 1995-2024. WDC for SEP, Moscow — Welcome."
@@ -27309,7 +27309,7 @@ host wdcb.ru
   applies https://github.com/omegaflow/sources/releases/download/web.archive.org/Pet12.dat id=26239
   note MGD77, Fahrt 12 Akademik Petrov; Protonen-Präzessions-Magnetometer (Kopf Pos. 7), 1-min-Rate.
   instrument precession magnetometer
-  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
+  instrument_quote "В данной статье описаны основные этапы разработки протонных магнитометров для измерения модуля магнитного поля и приведены характеристики основных приборов, изготавливавшихся в ИЗМИРАН."
 
 host wdcb.ru
   instrument magnetometer
@@ -33123,7 +33123,7 @@ host web.archive.org
   interval null
   api_cite https://cires.gitbook.io/the-marine-geophysical-data-exchange-format
   api_ref "CIRES / National Geophysical Data Center (NGDC); Workshop Januar 1977, Gitbook-Fassung v0.1.0. The Marine Geophysical Data Exchange Format (MGD77/MGD77T), v0.1.0."
-  instrument_cite https://geomag.bgs.ac.uk/education/earthmag.html
+  instrument_cite https://www.izmiran.ru/IZMIRAN75/MEP/Lyubimov.pdf
   instrument_ref "IFZ AN SSSR (Institut für Physik der Erde, Akademie der Wissenschaften der UdSSR); Katalog unter den Programmen ARCHIV-GRAVIK, Moskau. PET-12 — Fahrt 12 des Forschungsschiffs AKADEMIK PETROV, 1989."
   host_cite https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
   host_ref "IFZ AN SSSR (Institut für Physik der Erde, Akademie der Wissenschaften der UdSSR); Katalog unter den Programmen ARCHIV-GRAVIK, Moskau. PET-12 — Fahrt 12 des Forschungsschiffs AKADEMIK PETROV, 1989."
@@ -33133,7 +33133,7 @@ host web.archive.org
   fields mtf
   note Key `mtf` = Total Field, 1. Sensor (MGD77); der Wert steht in Zehntel-nT, Register-Token nT. Gerät im Kopf benannt (Präzessionsmagnetometer, IZMIRAN). Keine Rate dokumentiert (MGD77: instrumentation dependent), field-Intervall null; statischer Fahrtbestand.
   instrument precession magnetometer
-  instrument_quote "The most common types of absolute instrument are the fluxgate theodolite for measuring D and I and the proton precession magnetometer for measuring F."
+  instrument_quote "В данной статье описаны основные этапы разработки протонных магнитометров для измерения модуля магнитного поля и приведены характеристики основных приборов, изготавливавшихся в ИЗМИРАН."
 
 host zenodo.org
   status messung
