@@ -374,6 +374,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
         0 => &[
             "w",
+            "cps",
             "w/m2",
             "kw",
             "gw",

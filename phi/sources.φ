@@ -12317,6 +12317,17 @@ field amp_min mariner10_occlt_amp_min inverse-square em count 0.00000625 0.0 0.0
 field amp_max mariner10_occlt_amp_max inverse-square em count 0.00000625 0.0 0.0
 field amp_mean mariner10_occlt_amp_mean inverse-square em count 0.00000625 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_odg.bin
+format mariner4_odg
+origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/PSCM-00021_DD001528_05-DEC-64.tar
+instrument DSN
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
+compiler tools/harvest/src/bin/mariner4_odg_compiler.rs
+sha256 77e1a1c6bea0e13d26b30b807d3607b5c9704a1159f35aa47d8f46575149031c
+at earth
+no-sampling
+field mariner4_odg_dtype_08 mariner4_odg_dtype_08 inverse-square em cps 0
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER

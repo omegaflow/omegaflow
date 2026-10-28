@@ -107,3 +107,8 @@ em nmgy
 # until tools-latest republishes the gate, then deleted.
 em v^2/hz
 em nt^2/hz
+
+# Mountain (2026-10-28): `cps` admitted to em in units.rs — the Mariner 4 ODG
+# Doppler count rate (archivar::mariner4_odg UNIT = cps, the observable a tracking
+# pass produces). Frozen here until tools-latest republishes the gate, then deleted.
+em cps
