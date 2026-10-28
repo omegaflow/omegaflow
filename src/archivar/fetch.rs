@@ -151,17 +151,57 @@ pub fn fetch_raw_bytes_with(
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
-        Some(output.stdout)
-    } else {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!(
-            "\r\x1b[Kfetch_bytes returned ({}): {} {}",
-            output.status,
-            redact_secret(url),
-            stderr.trim()
-        );
-        None
+        return Some(output.stdout);
     }
+    if url.starts_with("https://github.com/")
+        && std::env::var("GH_TOKEN").is_ok()
+        && let Some(bytes) = gh_release_download(url)
+    {
+        return Some(bytes);
+    }
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    eprintln!(
+        "\r\x1b[Kfetch_bytes returned ({}): {} {}",
+        output.status,
+        redact_secret(url),
+        stderr.trim()
+    );
+    None
+}
+
+fn gh_release_download(url: &str) -> Option<Vec<u8>> {
+    let rest = url.strip_prefix("https://github.com/")?;
+    let parts: Vec<&str> = rest.split('/').collect();
+    if parts.len() < 6 || parts[2] != "releases" || parts[3] != "download" {
+        return None;
+    }
+    let repo = format!("{}/{}", parts[0], parts[1]);
+    let tag = parts[4];
+    let name = parts[5..].join("/");
+    let tmp = std::env::temp_dir().join(format!(
+        "omegaflow-gh-{}-{}",
+        std::process::id(),
+        name.replace('/', "_")
+    ));
+    let out = Command::new("gh")
+        .arg("release")
+        .arg("download")
+        .arg(tag)
+        .arg("--repo")
+        .arg(&repo)
+        .arg("--pattern")
+        .arg(&name)
+        .arg("--output")
+        .arg(&tmp)
+        .arg("--clobber")
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let bytes = std::fs::read(&tmp).ok();
+    let _ = std::fs::remove_file(&tmp);
+    bytes
 }
 
 pub fn fetch_raw_to_file_with(
