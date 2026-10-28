@@ -72,6 +72,13 @@ fn push_coefficient(
     }
 }
 
+fn cut_mid_line(bytes: &[u8]) -> bool {
+    match bytes.last() {
+        Some(b'\n') | None => false,
+        Some(_) => true,
+    }
+}
+
 fn compile(
     bytes: &[u8],
     ttl: f64,
@@ -81,6 +88,11 @@ fn compile(
     origin: &str,
     ci_mode: bool,
 ) -> Result<(), String> {
+    if cut_mid_line(bytes) {
+        return Err(format!(
+            "{origin}: the last byte is not a newline — the file ends mid-line, a partial download, and the asset stays unwritten"
+        ));
+    }
     let (head, end_line) = parse_head(bytes).ok_or_else(|| {
         "the ICGEM header (begin_of_head/end_of_head) stays unread — the asset stays unwritten"
             .to_string()
@@ -384,5 +396,14 @@ gfc 2 2 2.439370331756250E-06 -1.400307649958125E-06 0.0 0.0\n";
         assert!(parse_ttl(Some("NaN")).is_err());
         assert!(parse_ttl(None).is_err());
         assert_eq!(parse_ttl(Some("300")).ok(), Some(300.0));
+    }
+
+    #[test]
+    fn a_partial_download_ends_mid_line_and_stays_unwritten() {
+        assert!(!cut_mid_line(PROBE.as_bytes()));
+        assert!(cut_mid_line(b"gfc   3039  1515    5.01"));
+        assert!(cut_mid_line(b"gfc   3039  1515    5.01\n\n."));
+        assert!(!cut_mid_line(b""));
+        assert!(!cut_mid_line(b"gfc 2 2 1.0 0.0 0.0 0.0\n"));
     }
 }
