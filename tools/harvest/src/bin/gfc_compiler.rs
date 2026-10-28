@@ -4,6 +4,7 @@ use omegaflow::archivar::gfc::{
     SLOT_PRESENCE, SLOT_TTL, SLOT_VAL, channel_of, channels, parse_head, write_bin,
 };
 use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::archivar::types::NO_CADENCE;
 use omegaflow::archivar::{embedded_lsk, parse_iso_tdb};
 use omegaflow::cdn::upload_release;
 use omegaflow::force::{force_id_of, kernel_id_for_force};
@@ -196,7 +197,11 @@ fn compile(
         println!("tide {tide}");
     }
     println!("max_degree {}", cap);
-    println!("ttl {}", ttl as u64);
+    if ttl as u64 == NO_CADENCE {
+        println!("no-sampling");
+    } else {
+        println!("ttl {}", ttl as u64);
+    }
     for c in channels() {
         println!(
             "field {} {} inverse-square gravity {} {} 0.0 0.0 norm:{}",
@@ -214,23 +219,31 @@ fn compile(
     Ok(())
 }
 
+fn parse_ttl(raw: Option<&str>) -> Result<f64, String> {
+    match raw {
+        Some("no-sampling") => Ok(NO_CADENCE as f64),
+        Some(v) => match v.parse::<f64>() {
+            Ok(t) if t.is_finite() && t > 0.0 => Ok(t),
+            _ => Err(format!(
+                "--ttl {v}: a cadence is seconds greater than zero, or the word no-sampling"
+            )),
+        },
+        None => Err(
+            "the model's ttl is declared per source — pass --ttl <secs>, or --ttl no-sampling for a static model"
+                .to_string(),
+        ),
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|a| a == "--help" || a == "-h") {
         println!(
-            "usage: gfc_compiler [--input <x.gfc>|--url <url>] [--out <file.bin>] --ttl <secs> [--max-degree <n>] [--epoch <ISO-8601>] [--ci-mode]"
+            "usage: gfc_compiler [--input <x.gfc>|--url <url>] [--out <file.bin>] --ttl <secs|no-sampling> [--max-degree <n>] [--epoch <ISO-8601>] [--ci-mode]"
         );
         return Ok(());
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let ttl = match arg_value(args, "--ttl").and_then(|v| v.parse::<f64>().ok()) {
-        Some(t) if t.is_finite() && t > 0.0 => t,
-        _ => {
-            return Err(
-                "the model's ttl is declared per source — pass --ttl <secs> (a ttl <= 0 drops every record)"
-                    .to_string(),
-            );
-        }
-    };
+    let ttl = parse_ttl(arg_value(args, "--ttl").as_deref())?;
     let max_degree = match arg_value(args, "--max-degree") {
         Some(v) => Some(
             v.parse::<u32>()
@@ -355,5 +368,21 @@ gfc 2 2 2.439370331756250E-06 -1.400307649958125E-06 0.0 0.0\n";
     fn gfct_maps_to_its_own_channels() {
         assert_eq!(channel_of(FUNC_GFCT, false), Some(3));
         assert_eq!(channel_of(FUNC_GFCT, true), Some(4));
+    }
+
+    #[test]
+    fn a_static_model_carries_the_house_sentinel_not_an_invented_cadence() {
+        let ttl = parse_ttl(Some("no-sampling")).expect("the word is accepted");
+        assert_eq!(ttl as u64, NO_CADENCE);
+        assert_eq!(NO_CADENCE, 1 << 25);
+    }
+
+    #[test]
+    fn a_zero_or_missing_cadence_stays_refused() {
+        assert!(parse_ttl(Some("0")).is_err());
+        assert!(parse_ttl(Some("-5")).is_err());
+        assert!(parse_ttl(Some("NaN")).is_err());
+        assert!(parse_ttl(None).is_err());
+        assert_eq!(parse_ttl(Some("300")).ok(), Some(300.0));
     }
 }
