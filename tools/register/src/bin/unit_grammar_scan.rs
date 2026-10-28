@@ -40,7 +40,7 @@ fn split_terms(s: &str) -> Vec<String> {
     let mut out = Vec::new();
     let mut cur = String::new();
     for c in s.chars() {
-        if c == '.' || c == '/' {
+        if c == '.' || c == '/' || c == '(' || c == ')' {
             if !cur.is_empty() {
                 out.push(std::mem::take(&mut cur));
             }
@@ -156,6 +156,9 @@ fn main() {
             continue;
         }
         let mut ok = !clean.is_empty();
+        if clean.is_empty() && unit.trim_start().starts_with('{') {
+            ok = true;
+        }
         for term in split_terms(&clean) {
             if term == "1" {
                 continue;
