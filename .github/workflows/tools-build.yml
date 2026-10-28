@@ -50,14 +50,15 @@ jobs:
         fi
         if [ -z "$d" ]; then build_all=1; fi
         if printf '%s\n' "$d" | grep -qE '^(src/|bin/|Cargo[.]toml$|Cargo[.]lock$)'; then build_all=1; fi
-        reg=0; utl=0; gat=0; svc=0; cor=0
-        if [ "$build_all" = "1" ]; then reg=1; utl=1; gat=1; svc=1; cor=1; fi
+        reg=0; utl=0; gat=0; svc=0; cor=0; app=0
+        if [ "$build_all" = "1" ]; then reg=1; utl=1; gat=1; svc=1; cor=1; app=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/register/'; then reg=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/utils/'; then utl=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/gate/'; then gat=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/service/'; then svc=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/measure/'; then cor=1; fi
-        printf 'reg=%s\nutl=%s\ngat=%s\nsvc=%s\ncor=%s\n' "$reg" "$utl" "$gat" "$svc" "$cor" >> "$GITHUB_OUTPUT"
+        if printf '%s\n' "$d" | grep -q '^tools/app/'; then app=1; fi
+        printf 'reg=%s\nutl=%s\ngat=%s\nsvc=%s\ncor=%s\napp=%s\n' "$reg" "$utl" "$gat" "$svc" "$cor" "$app" >> "$GITHUB_OUTPUT"
     # Carry the previous release's binaries into target/release so an unchanged
     # crate need not be rebuilt. The manifest doubles as the completeness guard.
     - name: Carry over the previous release
@@ -66,6 +67,11 @@ jobs:
       run: |
         mkdir -p target/release
         gh release download tools-latest --repo omegaflow/omegaflow --dir target/release --clobber 2>/dev/null || true
+        if [ -f target/release/tools.manifest ]; then
+          awk '!/^git_sha=/{print $1}' target/release/tools.manifest | while read -r t; do
+            chmod +x "target/release/$t" 2>/dev/null || true
+          done
+        fi
     - name: Build the changed published crates
       env:
         GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
@@ -83,7 +89,7 @@ jobs:
           echo "carry incomplete (expected=$expected got=$got) — building the full published set"
           cargo build --release --bins -p omegaflow-register -p omegaflow-utils -p omegaflow-gate
           cargo build --release -p omegaflow-service
-          cargo build --release -p omegaflow --bin omegaflow --features browser_relay
+          cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
           exit 0
         fi
         if [ "${{ steps.changed.outputs.reg }}" = "1" ]; then cargo build --release --bins -p omegaflow-register; fi
@@ -91,7 +97,10 @@ jobs:
         if [ "${{ steps.changed.outputs.gat }}" = "1" ]; then cargo build --release --bins -p omegaflow-gate; fi
         if [ "${{ steps.changed.outputs.svc }}" = "1" ]; then cargo build --release -p omegaflow-service; fi
         if [ "${{ steps.changed.outputs.cor }}" = "1" ]; then
-          cargo build --release -p omegaflow --bin omegaflow --features browser_relay
+          cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
+        fi
+        if [ "${{ steps.changed.outputs.app }}" = "1" ]; then
+          cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
         fi
     - name: Tool list
       run: |
