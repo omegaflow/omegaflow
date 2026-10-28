@@ -304,6 +304,7 @@ pub mod snirf;
 pub mod spatial;
 pub mod spectral;
 pub mod stac;
+pub mod star_catalog;
 #[cfg(test)]
 mod tests;
 pub mod types;
