@@ -51,6 +51,7 @@ pub struct TecSample {
     pub champ_vtec: f64,
     pub iri_tec: f64,
     pub klobuchar_tec: f64,
+    pub code_tec: f64,
 }
 
 const TABLE: &str = include_str!("kernels/ionosphere_tec.tsv");
@@ -62,7 +63,7 @@ pub fn parse_table(text: &str) -> Option<Vec<TecSample>> {
             continue;
         }
         let cols: Vec<&str> = line.split('\t').collect();
-        if cols.len() < 6 {
+        if cols.len() < 7 {
             return None;
         }
         out.push(TecSample {
@@ -72,6 +73,7 @@ pub fn parse_table(text: &str) -> Option<Vec<TecSample>> {
             champ_vtec: cols[3].trim().parse().ok()?,
             iri_tec: cols[4].trim().parse().ok()?,
             klobuchar_tec: cols[5].trim().parse().ok()?,
+            code_tec: cols[6].trim().parse().ok()?,
         });
     }
     if out.is_empty() { None } else { Some(out) }
@@ -106,12 +108,49 @@ mod tests {
     }
 
     #[test]
-    fn the_fixture_carries_four_samples_with_three_sources() {
+    fn the_fixture_carries_four_samples_with_four_sources() {
         let rows = fixture().expect("ionosphere fixture");
         assert_eq!(rows.len(), 4);
         for r in &rows {
             assert!(r.lat_deg.abs() <= 90.0);
-            assert!(r.champ_vtec > 0.0 && r.iri_tec > 0.0 && r.klobuchar_tec > 0.0);
+            assert!(
+                r.champ_vtec > 0.0
+                    && r.iri_tec > 0.0
+                    && r.klobuchar_tec > 0.0
+                    && r.code_tec > 0.0
+            );
+        }
+    }
+
+    #[test]
+    fn iri_holds_against_the_code_map() {
+        let rows = fixture().expect("ionosphere fixture");
+        for r in &rows {
+            let diff = (r.iri_tec - r.code_tec).abs();
+            assert!(
+                diff <= 3.5,
+                "{}: IRI {:.2} vs CODE {:.2} differ by {:.2} TECU",
+                r.time_utc,
+                r.iri_tec,
+                r.code_tec,
+                diff
+            );
+        }
+    }
+
+    #[test]
+    fn the_broadcast_model_agrees_with_the_code_map() {
+        let rows = fixture().expect("ionosphere fixture");
+        for r in &rows {
+            let diff = (r.klobuchar_tec - r.code_tec).abs();
+            assert!(
+                diff <= 1.5,
+                "{}: Klobuchar {:.2} vs CODE {:.2} differ by {:.2} TECU",
+                r.time_utc,
+                r.klobuchar_tec,
+                r.code_tec,
+                diff
+            );
         }
     }
 
