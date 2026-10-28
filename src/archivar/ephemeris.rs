@@ -365,9 +365,9 @@ pub fn nutation_delta_fit(
     chebyshev_fit(&samples, NUT_DEGREE)
 }
 
-type GranuleVec = Vec<f64>;
-type Granule = (f64, f64, GranuleVec, GranuleVec, GranuleVec);
-type RotationRec = (f64, [f64; 9]);
+pub type GranuleVec = Vec<f64>;
+pub type Granule = (f64, f64, GranuleVec, GranuleVec, GranuleVec);
+pub type RotationRec = (f64, [f64; 9]);
 
 pub fn extract_granules(
     spk: &SpkFile,
