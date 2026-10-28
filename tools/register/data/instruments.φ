@@ -38194,7 +38194,7 @@ host meeo-s5p.s3.amazonaws.com
   ttl 604800
   probe 2026-10-28T09:32:14Z 200 https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/2018/04/30/
   fields ozone_tropospheric_vertical_column
-  applies https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/2018/04/30/ line=1
+  applies https://meeo-s5p.s3.amazonaws.com/OFFL/L2__O3_TCL/2018/04/30/ line=1
   field ozone_tropospheric_vertical_column meeo_s5p_o3_tcl mol/m2 null
   note MEEO-Asset S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc, 962515 B; Intervall null, bis der Harvest die Zeitfolge misst.
 
