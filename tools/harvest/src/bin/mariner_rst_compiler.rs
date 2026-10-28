@@ -31,6 +31,41 @@ fn words_of(payload: &[u8]) -> Vec<u64> {
         .collect()
 }
 
+const RST_POINT_WORDS: usize = 21;
+const TWO_WAY_DOPPLER: u32 = 8;
+
+fn single(w: u64) -> f64 {
+    let sign = if (w >> 35) & 1 == 1 { -1.0 } else { 1.0 };
+    let exp = ((w >> 27) & 0xFF) as i32;
+    let frac = (w & 0x07FF_FFFF) as f64 / (2f64.powi(27));
+    sign * frac * 2f64.powi(exp - 128)
+}
+
+fn rst_points(data: &[u8]) -> Vec<(f64, f64, u32)> {
+    let mut out = Vec::new();
+    let Some(epoch) = days_from_civil(1950, 1, 1).map(|d| d as f64 * 86400.0) else {
+        return out;
+    };
+    let mut off = 0usize;
+    while off + 2 <= data.len() {
+        let len = u16::from_be_bytes([data[off], data[off + 1]]) as usize;
+        let start = off + 2;
+        let end = start + len;
+        if len == 0 || end > data.len() {
+            break;
+        }
+        let words = words_of(&data[start..end]);
+        if words.len() == RST_POINT_WORDS {
+            let t = epoch + single(words[2]);
+            if (-252_460_800.0..=189_345_600.0).contains(&t) {
+                out.push((t, single(words[19]), TWO_WAY_DOPPLER));
+            }
+        }
+        off = end;
+    }
+    out
+}
+
 fn unix_from_words(w2: u64, w3: u64) -> Option<f64> {
     let v: u128 = ((w2 as u128) << 36) | (w3 as u128);
     let exp = ((v >> 63) & 0xFF) as i32;
@@ -42,13 +77,6 @@ fn unix_from_words(w2: u64, w3: u64) -> Option<f64> {
     }
     let epoch1950 = (days_from_civil(1950, 1, 1)? as f64) * 86400.0;
     Some(epoch1950 + seconds)
-}
-
-fn hex_single(w: u64) -> f64 {
-    let sign = if (w >> 35) & 1 == 1 { -1.0 } else { 1.0 };
-    let exp = ((w >> 28) & 0x7F) as i32;
-    let frac = (w & 0x0FFF_FFFF) as f64 / (2f64.powi(28));
-    sign * frac * 16f64.powi(exp - 64)
 }
 
 fn code_bits(code: u64) -> Vec<u32> {
@@ -129,7 +157,7 @@ fn sp_odg_record_observables(record: &[u64]) -> Vec<(f64, f64, u32)> {
         let Some(&obs) = record.get(6 + 2 * pair) else {
             break;
         };
-        let v = hex_single(obs);
+        let v = single(obs);
         if v.is_finite() {
             out.push((t, v, dtype));
         }
@@ -174,6 +202,10 @@ fn run(args: &[String]) -> Result<(), String> {
     };
 
     for data in dats {
+        if !sp {
+            rows.extend(rst_points(data));
+            continue;
+        }
         if sp {
             let mut words = Vec::new();
             let mut off = 0usize;
@@ -212,7 +244,7 @@ fn run(args: &[String]) -> Result<(), String> {
                     let bits = code_bits(words[7]);
                     for (j, &dtype) in bits.iter().enumerate() {
                         if let Some(&w) = words.get(8 + j) {
-                            rows.push((t, hex_single(w), dtype));
+                            rows.push((t, single(w), dtype));
                         }
                     }
                 }
@@ -422,5 +454,26 @@ mod tests {
         let records = sp_odg_logical_records(&decoded);
         assert_eq!(records.len(), 1);
         assert!(sp_odg_record_observables(records[0]).is_empty());
+    }
+
+    #[test]
+    fn the_first_mariner6_point_lands_on_its_label() {
+        let hex = "000014000001000000000013133420162f19101e00000000122f300128000f100000000011142c0000000d380000000013163100000500050300003c03000501070301000101070003000501070300000000000000000000000000000000000000000000000000000000000000080319231b1206113122340e2e062d2920";
+        let bytes: Vec<u8> = (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).expect("hex"))
+            .collect();
+        let mut framed = Vec::new();
+        framed.extend_from_slice(&(bytes.len() as u16).to_be_bytes());
+        framed.extend_from_slice(&bytes);
+        let rows = rst_points(&framed);
+        assert_eq!(rows.len(), 1, "{rows:?}");
+        assert!((rows[0].0 - (-26_427_064.0)).abs() < 1.0, "t = {}", rows[0].0);
+        assert!(
+            (rows[0].1 - 51_427.087_891).abs() < 1e-3,
+            "obs = {}",
+            rows[0].1
+        );
+        assert_eq!(rows[0].2, TWO_WAY_DOPPLER);
     }
 }
