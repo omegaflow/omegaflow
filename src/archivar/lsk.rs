@@ -62,11 +62,11 @@ pub(crate) fn tdb_minus_tt_full(
     let t = ((date1 - DJ00) + date2) / DJM;
     let tsol = (ut % 1.0) * std::f64::consts::TAU + elong;
     let w = t / 3600.0;
-    let elsun = (280.46645683_f64 + 1_296_027_711.03429 * w).rem_euclid(360.0) * DD2R;
+    let elsun = (280.46645683_f64 + 1_296_027_711.034_29 * w).rem_euclid(360.0) * DD2R;
     let emsun = (357.52910918_f64 + 1_295_965_810.481 * w).rem_euclid(360.0) * DD2R;
     let d = (297.85019547_f64 + 16_029_616_012.090 * w).rem_euclid(360.0) * DD2R;
-    let elj = (34.35151874_f64 + 109_306_899.89453 * w).rem_euclid(360.0) * DD2R;
-    let els = (50.07744430_f64 + 44_046_398.47038 * w).rem_euclid(360.0) * DD2R;
+    let elj = (34.35151874_f64 + 109_306_899.894_53 * w).rem_euclid(360.0) * DD2R;
+    let els = (50.07744430_f64 + 44_046_398.470_38 * w).rem_euclid(360.0) * DD2R;
     let wt = 0.00029e-10 * u * (tsol + elsun - els).sin()
         + 0.00100e-10 * u * (tsol - 2.0 * emsun).sin()
         + 0.00133e-10 * u * (tsol - d).sin()
@@ -298,7 +298,7 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
     fn tdb_minus_tt_matches_the_erfa_published_vector() {
         let got = tdb_minus_tt_full(2_448_939.5, 0.123, 0.76543, 5.0123, 5525.242, 3190.0)
             .expect("the frozen series parses");
-        let want = -0.1280368005936998991e-2;
+        let want = -1.280_368_005_936_999e-3;
         assert!(
             (got - want).abs() <= 1e-15,
             "eraDtdb vector: got {got:.18e}, want {want:.18e}"

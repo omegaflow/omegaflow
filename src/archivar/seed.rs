@@ -119,10 +119,10 @@ pub fn parse(xml: &str) -> Option<Network> {
             let Some(code) = attr(ch, "code") else {
                 continue;
             };
-            let location = match attr(ch, "locationCode") {
-                Some(v) => v,
-                None => String::new(),
-            };
+            let mut location = String::new();
+            if let Some(v) = attr(ch, "locationCode") {
+                location = v;
+            }
             let Some(sample_rate_hz) = num(ch, "SampleRate") else {
                 continue;
             };
