@@ -38177,3 +38177,24 @@ host ssd.jpl.nasa.gov
   applies https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/optical_format.txt
   note REFERENZ: Formatdokument für optische und Radar-Beobachtungen; es beschreibt Spalten, enthält aber keine Messwerte.
 
+
+host meeo-s5p.s3.amazonaws.com
+  instrument TROPOMI
+  unit mol/m2
+  sampling none
+  interval null
+  api_cite https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/2018/04/30/
+  api_ref "Copernicus Sentinel-5P / MEEO, S3-Bucket meeo-s5p, Abruf 2026-10-28. Listing des Produkts L2__O3_TCL."
+  api_quote "<KeyCount>1</KeyCount> <MaxKeys>1000</MaxKeys> <IsTruncated>false</IsTruncated> ... <Size>962515</Size>"
+  instrument_cite https://www.tropomi.eu/
+  instrument_ref "KNMI/ESA, TROPOMI — TROPOspheric Monitoring Instrument, Abruf 2026-10-28."
+  instrument_quote "TROPOMI (Tropospheric Monitoring Instrument) is a cutting-edge sensor that provides the high-resolution data essential for understanding atmospheric processes and environmental changes."
+  host_cite https://meeo-s5p.s3.amazonaws.com/?list-type=2
+  host_quote "<Name>meeo-s5p</Name> ... <KeyCount>1000</KeyCount>"
+  ttl 604800
+  probe 2026-10-28T09:32:14Z 200 https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/2018/04/30/
+  fields ozone_tropospheric_vertical_column
+  applies https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/2018/04/30/ line=1
+  field ozone_tropospheric_vertical_column meeo_s5p_o3_tcl mol/m2 null
+  note MEEO-Asset S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc, 962515 B; Intervall null, bis der Harvest die Zeitfolge misst.
+
