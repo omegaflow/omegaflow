@@ -1283,6 +1283,11 @@ mod tests {
         let air = file.values_numeric(bytes, "air").expect("air values");
         assert_eq!(air.len(), 126_144);
         assert!((air[0] + 28.13465).abs() < 5e-3, "first value {}", air[0]);
+        assert!(
+            (air[0] + 28.13516).abs() < 1e-3,
+            "NCO's own unpacking of the same file gives -28.13516, was {}",
+            air[0]
+        );
         let lo = air.iter().cloned().fold(f64::INFINITY, f64::min);
         let hi = air.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
         assert!((lo + 62.64235).abs() < 5e-3, "minimum {lo}");
