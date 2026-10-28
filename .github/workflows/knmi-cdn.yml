@@ -50,6 +50,7 @@ jobs:
     if: always() && needs.knmi.result == 'success'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
       - name: Fold every knmi shard on the CDN into the year-less series manifest
         run: |
           set -euo pipefail

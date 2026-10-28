@@ -44,6 +44,7 @@ jobs:
     if: always() && needs.worldclim.result == 'success'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
       - name: Fold every worldclim shard on the CDN into the year-less series manifest
         run: |
           set -euo pipefail
