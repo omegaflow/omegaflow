@@ -971,6 +971,16 @@ sha256 0845ccc710b8599393e800e035ed2638542f8f89dc5aab91175417bded82b329
 on earth 52.52 13.405 0
 ttl 3600
 field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
+url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/carbon_dioxide.json
+origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide&timezone=GMT
+instrument CAMS
+terms CC-BY-4.0 https://open-meteo.com/en/licence
+sha256 7893c01eaf3d45ac695d8f2971c72c48b5d46b7e8cc0626bb9809715068fa651
+ttl 3600
+map current
+epoch time
+on earth 19.5 -155.6 3927
+field carbon_dioxide openmeteo_co2_ppm ppm 3600
 
 url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
 format opensensemap_temperatur
@@ -4076,8 +4086,6 @@ ttl 2592000
 last average atmosphere_ch4_ppb_global ppb 2592000
 last trend atmosphere_ch4_trend_ppb ppb 2592000
 
-field average atmosphere_ch4_ppb_global ppb 2592000
-field average atmosphere_ch4_ppb_global ppb 2592000
 url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
 origin https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
 ttl 86400
@@ -4087,7 +4095,6 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth 19.5362 -155.5763 0
 lastrow average atmosphere_n2o_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
 
-field average atmosphere_n2o_ppb_global ppb 2592000
 url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
 instrument air_sampling_network
 origin https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
@@ -4097,7 +4104,6 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth 19.5362 -155.5763 0
 lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
 
-field average atmosphere_sf6_ppt_global ppt 2592000
 url https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 origin https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 instrument hf-radar
@@ -10394,7 +10400,6 @@ dec DEdeg
 field HRV rave_dr4_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 quantity Teff_K rave_dr4_effective_temp_k erfc source-parameter K 604800 0.0 0.0
 
-field carbon_dioxide openmeteo_co2_ppm ppm 3600
 url https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
 origin https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
 instrument PACS
@@ -26761,7 +26766,6 @@ no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 instrument MSK
 
-field MPSP obn2000_mpsp_magnitude 1 0
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9904.ZIP
 field H msk_h_nt nT 60
 origin https://web.archive.org/web/20030728194457id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9904.ZIP
@@ -26772,7 +26776,6 @@ sha256 659510dda54bc9f4c0a29fbec7d06df95879a70c9178837424462ca49b967960
 at earth
 no-sampling
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field MPSP obn2000_mpsp_magnitude 1 0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9905.ZIP
 origin https://web.archive.org/web/20030728194744id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9905.ZIP
@@ -26810,7 +26813,6 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9909.ZIP
 origin https://web.archive.org/web/20030729001547id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9909.ZIP
 instrument MSK
-field MPSP obn2000_mpsp_magnitude 1 0
 field H msk_h_nt nT 60
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 27f0dcf105dd583f54e03b0ae9c7a6f16f40f63767a614d4b50f3bdf97d5841d
@@ -26829,7 +26831,6 @@ sha256 0b900961afe5183c96881acbd8464e3c32612ee03f7e9862624c2af6d790b09c
 at earth datum=WGS84 coverage=open
 ttl no-sampling
 field H msk_h_nt nT 60
-field MPSP obn_mpsp_magnitude 1 0
 instrument MSK
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9912.ZIP
@@ -26842,7 +26843,6 @@ sha256 b1c73c38954ff62e66b5d677acdbb5bfedfdec750c994fe8fb3465b4cedd11a3
 at earth datum=WGS84 coverage=open
 ttl no-sampling
 field H msk_h_nt nT 60
-field MPSP obn_mpsp_magnitude 1 0
 instrument MSK
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000.txt
@@ -27684,7 +27684,6 @@ field MAG magnitude 1 0
 no-sampling
 terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
-field ALAND land_area m2 0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-11_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
 origin https://zenodo.org/api/records/10673982/files/2018-11_RBN.gz/content
@@ -27775,7 +27774,6 @@ format csv_gz
 at earth
 no-sampling
 
-field mass asteroid_mass kg 0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/KC0PEclipseLogU2.txt
 terms CC-BY-4.0 https://zenodo.org/records/999021
 origin https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content
@@ -27807,7 +27805,6 @@ sha256 1ddfcd6b9a9feff5ac3a573c8c26dc7a9a03685a99aed84bf5ce95e28b03d98b
 field backscatter venus_radar_basemap_2025_backscatter 1 0
 no-sampling
 
-field elevation radar_elevation m 0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif
 terms CC-BY-4.0 https://zenodo.org/records/18176179
 instrument Venera 15/16 SAR
@@ -28825,7 +28822,6 @@ sha256 7008e1d1b30c9f9a6f8f5ecdab98d0addc77ed597830ef40eb72a093cbd3d1ce
 sha256 7008e1d1b30c9f9a6f8f5ecdab98d0addc77ed597830ef40eb72a093cbd3d1ce
 no-sampling
 
-field elevation radar_elevation m 0
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
 origin https://gracedb.ligo.org/api/superevents/S250207bg/files/
 instrument interferometer
@@ -29186,7 +29182,6 @@ no-sampling
 field ene eels_energy_loss_mev meV 0
 instrument AGS-AGM
 
-field E energy_loss eV 0
 url https://zenodo.org/api/records/4444068/files/Node_1_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
 terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
