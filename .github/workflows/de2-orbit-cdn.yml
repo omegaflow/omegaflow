@@ -40,6 +40,8 @@ jobs:
           cargo build -p omegaflow-harvest --release --bin de2_orbit_compiler
           ./target/release/de2_orbit_compiler de2_orbit.cdf ephemeris_de2.bin
           ls -l ephemeris_de2.bin
+      - name: Read the written file back and compare it with the CDF
+        run: ./target/release/de2_orbit_compiler --check ephemeris_de2.bin de2_orbit.cdf
       - name: Publish to the ephemeris tag
         run: |
           if ! gh release view ssd.jpl.nasa.gov-ephemeris --repo omegaflow/sources >/dev/null 2>&1; then

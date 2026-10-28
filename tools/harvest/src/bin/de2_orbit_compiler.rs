@@ -1,5 +1,5 @@
 use omegaflow::archivar::J2000_EPOCH;
-use omegaflow::archivar::motion::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
+use omegaflow::archivar::motion::{BodyEphemeris, body_barycenter_position};
 use omegaflow::cdf::{CdfFile, cdf_epoch_unix, tt2000_unix};
 use omegaflow::ephemeris::{CHEBYSHEV_DEGREE, chebyshev_fit, write_binary};
 use omegaflow::pck::PckBody;
@@ -297,6 +297,8 @@ fn main() {
         j2: None,
         j4: None,
         nut_ra: None,
+        nut_dec: None,
+        nut_pm: None,
     };
 
     println!(
