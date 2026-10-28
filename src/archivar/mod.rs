@@ -54,6 +54,7 @@ pub mod charm2;
 pub mod cif;
 pub mod ck;
 pub mod cometels;
+pub mod constants;
 pub mod copernicus;
 pub mod cors;
 pub mod coverage_manifest;
