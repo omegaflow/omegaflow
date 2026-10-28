@@ -235,7 +235,7 @@ fn detrend(x: &[f64], linear: bool) -> Vec<f64> {
     }
     let b = if sxx > 0.0 { sxy / sxx } else { 0.0 };
     for (k, v) in y.iter_mut().enumerate() {
-        *v -= (mx + b * (k as f64 - mt));
+        *v -= mx + b * (k as f64 - mt);
     }
     y
 }
