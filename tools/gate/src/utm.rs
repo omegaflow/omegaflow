@@ -98,10 +98,23 @@ pub fn zone_letter(latitude_deg: f64) -> Option<char> {
 }
 
 pub fn to_utm_wgs84(latitude_deg: f64, longitude_deg: f64, zone: u8) -> (f64, f64, f64) {
+    let lam0 = (zone as f64 * 6.0 - 183.0).to_radians();
+    let (mut northing, mut easting, convergence) = tm_at(latitude_deg, longitude_deg, lam0);
+    if latitude_deg < 0.0 {
+        northing += FALSE_NORTHING_SOUTH;
+    }
+    easting += FALSE_EASTING;
+    (northing, easting, convergence)
+}
+
+pub fn to_tm_wgs84_cm0(latitude_deg: f64, longitude_deg: f64) -> (f64, f64, f64) {
+    tm_at(latitude_deg, longitude_deg, 0.0)
+}
+
+fn tm_at(latitude_deg: f64, longitude_deg: f64, lam0: f64) -> (f64, f64, f64) {
     let s = series();
     let phi = latitude_deg.to_radians();
     let lam = longitude_deg.to_radians();
-    let lam0 = (zone as f64 * 6.0 - 183.0).to_radians();
     let dlam = lam - lam0;
     let e = (F_WGS84 * (2.0 - F_WGS84)).sqrt();
 
@@ -124,13 +137,8 @@ pub fn to_utm_wgs84(latitude_deg: f64, longitude_deg: f64, zone: u8) -> (f64, f6
         df_im -= k * a * (k * xi_p).sin() * (k * eta_p).sinh();
     }
 
-    let northing = K0 * s.rectifying_radius * xi
-        + if latitude_deg < 0.0 {
-            FALSE_NORTHING_SOUTH
-        } else {
-            0.0
-        };
-    let easting = K0 * s.rectifying_radius * eta + FALSE_EASTING;
+    let northing = K0 * s.rectifying_radius * xi;
+    let easting = K0 * s.rectifying_radius * eta;
 
     let rot_series = df_im.atan2(df_re);
     let rot_u = (-(tau_p * dlam.sin())).atan2(cosh_psi * dlam.cos());
@@ -258,5 +266,65 @@ mod tests {
         let (_, _, east) = to_utm_wgs84(50.0, 11.0, 32);
         assert!(west < 0.0, "west convergence {west}");
         assert!(east > 0.0, "east convergence {east}");
+    }
+}
+
+#[cfg(test)]
+mod tmcoords {
+    use super::to_tm_wgs84_cm0;
+
+    #[test]
+    fn the_exact_reference_holds_to_a_micrometre_near_the_meridian() {
+        let text = include_str!("../data/tmcoords_sample.tsv");
+        let mut bands = [0.0_f64; 10];
+        let mut near = 0.0_f64;
+        let mut near_at = String::new();
+        let mut n = 0usize;
+        let mut skipped = 0usize;
+        for line in text.lines() {
+            if line.starts_with("#") || line.trim().is_empty() {
+                continue;
+            }
+            let c: Vec<&str> = line.split_whitespace().collect();
+            if c.len() < 4 {
+                continue;
+            }
+            let Ok(lat) = c[0].parse::<f64>() else {
+                continue;
+            };
+            let Ok(lon) = c[1].parse::<f64>() else {
+                continue;
+            };
+            let Ok(e_ref) = c[2].parse::<f64>() else {
+                continue;
+            };
+            let Ok(n_ref) = c[3].parse::<f64>() else {
+                continue;
+            };
+            if lat < 0.0 {
+                continue;
+            }
+            let (north, east, _) = to_tm_wgs84_cm0(lat, lon);
+            let d = (east - e_ref).abs().max((north - n_ref).abs());
+            if !d.is_finite() || d > 1e6 {
+                skipped += 1;
+                continue;
+            }
+            let b = ((lon.abs() / 10.0) as usize).min(9);
+            if d > bands[b] {
+                bands[b] = d;
+            }
+            if lon.abs() <= 40.0 && d > near {
+                near = d;
+                near_at = format!("{lat} {lon}");
+            }
+            n += 1;
+        }
+        eprintln!("bands 0-90 deg: {bands:?}, near worst {near:.3e} at {near_at}, n {n}, skipped {skipped}");
+        assert!(n > 6000, "sample carried {n} points");
+        assert!(
+            near < 1e-6,
+            "within 40 deg the worst deviation is {near:.3e} m at {near_at} over {n} points"
+        );
     }
 }
