@@ -1,0 +1,51 @@
+# harvest: format=ephemeris_de2 asset=ephemeris_de2.bin arm=de2_orbit_compiler
+
+name: de2-orbit-cdn
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/harvest/src/bin/de2_orbit_compiler.rs'
+      - 'src/archivar/ephemeris.rs'
+      - '.github/workflows/de2-orbit-cdn.yml'
+
+concurrency:
+  group: de2-orbit-cdn
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the DE-2 orbit/attitude CDF
+        run: |
+          curl -fsSL --retry 5 --retry-all-errors \
+            -o de2_orbit.cdf \
+            https://spdf.gsfc.nasa.gov/pub/data/de/de2/orbit/de2_orbit-attitude_19810815_v01.cdf
+          ls -l de2_orbit.cdf
+      - name: Compile the orbit to the body-ephemeris format
+        run: |
+          cargo build -p omegaflow-harvest --release --bin de2_orbit_compiler
+          ./target/release/de2_orbit_compiler de2_orbit.cdf ephemeris_de2.bin
+          ls -l ephemeris_de2.bin
+      - name: Publish to the ephemeris tag
+        run: |
+          if ! gh release view ssd.jpl.nasa.gov-ephemeris --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ssd.jpl.nasa.gov-ephemeris --repo omegaflow/sources \
+              --title "ssd.jpl.nasa.gov-ephemeris" \
+              --notes "body ephemerides in the Chebyshev container"
+          fi
+          gh release upload ssd.jpl.nasa.gov-ephemeris ephemeris_de2.bin \
+            --repo omegaflow/sources --clobber
