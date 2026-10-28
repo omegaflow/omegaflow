@@ -3,8 +3,31 @@ use std::collections::BTreeSet;
 use std::fs;
 use std::process::Command;
 
-const REG: &str = "tools/register/data/instruments.φ";
 const PHI: &str = "phi/sources.φ";
+
+fn work_root() -> std::path::PathBuf {
+    match std::env::var_os("OMEGAFLOW_WORK") {
+        Some(w) => std::path::PathBuf::from(w),
+        None => match std::env::var_os("HOME") {
+            Some(h) => std::path::PathBuf::from(h).join("projects/omegaflow-work"),
+            None => std::path::PathBuf::new(),
+        },
+    }
+}
+
+fn reg_path() -> String {
+    work_root()
+        .join("research/sources/instruments.φ")
+        .to_string_lossy()
+        .into_owned()
+}
+
+fn phi_work_path() -> String {
+    work_root()
+        .join("research/sources/sources.φ")
+        .to_string_lossy()
+        .into_owned()
+}
 
 fn blocks(text: &str) -> Vec<(usize, Vec<String>)> {
     let mut out = Vec::new();
@@ -90,7 +113,7 @@ fn normalize(block: &mut [String]) {
 
 fn merge_rows(out_path: &str, state_path: &str) {
     let text = fs::read_to_string(out_path).expect("out file");
-    let mut reg_text = fs::read_to_string(REG).expect("register");
+    let mut reg_text = fs::read_to_string(reg_path()).expect("register");
     if !reg_text.ends_with('\n') {
         reg_text.push('\n');
     }
@@ -135,7 +158,7 @@ fn merge_rows(out_path: &str, state_path: &str) {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     if !states.is_empty() {
         let mut old = match fs::read_to_string(state_path) {
             Ok(s) => s,
@@ -196,12 +219,12 @@ fn apply_instruments(tsv_path: &str) {
         lines.insert(at, line);
         added += 1;
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!("instrument: {added} eingesetzt");
 }
 
 fn host_docs() {
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out = String::new();
     let mut docs = 0usize;
     let mut failed = 0usize;
@@ -268,7 +291,7 @@ fn host_docs() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!(
         "rows {rows}, mit probe {with_probe}, host_cite: {docs} ergaenzt, {failed} ohne Header"
     );
@@ -289,7 +312,7 @@ fn url_id(url: &str) -> Option<String> {
 }
 
 fn probe_fill() {
-    let reg_text = fs::read_to_string(REG).expect("register");
+    let reg_text = fs::read_to_string(reg_path()).expect("register");
     let phi_text = fs::read_to_string(PHI).expect("phi");
     let mut rows = blocks(&reg_text);
     let mut filled = 0usize;
@@ -381,14 +404,14 @@ fn probe_fill() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!(
         "probe: {filled} ergaenzt, {failed} ohne Antwort, {seen} schon belegt, {no_row} ohne Zeile, {considered} mit Zeile"
     );
 }
 
 fn probe_drop_failed() {
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out = String::new();
     let mut dropped = 0usize;
     for (_, b) in blocks(&text) {
@@ -408,14 +431,14 @@ fn probe_drop_failed() {
         out.push_str(&keep.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!("probe: {dropped} Fehlschlaege entfernt");
 }
 
 fn probes_from_tsv(path: &str) {
     let tsv = fs::read_to_string(path).expect("tsv");
     let phi_text = fs::read_to_string(PHI).expect("phi");
-    let mut rows = blocks(&fs::read_to_string(REG).expect("register"));
+    let mut rows = blocks(&fs::read_to_string(reg_path()).expect("register"));
     let phi_blocks = blocks(&phi_text);
     let mut added = 0usize;
     let mut missed = 0usize;
@@ -493,12 +516,12 @@ fn probes_from_tsv(path: &str) {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!("probes: {added} uebernommen, {missed} ohne Zeile");
 }
 
 fn fill_instruments() {
-    let reg_text = fs::read_to_string(REG).expect("register");
+    let reg_text = fs::read_to_string(reg_path()).expect("register");
     let phi_text = fs::read_to_string(PHI).expect("phi");
     let rows = blocks(&reg_text);
     let phi_blocks = blocks(&phi_text);
@@ -568,12 +591,12 @@ fn fill_instruments() {
     for (at, line) in insertions.into_iter().rev() {
         lines.insert(at, line);
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!("instrument: {done} eindeutig eingesetzt, {ambiguous} mehrdeutig");
 }
 
 fn clean() {
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out = String::new();
     let mut removed = 0usize;
     for (_, b) in blocks(&text) {
@@ -608,12 +631,12 @@ fn clean() {
         out.push_str(&keep.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!("clean: {removed} none-Zeilen entfernt");
 }
 
 fn repair_instruments() {
-    let reg_text = fs::read_to_string(REG).expect("register");
+    let reg_text = fs::read_to_string(reg_path()).expect("register");
     let phi_text = fs::read_to_string(PHI).expect("phi");
     let rows = blocks(&reg_text);
     let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
@@ -677,12 +700,12 @@ fn repair_instruments() {
     for ln in drop.iter().rev() {
         lines.remove(ln - 1);
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!("repair: {} falsche Instrumentzeilen entfernt", drop.len());
 }
 
 fn backfill_fields() {
-    let reg_text = fs::read_to_string(REG).expect("register");
+    let reg_text = fs::read_to_string(reg_path()).expect("register");
     let phi_text = fs::read_to_string(PHI).expect("phi");
     let phi_blocks = blocks(&phi_text);
     let mut rows = blocks(&reg_text);
@@ -819,12 +842,12 @@ fn backfill_fields() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!("fields: {filled} Zeilen zugeordnet");
 }
 
 fn align_instruments() {
-    let reg_text = fs::read_to_string(REG).expect("register");
+    let reg_text = fs::read_to_string(reg_path()).expect("register");
     let phi_text = fs::read_to_string(PHI).expect("phi");
     let rows = blocks(&reg_text);
     let mut lines: Vec<String> = phi_text.lines().map(str::to_string).collect();
@@ -874,7 +897,7 @@ fn align_instruments() {
             fixed += 1;
         }
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!("align: {fixed} Blockinstrumente auf die Spec gezogen");
 }
 
@@ -930,7 +953,7 @@ fn apply_fields(path: &str) {
     for (at, line) in ins.iter().rev() {
         lines.insert(*at, line.clone());
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!(
         "fields: {} Zeilen in Bloecke eingesetzt, {skipped} ohne Block",
         ins.len()
@@ -979,7 +1002,7 @@ fn instrumentize(path: &str) {
     for (at, line) in ins.iter().rev() {
         lines.insert(*at, line.clone());
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!("instrument: {} in Bloecke nach url eingesetzt", ins.len());
 }
 
@@ -1032,7 +1055,7 @@ fn set_instruments(path: &str) {
         }
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("set-instruments: {done} Bloecke gesetzt");
 }
 
@@ -1104,7 +1127,7 @@ fn apply_instruments_url(path: &str) {
     for (at, line) in ins.iter().rev() {
         lines.insert(*at, line.clone());
     }
-    write_out(PHI, lines.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), lines.join("\n") + "\n", "phi");
     println!(
         "instrument-url: {} gesetzt, {open} OFFEN uebersprungen",
         ins.len()
@@ -1141,7 +1164,7 @@ fn aussondern_reg(args: &[String]) {
             wanted.insert(n);
         }
     }
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut keep: Vec<String> = Vec::new();
     let mut moved: Vec<String> = Vec::new();
     let mut count = 0usize;
@@ -1176,7 +1199,7 @@ fn aussondern_reg(args: &[String]) {
         moved.push(String::new());
         count += 1;
     }
-    write_out(REG, keep.join("\n") + "\n", "instruments");
+    write_out(&reg_path(), keep.join("\n") + "\n", "instruments");
     let mut out = match fs::read_to_string(&out_path) {
         Ok(s) => s,
         Err(_) => String::new(),
@@ -1248,7 +1271,7 @@ fn aussondern(class: &str, out_path: &str, derived_list: Option<&str>) {
         moved.push(String::new());
         count += 1;
     }
-    write_out(PHI, keep.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), keep.join("\n") + "\n", "phi");
     let mut out = match fs::read_to_string(out_path) {
         Ok(s) => s,
         Err(_) => String::new(),
@@ -1296,12 +1319,12 @@ fn restore_missing(gitref: &str) {
         all.push_str("\n\n");
     }
     all.push_str(&add.join("\n"));
-    write_out(PHI, all, "phi");
+    write_out(&phi_work_path(), all, "phi");
     println!("restore: {n} fehlende Bloecke aus {gitref} zurueck");
 }
 
 fn verify_specs() {
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut rows = 0usize;
     let mut quote_missing = 0usize;
     let mut inst_not_in_quote = 0usize;
@@ -1347,7 +1370,7 @@ fn verify_specs() {
 }
 
 fn sync_fields() {
-    let reg_text = fs::read_to_string(REG).expect("register");
+    let reg_text = fs::read_to_string(reg_path()).expect("register");
     let phi_text = fs::read_to_string(PHI).expect("phi");
     let phi_blocks = blocks(&phi_text);
     let mut rows = blocks(&reg_text);
@@ -1401,7 +1424,7 @@ fn sync_fields() {
         out.push_str(&b.join("\n"));
         out.push_str("\n\n");
     }
-    write_out(REG, out, "register");
+    write_out(&reg_path(), out, "register");
     println!("sync-fields: {synced} Zeilen an Block-Keys gebunden");
 }
 
@@ -1465,7 +1488,7 @@ fn set_instruments_by_asset(path: &str) {
         }
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("set-instruments-by-asset: {done} Bloecke gesetzt");
 }
 
@@ -1514,7 +1537,7 @@ fn aussondern_format(format_value: &str, out_path: &str) {
         keep.extend(block);
         keep.push(String::new());
     }
-    write_out(PHI, keep.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), keep.join("\n") + "\n", "phi");
     append_derived(out_path, &moved);
     println!("aussondern-format {format_value}: {count} Bloecke verschoben");
 }
@@ -1609,7 +1632,7 @@ fn aussondern_assets(list_path: &str, out_path: &str) {
         moved.push(String::new());
         count += 1;
     }
-    write_out(PHI, keep.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), keep.join("\n") + "\n", "phi");
     append_derived(out_path, &moved);
     println!("aussondern-assets: {count} Bloecke verschoben");
     for key in wanted.keys() {
@@ -1650,7 +1673,7 @@ fn replace_blocks(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("replace-blocks: {replaced} ersetzt, {added} neu angehaengt");
 }
 
@@ -1889,7 +1912,7 @@ fn fill_sha(report_path: Option<&str>, max_bytes: u64) {
             ));
         }
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     if let Some(p) = report_path {
         if let Some(parent) = std::path::Path::new(p).parent() {
             let _ = fs::create_dir_all(parent);
@@ -1997,7 +2020,7 @@ fn merge_rebuild(blocks_path: &str, derived_path: &str) {
         out.push(String::new());
         appended += 1;
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
 
     let mut derived: Vec<String> = Vec::new();
     let mut ref_count = 0usize;
@@ -2286,7 +2309,7 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         }
     }
 
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut reg_out: Vec<String> = Vec::new();
     let mut rows_touched = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -2321,7 +2344,7 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         reg_out.extend(b);
         reg_out.push(String::new());
     }
-    write_out(REG, reg_out.join("\n") + "\n", "register");
+    write_out(&reg_path(), reg_out.join("\n") + "\n", "register");
 
     let mut keep: Vec<String> = Vec::new();
     let mut moved: Vec<String> = Vec::new();
@@ -2367,7 +2390,7 @@ fn apply_specs(list_path: &str, derived_path: &str) {
         keep.push(String::new());
         blocks_touched += 1;
     }
-    write_out(PHI, keep.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), keep.join("\n") + "\n", "phi");
     if !moved.is_empty() {
         append_derived(derived_path, &moved);
     }
@@ -2441,9 +2464,9 @@ fn align_many(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
 
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut reg_out: Vec<String> = Vec::new();
     let mut rows = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -2463,7 +2486,7 @@ fn align_many(path: &str) {
         reg_out.extend(b);
         reg_out.push(String::new());
     }
-    write_out(REG, reg_out.join("\n") + "\n", "register");
+    write_out(&reg_path(), reg_out.join("\n") + "\n", "register");
     println!("align-many: {hit} Bloecke, {rows} Registerzeilen gesetzt");
 }
 
@@ -2494,7 +2517,7 @@ fn stitch_orphans() {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("stitch-orphans: {stitched} Waisenzeilen an den vorigen Block genaeht");
 }
 
@@ -2565,7 +2588,7 @@ fn set_fields(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("set-fields: {changed} Messzeilen ersetzt");
 }
 
@@ -2828,7 +2851,7 @@ fn reprobe(report: &str) {
         Some(v) => v,
         None => String::new(),
     };
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let lines: Vec<String> = text.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
     let mut report_lines: Vec<String> = Vec::new();
@@ -3015,7 +3038,7 @@ fn reprobe(report: &str) {
             None => l.clone(),
         });
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     write_out(report, report_lines.join("\n") + "\n", "report");
     println!(
         "reprobe: {fixed} auf 2xx gebracht, {failed} offen, {skipped} nach ttl oder Sperrliste ausgelassen (siehe {report})"
@@ -3059,7 +3082,7 @@ fn normalize_blocks() {
         out.extend(nb);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("normalize: {fixed} Bloecke, {removed} doppelte Zeilen entfernt");
 }
 
@@ -3126,7 +3149,7 @@ fn add_line(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("add-line: {added} Zeilen eingefuegt, {skipped} uebersprungen");
 }
 
@@ -3199,7 +3222,7 @@ fn probe_terms(host_filter: &str) {
             }
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let lines: Vec<String> = reg.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
     let (mut fixed, mut failed, mut skipped) = (0usize, 0usize, 0usize);
@@ -3274,7 +3297,7 @@ fn probe_terms(host_filter: &str) {
             None => l.clone(),
         });
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("probe-terms: {fixed} gesetzt, {failed} ohne 2xx, {skipped} ohne Zuordnung");
 }
 
@@ -3305,7 +3328,7 @@ fn probe_map(path: &str) {
         }
         pairs.push((key.trim().to_string(), target.trim().to_string()));
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let lines: Vec<String> = reg.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
     let (mut fixed, mut failed) = (0usize, 0usize);
@@ -3382,7 +3405,7 @@ fn probe_map(path: &str) {
             None => l.clone(),
         });
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("probe-map: {fixed} gesetzt, {failed} ohne 2xx");
 }
 
@@ -3419,7 +3442,7 @@ fn probe_openneuro() {
         Some(v) => v,
         None => String::new(),
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let lines: Vec<String> = reg.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
     let (mut fixed, mut without_id, mut failed) = (0usize, 0usize, 0usize);
@@ -3474,12 +3497,12 @@ fn probe_openneuro() {
             None => l.clone(),
         });
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("probe-openneuro: {fixed} gesetzt, {failed} ohne 2xx, {without_id} ohne Datensatz-ID");
 }
 
 fn untangle_probes() {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let lines: Vec<String> = reg.lines().map(str::to_string).collect();
     let mut repl: BTreeMap<usize, String> = BTreeMap::new();
     let mut fixed = 0usize;
@@ -3550,7 +3573,7 @@ fn untangle_probes() {
             None => l.clone(),
         });
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!(
         "untangle-probes: {fixed} auf 2xx, {} Zeilen entwirrt",
         repl.len()
@@ -3599,12 +3622,12 @@ fn set_header(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("set-header: {changed} Bloecke gesetzt");
 }
 
 fn list_missing(key: &str) {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut counts: BTreeMap<String, usize> = BTreeMap::new();
     for (_, b) in blocks(&reg) {
         let has = b
@@ -3650,7 +3673,7 @@ fn set_host_doc(path: &str) {
         }
         docs.insert(host.to_string(), (url.to_string(), quote.to_string()));
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut rows = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -3665,7 +3688,7 @@ fn set_host_doc(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!(
         "set-host-doc: {rows} Zeilen mit {} Hostdokumenten",
         docs.len()
@@ -3673,7 +3696,7 @@ fn set_host_doc(path: &str) {
 }
 
 fn list_missing_rows(key: &str) {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     for (_, b) in blocks(&reg) {
         let has = b
             .iter()
@@ -3840,7 +3863,7 @@ fn set_doc_quote(path: &str) {
         Ok(s) => s,
         Err(_) => return,
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut rows = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -3905,7 +3928,7 @@ fn set_doc_quote(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("set-doc-quote: {rows} Zeilen gesetzt");
 }
 
@@ -3953,7 +3976,7 @@ fn verify_register(filter_path: &str) {
             }
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let (mut ok, mut bad, mut http) = (0usize, 0usize, 0usize);
     for (_, b) in blocks(&reg) {
         let pairs = [
@@ -4054,7 +4077,7 @@ fn verify_register(filter_path: &str) {
 }
 
 fn block_audit() {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let (mut nohost, mut dup) = (0usize, 0usize);
     for (start, b) in blocks(&reg) {
         let first = match b.first() {
@@ -4093,7 +4116,7 @@ fn block_audit() {
 }
 
 fn stray_report(limit: usize) {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut shown = 0usize;
     let mut blocks_with_tail = 0usize;
     let mut sigs: BTreeMap<String, usize> = BTreeMap::new();
@@ -4166,7 +4189,7 @@ fn tail_value(lines: &[String], key: &str) -> String {
 }
 
 fn fix_stray(mode: &str) {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let (mut fixed, open, mut skipped, mut flipped) = (0usize, 0usize, 0usize, 0usize);
     let mut report: Vec<String> = Vec::new();
     let mut out: Vec<String> = Vec::new();
@@ -4295,7 +4318,7 @@ fn fix_stray(mode: &str) {
         out.extend(head);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     if let Ok(p) = std::env::var("OMEGAFLOW_STRAY_REPORT") {
         let _ = fs::write(&p, report.join("\n") + "\n");
     }
@@ -4305,7 +4328,7 @@ fn fix_stray(mode: &str) {
 }
 
 fn entry_audit() {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let (mut host_in_block, mut multi_applies, mut multi_block) = (0usize, 0usize, 0usize);
     for (start, b) in blocks(&reg) {
         let hosts = b.iter().skip(1).filter(|l| l.starts_with("host ")).count();
@@ -4335,7 +4358,7 @@ fn entry_audit() {
 }
 
 fn block_list() {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     println!(
         "line\thost\tapplies\tfields\tinstrument\tunit\tinterval\tsampling\tapi_cite\tinstrument_cite"
     );
@@ -4370,7 +4393,7 @@ fn block_list() {
 }
 
 fn doc_audit() {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let (mut same, mut empty_api, mut empty_instr, mut total) = (0usize, 0usize, 0usize, 0usize);
     for (start, b) in blocks(&reg) {
         total += 1;
@@ -4518,7 +4541,7 @@ fn replace_host(args: &[String]) {
         Some(v) => v.clone(),
         None => return,
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut n = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -4534,7 +4557,7 @@ fn replace_host(args: &[String]) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "instruments");
+    write_out(&reg_path(), out.join("\n") + "\n", "instruments");
     println!("replace-host: {n} blocks -> {new}");
 }
 
@@ -4564,7 +4587,7 @@ fn demote_api(args: &[String]) {
             (c[1].trim().to_string(), c[2].trim().to_string()),
         );
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut moved = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -4588,7 +4611,7 @@ fn demote_api(args: &[String]) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "instruments");
+    write_out(&reg_path(), out.join("\n") + "\n", "instruments");
     println!("demote-api: {moved} blocks moved to a format document");
 }
 
@@ -4600,7 +4623,7 @@ fn field_work(args: &[String]) {
             return;
         }
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let mut rows = 0usize;
     let mut out: Vec<String> = Vec::new();
@@ -4680,7 +4703,7 @@ fn field_work(args: &[String]) {
 }
 
 fn check_blocks() {
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let (
         mut ok,
@@ -4923,7 +4946,7 @@ fn set_instr_doc(path: &str) {
         Ok(s) => s,
         Err(_) => return,
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut wanted: BTreeMap<String, (String, String)> = BTreeMap::new();
     for line in tsv.lines() {
         let cols: Vec<&str> = line.split('\t').collect();
@@ -4954,7 +4977,7 @@ fn set_instr_doc(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!(
         "set-instr-doc: {set} Zeilen gesetzt ({} angefragt)",
         wanted.len()
@@ -4971,7 +4994,7 @@ fn mirror_instr_doc(path: &str) {
         .map(|l| l.trim().to_string())
         .filter(|l| !l.is_empty())
         .collect();
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut set = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -4986,7 +5009,7 @@ fn mirror_instr_doc(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("mirror-instr-doc: {set} Zeilen auf das Datendokument gesetzt (Geraetepapier fehlt)");
 }
 
@@ -4995,7 +5018,7 @@ fn set_doc_slot(path: &str) {
         Ok(s) => s,
         Err(_) => return,
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut wanted: BTreeMap<(String, String), (String, String, String)> = BTreeMap::new();
     for line in tsv.lines() {
         let cols: Vec<&str> = line.split('\t').collect();
@@ -5049,7 +5072,7 @@ fn set_doc_slot(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!(
         "set-doc-slot: {nd} data, {ni} instrument ({} requested)",
         wanted.len()
@@ -5061,7 +5084,7 @@ fn set_instr_by_name(path: &str) {
         Ok(s) => s,
         Err(_) => return,
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut wanted: BTreeMap<String, (String, String)> = BTreeMap::new();
     for line in tsv.lines() {
         let cols: Vec<&str> = line.split('\t').collect();
@@ -5094,7 +5117,7 @@ fn set_instr_by_name(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     for (k, v) in &seen {
         println!("set-instr-by-name: {v}x {k}");
     }
@@ -5106,7 +5129,7 @@ fn fill_doc_by_host(path: &str) {
         Ok(s) => s,
         Err(_) => return,
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut wanted: Vec<(String, String, String, String, String)> = Vec::new();
     for line in tsv.lines() {
         let c: Vec<&str> = line.split('\t').collect();
@@ -5171,7 +5194,7 @@ fn fill_doc_by_host(path: &str) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("fill-doc-by-host: {set} rows set");
 }
 
@@ -5194,7 +5217,7 @@ fn drop_orphans() {
             println!("DROPPED\t{}\t{}", start + 1, l);
         }
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("drop-orphans: {dropped} blocks without url dropped");
 }
 
@@ -5241,7 +5264,7 @@ fn set_ttl(args: &[String]) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!(
         "set-ttl: {changed} blocks set to {value} (host {host_pat}, old '{}')",
         if old.is_empty() { "*" } else { &old }
@@ -5261,7 +5284,7 @@ fn replace_cite(args: &[String]) {
         println!("replace-cite: old and new required");
         return;
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let (mut na, mut ni) = (0usize, 0usize);
     for (_, mut b) in blocks(&reg) {
@@ -5282,7 +5305,7 @@ fn replace_cite(args: &[String]) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("replace-cite: {na} api, {ni} instrument -> {new}");
 }
 
@@ -5295,7 +5318,7 @@ fn clear_cite(args: &[String]) {
         println!("clear-cite: url required");
         return;
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut cleared = 0usize;
     for (_, mut b) in blocks(&reg) {
@@ -5315,7 +5338,7 @@ fn clear_cite(args: &[String]) {
         out.extend(b);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n") + "\n", "register");
+    write_out(&reg_path(), out.join("\n") + "\n", "register");
     println!("clear-cite: {cleared} blocks cleared ({old})");
 }
 
@@ -5334,7 +5357,7 @@ fn quoted(line: &str) -> Option<String> {
 
 fn write_refs(args: &[String]) {
     let dry = args.first().map(|s| s == "dry").unwrap_or(false);
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let mut meta: BTreeMap<String, (String, String)> = BTreeMap::new();
     let text = match fs::read_to_string(DIGESTS) {
@@ -5424,7 +5447,7 @@ fn write_refs(args: &[String]) {
         println!("dry-run: write-refs {written} ref lines");
         return;
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!("write-refs: {written} ref lines written");
 }
 
@@ -5559,7 +5582,7 @@ fn quote_expand(args: &[String]) {
             cache.insert(c[0].to_string(), t);
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut expanded = 0usize;
     let mut seen_short = 0usize;
@@ -5682,7 +5705,7 @@ fn quote_expand(args: &[String]) {
         );
         return;
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!(
         "quote-expand: {expanded} von {seen_short} kurzen Zitaten ergaenzt, {no_doc} ohne Text im Cache"
     );
@@ -5713,7 +5736,7 @@ fn host_quote_title(args: &[String]) {
             cache.insert(c[0].to_string(), t);
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let mut titles: BTreeMap<String, String> = BTreeMap::new();
     if let Ok(dtext) = fs::read_to_string(DIGESTS) {
@@ -5816,7 +5839,7 @@ fn host_quote_title(args: &[String]) {
         );
         return;
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!("host-quote-title: {changed} Kopfzeilen ersetzt, {left} ohne Text");
 }
 
@@ -5847,7 +5870,7 @@ fn set_field(args: &[String]) {
             c[2].trim().to_string(),
         ));
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut changed = 0usize;
     for (_, b) in blocks(&reg) {
@@ -5873,7 +5896,7 @@ fn set_field(args: &[String]) {
         out.extend(body);
         out.push(String::new());
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!("set-field: {changed} Feldzeilen ersetzt");
 }
 
@@ -5886,7 +5909,7 @@ fn norm_id(s: &str) -> String {
 
 fn field_align(args: &[String]) {
     let dry = args.first().map(|s| s == "dry").unwrap_or(false);
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let mut out: Vec<String> = Vec::new();
     let mut changed = 0usize;
@@ -6016,7 +6039,7 @@ fn field_align(args: &[String]) {
         );
         return;
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!(
         "field-align: {changed} keys aligned, {ambiguous} ambiguous, {none} without candidate"
     );
@@ -6096,7 +6119,7 @@ fn quote_repair(args: &[String]) {
             cache.insert(c[0].to_string(), t);
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let (mut exact, mut by_overlap, mut skipped, mut no_doc) = (0usize, 0usize, 0usize, 0usize);
     for (_, b) in blocks(&reg) {
@@ -6255,7 +6278,7 @@ fn quote_repair(args: &[String]) {
         );
         return;
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!(
         "quote-repair: {exact} sentence around the fragment, {by_overlap} by word overlap, {skipped} without, {no_doc} without text"
     );
@@ -6286,7 +6309,7 @@ fn quote_retarget(args: &[String]) {
             cache.insert(c[0].to_string(), t);
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let (mut taken, mut left, mut nodoc) = (0usize, 0usize, 0usize);
     let mut report: Vec<String> = Vec::new();
@@ -6439,7 +6462,7 @@ fn quote_retarget(args: &[String]) {
         );
         return;
     }
-    write_out(REG, out.join("\n"), "instruments");
+    write_out(&reg_path(), out.join("\n"), "instruments");
     println!(
         "quote-retarget: {taken} quotes re-grounded, {left} without sentence, {nodoc} without text"
     );
@@ -6480,7 +6503,7 @@ fn phi_replace(args: &[String]) {
         }
         out.push(String::new());
     }
-    write_out(PHI, out.join("\n"), "phi");
+    write_out(&phi_work_path(), out.join("\n"), "phi");
     println!("phi-replace: {n} Zeilen in Bloecken mit {m}");
 }
 
@@ -6502,7 +6525,7 @@ fn phi_split_blocks() {
         }
         out.push(line.to_string());
     }
-    write_out(PHI, out.join("\n") + "\n", "phi");
+    write_out(&phi_work_path(), out.join("\n") + "\n", "phi");
     println!("phi-split-blocks: {splits} Bloecke getrennt");
 }
 
@@ -6514,7 +6537,7 @@ fn class_table(args: &[String]) {
             return;
         }
     };
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let mut titles: BTreeMap<String, String> = BTreeMap::new();
     if let Ok(dtext) = fs::read_to_string(DIGESTS) {
@@ -6698,7 +6721,7 @@ fn device_claims(args: &[String]) {
             cache.insert(c[0].to_string(), t);
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let digests = load_digests();
     let mut rows: Vec<String> = Vec::new();
     let mut found = 0usize;
@@ -7213,7 +7236,7 @@ fn claim_verify(args: &[String]) {
             cache.insert(c[0].to_string(), t);
         }
     }
-    let reg = fs::read_to_string(REG).expect("register");
+    let reg = fs::read_to_string(reg_path()).expect("register");
     let mut types: BTreeMap<String, String> = BTreeMap::new();
     for line in index.lines() {
         let c: Vec<&str> = line.split('\t').collect();
@@ -7450,7 +7473,7 @@ fn set_slot(args: &[String]) {
         Some(v) => v.clone(),
         None => return,
     };
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut changed = 0usize;
     for (_, b) in blocks(&text) {
@@ -7477,7 +7500,7 @@ fn set_slot(args: &[String]) {
     while body.ends_with("\n\n") {
         body.pop();
     }
-    write_out(REG, body, "instruments");
+    write_out(&reg_path(), body, "instruments");
     println!("set-slot: {changed} Zeilen {slot} fuer {url}");
 }
 
@@ -7517,7 +7540,7 @@ fn einholen_reg(args: &[String]) {
         Ok(t) => t,
         Err(_) => return,
     };
-    let r_text = fs::read_to_string(REG).expect("register");
+    let r_text = fs::read_to_string(reg_path()).expect("register");
     let mut back: Vec<String> = Vec::new();
     let mut keep: Vec<String> = Vec::new();
     let mut n = 0usize;
@@ -7541,7 +7564,7 @@ fn einholen_reg(args: &[String]) {
     }
     reg.push_str(&back.join("\n"));
     reg.push('\n');
-    write_out(REG, reg, "instruments");
+    write_out(&reg_path(), reg, "instruments");
     write_out(&src, keep.join("\n"), "quelle");
     println!("einholen-reg: {n} Bloecke zurueck aus {src}");
 }
@@ -7555,7 +7578,7 @@ fn quote_short(args: &[String]) {
         Some(Ok(n)) => n,
         _ => 1,
     };
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut n = 0usize;
     for (start, b) in blocks(&text) {
         let host = or_empty(field(&b, "host"));
@@ -7629,7 +7652,7 @@ fn set_quote(args: &[String]) {
             c[3].to_string(),
         );
     }
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut changed = 0usize;
     let mut seen: BTreeSet<(String, String, String)> = BTreeSet::new();
@@ -7687,7 +7710,7 @@ fn set_quote(args: &[String]) {
     if !final_text.ends_with('\n') {
         final_text.push('\n');
     }
-    write_out(REG, final_text, "instruments");
+    write_out(&reg_path(), final_text, "instruments");
     println!(
         "set-quote: {changed} quotes replaced, {} lines without match",
         want.len().saturating_sub(seen.len())
@@ -7696,7 +7719,7 @@ fn set_quote(args: &[String]) {
 
 fn quote_trim(args: &[String]) {
     let dry = args.first().map(|s| s == "dry").unwrap_or(false);
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let mut trimmed = 0usize;
     let mut left = 0usize;
@@ -7793,7 +7816,7 @@ fn quote_trim(args: &[String]) {
         println!("dry-run: quote-trim {trimmed} quotes cut to 25 words, {left} under the limit");
         return;
     }
-    write_out(REG, body, "instruments");
+    write_out(&reg_path(), body, "instruments");
     println!("quote-trim: {trimmed} quotes cut to 25 words, {left} under the limit");
 }
 
@@ -7804,7 +7827,7 @@ fn quote_widen(args: &[String]) {
     };
     let dry = args.get(1).map(|s| s == "dry").unwrap_or(false);
     let digests = load_digests();
-    let text = fs::read_to_string(REG).expect("register");
+    let text = fs::read_to_string(reg_path()).expect("register");
     let mut out: Vec<String> = Vec::new();
     let (mut short, mut widened, mut nohit) = (0usize, 0usize, 0usize);
     let mut report: Vec<String> = Vec::new();
@@ -7911,7 +7934,7 @@ fn quote_widen(args: &[String]) {
         );
         return;
     }
-    write_out(REG, final_text, "instruments");
+    write_out(&reg_path(), final_text, "instruments");
     println!(
         "quote-widen: {widened} of {short} short quotes widened, {nohit} without longer sentence"
     );

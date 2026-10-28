@@ -141,7 +141,21 @@ use omegaflow::archivar::kernel_id_of;
 use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
 
 const DEFAULT_PATH: &str = "phi/sources.φ";
-const DEFAULT_SPECS: &str = "tools/register/data/instruments.φ";
+fn default_specs() -> String {
+    let work = match std::env::var_os("OMEGAFLOW_WORK") {
+        Some(w) => std::path::PathBuf::from(w),
+        None => match std::env::var_os("HOME") {
+            Some(h) => std::path::PathBuf::from(h).join("projects/omegaflow-work"),
+            None => std::path::PathBuf::new(),
+        },
+    };
+    let in_work = work.join("research/sources/instruments.φ");
+    if in_work.is_file() {
+        return in_work.to_string_lossy().into_owned();
+    }
+    "tools/register/data/instruments.φ".to_string()
+}
+
 
 struct Ctx {
     fail: bool,
@@ -606,7 +620,7 @@ fn dump_blocks(content: &str) {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
-    let mut specs_path = DEFAULT_SPECS.to_string();
+    let mut specs_path = default_specs();
     let mut ctx = Ctx {
         fail: false,
         warnings: false,
