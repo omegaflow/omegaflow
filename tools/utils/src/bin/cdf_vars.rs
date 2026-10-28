@@ -41,8 +41,8 @@ fn main() {
                 .join("x")
         };
         println!(
-            "  {:<28} type {:>3} elements {:>2} dims {:<10} records {}",
-            var.name, var.data_type, var.num_elements, dims, var.record_vary
+            "  {:<28} type {:>3} elements {:>2} dims {:<10} records {} sparse {}",
+            var.name, var.data_type, var.num_elements, dims, var.record_vary, var.sparse
         );
     }
 }

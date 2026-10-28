@@ -16,8 +16,20 @@ fn jd_of_unix(unix_s: f64) -> f64 {
 }
 
 fn var_values(file: &CdfFile, bytes: &[u8], name: &str) -> Option<Vec<Vec<f64>>> {
-    let var = file.var(name)?;
-    let recs = file.var_records(bytes, var).ok()?;
+    let var = match file.var(name) {
+        Some(v) => v,
+        None => {
+            eprintln!("var {name}: absent");
+            return None;
+        }
+    };
+    let recs = match file.var_records(bytes, var) {
+        Ok(r) => r,
+        Err(note) => {
+            eprintln!("var {name}: {note:?}");
+            return None;
+        }
+    };
     Some(recs.into_iter().map(|(_, v)| v).collect())
 }
 
