@@ -3796,12 +3796,23 @@ mod tests {
     #[test]
     fn fink_tai_mjd_maps_to_an_absolute_tdb() {
         let mjd_tai = 61024.2459327064;
-        let tdb = fink_mjd_tai_to_tdb(mjd_tai, &lsk()).unwrap();
+        let lsk = lsk();
+        let tdb = fink_mjd_tai_to_tdb(mjd_tai, &lsk).unwrap();
         let as_utc = mjd_to_unix(mjd_tai);
-        let expected = as_utc + 32.184 - 946_728_000.0;
+        let leap = lsk.leap_at(as_utc).expect("a 2025 instant carries a leap");
+        let utc_instant = as_utc - leap;
+        let expected = lsk
+            .unix_to_tdb(utc_instant)
+            .expect("the library converts the same instant");
         assert!(
-            (tdb - expected).abs() < 2e-3,
-            "the leap cancels, but TDB-TT does not: its periodic term reaches 1.7 ms, so a model of unix plus leap holds only to that order — tdb {tdb}, model {expected}"
+            (tdb - expected).abs() < 1e-12,
+            "the wrapper must be the library plus the leap: tdb {tdb}, library {expected}"
+        );
+        let naive = as_utc + 32.184 - 946_728_000.0;
+        let gap = (tdb - naive).abs();
+        assert!(
+            gap > 1e-4 && gap < 2e-3,
+            "the periodic TDB-TT term is about 1.4 ms in November 2025: a gap of {gap} means it is either dropped or larger than its amplitude"
         );
         assert!(
             (tdb - 819_050_080.769_833).abs() < 1e-3,
