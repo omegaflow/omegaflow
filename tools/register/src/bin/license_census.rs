@@ -74,6 +74,18 @@ const TERMS: &[&str] = &[
     "wdc-kyoto-scientific-noncommercial",
     "wdcb-sep-policy",
     "wmo-data-policy",
+    "bgi-nc",
+    "cdpp-sipad-licence",
+    "DHM-open",
+    "dlr-license",
+    "galah-dr3-terms",
+    "gebco-terms",
+    "ieeg-terms",
+    "lasair-copyright",
+    "naoj-copyright",
+    "no-redistribution",
+    "pradan-terms",
+    "SWS-WDC",
 ];
 
 fn blocks(content: &str) -> Vec<Vec<&str>> {
