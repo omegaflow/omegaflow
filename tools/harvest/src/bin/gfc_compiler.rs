@@ -452,4 +452,51 @@ gfc 2 2 2.439370331756250E-06 -1.400307649958125E-06 0.0 0.0\n";
         assert!(!cut_mid_line(b""));
         assert!(!cut_mid_line(b"gfc 2 2 1.0 0.0 0.0 0.0\n"));
     }
+    fn compile_probe(text: &str, out: &str) {
+        compile(
+            text.as_bytes(),
+            300.0,
+            None,
+            Some("2000-01-01T00:00:00Z".to_string()),
+            out,
+            "probe",
+            false,
+        )
+        .expect("the probe compiles");
+    }
+
+    #[test]
+    fn the_same_source_compiles_to_the_same_bytes_twice() {
+        let a = std::env::temp_dir().join("gfc_probe_a.bin");
+        let b = std::env::temp_dir().join("gfc_probe_b.bin");
+        compile_probe(PROBE, a.to_str().expect("path"));
+        compile_probe(PROBE, b.to_str().expect("path"));
+        let first = std::fs::read(&a).expect("first bin");
+        let second = std::fs::read(&b).expect("second bin");
+        assert_eq!(first, second, "the compiler is not deterministic");
+    }
+
+    #[test]
+    fn a_changed_coefficient_changes_exactly_that_record_and_by_its_factor() {
+        let a = std::env::temp_dir().join("gfc_probe_c.bin");
+        let b = std::env::temp_dir().join("gfc_probe_d.bin");
+        compile_probe(PROBE, a.to_str().expect("path"));
+        let louder = PROBE.replace("2.439370331756250E-06", "4.878740663512500E-06");
+        compile_probe(&louder, b.to_str().expect("path"));
+        let first = omegaflow::archivar::gfc::parse_records(&std::fs::read(&a).expect("first bin")).expect("records a");
+        let second = omegaflow::archivar::gfc::parse_records(&std::fs::read(&b).expect("second bin")).expect("records b");
+        assert_eq!(first.len(), second.len());
+        let mut changed = 0;
+        for (x, y) in first.iter().zip(second.iter()) {
+            let delta = y[SLOT_VAL] - x[SLOT_VAL];
+            if delta != 0.0 {
+                changed += 1;
+                assert!(
+                    (delta - 2.439370331756250E-06).abs() < 1e-20,
+                    "record changed by {delta}, expected the coefficient itself"
+                );
+            }
+        }
+        assert_eq!(changed, 1, "a single coefficient touched {changed} records");
+    }
 }
