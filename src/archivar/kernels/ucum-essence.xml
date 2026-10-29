@@ -2062,4 +2062,66 @@
       <property>mass</property>
       <value Unit="kg" UNIT="KG" value="1.98841E30">1.98841E30</value>
    </unit>
+   <!-- psu: practical salinity, PSS-78 / UNESCO; dimensionless (UDUNITS-2 practical_salinity_unit) -->
+   <unit Code="psu" CODE="PSU" isMetric="no" class="oceanography">
+      <name>practical salinity unit</name>
+      <printSymbol>psu</printSymbol>
+      <property>salinity</property>
+      <value Unit="1" UNIT="1" value="1">1</value>
+   </unit>
+   <!-- DU: Dobson unit, WMO; 2.687e16 molecules per square metre -->
+   <unit Code="DU" CODE="DU" isMetric="no" class="atmosphere">
+      <name>Dobson unit</name>
+      <printSymbol>DU</printSymbol>
+      <property>column density</property>
+      <value Unit="m-2" UNIT="M-2" value="2.687E16">2.687E16</value>
+   </unit>
+   <!-- kt_tnt: kiloton TNT equivalent, 4.184e12 J (convention) -->
+   <unit Code="kt_tnt" CODE="KT_TNT" isMetric="no" class="energy">
+      <name>kiloton TNT</name>
+      <printSymbol>kt</printSymbol>
+      <property>energy</property>
+      <value Unit="J" UNIT="J" value="4.184E12">4.184E12</value>
+   </unit>
+   <!-- mag: astronomical magnitude, logarithmic scale (IVOA VOUnits, IAU) -->
+   <unit Code="mag" CODE="MAG" isMetric="no" isSpecial="yes" class="astronomy">
+      <name>magnitude</name>
+      <printSymbol>mag</printSymbol>
+      <property>magnitude</property>
+      <value Unit="lg(1 1)" UNIT="LG(1 1)">
+         <function name="lg" value="1" Unit="1"/>
+      </value>
+   </unit>
+   <!-- dBm: level relative to one milliwatt (ISO 80000-3 decibel, reference mW) -->
+   <unit Code="dBm" CODE="DBM" isMetric="yes" isSpecial="yes" class="levels">
+      <name>decibel milliwatt</name>
+      <printSymbol>dBm</printSymbol>
+      <property>level</property>
+      <value Unit="lg(1 mW)" UNIT="LG(1 MW)">
+         <function name="lg" value="1" Unit="mW"/>
+      </value>
+   </unit>
+   <!-- dBHz: level relative to one hertz (ISO 80000-3 decibel, reference Hz) -->
+   <unit Code="dBHz" CODE="DBHZ" isMetric="yes" isSpecial="yes" class="levels">
+      <name>decibel hertz</name>
+      <printSymbol>dBHz</printSymbol>
+      <property>level</property>
+      <value Unit="lg(1 Hz)" UNIT="LG(1 HZ)">
+         <function name="lg" value="1" Unit="Hz"/>
+      </value>
+   </unit>
+   <!-- Crab: X-ray flux density convention, 1e-24 erg cm-2 s-1 Hz-1 (OGIP) -->
+   <unit Code="Crab" CODE="CRAB" isMetric="no" class="astronomy">
+      <name>Crab unit</name>
+      <printSymbol>Crab</printSymbol>
+      <property>flux density</property>
+      <value Unit="erg/cm2/s/Hz" UNIT="ERG/CM2/S/HZ" value="1E-24">1E-24</value>
+   </unit>
+   <!-- mCrab: one thousandth of the Crab unit -->
+   <unit Code="mCrab" CODE="MCRAB" isMetric="no" class="astronomy">
+      <name>milli-Crab</name>
+      <printSymbol>mCrab</printSymbol>
+      <property>flux density</property>
+      <value Unit="Crab" UNIT="CRAB" value="1E-3">1E-3</value>
+   </unit>
 </root>

@@ -159,7 +159,9 @@ fn main() {    let args: Vec<String> = std::env::args().skip(1).collect();
         total += 1;
         let mut unit = cols[2].as_str();
         for i in 2..cols.len().saturating_sub(1) {
-            if omegaflow::mathematikerin::force::force_id_of(&cols[i]).is_some() {
+            if omegaflow::mathematikerin::force::force_id_of(&cols[i]).is_some()
+                || omegaflow::mathematikerin::force::quantity_kind_of(&cols[i]).is_some()
+            {
                 unit = cols[i + 1].as_str();
                 break;
             }
