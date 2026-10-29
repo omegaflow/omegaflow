@@ -6,6 +6,7 @@ pub const SECTION_CDR: u32 = 1;
 pub const SECTION_GDR: u32 = 2;
 pub const SECTION_RVDR: u32 = 3;
 pub const SECTION_ADR: u32 = 4;
+pub const SECTION_SPR: u32 = 5;
 pub const SECTION_VXR: u32 = 6;
 pub const SECTION_VD_ZVAR: u32 = 8;
 pub const SECTION_VVR: u32 = 7;
@@ -128,6 +129,7 @@ pub struct CdfVar {
     pub dim_vary: Vec<u32>,
     pub head_vxr: u64,
     pub max_rec: u32,
+    pub vdr_offset: usize,
     pub pad_value: Vec<f64>,
 }
 
@@ -451,6 +453,7 @@ impl CdfFile {
                 dim_vary,
                 head_vxr,
                 max_rec,
+                vdr_offset: off,
                 pad_value,
             });
             next = next_vdr as usize;
@@ -504,6 +507,44 @@ impl CdfFile {
             }
             _ => Err(CdfNote::BlockKind(block.kind)),
         }
+    }
+
+    fn spr_offset(&self, bytes: &[u8], var: &CdfVar) -> Option<usize> {
+        let off = var.vdr_offset;
+        let size = be_u64(bytes, off)? as usize;
+        let rec = bytes.get(off..off + size)?;
+        let mut found: Option<usize> = None;
+        let mut i = 20usize;
+        while i + 4 <= size {
+            let value = be_u32(rec, i)? as usize;
+            if value > 12 && be_u32(bytes, value + 8) == Some(SECTION_SPR) {
+                if found.is_some() && found != Some(value) {
+                    return None;
+                }
+                found = Some(value);
+            }
+            i += 4;
+        }
+        found
+    }
+
+    fn spr_present(&self, bytes: &[u8], spr: usize, max_rec: u32) -> Option<Vec<u32>> {
+        let size = be_u64(bytes, spr)? as usize;
+        if size < 13 {
+            return None;
+        }
+        let rec = bytes.get(spr..spr + size)?;
+        let mut out: Vec<u32> = Vec::new();
+        for bit in 0..(size - 12) * 8 {
+            let byte = *rec.get(12 + bit / 8)?;
+            if (byte >> (7 - (bit % 8))) & 1 == 1 {
+                out.push(bit as u32);
+                if out.len() > max_rec as usize {
+                    return None;
+                }
+            }
+        }
+        Some(out)
     }
 
     pub fn var_records(&self, bytes: &[u8], var: &CdfVar) -> Result<Vec<(u32, Vec<f64>)>, CdfNote> {
@@ -565,6 +606,18 @@ impl CdfFile {
                     )
                     .ok_or(CdfNote::DataType(var.data_type))?,
                 ));
+            }
+        }
+        if var.sparse != 0 {
+            let spr = self.spr_offset(bytes, var).ok_or(CdfNote::SparseRecord)?;
+            let present = self
+                .spr_present(bytes, spr, var.max_rec)
+                .ok_or(CdfNote::SparseRecord)?;
+            if present.len() != out.len() {
+                return Err(CdfNote::SparseRecord);
+            }
+            for (i, entry) in out.iter_mut().enumerate() {
+                entry.0 = present[i];
             }
         }
         Ok(out)

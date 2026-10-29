@@ -267,6 +267,7 @@ pub fn days_from_civil(year: i64, month: i64, day: i64) -> Option<i64> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::archivar::embedded_lsk;
 
     #[test]
     fn parses_naif_style_entries() {
