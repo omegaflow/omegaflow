@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_release;
+use omegaflow::cdn::{print_block, upload_release};
 use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::lsk::days_from_civil;
 use std::path::Path;
@@ -171,6 +171,13 @@ fn run(args: &[String]) -> Result<(), String> {
     eprintln!(
         "nasa_power_compiler: {} {parameter} rows written to {out}",
         rows.len()
+    );
+    print_block(
+        NETLOC,
+        &out,
+        &url,
+        "text",
+        "tools/harvest/src/bin/nasa_power_compiler.rs",
     );
     if ci_mode && !upload_release(NETLOC, &out) {
         return Err(format!("{out}: CDN upload did not reach the release"));

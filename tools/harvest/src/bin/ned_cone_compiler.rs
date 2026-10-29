@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::process::Command;
 
-use omegaflow::cdn::upload_release;
+use omegaflow::cdn::{print_block, upload_release};
 
 const CONE_ENDPOINT: &str = "https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition";
 const CDN_TAG: &str = "ned.ipac.caltech.edu-ned";
@@ -556,6 +556,13 @@ fn main() {
                 objs.len(),
                 skipped,
                 out_path
+            );
+            print_block(
+                CDN_TAG,
+                &out_path,
+                CONE_ENDPOINT,
+                "ned_cone_text",
+                "tools/harvest/src/bin/ned_cone_compiler.rs",
             );
             if ci_mode && !upload_release(CDN_TAG, &out_path) {
                 std::process::exit(1);
