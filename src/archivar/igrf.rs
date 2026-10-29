@@ -1,8 +1,6 @@
 const WGS84_A2_KM2: f64 = 40_680_631.6;
 const WGS84_B2_KM2: f64 = 40_408_296.0;
 
-const IGRF_MAX_DEGREE: usize = 13;
-
 fn geodetic_to_geocentric_term() -> f64 {
     WGS84_B2_KM2 / WGS84_A2_KM2
 }
@@ -62,6 +60,52 @@ impl IgrfCoeffs {
             return None;
         }
         Some(IgrfCoeffs { epochs, rows })
+    }
+
+    pub fn parse_wmm(text: &str) -> Option<IgrfCoeffs> {
+        let mut epochs: Vec<f64> = Vec::new();
+        let mut rows: Vec<ShRow> = Vec::new();
+        for line in text.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            let tokens: Vec<&str> = line.split_whitespace().collect();
+            let numbers: Option<Vec<f64>> = tokens.iter().map(|t| t.parse::<f64>().ok()).collect();
+            match numbers {
+                Some(v) if v.len() == 6 => {
+                    let n = v[0] as usize;
+                    let m = v[1] as usize;
+                    rows.push(ShRow {
+                        h: false,
+                        n,
+                        m,
+                        values: vec![v[2]],
+                        sv: v[4],
+                    });
+                    rows.push(ShRow {
+                        h: true,
+                        n,
+                        m,
+                        values: vec![v[3]],
+                        sv: v[5],
+                    });
+                }
+                _ => {
+                    if epochs.is_empty() {
+                        epochs.push(tokens.first()?.parse::<f64>().ok()?);
+                    }
+                }
+            }
+        }
+        if epochs.is_empty() || rows.is_empty() {
+            return None;
+        }
+        Some(IgrfCoeffs { epochs, rows })
+    }
+
+    fn max_degree(&self) -> Option<usize> {
+        self.rows.iter().map(|r| r.n).max()
     }
 
     fn coefficient(&self, h: bool, n: usize, m: usize, date: f64) -> Option<f64> {
@@ -148,7 +192,11 @@ impl IgrfCoeffs {
         if !lon_deg.is_finite() {
             return None;
         }
-        let pnm = schmidt_legendre(IGRF_MAX_DEGREE, colat_deg);
+        let nmax = self.max_degree()?;
+        if nmax == 0 {
+            return None;
+        }
+        let pnm = schmidt_legendre(nmax, colat_deg);
         let theta = colat_deg.to_radians();
         let costh = theta.cos();
         let sinth = (1.0 - costh * costh).sqrt();
@@ -158,7 +206,7 @@ impl IgrfCoeffs {
         let mut b_theta = 0.0;
         let mut b_phi = 0.0;
         let mut r_n = radius.powi(-3);
-        for n in 1..=IGRF_MAX_DEGREE {
+        for n in 1..=nmax {
             let g = self.coefficient(false, n, 0, date)?;
             b_r += (n as f64 + 1.0) * pnm[n][0] * r_n * g;
             b_theta += -pnm[0][n + 1] * r_n * g;
@@ -304,6 +352,57 @@ h  1  1   5922   5909   5898   5875   5845   5817   5808   5812   5821   5810   
                     "date {date} colat {colat} lon {lon} component {k}: got {got}, witness {e}"
                 );
             }
+        }
+    }
+
+    const WMM_COF: &str = include_str!("kernels/wmm2025.cof");
+    const WMM_TEST_VALUES: &str = include_str!("kernels/wmm2025_test_values.txt");
+
+    #[test]
+    fn wmm2025_reproduces_the_official_test_values_within_fifteen_nanotesla() {
+        let c = IgrfCoeffs::parse_wmm(WMM_COF).expect("the WMM2025 coefficients parse");
+        let a = 6378.137;
+        let f = 1.0 / 298.257223563;
+        let e2 = 1.0 - (1.0 - f) * (1.0 - f);
+        let mut worst = [0.0f64; 3];
+        let mut points = 0usize;
+        for line in WMM_TEST_VALUES.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            let v: Vec<f64> = line
+                .split_whitespace()
+                .filter_map(|t| t.parse::<f64>().ok())
+                .collect();
+            if v.len() < 10 {
+                continue;
+            }
+            let lat = v[2].to_radians();
+            let n_rad = a / (1.0 - e2 * lat.sin() * lat.sin()).sqrt();
+            let rho = (n_rad + v[1]) * lat.cos();
+            let zz = (n_rad * (1.0 - e2) + v[1]) * lat.sin();
+            let r = (rho * rho + zz * zz).sqrt();
+            let lat_c = zz.atan2(rho);
+            let colat = 90.0 - lat_c.to_degrees();
+            let b = c
+                .synthesize(v[0], r, 6371.2, colat, v[3])
+                .expect("the model covers the date");
+            let delta = lat - lat_c;
+            let (sa, ca) = delta.sin_cos();
+            let x = b[0] * ca + b[2] * sa;
+            let z = -b[0] * sa + b[2] * ca;
+            worst[0] = worst[0].max((x - v[7]).abs());
+            worst[1] = worst[1].max((b[1] - v[8]).abs());
+            worst[2] = worst[2].max((z - v[9]).abs());
+            points += 1;
+        }
+        assert!(points >= 100, "the test file lost points: {points}");
+        for (k, w) in worst.iter().enumerate() {
+            assert!(
+                *w <= 15.0,
+                "component {k} strays {w} nT from the official test values"
+            );
         }
     }
 }
