@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 use std::env;
 use std::fs;
+use std::io::Write;
 use std::process::Command;
 
 use omegaflow::archivar::pds3_table::{odl_kv, parse_label};
@@ -376,7 +377,23 @@ fn run_register(args: &[String]) -> Result<(), String> {
     let format = format.ok_or_else(|| usage.to_string())?;
     let list = entries(&register, &format)?;
     let mut cache: BTreeMap<String, String> = BTreeMap::new();
-    let mut lines: Vec<String> = Vec::new();
+    let mut sink: Option<std::io::BufWriter<fs::File>> = match &out {
+        None => None,
+        Some(path) => {
+            let file =
+                fs::File::create(path).map_err(|e| format!("create {path} returned void: {e}"))?;
+            let mut writer = std::io::BufWriter::new(file);
+            writeln!(
+                writer,
+                "asset\trecord_bytes\trows\tkey\tkey_start\tkey_bytes\tfirst\tlast\tverdict"
+            )
+            .map_err(|e| format!("write {path} returned void: {e}"))?;
+            writer
+                .flush()
+                .map_err(|e| format!("flush {path} returned void: {e}"))?;
+            Some(writer)
+        }
+    };
     let mut gated = 0usize;
     let mut absent = 0usize;
     for entry in list.iter().take(limit) {
@@ -461,17 +478,12 @@ fn run_register(args: &[String]) -> Result<(), String> {
         }
         let line = format!("{name}\t{verdict}");
         eprintln!("{line}");
-        lines.push(line);
-    }
-    if let Some(path) = out {
-        let mut body = String::from(
-            "asset\trecord_bytes\trows\tkey\tkey_start\tkey_bytes\tfirst\tlast\tverdict\n",
-        );
-        for line in &lines {
-            body.push_str(line);
-            body.push('\n');
+        if let Some(writer) = sink.as_mut() {
+            writeln!(writer, "{line}").map_err(|e| format!("write returned void: {e}"))?;
+            writer
+                .flush()
+                .map_err(|e| format!("flush returned void: {e}"))?;
         }
-        fs::write(&path, body).map_err(|e| format!("write {path} returned void: {e}"))?;
     }
     println!(
         "gated {gated}  absent {absent}  of {} entries",

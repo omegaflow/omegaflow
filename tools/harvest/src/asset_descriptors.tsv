@@ -1,0 +1,4 @@
+asset	record_bytes	rows	key	key_start	key_bytes	first	last	verdict
+pds3_fixed_width_ap01578l.bin	172	74786	EPHEMERIS_TIME	28	13	-26493039.38	-26418159.56	gated
+pds3_fixed_width_mlaradr0801141902.bin	180	1548	absent	absent	absent	absent	absent	gated-structure
+pds3_fixed_width_0110.bin	89	8584	absent	absent	absent	absent	absent	gated-structure
