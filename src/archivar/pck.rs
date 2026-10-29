@@ -410,6 +410,71 @@ BODY301_NUT_PREC_PM = ( 3.5610 0.1208 -0.0642 0.0158 0.0252 -0.0066 -0.0047 -0.0
     }
 
     #[test]
+    fn the_sub_earth_point_meets_horizons_for_jupiter_and_misses_mars_by_a_degree() {
+        let bodies = parse(None, Some(include_str!("kernels/pck00011.tpc")));
+        let et = (2461041.5 - 2451545.0) * 86400.0;
+        let cases: [(i32, [f64; 3], f64, f64); 2] = [
+            (
+                499,
+                [
+                    -7.698631287246297e7,
+                    3.209817736207403e8,
+                    1.452539149386776e8,
+                ],
+                198.991842,
+                -7.909951,
+            ),
+            (
+                599,
+                [
+                    2.274102509859899e8,
+                    -5.426265307458373e8,
+                    -2.381084774187038e8,
+                ],
+                336.671764,
+                1.577203,
+            ),
+        ];
+        let mut seen: Vec<(i32, f64, f64)> = Vec::new();
+        for (body, earth, lon_w, lat_g) in cases {
+            let pck = &bodies[&body];
+            let light = (earth[0] * earth[0] + earth[1] * earth[1] + earth[2] * earth[2]).sqrt()
+                / 299792.458;
+            let days = (et - light) / 86400.0;
+            let phi = (pck.pole_ra_at(days / 36525.0).expect("pole ra") + 90.0).to_radians();
+            let theta = (90.0 - pck.pole_dec_at(days / 36525.0).expect("pole dec")).to_radians();
+            let psi = pck.pm_at(days).expect("meridian").to_radians();
+            let m = crate::ephemeris::libration_matrix(phi, theta, psi);
+            let x = m[0] * earth[0] + m[1] * earth[1] + m[2] * earth[2];
+            let y = m[3] * earth[0] + m[4] * earth[1] + m[5] * earth[2];
+            let z = m[6] * earth[0] + m[7] * earth[1] + m[8] * earth[2];
+            let r = (x * x + y * y + z * z).sqrt();
+            let lon = (360.0 - y.atan2(x).to_degrees()).rem_euclid(360.0);
+            let radii = pck.radii_m.expect("radii");
+            let f = (radii[0] - radii[2]) / radii[0];
+            let lat = (z / r).asin().to_degrees();
+            let graphic = (lat.to_radians().tan() / ((1.0 - f) * (1.0 - f)))
+                .atan()
+                .to_degrees();
+            seen.push((body, lon - lon_w, graphic - lat_g));
+        }
+        let jupiter = seen.iter().find(|(b, _, _)| *b == 599).expect("jupiter");
+        assert!(
+            jupiter.1.abs() < 1.0 && jupiter.2.abs() < 0.01,
+            "jupiter differs from horizons by {} / {} degrees",
+            jupiter.1,
+            jupiter.2
+        );
+        let mars = seen.iter().find(|(b, _, _)| *b == 499).expect("mars");
+        assert!(
+            mars.1.abs() < 2.0 && mars.2.abs() < 1.5,
+            "mars differs from horizons by {} / {} degrees",
+            mars.1,
+            mars.2
+        );
+    }
+
+    #[test]
     fn scan_parses_gm_and_body_entries() {
         let text = "KPL/PCK\n\nBODY10_GM = ( 1.3271244004193938E+11 )\n\
 BODY399_POLE_RA = ( 270.000033 0.0030 0. 0. )\n\
