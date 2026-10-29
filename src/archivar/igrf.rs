@@ -405,4 +405,44 @@ h  1  1   5922   5909   5898   5875   5845   5817   5808   5812   5821   5810   
             );
         }
     }
+    #[test]
+    fn the_bgs_service_values_are_reproduced_at_three_points() {
+        let c = igrf14();
+        let a = 6378.137;
+        let f = 1.0 / 298.257223563;
+        let e2 = 1.0 - (1.0 - f) * (1.0 - f);
+        let cases: [(f64, f64, f64, f64, f64, f64); 3] = [
+            (0.0, 0.0, 0.0, 27457.0, -1926.0, -15997.0),
+            (50.0, 10.0, 0.0, 20062.0, 1361.0, 44856.0),
+            (-30.0, 120.0, 500.0, 20208.0, 69.0, -40122.0),
+        ];
+        for (lat_deg, lon_deg, height, north, east, down) in cases {
+            let lat = lat_deg.to_radians();
+            let n_rad = a / (1.0 - e2 * lat.sin() * lat.sin()).sqrt();
+            let rho = (n_rad + height) * lat.cos();
+            let zz = (n_rad * (1.0 - e2) + height) * lat.sin();
+            let r = (rho * rho + zz * zz).sqrt();
+            let lat_c = zz.atan2(rho);
+            let colat = 90.0 - lat_c.to_degrees();
+            let b = c
+                .synthesize(2025.0, r, 6371.2, colat, lon_deg)
+                .expect("the 2025 model covers the date");
+            let (sa, ca) = (lat - lat_c).sin_cos();
+            let x = b[0] * ca + b[2] * sa;
+            let z = -b[0] * sa + b[2] * ca;
+            assert!(
+                (x - north).abs() <= 2.0,
+                "lat {lat_deg} lon {lon_deg}: north {x} against {north}"
+            );
+            assert!(
+                (b[1] - east).abs() <= 2.0,
+                "lat {lat_deg} lon {lon_deg}: east {} against {east}",
+                b[1]
+            );
+            assert!(
+                (z - down).abs() <= 2.0,
+                "lat {lat_deg} lon {lon_deg}: down {z} against {down}"
+            );
+        }
+    }
 }
