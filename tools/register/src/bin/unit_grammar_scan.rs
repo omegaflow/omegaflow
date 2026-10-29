@@ -22,6 +22,28 @@ fn attr(xml: &str, tag: &str, attr: &str) -> Vec<String> {
     out
 }
 
+fn field_words(rest: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut cur = String::new();
+    let mut in_quote = false;
+    for ch in rest.chars() {
+        if ch == '"' {
+            in_quote = !in_quote;
+            cur.push(ch);
+        } else if ch.is_whitespace() && !in_quote {
+            if !cur.is_empty() {
+                out.push(std::mem::take(&mut cur));
+            }
+        } else {
+            cur.push(ch);
+        }
+    }
+    if !cur.is_empty() {
+        out.push(cur);
+    }
+    out
+}
+
 fn strip_annotations(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     let mut depth = 0i32;
@@ -124,15 +146,24 @@ fn main() {    let args: Vec<String> = std::env::args().skip(1).collect();
     let mut numbers: Vec<(String, usize)> = Vec::new();
     let mut total = 0usize;
     for (n, line) in text.lines().enumerate() {
-        let Some(rest) = line.strip_prefix("field ") else {
+        let Some(rest) = line.trim().strip_prefix("field") else {
             continue;
         };
-        let cols: Vec<&str> = rest.split_whitespace().collect();
+        if rest.is_empty() || !rest.starts_with(char::is_whitespace) {
+            continue;
+        }
+        let cols = field_words(rest.trim_start());
         if cols.len() < 3 {
             continue;
         }
         total += 1;
-        let unit = cols[2];
+        let mut unit = cols[2].as_str();
+        for i in 2..cols.len().saturating_sub(1) {
+            if omegaflow::mathematikerin::force::force_id_of(&cols[i]).is_some() {
+                unit = cols[i + 1].as_str();
+                break;
+            }
+        }
         if !seen.insert(unit.to_string()) {
             continue;
         }
