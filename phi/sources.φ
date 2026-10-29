@@ -15875,17 +15875,18 @@ format gfc
 origin https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc
 instrument GRACE
 compiler tools/harvest/src/bin/gfc_compiler.rs
+sha256 9d8c3f21df3d351b7e59793663913eb85b8e6cf6848ff2cf95d6cf24a0b32160
 at earth
 no-sampling
-gm 3.986004415E+14
+gm 398600441500000
 radius 6378136.3
 norm fully_normalized
 tide zero_tide
-max_degree 5540
-field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
-field icgem_gfc_s icgem_gfc_s inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
-field icgem_gfct_c icgem_gfct_c inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
-field icgem_gfct_s icgem_gfct_s inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
+max_degree 360
+field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 33554432 0.0 0.0 norm:fully_normalized
+field icgem_gfc_s icgem_gfc_s inverse-square gravity 1 33554432 0.0 0.0 norm:fully_normalized
+field icgem_gfct_c icgem_gfct_c inverse-square gravity 1 33554432 0.0 0.0 norm:fully_normalized
+field icgem_gfct_s icgem_gfct_s inverse-square gravity 1 33554432 0.0 0.0 norm:fully_normalized
 
 url https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t1_ascii.txt
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
@@ -15952,6 +15953,13 @@ no-sampling
 at earth
 field ocean_avg_temp woa23_ocean_avg_temp_c exponential-decay thermal C 2592000 0.0 0.0
 field ocean_salinity woa23_ocean_salinity_psu gaussian-inverse-square diffusion PSU 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc.manifest
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format manifest
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/
+compiler none
+no-sampling
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/venus_radar_level2.bin
 terms CC0-1.0 https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
@@ -29727,14 +29735,14 @@ field eiscat_isr_ti_k eiscat_isr_ti_k exponential-decay thermal K 33554432.0 0.0
 field eiscat_isr_te_k eiscat_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
 
 url https://meeo-s5p.s3.amazonaws.com/OFFL/L2__O3_TCL/2018/04/30/S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc
-terms free-open https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice
+terms copernicus-sentinel https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice
 origin https://meeo-s5p.s3.amazonaws.com/OFFL/L2__O3_TCL/2018/04/30/S5P_OFFL_L2__O3_TCL_20180430T105026_20180506T131804_02824_01_010105_20181212T112006.nc
 instrument TROPOMI
 compiler tools/harvest/src/bin/meeo_o3_compiler.rs
 sha256 c2bb0590002ab882cf073b1ba35a1c5f5ce3ca58105078e485583ae3b00d0e53
 at earth
 no-sampling
-field ozone_tropospheric_vertical_column meeo_s5p_o3_tcl mol/m2 null
+field ozone_tropospheric_vertical_column meeo_s5p_o3_tcl mol/m2 33554432
 
 url https://opendata.auger.org/catalog/data.zip
 terms CC-BY-SA-4.0 https://opendata.auger.org/
