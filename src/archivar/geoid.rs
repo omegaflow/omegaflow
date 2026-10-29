@@ -15,6 +15,18 @@ pub fn somigliana_gravity(lat_deg: f64) -> f64 {
     9.780_325_335_9 * (1.0 + 0.001_931_852_652_41 * s2) / (1.0 - 0.006_694_379_990_13 * s2).sqrt()
 }
 
+pub const WGS84_OMEGA: f64 = 7.292_115e-5;
+pub const WGS84_GM_EARTH: f64 = 3.986_004_418e14;
+pub const W0_IAG: f64 = 62_636_853.4;
+pub const W0_EGM2008: f64 = 62_636_855.7294;
+
+pub fn exact_radius(lat_deg: f64) -> f64 {
+    let phi = lat_deg.to_radians();
+    let e2 = 2.0 * WGS84_F - WGS84_F * WGS84_F;
+    let n_rad = WGS84_A_M / (1.0 - e2 * phi.sin() * phi.sin()).sqrt();
+    ((n_rad * phi.cos()).powi(2) + (n_rad * (1.0 - e2) * phi.sin()).powi(2)).sqrt()
+}
+
 pub const NORMAL_C20: f64 = -4.841_651_437_908_15e-4;
 pub const NORMAL_C40: f64 = 7.905_370_510_517_63e-7;
 
@@ -79,6 +91,87 @@ impl GeoidModel {
             c,
             s,
         })
+    }
+
+    fn potential_at(&self, r_m: f64, lat_deg: f64, lon_deg: f64) -> Option<f64> {
+        if !r_m.is_finite() || r_m <= 0.0 {
+            return None;
+        }
+        let phi = lat_deg.to_radians();
+        let psi = ((1.0 - WGS84_F).powi(2) * phi.tan()).atan();
+        let theta = std::f64::consts::FRAC_PI_2 - psi;
+        let x = theta.cos();
+        let sin_theta = theta.sin();
+        let lam = lon_deg.to_radians();
+        let nmax = self.degree;
+        let mut p = vec![vec![0.0f64; nmax + 1]; nmax + 1];
+        p[0][0] = 1.0;
+        let mut sum = 1.0f64;
+        let mut r_l = 1.0f64;
+        let ratio = self.radius_m / r_m;
+        for n in 1..=nmax {
+            if n == 1 {
+                p[1][0] = 3.0f64.sqrt() * x;
+                p[1][1] = 3.0f64.sqrt() * sin_theta;
+            } else {
+                p[n][n] = ((2.0 * n as f64 + 1.0) / (2.0 * n as f64)).sqrt()
+                    * sin_theta
+                    * p[n - 1][n - 1];
+                let mut row = vec![0.0f64; n];
+                for (m, &pm) in p[n - 1].iter().enumerate().take(n) {
+                    let a = ((2.0 * n as f64 + 1.0) * (2.0 * n as f64 - 1.0)
+                        / ((n as f64 - m as f64) * (n as f64 + m as f64)))
+                        .sqrt();
+                    let first = a * x * pm;
+                    let second = if n >= 2 && m + 1 < n {
+                        let b = ((2.0 * n as f64 + 1.0)
+                            * (n as f64 + m as f64 - 1.0)
+                            * (n as f64 - m as f64 - 1.0)
+                            / ((2.0 * n as f64 - 3.0)
+                                * (n as f64 - m as f64)
+                                * (n as f64 + m as f64)))
+                            .sqrt();
+                        b * p[n - 2][m]
+                    } else {
+                        0.0
+                    };
+                    row[m] = first - second;
+                }
+                p[n][..n].copy_from_slice(&row);
+            }
+            r_l *= ratio;
+            let mut inner = self.c[n][0] * p[n][0];
+            for (m, &pnm) in p[n].iter().enumerate().take(n + 1).skip(1) {
+                inner += pnm
+                    * (self.c[n][m] * (m as f64 * lam).cos()
+                        + self.s[n][m] * (m as f64 * lam).sin());
+            }
+            sum += r_l * inner;
+        }
+        let gravitational = WGS84_GM_EARTH / r_m * sum;
+        let axial = r_m * psi.cos();
+        let centrifugal = 0.5 * WGS84_OMEGA * WGS84_OMEGA * axial * axial;
+        Some(gravitational + centrifugal)
+    }
+
+    pub fn potential_parts(&self, r_m: f64, lat_deg: f64, lon_deg: f64) -> Option<(f64, f64, f64)> {
+        let w = self.potential_at(r_m, lat_deg, lon_deg)?;
+        let phi = lat_deg.to_radians();
+        let psi = ((1.0 - WGS84_F).powi(2) * phi.tan()).atan();
+        let axial = r_m * psi.cos();
+        let cent = 0.5 * WGS84_OMEGA * WGS84_OMEGA * axial * axial;
+        Some((w, w - cent, cent))
+    }
+
+    pub fn geoid_m_bruns(&self, lat_deg: f64, lon_deg: f64, w0: f64) -> Option<f64> {
+        let re = exact_radius(lat_deg);
+        let gamma = somigliana_gravity(lat_deg);
+        let mut n = 0.0f64;
+        for _ in 0..4 {
+            let w = self.potential_at(re + n, lat_deg, lon_deg)?;
+            n += (w - w0) / gamma;
+        }
+        if n.is_finite() { Some(n) } else { None }
     }
 
     pub fn geoid_m(&self, lat_deg: f64, lon_deg: f64) -> Option<f64> {
@@ -219,6 +312,44 @@ mod tests {
                 "lat {lat}: got {got}, want {want}"
             );
         }
+    }
+
+    #[test]
+    fn the_bruns_iteration_lands_on_the_potential_it_was_given() {
+        let model = synthetic(NORMAL_C20);
+        let lat = 52.52;
+        for target in [0.0f64, 10.0, -7.5] {
+            let r = exact_radius(lat) + target;
+            let w = model.potential_parts(r, lat, 13.4).expect("a potential").0;
+            let n = model.geoid_m_bruns(lat, 13.4, w).expect("a geoid value");
+            assert!(
+                (n - target).abs() < 1e-4,
+                "target {target}: iteration returned {n}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_lower_reference_potential_lifts_the_geoid() {
+        let model = synthetic(NORMAL_C20);
+        let base = model
+            .potential_parts(exact_radius(30.0), 30.0, 0.0)
+            .expect("a potential")
+            .0;
+        let low = model
+            .geoid_m_bruns(30.0, 0.0, base - 98.1)
+            .expect("a geoid value");
+        let high = model
+            .geoid_m_bruns(30.0, 0.0, base + 98.1)
+            .expect("a geoid value");
+        assert!(
+            low > 9.0 && low < 11.0,
+            "98.1 lower is about ten metres: {low}"
+        );
+        assert!(
+            high < -9.0 && high > -11.0,
+            "98.1 higher is about minus ten: {high}"
+        );
     }
 
     #[test]
