@@ -1,0 +1,49 @@
+# harvest: format=gfc assets=egm96.bin,egm2008.bin arm=gfc_compiler (ICGEM zip source)
+
+name: gfc-zip-cdn
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gfc-zip-cdn.yml'
+
+concurrency:
+  group: gfc-zip-cdn
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  egm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch and unpack the ICGEM zips
+        run: |
+          curl -fsSL -A 'Mozilla/5.0' --retry 5 --retry-all-errors \
+            -o egm96.zip 'https://icgem.gfz.de/getmodel/zip/971b0a3b49a497910aad23cd85e066d4cd9af0aeafe7ce6301a696bed8570be3/EGM96.zip'
+          curl -fsSL -A 'Mozilla/5.0' --retry 5 --retry-all-errors \
+            -o egm2008.zip 'https://icgem.gfz.de/getmodel/zip/c50128797a9cb62e936337c890e4425f03f0461d7329b09a8cc8561504465340/EGM2008.zip'
+          unzip -o egm96.zip
+          unzip -o egm2008.zip
+          ls -l *.gfc
+      - name: Compile EGM96 at degree 360
+        run: |
+          cargo build -p omegaflow-harvest --release --bin gfc_compiler
+          gfc=$(find . -name 'EGM96.gfc' | head -1)
+          ./target/release/gfc_compiler --input "$gfc" --max-degree 360 \
+            --ttl no-sampling --epoch 1996-01-01T00:00:00 --out egm96.bin --ci-mode
+      - name: Compile EGM2008 at degree 360
+        run: |
+          gfc=$(find . -name 'EGM2008.gfc' | head -1)
+          ./target/release/gfc_compiler --input "$gfc" --max-degree 360 \
+            --ttl no-sampling --epoch 2008-01-01T00:00:00 --out egm2008.bin --ci-mode
