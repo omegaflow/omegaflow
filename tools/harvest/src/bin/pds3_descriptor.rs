@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -9,7 +10,6 @@ pub struct Column {
     pub name: String,
     pub start_byte: usize,
     pub bytes: usize,
-    pub format: String,
 }
 
 #[derive(Clone, Debug)]
@@ -57,11 +57,6 @@ fn parse_fmt(text: &str) -> Result<Layout, String> {
                     column.bytes = value
                         .parse::<usize>()
                         .map_err(|_| format!("BYTES {value} carries no number"))?;
-                }
-            }
-            "FORMAT" => {
-                if let Some(column) = current.as_mut() {
-                    column.format = value.trim_matches('"').to_string();
                 }
             }
             _ => {}
@@ -165,13 +160,33 @@ pub struct Report {
 
 pub fn describe(
     label_text: &str,
-    fmt_text: &str,
+    fmt_text: Option<&str>,
     first_record: &[u8],
     last_record: &[u8],
     total: usize,
 ) -> Result<Report, String> {
     let meta = parse_label(label_text).ok_or_else(|| "the label carries no TABLE".to_string())?;
-    let layout = parse_fmt(fmt_text)?;
+    let layout = match fmt_text {
+        Some(text) => parse_fmt(text)?,
+        None => {
+            let columns: Vec<Column> = meta
+                .columns
+                .iter()
+                .map(|c| Column {
+                    name: c.name.clone(),
+                    start_byte: c.start_byte,
+                    bytes: c.bytes,
+                })
+                .collect();
+            if columns.is_empty() {
+                return Err("neither the label nor a format file carries a column".to_string());
+            }
+            Layout {
+                row_bytes: None,
+                columns,
+            }
+        }
+    };
     let kv = odl_kv(label_text);
     let get = |name: &str| -> Option<String> {
         kv.iter()
@@ -199,8 +214,17 @@ pub fn describe(
             "{rows} rows of {record_bytes} bytes are {declared}, the file holds {total}"
         ));
     }
-    let key_name =
-        get("PRIMARY_KEY").ok_or_else(|| "the label names no primary key".to_string())?;
+    let Some(key_name) = get("PRIMARY_KEY") else {
+        return Ok(Report {
+            row_bytes: record_bytes,
+            rows,
+            key: String::new(),
+            key_start: 0,
+            key_bytes: 0,
+            first: f64::NAN,
+            last: f64::NAN,
+        });
+    };
     let column = layout
         .columns
         .iter()
@@ -234,8 +258,253 @@ pub fn describe(
     })
 }
 
+#[derive(Clone, Debug)]
+struct Entry {
+    asset: String,
+    origin: String,
+}
+
+fn entries(register: &str, format: &str) -> Result<Vec<Entry>, String> {
+    let text =
+        fs::read_to_string(register).map_err(|e| format!("read {register} returned void: {e}"))?;
+    let mut blocks: Vec<BTreeMap<String, String>> = Vec::new();
+    let mut current: BTreeMap<String, String> = BTreeMap::new();
+    let flush = |current: &mut BTreeMap<String, String>,
+                 blocks: &mut Vec<BTreeMap<String, String>>| {
+        if !current.is_empty() {
+            blocks.push(std::mem::take(current));
+        }
+    };
+    for line in text.lines() {
+        if line.trim().is_empty() {
+            flush(&mut current, &mut blocks);
+            continue;
+        }
+        let mut parts = line.splitn(2, char::is_whitespace);
+        let key = parts.next().unwrap_or("");
+        let value = parts.next().unwrap_or("").trim();
+        if !key.is_empty() {
+            current.insert(key.to_string(), value.to_string());
+        }
+    }
+    flush(&mut current, &mut blocks);
+    let mut found: Vec<Entry> = Vec::new();
+    for block in blocks {
+        if block.get("format").map(|f| f == format).unwrap_or(false)
+            && let (Some(asset), Some(origin)) = (block.get("url"), block.get("origin"))
+        {
+            found.push(Entry {
+                asset: asset.clone(),
+                origin: origin.clone(),
+            });
+        }
+    }
+    if found.is_empty() {
+        return Err(format!(
+            "{register} carries no {format} entry with an origin"
+        ));
+    }
+    Ok(found)
+}
+
+fn label_of(origin: &str) -> String {
+    match origin.rfind('.') {
+        Some(at) => format!("{}.lbl", &origin[..at]),
+        None => format!("{origin}.lbl"),
+    }
+}
+
+fn resolve_fmt(
+    label_url: &str,
+    structure: &str,
+    cache: &mut BTreeMap<String, String>,
+) -> Option<String> {
+    if structure.starts_with("http") {
+        return Some(structure.to_string());
+    }
+    let base = match label_url.rfind('/') {
+        Some(at) => &label_url[..at],
+        None => return None,
+    };
+    if let Some(hit) = cache.get(base) {
+        return Some(format!("{hit}/{structure}"));
+    }
+    let mut dir = base.to_string();
+    for _depth in 0..5 {
+        for sub in ["", "/label", "/catalog", "/document"] {
+            let url = format!("{dir}{sub}/{structure}");
+            if fetch(&url).is_ok() {
+                cache.insert(base.to_string(), format!("{dir}{sub}"));
+                return Some(url);
+            }
+        }
+        match dir.rsplit_once('/') {
+            Some((parent, _)) => dir = parent.to_string(),
+            None => break,
+        }
+    }
+    None
+}
+
+fn run_register(args: &[String]) -> Result<(), String> {
+    let usage = "usage: pds3_descriptor --register <phi/sources.φ> --format <name> [--limit <n>] [--out <tsv>]";
+    let mut register = None;
+    let mut format = None;
+    let mut limit = usize::MAX;
+    let mut out: Option<String> = None;
+    let mut index = 0;
+    while index < args.len() {
+        let value = || {
+            args.get(index + 1)
+                .cloned()
+                .ok_or_else(|| usage.to_string())
+        };
+        match args[index].as_str() {
+            "--register" => register = Some(value()?),
+            "--format" => format = Some(value()?),
+            "--limit" => {
+                limit = value()?
+                    .parse::<usize>()
+                    .map_err(|_| "limit carries no number".to_string())?
+            }
+            "--out" => out = Some(value()?),
+            other => return Err(format!("{other}: not a flag of this mode")),
+        }
+        index += 2;
+    }
+    let register = register.ok_or_else(|| usage.to_string())?;
+    let format = format.ok_or_else(|| usage.to_string())?;
+    let list = entries(&register, &format)?;
+    let mut cache: BTreeMap<String, String> = BTreeMap::new();
+    let mut lines: Vec<String> = Vec::new();
+    let mut gated = 0usize;
+    let mut absent = 0usize;
+    for entry in list.iter().take(limit) {
+        let name = entry
+            .asset
+            .rsplit('/')
+            .next()
+            .unwrap_or("unnamed")
+            .to_string();
+        let label_url = label_of(&entry.origin);
+        let verdict = match fetch(&label_url) {
+            Err(reason) => {
+                format!("absent\tabsent\tabsent\tabsent\tabsent\tabsent\tabsent\t{reason}")
+            }
+            Ok(bytes) => {
+                let label_text = String::from_utf8_lossy(&bytes).to_string();
+                let structure = odl_kv(&label_text)
+                    .iter()
+                    .find(|(k, _)| k == "^STRUCTURE")
+                    .map(|(_, v)| v.trim().trim_matches('"').to_string());
+                let resolved = structure.and_then(|s| resolve_fmt(&label_url, &s, &mut cache));
+                let loaded = match &resolved {
+                    None => Ok(None),
+                    Some(url) => {
+                        fetch(url).map(|bytes| Some(String::from_utf8_lossy(&bytes).to_string()))
+                    }
+                };
+                match loaded {
+                    Err(reason) => {
+                        format!("absent\tabsent\tabsent\tabsent\tabsent\tabsent\tabsent\t{reason}")
+                    }
+                    Ok(fmt_text) => {
+                        let rb = parse_label(&label_text).and_then(|m| m.record_bytes);
+                        match rb {
+                            None => format!(
+                                "absent\tabsent\tabsent\tabsent\tabsent\tabsent\tabsent\tthe label names no record length"
+                            ),
+                            Some(rb) => match length(&entry.origin, None) {
+                                Err(reason) => format!(
+                                    "absent\tabsent\tabsent\tabsent\tabsent\tabsent\tabsent\t{reason}"
+                                ),
+                                Ok(total) => {
+                                    let head = fetch_range(&entry.origin, 0, rb, None);
+                                    let tail = fetch_range(
+                                        &entry.origin,
+                                        total.saturating_sub(rb),
+                                        rb,
+                                        None,
+                                    );
+                                    match (head, tail) {
+                                        (Ok(head), Ok(tail)) => match describe(
+                                            &label_text,
+                                            fmt_text.as_deref(),
+                                            &head,
+                                            &tail,
+                                            total,
+                                        ) {
+                                            Ok(report) => render(&report),
+                                            Err(reason) => {
+                                                format!(
+                                                    "absent\tabsent\tabsent\tabsent\tabsent\tabsent\tabsent\t{reason}"
+                                                )
+                                            }
+                                        },
+                                        (Err(reason), _) | (_, Err(reason)) => {
+                                            format!(
+                                                "absent\tabsent\tabsent\tabsent\tabsent\tabsent\tabsent\t{reason}"
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            }
+        };
+        if verdict.contains("gated") {
+            gated += 1;
+        } else {
+            absent += 1;
+        }
+        let line = format!("{name}\t{verdict}");
+        eprintln!("{line}");
+        lines.push(line);
+    }
+    if let Some(path) = out {
+        let mut body = String::from(
+            "asset\trecord_bytes\trows\tkey\tkey_start\tkey_bytes\tfirst\tlast\tverdict\n",
+        );
+        for line in &lines {
+            body.push_str(line);
+            body.push('\n');
+        }
+        fs::write(&path, body).map_err(|e| format!("write {path} returned void: {e}"))?;
+    }
+    println!(
+        "gated {gated}  absent {absent}  of {} entries",
+        list.len().min(limit)
+    );
+    Ok(())
+}
+
+fn render(report: &Report) -> String {
+    if report.key.is_empty() {
+        format!(
+            "{}\t{}\tabsent\tabsent\tabsent\tabsent\tabsent\tgated-structure",
+            report.row_bytes, report.rows
+        )
+    } else {
+        format!(
+            "{}\t{}\t{}\t{}\t{}\t{:.2}\t{:.2}\tgated",
+            report.row_bytes,
+            report.rows,
+            report.key,
+            report.key_start,
+            report.key_bytes,
+            report.first,
+            report.last
+        )
+    }
+}
+
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--register") {
+        return run_register(&args);
+    }
     let usage = "usage: pds3_descriptor --label <path|url> --fmt <path|url> --data <path|url> [--name <asset>]";
     let mut label: Option<String> = None;
     let mut fmt_source: Option<String> = None;
@@ -282,18 +551,9 @@ fn main() -> Result<(), String> {
         whole.as_deref(),
     )?;
 
-    match describe(&label_text, &fmt_text, &head, &tail, total) {
+    match describe(&label_text, Some(fmt_text.as_str()), &head, &tail, total) {
         Ok(report) => {
-            println!(
-                "{name}\t{}\t{}\t{}\t{}\t{}\t{:.2}\t{:.2}\tgated",
-                report.row_bytes,
-                report.rows,
-                report.key,
-                report.key_start,
-                report.key_bytes,
-                report.first,
-                report.last
-            );
+            println!("{name}\t{}", render(&report));
             Ok(())
         }
         Err(reason) => {
@@ -338,7 +598,7 @@ OBJECT = COLUMN\n  NAME = VALUE\n  START_BYTE = 11\n  BYTES = 10\n  FORMAT = \"F
     fn label_and_format_file_agree_on_a_gated_table() {
         let bytes = data();
         let report =
-            describe(LABEL, FMT, &bytes[0..20], &bytes[40..60], bytes.len()).expect("gated");
+            describe(LABEL, Some(FMT), &bytes[0..20], &bytes[40..60], bytes.len()).expect("gated");
         assert_eq!(report.row_bytes, 20);
         assert_eq!(report.rows, 3);
         assert_eq!(report.key, "TIME");
@@ -352,23 +612,35 @@ OBJECT = COLUMN\n  NAME = VALUE\n  START_BYTE = 11\n  BYTES = 10\n  FORMAT = \"F
     fn two_documents_that_disagree_on_the_record_length_are_absent() {
         let broken = FMT.replace("ROW_BYTES = 20", "ROW_BYTES = 24");
         let bytes = data();
-        let reason = describe(LABEL, &broken, &bytes[0..20], &bytes[40..60], bytes.len())
-            .expect_err("must not pass");
+        let reason = describe(
+            LABEL,
+            Some(&broken),
+            &bytes[0..20],
+            &bytes[40..60],
+            bytes.len(),
+        )
+        .expect_err("must not pass");
         assert!(reason.contains("20") && reason.contains("24"), "{reason}");
     }
 
     #[test]
     fn a_length_that_contradicts_the_row_count_is_absent() {
         let bytes = data();
-        let reason = describe(LABEL, FMT, &bytes[0..20], &bytes[40..60], bytes.len() - 1)
-            .expect_err("must not pass");
+        let reason = describe(
+            LABEL,
+            Some(FMT),
+            &bytes[0..20],
+            &bytes[40..60],
+            bytes.len() - 1,
+        )
+        .expect_err("must not pass");
         assert!(reason.contains("59"), "{reason}");
     }
 
     #[test]
     fn a_last_key_that_is_not_the_declared_stop_is_absent() {
         let bytes = data();
-        let reason = describe(LABEL, FMT, &bytes[0..20], &bytes[20..40], bytes.len())
+        let reason = describe(LABEL, Some(FMT), &bytes[0..20], &bytes[20..40], bytes.len())
             .expect_err("must not pass");
         assert!(
             reason.contains("11.5") && reason.contains("12.5"),
@@ -381,8 +653,8 @@ OBJECT = COLUMN\n  NAME = VALUE\n  START_BYTE = 11\n  BYTES = 10\n  FORMAT = \"F
         let bytes = data();
         let mut head = bytes[0..20].to_vec();
         head[0] = b'?';
-        let reason =
-            describe(LABEL, FMT, &head, &bytes[40..60], bytes.len()).expect_err("must not pass");
+        let reason = describe(LABEL, Some(FMT), &head, &bytes[40..60], bytes.len())
+            .expect_err("must not pass");
         assert!(reason.contains("TIME"), "{reason}");
     }
 }
