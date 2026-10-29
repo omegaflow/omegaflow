@@ -1,0 +1,50 @@
+name: voyager-redr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      data_url:
+        description: PDS4 data directory of the Voyager RSS raw bundle
+        required: true
+        default: https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/voyager1_rss_jupiter_raw_v1.0/data/
+      limit:
+        description: compile at most this many files
+        required: true
+        default: "1"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  redr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the pds-rings.seti.org release exists on the CDN
+        run: |
+          if ! gh release view pds-rings.seti.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-rings.seti.org --repo omegaflow/sources \
+              --title "pds-rings.seti.org" \
+              --notes "Voyager RSS raw REDR records from the PDS Rings Node, packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: List the REDR files and compile each one
+        run: |
+          set -euo pipefail
+          curl -fsSL "${{ inputs.data_url }}" -o index.html
+          grep -o 'href="[^"]*\.odr"' index.html | sed 's/href="//; s/"$//' | head -n "${{ inputs.limit }}" > list.txt
+          wc -l list.txt
+          while read -r name; do
+            echo "::group::$name"
+            cargo run --release -p omegaflow-harvest --bin redr_compiler -- \
+              --url "${{ inputs.data_url }}${name}" \
+              --out "redr_${name%.odr}.bin" \
+              --ci-mode
+            echo "::endgroup::"
+          done < list.txt
