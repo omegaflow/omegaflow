@@ -212,7 +212,13 @@ pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
     let mut norm_seen = false;
     let mut tide_system: Option<String> = None;
     let mut epoch: Option<String> = None;
-    let mut in_head = false;
+    let marked = bytes.split(|&b| b == b
+).any(|raw| {
+        std::str::from_utf8(raw)
+            .map(|line| line.trim_start().starts_with("begin_of_head"))
+            .unwrap_or(false)
+    });
+    let mut in_head = !marked;
     let mut end_line = None;
     for (i, raw) in bytes.split(|&b| b == b'\n').enumerate() {
         let Some(line) = std::str::from_utf8(raw).ok().map(str::trim) else {
@@ -233,6 +239,10 @@ pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
         let (Some(key), Some(value)) = (it.next(), it.next()) else {
             continue;
         };
+        if key == "key" {
+            end_line = Some(i);
+            break;
+        }
         match key {
             "product_type" => product_type = Some(value.to_string()),
             "modelname" => modelname = Some(value.to_string()),
@@ -1387,5 +1397,15 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
                 "addition theorem fails at colat {colat}: rel {worst_sum:.3e} at n {worst_n}"
             );
         }
+    }
+    #[test]
+    fn the_legacy_header_without_markers_ends_at_the_key_line() {
+        let text = "Lemoine F.G., Kenyon S.C.\n\nproduct_type gravity_field\nmodelname EGM96\nearth_gravity_constant 0.3986004415E+15\nradius 0.6378136300E+07\nmax_degree 360\ntide_system tide_free\n\nkey L M C S sigmaC sigmaS\nend_of_head =====\ngfc 0 0 1.0 0.0 0.0 0.0\n";
+        let (head, end) = parse_head(text.as_bytes()).expect("the legacy header parses");
+        assert_eq!(head.modelname, "EGM96");
+        assert_eq!(head.max_degree, 360);
+        assert!((head.gm_m3_s2 - 3.986004415e14).abs() < 1.0);
+        assert_eq!(head.norm, Norm::FullyNormalized);
+        assert_eq!(end, 9);
     }
 }
