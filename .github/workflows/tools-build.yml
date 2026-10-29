@@ -125,8 +125,13 @@ jobs:
     - name: Stückliste — SBOM des Werkzeug-Baums
       run: |
         cargo cyclonedx --format json --all-features
-        mv bom.json sbom.cdx.json
-        echo "sbom: $(jq '.components | length' sbom.cdx.json) components"
+        sbom=$(find . -name '*.cdx.json' -not -path './target/*' | head -1)
+        if [ -z "$sbom" ]; then
+          echo "sbom: cargo cyclonedx wrote no *.cdx.json — the release ships without a bill of materials" >&2
+          exit 1
+        fi
+        cp "$sbom" sbom.cdx.json
+        echo "sbom: $(jq '.components | length' sbom.cdx.json) components from $sbom"
     - name: Sign the assets — the origin is proven, not asserted
       env:
         SIGNING_KEY: ${{ secrets.OMEGAFLOW_SIGNING_KEY }}
