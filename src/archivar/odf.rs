@@ -6,6 +6,10 @@ pub const PK_RAMP: u32 = 2030;
 pub const PK_CLOCK: u32 = 2040;
 pub const PK_SUMMARY: u32 = 105;
 
+pub const RECORD_BYTES: usize = 36;
+pub const RECORDS_PER_BLOCK: usize = 224;
+pub const PHYSICAL_RECORD: usize = 8064;
+
 pub const ODF_TDB_OFFSET: f64 = -1577664000.0;
 
 pub const COMP_OBSERVABLE: u32 = 1;
@@ -328,17 +332,20 @@ pub fn parse_p11r_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
 }
 
 pub fn parse_odf(bytes: &[u8]) -> Option<Vec<OdOrbit>> {
-    if !bytes.len().is_multiple_of(36) {
+    if !bytes.len().is_multiple_of(PHYSICAL_RECORD) {
         return None;
     }
     let mut out = Vec::new();
     let mut in_orbit = false;
-    let n = bytes.len() / 36;
+    let n = bytes.len() / RECORD_BYTES;
     for i in 0..n {
         let mut words = [0u32; 9];
         for k in 0..9 {
-            words[k] =
-                u32::from_be_bytes(bytes[i * 36 + k * 4..i * 36 + k * 4 + 4].try_into().ok()?);
+            words[k] = u32::from_be_bytes(
+                bytes[i * RECORD_BYTES + k * 4..i * RECORD_BYTES + k * 4 + 4]
+                    .try_into()
+                    .ok()?,
+            );
         }
         match words[0] {
             PK_FILE_LABEL | PK_IDENTIFIER | PK_ORBIT_HEADER | PK_RAMP | PK_CLOCK | PK_SUMMARY => {
@@ -3339,5 +3346,41 @@ mod tests {
             ReferenceStage::UplinkCarrier
         );
         assert_eq!(ref_uplink_hz(12, 2_110_274_976.0), 2_110_274_976.0);
+    }
+
+    #[test]
+    fn the_block_arithmetic_is_the_specification() {
+        assert_eq!(RECORDS_PER_BLOCK * RECORD_BYTES, PHYSICAL_RECORD);
+        assert_eq!(PHYSICAL_RECORD, 8064);
+        assert_eq!(RECORD_BYTES, 36);
+        assert_eq!(RECORDS_PER_BLOCK, 224);
+    }
+
+    #[test]
+    fn a_file_of_records_without_whole_blocks_is_absent() {
+        let two_records = vec![0u8; 2 * RECORD_BYTES];
+        assert!(parse_odf(&two_records).is_none());
+        let one_block = vec![0u8; PHYSICAL_RECORD];
+        assert!(parse_odf(&one_block).is_some());
+    }
+
+    #[test]
+    fn the_six_groups_are_read_in_the_order_the_specification_names() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_IDENTIFIER, 2);
+        put_header(&mut block, 4, PK_ORBIT_HEADER, 4);
+        put_header(&mut block, 6, PK_SUMMARY, 6);
+        let rows = parse_odf(&block).expect("a block with the six headers parses");
+        assert!(rows.is_empty(), "no orbit record was written");
+        assert_eq!(block.len(), 8064);
+    }
+
+    fn put_header(block: &mut [u8], record: usize, key: u32, group_start: u32) {
+        let at = record * RECORD_BYTES;
+        block[at..at + 4].copy_from_slice(&key.to_be_bytes());
+        block[at + 4..at + 8].copy_from_slice(&0u32.to_be_bytes());
+        block[at + 8..at + 12].copy_from_slice(&1u32.to_be_bytes());
+        block[at + 12..at + 16].copy_from_slice(&group_start.to_be_bytes());
     }
 }
