@@ -1,3 +1,4 @@
+use std::sync::OnceLock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use super::types::J2000_UNIX_OFFSET;
@@ -113,6 +114,62 @@ pub(crate) fn tdb_minus_tt_seconds(unix: f64) -> Option<f64> {
     }
     let jd = unix / 86400.0 + 2_440_587.5;
     tdb_minus_tt_full(jd, 0.0, 0.0, 0.0, 0.0, 0.0)
+}
+
+pub struct MoyerTerm {
+    pub amplitude_seconds: f64,
+    pub angle_a_deg: f64,
+    pub rate_a_deg_day: f64,
+    pub angle_b_deg: f64,
+    pub rate_b_deg_day: f64,
+}
+
+const MOYER_TSV: &str = include_str!("kernels/moyer_tdb.tsv");
+
+pub fn moyer_terms() -> Option<&'static Vec<MoyerTerm>> {
+    static TERMS: OnceLock<Option<Vec<MoyerTerm>>> = OnceLock::new();
+    TERMS
+        .get_or_init(|| {
+            let mut out = Vec::new();
+            for line in MOYER_TSV.lines() {
+                if line.starts_with('#') || line.trim().is_empty() {
+                    continue;
+                }
+                let cols: Vec<&str> = line.split('\t').collect();
+                if cols.len() < 6 {
+                    continue;
+                }
+                let v: Vec<f64> = cols[1..6]
+                    .iter()
+                    .filter_map(|x| x.trim().parse().ok())
+                    .collect();
+                if v.len() == 5 {
+                    out.push(MoyerTerm {
+                        amplitude_seconds: v[0],
+                        angle_a_deg: v[1],
+                        rate_a_deg_day: v[2],
+                        angle_b_deg: v[3],
+                        rate_b_deg_day: v[4],
+                    });
+                }
+            }
+            if out.is_empty() { None } else { Some(out) }
+        })
+        .as_ref()
+}
+
+pub fn moyer_tdb_minus_tt_seconds(unix: f64) -> Option<f64> {
+    if !unix.is_finite() {
+        return None;
+    }
+    let d = (unix - J2000_UNIX_OFFSET) / 86_400.0;
+    let mut sum = 0.0;
+    for term in moyer_terms()? {
+        let a = (term.angle_a_deg + term.rate_a_deg_day * d).to_radians();
+        let b = (term.angle_b_deg + term.rate_b_deg_day * d).to_radians();
+        sum += term.amplitude_seconds * (a - b).sin();
+    }
+    if sum.is_finite() { Some(sum) } else { None }
 }
 
 impl LeapSeconds {
@@ -361,8 +418,7 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
     }
 
     #[test]
-    fn the_series_carries_the_periodic_term_at_its_physical_amplitude() {
-        let lsk = embedded_lsk().expect("the embedded leap-second kernel");
+    fn the_series_carries_the_periodic_term_at_its_physical_amplitude() {        let lsk = embedded_lsk().expect("the embedded leap-second kernel");
         let epochs = [
             1_234_567_890.0,
             1_500_000_000.0,
@@ -387,5 +443,29 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
             largest >= 1.0e-3,
             "the periodic term must reach its 1.6 ms amplitude somewhere, largest {largest}"
         );
+    }
+
+    #[test]
+    fn the_moyer_realisation_agrees_with_the_full_series() {
+        for unix in [
+            1_234_567_890.0,
+            1_500_000_000.0,
+            1_700_000_000.0,
+            1_800_000_000.0,
+            2_000_000_000.0,
+        ] {
+            let full = super::tdb_minus_tt_seconds(unix).expect("the Fairhead series");
+            let moyer = moyer_tdb_minus_tt_seconds(unix).expect("the Moyer realisation");
+            let diff = (full - moyer).abs();
+            assert!(
+                diff < 1.0e-4,
+                "unix {unix}: Fairhead {full}, Moyer {moyer}, difference {diff} s"
+            );
+        }
+    }
+
+    #[test]
+    fn the_moyer_realisation_is_absent_for_a_void_epoch() {
+        assert!(moyer_tdb_minus_tt_seconds(f64::NAN).is_none());
     }
 }

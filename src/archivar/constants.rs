@@ -138,4 +138,20 @@ mod tests {
         let g = k.get("G").expect("G").uncertainty.expect("G has an uncertainty");
         assert!((g - 1.5e-15).abs() < 1e-18, "G uncertainty {g}");
     }
+
+    #[test]
+    fn the_five_defining_constants_match_the_si_brochure() {
+        let k = kernel().expect("constants kernel");
+        let bimp: [(&str, f64); 5] = [
+            ("c", 299_792_458.0),
+            ("h", 6.626_070_15e-34),
+            ("e", 1.602_176_634e-19),
+            ("k_B", 1.380_649e-23),
+            ("N_A", 6.022_140_76e23),
+        ];
+        for (key, value) in bimp {
+            let got = k.get(key).expect("a defining constant").value;
+            assert_eq!(got, value, "{key}: the kernel deviates from the SI brochure");
+        }
+    }
 }
