@@ -358,4 +358,33 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
             "an epoch with no anchor stays void — no fabricated value"
         );
     }
+
+    #[test]
+    fn the_series_carries_the_periodic_term_at_its_physical_amplitude() {
+        let lsk = embedded_lsk().expect("the embedded leap-second kernel");
+        let epochs = [
+            1_234_567_890.0,
+            1_500_000_000.0,
+            1_700_000_000.0,
+            1_800_000_000.0,
+        ];
+        let mut largest = 0.0f64;
+        for unix in epochs {
+            let leap = lsk.leap_at(unix).expect("an epoch carries a leap");
+            let tdb = lsk.unix_to_tdb(unix).expect("a TDB value");
+            let naive = unix + 32.184 + leap - J2000_UNIX_OFFSET;
+            let gap = (tdb - naive).abs();
+            assert!(
+                gap <= 1.8e-3,
+                "unix {unix}: the TDB-TT periodic term never exceeds 1.8 ms, gap {gap}"
+            );
+            if gap > largest {
+                largest = gap;
+            }
+        }
+        assert!(
+            largest >= 1.0e-3,
+            "the periodic term must reach its 1.6 ms amplitude somewhere, largest {largest}"
+        );
+    }
 }

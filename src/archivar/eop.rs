@@ -226,4 +226,32 @@ mod tests {
         );
         assert!(e.ut1_utc_s < 0.0, "the ramp came back: {}", e.ut1_utc_s);
     }
+
+    const BULLETIN_A: &str = include_str!("kernels/eop_bulletina.tsv");
+
+    #[test]
+    fn the_c04_kernel_agrees_with_bulletin_a() {
+        let s = kernel().expect("eop kernel");
+        let mut n = 0usize;
+        for line in BULLETIN_A.lines() {
+            if line.starts_with('#') || line.trim().is_empty() {
+                continue;
+            }
+            let c: Vec<&str> = line.split('\t').collect();
+            assert_eq!(c.len(), 4, "a bulletin row carries four columns");
+            let mjd: f64 = c[0].trim().parse().expect("mjd");
+            let x: f64 = c[1].trim().parse().expect("x");
+            let y: f64 = c[2].trim().parse().expect("y");
+            let ut1: f64 = c[3].trim().parse().expect("ut1");
+            let e = s.at(mjd).expect("an EOP value at a bulletin day");
+            let dx_mas = (e.pm_x_arcsec - x).abs() * 1000.0;
+            let dy_mas = (e.pm_y_arcsec - y).abs() * 1000.0;
+            let dut1_us = (e.ut1_utc_s - ut1).abs() * 1.0e6;
+            assert!(dx_mas <= 0.1, "mjd {mjd}: x differs by {dx_mas} mas");
+            assert!(dy_mas <= 0.1, "mjd {mjd}: y differs by {dy_mas} mas");
+            assert!(dut1_us <= 1.0, "mjd {mjd}: UT1-UTC differs by {dut1_us} us");
+            n += 1;
+        }
+        assert_eq!(n, 4, "four bulletin days are compared");
+    }
 }

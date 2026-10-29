@@ -100,4 +100,42 @@ mod tests {
         let f = value("f_WGS84").expect("WGS84 flattening");
         assert!((1.0 / f - 298.257223563).abs() < 1e-9, "{}", 1.0 / f);
     }
+
+    #[test]
+    fn the_kernel_carries_the_published_digits() {
+        let k = kernel().expect("constants kernel");
+        let want: [(&str, f64); 10] = [
+            ("c", 299_792_458.0),
+            ("h", 6.626_070_15e-34),
+            ("e", 1.602_176_634e-19),
+            ("k_B", 1.380_649e-23),
+            ("N_A", 6.022_140_76e23),
+            ("G", 6.674_30e-11),
+            ("AU", 149_597_870_700.0),
+            ("GM_sun", 1.327_124_4e20),
+            ("a_WGS84", 6_378_137.0),
+            ("f_WGS84", 0.003_352_810_664_747_480_5),
+        ];
+        for (key, expected) in want {
+            let got = k.get(key).expect("a constant").value;
+            assert_eq!(
+                got, expected,
+                "{key}: the kernel carries {got}, CODATA/IAU/WGS84 says {expected}"
+            );
+        }
+    }
+
+    #[test]
+    fn the_exact_constants_carry_no_uncertainty() {
+        let k = kernel().expect("constants kernel");
+        for key in ["c", "h", "e", "k_B", "N_A", "AU", "GM_sun", "a_WGS84"] {
+            let c = k.get(key).expect("a constant");
+            assert!(
+                c.uncertainty.is_none(),
+                "{key} is exact by definition and must not carry an uncertainty"
+            );
+        }
+        let g = k.get("G").expect("G").uncertainty.expect("G has an uncertainty");
+        assert!((g - 1.5e-15).abs() < 1e-18, "G uncertainty {g}");
+    }
 }
