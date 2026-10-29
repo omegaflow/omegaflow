@@ -1,0 +1,54 @@
+# Fremde Quellen — Institutionen und Normen, die eine Zahl belegen können.
+# Eine Zeile je Marker; der Scanner sucht den Marker im Testkörper und in
+# den drei Zeilen davor (Zitat steht oft über dem Test).
+#
+# Nicht in dieser Liste stehen Hauswörter wie „witness", „reference" oder
+# „official": sie bezeichnen oft unsere eigene Gestalt-Zusage, nicht eine
+# fremde Messung. Wer sie zählt, überschätzt die Zahl.
+SOFA
+ERFA
+IERS
+CODATA
+BIPM
+NIST
+IAU
+JPL
+Horizons
+SBDB
+VizieR
+SIMBAD
+ICGEM
+EGM96
+EGM2008
+XGM2019
+WMM
+IGRF
+NOAA
+GFZ
+INPOP
+DE441
+DE440
+EPM2021
+Gaia
+Hipparcos
+Tycho
+HEASARC
+PDS
+OGIP
+IVOA
+UCUM
+NLM
+cfitsio
+astropy
+NAIF
+SPICE
+ISO 8601
+RFC 3339
+WGS84
+UDUNITS
+IRIS
+GEOFON
+RESIF
+CHAMP
+CDDIS
+MPC
