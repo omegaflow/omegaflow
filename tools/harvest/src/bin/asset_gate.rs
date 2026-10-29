@@ -42,6 +42,24 @@ impl Classes {
     }
 }
 
+const DESCRIPTORS: &str = "tools/harvest/src/asset_descriptors.tsv";
+
+fn descriptor_table() -> Option<std::collections::BTreeMap<String, String>> {
+    let text = fs::read_to_string(DESCRIPTORS).ok()?;
+    let mut out = std::collections::BTreeMap::new();
+    for line in text.lines().skip(1) {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 2 {
+            continue;
+        }
+        out.insert(
+            cols[0].trim().to_string(),
+            cols[cols.len() - 1].trim().to_string(),
+        );
+    }
+    Some(out)
+}
+
 fn classes_table() -> Vec<Classes> {
     let text = include_str!("../asset_classes.tsv");
     let mut out = Vec::new();
@@ -156,10 +174,13 @@ fn coverage(register: &str) -> Result<(), String> {
     let mut format: Option<String> = None;
     let mut total = 0usize;
     let mut covered = 0usize;
+    let mut with_key = 0usize;
+    let mut structure_only = 0usize;
+    let descriptors = descriptor_table();
     let classes = classes_table();
     let mut full = 0usize;
     let mut gated_formats = 0usize;
-    let mut by_format: std::collections::BTreeMap<String, (usize, bool)> =
+    let mut by_format: std::collections::BTreeMap<String, (usize, usize)> =
         std::collections::BTreeMap::new();
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("url ") {
@@ -168,14 +189,30 @@ fn coverage(register: &str) -> Result<(), String> {
                 Some(name) => name.clone(),
                 None => "entry without a format line".to_string(),
             };
-            let entry = by_format.entry(name).or_insert((0, false));
+            let entry = by_format.entry(name).or_insert((0, 0));
             if is_bin {
                 entry.0 += 1;
                 total += 1;
-                let is_gated = gated.iter().any(|g| format.as_deref() == Some(g));
-                if is_gated {
-                    covered += 1;
-                    entry.1 = true;
+                let asset = rest.trim().rsplit('/').next().unwrap_or("");
+                let verdict = descriptors.as_ref().and_then(|d| d.get(asset));
+                match verdict.map(|v| v.as_str()) {
+                    Some("gated") => {
+                        with_key += 1;
+                        covered += 1;
+                        entry.1 += 1;
+                    }
+                    Some("gated-structure") => {
+                        structure_only += 1;
+                        covered += 1;
+                        entry.1 += 1;
+                    }
+                    _ => {
+                        let is_gated = gated.iter().any(|g| format.as_deref() == Some(g));
+                        if is_gated {
+                            covered += 1;
+                            entry.1 += 1;
+                        }
+                    }
                 }
             }
         } else if let Some(rest) = line.strip_prefix("format ") {
@@ -183,25 +220,38 @@ fn coverage(register: &str) -> Result<(), String> {
         }
     }
     println!("register {register}: {total} bin assets, {covered} carried by a gate descriptor");
+    match &descriptors {
+        Some(map) => println!(
+            "  descriptors {DESCRIPTORS}: {} rows — {with_key} with key, {structure_only} structure only",
+            map.len()
+        ),
+        None => println!("  descriptors absent: {DESCRIPTORS}"),
+    }
     let mut open = 0usize;
-    for (name, (count, is_gated)) in &by_format {
+    for (name, (count, gated_count)) in &by_format {
         if *count == 0 {
             continue;
         }
-        if !*is_gated {
-            open += count;
+        let missing = count - gated_count;
+        open += missing;
+        if *gated_count == 0 {
             println!("  {:<28} {:>4}  no descriptor", name, count);
             continue;
         }
-        gated_formats += 1;
+        let state = if missing == 0 {
+            gated_formats += 1;
+            "gated".to_string()
+        } else {
+            format!("partial {gated_count}/{count}")
+        };
         match classes.iter().find(|c| &c.format == name) {
             Some(c) if c.measured() == 3 => {
                 full += 1;
-                println!("  {:<28} {:>4}  gated, classes 3/3", name, count);
+                println!("  {:<28} {:>4}  {state}, classes 3/3", name, count);
             }
             Some(c) => {
                 println!(
-                    "  {:<28} {:>4}  gated, classes {}/3, absent: {}",
+                    "  {:<28} {:>4}  {state}, classes {}/3, absent: {}",
                     name,
                     count,
                     c.measured(),
@@ -210,7 +260,7 @@ fn coverage(register: &str) -> Result<(), String> {
             }
             None => {
                 println!(
-                    "  {:<28} {:>4}  gated, classes 0/3, no class row",
+                    "  {:<28} {:>4}  {state}, classes 0/3, no class row",
                     name, count
                 );
             }
