@@ -230,6 +230,20 @@ fn registered_netlocs() -> &'static HashSet<String> {
     })
 }
 
+pub fn print_block(tag: &str, asset: &str, origin: &str, format: &str, compiler: &str) {
+    let name = std::path::Path::new(asset)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or(asset);
+    println!("url https://github.com/omegaflow/sources/releases/download/{tag}/{name}");
+    println!("format {format}");
+    println!("origin {origin}");
+    println!("compiler {compiler}");
+    if let Ok(bytes) = std::fs::read(asset) {
+        println!("sha256 {}", sha256::sha256_hex(&bytes));
+    }
+}
+
 pub fn require_ci() {
     let env_is = |name: &str, value: &str| std::env::var(name).map(|v| v == value).unwrap_or(false);
     if !(env_is("OMEGAFLOW_CI", "1") || env_is("GITHUB_ACTIONS", "true")) {

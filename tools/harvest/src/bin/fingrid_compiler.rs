@@ -1,3 +1,4 @@
+use omegaflow::cdn::print_block;
 use omegaflow::cdn::upload_release;
 use std::env;
 use std::io::Write;
@@ -157,6 +158,13 @@ fn run(args: &[String]) -> Result<(), String> {
                 return Err(format!("{url} carries no data record"));
             }
             write_asset(&out_path, &bytes)?;
+            print_block(
+                TAG,
+                &out_path,
+                &url,
+                "json",
+                "tools/harvest/src/bin/fingrid_compiler.rs",
+            );
             println!(
                 "{out_path}: {} bytes, {count} record(s) for dataset {dataset} ({start} .. {stop})",
                 bytes.len()
@@ -171,6 +179,13 @@ fn run(args: &[String]) -> Result<(), String> {
     let count = dataset_count(&bytes);
 
     write_asset(&out_path, &bytes)?;
+    print_block(
+        TAG,
+        &out_path,
+        DATASETS_URL,
+        "json",
+        "tools/harvest/src/bin/fingrid_compiler.rs",
+    );
 
     println!(
         "{out_path}: {} bytes, {count} dataset id(s) in the Fingrid ableList",
