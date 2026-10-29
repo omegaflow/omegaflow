@@ -159,7 +159,7 @@ fn nut_terms(
             }
         }
         let phase_deg = if cosine { a0 + 90.0 } else { a0 };
-        terms.push([*amplitude, a1 * 36525.0 * deg, phase_deg * deg]);
+        terms.push([*amplitude, a1 * deg, phase_deg * deg]);
     }
     if terms.is_empty() { None } else { Some(terms) }
 }
@@ -458,20 +458,12 @@ BODY301_NUT_PREC_PM = ( 3.5610 0.1208 -0.0642 0.0158 0.0252 -0.0066 -0.0047 -0.0
                 .to_degrees();
             seen.push((body, lon - lon_w, graphic - lat_g));
         }
-        let jupiter = seen.iter().find(|(b, _, _)| *b == 599).expect("jupiter");
-        assert!(
-            jupiter.1.abs() < 1.0 && jupiter.2.abs() < 0.01,
-            "jupiter differs from horizons by {} / {} degrees",
-            jupiter.1,
-            jupiter.2
-        );
-        let mars = seen.iter().find(|(b, _, _)| *b == 499).expect("mars");
-        assert!(
-            mars.1.abs() < 2.0 && mars.2.abs() < 1.5,
-            "mars differs from horizons by {} / {} degrees",
-            mars.1,
-            mars.2
-        );
+        for (body, dlon, dlat) in &seen {
+            assert!(
+                dlon.abs() < 1.0 && dlat.abs() < 0.01,
+                "body {body} differs from horizons by {dlon} / {dlat} degrees"
+            );
+        }
     }
 
     #[test]
