@@ -608,8 +608,9 @@ impl CdfFile {
                 ));
             }
         }
-        if var.sparse != 0 {
-            let spr = self.spr_offset(bytes, var).ok_or(CdfNote::SparseRecord)?;
+        if var.sparse != 0
+            && let Some(spr) = self.spr_offset(bytes, var)
+        {
             let present = self
                 .spr_present(bytes, spr, var.max_rec)
                 .ok_or(CdfNote::SparseRecord)?;

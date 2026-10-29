@@ -41,8 +41,15 @@ fn main() {
                 .join("x")
         };
         println!(
-            "  {:<28} type {:>3} elements {:>2} dims {:<10} records {} sparse {}",
-            var.name, var.data_type, var.num_elements, dims, var.record_vary, var.sparse
+            "  {:<28} type {:>3} elements {:>2} dims {:<10} records {} sparse {} max_rec {} vdr {}",
+            var.name,
+            var.data_type,
+            var.num_elements,
+            dims,
+            var.record_vary,
+            var.sparse,
+            var.max_rec,
+            var.vdr_offset
         );
     }
 }
