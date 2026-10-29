@@ -323,6 +323,7 @@ fn geometry(
     station: Station,
     spin: BodySpin,
     paths: &Paths,
+    bend: Option<Bend>,
 ) -> Result<Geometry, String> {
     let jd = t_unix / 86400.0 + UNIX_JD;
     let carrier_pos = paths.carrier_position(jd)?;
@@ -343,7 +344,11 @@ fn geometry(
         let jd_craft = jd - light_time / 86400.0;
         let target_pos = paths.target_position(jd_craft)?;
         let target_vel = paths.target_velocity(jd_craft)?;
-        let (craft_pos, craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
+        let (mut craft_pos, mut craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
+        if let Some(b) = bend {
+            craft_pos = rotate_about(craft_pos, b);
+            craft_vel = rotate_about(craft_vel, b);
+        }
         let mut line = [0.0; 3];
         for i in 0..3 {
             line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
@@ -371,6 +376,28 @@ fn impact_parameter(target: [f64; 3], station: [f64; 3], unit: [f64; 3]) -> f64 
     (c[0] * c[0] + c[1] * c[1] + c[2] * c[2]).sqrt()
 }
 
+#[derive(Clone, Copy)]
+struct Bend {
+    axis: [f64; 3],
+    angle_rad: f64,
+}
+
+fn rotate_about(v: [f64; 3], bend: Bend) -> [f64; 3] {
+    let (s, c) = bend.angle_rad.sin_cos();
+    let k = cross(bend.axis, v);
+    let d = bend.axis[0] * v[0] + bend.axis[1] * v[1] + bend.axis[2] * v[2];
+    [
+        v[0] * c + k[0] * s + bend.axis[0] * d * (1.0 - c),
+        v[1] * c + k[1] * s + bend.axis[1] * d * (1.0 - c),
+        v[2] * c + k[2] * s + bend.axis[2] * d * (1.0 - c),
+    ]
+}
+
+fn unit_vector(v: [f64; 3]) -> [f64; 3] {
+    let n = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    [v[0] / n, v[1] / n, v[2] / n]
+}
+
 fn limb_gap_at(
     t_unix: f64,
     orbit: Hyperbola,
@@ -378,8 +405,9 @@ fn limb_gap_at(
     spin: BodySpin,
     paths: &Paths,
     radius: f64,
+    bend: Option<Bend>,
 ) -> Result<f64, String> {
-    let g = geometry(t_unix, orbit, station, spin, paths)?;
+    let g = geometry(t_unix, orbit, station, spin, paths, bend)?;
     Ok(impact_parameter(g.target, g.station, g.unit) - radius)
 }
 
@@ -391,13 +419,14 @@ fn crossing_between(
     spin: BodySpin,
     paths: &Paths,
     radius: f64,
+    bend: Option<Bend>,
 ) -> Result<f64, String> {
     let mut lo = lo_t;
     let mut hi = hi_t;
-    let lo_sign = limb_gap_at(lo, orbit, station, spin, paths, radius)?.is_sign_positive();
+    let lo_sign = limb_gap_at(lo, orbit, station, spin, paths, radius, bend)?.is_sign_positive();
     for _ in 0..80 {
         let mid = 0.5 * (lo + hi);
-        if limb_gap_at(mid, orbit, station, spin, paths, radius)?.is_sign_positive() == lo_sign {
+        if limb_gap_at(mid, orbit, station, spin, paths, radius, bend)?.is_sign_positive() == lo_sign {
             lo = mid;
         } else {
             hi = mid;
@@ -413,7 +442,7 @@ fn range_rate_cps(
     spin: BodySpin,
     paths: &Paths,
 ) -> Result<f64, String> {
-    let g = geometry(t_unix, orbit, station, spin, paths)?;
+    let g = geometry(t_unix, orbit, station, spin, paths, None)?;
     let rate = g.unit[0] * g.rel_velocity[0]
         + g.unit[1] * g.rel_velocity[1]
         + g.unit[2] * g.rel_velocity[2];
@@ -466,6 +495,7 @@ fn main() -> Result<(), String> {
     let mut every_row = false;
     let mut ephemeris_probe = false;
     let mut limb: Option<(f64, f64, f64)> = None;
+    let mut bend_scan: Option<(f64, f64, f64)> = None;
     let mut scan = 0;
     while scan < args.len() {
         match args[scan].as_str() {
@@ -481,6 +511,16 @@ fn main() -> Result<(), String> {
                 let step = args.get(scan + 3).ok_or_else(|| usage.to_string())?.parse::<f64>()
                     .map_err(|_| "the limb step carries no number".to_string())?;
                 limb = Some((start, end, step));
+                scan += 4;
+            }
+            "--bend-scan" => {
+                let from = args.get(scan + 1).ok_or_else(|| usage.to_string())?.parse::<f64>()
+                    .map_err(|_| "the bend start carries no angle".to_string())?;
+                let to = args.get(scan + 2).ok_or_else(|| usage.to_string())?.parse::<f64>()
+                    .map_err(|_| "the bend end carries no angle".to_string())?;
+                let step = args.get(scan + 3).ok_or_else(|| usage.to_string())?.parse::<f64>()
+                    .map_err(|_| "the bend step carries no angle".to_string())?;
+                bend_scan = Some((from, to, step));
                 scan += 4;
             }
             "--ephemeris-probe" => {
@@ -539,6 +579,65 @@ fn main() -> Result<(), String> {
         }
     };
     let orbit = mariner5_encounter();
+    if let Some((from_deg, to_deg, step_deg)) = bend_scan {
+        let (start, end, sample) = limb
+            .ok_or_else(|| "--bend-scan needs --limb <start> <end> <step>".to_string())?;
+        let (_, target, _) = paths
+            .chebyshev
+            .as_ref()
+            .ok_or_else(|| "--bend-scan needs --ephemeris so the target is declared".to_string())?;
+        let radius = body_props(target)?.radius_m / METRES_PER_KM;
+        let mut best = (f64::INFINITY, start);
+        let mut probe_t = start;
+        while probe_t <= end {
+            let g = geometry(probe_t, orbit, stations[0], spin, &paths, None)?;
+            let b = impact_parameter(g.target, g.station, g.unit);
+            if b < best.0 {
+                best = (b, probe_t);
+            }
+            probe_t += sample;
+        }
+        let g0 = geometry(best.1, orbit, stations[0], spin, &paths, None)?;
+        let axis = g0.unit;
+        println!(
+            "bend axis from the line of sight at {:.0}, unbent closest {:.1} km, radius {radius:.1} km",
+            best.1, best.0
+        );
+        println!("angle_deg,closest_km,scatter_pre,scatter_post");
+        let mut angle = from_deg;
+        while angle <= to_deg + 1e-9 {
+            let bend = Some(Bend { axis, angle_rad: angle * DEG });
+            let mut bmin = f64::INFINITY;
+            let mut scan_t = start;
+            while scan_t <= end {
+                let g = geometry(scan_t, orbit, stations[0], spin, &paths, bend)?;
+                let b = impact_parameter(g.target, g.station, g.unit);
+                if b < bmin {
+                    bmin = b;
+                }
+                scan_t += sample;
+            }
+            let mut pre = Vec::new();
+            let mut post = Vec::new();
+            for row in &rows {
+                let g = geometry(row.t_unix, orbit, stations[0], spin, &paths, bend)?;
+                let rate = g.unit[0] * g.rel_velocity[0]
+                    + g.unit[1] * g.rel_velocity[1]
+                    + g.unit[2] * g.rel_velocity[2];
+                let residual = row.observed - doppler_scale_cps_per_km_s() * rate;
+                if row.segment == "pre" {
+                    pre.push(residual);
+                } else {
+                    post.push(residual);
+                }
+            }
+            let a = stats(&pre);
+            let b = stats(&post);
+            println!("{angle:.2},{bmin:.1},{:.1},{:.1}", a.scatter, b.scatter);
+            angle += step_deg;
+        }
+        return Ok(());
+    }
     if let Some((start, end, step)) = limb {
         let (_, target, _) = paths
             .chebyshev
@@ -547,15 +646,15 @@ fn main() -> Result<(), String> {
         let radius = body_props(target)?.radius_m / METRES_PER_KM;
         println!("limb against {target}, radius {radius:.1} km");
         let mut lo_t = start;
-        let mut lo_gap = limb_gap_at(lo_t, orbit, stations[0], spin, &paths, radius)?;
+        let mut lo_gap = limb_gap_at(lo_t, orbit, stations[0], spin, &paths, radius, None)?;
         let mut best = (f64::INFINITY, lo_t);
         let mut t = start;
         while t + step <= end + 1e-9 {
             t += step;
-            let gap = limb_gap_at(t, orbit, stations[0], spin, &paths, radius)?;
+            let gap = limb_gap_at(t, orbit, stations[0], spin, &paths, radius, None)?;
             println!("{t:.0},{:.2},{}", gap + radius, if gap < 0.0 { "in" } else { "out" });
             if gap.is_sign_positive() != lo_gap.is_sign_positive() {
-                let crossing = crossing_between(lo_t, t, orbit, stations[0], spin, &paths, radius)?;
+                let crossing = crossing_between(lo_t, t, orbit, stations[0], spin, &paths, radius, None)?;
                 println!("crossing {crossing:.2} {}", if gap < 0.0 { "in" } else { "out" });
             }
             if gap < best.0 {
@@ -564,7 +663,7 @@ fn main() -> Result<(), String> {
             lo_t = t;
             lo_gap = gap;
         }
-        let g = geometry(best.1, orbit, stations[0], spin, &paths)?;
+        let g = geometry(best.1, orbit, stations[0], spin, &paths, None)?;
         let along = g.unit[0] * g.rel_velocity[0]
             + g.unit[1] * g.rel_velocity[1]
             + g.unit[2] * g.rel_velocity[2];
