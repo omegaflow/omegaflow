@@ -73,7 +73,9 @@ pub fn months_from_rstn(dir: &str, from: usize, to: usize) -> Result<BTreeMap<Mo
     let mut bucket: BTreeMap<Month, (f64, u32)> = BTreeMap::new();
     let mut files = 0usize;
     for entry in fs::read_dir(dir).map_err(|e| format!("read {dir} returned void: {e}"))? {
-        let path = entry.map_err(|e| format!("{dir} carries an entry that reads as void: {e}"))?.path();
+        let path = entry
+            .map_err(|e| format!("{dir} carries an entry that reads as void: {e}"))?
+            .path();
         if path.extension().and_then(|e| e.to_str()) != Some("txt") {
             continue;
         }
@@ -117,7 +119,10 @@ pub fn months_from_norp(path: &str, value_col: usize) -> Result<BTreeMap<Month, 
     let text = fs::read_to_string(path).map_err(|e| format!("read {path} returned void: {e}"))?;
     let mut bucket: BTreeMap<Month, (f64, u32)> = BTreeMap::new();
     for line in text.lines() {
-        let cells: Vec<&str> = line.split(',').map(|c| c.trim().trim_matches('"')).collect();
+        let cells: Vec<&str> = line
+            .split(',')
+            .map(|c| c.trim().trim_matches('"'))
+            .collect();
         if cells.len() <= value_col {
             continue;
         }
@@ -231,10 +236,16 @@ fn changepoints(
             score: ratio.ln().abs() * weight,
         });
     }
-    found.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    found.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     let mut kept: Vec<Step> = Vec::new();
     for step in found {
-        let near = kept.iter().any(|k| months_between(k.month, step.month) < separation);
+        let near = kept
+            .iter()
+            .any(|k| months_between(k.month, step.month) < separation);
         if !near {
             kept.push(step);
         }
@@ -254,17 +265,27 @@ fn months_between(a: Month, b: Month) -> usize {
 fn parse_series(spec: &str) -> Result<Series, String> {
     let parts: Vec<&str> = spec.split('|').collect();
     if parts.len() != 4 {
-        return Err(format!("--series {spec} carries {} fields, not four: name|kind|path|params", parts.len()));
+        return Err(format!(
+            "--series {spec} carries {} fields, not four: name|kind|path|params",
+            parts.len()
+        ));
     }
     let (name, kind, path, params) = (parts[0], parts[1], parts[2], parts[3]);
     let numbers = |required: usize| -> Result<Vec<usize>, String> {
         let list: Vec<usize> = params
             .split(',')
             .filter(|p| !p.trim().is_empty())
-            .map(|p| p.trim().parse::<usize>().map_err(|_| format!("{name}: params {params} carry no number")))
+            .map(|p| {
+                p.trim()
+                    .parse::<usize>()
+                    .map_err(|_| format!("{name}: params {params} carry no number"))
+            })
             .collect::<Result<Vec<_>, _>>()?;
         if list.len() != required {
-            return Err(format!("{name}: params {params} carry {} numbers, not {required}", list.len()));
+            return Err(format!(
+                "{name}: params {params} carry {} numbers, not {required}",
+                list.len()
+            ));
         }
         Ok(list)
     };
@@ -272,7 +293,12 @@ fn parse_series(spec: &str) -> Result<Series, String> {
         "bin" => months_from_bin(path)?,
         "text" => {
             let c = numbers(3)?;
-            months_from_text(path, c[0].saturating_sub(1), c[1].saturating_sub(1), c[2].saturating_sub(1))?
+            months_from_text(
+                path,
+                c[0].saturating_sub(1),
+                c[1].saturating_sub(1),
+                c[2].saturating_sub(1),
+            )?
         }
         "rstn" => {
             let c = numbers(2)?;
@@ -282,7 +308,11 @@ fn parse_series(spec: &str) -> Result<Series, String> {
             let c = numbers(1)?;
             months_from_norp(path, c[0].saturating_sub(1))?
         }
-        other => return Err(format!("{name}: kind {other} is not bin, text, rstn or norp")),
+        other => {
+            return Err(format!(
+                "{name}: kind {other} is not bin, text, rstn or norp"
+            ));
+        }
     };
     if months.len() < 2 {
         return Err(format!("{name}: {path} carries {} months", months.len()));
@@ -310,7 +340,10 @@ fn parse_eras(raw: &str) -> Result<Vec<Era>, String> {
             .collect::<Result<Vec<_>, _>>()
             .map_err(|_| format!("--eras {raw} carries no year"))?;
         if nums.len() != 2 {
-            return Err(format!("--eras {raw}: {part} carries {} years, not two", nums.len()));
+            return Err(format!(
+                "--eras {raw}: {part} carries {} years, not two",
+                nums.len()
+            ));
         }
         eras.push(Era {
             name: format!("{}-{}", nums[0], nums[1]),
@@ -433,7 +466,11 @@ fn main() -> Result<(), String> {
     while index < args.len() {
         match args[index].as_str() {
             "--series" => {
-                specs.push(args.get(index + 1).ok_or_else(|| usage.to_string())?.clone());
+                specs.push(
+                    args.get(index + 1)
+                        .ok_or_else(|| usage.to_string())?
+                        .clone(),
+                );
                 index += 2;
             }
             "--min-months" => {
@@ -472,11 +509,19 @@ fn main() -> Result<(), String> {
                 index += 2;
             }
             "--control" => {
-                control = Some(args.get(index + 1).ok_or_else(|| usage.to_string())?.clone());
+                control = Some(
+                    args.get(index + 1)
+                        .ok_or_else(|| usage.to_string())?
+                        .clone(),
+                );
                 index += 2;
             }
             "--eras" => {
-                eras = Some(args.get(index + 1).ok_or_else(|| usage.to_string())?.clone());
+                eras = Some(
+                    args.get(index + 1)
+                        .ok_or_else(|| usage.to_string())?
+                        .clone(),
+                );
                 index += 2;
             }
             "--bin-width" => {
@@ -515,7 +560,13 @@ fn main() -> Result<(), String> {
     series.sort_by(|a, b| a.name.cmp(&b.name));
 
     for s in &series {
-        println!("series {:<22} months {:>5}  {:<19}  {}", s.name, s.months.len(), span(&s.months), s.source);
+        println!(
+            "series {:<22} months {:>5}  {:<19}  {}",
+            s.name,
+            s.months.len(),
+            span(&s.months),
+            s.source
+        );
     }
 
     if let Some(name) = control {
@@ -526,7 +577,10 @@ fn main() -> Result<(), String> {
             return Err(format!("--control {name} names no series in this run"));
         };
         println!();
-        println!("control {}  width {:.0}  min bin {}  era A {}  era B {}", held.name, width, floor, eras[0].name, eras[1].name);
+        println!(
+            "control {}  width {:.0}  min bin {}  era A {}  era B {}",
+            held.name, width, floor, eras[0].name, eras[1].name
+        );
         for other in series.iter().filter(|s| s.name != name) {
             control_table(held, other, &eras, width, floor);
         }
@@ -538,11 +592,19 @@ fn main() -> Result<(), String> {
         for j in (i + 1)..series.len() {
             let a = &series[i];
             let b = &series[j];
-            let common: Vec<Month> = a.months.keys().filter(|k| b.months.contains_key(*k)).cloned().collect();
+            let common: Vec<Month> = a
+                .months
+                .keys()
+                .filter(|k| b.months.contains_key(*k))
+                .cloned()
+                .collect();
             if common.len() < min_months {
                 println!(
                     "pair {:<22} ~ {:<22} common months {:>5}  below {}",
-                    a.name, b.name, common.len(), min_months
+                    a.name,
+                    b.name,
+                    common.len(),
+                    min_months
                 );
                 continue;
             }
@@ -573,7 +635,14 @@ fn main() -> Result<(), String> {
             }
             let rendered: Vec<String> = steps
                 .iter()
-                .map(|s| format!("{:04}-{:02} {:+.1}%", s.month.0, s.month.1, 100.0 * (s.ratio - 1.0)))
+                .map(|s| {
+                    format!(
+                        "{:04}-{:02} {:+.1}%",
+                        s.month.0,
+                        s.month.1,
+                        100.0 * (s.ratio - 1.0)
+                    )
+                })
                 .collect();
             println!(
                 "pair {:<22} ~ {:<22} common months {:>5}  top {}",
@@ -600,7 +669,10 @@ fn main() -> Result<(), String> {
         }
     }
     println!();
-    println!("ripple: dates where more than one pair steps within {} months", separation);
+    println!(
+        "ripple: dates where more than one pair steps within {} months",
+        separation
+    );
     let mut any = false;
     for (anchor, members) in &clusters {
         if members.len() < 2 {
@@ -616,8 +688,15 @@ fn main() -> Result<(), String> {
             continue;
         }
         any = true;
-        let mean = members.iter().map(|(_, s)| (s.ratio - 1.0).abs()).sum::<f64>() / members.len() as f64;
-        let names: Vec<String> = members.iter().map(|(n, s)| format!("{n}@{:04}-{:02}", s.month.0, s.month.1)).collect();
+        let mean = members
+            .iter()
+            .map(|(_, s)| (s.ratio - 1.0).abs())
+            .sum::<f64>()
+            / members.len() as f64;
+        let names: Vec<String> = members
+            .iter()
+            .map(|(n, s)| format!("{n}@{:04}-{:02}", s.month.0, s.month.1))
+            .collect();
         println!(
             "  {:04}-{:02}  distinct pairs {}  steps {}  mean |step| {:+.1} %  {}",
             anchor.0,
@@ -640,18 +719,30 @@ mod tests {
 
     #[test]
     fn a_two_regime_pair_yields_its_slope_ratio() {
-        let months: Vec<Month> = (0..80).map(|i| (1970 + (i as i32) / 12, (i as u32) % 12 + 1)).collect();
+        let months: Vec<Month> = (0..80)
+            .map(|i| (1970 + (i as i32) / 12, (i as u32) % 12 + 1))
+            .collect();
         let xs: Vec<f64> = months.iter().enumerate().map(|(i, _)| i as f64).collect();
         let ys: Vec<f64> = months
             .iter()
             .enumerate()
-            .map(|(i, _)| if i < 40 { 2.0 * i as f64 + 5.0 } else { 3.0 * i as f64 + 5.0 })
+            .map(|(i, _)| {
+                if i < 40 {
+                    2.0 * i as f64 + 5.0
+                } else {
+                    3.0 * i as f64 + 5.0
+                }
+            })
             .collect();
         let (steps, flat) = changepoints(&xs, &ys, &months, 24, 12, 1);
         assert_eq!(flat, 0);
         assert_eq!(steps.len(), 1);
         assert_eq!(steps[0].month, months[40]);
-        assert!((steps[0].ratio - 1.5).abs() < 1e-6, "ratio {}", steps[0].ratio);
+        assert!(
+            (steps[0].ratio - 1.5).abs() < 1e-6,
+            "ratio {}",
+            steps[0].ratio
+        );
     }
 
     #[test]
@@ -659,16 +750,30 @@ mod tests {
         let months: Vec<Month> = (0..80)
             .map(|i| (1970 + (i as i32) / 12, (i as u32) % 12 + 1))
             .collect();
-        let xs: Vec<f64> = months.iter().enumerate().map(|(i, _)| (i as f64 + 40.0) * 1e-22).collect();
+        let xs: Vec<f64> = months
+            .iter()
+            .enumerate()
+            .map(|(i, _)| (i as f64 + 40.0) * 1e-22)
+            .collect();
         let ys: Vec<f64> = months
             .iter()
             .enumerate()
-            .map(|(i, _)| if i < 40 { 2.0 * i as f64 + 5.0 } else { 3.0 * i as f64 + 5.0 })
+            .map(|(i, _)| {
+                if i < 40 {
+                    2.0 * i as f64 + 5.0
+                } else {
+                    3.0 * i as f64 + 5.0
+                }
+            })
             .collect();
         let (steps, flat) = changepoints(&xs, &ys, &months, 24, 12, 1);
         assert_eq!(flat, 0, "a scale of 1e-22 is not degenerate");
         assert_eq!(steps.len(), 1);
-        assert!((steps[0].ratio - 1.5).abs() < 1e-6, "ratio {}", steps[0].ratio);
+        assert!(
+            (steps[0].ratio - 1.5).abs() < 1e-6,
+            "ratio {}",
+            steps[0].ratio
+        );
     }
 
     #[test]
@@ -694,8 +799,16 @@ mod tests {
                 late.insert((year, month), level * 1.0);
             }
         }
-        let control = Series { name: "c".into(), months: control, source: "test".into() };
-        let series = |map: BTreeMap<Month, f64>| Series { name: "x".into(), months: map, source: "test".into() };
+        let control = Series {
+            name: "c".into(),
+            months: control,
+            source: "test".into(),
+        };
+        let series = |map: BTreeMap<Month, f64>| Series {
+            name: "x".into(),
+            months: map,
+            source: "test".into(),
+        };
         let rows = control_rows(&control, &series(early), &eras, 30.0, 10);
         assert!(!rows.is_empty());
         for row in &rows {
@@ -722,8 +835,10 @@ mod tests {
     fn the_rstn_reader_takes_2695_from_forty_five_and_drops_day_32() {
         let dir = env::temp_dir().join("ripple_scan_rstn");
         let _ = fs::create_dir_all(&dir);
-        let a = "760105 SGMR   7.9    23.0    42.2    51.0    71.9   118     276     525         \n";
-        let b = "760132 SGMR   7.9    23.0    42.2    51.0   999.9   118     276     525         \n";
+        let a =
+            "760105 SGMR   7.9    23.0    42.2    51.0    71.9   118     276     525         \n";
+        let b =
+            "760132 SGMR   7.9    23.0    42.2    51.0   999.9   118     276     525         \n";
         fs::write(dir.join("1976.txt"), format!("{a}{b}")).expect("write");
         let map = months_from_rstn(&dir.to_string_lossy(), 45, 49).expect("read");
         assert_eq!(map.get(&(1976, 1)).copied(), Some(71.9));
@@ -733,9 +848,30 @@ mod tests {
     #[test]
     fn nearby_steps_cluster_into_one_date() {
         let steps = vec![
-            (("a~b").to_string(), Step { month: (1981, 1), ratio: 1.09, score: 2.0 }),
-            (("c~d").to_string(), Step { month: (1981, 3), ratio: 1.10, score: 1.9 }),
-            (("e~f").to_string(), Step { month: (2003, 9), ratio: 1.17, score: 2.2 }),
+            (
+                ("a~b").to_string(),
+                Step {
+                    month: (1981, 1),
+                    ratio: 1.09,
+                    score: 2.0,
+                },
+            ),
+            (
+                ("c~d").to_string(),
+                Step {
+                    month: (1981, 3),
+                    ratio: 1.10,
+                    score: 1.9,
+                },
+            ),
+            (
+                ("e~f").to_string(),
+                Step {
+                    month: (2003, 9),
+                    ratio: 1.17,
+                    score: 2.2,
+                },
+            ),
         ];
         let mut ordered = steps.clone();
         ordered.sort_by(|a, b| a.1.month.cmp(&b.1.month));
