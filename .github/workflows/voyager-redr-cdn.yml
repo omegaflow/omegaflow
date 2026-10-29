@@ -38,7 +38,10 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsSL "${{ inputs.data_url }}" -o index.html
-          grep -o 'href="[^"]*\.odr"' index.html | sed 's/href="//; s/"$//' | head -n "${{ inputs.limit }}" > list.txt
+          if ! grep -o 'href="[^"]*\.odr"' index.html | sed 's/href="//; s/"$//' | head -n "${{ inputs.limit }}" > list.txt; then
+            echo "::error::${{ inputs.data_url }} carries no .odr file — this directory is not a REDR collection"
+            exit 1
+          fi
           wc -l list.txt
           while read -r name; do
             echo "::group::$name"
