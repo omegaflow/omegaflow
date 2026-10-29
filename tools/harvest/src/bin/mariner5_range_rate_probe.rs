@@ -330,7 +330,11 @@ fn geometry(
     let (st_pos, st_vel) = station_state(jd, station, spin);
     let mut light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
     let mut out = Geometry {
-        station: st_pos,
+        station: [
+            carrier_pos[0] + st_pos[0],
+            carrier_pos[1] + st_pos[1],
+            carrier_pos[2] + st_pos[2],
+        ],
         target: [0.0; 3],
         rel_velocity: [0.0; 3],
         unit: [0.0; 3],
@@ -544,6 +548,7 @@ fn main() -> Result<(), String> {
         println!("limb against {target}, radius {radius:.1} km");
         let mut lo_t = start;
         let mut lo_gap = limb_gap_at(lo_t, orbit, stations[0], spin, &paths, radius)?;
+        let mut best = (f64::INFINITY, lo_t);
         let mut t = start;
         while t + step <= end + 1e-9 {
             t += step;
@@ -553,9 +558,30 @@ fn main() -> Result<(), String> {
                 let crossing = crossing_between(lo_t, t, orbit, stations[0], spin, &paths, radius)?;
                 println!("crossing {crossing:.2} {}", if gap < 0.0 { "in" } else { "out" });
             }
+            if gap < best.0 {
+                best = (gap, t);
+            }
             lo_t = t;
             lo_gap = gap;
         }
+        let g = geometry(best.1, orbit, stations[0], spin, &paths)?;
+        let along = g.unit[0] * g.rel_velocity[0]
+            + g.unit[1] * g.rel_velocity[1]
+            + g.unit[2] * g.rel_velocity[2];
+        let transverse = [
+            g.rel_velocity[0] - along * g.unit[0],
+            g.rel_velocity[1] - along * g.unit[1],
+            g.rel_velocity[2] - along * g.unit[2],
+        ];
+        println!(
+            "closest {:.0} {:.1} {:.4}",
+            best.1,
+            best.0 + radius,
+            (transverse[0] * transverse[0]
+                + transverse[1] * transverse[1]
+                + transverse[2] * transverse[2])
+                .sqrt()
+        );
         return Ok(());
     }
     if ephemeris_probe {
