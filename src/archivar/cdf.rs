@@ -507,9 +507,6 @@ impl CdfFile {
     }
 
     pub fn var_records(&self, bytes: &[u8], var: &CdfVar) -> Result<Vec<(u32, Vec<f64>)>, CdfNote> {
-        if var.sparse != 0 {
-            return Err(CdfNote::SparseRecord);
-        }
         if !var.record_vary {
             let mut out = Vec::new();
             for block in self.blocks(bytes, var)? {
