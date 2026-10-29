@@ -11,6 +11,12 @@ const DE2_NAIF: i32 = -17;
 const ALTITUDE_TOLERANCE_KM: f64 = 50.0;
 const UNIX_TO_JD: f64 = 2440587.5;
 
+const CDF_MISSING_REAL4: f64 = -9.999999848243207e30;
+
+fn is_missing(value: f64) -> bool {
+    value == -1.0e31 || (value - CDF_MISSING_REAL4).abs() <= 1.0e20
+}
+
 fn jd_of_unix(unix_s: f64) -> f64 {
     unix_s / 86400.0 + UNIX_TO_JD
 }
@@ -243,6 +249,9 @@ fn main() {
             ) else {
                 continue;
             };
+            if is_missing(x) || is_missing(y) || is_missing(z) || is_missing(a) {
+                continue;
+            }
             let r = (x * x + y * y + z * z).sqrt();
             let d = (r - R_EARTH_KM - a).abs();
             if d > worst {
@@ -260,6 +269,8 @@ fn main() {
     }
 
     let mut granules = Vec::new();
+    let mut missing = 0usize;
+    let mut skipped = 0usize;
     let mut start = 0usize;
     let jd_end = jd_of_unix(t[n - 1]);
     while start < n {
@@ -274,7 +285,9 @@ fn main() {
                 py[i].first().copied(),
                 pz[i].first().copied(),
             ) {
-                if x.is_finite() && y.is_finite() && z.is_finite() {
+                if is_missing(x) || is_missing(y) || is_missing(z) {
+                    missing += 1;
+                } else if x.is_finite() && y.is_finite() && z.is_finite() {
                     let jd = jd_of_unix(t[i]);
                     samples.push((jd, x, y));
                     zs.push((jd, z, 0.0));
@@ -289,12 +302,20 @@ fn main() {
                 granules.push((t0, stop - t0, cx, cy, cz));
             }
             _ => {
-                eprintln!("granule {start}: Fit fehlgeschlagen");
-                std::process::exit(2);
+                skipped += 1;
+                eprintln!("granule {start}: keine Messwerte, uebersprungen");
             }
         }
         start = i;
     }
+
+    if granules.is_empty() {
+        eprintln!(
+            "{cdf_path}: kein Granule traegt eine Position — {missing} Werte stehen auf dem Fehlt-Marker"
+        );
+        std::process::exit(2);
+    }
+    println!("positionen: {missing} fehlend, {skipped} Granule ohne Messwerte uebersprungen");
 
     let pck = PckBody {
         naif_id: DE2_NAIF,

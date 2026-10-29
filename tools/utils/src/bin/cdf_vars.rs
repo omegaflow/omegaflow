@@ -47,6 +47,18 @@ fn main() {
                     records.first().map(|r| r.0),
                     records.last().map(|r| r.0)
                 );
+                let mut finite = 0usize;
+                let mut missing = 0usize;
+                for (_, values) in &records {
+                    for v in values {
+                        if *v == -1.0e31 || (*v - -9.999999848243207e30).abs() <= 1.0e20 {
+                            missing += 1;
+                        } else if v.is_finite() {
+                            finite += 1;
+                        }
+                    }
+                }
+                println!("  {finite} endliche Werte, {missing} auf dem Fehlt-Marker");
                 for (i, (number, values)) in records.iter().take(3).enumerate() {
                     println!("  [{i}] rec {number}: {:?}", &values[..values.len().min(3)]);
                 }
