@@ -294,6 +294,109 @@ fn parse_series(spec: &str) -> Result<Series, String> {
     })
 }
 
+#[derive(Clone, Debug)]
+struct Era {
+    name: String,
+    y0: i32,
+    y1: i32,
+}
+
+fn parse_eras(raw: &str) -> Result<Vec<Era>, String> {
+    let mut eras = Vec::new();
+    for part in raw.split(':') {
+        let nums: Vec<i32> = part
+            .split(',')
+            .map(|n| n.trim().parse::<i32>())
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|_| format!("--eras {raw} carries no year"))?;
+        if nums.len() != 2 {
+            return Err(format!("--eras {raw}: {part} carries {} years, not two", nums.len()));
+        }
+        eras.push(Era {
+            name: format!("{}-{}", nums[0], nums[1]),
+            y0: nums[0],
+            y1: nums[1],
+        });
+    }
+    if eras.len() != 2 {
+        return Err(format!("--eras {raw} carries {} eras, not two", eras.len()));
+    }
+    Ok(eras)
+}
+
+#[derive(Clone, Debug)]
+struct Row {
+    lo: f64,
+    hi: f64,
+    cells: Vec<(usize, f64)>,
+}
+
+fn control_rows(
+    control: &Series,
+    other: &Series,
+    eras: &[Era],
+    width: f64,
+    min_bin: usize,
+) -> Vec<Row> {
+    let mut keys: Vec<i64> = control
+        .months
+        .values()
+        .map(|value| (value / width).floor() as i64)
+        .collect();
+    keys.sort_unstable();
+    keys.dedup();
+    let mut rows: Vec<Row> = Vec::new();
+    for key in keys {
+        let lo = key as f64 * width;
+        let hi = lo + width;
+        let mut cells: Vec<(usize, f64)> = Vec::new();
+        for era in eras {
+            let mut sum = 0.0;
+            let mut n = 0usize;
+            for (month, c) in &control.months {
+                if month.0 < era.y0 || month.0 > era.y1 {
+                    continue;
+                }
+                if *c < lo || *c >= hi || *c <= 0.0 {
+                    continue;
+                }
+                let Some(v) = other.months.get(month) else {
+                    continue;
+                };
+                if !v.is_finite() || *v <= 0.0 {
+                    continue;
+                }
+                sum += v / c;
+                n += 1;
+            }
+            cells.push((n, if n > 0 { sum / n as f64 } else { f64::NAN }));
+        }
+        if cells[0].0 < min_bin || cells[1].0 < min_bin {
+            continue;
+        }
+        rows.push(Row { lo, hi, cells });
+    }
+    rows
+}
+
+fn control_table(control: &Series, other: &Series, eras: &[Era], width: f64, min_bin: usize) {
+    println!();
+    println!("series {} against control {}", other.name, control.name);
+    println!("  bin               A: n  ratio       B: n  ratio     delta");
+    for row in control_rows(control, other, eras, width, min_bin) {
+        println!(
+            "  {:>4.0}-{:<4.0}       {:>5}  {:.3}   {:>5}  {:.3}   {:+.1} %",
+            row.lo,
+            row.hi,
+            row.cells[0].0,
+            row.cells[0].1,
+            row.cells[1].0,
+            row.cells[1].1,
+            100.0 * (row.cells[1].1 / row.cells[0].1 - 1.0)
+        );
+    }
+}
+
 fn span_years(months: &[Month]) -> f64 {
     match (months.first(), months.last()) {
         (Some(a), Some(b)) => {
@@ -321,6 +424,10 @@ fn main() -> Result<(), String> {
     let mut min_months: Option<usize> = None;
     let mut separation: Option<usize> = None;
     let mut keep = 0usize;
+    let mut control: Option<String> = None;
+    let mut eras: Option<String> = None;
+    let mut bin_width: Option<f64> = None;
+    let mut min_bin: Option<usize> = None;
     let mut edge: Option<usize> = None;
     let mut index = 0;
     while index < args.len() {
@@ -364,6 +471,32 @@ fn main() -> Result<(), String> {
                     .map_err(|_| "keep carries no number".to_string())?;
                 index += 2;
             }
+            "--control" => {
+                control = Some(args.get(index + 1).ok_or_else(|| usage.to_string())?.clone());
+                index += 2;
+            }
+            "--eras" => {
+                eras = Some(args.get(index + 1).ok_or_else(|| usage.to_string())?.clone());
+                index += 2;
+            }
+            "--bin-width" => {
+                bin_width = Some(
+                    args.get(index + 1)
+                        .ok_or_else(|| usage.to_string())?
+                        .parse::<f64>()
+                        .map_err(|_| "bin-width carries no number".to_string())?,
+                );
+                index += 2;
+            }
+            "--min-bin" => {
+                min_bin = Some(
+                    args.get(index + 1)
+                        .ok_or_else(|| usage.to_string())?
+                        .parse::<usize>()
+                        .map_err(|_| "min-bin carries no number".to_string())?,
+                );
+                index += 2;
+            }
             other => return Err(format!("{other}: not a flag of this tool")),
         }
     }
@@ -383,6 +516,21 @@ fn main() -> Result<(), String> {
 
     for s in &series {
         println!("series {:<22} months {:>5}  {:<19}  {}", s.name, s.months.len(), span(&s.months), s.source);
+    }
+
+    if let Some(name) = control {
+        let eras = parse_eras(&eras.ok_or_else(|| usage.to_string())?)?;
+        let width = bin_width.ok_or_else(|| usage.to_string())?;
+        let floor = min_bin.ok_or_else(|| usage.to_string())?;
+        let Some(held) = series.iter().find(|s| s.name == name) else {
+            return Err(format!("--control {name} names no series in this run"));
+        };
+        println!();
+        println!("control {}  width {:.0}  min bin {}  era A {}  era B {}", held.name, width, floor, eras[0].name, eras[1].name);
+        for other in series.iter().filter(|s| s.name != name) {
+            control_table(held, other, &eras, width, floor);
+        }
+        return Ok(());
     }
 
     let mut all_steps: Vec<(String, Step)> = Vec::new();
@@ -521,6 +669,43 @@ mod tests {
         assert_eq!(flat, 0, "a scale of 1e-22 is not degenerate");
         assert_eq!(steps.len(), 1);
         assert!((steps[0].ratio - 1.5).abs() < 1e-6, "ratio {}", steps[0].ratio);
+    }
+
+    #[test]
+    fn eras_parse_two_ranges_and_reject_one() {
+        let eras = parse_eras("2002,2004:2006,2009").expect("eras");
+        assert_eq!(eras.len(), 2);
+        assert_eq!((eras[1].y0, eras[1].y1), (2006, 2009));
+        assert!(parse_eras("2002,2004").is_err());
+    }
+
+    #[test]
+    fn the_control_table_separates_a_tilt_from_the_activity_curve() {
+        let eras = parse_eras("1990,1995:2000,2005").expect("eras");
+        let mut control = BTreeMap::new();
+        let mut early = BTreeMap::new();
+        let mut late = BTreeMap::new();
+        for year in 1990..=2005 {
+            for month in 1..=12u32 {
+                let level = 100.0 + 10.0 * ((month as f64) / 12.0);
+                control.insert((year, month), level);
+                let factor = if year < 1998 { 0.9 } else { 0.85 };
+                early.insert((year, month), level * factor);
+                late.insert((year, month), level * 1.0);
+            }
+        }
+        let control = Series { name: "c".into(), months: control, source: "test".into() };
+        let series = |map: BTreeMap<Month, f64>| Series { name: "x".into(), months: map, source: "test".into() };
+        let rows = control_rows(&control, &series(early), &eras, 30.0, 10);
+        assert!(!rows.is_empty());
+        for row in &rows {
+            if row.cells[0].0 == 0 {
+                continue;
+            }
+            let delta = row.cells[1].1 / row.cells[0].1 - 1.0;
+            assert!((delta - (0.9 / 0.85 - 1.0)).abs() < 1e-9, "delta {delta}");
+        }
+        let _ = series(late);
     }
 
     #[test]
