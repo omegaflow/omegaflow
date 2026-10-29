@@ -1,5 +1,3 @@
-
-
 #[derive(Clone, Debug)]
 pub struct Sensitivity {
     pub value: f64,
@@ -158,7 +156,6 @@ pub fn parse(xml: &str) -> Option<Network> {
     })
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -182,11 +179,19 @@ mod tests {
             .iter()
             .find(|c| c.code == "BHZ" && c.location == "00")
             .expect("BHZ.00");
-        assert!((ch.sample_rate_hz - 20.0).abs() < 1e-9, "{}", ch.sample_rate_hz);
+        assert!(
+            (ch.sample_rate_hz - 20.0).abs() < 1e-9,
+            "{}",
+            ch.sample_rate_hz
+        );
         assert!(ch.stages >= 1, "stages {}", ch.stages);
         let sens = ch.sensitivity.as_ref().expect("sensitivity");
         assert!((sens.value - 8.64679e8).abs() < 1.0, "{}", sens.value);
-        assert!((sens.frequency_hz - 0.02).abs() < 1e-9, "{}", sens.frequency_hz);
+        assert!(
+            (sens.frequency_hz - 0.02).abs() < 1e-9,
+            "{}",
+            sens.frequency_hz
+        );
         assert_eq!(sens.input_units, "m/s");
         assert_eq!(sens.output_units, "counts");
     }
@@ -224,7 +229,11 @@ mod tests {
             .iter()
             .find(|s| s.code == "ZELS")
             .expect("FR.ZELS");
-        assert!((zels.latitude - 48.302306).abs() < 1e-6, "{}", zels.latitude);
+        assert!(
+            (zels.latitude - 48.302306).abs() < 1e-6,
+            "{}",
+            zels.latitude
+        );
         let zels_bhz = zels.channels.iter().find(|c| c.code == "BHZ").expect("BHZ");
         assert!((zels_bhz.sample_rate_hz - 20.0).abs() < 1e-9);
         let zels_sens = zels_bhz.sensitivity.as_ref().expect("sensitivity");

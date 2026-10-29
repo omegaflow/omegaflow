@@ -81,10 +81,7 @@ mod tests {
         let na = k.get("N_A").expect("avogadro").value;
         let au = k.get("AU").expect("astronomical unit").value;
         let r = kb * na;
-        assert!(
-            (r - 8.31446261815324).abs() < 1e-12,
-            "R = k_B * N_A is {r}"
-        );
+        assert!((r - 8.31446261815324).abs() < 1e-12, "R = k_B * N_A is {r}");
         let light_time = au / c;
         assert!(
             (light_time - 499.00478383615643).abs() < 1e-9,
@@ -135,7 +132,11 @@ mod tests {
                 "{key} is exact by definition and must not carry an uncertainty"
             );
         }
-        let g = k.get("G").expect("G").uncertainty.expect("G has an uncertainty");
+        let g = k
+            .get("G")
+            .expect("G")
+            .uncertainty
+            .expect("G has an uncertainty");
         assert!((g - 1.5e-15).abs() < 1e-18, "G uncertainty {g}");
     }
 
@@ -151,7 +152,10 @@ mod tests {
         ];
         for (key, value) in bimp {
             let got = k.get(key).expect("a defining constant").value;
-            assert_eq!(got, value, "{key}: the kernel deviates from the SI brochure");
+            assert_eq!(
+                got, value,
+                "{key}: the kernel deviates from the SI brochure"
+            );
         }
     }
 }

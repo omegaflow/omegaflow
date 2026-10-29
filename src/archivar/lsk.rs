@@ -418,7 +418,8 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
     }
 
     #[test]
-    fn the_series_carries_the_periodic_term_at_its_physical_amplitude() {        let lsk = embedded_lsk().expect("the embedded leap-second kernel");
+    fn the_series_carries_the_periodic_term_at_its_physical_amplitude() {
+        let lsk = embedded_lsk().expect("the embedded leap-second kernel");
         let epochs = [
             1_234_567_890.0,
             1_500_000_000.0,

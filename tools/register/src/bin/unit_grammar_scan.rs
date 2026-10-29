@@ -111,7 +111,8 @@ fn unit_known(base: &str, atoms: &BTreeSet<String>, prefixes: &BTreeSet<String>)
     false
 }
 
-fn main() {    let args: Vec<String> = std::env::args().skip(1).collect();
+fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
     let essence = match args.first() {
         Some(a) => a.clone(),
         None => "src/archivar/kernels/ucum-essence.xml".to_string(),
@@ -172,7 +173,9 @@ fn main() {    let args: Vec<String> = std::env::args().skip(1).collect();
         let clean = strip_annotations(unit);
         let prefix: String = clean
             .chars()
-            .take_while(|c| c.is_ascii_digit() || *c == '.' || *c == 'e' || *c == 'E' || *c == '-' || *c == '+')
+            .take_while(|c| {
+                c.is_ascii_digit() || *c == '.' || *c == 'e' || *c == 'E' || *c == '-' || *c == '+'
+            })
             .collect();
         let rest = &clean[prefix.len()..];
         let number_then_unit = !prefix.is_empty()
@@ -203,7 +206,13 @@ fn main() {    let args: Vec<String> = std::env::args().skip(1).collect();
                 break;
             }
             let (base, has_exp) = base_and_exp(&term);
-            if base.is_empty() || (has_exp && !term.contains('(') && !term[base.len()..].chars().all(|c| c.is_ascii_digit() || c == '-' || c == '+')) {
+            if base.is_empty()
+                || (has_exp
+                    && !term.contains('(')
+                    && !term[base.len()..]
+                        .chars()
+                        .all(|c| c.is_ascii_digit() || c == '-' || c == '+'))
+            {
                 ok = false;
                 break;
             }

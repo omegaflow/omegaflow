@@ -88,7 +88,9 @@ impl GeoidModel {
                 p[1][0] = 3.0f64.sqrt() * x;
                 p[1][1] = 3.0f64.sqrt() * sin_theta;
             } else {
-                p[n][n] = ((2.0 * n as f64 + 1.0) / (2.0 * n as f64)).sqrt() * sin_theta * p[n - 1][n - 1];
+                p[n][n] = ((2.0 * n as f64 + 1.0) / (2.0 * n as f64)).sqrt()
+                    * sin_theta
+                    * p[n - 1][n - 1];
                 for m in 0..n {
                     let a = ((2.0 * n as f64 + 1.0) * (2.0 * n as f64 - 1.0)
                         / ((n as f64 - m as f64) * (n as f64 + m as f64)))
@@ -220,7 +222,10 @@ mod tests {
             let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
             assert_eq!(set.len(), 4, "{station} carries four values");
             for model in ["EGM96", "EGM2008", "XGM2019e", "PROJ EGM96 grid"] {
-                assert!(set.iter().any(|r| r.model == model), "{station} lacks {model}");
+                assert!(
+                    set.iter().any(|r| r.model == model),
+                    "{station} lacks {model}"
+                );
             }
         }
     }
@@ -235,7 +240,11 @@ mod tests {
                 .collect();
             let spread = set
                 .iter()
-                .map(|a| set.iter().map(|b| (a.geoid_m - b.geoid_m).abs()).fold(0.0, f64::max))
+                .map(|a| {
+                    set.iter()
+                        .map(|b| (a.geoid_m - b.geoid_m).abs())
+                        .fold(0.0, f64::max)
+                })
                 .fold(0.0, f64::max);
             assert!(
                 spread <= 0.6,

@@ -27,7 +27,9 @@ fn main() {
         }
     }
     if kernels.is_empty() {
-        eprintln!("usage: planet_ephemeris_probe --kernel <file.bsp> [--kernel ...] [--et <seconds>]");
+        eprintln!(
+            "usage: planet_ephemeris_probe --kernel <file.bsp> [--kernel ...] [--et <seconds>]"
+        );
         return;
     }
     println!("# et {et}");

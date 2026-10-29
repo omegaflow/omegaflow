@@ -212,8 +212,7 @@ pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
     let mut norm_seen = false;
     let mut tide_system: Option<String> = None;
     let mut epoch: Option<String> = None;
-    let marked = bytes.split(|&b| b == b
-).any(|raw| {
+    let marked = bytes.split(|&b| b == b).any(|raw| {
         std::str::from_utf8(raw)
             .map(|line| line.trim_start().starts_with("begin_of_head"))
             .unwrap_or(false)

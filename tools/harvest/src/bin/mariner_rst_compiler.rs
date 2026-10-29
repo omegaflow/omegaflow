@@ -468,7 +468,11 @@ mod tests {
         framed.extend_from_slice(&bytes);
         let rows = rst_points(&framed);
         assert_eq!(rows.len(), 1, "{rows:?}");
-        assert!((rows[0].0 - (-26_427_064.0)).abs() < 1.0, "t = {}", rows[0].0);
+        assert!(
+            (rows[0].0 - (-26_427_064.0)).abs() < 1.0,
+            "t = {}",
+            rows[0].0
+        );
         assert!(
             (rows[0].1 - 51_427.087_891).abs() < 1e-3,
             "obs = {}",

@@ -82,9 +82,8 @@ impl Vincenty {
             return None;
         }
         let u_sq = cos_sq_alpha * (self.a_m * self.a_m - b * b) / (b * b);
-        let big_a = 1.0
-            + u_sq / 16384.0
-                * (4096.0 + u_sq * (-768.0 + u_sq * (320.0 - 175.0 * u_sq)));
+        let big_a =
+            1.0 + u_sq / 16384.0 * (4096.0 + u_sq * (-768.0 + u_sq * (320.0 - 175.0 * u_sq)));
         let big_b = u_sq / 1024.0 * (256.0 + u_sq * (-128.0 + u_sq * (74.0 - 47.0 * u_sq)));
         let delta_sigma = big_b
             * sin_sigma
@@ -96,14 +95,20 @@ impl Vincenty {
                             * (-3.0 + 4.0 * sin_sigma * sin_sigma)
                             * (-3.0 + 4.0 * cos2_sigma_m * cos2_sigma_m)));
         let distance_m = b * big_a * (sigma - delta_sigma);
-        let azimuth1 = (cos_u2 * lambda.sin()).atan2(cos_u1 * sin_u2 - sin_u1 * cos_u2 * lambda.cos());
-        let azimuth2 = (cos_u1 * lambda.sin()).atan2(-sin_u1 * cos_u2 + cos_u1 * sin_u2 * lambda.cos());
+        let azimuth1 =
+            (cos_u2 * lambda.sin()).atan2(cos_u1 * sin_u2 - sin_u1 * cos_u2 * lambda.cos());
+        let azimuth2 =
+            (cos_u1 * lambda.sin()).atan2(-sin_u1 * cos_u2 + cos_u1 * sin_u2 * lambda.cos());
         let out = Inverse {
             distance_m,
             azimuth1_deg: azimuth1.to_degrees().rem_euclid(360.0),
             azimuth2_deg: azimuth2.to_degrees().rem_euclid(360.0),
         };
-        if out.distance_m.is_finite() { Some(out) } else { None }
+        if out.distance_m.is_finite() {
+            Some(out)
+        } else {
+            None
+        }
     }
 }
 
@@ -145,10 +150,7 @@ mod tests {
         for (lat1, lon1, lat2, lon2) in pairs {
             let a = v.inverse(lat1, lon1, lat2, lon2).expect("forward");
             let b = v.inverse(lat2, lon2, lat1, lon1).expect("backward");
-            assert!(
-                (a.distance_m - b.distance_m).abs() < 1e-6,
-                "{a:?} vs {b:?}"
-            );
+            assert!((a.distance_m - b.distance_m).abs() < 1e-6, "{a:?} vs {b:?}");
         }
     }
 

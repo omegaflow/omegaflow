@@ -1,7 +1,16 @@
 use std::path::Path;
 
 const REPO_PREFIXES: &[&str] = &[
-    "phi/", "tools/", "docs/", "data/", "state/", "cache/", "queue/", "stage/", "research/", "src/",
+    "phi/",
+    "tools/",
+    "docs/",
+    "data/",
+    "state/",
+    "cache/",
+    "queue/",
+    "stage/",
+    "research/",
+    "src/",
     "bin/",
 ];
 

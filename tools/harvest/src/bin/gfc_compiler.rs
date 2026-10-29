@@ -483,8 +483,11 @@ gfc 2 2 2.439370331756250E-06 -1.400307649958125E-06 0.0 0.0\n";
         compile_probe(PROBE, a.to_str().expect("path"));
         let louder = PROBE.replace("2.439370331756250E-06", "4.878740663512500E-06");
         compile_probe(&louder, b.to_str().expect("path"));
-        let first = omegaflow::archivar::gfc::parse_records(&std::fs::read(&a).expect("first bin")).expect("records a");
-        let second = omegaflow::archivar::gfc::parse_records(&std::fs::read(&b).expect("second bin")).expect("records b");
+        let first = omegaflow::archivar::gfc::parse_records(&std::fs::read(&a).expect("first bin"))
+            .expect("records a");
+        let second =
+            omegaflow::archivar::gfc::parse_records(&std::fs::read(&b).expect("second bin"))
+                .expect("records b");
         assert_eq!(first.len(), second.len());
         let mut changed = 0;
         for (x, y) in first.iter().zip(second.iter()) {

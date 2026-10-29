@@ -78,7 +78,6 @@ pub fn time_row_month(time_days: f64, epoch: (u32, u32, u32)) -> Option<(u32, u3
     Some((y, m))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::{packed, values};

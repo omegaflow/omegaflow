@@ -909,8 +909,15 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
             ),
         });
     }
-    if let Err(e) = std::fs::write(pipeline_path("stage/recheck_live.φ"), lines.join("\n") + "\n") {
-        eprintln!("reverify: write {}: {}", pipeline_path("stage/recheck_live.φ"), e);
+    if let Err(e) = std::fs::write(
+        pipeline_path("stage/recheck_live.φ"),
+        lines.join("\n") + "\n",
+    ) {
+        eprintln!(
+            "reverify: write {}: {}",
+            pipeline_path("stage/recheck_live.φ"),
+            e
+        );
         return 1;
     }
     0
@@ -1025,14 +1032,20 @@ pub fn probe_mode(
     let dead = dead_lock.into_inner().unwrap();
     std::fs::create_dir_all(pipeline_root()).ok();
     if std::fs::write(pipeline_path("probe_survivors.φ"), &out).is_err() {
-        eprintln!("write {}: the register does not remember", pipeline_path("probe_survivors.φ"));
+        eprintln!(
+            "write {}: the register does not remember",
+            pipeline_path("probe_survivors.φ")
+        );
     }
     let per_input = format!("{}.survivors.φ", path);
     if std::fs::write(&per_input, &out).is_err() {
         eprintln!("write {}: the register does not remember", per_input);
     }
     if std::fs::write(pipeline_path("probe_void.txt"), &dead).is_err() {
-        eprintln!("write {}: the register does not remember", pipeline_path("probe_void.txt"));
+        eprintln!(
+            "write {}: the register does not remember",
+            pipeline_path("probe_void.txt")
+        );
     }
     eprintln!(
         "probe: wrote {} ({} verified) and {} ({} declined)",
@@ -3843,7 +3856,10 @@ pub fn draft_context_mode(path: &str) -> i32 {
         reg.push_str(&format!("{} | {}\n", nl, f));
     }
     if std::fs::write(pipeline_path("frame_registry.φ"), reg).is_err() {
-        eprintln!("write {}: the register does not remember", pipeline_path("frame_registry.φ"));
+        eprintln!(
+            "write {}: the register does not remember",
+            pipeline_path("frame_registry.φ")
+        );
     }
     let mut out = String::new();
     let mut celestial = 0usize;
@@ -3900,7 +3916,10 @@ pub fn draft_context_mode(path: &str) -> i32 {
     }
     std::fs::create_dir_all(pipeline_root()).ok();
     if std::fs::write(pipeline_path("probe_drafts_enriched.φ"), out).is_err() {
-        eprintln!("write {}: the register does not remember", pipeline_path("probe_drafts_enriched.φ"));
+        eprintln!(
+            "write {}: the register does not remember",
+            pipeline_path("probe_drafts_enriched.φ")
+        );
     }
     eprintln!(
         "--draft-context: {} pending → {} celestial, {} terrestrial, {} stay pending → {}",
@@ -3955,7 +3974,10 @@ pub fn gate_learn_mode() -> i32 {
         d.push_str(&format!("{} {} {}\n", w, f, tag));
     }
     if std::fs::write(pipeline_path("library_gate_delta.φ"), d).is_err() {
-        eprintln!("write {}: the register does not remember", pipeline_path("library_gate_delta.φ"));
+        eprintln!(
+            "write {}: the register does not remember",
+            pipeline_path("library_gate_delta.φ")
+        );
     }
     let library = match std::fs::read_to_string("tools/utils/data/library.φ") {
         Ok(c) => c,
@@ -3988,10 +4010,12 @@ pub fn gate_learn_mode() -> i32 {
             out.push('\n');
         }
     }
-    let library = crate::archivar::asset_path::work_root()
-        .join("tools/utils/data/library.φ");
+    let library = crate::archivar::asset_path::work_root().join("tools/utils/data/library.φ");
     if std::fs::write(&library, out).is_err() {
-        eprintln!("write {}: the register does not remember", library.display());
+        eprintln!(
+            "write {}: the register does not remember",
+            library.display()
+        );
     }
     eprintln!(
         "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",

@@ -1,9 +1,9 @@
 use std::env;
 use std::fs;
 
-use omegaflow::archivar::mariner4_odg;
 use omegaflow::archivar::mariner_occlt;
 use omegaflow::archivar::mariner_rst;
+use omegaflow::archivar::mariner4_odg;
 
 struct Sample {
     time: f64,
@@ -74,7 +74,10 @@ fn series(path: &str) -> Result<Vec<Sample>, String> {
                 .ok_or_else(|| format!("{path}: the MOCC rows do not parse"))?;
             Ok(rows
                 .iter()
-                .map(|r| Sample { time: r[0], value: r[9] })
+                .map(|r| Sample {
+                    time: r[0],
+                    value: r[9],
+                })
                 .collect())
         }
         b"M4OD" | b"MRST" => {
@@ -136,12 +139,19 @@ fn audit(path: &str) -> Result<String, String> {
     };
     Ok(format!(
         "{:<44} rows {:>7}  span {:>10.1} s  order {:>6}  absent {:>5}  motion {:>10.3}  {}",
-        path, rows.len(), span, violations, absent, motion, verdict
+        path,
+        rows.len(),
+        span,
+        violations,
+        absent,
+        motion,
+        verdict
     ))
 }
 
 fn coverage(register: &str) -> Result<(), String> {
-    let text = fs::read_to_string(register).map_err(|e| format!("read {register} returned void: {e}"))?;
+    let text =
+        fs::read_to_string(register).map_err(|e| format!("read {register} returned void: {e}"))?;
     let gated = GATED;
     let mut format: Option<String> = None;
     let mut total = 0usize;
@@ -149,7 +159,8 @@ fn coverage(register: &str) -> Result<(), String> {
     let classes = classes_table();
     let mut full = 0usize;
     let mut gated_formats = 0usize;
-    let mut by_format: std::collections::BTreeMap<String, (usize, bool)> = std::collections::BTreeMap::new();
+    let mut by_format: std::collections::BTreeMap<String, (usize, bool)> =
+        std::collections::BTreeMap::new();
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("url ") {
             let is_bin = rest.trim_end().ends_with(".bin");
@@ -198,7 +209,10 @@ fn coverage(register: &str) -> Result<(), String> {
                 );
             }
             None => {
-                println!("  {:<28} {:>4}  gated, classes 0/3, no class row", name, count);
+                println!(
+                    "  {:<28} {:>4}  gated, classes 0/3, no class row",
+                    name, count
+                );
             }
         }
     }
@@ -210,7 +224,10 @@ fn coverage(register: &str) -> Result<(), String> {
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.is_empty() {
-        return Err("usage: asset_gate <bin> [<bin> ...]  |  asset_gate --register [<phi/sources.φ>]".to_string());
+        return Err(
+            "usage: asset_gate <bin> [<bin> ...]  |  asset_gate --register [<phi/sources.φ>]"
+                .to_string(),
+        );
     }
     if args[0] == "--register" {
         let register = args
@@ -234,7 +251,10 @@ fn main() -> Result<(), String> {
         }
     }
     if failed > 0 {
-        return Err(format!("{failed} of {} assets carry no gate pass", args.len()));
+        return Err(format!(
+            "{failed} of {} assets carry no gate pass",
+            args.len()
+        ));
     }
     Ok(())
 }

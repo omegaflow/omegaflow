@@ -2286,7 +2286,8 @@ mod tests {
 
     #[test]
     fn a_file_written_by_a_foreign_encoder_is_read() {
-        let path = std::env::temp_dir().join(format!("omegaflow_fitrs_{}.fits", std::process::id()));
+        let path =
+            std::env::temp_dir().join(format!("omegaflow_fitrs_{}.fits", std::process::id()));
         let shape = [3usize, 4usize];
         let data: Vec<i32> = (0..12).collect();
         let mut hdu = fitrs::Hdu::new(&shape, data.clone());

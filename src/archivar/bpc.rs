@@ -149,8 +149,8 @@ impl BpcFile {
 
 #[cfg(test)]
 mod tests {
-    use super::cheby_val;
     use super::BpcFile;
+    use super::cheby_val;
 
     const SEGMENT_ONE_INIT: f64 = -14200747200.0;
     const SEGMENT_ONE_RECORDS: f64 = 40000.0;
@@ -201,11 +201,17 @@ mod tests {
         );
         let bpc = BpcFile::open(path).expect("the bundled lunar pck opens");
         let seam = SEGMENT_ONE_INIT + SEGMENT_ONE_RECORDS * SEGMENT_STEP;
-        let before = bpc.orient(31008, 1, seam - 1.0).expect("segment one answers");
+        let before = bpc
+            .orient(31008, 1, seam - 1.0)
+            .expect("segment one answers");
         let after = bpc.orient(31008, 1, seam).expect("segment two answers");
-        for (i, (a, b)) in [(before.0, after.0), (before.1, after.1), (before.2, after.2)]
-            .into_iter()
-            .enumerate()
+        for (i, (a, b)) in [
+            (before.0, after.0),
+            (before.1, after.1),
+            (before.2, after.2),
+        ]
+        .into_iter()
+        .enumerate()
         {
             let delta = (a - b).abs();
             assert!(

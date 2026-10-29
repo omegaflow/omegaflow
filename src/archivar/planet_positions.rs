@@ -121,7 +121,11 @@ mod tests {
             let set: Vec<&PlanetState> = rows.iter().filter(|r| r.planet == planet).collect();
             let spread = set
                 .iter()
-                .map(|a| set.iter().map(|b| position_distance_km(a, b)).fold(0.0, f64::max))
+                .map(|a| {
+                    set.iter()
+                        .map(|b| position_distance_km(a, b))
+                        .fold(0.0, f64::max)
+                })
                 .fold(0.0, f64::max);
             assert!(
                 spread > 1.0,

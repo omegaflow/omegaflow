@@ -94,11 +94,7 @@ fn scan_file(path: &Path, markers: &[String], out: &mut Vec<Test>) -> usize {
         }
         let body = lines[fn_index..=end.min(lines.len() - 1)].join("\n");
         let context_start = fn_index.saturating_sub(3);
-        let context = format!(
-            "{}\n{}",
-            lines[context_start..fn_index].join("\n"),
-            body
-        );
+        let context = format!("{}\n{}", lines[context_start..fn_index].join("\n"), body);
         let foreign: Vec<String> = markers
             .iter()
             .filter(|m| context.to_lowercase().contains(m.as_str()))
@@ -160,10 +156,16 @@ fn formats(register: &str) {
     rows.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
     let mut without = 0usize;
     let mut without_assets = 0usize;
-    println!("{:<28} {:>6} {:>6} {:>6}  {}", "format", "assets", "tests", "fremd", "quelle im Haus");
+    println!(
+        "{:<28} {:>6} {:>6} {:>6}  {}",
+        "format", "assets", "tests", "fremd", "quelle im Haus"
+    );
     for (name, count, tests_in, foreign) in &rows {
         let mark = if *foreign > 0 { "ja" } else { "nein" };
-        println!("{:<28} {:>6} {:>6} {:>6}  {}", name, count, tests_in, foreign, mark);
+        println!(
+            "{:<28} {:>6} {:>6} {:>6}  {}",
+            name, count, tests_in, foreign, mark
+        );
         if *foreign == 0 {
             without += 1;
             without_assets += count;
@@ -239,7 +241,10 @@ fn main() {
         }
     }
     for (name, (all, foreign)) in &scope {
-        println!("  {:<10} {:>5} tests, {:>3} against a foreign number", name, all, foreign);
+        println!(
+            "  {:<10} {:>5} tests, {:>3} against a foreign number",
+            name, all, foreign
+        );
     }
     let compilers: Vec<&Test> = tests
         .iter()

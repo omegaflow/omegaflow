@@ -102,7 +102,8 @@ fn check(bin_path: &str, cdf_path: Option<&str>) {
         }
     }
     let lo = eph.granules[0].t0_jd;
-    let hi = eph.granules[eph.granules.len() - 1].t0_jd + eph.granules[eph.granules.len() - 1].dt_jd;
+    let hi =
+        eph.granules[eph.granules.len() - 1].t0_jd + eph.granules[eph.granules.len() - 1].dt_jd;
     println!(
         "{bin_path}: {} Granulen, JD {lo:.3} bis {hi:.3}, Rotationen 0",
         eph.granules.len()

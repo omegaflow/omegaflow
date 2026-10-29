@@ -45,7 +45,9 @@ pub fn build_frame_registry() -> HashMap<String, String> {
             }
         }
     }
-    if let Ok(content) = std::fs::read_to_string(crate::archivar::port::pipeline_path("frame_learned.φ")) {
+    if let Ok(content) =
+        std::fs::read_to_string(crate::archivar::port::pipeline_path("frame_learned.φ"))
+    {
         for line in content.lines() {
             let t = line.trim();
             if t.is_empty() || t.starts_with('#') {
@@ -66,7 +68,9 @@ pub fn build_frame_registry() -> HashMap<String, String> {
 
 pub fn learn_frames(new: &HashMap<String, String>) {
     let mut map: HashMap<String, String> = HashMap::new();
-    if let Ok(content) = std::fs::read_to_string(crate::archivar::port::pipeline_path("frame_learned.φ")) {
+    if let Ok(content) =
+        std::fs::read_to_string(crate::archivar::port::pipeline_path("frame_learned.φ"))
+    {
         for line in content.lines() {
             let t = line.trim();
             if t.is_empty() || t.starts_with('#') {

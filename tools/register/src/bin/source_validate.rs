@@ -156,7 +156,6 @@ fn default_specs() -> String {
     "tools/register/data/instruments.φ".to_string()
 }
 
-
 struct Ctx {
     fail: bool,
     warnings: bool,

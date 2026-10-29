@@ -229,7 +229,11 @@ mod tests {
         assert!(t_med <= 1.75, "Gaia vs Tycho-2 median {t_med}");
         assert!(t_p90 <= 3.0, "Gaia vs Tycho-2 p90 {t_p90}");
         for (i, z) in tyc.iter().enumerate() {
-            assert!(*z <= 3.0, "Tycho-2 proper motion {z} for star {}", stars[i].hip);
+            assert!(
+                *z <= 3.0,
+                "Tycho-2 proper motion {z} for star {}",
+                stars[i].hip
+            );
         }
     }
 

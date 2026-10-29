@@ -4,18 +4,20 @@ fn attr_num(file: &NetcdfFile, name: &str, key: &str) -> Option<f64> {
     let var = file.var(name)?;
     let a = var.attrs.iter().find(|a| a.name == key)?;
     match a.nc_type {
-        NetcdfType::Float if a.raw.len() >= 4 => Some(f32::from_bits(u32::from_be_bytes([
-            a.raw[0], a.raw[1], a.raw[2], a.raw[3],
-        ])) as f64),
+        NetcdfType::Float if a.raw.len() >= 4 => {
+            Some(
+                f32::from_bits(u32::from_be_bytes([a.raw[0], a.raw[1], a.raw[2], a.raw[3]])) as f64,
+            )
+        }
         NetcdfType::Double if a.raw.len() >= 8 => Some(f64::from_bits(u64::from_be_bytes([
             a.raw[0], a.raw[1], a.raw[2], a.raw[3], a.raw[4], a.raw[5], a.raw[6], a.raw[7],
         ]))),
         NetcdfType::Short if a.raw.len() >= 2 => {
             Some(i16::from_be_bytes([a.raw[0], a.raw[1]]) as f64)
         }
-        NetcdfType::Int if a.raw.len() >= 4 => Some(i32::from_be_bytes([
-            a.raw[0], a.raw[1], a.raw[2], a.raw[3],
-        ]) as f64),
+        NetcdfType::Int if a.raw.len() >= 4 => {
+            Some(i32::from_be_bytes([a.raw[0], a.raw[1], a.raw[2], a.raw[3]]) as f64)
+        }
         _ => None,
     }
 }
@@ -107,7 +109,10 @@ fn run_classic(path: &str, buf: &[u8], file: &omegaflow::archivar::netcdf::Netcd
             continue;
         }
         let Some(packed) = file.values_numeric(&buf, &var.name) else {
-            println!("{path}: {} has the attributes, the values are absent", var.name);
+            println!(
+                "{path}: {} has the attributes, the values are absent",
+                var.name
+            );
             return false;
         };
         let Some(raw) = raw_values(&file, &buf, &var.name, var.nc_type) else {

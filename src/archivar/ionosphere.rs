@@ -33,8 +33,7 @@ impl Klobuchar {
         let amplitude = poly(&self.alpha, phi_m).max(0.0);
         let period = poly(&self.beta, phi_m).max(72_000.0);
         let x = 2.0 * std::f64::consts::PI * (t - 50_400.0) / period;
-        let delay_s =
-            5.0e-9 + amplitude * (1.0 - x * x / 2.0 + x * x * x * x / 24.0);
+        let delay_s = 5.0e-9 + amplitude * (1.0 - x * x / 2.0 + x * x * x * x / 24.0);
         let tec = delay_s * C_M_S * L1_HZ * L1_HZ / 40.3 / 1.0e16;
         if tec.is_finite() { Some(tec) } else { None }
     }
@@ -114,10 +113,7 @@ mod tests {
         for r in &rows {
             assert!(r.lat_deg.abs() <= 90.0);
             assert!(
-                r.champ_vtec > 0.0
-                    && r.iri_tec > 0.0
-                    && r.klobuchar_tec > 0.0
-                    && r.code_tec > 0.0
+                r.champ_vtec > 0.0 && r.iri_tec > 0.0 && r.klobuchar_tec > 0.0 && r.code_tec > 0.0
             );
         }
     }

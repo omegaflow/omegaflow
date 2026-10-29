@@ -277,7 +277,10 @@ mod tests {
             let dut1_us = (e.ut1_utc_s - ut1).abs() * 1.0e6;
             assert!(dx_mas <= 0.3, "mjd {mjd}: x differs by {dx_mas} mas");
             assert!(dy_mas <= 0.3, "mjd {mjd}: y differs by {dy_mas} mas");
-            assert!(dut1_us <= 20.0, "mjd {mjd}: UT1-UTC differs by {dut1_us} us");
+            assert!(
+                dut1_us <= 20.0,
+                "mjd {mjd}: UT1-UTC differs by {dut1_us} us"
+            );
             n += 1;
         }
         assert_eq!(n, 4, "four ERP days are compared");
