@@ -43,6 +43,15 @@ for p in $paths; do
                 exit 2
             fi ;;
     esac
+    case "$p" in
+        *.rs)
+            if [ -f "$p" ] && command -v rustfmt >/dev/null 2>&1; then
+                if ! rustfmt --edition 2024 --check "$p" >/dev/null 2>&1; then
+                    echo "commit: $p — rustfmt wuerde aendern; cargo fmt vor dem Commit" >&2
+                    exit 2
+                fi
+            fi ;;
+    esac
 done
 
 missing=""

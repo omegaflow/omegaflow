@@ -219,6 +219,7 @@ pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
     });
     let mut in_head = !marked;
     let mut end_line = None;
+    let mut key_line = None;
     for (i, raw) in bytes.split(|&b| b == b'\n').enumerate() {
         let Some(line) = std::str::from_utf8(raw).ok().map(str::trim) else {
             continue;
@@ -239,8 +240,8 @@ pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
             continue;
         };
         if key == "key" {
-            end_line = Some(i);
-            break;
+            key_line = Some(i);
+            continue;
         }
         match key {
             "product_type" => product_type = Some(value.to_string()),
@@ -275,7 +276,7 @@ pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
         tide_system,
         epoch,
     };
-    Some((head, end_line?))
+    Some((head, end_line.or(key_line)?))
 }
 
 fn tri_index(n: u32, m: u32) -> usize {
