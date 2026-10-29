@@ -79,6 +79,52 @@ fn cut_mid_line(bytes: &[u8]) -> bool {
     }
 }
 
+fn head_gap(bytes: &[u8]) -> String {
+    let names = [
+        "product_type",
+        "modelname",
+        "earth_gravity_constant",
+        "radius",
+        "max_degree",
+    ];
+    let mut have = [false; 5];
+    let mut lines = 0usize;
+    for raw in bytes.split(|&b| b == b'\n').take(200) {
+        let Ok(s) = std::str::from_utf8(raw) else {
+            continue;
+        };
+        let s = s.trim();
+        if s.is_empty() {
+            continue;
+        }
+        lines += 1;
+        let key = s.split_whitespace().next().unwrap_or("");
+        for (i, name) in names.iter().enumerate() {
+            if key == *name {
+                have[i] = true;
+            }
+        }
+    }
+    if lines == 0 {
+        return "the first 200 lines carry no UTF-8 text — the asset may not be the unpacked gfc"
+            .to_string();
+    }
+    let missing: Vec<&str> = names
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| !have[*i])
+        .map(|(_, n)| *n)
+        .collect();
+    if missing.is_empty() {
+        return "all five keys are present but the head does not parse — check the end_of_head/key line"
+            .to_string();
+    }
+    format!(
+        "the ICGEM head lacks {} — the asset stays unwritten",
+        missing.join(", ")
+    )
+}
+
 fn compile(
     bytes: &[u8],
     ttl: f64,
@@ -93,10 +139,10 @@ fn compile(
             "{origin}: the last byte is not a newline — the file ends mid-line, a partial download, and the asset stays unwritten"
         ));
     }
-    let (head, end_line) = parse_head(bytes).ok_or_else(|| {
-        "the ICGEM header (begin_of_head/end_of_head) stays unread — the asset stays unwritten"
-            .to_string()
-    })?;
+    let (head, end_line) = match parse_head(bytes) {
+        Some(v) => v,
+        None => return Err(format!("{origin}: {}", head_gap(bytes))),
+    };
     let lsk = embedded_lsk().ok_or("the embedded naif0012 table stays unread")?;
     let epoch = epoch_of(&head.epoch, &epoch_override, &lsk).ok_or_else(|| {
         "neither the ICGEM header nor --epoch <ISO-8601> supplies a parseable epoch — the asset stays unwritten"
