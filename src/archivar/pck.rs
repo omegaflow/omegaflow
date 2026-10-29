@@ -129,6 +129,41 @@ fn lunar_terms(id: i32, amplitudes: &[f64], cosine: bool) -> Option<Vec<[f64; 3]
     if terms.is_empty() { None } else { Some(terms) }
 }
 
+fn nut_terms(
+    id: i32,
+    amplitudes: &[f64],
+    cosine: bool,
+    angles: &HashMap<i32, Vec<f64>>,
+) -> Option<Vec<[f64; 3]>> {
+    let planet = id / 100;
+    let Some(raw) = angles.get(&planet) else {
+        return lunar_terms(id, amplitudes, cosine);
+    };
+    let deg = std::f64::consts::PI / 180.0;
+    let stride = if raw.len() == 3 * amplitudes.len() {
+        3
+    } else if raw.len() == 2 * amplitudes.len() {
+        2
+    } else {
+        return None;
+    };
+    let mut terms: Vec<[f64; 3]> = Vec::with_capacity(amplitudes.len());
+    for (k, amplitude) in amplitudes.iter().enumerate() {
+        let base = k * stride;
+        let a0 = *raw.get(base)?;
+        let a1 = *raw.get(base + 1)?;
+        if stride == 3 {
+            let a2 = *raw.get(base + 2)?;
+            if a2 != 0.0 && *amplitude != 0.0 {
+                return None;
+            }
+        }
+        let phase_deg = if cosine { a0 + 90.0 } else { a0 };
+        terms.push([*amplitude, a1 * 36525.0 * deg, phase_deg * deg]);
+    }
+    if terms.is_empty() { None } else { Some(terms) }
+}
+
 fn nut_sum(terms: &[[f64; 3]], t: f64) -> f64 {
     terms
         .iter()
@@ -139,7 +174,14 @@ fn nut_sum(terms: &[[f64; 3]], t: f64) -> f64 {
 pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, PckBody> {
     let mut bodies: HashMap<i32, PckBody> = HashMap::new();
     if let Some(text) = body_text {
-        for ((id, key), values) in scan_entries(text) {
+        let entries = scan_entries(text);
+        let mut angles: HashMap<i32, Vec<f64>> = HashMap::new();
+        for ((id, key), values) in &entries {
+            if key == "NUT_PREC_ANGLES" {
+                angles.insert(*id, values.clone());
+            }
+        }
+        for ((id, key), values) in entries {
             let entry = bodies.entry(id).or_insert_with(|| PckBody::minimal(id));
             match key.as_str() {
                 "POLE_RA" if values.len() >= 2 => {
@@ -163,13 +205,13 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
                 "J2" if !values.is_empty() => entry.j2 = Some(values[0]),
                 "J4" if !values.is_empty() => entry.j4 = Some(values[0]),
                 "NUT_PREC_RA" if !values.is_empty() => {
-                    entry.nut_ra = lunar_terms(id, &values, false)
+                    entry.nut_ra = nut_terms(id, &values, false, &angles)
                 }
                 "NUT_PREC_DEC" if !values.is_empty() => {
-                    entry.nut_dec = lunar_terms(id, &values, true)
+                    entry.nut_dec = nut_terms(id, &values, true, &angles)
                 }
                 "NUT_PREC_PM" if !values.is_empty() => {
-                    entry.nut_pm = lunar_terms(id, &values, false)
+                    entry.nut_pm = nut_terms(id, &values, false, &angles)
                 }
                 _ => {}
             }
@@ -311,6 +353,47 @@ BODY301_NUT_PREC_PM = ( 3.5610 0.1208 -0.0642 0.0158 0.0252 -0.0066 -0.0047 -0.0
         assert!(
             compass.abs() < 0.05,
             "the E terms must compensate: {compass}"
+        );
+    }
+
+    #[test]
+    fn mars_and_jupiter_take_their_nutation_from_the_angle_list_in_the_file() {
+        let bodies = parse(None, Some(include_str!("kernels/pck00011.tpc")));
+        let mars = &bodies[&499];
+        let dec = mars.pole_dec_at(0.0).expect("mars dec");
+        assert!((dec - 52.886_439).abs() < 1e-5, "mars dec {dec}");
+        let w = mars.pm_at(0.0).expect("mars pm");
+        assert!((w - 176.632_060).abs() < 1e-5, "mars meridian {w}");
+        let base = mars.pole_dec_deg.expect("mars base pole");
+        assert!(
+            (base - dec).abs() > 1.5,
+            "the nutation must move the pole by more than a degree, it moved {}",
+            base - dec
+        );
+        let jupiter = &bodies[&599];
+        let dec_j = jupiter.pole_dec_at(0.0).expect("jupiter dec");
+        assert!((dec_j - 64.495_810).abs() < 1e-5, "jupiter dec {dec_j}");
+    }
+
+    #[test]
+    fn mars_declination_stays_near_its_pole_over_two_centuries() {
+        let bodies = parse(None, Some(include_str!("kernels/pck00011.tpc")));
+        let mars = &bodies[&499];
+        let mut low = f64::MAX;
+        let mut high = f64::MIN;
+        for year in 1900..=2100 {
+            let centuries = (year as f64 - 2000.0) / 100.0;
+            let dec = mars.pole_dec_at(centuries).expect("mars dec");
+            if dec < low {
+                low = dec;
+            }
+            if dec > high {
+                high = dec;
+            }
+        }
+        assert!(
+            low > 52.0 && high < 57.0,
+            "mars declination runs from {low} to {high} — the amplitudes sit on the wrong angles"
         );
     }
 
