@@ -237,7 +237,39 @@ fn coverage(register: &str) -> Result<(), String> {
             format = Some(rest.trim().to_string());
         }
     }
-    println!("register {register}: {total} bin assets, {covered} carried by a gate descriptor");
+    let mut blocks = 0usize;
+    let mut source_only = 0usize;
+    let mut in_block = false;
+    let mut block_has_bin = false;
+    for line in text.lines() {
+        if line.trim().is_empty() {
+            if in_block {
+                blocks += 1;
+                if !block_has_bin {
+                    source_only += 1;
+                }
+            }
+            in_block = false;
+            block_has_bin = false;
+            continue;
+        }
+        in_block = true;
+        if let Some(rest) = line.strip_prefix("url ")
+            && rest.trim().ends_with(".bin")
+        {
+            block_has_bin = true;
+        }
+    }
+    if in_block {
+        blocks += 1;
+        if !block_has_bin {
+            source_only += 1;
+        }
+    }
+    println!(
+        "register {register}: {blocks} blocks, {total} of them compiled to a bin asset, {source_only} carry only a source address"
+    );
+    println!("  compiled assets carried by a gate descriptor: {covered}");
     match &descriptors {
         Some(map) => println!(
             "  descriptors {DESCRIPTORS}: {} rows — {with_key} fully checked, {structure_only} structure only",
