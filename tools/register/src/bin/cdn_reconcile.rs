@@ -22,6 +22,10 @@ const COMPILER_NETLOCS: &[&str] = &[
     "vizier.cfa.harvard.edu",
     "gsaweb.ast.cam.ac.uk",
     "ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca",
+    "naif.jpl.nasa.gov",
+    "ftp.iaaras.ru",
+    "www.kari.re.kr",
+    "celestrak.org",
 ];
 
 fn release_tag_netloc(tag: &str) -> (&str, bool) {
