@@ -4,7 +4,7 @@ pub const PK_IDENTIFIER: u32 = 107;
 pub const PK_ORBIT_HEADER: u32 = 109;
 pub const PK_RAMP: u32 = 2030;
 pub const PK_CLOCK: u32 = 2040;
-pub const PK_SUMMARY: u32 = 105;
+pub const PK_SUMMARY: u32 = u32::MAX;
 
 pub const RECORD_BYTES: usize = 36;
 pub const RECORDS_PER_BLOCK: usize = 224;
@@ -3382,5 +3382,27 @@ mod tests {
         block[at + 4..at + 8].copy_from_slice(&0u32.to_be_bytes());
         block[at + 8..at + 12].copy_from_slice(&1u32.to_be_bytes());
         block[at + 12..at + 16].copy_from_slice(&group_start.to_be_bytes());
+    }
+
+    fn put_words(block: &mut [u8], record: usize, words: [u32; 9]) {
+        let at = record * RECORD_BYTES;
+        for (index, word) in words.iter().enumerate() {
+            block[at + index * 4..at + index * 4 + 4].copy_from_slice(&word.to_be_bytes());
+        }
+    }
+
+    #[test]
+    fn the_end_of_file_header_ends_the_orbit_group() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_IDENTIFIER, 2);
+        put_header(&mut block, 4, PK_ORBIT_HEADER, 4);
+        put_words(&mut block, 5, example_words());
+        let mut eof = [0u32; 9];
+        eof[0] = PK_SUMMARY;
+        put_words(&mut block, 6, eof);
+        let rows = parse_odf(&block).expect("the block parses");
+        assert_eq!(rows.len(), 1, "only the orbit record is a row");
+        assert!((rows[0].t_since_1950 - 1812103240.0).abs() < 1.0e-9);
     }
 }

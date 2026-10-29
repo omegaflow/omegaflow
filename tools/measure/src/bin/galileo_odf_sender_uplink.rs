@@ -17,7 +17,7 @@ const PK_IDENTIFIER: u32 = 107;
 const PK_ORBIT_HEADER: u32 = 109;
 const PK_RAMP: u32 = 2030;
 const PK_CLOCK: u32 = 2040;
-const PK_SUMMARY: u32 = 105;
+const PK_SUMMARY: u32 = u32::MAX;
 
 fn unix_day(tdb: f64) -> i64 {
     let jd = 2451545.0 + tdb / 86400.0;
