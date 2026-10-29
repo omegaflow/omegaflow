@@ -2056,4 +2056,10 @@
       <printSymbol>Ti</printSymbol>
       <value value="1099511627776">1099511627776</value>
    </prefix>
+   <unit Code="Msun" CODE="MSUN" isMetric="no" class="astronomy">
+      <name>solar mass</name>
+      <printSymbol>M<sub>sun</sub></printSymbol>
+      <property>mass</property>
+      <value Unit="kg" UNIT="KG" value="1.98841E30">1.98841E30</value>
+   </unit>
 </root>
