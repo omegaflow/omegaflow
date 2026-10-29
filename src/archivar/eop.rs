@@ -254,4 +254,32 @@ mod tests {
         }
         assert_eq!(n, 4, "four bulletin days are compared");
     }
+
+    const CODE_ERP: &str = include_str!("kernels/eop_code_erp.tsv");
+
+    #[test]
+    fn the_c04_kernel_agrees_with_the_code_mgex_erp() {
+        let s = kernel().expect("eop kernel");
+        let mut n = 0usize;
+        for line in CODE_ERP.lines() {
+            if line.starts_with('#') || line.trim().is_empty() {
+                continue;
+            }
+            let c: Vec<&str> = line.split('\t').collect();
+            assert_eq!(c.len(), 4, "an ERP row carries four columns");
+            let mjd: f64 = c[0].trim().parse().expect("mjd");
+            let x: f64 = c[1].trim().parse().expect("x");
+            let y: f64 = c[2].trim().parse().expect("y");
+            let ut1: f64 = c[3].trim().parse().expect("ut1");
+            let e = s.at(mjd).expect("an EOP value at an ERP day");
+            let dx_mas = (e.pm_x_arcsec - x).abs() * 1000.0;
+            let dy_mas = (e.pm_y_arcsec - y).abs() * 1000.0;
+            let dut1_us = (e.ut1_utc_s - ut1).abs() * 1.0e6;
+            assert!(dx_mas <= 0.3, "mjd {mjd}: x differs by {dx_mas} mas");
+            assert!(dy_mas <= 0.3, "mjd {mjd}: y differs by {dy_mas} mas");
+            assert!(dut1_us <= 20.0, "mjd {mjd}: UT1-UTC differs by {dut1_us} us");
+            n += 1;
+        }
+        assert_eq!(n, 4, "four ERP days are compared");
+    }
 }

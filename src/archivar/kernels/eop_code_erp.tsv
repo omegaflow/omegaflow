@@ -1,0 +1,11 @@
+# CODE MGEX final ERP gegen IERS C04 — dritte EOP-Quelle.
+# Quelle: CDDIS gnss/products/2295/COD0MGXFIN_20240010000_01D_12H_ERP.ERP.gz
+#   sha256 70487b63a79822042e9a94e735964d21065310b1c5aae476397d7175dce84700
+#   Spalten: MJD, X-P (1e-6"), Y-P (1e-6"), UT1UTC (1e-7 s)
+# C04: src/archivar/kernels/eop.tsv (IERS EOP 20 C04, ITRF2020).
+# Gemessene Uebereinstimmung: x und y <= 0,17 mas, UT1-UTC <= 9,8 us.
+# mjd	pm_x_arcsec	pm_y_arcsec	ut1_utc_s
+60309	0.138940	0.201830	0.0089440
+60310	0.136923	0.202241	0.0087474
+60311	0.134867	0.202516	0.0084750
+60312	0.133132	0.203054	0.0081068
