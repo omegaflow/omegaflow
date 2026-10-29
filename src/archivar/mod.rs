@@ -227,6 +227,7 @@ pub mod quaoar_occlt;
 pub mod radio;
 pub mod radio_burst;
 pub mod range;
+pub mod redr;
 pub mod regrid;
 pub mod rinex;
 pub mod rixs;
