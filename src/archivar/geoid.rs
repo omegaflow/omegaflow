@@ -267,7 +267,7 @@ pub fn parse_table(text: &str) -> Option<Vec<StationValue>> {
         let lon_deg: f64 = cols[2].trim().parse().ok()?;
         let cap: usize = cols[4].trim().parse().ok()?;
         let quantity = cols[5].trim().to_string();
-        if quantity != "n" && quantity != "w" {
+        if quantity != "n" && quantity != "w" && quantity != "g" {
             return None;
         }
         let value: f64 = cols[6].trim().parse().ok()?;

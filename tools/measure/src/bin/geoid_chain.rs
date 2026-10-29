@@ -140,16 +140,22 @@ fn main() {
                 .map(|p| p.0);
             let closed = model.geoid_m(*lat, *lon);
             let bruns = model.geoid_m_bruns(*lat, *lon, w0);
+            let gravity_only = model
+                .potential_parts(exact_radius(*lat), *lat, *lon)
+                .map(|p| p.1);
             let grid = cell(&rows, name, grid_label, "n", None);
             let table_w = cell(&rows, name, &arg.label, "w", Some(arg.cap));
             let table_n = cell(&rows, name, &arg.label, "n", Some(arg.cap));
             let table_bruns = cell(&rows, name, &bruns_source, "n", None);
             let table_service = cell(&rows, name, &service_label, "w", Some(arg.cap));
+            let table_service_g = cell(&rows, name, &service_label, "g", Some(arg.cap));
             println!(
-                "{name:<13} W {}  dTable {}  dService {} | N closed {}  dTable {} | N bruns {}  dGrid {}  dTable {}",
+                "{name:<13} W {}  dTable {}  dService {} | G {}  dService {} | N closed {}  dTable {} | N bruns {}  dGrid {}  dTable {}",
                 value(potential),
                 delta(potential, table_w.map(|r| r.value)),
                 delta(potential, table_service.map(|r| r.value)),
+                value(gravity_only),
+                delta(gravity_only, table_service_g.map(|r| r.value)),
                 value(closed),
                 delta(closed, table_n.map(|r| r.value)),
                 value(bruns),
