@@ -2305,4 +2305,15 @@ mod tests {
             assert_eq!(value(index), index as i32, "element {index}");
         }
     }
+
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn arbitrary_bytes_never_panic_the_reader(bytes in proptest::collection::vec(any::<u8>(), 0..2048)) {
+            let _ = FitsHeader::parse(&bytes, 0);
+            let _ = FitsImage::parse(&bytes, 0);
+            let _ = FitsTable::parse(&bytes, 0);
+        }
+    }
 }

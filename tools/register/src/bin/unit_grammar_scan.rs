@@ -89,8 +89,7 @@ fn unit_known(base: &str, atoms: &BTreeSet<String>, prefixes: &BTreeSet<String>)
     false
 }
 
-fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+fn main() {    let args: Vec<String> = std::env::args().skip(1).collect();
     let essence = match args.first() {
         Some(a) => a.clone(),
         None => "src/archivar/kernels/ucum-essence.xml".to_string(),
@@ -206,4 +205,93 @@ fn main() {
     } else {
         1
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn classify(unit: &str, atoms: &BTreeSet<String>, prefixes: &BTreeSet<String>) -> &'static str {
+        let clean = strip_annotations(unit);
+        let prefix: String = clean
+            .chars()
+            .take_while(|c| {
+                c.is_ascii_digit() || *c == '.' || *c == 'e' || *c == 'E' || *c == '-' || *c == '+'
+            })
+            .collect();
+        let rest = &clean[prefix.len()..];
+        let number_then_unit = !prefix.is_empty()
+            && prefix != "1"
+            && prefix.parse::<f64>().is_ok()
+            && rest
+                .chars()
+                .next()
+                .map(|c| c.is_ascii_alphabetic())
+                .unwrap_or(false);
+        if number_then_unit {
+            return "number";
+        }
+        let mut ok = !clean.is_empty();
+        if clean.is_empty() && unit.trim_start().starts_with('{') {
+            ok = true;
+        }
+        for term in split_terms(&clean) {
+            if term == "1" {
+                continue;
+            }
+            if let Some(rest) = term.strip_prefix("10*") {
+                if rest.parse::<i32>().is_ok() {
+                    continue;
+                }
+                ok = false;
+                break;
+            }
+            let (base, has_exp) = base_and_exp(&term);
+            if base.is_empty()
+                || (has_exp
+                    && !term.contains('(')
+                    && !term[base.len()..]
+                        .chars()
+                        .all(|c| c.is_ascii_digit() || c == '-' || c == '+'))
+            {
+                ok = false;
+                break;
+            }
+            if !unit_known(&base, atoms, prefixes) {
+                ok = false;
+                break;
+            }
+        }
+        if ok { "valid" } else { "invalid" }
+    }
+
+    #[test]
+    fn the_scanner_agrees_with_the_nlm_validator() {
+        let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
+        let xml = std::fs::read_to_string(format!("{dir}/src/archivar/kernels/ucum-essence.xml"))
+            .expect("the frozen UCUM essence table");
+        let tsv = std::fs::read_to_string(format!("{dir}/src/archivar/kernels/ucum_verdicts.tsv"))
+            .expect("the NLM verdicts");
+        let mut atoms: BTreeSet<String> = attr(&xml, "unit", "Code").into_iter().collect();
+        atoms.extend(attr(&xml, "base-unit", "Code"));
+        let prefixes: BTreeSet<String> = attr(&xml, "prefix", "Code").into_iter().collect();
+        assert!(!atoms.is_empty() && !prefixes.is_empty());
+        let mut n = 0usize;
+        for line in tsv.lines() {
+            if line.starts_with('#') || line.trim().is_empty() {
+                continue;
+            }
+            let cols: Vec<&str> = line.split('\t').collect();
+            assert!(cols.len() >= 2, "a verdict row carries code and status");
+            let code = cols[0].trim();
+            let nlm = cols[1].trim();
+            let ours = classify(code, &atoms, &prefixes);
+            let agree = (ours == "valid" && nlm == "valid")
+                || (ours == "invalid" && nlm == "invalid")
+                || (ours == "number" && nlm == "invalid");
+            assert!(agree, "{code}: ours {ours}, NLM {nlm}");
+            n += 1;
+        }
+        assert_eq!(n, 85, "85 distinct unit strings are compared");
+    }
 }

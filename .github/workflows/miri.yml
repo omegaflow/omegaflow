@@ -1,0 +1,23 @@
+name: miri
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "package to run under Miri"
+        required: true
+        default: "omegaflow"
+
+jobs:
+  miri:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          components: miri
+      - run: cargo miri setup
+      - run: cargo miri test -p "${{ inputs.package }}" --lib
+        continue-on-error: true

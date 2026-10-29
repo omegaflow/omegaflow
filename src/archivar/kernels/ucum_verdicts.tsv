@@ -1,0 +1,90 @@
+# UCUM-Befunde des NLM-Validators (ucum-lhc, @lhncbc/ucum-lhc) fuer die 85 Einheiten-Zeichenketten des Registers.
+# Quelle: National Library of Medicine, ucum-lhc (JavaScript), Lauf 2026-10-29;
+#   validateUnitString(code, true) gegen ucum-essence 2.2.
+# Spalten: code<TAB>status(valid|invalid)<TAB>kanonische Form (nur bei valid).
+# code	status	canonical
+degC	invalid	
+nT	valid	nT
+inverse-square	invalid	
+m	valid	m
+kg/m3	valid	kg/m3
+TECU	invalid	
+m/s	valid	m/s
+km	valid	km
+1	valid	1
+null	invalid	
+C	valid	C
+mV/km	valid	mV/km
+primary	invalid	
+km/s	valid	km/s
+1/cm3	valid	1/cm3
+Hz	valid	Hz
+pfu/kev	invalid	
+pfu	invalid	
+W/m2	valid	W/m2
+wm2	invalid	
+cpm	invalid	
+ug/m3	valid	ug/m3
+erfc	invalid	
+gaussian-inverse-square	invalid	
+patch-levy	invalid	
+sfu	invalid	
+exponential-decay	invalid	
+point	invalid	
+1e-4W/m2	invalid	
+uatm	valid	uatm
+pa	valid	pa
+MW	valid	MW
+deg	valid	deg
+uV	valid	uV
+µV	invalid	
+V	valid	V
+mag	invalid	
+DN	invalid	
+mm/day	invalid	mm/d
+m/yr	invalid	
+m/s2	valid	m/s2
+INTENSITY"	invalid	
+INTENSITY	invalid	
+dB	valid	dB
+relative	invalid	
+mas	invalid	
+count	invalid	
+s	valid	s
+mJy	invalid	
+K	valid	K
+cm-3	valid	cm-3
+1/m3	valid	1/m3
+m-2.s-1.tev-1	invalid	
+au	valid	au
+meV	valid	meV
+eV	valid	eV
+X-BAND	invalid	
+CALIBRATED	invalid	
+OBSERVED	invalid	
+LEVEL	invalid	
+SIGNAL	invalid	
+Pa	valid	Pa
+pixel	invalid	
+cycle	invalid	
+pds3_mischa_bx_pso	invalid	
+pds3_mischa_by_pso	invalid	
+pds3_mischa_bz_pso	invalid	
+pds3_mischa_bt_pso	invalid	
+pds3_mischa_bu_pso	invalid	
+cps	invalid	
+us	valid	us
+h	valid	h
+arcsec	invalid	
+erg/s	valid	erg/s
+Msun	invalid	
+cm3/g/s2	valid	cm3/g/s2
+mGal	valid	mGal
+0.1nT	invalid	0.(1.nT)
+kHz	valid	kHz
+none	invalid	
+TECu	invalid	
+W/m2/Hz	valid	W/m2/Hz
+TeV	valid	TeV
+mol/m2	valid	mol/m2
+kg	valid	kg
