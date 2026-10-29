@@ -167,4 +167,38 @@ mod tests {
         assert_eq!(spacecraft_id(&bytes), Some(31));
         assert_eq!(station_id(&bytes), Some(63));
     }
+
+    const RECORD0: &str = include_str!("kernels/redr_record0.hex");
+
+    fn fixture() -> Vec<u8> {
+        let mut out = Vec::new();
+        for line in RECORD0.lines() {
+            if line.starts_with('#') || line.trim().is_empty() {
+                continue;
+            }
+            for token in line.split_whitespace() {
+                if let Ok(byte) = u8::from_str_radix(token, 16) {
+                    out.push(byte);
+                }
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn the_first_record_of_the_jupiter_file_reads_as_1979_day_64() {
+        let bytes = fixture();
+        assert_eq!(bytes.len(), RECORD_BYTES);
+        let r = record(&bytes).expect("the frozen record");
+        assert_eq!(r.header.year, 79);
+        assert_eq!(r.header.day, 64);
+        assert_eq!(r.header.hour, 16);
+        assert_eq!(r.header.minute, 3);
+        assert!(r.header.second.abs() < 1.0e-9);
+        assert!(r.header.valid());
+        assert_eq!(r.header.sample_rate, SAMPLE_RATE_HZ);
+        assert_eq!(r.s_band[0], -36);
+        assert_eq!(spacecraft_id(&bytes), Some(31));
+        assert_eq!(station_id(&bytes), Some(63));
+    }
 }
