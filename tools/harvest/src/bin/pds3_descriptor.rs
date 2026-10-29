@@ -68,14 +68,21 @@ fn parse_fmt(text: &str) -> Result<Layout, String> {
 
 fn fetch(text: &str) -> Result<Vec<u8>, String> {
     if text.starts_with("http://") || text.starts_with("https://") {
-        let out = Command::new("curl")
-            .args(["-sSfL", "--max-time", "120", text])
-            .output()
-            .map_err(|e| format!("curl for {text} returned void: {e}"))?;
-        if !out.status.success() {
-            return Err(format!("{text}: curl reported {}", out.status));
+        let mut last = String::new();
+        for attempt in 0..2 {
+            let out = Command::new("curl")
+                .args(["-sSfL", "--max-time", "120", text])
+                .output()
+                .map_err(|e| format!("curl for {text} returned void: {e}"))?;
+            if out.status.success() {
+                return Ok(out.stdout);
+            }
+            last = format!("curl reported {}", out.status);
+            if attempt == 0 {
+                std::thread::sleep(std::time::Duration::from_secs(2));
+            }
         }
-        Ok(out.stdout)
+        Err(format!("{text}: {last}"))
     } else {
         fs::read(text).map_err(|e| format!("read {text} returned void: {e}"))
     }
@@ -124,11 +131,30 @@ fn length(text: &str, whole: Option<&[u8]>) -> Result<usize, String> {
         .output()
         .map_err(|e| format!("curl head for {text} returned void: {e}"))?;
     let head = String::from_utf8_lossy(&out.stdout).to_lowercase();
-    head.lines()
+    if let Some(total) = head
+        .lines()
         .filter_map(|line| line.strip_prefix("content-length:"))
         .filter_map(|value| value.trim().parse::<usize>().ok())
         .next_back()
-        .ok_or_else(|| format!("{text}: the head carries no content-length"))
+    {
+        return Ok(total);
+    }
+    let probe = Command::new("curl")
+        .args(["-sSfL", "--max-time", "60", "-r", "0-0", "-D", "-", text])
+        .output()
+        .map_err(|e| format!("curl range probe for {text} returned void: {e}"))?;
+    let headers = String::from_utf8_lossy(&probe.stdout).to_lowercase();
+    headers
+        .lines()
+        .filter_map(|line| line.strip_prefix("content-range:"))
+        .filter_map(|value| {
+            value
+                .rsplit_once('/')
+                .map(|(_, total)| total.trim().to_string())
+        })
+        .filter_map(|total| total.parse::<usize>().ok())
+        .next_back()
+        .ok_or_else(|| format!("{text}: neither content-length nor content-range names a size"))
 }
 
 fn field(record: &[u8], column: &Column) -> Result<f64, String> {
@@ -211,8 +237,14 @@ pub fn describe(
         .ok_or_else(|| "the label names no row count".to_string())?;
     let declared = record_bytes * rows;
     if declared != total {
+        let delta = total as i64 - declared as i64;
+        let extra = if delta % record_bytes as i64 == 0 {
+            format!(", that is {} whole record(s)", delta / record_bytes as i64)
+        } else {
+            String::new()
+        };
         return Err(format!(
-            "{rows} rows of {record_bytes} bytes are {declared}, the file holds {total}"
+            "{rows} rows of {record_bytes} bytes are {declared}, the file holds {total} ({delta:+} bytes{extra})"
         ));
     }
     let Some(key_name) = get("PRIMARY_KEY") else {
