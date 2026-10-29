@@ -357,6 +357,18 @@ BODY301_NUT_PREC_PM = ( 3.5610 0.1208 -0.0642 0.0158 0.0252 -0.0066 -0.0047 -0.0
     }
 
     #[test]
+    fn the_moon_from_the_file_matches_the_moon_from_the_hardcoded_series() {
+        let bodies = parse(None, Some(include_str!("kernels/pck00011.tpc")));
+        let moon = &bodies[&301];
+        let ra = moon.pole_ra_at(0.0).expect("moon pole ra");
+        let dec = moon.pole_dec_at(0.0).expect("moon pole dec");
+        let w = moon.pm_at(0.0).expect("moon prime meridian");
+        assert!((ra - 266.857_733).abs() < 1e-5, "ra {ra}");
+        assert!((dec - 65.641_103).abs() < 1e-5, "dec {dec}");
+        assert!((w - 41.195_264).abs() < 1e-5, "w {w}");
+    }
+
+    #[test]
     fn mars_and_jupiter_take_their_nutation_from_the_angle_list_in_the_file() {
         let bodies = parse(None, Some(include_str!("kernels/pck00011.tpc")));
         let mars = &bodies[&499];
