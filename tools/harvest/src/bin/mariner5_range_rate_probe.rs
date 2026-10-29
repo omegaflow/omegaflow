@@ -18,6 +18,7 @@ const UNIX_JD: f64 = 2_440_587.5;
 const DEG: f64 = std::f64::consts::PI / 180.0;
 const TAU: f64 = std::f64::consts::TAU;
 const LIGHT_RANGE_AU: f64 = 0.5332;
+const METRES_PER_KM: f64 = 1_000.0;
 
 #[derive(Clone, Copy)]
 struct Elements {
@@ -264,6 +265,7 @@ impl Paths {
             None => Ok(planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd)),
             Some((carrier, _, eph)) => {
                 body_barycenter_position(carrier, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| [v[0] / METRES_PER_KM, v[1] / METRES_PER_KM, v[2] / METRES_PER_KM])
                     .ok_or_else(|| format!("{carrier} carries no position at jd {jd:.6}"))
             }
         }
@@ -274,6 +276,7 @@ impl Paths {
             None => Ok(planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd)),
             Some((carrier, _, eph)) => {
                 body_barycenter_velocity(carrier, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| [v[0] / METRES_PER_KM, v[1] / METRES_PER_KM, v[2] / METRES_PER_KM])
                     .ok_or_else(|| format!("{carrier} carries no velocity at jd {jd:.6}"))
             }
         }
@@ -284,6 +287,7 @@ impl Paths {
             None => Ok(planet_position(INNER_ELEMENTS, INNER_RATES, jd)),
             Some((_, target, eph)) => {
                 body_barycenter_position(target, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| [v[0] / METRES_PER_KM, v[1] / METRES_PER_KM, v[2] / METRES_PER_KM])
                     .ok_or_else(|| format!("{target} carries no position at jd {jd:.6}"))
             }
         }
@@ -294,6 +298,7 @@ impl Paths {
             None => Ok(planet_velocity(INNER_ELEMENTS, INNER_RATES, jd)),
             Some((_, target, eph)) => {
                 body_barycenter_velocity(target, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| [v[0] / METRES_PER_KM, v[1] / METRES_PER_KM, v[2] / METRES_PER_KM])
                     .ok_or_else(|| format!("{target} carries no velocity at jd {jd:.6}"))
             }
         }
@@ -376,11 +381,16 @@ fn main() -> Result<(), String> {
     let mut positional: Vec<String> = Vec::new();
     let mut ephemeris: Option<(String, String)> = None;
     let mut every_row = false;
+    let mut ephemeris_probe = false;
     let mut scan = 0;
     while scan < args.len() {
         match args[scan].as_str() {
             "--rows" => {
                 every_row = true;
+                scan += 1;
+            }
+            "--ephemeris-probe" => {
+                ephemeris_probe = true;
                 scan += 1;
             }
             "--ephemeris" => {
@@ -435,6 +445,20 @@ fn main() -> Result<(), String> {
         }
     };
     let orbit = mariner5_encounter();
+    if ephemeris_probe {
+        let jd = rows[0].t_unix / 86400.0 + UNIX_JD;
+        let p = paths.carrier_position(jd)?;
+        let v = paths.carrier_velocity(jd)?;
+        let t = paths.target_position(jd)?;
+        let tv = paths.target_velocity(jd)?;
+        println!(
+            "carrier |r| {:.3e} |v| {:.3e}   target |r| {:.3e} |v| {:.3e}",
+            (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt(),
+            (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt(),
+            (t[0] * t[0] + t[1] * t[1] + t[2] * t[2]).sqrt(),
+            (tv[0] * tv[0] + tv[1] * tv[1] + tv[2] * tv[2]).sqrt()
+        );
+    }
     println!(
         "rows {}  scale {:.1} cps per km/s  body {body}  radius {:.0} m  flattening {:.8}  rotation {:.6} deg/day",
         rows.len(),
