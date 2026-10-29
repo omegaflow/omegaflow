@@ -42,20 +42,38 @@ impl Classes {
     }
 }
 
-const DESCRIPTORS: &str = "tools/harvest/src/asset_descriptors.tsv";
+const DESCRIPTORS: &str = "tools/harvest/src/asset_descriptors";
 
 fn descriptor_table() -> Option<std::collections::BTreeMap<String, String>> {
-    let text = fs::read_to_string(DESCRIPTORS).ok()?;
     let mut out = std::collections::BTreeMap::new();
-    for line in text.lines().skip(1) {
-        let cols: Vec<&str> = line.split('\t').collect();
-        if cols.len() < 2 {
+    let mut files = 0usize;
+    let entries = fs::read_dir("tools/harvest/src").ok()?;
+    let mut paths: Vec<std::path::PathBuf> = entries
+        .filter_map(|entry| entry.ok().map(|e| e.path()))
+        .filter(|path| {
+            let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+            name.starts_with("asset_descriptors") && name.ends_with(".tsv")
+        })
+        .collect();
+    paths.sort();
+    for path in paths {
+        let Ok(text) = fs::read_to_string(&path) else {
             continue;
+        };
+        files += 1;
+        for line in text.lines().skip(1) {
+            let cols: Vec<&str> = line.split('\t').collect();
+            if cols.len() < 2 {
+                continue;
+            }
+            out.insert(
+                cols[0].trim().to_string(),
+                cols[cols.len() - 1].trim().to_string(),
+            );
         }
-        out.insert(
-            cols[0].trim().to_string(),
-            cols[cols.len() - 1].trim().to_string(),
-        );
+    }
+    if files == 0 {
+        return None;
     }
     Some(out)
 }
