@@ -30,6 +30,30 @@ fn main() {
         file.vars.len(),
         file.little_endian
     );
+    let wanted = match std::env::args().nth(2) {
+        Some(name) => Some(name),
+        None => std::env::args().nth(3),
+    };
+    if let Some(name) = &wanted {
+        let Some(var) = file.var(name) else {
+            eprintln!("cdf_vars: no variable named {name}");
+            std::process::exit(2);
+        };
+        match file.var_records(&bytes, var) {
+            Ok(records) => {
+                println!(
+                    "{name}: {} record(s), first number {:?}, last number {:?}",
+                    records.len(),
+                    records.first().map(|r| r.0),
+                    records.last().map(|r| r.0)
+                );
+                for (i, (number, values)) in records.iter().take(3).enumerate() {
+                    println!("  [{i}] rec {number}: {:?}", &values[..values.len().min(3)]);
+                }
+            }
+            Err(note) => println!("{name}: {note:?}"),
+        }
+    }
     for var in &file.vars {
         let dims = if var.dim_sizes.is_empty() {
             "-".to_string()
