@@ -19,6 +19,7 @@ const DEG: f64 = std::f64::consts::PI / 180.0;
 const TAU: f64 = std::f64::consts::TAU;
 const LIGHT_RANGE_AU: f64 = 0.5332;
 const METRES_PER_KM: f64 = 1_000.0;
+const ECLIPTIC_OBLIQUITY_DEG: f64 = 23.439_291_1;
 
 #[derive(Clone, Copy)]
 struct Elements {
@@ -120,6 +121,10 @@ fn mariner5_encounter() -> Hyperbola {
     }
 }
 
+fn ecliptic_to_equatorial(v: [f64; 3]) -> [f64; 3] {
+    rot_x(ECLIPTIC_OBLIQUITY_DEG * DEG, v)
+}
+
 fn rot_z(angle: f64, v: [f64; 3]) -> [f64; 3] {
     let (s, c) = angle.sin_cos();
     [c * v[0] - s * v[1], s * v[0] + c * v[1], v[2]]
@@ -156,7 +161,7 @@ fn planet_position(el: Elements, rate: Elements, jd: f64) -> [f64; 3] {
     let x = (ca * co - sa * so * ci) * xp + (-sa * co - ca * so * ci) * yp;
     let y = (ca * so + sa * co * ci) * xp + (-sa * so + ca * co * ci) * yp;
     let z = (sa * si) * xp + (ca * si) * yp;
-    [x * AU_KM, y * AU_KM, z * AU_KM]
+    ecliptic_to_equatorial([x * AU_KM, y * AU_KM, z * AU_KM])
 }
 
 fn planet_velocity(el: Elements, rate: Elements, jd: f64) -> [f64; 3] {
@@ -194,7 +199,7 @@ fn hyperbolic_state(orbit: Hyperbola, t_unix: f64) -> ([f64; 3], [f64; 3]) {
         orbit.node_deg,
         orbit.peri_deg,
     );
-    (pos, vel)
+    (ecliptic_to_equatorial(pos), ecliptic_to_equatorial(vel))
 }
 
 fn body_spin(props: &BodyProperties) -> Result<BodySpin, String> {
@@ -447,17 +452,23 @@ fn main() -> Result<(), String> {
     let orbit = mariner5_encounter();
     if ephemeris_probe {
         let jd = rows[0].t_unix / 86400.0 + UNIX_JD;
-        let p = paths.carrier_position(jd)?;
-        let v = paths.carrier_velocity(jd)?;
-        let t = paths.target_position(jd)?;
-        let tv = paths.target_velocity(jd)?;
-        println!(
-            "carrier |r| {:.3e} |v| {:.3e}   target |r| {:.3e} |v| {:.3e}",
-            (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt(),
-            (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt(),
-            (t[0] * t[0] + t[1] * t[1] + t[2] * t[2]).sqrt(),
-            (tv[0] * tv[0] + tv[1] * tv[1] + tv[2] * tv[2]).sqrt()
-        );
+        let ep = planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
+        let ev = planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
+        let tp = planet_position(INNER_ELEMENTS, INNER_RATES, jd);
+        let tv0 = planet_velocity(INNER_ELEMENTS, INNER_RATES, jd);
+        let bp = paths.carrier_position(jd)?;
+        let bv = paths.carrier_velocity(jd)?;
+        let bt = paths.target_position(jd)?;
+        let btv = paths.target_velocity(jd)?;
+        let dot = |a: [f64; 3], b: [f64; 3]| a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        let norm = |a: [f64; 3]| (dot(a, a)).sqrt();
+        let ang = |a: [f64; 3], b: [f64; 3]| (dot(a, b) / (norm(a) * norm(b))).clamp(-1.0, 1.0).acos().to_degrees();
+        println!("carrier |r| analytic {:.4e} binary {:.4e}  angle {:.4} deg", norm(ep), norm(bp), ang(ep, bp));
+        println!("carrier |v| analytic {:.4} binary {:.4}  angle {:.4} deg", norm(ev), norm(bv), ang(ev, bv));
+        println!("target  |r| analytic {:.4e} binary {:.4e}  angle {:.4} deg", norm(tp), norm(bt), ang(tp, bt));
+        println!("target  |v| analytic {:.4} binary {:.4}  angle {:.4} deg", norm(tv0), norm(btv), ang(tv0, btv));
+        println!("delta carrier r {:?}", [bp[0] - ep[0], bp[1] - ep[1], bp[2] - ep[2]]);
+        println!("delta target  v {:?}", [btv[0] - tv0[0], btv[1] - tv0[1], btv[2] - tv0[2]]);
     }
     println!(
         "rows {}  scale {:.1} cps per km/s  body {body}  radius {:.0} m  flattening {:.8}  rotation {:.6} deg/day",
