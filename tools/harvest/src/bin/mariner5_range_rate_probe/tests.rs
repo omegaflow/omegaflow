@@ -37,7 +37,7 @@ fn rms_residual(station: Station) -> f64 {
     let orbit = mariner5_encounter();
     let mut squares = 0.0;
     for (t, observed) in TAPE {
-        let model = range_rate_cps(t, orbit, station, spin).expect("body fixture");
+        let model = range_rate_cps(t, orbit, station, spin, &Paths::analytic()).expect("body fixture");
         let residual = observed - model;
         squares += residual * residual;
     }
@@ -49,7 +49,7 @@ fn the_computed_range_rate_tracks_the_tape() {
     let spin = spin();
     let orbit = mariner5_encounter();
     for (t, observed) in TAPE {
-        let model = range_rate_cps(t, orbit, goldstone(), spin).expect("body fixture");
+        let model = range_rate_cps(t, orbit, goldstone(), spin, &Paths::analytic()).expect("body fixture");
         assert!(
             (observed - model).abs() < 700.0,
             "at {t} the tape carries {observed} and the orbit gives {model}"
@@ -62,7 +62,7 @@ fn a_thirteen_percent_scale_slip_is_visible() {
     let spin = spin();
     let orbit = mariner5_encounter();
     let (t, observed) = TAPE[0];
-    let model = range_rate_cps(t, orbit, goldstone(), spin).expect("body fixture");
+    let model = range_rate_cps(t, orbit, goldstone(), spin, &Paths::analytic()).expect("body fixture");
     let slipped = model * 1.13;
     assert!(
         (observed - slipped).abs() > 20_000.0,

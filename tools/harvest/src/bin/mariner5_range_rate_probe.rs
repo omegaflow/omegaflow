@@ -1,9 +1,13 @@
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 
+use omegaflow::archivar::BodyEphemeris;
 use omegaflow::archivar::BodyProperties;
-use omegaflow::archivar::cdn::body_props;
-use omegaflow::archivar::motion::orientation_angles_at;
+use omegaflow::archivar::cdn::{body_ephemeris, body_props};
+use omegaflow::archivar::motion::{
+    body_barycenter_position, body_barycenter_velocity, orientation_angles_at,
+};
 
 const AU_KM: f64 = 1.495_978_707e8;
 const MU_VENUS_KM3_S2: f64 = 324_858.6;
@@ -246,15 +250,66 @@ fn doppler_scale_cps_per_km_s() -> f64 {
     2.0 * DOPPLER_HZ / C_KM_S
 }
 
+struct Paths {
+    chebyshev: Option<(String, String, HashMap<String, BodyEphemeris>)>,
+}
+
+impl Paths {
+    fn analytic() -> Paths {
+        Paths { chebyshev: None }
+    }
+
+    fn carrier_position(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd)),
+            Some((carrier, _, eph)) => {
+                body_barycenter_position(carrier, (jd - J2000_JD) * 86400.0, eph)
+                    .ok_or_else(|| format!("{carrier} carries no position at jd {jd:.6}"))
+            }
+        }
+    }
+
+    fn carrier_velocity(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd)),
+            Some((carrier, _, eph)) => {
+                body_barycenter_velocity(carrier, (jd - J2000_JD) * 86400.0, eph)
+                    .ok_or_else(|| format!("{carrier} carries no velocity at jd {jd:.6}"))
+            }
+        }
+    }
+
+    fn target_position(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_position(INNER_ELEMENTS, INNER_RATES, jd)),
+            Some((_, target, eph)) => {
+                body_barycenter_position(target, (jd - J2000_JD) * 86400.0, eph)
+                    .ok_or_else(|| format!("{target} carries no position at jd {jd:.6}"))
+            }
+        }
+    }
+
+    fn target_velocity(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_velocity(INNER_ELEMENTS, INNER_RATES, jd)),
+            Some((_, target, eph)) => {
+                body_barycenter_velocity(target, (jd - J2000_JD) * 86400.0, eph)
+                    .ok_or_else(|| format!("{target} carries no velocity at jd {jd:.6}"))
+            }
+        }
+    }
+}
+
 fn range_rate_cps(
     t_unix: f64,
     orbit: Hyperbola,
     station: Station,
     spin: BodySpin,
+    paths: &Paths,
 ) -> Result<f64, String> {
     let jd = t_unix / 86400.0 + UNIX_JD;
-    let carrier_pos = planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
-    let carrier_vel = planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
+    let carrier_pos = paths.carrier_position(jd)?;
+    let carrier_vel = paths.carrier_velocity(jd)?;
     let (st_pos, st_vel) = station_state(jd, station, spin);
     let mut light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
     let mut line = [0.0; 3];
@@ -262,8 +317,8 @@ fn range_rate_cps(
     let mut range = 0.0;
     for _ in 0..3 {
         let jd_craft = jd - light_time / 86400.0;
-        let target_pos = planet_position(INNER_ELEMENTS, INNER_RATES, jd_craft);
-        let target_vel = planet_velocity(INNER_ELEMENTS, INNER_RATES, jd_craft);
+        let target_pos = paths.target_position(jd_craft)?;
+        let target_vel = paths.target_velocity(jd_craft)?;
         let (craft_pos, craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
         for i in 0..3 {
             line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
@@ -317,11 +372,32 @@ fn stats(values: &[f64]) -> Stats {
 
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().skip(1).collect();
-    let usage =
-        "usage: mariner5_range_rate_probe <wings.csv> <body> <lat> <lon> [<lat> <lon> ...]";
-    let path = args.first().ok_or_else(|| usage.to_string())?;
-    let body = args.get(1).ok_or_else(|| usage.to_string())?;
-    let rest = args.get(2..).ok_or_else(|| usage.to_string())?;
+    let usage = "usage: mariner5_range_rate_probe <wings.csv> <body> <lat> <lon> [<lat> <lon> ...] [--rows] [--ephemeris <carrier> <target>]";
+    let mut positional: Vec<String> = Vec::new();
+    let mut ephemeris: Option<(String, String)> = None;
+    let mut every_row = false;
+    let mut scan = 0;
+    while scan < args.len() {
+        match args[scan].as_str() {
+            "--rows" => {
+                every_row = true;
+                scan += 1;
+            }
+            "--ephemeris" => {
+                let carrier = args.get(scan + 1).ok_or_else(|| usage.to_string())?;
+                let target = args.get(scan + 2).ok_or_else(|| usage.to_string())?;
+                ephemeris = Some((carrier.clone(), target.clone()));
+                scan += 3;
+            }
+            other => {
+                positional.push(other.to_string());
+                scan += 1;
+            }
+        }
+    }
+    let path = positional.first().ok_or_else(|| usage.to_string())?;
+    let body = positional.get(1).ok_or_else(|| usage.to_string())?;
+    let rest = positional.get(2..).ok_or_else(|| usage.to_string())?;
     let mut stations = Vec::new();
     let mut index = 0;
     while index + 1 < rest.len() {
@@ -344,6 +420,20 @@ fn main() -> Result<(), String> {
     }
     let props = body_props(body)?;
     let spin = body_spin(&props)?;
+    let paths = match ephemeris {
+        None => Paths::analytic(),
+        Some((carrier, target)) => {
+            let mut eph = HashMap::new();
+            eph.insert(carrier.clone(), body_ephemeris(&carrier)?);
+            eph.insert(target.clone(), body_ephemeris(&target)?);
+            println!(
+                "paths {carrier} and {target} from the ephemeris binaries, {} and {} granules",
+                eph[&carrier].granules.len(),
+                eph[&target].granules.len()
+            );
+            Paths { chebyshev: Some((carrier, target, eph)) }
+        }
+    };
     let orbit = mariner5_encounter();
     println!(
         "rows {}  scale {:.1} cps per km/s  body {body}  radius {:.0} m  flattening {:.8}  rotation {:.6} deg/day",
@@ -361,7 +451,7 @@ fn main() -> Result<(), String> {
         let mut pre = Vec::new();
         let mut post = Vec::new();
         for row in &rows {
-            let residual = row.observed - range_rate_cps(row.t_unix, orbit, *station, spin)?;
+            let residual = row.observed - range_rate_cps(row.t_unix, orbit, *station, spin, &paths)?;
             if row.segment == "pre" {
                 pre.push(residual);
             } else {
@@ -384,11 +474,10 @@ fn main() -> Result<(), String> {
         );
     }
     let station = stations[0];
-    let every_row = args.iter().any(|a| a == "--rows");
-    if every_row {
+        if every_row {
         println!("idx,iso,seg,observed,model,residual");
         for (index, row) in rows.iter().enumerate() {
-            let model = range_rate_cps(row.t_unix, orbit, station, spin)?;
+            let model = range_rate_cps(row.t_unix, orbit, station, spin, &paths)?;
             println!(
                 "{},{},{},{:.3},{:.3},{:.3}",
                 index,
@@ -407,7 +496,7 @@ fn main() -> Result<(), String> {
         if index % 30 != 0 && index + 1 != rows.len() {
             continue;
         }
-        let model = range_rate_cps(row.t_unix, orbit, station, spin)?;
+        let model = range_rate_cps(row.t_unix, orbit, station, spin, &paths)?;
         println!(
             "  {} {} observed {:.0} model {:.0} residual {:.0}",
             row.iso,
