@@ -371,7 +371,7 @@ mod tests {
     #[test]
     fn the_fixture_carries_three_models_two_grids_and_the_service_potentials() {
         let rows = fixture().expect("geoid fixture");
-        assert_eq!(rows.len(), 33);
+        assert_eq!(rows.len(), 43);
         for station in ["Berlin", "Honolulu", "Kapstadt"] {
             let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
             assert_eq!(set.len(), 11, "{station} carries eleven values");
@@ -399,6 +399,20 @@ mod tests {
                 set.iter().filter(|r| r.quantity == "w").count(),
                 4,
                 "{station} carries four potentials"
+            );
+        }
+        for station in [
+            "Aequator",
+            "Hawaii Nord",
+            "Hawaii Ost",
+            "Hawaii Sued",
+            "Hawaii West",
+        ] {
+            let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
+            assert_eq!(set.len(), 2, "{station} carries the two EGM96 potentials");
+            assert!(
+                set.iter()
+                    .all(|r| r.quantity == "w" && r.source.contains("EGM96"))
             );
         }
     }
