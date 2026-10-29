@@ -35,7 +35,7 @@ impl Draft {
 
 pub struct IauPck {
     bodies: HashMap<i32, IauBody>,
-    angles: HashMap<i32, Vec<[f64; 2]>>,
+    angles: HashMap<i32, Vec<f64>>,
 }
 
 fn strip_comments(text: &str) -> String {
@@ -118,18 +118,13 @@ fn split_name(name: &str) -> Option<(i32, &str)> {
 impl IauPck {
     pub fn parse(text: &str) -> Self {
         let mut drafts: HashMap<i32, Draft> = HashMap::new();
-        let mut angles: HashMap<i32, Vec<[f64; 2]>> = HashMap::new();
+        let mut angles: HashMap<i32, Vec<f64>> = HashMap::new();
         for (name, values) in assignments(text) {
             let Some((id, suffix)) = split_name(&name) else {
                 continue;
             };
             if suffix == "NUT_PREC_ANGLES" {
-                let pairs: Vec<[f64; 2]> = values
-                    .chunks(2)
-                    .filter(|c| c.len() == 2)
-                    .map(|c| [c[0], c[1]])
-                    .collect();
-                angles.insert(id, pairs);
+                angles.insert(id, values);
                 continue;
             }
             let draft = drafts.entry(id).or_insert_with(Draft::empty);
@@ -187,7 +182,19 @@ impl IauPck {
     }
 
     pub fn angle_count(&self, pck_id: i32) -> Option<usize> {
-        self.angles.get(&(pck_id / 100)).map(|a| a.len())
+        let b = self.bodies.get(&pck_id)?;
+        let widths = b.nut_ra.len().max(b.nut_dec.len()).max(b.nut_pm.len());
+        let raw = self.angles.get(&(pck_id / 100))?;
+        if widths == 0 {
+            return None;
+        }
+        if raw.len() == 3 * widths {
+            Some(raw.len() / 3)
+        } else if raw.len() == 2 * widths {
+            Some(raw.len() / 2)
+        } else {
+            None
+        }
     }
 
     pub fn orientation(&self, pck_id: i32, et: f64) -> Option<(f64, f64, f64)> {
@@ -197,22 +204,36 @@ impl IauPck {
         let mut ra = poly(&b.pole_ra, centuries)?;
         let mut dec = poly(&b.pole_dec, centuries)?;
         let mut w = poly(&b.pm, days)?;
-        let widths = (b.nut_ra.len(), b.nut_dec.len(), b.nut_pm.len());
-        if widths.0 != widths.1 || widths.1 != widths.2 {
-            return None;
-        }
-        if widths.0 > 0 {
-            let angles = self.angles.get(&(pck_id / 100))?;
-            if angles.len() < widths.0 {
+        let widths = b.nut_ra.len().max(b.nut_dec.len()).max(b.nut_pm.len());
+        if widths > 0 {
+            let raw = self.angles.get(&(pck_id / 100))?;
+            let stride = if raw.len() == 3 * widths {
+                3
+            } else if raw.len() == 2 * widths {
+                2
+            } else {
                 return None;
-            }
-            let offset = angles.len() - widths.0;
-            for k in 0..widths.0 {
-                let a = angles.get(offset + k)?;
-                let argument = (a[0] + a[1] * days).to_radians();
-                ra += b.nut_ra[k] * argument.sin();
-                dec += b.nut_dec[k] * argument.cos();
-                w += b.nut_pm[k] * argument.sin();
+            };
+            for k in 0..widths {
+                let base = k * stride;
+                let a0 = *raw.get(base)?;
+                let a1 = *raw.get(base + 1)?;
+                let argument = match stride {
+                    3 => {
+                        let a2 = *raw.get(base + 2)?;
+                        (a0 + a1 * days + a2 * days * days).to_radians()
+                    }
+                    _ => (a0 + a1 * days).to_radians(),
+                };
+                if let Some(amplitude) = b.nut_ra.get(k) {
+                    ra += amplitude * argument.sin();
+                }
+                if let Some(amplitude) = b.nut_dec.get(k) {
+                    dec += amplitude * argument.cos();
+                }
+                if let Some(amplitude) = b.nut_pm.get(k) {
+                    w += amplitude * argument.sin();
+                }
             }
         }
         let turn = |deg: f64| deg.rem_euclid(360.0).to_radians();
@@ -305,14 +326,39 @@ mod tests {
     }
 
     #[test]
-    fn mars_stays_absent_while_its_arrays_do_not_line_up() {
+    fn mars_pairs_its_amplitudes_from_the_front_of_the_angle_list() {
         let pck = IauPck::parse(TEXT);
-        let widths = pck.nutation_lengths(499).expect("mars is in the file");
-        assert_eq!(widths, (15, 20, 26));
+        assert_eq!(pck.nutation_lengths(499), Some((15, 20, 26)));
         assert_eq!(pck.angle_count(499), Some(26));
+        let mars = pck.orientation(499, -43200.0).expect("mars answers");
         assert!(
-            pck.orientation(499, 0.0).is_none(),
-            "mars answered although its nutation arrays carry three different lengths"
+            (degrees(mars.0) - 47.663_795).abs() < 1e-5,
+            "mars right ascension {}",
+            degrees(mars.0)
+        );
+        let dec = 90.0 - degrees(mars.1);
+        assert!((dec - 54.899_558).abs() < 1e-5, "mars declination {dec}");
+    }
+
+    #[test]
+    fn the_mars_declination_stays_near_its_pole_over_two_centuries() {
+        let pck = IauPck::parse(TEXT);
+        let mut low = f64::MAX;
+        let mut high = f64::MIN;
+        for year in 1900..=2100 {
+            let et = (year as f64 - 2000.0) * 365.25 * 86400.0;
+            let mars = pck.orientation(499, et).expect("mars answers");
+            let dec = 90.0 - degrees(mars.1);
+            if dec < low {
+                low = dec;
+            }
+            if dec > high {
+                high = dec;
+            }
+        }
+        assert!(
+            low > 52.0 && high < 57.0,
+            "mars declination runs from {low} to {high} — the amplitudes sit on the wrong angles"
         );
     }
 }
