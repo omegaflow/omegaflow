@@ -245,9 +245,10 @@ pub struct StationValue {
     pub station: String,
     pub lat_deg: f64,
     pub lon_deg: f64,
-    pub model: String,
+    pub source: String,
     pub cap: usize,
-    pub geoid_m: f64,
+    pub quantity: String,
+    pub value: f64,
 }
 
 const TABLE: &str = include_str!("kernels/geoid_stations.tsv");
@@ -259,20 +260,25 @@ pub fn parse_table(text: &str) -> Option<Vec<StationValue>> {
             continue;
         }
         let cols: Vec<&str> = line.split('\t').collect();
-        if cols.len() < 6 {
+        if cols.len() < 7 {
             return None;
         }
         let lat_deg: f64 = cols[1].trim().parse().ok()?;
         let lon_deg: f64 = cols[2].trim().parse().ok()?;
         let cap: usize = cols[4].trim().parse().ok()?;
-        let geoid_m: f64 = cols[5].trim().parse().ok()?;
+        let quantity = cols[5].trim().to_string();
+        if quantity != "n" && quantity != "w" {
+            return None;
+        }
+        let value: f64 = cols[6].trim().parse().ok()?;
         out.push(StationValue {
             station: cols[0].trim().to_string(),
             lat_deg,
             lon_deg,
-            model: cols[3].trim().to_string(),
+            source: cols[3].trim().to_string(),
             cap,
-            geoid_m,
+            quantity,
+            value,
         });
     }
     if out.is_empty() { None } else { Some(out) }
@@ -363,31 +369,49 @@ mod tests {
     }
 
     #[test]
-    fn the_fixture_carries_three_models_and_two_independent_grids() {
+    fn the_fixture_carries_three_models_two_grids_and_the_service_potentials() {
         let rows = fixture().expect("geoid fixture");
-        assert_eq!(rows.len(), 21);
+        assert_eq!(rows.len(), 33);
         for station in ["Berlin", "Honolulu", "Kapstadt"] {
             let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
-            assert_eq!(set.len(), 7, "{station} carries seven values");
-            for model in [
-                "EGM96",
-                "EGM2008",
-                "XGM2019e",
-                "EGM2008 Bruns",
+            assert_eq!(set.len(), 11, "{station} carries eleven values");
+            for source in [
+                "ours EGM96",
+                "ours EGM2008",
+                "ours XGM2019e",
+                "ours EGM2008 bruns",
                 "EGM2008 grid",
                 "PROJ EGM96 grid",
+                "ICGEM EGM96",
+                "ICGEM EGM2008",
             ] {
                 assert!(
-                    set.iter().any(|r| r.model == model),
-                    "{station} lacks {model}"
+                    set.iter().any(|r| r.source == source),
+                    "{station} lacks {source}"
                 );
             }
             assert_eq!(
-                set.iter().filter(|r| r.model == "EGM2008").count(),
-                2,
-                "{station} carries EGM2008 at two degrees"
+                set.iter().filter(|r| r.source == "ours EGM2008").count(),
+                3,
+                "{station} carries EGM2008 at two degrees as height and potential"
+            );
+            assert_eq!(
+                set.iter().filter(|r| r.quantity == "w").count(),
+                4,
+                "{station} carries four potentials"
             );
         }
+    }
+
+    fn find<'a>(
+        rows: &'a [StationValue],
+        station: &str,
+        source: &str,
+        quantity: &str,
+    ) -> &'a StationValue {
+        rows.iter()
+            .find(|r| r.station == station && r.source == source && r.quantity == quantity)
+            .expect("the table carries this row")
     }
 
     #[test]
@@ -398,8 +422,10 @@ mod tests {
                 .iter()
                 .filter(|r| {
                     r.station == station
+                        && r.quantity == "n"
                         && r.cap == 360
-                        && ["EGM96", "EGM2008", "XGM2019e"].contains(&r.model.as_str())
+                        && ["ours EGM96", "ours EGM2008", "ours XGM2019e"]
+                            .contains(&r.source.as_str())
                 })
                 .collect();
             assert_eq!(set.len(), 3, "{station}: three synthesis values");
@@ -407,7 +433,7 @@ mod tests {
                 .iter()
                 .map(|a| {
                     set.iter()
-                        .map(|b| (a.geoid_m - b.geoid_m).abs())
+                        .map(|b| (a.value - b.value).abs())
                         .fold(0.0, f64::max)
                 })
                 .fold(0.0, f64::max);
@@ -422,15 +448,9 @@ mod tests {
     fn our_egm96_value_holds_against_the_proj_grid() {
         let rows = fixture().expect("geoid fixture");
         for station in ["Berlin", "Honolulu", "Kapstadt"] {
-            let ours = rows
-                .iter()
-                .find(|r| r.station == station && r.model == "EGM96")
-                .expect("our EGM96 value");
-            let proj = rows
-                .iter()
-                .find(|r| r.station == station && r.model == "PROJ EGM96 grid")
-                .expect("the PROJ grid value");
-            let diff = (ours.geoid_m - proj.geoid_m).abs();
+            let ours = find(&rows, station, "ours EGM96", "n");
+            let proj = find(&rows, station, "PROJ EGM96 grid", "n");
+            let diff = (ours.value - proj.value).abs();
             assert!(
                 diff <= 0.5,
                 "{station}: our synthesis differs from PROJ's grid by {diff} m"
@@ -442,20 +462,28 @@ mod tests {
     fn the_bruns_value_holds_against_the_official_egm2008_grid() {
         let rows = fixture().expect("geoid fixture");
         for station in ["Berlin", "Honolulu", "Kapstadt"] {
-            let bruns = rows
-                .iter()
-                .find(|r| r.station == station && r.model == "EGM2008 Bruns")
-                .expect("the Bruns value");
-            let grid = rows
-                .iter()
-                .find(|r| r.station == station && r.model == "EGM2008 grid")
-                .expect("the official grid value");
+            let bruns = find(&rows, station, "ours EGM2008 bruns", "n");
+            let grid = find(&rows, station, "EGM2008 grid", "n");
             assert_eq!(bruns.cap, 2190);
             assert_eq!(grid.cap, 2190);
-            let diff = (bruns.geoid_m - grid.geoid_m).abs();
+            let diff = (bruns.value - grid.value).abs();
             assert!(
                 diff <= 0.02,
                 "{station}: the ellipsoidal path differs from the grid by {diff} m"
+            );
+        }
+    }
+
+    #[test]
+    fn our_egm2008_potential_matches_the_service_within_the_gm_term() {
+        let rows = fixture().expect("geoid fixture");
+        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+            let ours = find(&rows, station, "ours EGM2008", "w");
+            let service = find(&rows, station, "ICGEM EGM2008", "w");
+            let diff = (ours.value - service.value).abs();
+            assert!(
+                diff <= 0.05,
+                "{station}: our potential differs from the service by {diff} m2/s2"
             );
         }
     }
