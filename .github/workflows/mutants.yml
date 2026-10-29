@@ -1,0 +1,37 @@
+name: mutants
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: "source file to mutate"
+        required: true
+        default: "src/archivar/geoid.rs"
+      timeout:
+        description: "per-mutant timeout in seconds"
+        required: true
+        default: "300"
+
+jobs:
+  mutants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo install cargo-mutants --locked
+      - name: list the mutants
+        run: cargo mutants -p omegaflow --file "${{ inputs.file }}" --list | tee mutant-list.txt
+      - name: run the mutants
+        run: cargo mutants -p omegaflow --file "${{ inputs.file }}" --timeout "${{ inputs.timeout }}" --jobs 1 --output mutants.out
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutants-${{ github.run_id }}
+          path: |
+            mutants.out
+            mutant-list.txt
+      - name: summary
+        if: always()
+        run: tail -40 mutants.out/mutants.log || true
