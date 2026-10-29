@@ -367,6 +367,41 @@ fn impact_parameter(target: [f64; 3], station: [f64; 3], unit: [f64; 3]) -> f64 
     (c[0] * c[0] + c[1] * c[1] + c[2] * c[2]).sqrt()
 }
 
+fn limb_gap_at(
+    t_unix: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+    radius: f64,
+) -> Result<f64, String> {
+    let g = geometry(t_unix, orbit, station, spin, paths)?;
+    Ok(impact_parameter(g.target, g.station, g.unit) - radius)
+}
+
+fn crossing_between(
+    lo_t: f64,
+    hi_t: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+    radius: f64,
+) -> Result<f64, String> {
+    let mut lo = lo_t;
+    let mut hi = hi_t;
+    let lo_sign = limb_gap_at(lo, orbit, station, spin, paths, radius)?.is_sign_positive();
+    for _ in 0..80 {
+        let mid = 0.5 * (lo + hi);
+        if limb_gap_at(mid, orbit, station, spin, paths, radius)?.is_sign_positive() == lo_sign {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    Ok(0.5 * (lo + hi))
+}
+
 fn range_rate_cps(
     t_unix: f64,
     orbit: Hyperbola,
@@ -507,12 +542,19 @@ fn main() -> Result<(), String> {
             .ok_or_else(|| "--limb needs --ephemeris so the target is declared".to_string())?;
         let radius = body_props(target)?.radius_m / METRES_PER_KM;
         println!("limb against {target}, radius {radius:.1} km");
+        let mut lo_t = start;
+        let mut lo_gap = limb_gap_at(lo_t, orbit, stations[0], spin, &paths, radius)?;
         let mut t = start;
-        while t <= end {
-            let g = geometry(t, orbit, stations[0], spin, &paths)?;
-            let b = impact_parameter(g.target, g.station, g.unit);
-            println!("{t:.0},{b:.2},{}", if b < radius { "in" } else { "out" });
+        while t + step <= end + 1e-9 {
             t += step;
+            let gap = limb_gap_at(t, orbit, stations[0], spin, &paths, radius)?;
+            println!("{t:.0},{:.2},{}", gap + radius, if gap < 0.0 { "in" } else { "out" });
+            if gap.is_sign_positive() != lo_gap.is_sign_positive() {
+                let crossing = crossing_between(lo_t, t, orbit, stations[0], spin, &paths, radius)?;
+                println!("crossing {crossing:.2} {}", if gap < 0.0 { "in" } else { "out" });
+            }
+            lo_t = t;
+            lo_gap = gap;
         }
         return Ok(());
     }
