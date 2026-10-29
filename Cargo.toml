@@ -35,5 +35,6 @@ cdshealpix = "0.10"
 proj4rs = "0.1.5"
 time = { version = "0.3", features = ["parsing"] }
 tungstenite = "0.30"
+fitrs = "0.5"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

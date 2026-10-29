@@ -2283,4 +2283,26 @@ mod tests {
         assert_eq!(super::parse_tform("8A"), Some(('A', 8, None)));
         assert_eq!(super::parse_tform("1PB(100)"), Some(('P', 1, Some('B'))));
     }
+
+    #[test]
+    fn a_file_written_by_a_foreign_encoder_is_read() {
+        let path = std::env::temp_dir().join(format!("omegaflow_fitrs_{}.fits", std::process::id()));
+        let shape = [3usize, 4usize];
+        let data: Vec<i32> = (0..12).collect();
+        let mut hdu = fitrs::Hdu::new(&shape, data.clone());
+        hdu.insert("BUNIT", "counts");
+        fitrs::Fits::create(&path, hdu).expect("the foreign encoder writes the file");
+        let bytes = std::fs::read(&path).expect("the file reads back");
+        let _ = std::fs::remove_file(&path);
+        let (image, _) = FitsImage::parse(&bytes, 0).expect("our reader takes the foreign file");
+        assert_eq!(image.dims, [3, 4, 1]);
+        assert_eq!(image.bitpix, 32);
+        let value = |index: usize| -> i32 {
+            let o = image.data_start + index * 4;
+            i32::from_be_bytes([bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]])
+        };
+        for index in 0..12 {
+            assert_eq!(value(index), index as i32, "element {index}");
+        }
+    }
 }

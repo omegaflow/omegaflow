@@ -419,6 +419,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d45db016d36b838f563236e9193d0ee6ce38f3f68b6c94e914b4929c96bbb890"
 
 [[package]]
+name = "fitrs"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f6ad8c9d4e2bd7b2e535a7c72bfd61f43945e79e8937caff19a061b55347134"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "flate2"
 version = "1.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1155,6 +1164,7 @@ name = "omegaflow"
 version = "1.0.0"
 dependencies = [
  "cdshealpix",
+ "fitrs",
  "proj4rs",
  "time",
  "tungstenite",
