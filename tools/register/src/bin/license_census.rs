@@ -75,6 +75,8 @@ const TERMS: &[&str] = &[
     "wdcb-sep-policy",
     "wmo-data-policy",
     "bgi-nc",
+    "cems-floods-licence",
+    "copernicus-sentinel",
     "cdpp-sipad-licence",
     "DHM-open",
     "dlr-license",
