@@ -116,10 +116,75 @@ fn scan_file(path: &Path, markers: &[String], out: &mut Vec<Test>) -> usize {
     attributes
 }
 
+fn formats(register: &str) {
+    let mut tests: Vec<Test> = Vec::new();
+    let mut files = Vec::new();
+    rust_files(Path::new("src"), &mut files);
+    rust_files(Path::new("tools"), &mut files);
+    let marks = markers();
+    for file in files {
+        scan_file(&file, &marks, &mut tests);
+    }
+    let text = match std::fs::read_to_string(register) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("{register}: {e}");
+            return;
+        }
+    };
+    let mut assets: BTreeMap<String, usize> = BTreeMap::new();
+    let mut current: Option<String> = None;
+    for line in text.lines() {
+        if let Some(rest) = line.strip_prefix("format ") {
+            current = Some(rest.trim().to_string());
+        } else if let Some(rest) = line.strip_prefix("url ") {
+            if rest.trim_end().ends_with(".bin") {
+                if let Some(name) = &current {
+                    *assets.entry(name.clone()).or_insert(0) += 1;
+                }
+            }
+        }
+    }
+    let mut rows: Vec<(String, usize, usize, usize)> = Vec::new();
+    for (name, count) in &assets {
+        let owned: Vec<&Test> = tests
+            .iter()
+            .filter(|t| t.file.contains(name.as_str()))
+            .collect();
+        let foreign = owned
+            .iter()
+            .filter(|t| !t.foreign.is_empty() && t.numeric)
+            .count();
+        rows.push((name.clone(), *count, owned.len(), foreign));
+    }
+    rows.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+    let mut without = 0usize;
+    let mut without_assets = 0usize;
+    println!("{:<28} {:>6} {:>6} {:>6}  {}", "format", "assets", "tests", "fremd", "quelle im Haus");
+    for (name, count, tests_in, foreign) in &rows {
+        let mark = if *foreign > 0 { "ja" } else { "nein" };
+        println!("{:<28} {:>6} {:>6} {:>6}  {}", name, count, tests_in, foreign, mark);
+        if *foreign == 0 {
+            without += 1;
+            without_assets += count;
+        }
+    }
+    println!(
+        "formats with assets: {}; without a foreign number in a test: {without} ({without_assets} assets)",
+        rows.len()
+    );
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let roots: Vec<String> = if args.is_empty() {
         vec!["src".to_string(), "tools".to_string()]
+    } else if args[0] == "--formats" {
+        let register = match args.get(1) {
+            Some(r) => r.clone(),
+            None => return eprintln!("usage: test_provenance_scan --formats <phi/sources.φ>"),
+        };
+        return formats(&register);
     } else {
         args
     };
