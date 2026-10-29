@@ -91,11 +91,12 @@ impl GeoidModel {
                 p[n][n] = ((2.0 * n as f64 + 1.0) / (2.0 * n as f64)).sqrt()
                     * sin_theta
                     * p[n - 1][n - 1];
-                for m in 0..n {
+                let mut row = vec![0.0f64; n];
+                for (m, &pm) in p[n - 1].iter().enumerate().take(n) {
                     let a = ((2.0 * n as f64 + 1.0) * (2.0 * n as f64 - 1.0)
                         / ((n as f64 - m as f64) * (n as f64 + m as f64)))
                         .sqrt();
-                    let first = a * x * p[n - 1][m];
+                    let first = a * x * pm;
                     let second = if n >= 2 && m + 1 < n {
                         let b = ((2.0 * n as f64 + 1.0)
                             * (n as f64 + m as f64 - 1.0)
@@ -108,15 +109,16 @@ impl GeoidModel {
                     } else {
                         0.0
                     };
-                    p[n][m] = first - second;
+                    row[m] = first - second;
                 }
+                p[n][..n].copy_from_slice(&row);
             }
             if n < 2 {
                 continue;
             }
             let mut inner = (self.c[n][0] - normal_zonal(n)) * p[n][0];
-            for m in 1..=n {
-                inner += p[n][m]
+            for (m, &pnm) in p[n].iter().enumerate().take(n + 1).skip(1) {
+                inner += pnm
                     * (self.c[n][m] * (m as f64 * lam).cos()
                         + self.s[n][m] * (m as f64 * lam).sin());
             }
