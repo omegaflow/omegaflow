@@ -5,6 +5,16 @@ pub struct GeoidModel {
     s: Vec<Vec<f64>>,
 }
 
+pub const WGS84_GM: f64 = 3.986_004_418e14;
+pub const WGS84_A_M: f64 = 6_378_137.0;
+pub const WGS84_F: f64 = 1.0 / 298.257_223_563;
+
+pub fn somigliana_gravity(lat_deg: f64) -> f64 {
+    let phi = lat_deg.to_radians();
+    let s2 = phi.sin() * phi.sin();
+    9.780_325_335_9 * (1.0 + 0.001_931_852_652_41 * s2) / (1.0 - 0.006_694_379_990_13 * s2).sqrt()
+}
+
 pub const NORMAL_C20: f64 = -4.841_651_437_908_15e-4;
 pub const NORMAL_C40: f64 = 7.905_370_510_517_63e-7;
 
@@ -124,7 +134,9 @@ impl GeoidModel {
             }
             sum += inner;
         }
-        let n = self.radius_m * sum;
+        let re = WGS84_A_M * (1.0 - WGS84_F * lat_deg.to_radians().sin().powi(2));
+        let gamma = somigliana_gravity(lat_deg);
+        let n = WGS84_GM / (re * gamma) * sum;
         if n.is_finite() { Some(n) } else { None }
     }
 

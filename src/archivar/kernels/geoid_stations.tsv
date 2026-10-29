@@ -1,20 +1,22 @@
 # Geoidhoehe an drei Stationen aus drei Schwerefeldmodellen, Grad 360.
+# Formel: Barthelmes STR09/02 (4.2), N = GM/(re*gamma(phi)) * sum, mit Somigliana-
+#         Schwere an der Breite und dem geodaetischen Radius re(phi). Das Normalfeld
+#         traegt weiter nur C20 und C40; das ist der verbleibende Unterschied zur
+#         vollstaendigen Vorschrift und steht als Abstand in der Notiz.
 # EGM96   sources/icgem.gfz.de/EGM96.gfc    sha256 5247a9e9c316dd2c8f8fd491d53be0e163cb5cb3676b021754240cc9e44cb43b
 # EGM2008 sources/icgem.gfz.de/EGM2008.gfc  sha256 ab5b524da073e63b5bdceb7ca47a0de07a26dd44a1c5798f39fc98dc80af70fd
 # XGM2019e sources/icgem.gfz.de/XGM2019e.gfc 1.796.436.884 B sha256 d51ca8315799d331ea3f4c6f1b763ec0b535866f7c7c86d6c87e0457af2e2139
 # (vollstaendig geladen, letzte Zeile gfc 5540 5540; die Grad-360-Werte wurden gegen die vollstaendige Datei nachgemessen und sind identisch)
-# Synthese: geoid.rs, kugelfoermige Naeherung, Normalfeld WGS84 (C*20, C*40), alle Modelle bei Grad 360 abgeschnitten.
-# PROJ-Zeile: cs2cs/cct mit egm96_15.gtx (PROJ-Daten), unabhaengige Umsetzung desselben EGM96-Gitters.
-# station	lat_deg	lon_deg	model	geoid_m
-Berlin	52.52	13.40	EGM96	39.537
-Berlin	52.52	13.40	EGM2008	39.454
-Berlin	52.52	13.40	XGM2019e	39.421
+# PROJ-Zeilen sind fremde Werte (NGA-Gitter ueber PROJ), keine eigene Rechnung.
+Berlin	52.52	13.40	EGM96	39.561
+Berlin	52.52	13.40	EGM2008	39.479
+Berlin	52.52	13.40	XGM2019e	39.445
 Berlin	52.52	13.40	PROJ EGM96 grid	39.529
-Honolulu	21.30	-157.86	EGM96	14.843
-Honolulu	21.30	-157.86	EGM2008	15.348
-Honolulu	21.30	-157.86	XGM2019e	15.380
+Honolulu	21.30	-157.86	EGM96	14.867
+Honolulu	21.30	-157.86	EGM2008	15.372
+Honolulu	21.30	-157.86	XGM2019e	15.404
 Honolulu	21.30	-157.86	PROJ EGM96 grid	14.876
-Kapstadt	-33.93	18.42	EGM96	31.368
-Kapstadt	-33.93	18.42	EGM2008	31.497
-Kapstadt	-33.93	18.42	XGM2019e	31.522
+Kapstadt	-33.93	18.42	EGM96	31.407
+Kapstadt	-33.93	18.42	EGM2008	31.536
+Kapstadt	-33.93	18.42	XGM2019e	31.561
 Kapstadt	-33.93	18.42	PROJ EGM96 grid	31.050
