@@ -246,6 +246,7 @@ pub struct StationValue {
     pub lat_deg: f64,
     pub lon_deg: f64,
     pub model: String,
+    pub cap: usize,
     pub geoid_m: f64,
 }
 
@@ -258,17 +259,19 @@ pub fn parse_table(text: &str) -> Option<Vec<StationValue>> {
             continue;
         }
         let cols: Vec<&str> = line.split('\t').collect();
-        if cols.len() < 5 {
+        if cols.len() < 6 {
             return None;
         }
         let lat_deg: f64 = cols[1].trim().parse().ok()?;
         let lon_deg: f64 = cols[2].trim().parse().ok()?;
-        let geoid_m: f64 = cols[4].trim().parse().ok()?;
+        let cap: usize = cols[4].trim().parse().ok()?;
+        let geoid_m: f64 = cols[5].trim().parse().ok()?;
         out.push(StationValue {
             station: cols[0].trim().to_string(),
             lat_deg,
             lon_deg,
             model: cols[3].trim().to_string(),
+            cap,
             geoid_m,
         });
     }
@@ -360,18 +363,30 @@ mod tests {
     }
 
     #[test]
-    fn the_fixture_carries_three_models_and_one_independent_grid() {
+    fn the_fixture_carries_three_models_and_two_independent_grids() {
         let rows = fixture().expect("geoid fixture");
-        assert_eq!(rows.len(), 12);
+        assert_eq!(rows.len(), 21);
         for station in ["Berlin", "Honolulu", "Kapstadt"] {
             let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
-            assert_eq!(set.len(), 4, "{station} carries four values");
-            for model in ["EGM96", "EGM2008", "XGM2019e", "PROJ EGM96 grid"] {
+            assert_eq!(set.len(), 7, "{station} carries seven values");
+            for model in [
+                "EGM96",
+                "EGM2008",
+                "XGM2019e",
+                "EGM2008 Bruns",
+                "EGM2008 grid",
+                "PROJ EGM96 grid",
+            ] {
                 assert!(
                     set.iter().any(|r| r.model == model),
                     "{station} lacks {model}"
                 );
             }
+            assert_eq!(
+                set.iter().filter(|r| r.model == "EGM2008").count(),
+                2,
+                "{station} carries EGM2008 at two degrees"
+            );
         }
     }
 
@@ -381,8 +396,13 @@ mod tests {
         for station in ["Berlin", "Honolulu", "Kapstadt"] {
             let set: Vec<&StationValue> = rows
                 .iter()
-                .filter(|r| r.station == station && r.model != "PROJ EGM96 grid")
+                .filter(|r| {
+                    r.station == station
+                        && r.cap == 360
+                        && ["EGM96", "EGM2008", "XGM2019e"].contains(&r.model.as_str())
+                })
                 .collect();
+            assert_eq!(set.len(), 3, "{station}: three synthesis values");
             let spread = set
                 .iter()
                 .map(|a| {
@@ -414,6 +434,28 @@ mod tests {
             assert!(
                 diff <= 0.5,
                 "{station}: our synthesis differs from PROJ's grid by {diff} m"
+            );
+        }
+    }
+
+    #[test]
+    fn the_bruns_value_holds_against_the_official_egm2008_grid() {
+        let rows = fixture().expect("geoid fixture");
+        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+            let bruns = rows
+                .iter()
+                .find(|r| r.station == station && r.model == "EGM2008 Bruns")
+                .expect("the Bruns value");
+            let grid = rows
+                .iter()
+                .find(|r| r.station == station && r.model == "EGM2008 grid")
+                .expect("the official grid value");
+            assert_eq!(bruns.cap, 2190);
+            assert_eq!(grid.cap, 2190);
+            let diff = (bruns.geoid_m - grid.geoid_m).abs();
+            assert!(
+                diff <= 0.02,
+                "{station}: the ellipsoidal path differs from the grid by {diff} m"
             );
         }
     }

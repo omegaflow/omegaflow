@@ -1,22 +1,36 @@
-# Geoidhoehe an drei Stationen aus drei Schwerefeldmodellen, Grad 360.
-# Formel: Barthelmes STR09/02 (4.2), N = GM/(re*gamma(phi)) * sum, mit Somigliana-
-#         Schwere an der Breite und dem geodaetischen Radius re(phi). Das Normalfeld
-#         traegt weiter nur C20 und C40; das ist der verbleibende Unterschied zur
+# Geoidhoehe an drei Stationen aus drei Schwerefeldmodellen, je Zeile mit Gradzahl.
+# Formel (EGM96, EGM2008, XGM2019e): Barthelmes STR09/02 (4.2), N = GM/(re*gamma(phi)) * sum,
+#         mit Somigliana-Schwere an der Breite und dem geodaetischen Radius re(phi). Das
+#         Normalfeld traegt weiter nur C20 und C40; das ist der verbleibende Unterschied zur
 #         vollstaendigen Vorschrift und steht als Abstand in der Notiz.
+# Bruns:  N = (W - W0)/gamma, iteriert, mit W = GM/r sum + 0.5 omega^2 (r cos psi)^2,
+#         psi geozentrisch, r exakter geozentrischer Ellipsoidradius, W0 = 62636855.7294
+#         (gemessen an diesem Gitter, Streuung 0.11 m2/s2). Gegenprobe mit dem IAG-Wert
+#         62636853.4 liegt konstant 0.24 m hoeher; die Zahl ist der Bezug des Modells.
 # EGM96   sources/icgem.gfz.de/EGM96.gfc    sha256 5247a9e9c316dd2c8f8fd491d53be0e163cb5cb3676b021754240cc9e44cb43b
 # EGM2008 sources/icgem.gfz.de/EGM2008.gfc  sha256 ab5b524da073e63b5bdceb7ca47a0de07a26dd44a1c5798f39fc98dc80af70fd
 # XGM2019e sources/icgem.gfz.de/XGM2019e.gfc 1.796.436.884 B sha256 d51ca8315799d331ea3f4c6f1b763ec0b535866f7c7c86d6c87e0457af2e2139
 # (vollstaendig geladen, letzte Zeile gfc 5540 5540; die Grad-360-Werte wurden gegen die vollstaendige Datei nachgemessen und sind identisch)
-# PROJ-Zeilen sind fremde Werte (NGA-Gitter ueber PROJ), keine eigene Rechnung.
-Berlin	52.52	13.40	EGM96	39.561
-Berlin	52.52	13.40	EGM2008	39.479
-Berlin	52.52	13.40	XGM2019e	39.445
-Berlin	52.52	13.40	PROJ EGM96 grid	39.529
-Honolulu	21.30	-157.86	EGM96	14.867
-Honolulu	21.30	-157.86	EGM2008	15.372
-Honolulu	21.30	-157.86	XGM2019e	15.404
-Honolulu	21.30	-157.86	PROJ EGM96 grid	14.876
-Kapstadt	-33.93	18.42	EGM96	31.407
-Kapstadt	-33.93	18.42	EGM2008	31.536
-Kapstadt	-33.93	18.42	XGM2019e	31.561
-Kapstadt	-33.93	18.42	PROJ EGM96 grid	31.050
+# EGM2008 grid: amtliches 2.5-Bogenminuten-Gitter egm08_25.gtx (OSGeo/PROJ aus NGA), interpoliert.
+# PROJ EGM96 grid: amtliches 15-Bogenminuten-Gitter egm96_15.gtx (PROJ), interpoliert.
+Berlin	52.52	13.40	EGM96	360	39.561
+Berlin	52.52	13.40	EGM2008	360	39.479
+Berlin	52.52	13.40	EGM2008	2190	39.503
+Berlin	52.52	13.40	XGM2019e	360	39.445
+Berlin	52.52	13.40	EGM2008 Bruns	2190	39.490
+Berlin	52.52	13.40	EGM2008 grid	2190	39.491
+Berlin	52.52	13.40	PROJ EGM96 grid	360	39.529
+Honolulu	21.30	-157.86	EGM96	360	14.867
+Honolulu	21.30	-157.86	EGM2008	360	15.372
+Honolulu	21.30	-157.86	EGM2008	2190	15.759
+Honolulu	21.30	-157.86	XGM2019e	360	15.404
+Honolulu	21.30	-157.86	EGM2008 Bruns	2190	15.741
+Honolulu	21.30	-157.86	EGM2008 grid	2190	15.728
+Honolulu	21.30	-157.86	PROJ EGM96 grid	360	14.876
+Kapstadt	-33.93	18.42	EGM96	360	31.407
+Kapstadt	-33.93	18.42	EGM2008	360	31.536
+Kapstadt	-33.93	18.42	EGM2008	2190	31.418
+Kapstadt	-33.93	18.42	XGM2019e	360	31.561
+Kapstadt	-33.93	18.42	EGM2008 Bruns	2190	31.138
+Kapstadt	-33.93	18.42	EGM2008 grid	2190	31.136
+Kapstadt	-33.93	18.42	PROJ EGM96 grid	360	31.050
