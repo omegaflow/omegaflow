@@ -310,6 +310,63 @@ impl Paths {
     }
 }
 
+struct Geometry {
+    station: [f64; 3],
+    target: [f64; 3],
+    rel_velocity: [f64; 3],
+    unit: [f64; 3],
+}
+
+fn geometry(
+    t_unix: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+) -> Result<Geometry, String> {
+    let jd = t_unix / 86400.0 + UNIX_JD;
+    let carrier_pos = paths.carrier_position(jd)?;
+    let carrier_vel = paths.carrier_velocity(jd)?;
+    let (st_pos, st_vel) = station_state(jd, station, spin);
+    let mut light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
+    let mut out = Geometry {
+        station: st_pos,
+        target: [0.0; 3],
+        rel_velocity: [0.0; 3],
+        unit: [0.0; 3],
+    };
+    for _ in 0..3 {
+        let jd_craft = jd - light_time / 86400.0;
+        let target_pos = paths.target_position(jd_craft)?;
+        let target_vel = paths.target_velocity(jd_craft)?;
+        let (craft_pos, craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
+        let mut line = [0.0; 3];
+        for i in 0..3 {
+            line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
+            out.rel_velocity[i] = target_vel[i] + craft_vel[i] - carrier_vel[i] - st_vel[i];
+        }
+        let range = (line[0] * line[0] + line[1] * line[1] + line[2] * line[2]).sqrt();
+        light_time = range / C_KM_S;
+        out.target = target_pos;
+        out.unit = [line[0] / range, line[1] / range, line[2] / range];
+    }
+    Ok(out)
+}
+
+fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    ]
+}
+
+fn impact_parameter(target: [f64; 3], station: [f64; 3], unit: [f64; 3]) -> f64 {
+    let d = [target[0] - station[0], target[1] - station[1], target[2] - station[2]];
+    let c = cross(d, unit);
+    (c[0] * c[0] + c[1] * c[1] + c[2] * c[2]).sqrt()
+}
+
 fn range_rate_cps(
     t_unix: f64,
     orbit: Hyperbola,
@@ -317,28 +374,10 @@ fn range_rate_cps(
     spin: BodySpin,
     paths: &Paths,
 ) -> Result<f64, String> {
-    let jd = t_unix / 86400.0 + UNIX_JD;
-    let carrier_pos = paths.carrier_position(jd)?;
-    let carrier_vel = paths.carrier_velocity(jd)?;
-    let (st_pos, st_vel) = station_state(jd, station, spin);
-    let mut light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
-    let mut line = [0.0; 3];
-    let mut rel = [0.0; 3];
-    let mut range = 0.0;
-    for _ in 0..3 {
-        let jd_craft = jd - light_time / 86400.0;
-        let target_pos = paths.target_position(jd_craft)?;
-        let target_vel = paths.target_velocity(jd_craft)?;
-        let (craft_pos, craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
-        for i in 0..3 {
-            line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
-            rel[i] = target_vel[i] + craft_vel[i] - carrier_vel[i] - st_vel[i];
-        }
-        range = (line[0] * line[0] + line[1] * line[1] + line[2] * line[2]).sqrt();
-        light_time = range / C_KM_S;
-    }
-    let unit = [line[0] / range, line[1] / range, line[2] / range];
-    let rate = unit[0] * rel[0] + unit[1] * rel[1] + unit[2] * rel[2];
+    let g = geometry(t_unix, orbit, station, spin, paths)?;
+    let rate = g.unit[0] * g.rel_velocity[0]
+        + g.unit[1] * g.rel_velocity[1]
+        + g.unit[2] * g.rel_velocity[2];
     Ok(doppler_scale_cps_per_km_s() * rate)
 }
 
@@ -387,12 +426,23 @@ fn main() -> Result<(), String> {
     let mut ephemeris: Option<(String, String)> = None;
     let mut every_row = false;
     let mut ephemeris_probe = false;
+    let mut limb: Option<(f64, f64, f64)> = None;
     let mut scan = 0;
     while scan < args.len() {
         match args[scan].as_str() {
             "--rows" => {
                 every_row = true;
                 scan += 1;
+            }
+            "--limb" => {
+                let start = args.get(scan + 1).ok_or_else(|| usage.to_string())?.parse::<f64>()
+                    .map_err(|_| "the limb start carries no number".to_string())?;
+                let end = args.get(scan + 2).ok_or_else(|| usage.to_string())?.parse::<f64>()
+                    .map_err(|_| "the limb end carries no number".to_string())?;
+                let step = args.get(scan + 3).ok_or_else(|| usage.to_string())?.parse::<f64>()
+                    .map_err(|_| "the limb step carries no number".to_string())?;
+                limb = Some((start, end, step));
+                scan += 4;
             }
             "--ephemeris-probe" => {
                 ephemeris_probe = true;
@@ -450,6 +500,22 @@ fn main() -> Result<(), String> {
         }
     };
     let orbit = mariner5_encounter();
+    if let Some((start, end, step)) = limb {
+        let (_, target, _) = paths
+            .chebyshev
+            .as_ref()
+            .ok_or_else(|| "--limb needs --ephemeris so the target is declared".to_string())?;
+        let radius = body_props(target)?.radius_m / METRES_PER_KM;
+        println!("limb against {target}, radius {radius:.1} km");
+        let mut t = start;
+        while t <= end {
+            let g = geometry(t, orbit, stations[0], spin, &paths)?;
+            let b = impact_parameter(g.target, g.station, g.unit);
+            println!("{t:.0},{b:.2},{}", if b < radius { "in" } else { "out" });
+            t += step;
+        }
+        return Ok(());
+    }
     if ephemeris_probe {
         let jd = rows[0].t_unix / 86400.0 + UNIX_JD;
         let ep = planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
