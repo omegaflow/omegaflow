@@ -240,7 +240,7 @@ fn coverage(register: &str) -> Result<(), String> {
     println!("register {register}: {total} bin assets, {covered} carried by a gate descriptor");
     match &descriptors {
         Some(map) => println!(
-            "  descriptors {DESCRIPTORS}: {} rows — {with_key} with key, {structure_only} structure only",
+            "  descriptors {DESCRIPTORS}: {} rows — {with_key} fully checked, {structure_only} structure only",
             map.len()
         ),
         None => println!("  descriptors absent: {DESCRIPTORS}"),

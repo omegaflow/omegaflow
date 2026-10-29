@@ -280,6 +280,7 @@ fn run_register(args: &[String]) -> Result<(), String> {
     let mut format = None;
     let mut limit = usize::MAX;
     let mut out: Option<String> = None;
+    let mut append = false;
     let mut index = 0;
     while index < args.len() {
         let value = || {
@@ -296,6 +297,11 @@ fn run_register(args: &[String]) -> Result<(), String> {
                     .map_err(|_| "limit carries no number".to_string())?
             }
             "--out" => out = Some(value()?),
+            "--append" => {
+                append = true;
+                index += 1;
+                continue;
+            }
             other => return Err(format!("{other}: not a flag of this mode")),
         }
         index += 2;
@@ -306,15 +312,23 @@ fn run_register(args: &[String]) -> Result<(), String> {
     let mut sink: Option<std::io::BufWriter<fs::File>> = match &out {
         None => None,
         Some(path) => {
-            let file =
-                fs::File::create(path).map_err(|e| format!("create {path} returned void: {e}"))?;
-            let mut writer = std::io::BufWriter::new(file);
             use std::io::Write;
-            writeln!(
-                writer,
-                "asset\tchannels\tpoints\ttrials\trate_hz\ttrial_s\tbytes\tverdict"
-            )
-            .map_err(|e| format!("write {path} returned void: {e}"))?;
+            let file = if append {
+                fs::OpenOptions::new()
+                    .append(true)
+                    .open(path)
+                    .map_err(|e| format!("open {path} for append returned void: {e}"))?
+            } else {
+                fs::File::create(path).map_err(|e| format!("create {path} returned void: {e}"))?
+            };
+            let mut writer = std::io::BufWriter::new(file);
+            if !append {
+                writeln!(
+                    writer,
+                    "asset\tchannels\tpoints\ttrials\trate_hz\ttrial_s\tbytes\tverdict"
+                )
+                .map_err(|e| format!("write {path} returned void: {e}"))?;
+            }
             writer
                 .flush()
                 .map_err(|e| format!("flush {path} returned void: {e}"))?;
