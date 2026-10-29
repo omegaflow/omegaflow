@@ -371,10 +371,23 @@ mod tests {
     #[test]
     fn the_fixture_carries_three_models_two_grids_and_the_service_potentials() {
         let rows = fixture().expect("geoid fixture");
-        assert_eq!(rows.len(), 43);
-        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+        assert_eq!(rows.len(), 47);
+        let counts = [
+            ("Berlin", 13usize),
+            ("Honolulu", 13),
+            ("Cape Town", 11),
+            ("Equator", 2),
+            ("Hawaii North", 2),
+            ("Hawaii East", 2),
+            ("Hawaii South", 2),
+            ("Hawaii West", 2),
+        ];
+        for (station, want) in counts {
             let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
-            assert_eq!(set.len(), 11, "{station} carries eleven values");
+            assert_eq!(set.len(), want, "{station} carries {want} values");
+        }
+        for station in ["Berlin", "Honolulu", "Cape Town"] {
+            let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
             for source in [
                 "ours EGM96",
                 "ours EGM2008",
@@ -395,17 +408,34 @@ mod tests {
                 3,
                 "{station} carries EGM2008 at two degrees as height and potential"
             );
+        }
+        assert_eq!(
+            rows.iter()
+                .filter(|r| r.station == "Cape Town" && r.quantity == "w")
+                .count(),
+            4,
+            "Cape Town carries four potentials"
+        );
+        for station in ["Berlin", "Honolulu"] {
             assert_eq!(
-                set.iter().filter(|r| r.quantity == "w").count(),
-                4,
-                "{station} carries four potentials"
+                rows.iter()
+                    .filter(|r| r.station == station && r.quantity == "w")
+                    .count(),
+                6,
+                "{station} carries six potentials"
             );
+            let degrees: Vec<usize> = rows
+                .iter()
+                .filter(|r| r.station == station && r.source == "ICGEM EGM96")
+                .map(|r| r.cap)
+                .collect();
+            assert_eq!(degrees, vec![360, 180, 90], "{station}: three degrees");
         }
         for station in [
-            "Aequator",
-            "Hawaii Nord",
-            "Hawaii Ost",
-            "Hawaii Sued",
+            "Equator",
+            "Hawaii North",
+            "Hawaii East",
+            "Hawaii South",
             "Hawaii West",
         ] {
             let set: Vec<&StationValue> = rows.iter().filter(|r| r.station == station).collect();
@@ -431,7 +461,7 @@ mod tests {
     #[test]
     fn the_three_models_agree_within_the_measured_spread() {
         let rows = fixture().expect("geoid fixture");
-        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+        for station in ["Berlin", "Honolulu", "Cape Town"] {
             let set: Vec<&StationValue> = rows
                 .iter()
                 .filter(|r| {
@@ -461,7 +491,7 @@ mod tests {
     #[test]
     fn our_egm96_value_holds_against_the_proj_grid() {
         let rows = fixture().expect("geoid fixture");
-        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+        for station in ["Berlin", "Honolulu", "Cape Town"] {
             let ours = find(&rows, station, "ours EGM96", "n");
             let proj = find(&rows, station, "PROJ EGM96 grid", "n");
             let diff = (ours.value - proj.value).abs();
@@ -475,7 +505,7 @@ mod tests {
     #[test]
     fn the_bruns_value_holds_against_the_official_egm2008_grid() {
         let rows = fixture().expect("geoid fixture");
-        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+        for station in ["Berlin", "Honolulu", "Cape Town"] {
             let bruns = find(&rows, station, "ours EGM2008 bruns", "n");
             let grid = find(&rows, station, "EGM2008 grid", "n");
             assert_eq!(bruns.cap, 2190);
@@ -491,7 +521,7 @@ mod tests {
     #[test]
     fn our_egm2008_potential_matches_the_service_within_the_gm_term() {
         let rows = fixture().expect("geoid fixture");
-        for station in ["Berlin", "Honolulu", "Kapstadt"] {
+        for station in ["Berlin", "Honolulu", "Cape Town"] {
             let ours = find(&rows, station, "ours EGM2008", "w");
             let service = find(&rows, station, "ICGEM EGM2008", "w");
             let diff = (ours.value - service.value).abs();

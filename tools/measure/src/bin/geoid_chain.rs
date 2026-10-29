@@ -95,24 +95,24 @@ fn main() {
         return;
     }
     let Some(rows) = fixture() else {
-        println!("# die Register-Tabelle ist nicht lesbar");
+        println!("# the register table is not readable");
         return;
     };
     let stations = station_rows(&rows);
     for arg in &models {
         let Ok(text) = std::fs::read_to_string(&arg.path) else {
-            println!("# {}: unlesbar", arg.path);
+            println!("# {}: unreadable", arg.path);
             continue;
         };
         let Some(model) = GeoidModel::parse(&text, arg.cap) else {
-            println!("# {}: kein Radius oder keine Koeffizienten", arg.path);
+            println!("# {}: no radius or no coefficients", arg.path);
             continue;
         };
         let Some((_, grid_label)) = grids.iter().find(|(label, _)| label == &arg.label) else {
-            println!("# {}: kein Gitter zugeordnet", arg.label);
+            println!("# {}: no grid assigned", arg.label);
             continue;
         };
-        println!("# {}  Grad {}  Gitter {}", arg.label, arg.cap, grid_label);
+        println!("# {}  degree {}  grid {}", arg.label, arg.cap, grid_label);
         let mut w_at_grid: Vec<f64> = Vec::new();
         for (name, lat, lon) in &stations {
             if let Some(grid) = cell(&rows, name, grid_label, "n", None)
@@ -123,14 +123,14 @@ fn main() {
             }
         }
         if w_at_grid.is_empty() {
-            println!("#   kein Potential an der Gitterflaeche");
+            println!("#   no potential at the grid surface");
             continue;
         }
         let w0 = w_at_grid.iter().sum::<f64>() / w_at_grid.len() as f64;
         let spread = w_at_grid.iter().cloned().fold(f64::MIN, f64::max)
             - w_at_grid.iter().cloned().fold(f64::MAX, f64::min);
         println!(
-            "#   W0 aus dem Gitter {w0:.4}  Streuung {spread:.4}  ({} Punkte)",
+            "#   W0 from the grid {w0:.4}  spread {spread:.4}  ({} points)",
             w_at_grid.len()
         );
         let service_label = arg.label.replace("ours ", "ICGEM ");
@@ -146,7 +146,7 @@ fn main() {
             let table_bruns = cell(&rows, name, &bruns_source, "n", None);
             let table_service = cell(&rows, name, &service_label, "w", Some(arg.cap));
             println!(
-                "{name:<9} W {}  ΔTabelle {}  ΔDienst {} | N geschlossen {}  ΔTabelle {} | N Bruns {}  ΔGitter {}  ΔTabelle {}",
+                "{name:<13} W {}  dTable {}  dService {} | N closed {}  dTable {} | N bruns {}  dGrid {}  dTable {}",
                 value(potential),
                 delta(potential, table_w.map(|r| r.value)),
                 delta(potential, table_service.map(|r| r.value)),
