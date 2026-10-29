@@ -751,6 +751,33 @@ fn main() {
             }
         }
 
+        if let Some(p) = field_of(&block, "origin-sha256") {
+            let value = p.get(1).copied().unwrap_or("");
+            let shaped = value.len() == 64 && value.chars().all(|c| c.is_ascii_hexdigit());
+            if !shaped {
+                push(
+                    "origin_sha_bad",
+                    format!("{tag}\t{name}"),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                );
+            } else if let Some(s) = field_of(&block, "sha256")
+                && let Some(own) = s.get(1)
+                && *own != value
+            {
+                push(
+                    "origin_sha_differs",
+                    format!("{tag}\t{name}\t{own}\t{value}"),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                );
+            }
+        }
+
         let field_keys: Vec<String> = block
             .iter()
             .filter_map(|l| {
