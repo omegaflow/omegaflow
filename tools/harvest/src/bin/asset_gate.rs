@@ -10,6 +10,59 @@ struct Sample {
     value: f64,
 }
 
+const GATED: [&str; 3] = ["mariner_occlt", "mariner4_odg", "mariner_rst"];
+
+struct Classes {
+    format: String,
+    structure: bool,
+    reader: bool,
+    law: bool,
+}
+
+impl Classes {
+    fn measured(&self) -> usize {
+        [self.structure, self.reader, self.law]
+            .iter()
+            .filter(|m| **m)
+            .count()
+    }
+
+    fn absent(&self) -> Vec<&'static str> {
+        let mut out = Vec::new();
+        if !self.structure {
+            out.push("struktur");
+        }
+        if !self.reader {
+            out.push("leser");
+        }
+        if !self.law {
+            out.push("gesetz");
+        }
+        out
+    }
+}
+
+fn classes_table() -> Vec<Classes> {
+    let text = include_str!("../asset_classes.tsv");
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line.starts_with('#') || line.trim().is_empty() {
+            continue;
+        }
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 4 {
+            continue;
+        }
+        out.push(Classes {
+            format: cols[0].trim().to_string(),
+            structure: cols[1].trim() == "gemessen",
+            reader: cols[2].trim() == "gemessen",
+            law: cols[3].trim() == "gemessen",
+        });
+    }
+    out
+}
+
 fn series(path: &str) -> Result<Vec<Sample>, String> {
     let bytes = fs::read(path).map_err(|e| format!("read {path} returned void: {e}"))?;
     if bytes.len() < 8 {
@@ -89,10 +142,13 @@ fn audit(path: &str) -> Result<String, String> {
 
 fn coverage(register: &str) -> Result<(), String> {
     let text = fs::read_to_string(register).map_err(|e| format!("read {register} returned void: {e}"))?;
-    let gated = ["mariner_occlt", "mariner4_odg", "mariner_rst"];
+    let gated = GATED;
     let mut format: Option<String> = None;
     let mut total = 0usize;
     let mut covered = 0usize;
+    let classes = classes_table();
+    let mut full = 0usize;
+    let mut gated_formats = 0usize;
     let mut by_format: std::collections::BTreeMap<String, (usize, bool)> = std::collections::BTreeMap::new();
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("url ") {
@@ -123,10 +179,31 @@ fn coverage(register: &str) -> Result<(), String> {
         }
         if !*is_gated {
             open += count;
+            println!("  {:<28} {:>4}  no descriptor", name, count);
+            continue;
         }
-        println!("  {:<28} {:>4}  {}", name, count, if *is_gated { "gated" } else { "no descriptor" });
+        gated_formats += 1;
+        match classes.iter().find(|c| &c.format == name) {
+            Some(c) if c.measured() == 3 => {
+                full += 1;
+                println!("  {:<28} {:>4}  gated, classes 3/3", name, count);
+            }
+            Some(c) => {
+                println!(
+                    "  {:<28} {:>4}  gated, classes {}/3, absent: {}",
+                    name,
+                    count,
+                    c.measured(),
+                    c.absent().join(", ")
+                );
+            }
+            None => {
+                println!("  {:<28} {:>4}  gated, classes 0/3, no class row", name, count);
+            }
+        }
     }
     println!("open without descriptor: {open}");
+    println!("gated formats: {gated_formats}, with three classes: {full}");
     Ok(())
 }
 
@@ -226,5 +303,40 @@ mod tests {
         let reason = audit(&path).expect_err("audit");
         assert!(reason.contains("is not in the gate table"), "{reason}");
         let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn every_gated_format_has_a_row_in_the_class_table() {
+        let table = classes_table();
+        for name in GATED {
+            assert!(
+                table.iter().any(|c| c.format == name),
+                "{name} parses but carries no class row"
+            );
+        }
+    }
+
+    #[test]
+    fn a_row_with_fewer_than_three_classes_names_the_absent_ones() {
+        for row in classes_table() {
+            assert_eq!(
+                row.measured() + row.absent().len(),
+                3,
+                "{}: a class is neither measured nor named absent",
+                row.format
+            );
+        }
+    }
+
+    #[test]
+    fn a_format_with_three_measured_classes_is_counted_as_full() {
+        let row = Classes {
+            format: "probe".to_string(),
+            structure: true,
+            reader: true,
+            law: true,
+        };
+        assert_eq!(row.measured(), 3);
+        assert!(row.absent().is_empty());
     }
 }
