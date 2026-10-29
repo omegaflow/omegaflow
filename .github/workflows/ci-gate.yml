@@ -207,6 +207,8 @@ jobs:
     - name: clean-tree acceptance — no privileged body name or constant in non-test src/
       run: cargo run -q -p omegaflow-register --bin clean_tree -- --fail
     - run: cargo run -q -p omegaflow-register --bin path_reference_scan -- .
+    - name: werkstatt — no write call reaches into the release tree with a repo literal
+      run: cargo run -q -p omegaflow-register --bin repo_write_scan
     - name: test shape — no allow, no test that only asserts existence
       run: |
         cargo run -q -p omegaflow-register --bin test_shape_scan -- --allows

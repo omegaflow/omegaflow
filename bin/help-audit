@@ -1,0 +1,39 @@
+#!/bin/sh
+# help-audit — nennt jedes Flag, das der Parser kennt und die Hilfe verschweigt.
+# Ein Flag ohne Hilfetext ist ein Flag, das niemand findet; 220 Flags, von denen
+# nur ein Teil dokumentiert ist, sind kein Werkzeug, sondern ein Geheimnis.
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$root" || exit 2
+bin="${ARCHIVE_SEARCH:-$root/bin/archive_search}"
+[ -x "$bin" ] || { echo "help-audit: kein archive_search: $bin" >&2; exit 2; }
+
+"$bin" --help-all > /tmp/help-audit.$$ 2>&1 || true
+trap 'rm -f /tmp/help-audit.$$' EXIT INT TERM
+
+perl - /tmp/help-audit.$$ <<'PERL'
+use strict; use warnings;
+my ($help) = @ARGV;
+
+my %doc;
+open my $h, '<', $help or die "$help: $!\n";
+while (<$h>) { $doc{$1} = 1 if /^\s*(--[a-z0-9-]+)/ }
+close $h;
+
+my %parse;
+for my $file (glob("tools/utils/src/bin/archive_search.rs"),
+              glob("tools/utils/src/bin/archive_search/*.rs")) {
+    open my $f, '<', $file or next;
+    while (<$f>) { $parse{$1} = $file if /"(--[a-z0-9-]+)"\s*=>/g }
+    close $f;
+}
+
+my @missing = sort grep { !$doc{$_} } keys %parse;
+printf "help-audit: %d flags in the parser, %d documented, %d undocumented\n",
+    scalar(keys %parse), scalar(keys %doc), scalar(@missing);
+if (@missing) {
+    printf "  %-28s %s\n", $_, $parse{$_} for @missing;
+    exit 1;
+}
+PERL
