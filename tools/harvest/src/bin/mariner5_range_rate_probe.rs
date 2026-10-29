@@ -170,7 +170,7 @@ fn hyperbolic_state(orbit: Hyperbola, t_unix: f64) -> ([f64; 3], [f64; 3]) {
     let p = orbit.a * (1.0 - orbit.e * orbit.e);
     let n = (MU_VENUS_KM3_S2 / orbit.a.abs().powi(3)).sqrt();
     let mean_anomaly = n * (t_unix - orbit.t_peri_unix);
-    let mut h = mean_anomaly;
+    let mut h = (mean_anomaly / orbit.e).asinh();
     for _ in 0..120 {
         h -= (orbit.e * h.sinh() - h - mean_anomaly) / (orbit.e * h.cosh() - 1.0);
     }
@@ -253,21 +253,25 @@ fn range_rate_cps(
     spin: BodySpin,
 ) -> Result<f64, String> {
     let jd = t_unix / 86400.0 + UNIX_JD;
-    let light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
-    let jd_craft = jd - light_time / 86400.0;
     let carrier_pos = planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
     let carrier_vel = planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
-    let target_pos = planet_position(INNER_ELEMENTS, INNER_RATES, jd_craft);
-    let target_vel = planet_velocity(INNER_ELEMENTS, INNER_RATES, jd_craft);
     let (st_pos, st_vel) = station_state(jd, station, spin);
-    let (craft_pos, craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
+    let mut light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
     let mut line = [0.0; 3];
     let mut rel = [0.0; 3];
-    for i in 0..3 {
-        line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
-        rel[i] = target_vel[i] + craft_vel[i] - carrier_vel[i] - st_vel[i];
+    let mut range = 0.0;
+    for _ in 0..3 {
+        let jd_craft = jd - light_time / 86400.0;
+        let target_pos = planet_position(INNER_ELEMENTS, INNER_RATES, jd_craft);
+        let target_vel = planet_velocity(INNER_ELEMENTS, INNER_RATES, jd_craft);
+        let (craft_pos, craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
+        for i in 0..3 {
+            line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
+            rel[i] = target_vel[i] + craft_vel[i] - carrier_vel[i] - st_vel[i];
+        }
+        range = (line[0] * line[0] + line[1] * line[1] + line[2] * line[2]).sqrt();
+        light_time = range / C_KM_S;
     }
-    let range = (line[0] * line[0] + line[1] * line[1] + line[2] * line[2]).sqrt();
     let unit = [line[0] / range, line[1] / range, line[2] / range];
     let rate = unit[0] * rel[0] + unit[1] * rel[1] + unit[2] * rel[2];
     Ok(doppler_scale_cps_per_km_s() * rate)
@@ -380,6 +384,23 @@ fn main() -> Result<(), String> {
         );
     }
     let station = stations[0];
+    let every_row = args.iter().any(|a| a == "--rows");
+    if every_row {
+        println!("idx,iso,seg,observed,model,residual");
+        for (index, row) in rows.iter().enumerate() {
+            let model = range_rate_cps(row.t_unix, orbit, station, spin)?;
+            println!(
+                "{},{},{},{:.3},{:.3},{:.3}",
+                index,
+                row.iso,
+                row.segment,
+                row.observed,
+                model,
+                row.observed - model
+            );
+        }
+        return Ok(());
+    }
     println!();
     println!("samples for station {:.2} {:.2}:", station.lat_deg, station.lon_deg);
     for (index, row) in rows.iter().enumerate() {
