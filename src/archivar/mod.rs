@@ -36,6 +36,7 @@ pub mod ble;
 pub mod blinkverse;
 pub mod bpa_gic;
 pub mod bpc;
+pub mod pck_text;
 pub mod brainvision;
 pub mod bsp_reader;
 pub mod bzip2;
