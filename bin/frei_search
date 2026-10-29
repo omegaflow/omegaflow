@@ -15,7 +15,7 @@ for a in "$@"; do
       echo "frei_search: '$a' is a local-disk mode — refused; the free agent reads the net only" >&2
       exit 2
       ;;
-    --mwmbl|--searxng|--brave|--tavily|--exa|--duckduckgo-instant|--wiby|--marginalia|--wiki|--wikipedia|--jina|--consensus|--perplexity|--gemini|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--stackexchange|--sourcegraph|--github|--crates|--arxiv|--arxiv-oai|--crossref|--openalex|--semanticscholar|--pubmed|--doaj|--zenodo|--datacite|--core|--base|--hal|--osf|--huggingface|--dblp|--orcid|--ror|--shodan|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--slack|--wikidata|--openlibrary)
+    --mwmbl|--searxng|--brave|--tavily|--exa|--duckduckgo-instant|--wiby|--marginalia|--wiki|--wikipedia|--jina|--perplexity|--linkup|--serper|--firecrawl|--stackexchange|--sourcegraph|--github|--crates|--arxiv|--arxiv-oai|--crossref|--openalex|--semanticscholar|--pubmed|--doaj|--zenodo|--datacite|--core|--base|--hal|--osf|--huggingface|--dblp|--orcid|--ror|--shodan|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--slack|--wikidata|--openlibrary)
       have_net=1
       ;;
   esac
