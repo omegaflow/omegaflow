@@ -36,6 +36,13 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "commit: kein Repo
 cd "$root" || exit 2
 
 for p in $paths; do
+    case "$(basename "$p")" in
+        sources.φ|instruments.φ|field_model.tsv|licences.tsv|bands.φ|digests.φ|library.φ|nrs_stations.φ|dust-maske.φ|ci_measurements.φ|scan_coverage.φ|references.φ|ephemerides.φ|derived.φ)
+            case "$p" in
+                phi/*) ;;
+                *) echo "commit: $p — Registerdatei gehoert nach phi/, nicht daneben" >&2; exit 2 ;;
+            esac ;;
+    esac
     case "$p" in
         phi/sources.*)
             if [ -z "${OMEGAFLOW_REGISTER_RELEASE:-}" ]; then

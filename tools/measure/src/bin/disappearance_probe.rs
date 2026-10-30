@@ -10,7 +10,7 @@ use std::time::Duration;
 const UA: &str = "omegaflow-disappearance-probe/1.0";
 const FINK_CONE: &str = "https://api.lsst.fink-portal.org/api/v1/conesearch";
 const FINK_FP: &str = "https://api.lsst.fink-portal.org/api/v1/fp";
-const DEFAULT_REGISTER: &str = "tools/measure/data/scan_coverage.φ";
+const DEFAULT_REGISTER: &str = "phi/scan_coverage.φ";
 const FP_BAND: &str = "r:band";
 const FP_MJD: &str = "r:midpointMjdTai";
 const FP_FLUX: &str = "r:scienceFlux";
