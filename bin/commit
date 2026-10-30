@@ -37,6 +37,11 @@ cd "$root" || exit 2
 
 for p in $paths; do
     case "$p" in
+        phi/sources.*)
+            if [ -z "${OMEGAFLOW_REGISTER_RELEASE:-}" ]; then
+                echo "commit: $p — Register; nur ueber den Release-Schritt (OMEGAFLOW_REGISTER_RELEASE=1)" >&2
+                exit 2
+            fi ;;
         phi/*|src/gate/*|tools/gate/*)
             if [ -z "${OMEGAFLOW_OWNER_OK:-}" ]; then
                 echo "commit: $p — geschuetzter Pfad; nur mit OMEGAFLOW_OWNER_OK=\"<Eigentuemer-Wort>\"" >&2
