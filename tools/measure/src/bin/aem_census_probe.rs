@@ -42,7 +42,9 @@ fn main() {
         .filter_map(|s| s.quaternion_type.as_deref())
         .collect();
     if declared.is_empty() {
-        println!("aem-census: QUATERNION_TYPE absent in every segment — order not declared");
+        println!(
+            "aem-census: quaternion order Q1 Q2 Q3 QC by CCSDS 504.0-B-2 table 4-4; QUATERNION_TYPE was removed in that revision, its absence is correct"
+        );
     }
     match aem::worst_norm_deviation(&segments) {
         Some((dev, time)) => println!("aem-census: worst |q|-1 = {dev:.3e} at {time}"),

@@ -22,7 +22,7 @@ pub struct AemRecord {
 }
 
 impl AemRecord {
-    pub fn quaternion(&self) -> Option<[f64; 4]> {
+    pub fn quaternion_qc_last(&self) -> Option<[f64; 4]> {
         if self.values.len() != 4 {
             return None;
         }
@@ -164,7 +164,7 @@ pub fn worst_norm_deviation(segments: &[AemSegment]) -> Option<(f64, String)> {
     let mut worst: Option<(f64, String)> = None;
     for segment in segments {
         for record in &segment.records {
-            let Some(q) = record.quaternion() else {
+            let Some(q) = record.quaternion_qc_last() else {
                 continue;
             };
             let norm = (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]).sqrt();
@@ -220,7 +220,7 @@ DATA_STOP
         assert_eq!(seg.attitude_type, "QUATERNION");
         assert_eq!(seg.interpolation_degree, Some(9));
         assert_eq!(seg.records.len(), 2);
-        let q = seg.records[0].quaternion().expect("quaternion");
+        let q = seg.records[0].quaternion_qc_last().expect("quaternion");
         assert_eq!(q[3], -8.7302099660618959e-1);
     }
 
