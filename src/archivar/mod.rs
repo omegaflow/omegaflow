@@ -140,6 +140,7 @@ pub mod hrv;
 pub mod hsd;
 pub mod ia2_tap;
 pub mod iaga;
+pub mod ifms;
 pub mod ifms_agc;
 pub mod igra;
 pub mod igrf;
