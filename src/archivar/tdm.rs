@@ -30,12 +30,45 @@ fn key_value(line: &str) -> Option<(&str, &str)> {
 }
 
 fn observation_key(key: &str) -> Option<(&str, u8)> {
-    let (name, link) = key.rsplit_once('_')?;
-    let link: u8 = link.parse().ok()?;
-    if link != 1 && link != 2 {
-        return None;
+    if let Some((name, link)) = key.rsplit_once('_')
+        && let Ok(link) = link.parse::<u8>()
+        && (link == 1 || link == 2)
+    {
+        return Some((name, link));
     }
-    Some((name, link))
+    let known = !matches!(
+        key,
+        "TIME_SYSTEM"
+            | "START_TIME"
+            | "STOP_TIME"
+            | "PARTICIPANT_1"
+            | "PARTICIPANT_2"
+            | "MODE"
+            | "PATH"
+            | "TRANSMIT_BAND"
+            | "RECEIVE_BAND"
+            | "TIMETAG_REF"
+            | "DATA_QUALITY"
+            | "RANGE_MODULUS"
+            | "CORRECTION_RANGE"
+            | "CORRECTION_ANGLE_1"
+            | "CORRECTION_ANGLE_2"
+            | "FREQ_OFFSET"
+            | "TRANSMIT_DELAY_1"
+            | "TRANSMIT_DELAY_2"
+            | "RECEIVE_DELAY_1"
+            | "RECEIVE_DELAY_2"
+            | "TURNAROUND_NUMERATOR"
+            | "TURNAROUND_DENOMINATOR"
+            | "INTEGRATION_INTERVAL"
+            | "INTEGRATION_REF"
+            | "RANGE_UNCERTAINTY"
+            | "APERTURE"
+    );
+    if known && key.chars().all(|c| c.is_ascii_uppercase() || c == '_') {
+        return Some((key, 1));
+    }
+    None
 }
 
 pub fn parse_tdm(text: &str) -> Option<Tdm> {
@@ -180,6 +213,32 @@ DATA_STOP
         let tdm = parse_tdm(&text).expect("a tdm");
         assert_eq!(tdm.observations.len(), 2);
         assert!(!tdm.observations.iter().any(|o| o.name == "RECEIVE_FREQ"));
+    }
+
+    #[test]
+    fn an_observation_without_participant_suffix_reads_as_link_one() {
+        let text = SAMPLE.replace(
+            "RECEIVE_FREQ_1 = 2005-02-18T06:03:24.000000 7.167e9",
+            "RANGE = 2005-02-18T06:03:24.000000 0.0073329",
+        );
+        let tdm = parse_tdm(&text).expect("a tdm");
+        let range = tdm
+            .observations
+            .iter()
+            .find(|o| o.name == "RANGE")
+            .expect("a range observation");
+        assert_eq!(range.link, 1);
+        assert_eq!(range.value, 0.0073329);
+    }
+
+    #[test]
+    fn meta_keys_inside_the_data_block_are_not_observations() {
+        let text = SAMPLE.replace(
+            "DATA_START",
+            "DATA_START\nRANGE_MODULUS = 2005-02-18T06:03:24.000000 749.0",
+        );
+        let tdm = parse_tdm(&text).expect("a tdm");
+        assert!(!tdm.observations.iter().any(|o| o.name == "RANGE_MODULUS"));
     }
 
     #[test]
