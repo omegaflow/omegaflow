@@ -112,3 +112,35 @@ em nt^2/hz
 # Doppler count rate (archivar::mariner4_odg UNIT = cps, the observable a tracking
 # pass produces). Frozen here until tools-latest republishes the gate, then deleted.
 em cps
+
+# 2026-10-30 (Mountain): UCUM-Basisschreibweise einer gültigen Größe. Der Kraft-Tag ist
+# Membran-Modellierung (bindend/sources.md §1: kernel und kraft gehören nicht in die
+# Quellenzeile) und wird mit dem Parser-Schnitt entfernt. Bis dahin werden diese Paare
+# hier toleriert statt in units.rs aufgenommen — die Kraftliste bleibt die der Membran.
+acoustic {count}
+advective [ft_i]3/s
+advective [kn_i]
+advective dbar
+advective m/a
+diffusion 10*-6
+diffusion 10*-9
+diffusion [gr]/m3
+em 1/(cm2.s.sr)
+em 10*-22.w/m2/hz
+em 10*-26.w/m2/hz
+em 10*-26.w/m2/hz.km/s
+em 10*-29.w/m2/hz
+em 10*-32.w/m2/hz
+em 10*-35.w/m2/hz
+em 10*10.j
+em 10*16/m2
+em [nmi_i]
+em ev/(cm2.sr.s)
+em nt2/hz
+em v2/hz
+em w/m2/nm
+em {count}
+em {count}/s
+momentum mm/a
+thermal cel
+thermal uk2
