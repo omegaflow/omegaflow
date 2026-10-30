@@ -92,7 +92,7 @@ pub(crate) fn field_model()
     > = std::sync::OnceLock::new();
     MODEL.get_or_init(|| {
         let mut m = std::collections::HashMap::new();
-        for line in include_str!("field_model.tsv").lines() {
+        for line in include_str!("../../phi/field_model.tsv").lines() {
             let p: Vec<&str> = line.split('\t').collect();
             if p.len() == 3 {
                 m.entry(p[0]).or_insert((p[1], p[2]));

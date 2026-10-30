@@ -3979,10 +3979,10 @@ pub fn gate_learn_mode() -> i32 {
             pipeline_path("library_gate_delta.φ")
         );
     }
-    let library = match std::fs::read_to_string("tools/utils/data/library.φ") {
+    let library = match std::fs::read_to_string("phi/library.φ") {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("learn-gate: read tools/utils/data/library.φ: {}", e);
+            eprintln!("learn-gate: read phi/library.φ: {}", e);
             String::new()
         }
     };
@@ -4010,7 +4010,7 @@ pub fn gate_learn_mode() -> i32 {
             out.push('\n');
         }
     }
-    let library = crate::archivar::asset_path::work_root().join("tools/utils/data/library.φ");
+    let library = crate::archivar::asset_path::work_root().join("phi/library.φ");
     if std::fs::write(&library, out).is_err() {
         eprintln!(
             "write {}: the register does not remember",

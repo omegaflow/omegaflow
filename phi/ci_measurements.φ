@@ -1,0 +1,2 @@
+ci measurements — raw observations folded from the measuring CI workflows (pilot: field-te-query)
+each block: run <run-id> head <head-sha> artifact <name>, then the raw artifact lines note-prefixed; verdict/p_adj/riss derived at read time, never written; 0-Kanon: skipped run absent, true null 0.0, unmeasured pending

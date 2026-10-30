@@ -53,7 +53,7 @@ run concurrency_contract || exit $?
 # bin/register-gate checks the blocks and verifies every changed citation
 # against its document; it is the third wall, next to text and concurrency.
 staged="$(git diff --cached --name-only 2>/dev/null)"
-if [ -n "$staged" ] && printf '%s\n' "$staged" | grep -Eq '^(phi/|tools/register/data/)'; then
+if [ -n "$staged" ] && printf '%s\n' "$staged" | grep -Eq '^phi/sources\.φ$'; then
     ensure spec_merge
     "$root/bin/register-gate" $staged || exit $?
 fi

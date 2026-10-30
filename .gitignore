@@ -49,6 +49,18 @@ fam_state_SOD_2024.txt
 # REGISTER_CLASSES-Eintrag im selben Commit). Alle Register liegen flach in phi/.
 phi/*
 !phi/sources.φ
+!phi/instruments.φ
+!phi/field_model.tsv
+!phi/licences.tsv
+!phi/bands.φ
+!phi/digests.φ
+!phi/library.φ
+!phi/nrs_stations.φ
+!phi/dust-maske.φ
+!phi/ci_measurements.φ
+!phi/scan_coverage.φ
+!phi/asteroid_gm_inpop25c.φ
+!phi/asteroid_gm_sb441.φ
 # Asteroid-Diameter-Kataloge sind Compiler-Eingaben (dastcom_compiler/kernel-flatten) — groß und nicht auf dem CI-Runner; die gm-Kataloge sind getrackt, die Diameter bleiben lokal.
 tools/harvest/data/asteroid/asteroid_diameters_*.φ
 

@@ -17,7 +17,7 @@ fn work_root() -> std::path::PathBuf {
 
 fn reg_path() -> String {
     work_root()
-        .join("research/sources/instruments.φ")
+        .join("phi/instruments.φ")
         .to_string_lossy()
         .into_owned()
 }
@@ -4422,7 +4422,7 @@ fn doc_audit() {
     );
 }
 
-const DIGESTS: &str = "tools/register/data/digests.φ";
+const DIGESTS: &str = "phi/digests.φ";
 
 struct Digest {
     claims: Vec<(String, Vec<String>, String)>,

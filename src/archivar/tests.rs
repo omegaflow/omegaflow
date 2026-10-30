@@ -8391,7 +8391,7 @@ fn test_phi_register_carries_measurements_not_ephemerides() {
         .collect();
     assert!(
         leaks.is_empty(),
-        "ephemerides belong to the work register research/sources/ephemerides.φ, not to phi: {:?}",
+        "ephemerides belong to the work register phi/ephemerides.φ, not to phi: {:?}",
         leaks
     );
 }

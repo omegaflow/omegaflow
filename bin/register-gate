@@ -10,7 +10,7 @@ set -u
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "register-gate: kein Repo" >&2; exit 2; }
 cd "$root" || exit 2
 
-reg="tools/register/data/instruments.φ"
+reg="phi/instruments.φ"
 paths="${*:-$reg}"
 tool=""
 for b in target/debug/spec_merge target/release/spec_merge; do
