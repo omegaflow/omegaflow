@@ -194,6 +194,7 @@ pub mod nsdb;
 pub mod odf;
 pub mod odp;
 pub mod oe417;
+pub mod oem;
 pub mod omni2;
 pub mod omni_hro;
 pub mod opendap;
