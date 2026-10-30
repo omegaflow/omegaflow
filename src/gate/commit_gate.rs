@@ -2491,7 +2491,19 @@ pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<
     (tracked_not_declared, declared_not_tracked)
 }
 
-pub const REGISTER_CLASSES: [&str; 1] = ["phi/sources.φ"];
+pub const REGISTER_CLASSES: [&str; 11] = [
+    "phi/sources.φ",
+    "phi/instruments.φ",
+    "phi/bands.φ",
+    "phi/digests.φ",
+    "phi/library.φ",
+    "phi/nrs_stations.φ",
+    "phi/dust-maske.φ",
+    "phi/ci_measurements.φ",
+    "phi/scan_coverage.φ",
+    "phi/asteroid_gm_inpop25c.φ",
+    "phi/asteroid_gm_sb441.φ",
+];
 
 pub fn declared_canon() -> Vec<String> {
     REGISTER_CLASSES.iter().map(|s| s.to_string()).collect()
@@ -2510,6 +2522,9 @@ pub fn prose_violation(line: &str) -> Option<&'static str> {
 }
 
 pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
+    if path != "phi/sources.φ" {
+        return None;
+    }
     if path == "phi/sources.φ" && (line == "note" || line.starts_with("note ")) {
         return Some("phi-sources-note");
     }
@@ -5212,14 +5227,21 @@ mod tests {
     }
 
     #[test]
-    fn fn_register_classes_are_the_one_living_register() {
+    fn fn_register_classes_are_declared_and_prose_is_scoped_to_sources() {
         let classes = register_classes();
-        assert_eq!(classes.len(), 1);
+        assert_eq!(classes.len(), 11);
         assert!(classes.iter().any(|p| p == "phi/sources.φ"));
+        assert!(classes.iter().any(|p| p == "phi/instruments.φ"));
+        assert!(classes.iter().any(|p| p == "phi/digests.φ"));
+        assert!(classes.iter().any(|p| p == "phi/dust-maske.φ"));
+        assert!(classes.iter().any(|p| p == "phi/scan_coverage.φ"));
         assert!(!classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
-        assert!(!classes.iter().any(|p| p == "phi/dust-maske.φ"));
-        assert!(!classes.iter().any(|p| p == "phi/scan_coverage.φ"));
+        assert!(prose_violation_for("phi/digests.φ", "# kopf").is_none());
+        assert_eq!(
+            prose_violation_for("phi/sources.φ", "# kopf"),
+            Some("phi-register-comment")
+        );
     }
 
     #[test]
