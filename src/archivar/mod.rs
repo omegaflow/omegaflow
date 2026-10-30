@@ -253,6 +253,7 @@ pub mod swarm_fac;
 pub mod swpc_efield;
 pub mod tar_zst;
 pub mod tdat;
+pub mod tdm;
 pub mod themis_asi;
 pub mod themis_mag;
 pub mod thermochem;
