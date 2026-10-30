@@ -172,7 +172,7 @@ fn admitted_terms(token: &str) -> bool {
 fn licences() -> &'static [(String, String)] {
     static LIST: OnceLock<Vec<(String, String)>> = OnceLock::new();
     LIST.get_or_init(|| {
-        include_str!("../../phi/licences.tsv")
+        include_str!("licences.tsv")
             .lines()
             .map(str::trim)
             .filter(|line| !line.is_empty() && !line.starts_with('#'))
@@ -778,7 +778,7 @@ mod tests {
     fn licences_note(term: &str) -> Option<&'static str> {
         static NOTES: OnceLock<Vec<(String, String)>> = OnceLock::new();
         let notes = NOTES.get_or_init(|| {
-            include_str!("../../phi/licences.tsv")
+            include_str!("licences.tsv")
                 .lines()
                 .map(str::trim)
                 .filter(|line| !line.is_empty() && !line.starts_with('#'))

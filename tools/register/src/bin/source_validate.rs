@@ -149,11 +149,11 @@ fn default_specs() -> String {
             None => std::path::PathBuf::new(),
         },
     };
-    let in_work = work.join("phi/instruments.φ");
+    let in_work = work.join("research/sources/instruments.φ");
     if in_work.is_file() {
         return in_work.to_string_lossy().into_owned();
     }
-    "phi/instruments.φ".to_string()
+    "tools/register/data/instruments.φ".to_string()
 }
 
 struct Ctx {

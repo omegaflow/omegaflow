@@ -15,7 +15,7 @@ fn main() {
         Some(p) => PathBuf::from(p),
         None => work_root().join("build/sources.\u{03c6}"),
     };
-    let work = work_root().join("phi/sources.tsv");
+    let work = work_root().join("research/sources/sources.tsv");
     let text = match std::fs::read_to_string(&work) {
         Ok(t) => t,
         Err(e) => {

@@ -38,7 +38,7 @@ const RIVER_WINDOW_MULT: f64 = 3.0;
 const MYCELIUM_WINDOW_MULT: f64 = 2.0;
 const FOOD_SATURATION: f64 = 1.0;
 const SEPARATION_EPS_ARCSEC: f64 = 1.0;
-const DEFAULT_REGISTER: &str = "phi/scan_coverage.φ";
+const DEFAULT_REGISTER: &str = "tools/measure/data/scan_coverage.φ";
 
 #[derive(Clone)]
 struct ConeVisit {
@@ -121,7 +121,7 @@ fn arg_usize(args: &[String], name: &str) -> Option<usize> {
 fn usage() {
     eprintln!(
         "mycelium_fan_navigator — the autonomous scan navigator (five voices, golden-angle fan)\n\
-         coverage state: phi/scan_coverage.φ cone lines (center ra/dec, radius, outcome)\n\
+         coverage state: tools/measure/data/scan_coverage.φ cone lines (center ra/dec, radius, outcome)\n\
          \x20 mycelium_fan_navigator [--register <path>] [--steps N=2] [--floor N=24]\n\
          \x20   [--ra deg --dec deg --radius arcsec]  (fresh kernel; otherwise the register's first measured cone anchors the fan)\n\
          \x20   [--frontier-pool N=24]   (frontier candidate cap per step)\n\
