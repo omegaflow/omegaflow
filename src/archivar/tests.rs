@@ -13558,6 +13558,20 @@ fn test_parse_iso_tdb_date_only_is_midnight() {
 }
 
 #[test]
+fn test_parse_iso_unix_keeps_the_fractional_second() {
+    let whole = super::parse_iso_unix("2005-03-04T22:10:18").unwrap();
+    let fraction = super::parse_iso_unix("2005-03-04T22:10:18.30270225").unwrap();
+    assert!((fraction - whole - 0.30270225).abs() < 1e-12);
+}
+
+#[test]
+fn test_parse_iso_tdb_label_reads_the_label_at_face_value() {
+    let label = super::parse_iso_tdb_label("2005-03-04T22:10:18.30270225").unwrap();
+    let unix = super::parse_iso_unix("2005-03-04T22:10:18.30270225").unwrap();
+    assert!((label - (unix - 946_728_000.0)).abs() < 1e-9);
+}
+
+#[test]
 fn test_parse_iso_tdb_slash_between_date_and_time() {
     let lsk = fixture_lsk();
     assert_eq!(

@@ -247,16 +247,11 @@ fn lagrange_at(nodes: &[(f64, [f64; 4])], seconds: f64) -> Option<[f64; 4]> {
     Some([out[0] / norm, out[1] / norm, out[2] / norm, out[3] / norm])
 }
 
-pub fn quaternion_at(
-    segments: &[AemSegment],
-    seconds: f64,
-    lsk: &crate::archivar::LeapSeconds,
-    degree: usize,
-) -> Option<[f64; 4]> {
+pub fn quaternion_at(segments: &[AemSegment], seconds: f64, degree: usize) -> Option<[f64; 4]> {
     let mut nodes: Vec<(f64, [f64; 4])> = Vec::new();
     for segment in segments {
         for record in &segment.records {
-            let Some(t) = crate::archivar::parse_iso_tdb(&record.time, lsk) else {
+            let Some(t) = crate::archivar::parse_iso_tdb_label(&record.time) else {
                 continue;
             };
             let Some(q) = record.quaternion_qc_last() else {

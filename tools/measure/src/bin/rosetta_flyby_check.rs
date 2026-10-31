@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use omegaflow::archivar::geoid::{WGS84_A_M, WGS84_F};
 use omegaflow::archivar::{
     aem, aux, body_barycenter_position, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
-    parse_ephemeris_binary, parse_iso_tdb, srp, tdm,
+    parse_ephemeris_binary, parse_iso_tdb, parse_iso_tdb_label, srp, tdm,
 };
 use omegaflow::mathematikerin::tropo;
 
@@ -128,6 +128,16 @@ fn plane_crossings(
     out
 }
 
+fn angle_deg(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
+    let na = (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]).sqrt();
+    let nb = (b[0] * b[0] + b[1] * b[1] + b[2] * b[2]).sqrt();
+    if !na.is_finite() || !nb.is_finite() || na <= 0.0 || nb <= 0.0 {
+        return None;
+    }
+    let dot = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / (na * nb);
+    Some(dot.clamp(-1.0, 1.0).acos().to_degrees())
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut package = PathBuf::from(".");
@@ -137,6 +147,8 @@ fn main() {
     let mut gm_source = String::new();
     let mut gravity_path = PathBuf::new();
     let mut flux_w_m2: Option<f64> = None;
+    let mut gravity_second: Option<PathBuf> = None;
+    let mut perigee_body: Option<(f64, f64, f64)> = None;
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--package"
@@ -154,6 +166,11 @@ fn main() {
             && let Some(v) = args.get(i + 1).and_then(|v| v.parse::<f64>().ok())
         {
             flux_w_m2 = Some(v);
+            i += 2;
+        } else if args[i] == "--gravity-second"
+            && let Some(v) = args.get(i + 1)
+        {
+            gravity_second = Some(PathBuf::from(v));
             i += 2;
         } else if args[i] == "--gravity"
             && let Some(p) = args.get(i + 1)
@@ -239,7 +256,7 @@ fn main() {
                 Some(earth) => {
                     let mut map = std::collections::HashMap::new();
                     map.insert(body.clone(), earth);
-                    let seconds = civil_to_unix(&epoch).map(|u| u - 946_728_000.0);
+                    let seconds = parse_iso_tdb_label(&epoch);
                     match seconds {
                         Some(seconds) => match body_barycenter_position(&body, seconds, &map) {
                             Some(centre) => {
@@ -269,10 +286,13 @@ fn main() {
                                 match icrs_to_body_geodetic(
                                     point[0], point[1], point[2], seconds, &body, &map,
                                 ) {
-                                    Some((lat, lon, depth)) => println!(
-                                        "rosetta-check: library path — latitude {lat:.4}, longitude {lon:.4}, altitude {:.3} km",
-                                        -depth
-                                    ),
+                                    Some((lat, lon, depth)) => {
+                                        perigee_body = Some((lat, lon, radius_km));
+                                        println!(
+                                            "rosetta-check: library path — latitude {lat:.4}, longitude {lon:.4}, altitude {:.3} km",
+                                            -depth
+                                        );
+                                    }
                                     None => {
                                         println!("rosetta-check: library path returned absent")
                                     }
@@ -288,6 +308,58 @@ fn main() {
                 None => println!("rosetta-check: {} is not an ephemeris", earth_bin.display()),
             },
             Err(_) => println!("rosetta-check: {} absent", earth_bin.display()),
+        }
+    }
+
+    if let (Some(second_path), Some((lat, lon, radius))) = (gravity_second.clone(), perigee_body) {
+        let first = std::fs::read(&gravity_path)
+            .ok()
+            .and_then(|b| gfc::GfcModel::from_bytes(&b))
+            .and_then(|m| m.truncated(64));
+        let second = std::fs::read(&second_path)
+            .ok()
+            .and_then(|b| gfc::GfcModel::from_bytes(&b))
+            .and_then(|m| m.truncated(64));
+        match (first, second) {
+            (Some(a), Some(b)) => {
+                let colat = 90.0 - lat;
+                let pa = a.evaluate(radius * 1000.0, colat, lon, gfc::Functional::Potential);
+                let pb = b.evaluate(radius * 1000.0, colat, lon, gfc::Functional::Potential);
+                let ga = a.evaluate(radius * 1000.0, colat, lon, gfc::Functional::GravityAnomaly);
+                let gb = b.evaluate(radius * 1000.0, colat, lon, gfc::Functional::GravityAnomaly);
+                println!(
+                    "rosetta-check: gravity at perigee, degree 64 — {} GM {:.4} m3/s2, radius {:.4} m; {} GM {:.4}, radius {:.4}",
+                    a.head.modelname,
+                    a.head.gm_m3_s2,
+                    a.head.radius_m,
+                    b.head.modelname,
+                    b.head.gm_m3_s2,
+                    b.head.radius_m
+                );
+                match (pa, pb) {
+                    (Some(pa), Some(pb)) => println!(
+                        "rosetta-check: potential {pa:.6} against {pb:.6} m2/s2 — delta {:+.4} m2/s2",
+                        pb - pa
+                    ),
+                    _ => println!(
+                        "rosetta-check: the potential carries no value in one of the two models"
+                    ),
+                }
+                match (ga, gb) {
+                    (Some(ga), Some(gb)) => println!(
+                        "rosetta-check: gravity anomaly {ga:.6e} against {gb:.6e} m/s2 — delta {:+.4e}",
+                        gb - ga
+                    ),
+                    _ => println!(
+                        "rosetta-check: the gravity anomaly carries no value in one of the two models"
+                    ),
+                }
+            }
+            _ => println!(
+                "rosetta-check: the two gravity models do not load — {} and {}",
+                gravity_path.display(),
+                second_path.display()
+            ),
         }
     }
 
@@ -420,7 +492,8 @@ fn main() {
     }
 
     let aux_dir = package.join("AUXILIARY_data");
-    let perigee_mjd2000 = civil_to_unix(&epoch).map(|u| (u - aux::MJD2000_ORIGIN_UNIX) / 86_400.0);
+    let perigee_mjd2000 = parse_iso_tdb_label(&epoch)
+        .map(|t| (t + 946_728_000.0 - aux::MJD2000_ORIGIN_UNIX) / 86_400.0);
     match perigee_mjd2000 {
         Some(mjd) => println!(
             "rosetta-check: perigee MJD2000 {mjd:.6} — aux epochs count from 2000-01-01 00:00 TDB"
@@ -581,7 +654,7 @@ fn main() {
     let meteo_path = package.join("ESTRACK_data/NN11_METEO_2005_048-070.tdm");
     if let Ok(text) = std::fs::read_to_string(&meteo_path)
         && let Some(parsed) = tdm::parse_tdm(&text)
-        && let Some(base) = parse_iso_tdb(&epoch, &lsk)
+        && let Some(base) = parse_iso_tdb_label(&epoch)
     {
         let mut pressure: Option<(f64, f64)> = None;
         let mut temperature: Option<(f64, f64)> = None;
@@ -693,39 +766,10 @@ fn main() {
                 return;
             }
         };
-        let earth_direction = {
-            let norm = radius_km;
-            [
-                -position[0] / norm,
-                -position[1] / norm,
-                -position[2] / norm,
-            ]
-        };
-        for (label, civil) in [
-            ("perigee", epoch.clone()),
-            ("paper 22:17 TDB", "2005-03-04T22:17:00".to_string()),
-        ] {
-            let Some(seconds) = civil_to_unix(&civil).map(|u| u - J2000_UNIX) else {
-                println!("rosetta-check: {label} does not parse");
-                continue;
-            };
-            let Some(q) = aem::quaternion_at(&attitude, seconds, &lsk, degree) else {
-                println!("rosetta-check: {label} carries no attitude interpolation");
-                continue;
-            };
-            let body = aem::to_body_frame(q, earth_direction);
-            let angle_minus_x = (-body[0]).clamp(-1.0, 1.0).acos().to_degrees();
-            let angle_minus_z = (-body[2]).clamp(-1.0, 1.0).acos().to_degrees();
-            println!(
-                "rosetta-check: earth direction in body frame at {label} — x {:+.4}, y {:+.4}, z {:+.4}; angle to -X {angle_minus_x:.2} deg, to -Z {angle_minus_z:.2} deg",
-                body[0], body[1], body[2]
-            );
-        }
-
-        let points = oem::positions_in_center(&segments, "EARTH", &lsk);
+        let points = oem::positions_in_center(&segments, "EARTH");
         let direction = |seconds: f64| -> Option<[f64; 3]> {
             let p = oem::position_at(&points, seconds)?;
-            let q = aem::quaternion_at(&attitude, seconds, &lsk, degree)?;
+            let q = aem::quaternion_at(&attitude, seconds, degree)?;
             let norm = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
             if norm <= 0.0 {
                 return None;
@@ -735,7 +779,30 @@ fn main() {
                 [-p[0] / norm, -p[1] / norm, -p[2] / norm],
             ))
         };
-        if let Some(base) = parse_iso_tdb(&epoch, &lsk) {
+        let body_vector = |seconds: f64, icrs: [f64; 3]| -> Option<[f64; 3]> {
+            let q = aem::quaternion_at(&attitude, seconds, degree)?;
+            Some(aem::to_body_frame(q, icrs))
+        };
+        for (label, civil) in [
+            ("perigee", epoch.clone()),
+            ("paper 22:17 TDB", "2005-03-04T22:17:00".to_string()),
+        ] {
+            let Some(seconds) = parse_iso_tdb_label(&civil) else {
+                println!("rosetta-check: {label} does not parse");
+                continue;
+            };
+            let Some(body) = direction(seconds) else {
+                println!("rosetta-check: {label} carries no attitude interpolation");
+                continue;
+            };
+            let angle_minus_x = (-body[0]).clamp(-1.0, 1.0).acos().to_degrees();
+            let angle_minus_z = (-body[2]).clamp(-1.0, 1.0).acos().to_degrees();
+            println!(
+                "rosetta-check: earth direction in body frame at {label} — x {:+.4}, y {:+.4}, z {:+.4}; angle to -X {angle_minus_x:.2} deg, to -Z {angle_minus_z:.2} deg",
+                body[0], body[1], body[2]
+            );
+        }
+        if let Some(base) = parse_iso_tdb_label(&epoch) {
             let minus_x = plane_crossings(
                 &direction,
                 0,
@@ -750,7 +817,7 @@ fn main() {
                 base + 6.0 * 3600.0,
                 10.0,
             );
-            let reference = |civil: &str| parse_iso_tdb(civil, &lsk);
+            let reference = |civil: &str| parse_iso_tdb_label(civil);
             let enter = reference(REFERENCE_MINUS_X_ENTER);
             let exit = reference(REFERENCE_MINUS_X_EXIT);
             let z_enter = reference(REFERENCE_MINUS_Z_ENTER);
@@ -793,6 +860,102 @@ fn main() {
                 "rosetta-check: the body Y axis stays {worst:.2} deg from square to the earth direction within two hours (at {:+.0} min) — paper within {REFERENCE_Y_ORTHOGONAL_DEG:.0} deg",
                 (worst_at - base) / 60.0
             );
+
+            if let Some(event) = minus_z.first().copied() {
+                let obliquity = 23.4392911_f64.to_radians();
+                let ecliptic_pole = [0.0, -obliquity.sin(), obliquity.cos()];
+                let earth_axis = [0.0, 0.0, 1.0];
+                let earth = direction(event);
+                let y_axis = [0.0, 1.0, 0.0];
+                let nearest = points.iter().min_by(|a, b| {
+                    (a.seconds - event)
+                        .abs()
+                        .total_cmp(&(b.seconds - event).abs())
+                });
+                let velocity = nearest.map(|n| n.velocity_km_s);
+                let position_here = oem::position_at(&points, event);
+                let normal = match (position_here, velocity) {
+                    (Some(r), Some(v)) => Some([
+                        r[1] * v[2] - r[2] * v[1],
+                        r[2] * v[0] - r[0] * v[2],
+                        r[0] * v[1] - r[1] * v[0],
+                    ]),
+                    _ => None,
+                };
+                let mut rows: Vec<(&str, Option<f64>)> = Vec::new();
+                if let Some(e) = earth {
+                    rows.push((
+                        "earth against the -X axis",
+                        Some((-e[0]).clamp(-1.0, 1.0).acos().to_degrees()),
+                    ));
+                    rows.push((
+                        "earth against the -Y axis",
+                        Some((-e[1]).clamp(-1.0, 1.0).acos().to_degrees()),
+                    ));
+                    rows.push((
+                        "earth against the -Z axis",
+                        Some((-e[2]).clamp(-1.0, 1.0).acos().to_degrees()),
+                    ));
+                }
+                if let Some(y) = body_vector(event, earth_axis) {
+                    rows.push(("body +Y against the earth spin axis", angle_deg(y_axis, y)));
+                }
+                if let Some(z) = body_vector(event, ecliptic_pole) {
+                    rows.push((
+                        "body -Z against the ecliptic pole",
+                        angle_deg([0.0, 0.0, -1.0], z),
+                    ));
+                }
+                if let (Some(e), Some(n)) = (earth, normal.and_then(|n| body_vector(event, n))) {
+                    rows.push(("earth against the orbit normal", angle_deg(e, n)));
+                }
+                if let (Some(e), Some(v)) = (earth, velocity.and_then(|v| body_vector(event, v))) {
+                    rows.push(("earth against the velocity", angle_deg(e, v)));
+                }
+                for (name, angle) in &rows {
+                    match angle {
+                        Some(a) => println!(
+                            "rosetta-check: candidate at the -Z crossing — {name}: {a:.2} deg"
+                        ),
+                        None => {
+                            println!("rosetta-check: candidate at the -Z crossing — {name}: absent")
+                        }
+                    }
+                }
+                let best = rows
+                    .iter()
+                    .filter_map(|(name, a)| a.map(|a| (name, a)))
+                    .min_by(|a, b| a.1.total_cmp(&b.1));
+                match best {
+                    Some((name, a)) => println!(
+                        "rosetta-check: the closest candidate is {name} at {a:.2} deg — the printed sentence says 4 deg"
+                    ),
+                    None => println!("rosetta-check: no candidate carries an angle"),
+                }
+            }
+
+            let mut closest: Option<(f64, f64)> = None;
+            let first = points.first().map(|p| p.seconds);
+            let last = points.last().map(|p| p.seconds);
+            if let (Some(from), Some(to)) = (first, last) {
+                let mut t = from;
+                while t <= to {
+                    if let Some(e) = direction(t) {
+                        let angle = (-e[0]).clamp(-1.0, 1.0).acos().to_degrees();
+                        if closest.is_none_or(|(a, _)| angle < a) {
+                            closest = Some((angle, t));
+                        }
+                    }
+                    t += 30.0;
+                }
+            }
+            match closest {
+                Some((angle, t)) => println!(
+                    "rosetta-check: the earth direction comes within {angle:.2} deg of the -X axis at {:+.1} min around perigee over the whole arc",
+                    (t - base) / 60.0
+                ),
+                None => println!("rosetta-check: the arc scan carries no earth direction"),
+            }
         }
     }
 

@@ -202,6 +202,19 @@ impl Norm {
     }
 }
 
+fn parse_fortran_float(token: &str) -> Option<f64> {
+    if let Ok(value) = token.parse::<f64>() {
+        return Some(value);
+    }
+    if token.contains(['d', 'D']) {
+        let replaced = token.replace(['d', 'D'], "e");
+        if let Ok(value) = replaced.parse::<f64>() {
+            return Some(value);
+        }
+    }
+    None
+}
+
 pub fn parse_head(bytes: &[u8]) -> Option<(GfcHead, usize)> {
     let mut product_type: Option<String> = None;
     let mut modelname: Option<String> = None;
@@ -341,17 +354,39 @@ impl GfcModel {
             if t.len() < 5 || (t[0] != "gfc" && t[0] != "gfct") {
                 continue;
             }
-            let (Ok(n), Ok(m), Ok(c), Ok(s)) = (
+            let (Ok(n), Ok(m), Some(c), Some(s)) = (
                 t[1].parse::<u32>(),
                 t[2].parse::<u32>(),
-                t[3].parse::<f64>(),
-                t[4].parse::<f64>(),
+                parse_fortran_float(t[3]),
+                parse_fortran_float(t[4]),
             ) else {
                 continue;
             };
             coeffs.push(GfcCoeff { n, m, c, s });
         }
         GfcModel::from_coeffs(head, &coeffs)
+    }
+
+    pub fn truncated(&self, degree: u32) -> Option<GfcModel> {
+        let nmax = degree.min(self.nmax);
+        if nmax < 2 {
+            return None;
+        }
+        let mut c = vec![0.0f64; tri_len(nmax)];
+        let mut s = vec![0.0f64; tri_len(nmax)];
+        for n in 0..=nmax {
+            for m in 0..=n {
+                let i = tri_index(n, m);
+                c[i] = self.c[i];
+                s[i] = self.s[i];
+            }
+        }
+        Some(GfcModel {
+            head: self.head.clone(),
+            nmax,
+            c,
+            s,
+        })
     }
 
     pub fn from_wire(head: GfcHead, bytes: &[u8]) -> Option<GfcModel> {

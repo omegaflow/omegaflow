@@ -2863,7 +2863,7 @@ pub fn parse_path(s: &str) -> String {
     }
 }
 
-pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
+pub fn parse_iso_unix(s: &str) -> Option<f64> {
     let s = s.trim();
     let (date, time) = if let Some((d, t)) = s.split_once('T') {
         (d, t)
@@ -2878,14 +2878,36 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     let y: i64 = dp.next()?.parse().ok()?;
     let m: u32 = dp.next()?.parse().ok()?;
     let d: u32 = dp.next()?.parse().ok()?;
-    let t = time.split(['.', 'Z', 'z']).next()?;
-    let mut tp = t.split(':');
+    let time = time.trim_end_matches(['Z', 'z']);
+    let (clock, fraction) = match time.split_once('.') {
+        Some((clock, fraction)) => (clock, Some(fraction)),
+        None => (time, None),
+    };
+    let mut tp = clock.split(':');
     let hh: u32 = tp.next()?.parse().ok()?;
     let mm: u32 = tp.next().unwrap_or("0").parse().ok()?;
     let ss: u32 = tp.next().unwrap_or("0").parse().ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
-    let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64;
-    lsk.unix_to_tdb(unix as f64)
+    let whole = (days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64) as f64;
+    match fraction {
+        Some(fraction) => {
+            let digits: String = fraction.chars().take_while(char::is_ascii_digit).collect();
+            if digits.is_empty() {
+                return None;
+            }
+            let value: f64 = format!("0.{digits}").parse().ok()?;
+            Some(whole + value)
+        }
+        None => Some(whole),
+    }
+}
+
+pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
+    lsk.unix_to_tdb(parse_iso_unix(s)?)
+}
+
+pub fn parse_iso_tdb_label(s: &str) -> Option<f64> {
+    Some(parse_iso_unix(s)? - super::types::J2000_UNIX_OFFSET)
 }
 
 fn parse_anchor_attrs(

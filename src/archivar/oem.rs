@@ -155,54 +155,100 @@ pub fn span(segments: &[OemSegment]) -> Option<(String, String)> {
     Some((first?.to_string(), last?.to_string()))
 }
 
-pub fn positions_in_center(
-    segments: &[OemSegment],
-    center: &str,
-    lsk: &crate::archivar::LeapSeconds,
-) -> Vec<(f64, [f64; 3], [f64; 3])> {
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct OemPoint {
+    pub seconds: f64,
+    pub position_km: [f64; 3],
+    pub velocity_km_s: [f64; 3],
+    pub acceleration_km_s2: Option<[f64; 3]>,
+}
+
+pub fn positions_in_center(segments: &[OemSegment], center: &str) -> Vec<OemPoint> {
     let mut out = Vec::new();
     for segment in segments {
         if segment.center_name != center {
             continue;
         }
         for record in &segment.records {
-            let Some(seconds) = crate::archivar::parse_iso_tdb(&record.time, lsk) else {
+            let Some(seconds) = crate::archivar::parse_iso_tdb_label(&record.time) else {
                 continue;
             };
-            out.push((seconds, record.position_km, record.velocity_km_s));
+            out.push(OemPoint {
+                seconds,
+                position_km: record.position_km,
+                velocity_km_s: record.velocity_km_s,
+                acceleration_km_s2: record.acceleration_km_s2,
+            });
         }
     }
-    out.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    out.sort_by(|a, b| {
+        a.seconds
+            .partial_cmp(&b.seconds)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    out.dedup_by(|a, b| a.seconds == b.seconds);
     out
 }
 
-pub fn position_at(points: &[(f64, [f64; 3], [f64; 3])], seconds: f64) -> Option<[f64; 3]> {
+pub fn position_at(points: &[OemPoint], seconds: f64) -> Option<[f64; 3]> {
     let first = points.first()?;
     let last = points.last()?;
-    if seconds < first.0 || seconds > last.0 {
+    if seconds < first.seconds || seconds > last.seconds {
         return None;
     }
     let mut low = 0usize;
     let mut high = points.len() - 1;
     while high - low > 1 {
         let middle = (low + high) / 2;
-        if points[middle].0 <= seconds {
+        if points[middle].seconds <= seconds {
             low = middle;
         } else {
             high = middle;
         }
     }
-    let (t0, p0, _) = points[low];
-    let (t1, p1, _) = points[high];
-    if t1 == t0 {
-        return Some(p0);
+    let a = points[low];
+    let b = points[high];
+    let span = b.seconds - a.seconds;
+    if span <= 0.0 {
+        return Some(a.position_km);
     }
-    let w = (seconds - t0) / (t1 - t0);
-    Some([
-        p0[0] + (p1[0] - p0[0]) * w,
-        p0[1] + (p1[1] - p0[1]) * w,
-        p0[2] + (p1[2] - p0[2]) * w,
-    ])
+    let s = (seconds - a.seconds) / span;
+    let s2 = s * s;
+    let s3 = s2 * s;
+    let s4 = s3 * s;
+    let s5 = s4 * s;
+    let mut out = [0.0; 3];
+    match (a.acceleration_km_s2, b.acceleration_km_s2) {
+        (Some(a_acc), Some(b_acc)) => {
+            let h00 = 1.0 - 10.0 * s3 + 15.0 * s4 - 6.0 * s5;
+            let h10 = s - 6.0 * s3 + 8.0 * s4 - 3.0 * s5;
+            let h20 = 0.5 * s2 - 1.5 * s3 + 1.5 * s4 - 0.5 * s5;
+            let h01 = 10.0 * s3 - 15.0 * s4 + 6.0 * s5;
+            let h11 = -4.0 * s3 + 7.0 * s4 - 3.0 * s5;
+            let h21 = 0.5 * s3 - s4 + 0.5 * s5;
+            for axis in 0..3 {
+                out[axis] = a.position_km[axis] * h00
+                    + a.velocity_km_s[axis] * span * h10
+                    + a_acc[axis] * span * span * h20
+                    + b.position_km[axis] * h01
+                    + b.velocity_km_s[axis] * span * h11
+                    + b_acc[axis] * span * span * h21;
+            }
+        }
+        _ => {
+            let h00 = 2.0 * s3 - 3.0 * s2 + 1.0;
+            let h10 = s3 - 2.0 * s2 + s;
+            let h01 = -2.0 * s3 + 3.0 * s2;
+            let h11 = s3 - s2;
+            for axis in 0..3 {
+                out[axis] = a.position_km[axis] * h00
+                    + a.velocity_km_s[axis] * span * h10
+                    + b.position_km[axis] * h01
+                    + b.velocity_km_s[axis] * span * h11;
+            }
+        }
+    }
+    Some(out)
 }
 
 #[cfg(test)]
@@ -228,6 +274,113 @@ META_STOP
 2005-02-17T14:02:25.73180234  -1.312072714458328e+08  7.120124345736103e+07  3.054026550260468e+07 -1.184908073808264e+01 -2.448021630411433e+01 -1.038422565374082e+01  4.906157272981018e-06 -2.644884334201375e-06 -1.134295439082151e-06
 2005-02-17T14:03:25.73180234  -1.312079823818460e+08  7.119977463962205e+07  3.053964244702375e+07 -1.184878636725333e+01 -2.448037499585140e+01 -1.038429371090523e+01
 ";
+
+    #[test]
+    fn a_constant_acceleration_is_reproduced_by_the_quintic() {
+        let a = [1.0e-3, -2.0e-3, 3.0e-3];
+        let p0 = [8331.0, -120.0, 44.0];
+        let v0 = [0.3, 10.5, -0.2];
+        let make = |t: f64| {
+            let mut p = [0.0; 3];
+            let mut v = [0.0; 3];
+            for k in 0..3 {
+                p[k] = p0[k] + v0[k] * t + 0.5 * a[k] * t * t;
+                v[k] = v0[k] + a[k] * t;
+            }
+            (p, v)
+        };
+        let (p1, v1) = make(60.0);
+        let points = [
+            OemPoint {
+                seconds: 0.0,
+                position_km: p0,
+                velocity_km_s: v0,
+                acceleration_km_s2: Some(a),
+            },
+            OemPoint {
+                seconds: 60.0,
+                position_km: p1,
+                velocity_km_s: v1,
+                acceleration_km_s2: Some(a),
+            },
+        ];
+        let (expect, _) = make(23.0);
+        let got = position_at(&points, 23.0).expect("a position");
+        for k in 0..3 {
+            assert!(
+                (got[k] - expect[k]).abs() < 1.0e-9,
+                "axis {k}: {got:?} against {expect:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn the_quintic_stays_below_a_millimetre_where_a_straight_line_loses_metres() {
+        let a = [4.9e-3, -4.9e-3, 0.0];
+        let p0 = [0.0, 0.0, 0.0];
+        let v0 = [10.5, 0.0, 0.0];
+        let make = |t: f64| {
+            let mut p = [0.0; 3];
+            let mut v = [0.0; 3];
+            for k in 0..3 {
+                p[k] = p0[k] + v0[k] * t + 0.5 * a[k] * t * t;
+                v[k] = v0[k] + a[k] * t;
+            }
+            (p, v)
+        };
+        let (p1, v1) = make(8.6);
+        let points = [
+            OemPoint {
+                seconds: 0.0,
+                position_km: p0,
+                velocity_km_s: v0,
+                acceleration_km_s2: Some(a),
+            },
+            OemPoint {
+                seconds: 8.6,
+                position_km: p1,
+                velocity_km_s: v1,
+                acceleration_km_s2: Some(a),
+            },
+        ];
+        let (expect, _) = make(4.3);
+        let got = position_at(&points, 4.3).expect("a position");
+        let straight = [
+            0.5 * (p0[0] + p1[0]),
+            0.5 * (p0[1] + p1[1]),
+            0.5 * (p0[2] + p1[2]),
+        ];
+        let straight_error = (straight[0] - expect[0]).abs() + (straight[1] - expect[1]).abs();
+        let hermit_error = (got[0] - expect[0]).abs() + (got[1] - expect[1]).abs();
+        assert!(straight_error > 1.0e-3);
+        assert!(hermit_error < 1.0e-9);
+    }
+
+    #[test]
+    fn without_acceleration_the_cubic_still_beats_the_straight_line() {
+        let p0 = [0.0, 0.0, 0.0];
+        let p1 = [100.0, 40.0, -20.0];
+        let v0 = [10.0, 1.0, 0.0];
+        let v1 = [11.0, 3.0, -1.0];
+        let points = [
+            OemPoint {
+                seconds: 0.0,
+                position_km: p0,
+                velocity_km_s: v0,
+                acceleration_km_s2: None,
+            },
+            OemPoint {
+                seconds: 10.0,
+                position_km: p1,
+                velocity_km_s: v1,
+                acceleration_km_s2: None,
+            },
+        ];
+        let got = position_at(&points, 5.0).expect("a position");
+        assert!((got[0] - 52.5).abs() < 1.0e-9);
+        assert!((got[1] - 20.0).abs() < 1.0e-9);
+        assert!(position_at(&points, 11.0).is_none());
+    }
 
     #[test]
     fn an_oem_segment_carries_its_meta_and_records() {
