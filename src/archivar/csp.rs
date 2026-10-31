@@ -22,6 +22,95 @@ fn list_after<'a>(text: &'a str, key: &str) -> Option<&'a str> {
     Some(&rest[..end])
 }
 
+fn window_seconds(stamp: &str) -> Option<f64> {
+    let (date, clock) = stamp.split_once(',')?;
+    let mut parts = date.split('/');
+    let yy: i64 = parts.next()?.parse().ok()?;
+    let month: u32 = parts.next()?.parse().ok()?;
+    let day: u32 = parts.next()?.parse().ok()?;
+    if parts.next().is_some() {
+        return None;
+    }
+    let year = if yy < 70 { 2000 + yy } else { 1900 + yy };
+    let mut clock_parts = clock.split(':');
+    let hour: u32 = clock_parts.next()?.parse().ok()?;
+    let minute: u32 = clock_parts.next()?.parse().ok()?;
+    if clock_parts.next().is_some() {
+        return None;
+    }
+    let iso = format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:00");
+    crate::archivar::parse_iso_unix(&iso)
+}
+
+impl CspAdjust {
+    pub fn span(&self) -> Option<(f64, f64)> {
+        let start = window_seconds(&self.from)?;
+        let end = window_seconds(&self.to)?;
+        if !(end > start) {
+            return None;
+        }
+        Some((start, end))
+    }
+
+    pub fn at(&self, unix: f64) -> Option<f64> {
+        let (start, end) = self.span()?;
+        if !unix.is_finite() || unix < start || unix > end {
+            return None;
+        }
+        let x = 2.0 * ((unix - start) / (end - start)) - 1.0;
+        let mut value = 0.0;
+        for coefficient in self.coefficients.iter().rev() {
+            value = value * x + coefficient;
+        }
+        value.is_finite().then_some(value)
+    }
+}
+
+#[cfg(test)]
+mod window_tests {
+    use super::*;
+
+    const SAMPLE: &str = "# FITSIG= .0154976
+ADJUST(DOPRNG)BY NRMPOW(   0.6721,  -0.1052,   1.6716)                 MODEL(CHPART)
+FROM(05/03/01,02:16)TO(05/03/01,14:24)DSN( 74)SCID(226).   #S01
+";
+
+    #[test]
+    fn a_window_parses_to_unix_seconds() {
+        let adjustments = parse_csp(SAMPLE).expect("adjustments");
+        let (start, end) = adjustments[0].span().expect("a span");
+        assert!(end > start);
+        assert!((end - start - 12.0 * 3600.0 - 8.0 * 60.0).abs() < 1.0);
+    }
+
+    #[test]
+    fn the_series_hits_its_endpoints() {
+        let adjustments = parse_csp(SAMPLE).expect("adjustments");
+        let (start, end) = adjustments[0].span().expect("a span");
+        let at_start = adjustments[0].at(start).expect("a value");
+        let at_end = adjustments[0].at(end).expect("a value");
+        let expected_start = 0.6721 - 0.1052 + 1.6716;
+        let expected_end = 0.6721 + 0.1052 + 1.6716;
+        assert!((at_start - expected_start).abs() < 1e-12);
+        assert!((at_end - expected_end).abs() < 1e-12);
+    }
+
+    #[test]
+    fn the_midpoint_is_the_constant_term() {
+        let adjustments = parse_csp(SAMPLE).expect("adjustments");
+        let (start, end) = adjustments[0].span().expect("a span");
+        let middle = adjustments[0].at(0.5 * (start + end)).expect("a value");
+        assert!((middle - 0.6721).abs() < 1e-12);
+    }
+
+    #[test]
+    fn outside_the_window_is_absent() {
+        let adjustments = parse_csp(SAMPLE).expect("adjustments");
+        let (start, _) = adjustments[0].span().expect("a span");
+        assert!(adjustments[0].at(start - 1.0).is_none());
+    }
+}
+
 pub fn parse_csp(text: &str) -> Option<Vec<CspAdjust>> {
     let mut out = Vec::new();
     let mut statement = String::new();
