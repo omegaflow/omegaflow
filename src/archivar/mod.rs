@@ -24,6 +24,7 @@ pub mod astrometry;
 pub mod astrometry_series;
 pub mod atdf;
 pub mod auger;
+pub mod aux;
 pub mod babamul;
 pub mod bayestar;
 pub mod bc_mpo_mag;
