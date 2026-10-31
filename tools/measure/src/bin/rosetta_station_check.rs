@@ -72,6 +72,48 @@ const TABLE_2005: [Itrf; 3] = [
     },
 ];
 
+struct Naif {
+    name: &'static str,
+    x_km: f64,
+    y_km: f64,
+    z_km: f64,
+}
+
+const NAIF_EPOCH: f64 = 2020.81;
+
+const NAIF_2020: [Naif; 5] = [
+    Naif {
+        name: "DSS-15",
+        x_km: -2353.5392785750,
+        y_km: -4641.6493132370,
+        z_km: 3676.6699163230,
+    },
+    Naif {
+        name: "DSS-24",
+        x_km: -2354.9070315750,
+        y_km: -4646.8399792370,
+        z_km: 3669.2422573230,
+    },
+    Naif {
+        name: "DSS-25",
+        x_km: -2355.0223345750,
+        y_km: -4646.9530882370,
+        z_km: 3669.0404993230,
+    },
+    Naif {
+        name: "DSS-54",
+        x_km: 4849.4343099030,
+        y_km: -360.7234689048,
+        z_km: 4114.6191128320,
+    },
+    Naif {
+        name: "DSS-55",
+        x_km: 4849.5250779030,
+        y_km: -360.6056622048,
+        z_km: 4114.4953618320,
+    },
+];
+
 fn main() {
     let mut worst_spin = 0.0f64;
     let mut worst_equator = 0.0f64;
@@ -109,5 +151,35 @@ fn main() {
     }
     println!(
         "station-check: worst of the three — {worst_longitude:.1} mas in longitude, {worst_spin:.1} mm on the spin axis, {worst_equator:.1} mm on the equator"
+    );
+
+    let mut worst_naif = 0.0f64;
+    for naif in &NAIF_2020 {
+        let Some(later) = TABLE_2005.iter().find(|s| s.name == naif.name) else {
+            println!(
+                "station-check: {} carries no ESA epoch-2005 counterpart",
+                naif.name
+            );
+            continue;
+        };
+        let rates_km_per_year = [
+            later.rate_cm_per_year[0] / 1.0e5,
+            later.rate_cm_per_year[1] / 1.0e5,
+            later.rate_cm_per_year[2] / 1.0e5,
+        ];
+        let years = NAIF_EPOCH - 2005.0;
+        let moved = propagate(later.x_km, later.y_km, later.z_km, rates_km_per_year, years);
+        let dx = (naif.x_km - moved[0]) * 1.0e6;
+        let dy = (naif.y_km - moved[1]) * 1.0e6;
+        let dz = (naif.z_km - moved[2]) * 1.0e6;
+        let magnitude = (dx * dx + dy * dy + dz * dz).sqrt();
+        worst_naif = worst_naif.max(magnitude);
+        println!(
+            "station-check: {} against the NAIF kernel at epoch {NAIF_EPOCH:.2} — dx {dx:+.1} mm, dy {dy:+.1} mm, dz {dz:+.1} mm, |d| {magnitude:.1} mm over {years:.1} years",
+            naif.name
+        );
+    }
+    println!(
+        "station-check: worst against NAIF — {worst_naif:.1} mm after extrapolating the printed rates"
     );
 }
