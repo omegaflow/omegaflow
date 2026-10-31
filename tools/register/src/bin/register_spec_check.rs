@@ -19,7 +19,11 @@ fn parse_sources(text: &str) -> Vec<String> {
     let mut urls = Vec::new();
     for raw in text.split("\n\n") {
         for line in raw.lines() {
-            let first = line.split('\t').next().unwrap_or("");
+            let cols: Vec<&str> = line.split('\t').collect();
+            let first = match cols.get(1) {
+                Some(correction) if !correction.trim().is_empty() => correction.trim(),
+                _ => cols.first().copied().unwrap_or(""),
+            };
             if first.starts_with('#') {
                 continue;
             }
