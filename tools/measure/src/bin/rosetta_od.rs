@@ -8,57 +8,73 @@ use omegaflow::archivar::{
 };
 
 struct Station {
-    name: &'static str,
-    itrf_m: [f64; 3],
+    body: String,
+    x_m: f64,
+    y_m: f64,
+    z_m: f64,
+    vx_m_per_year: f64,
+    vy_m_per_year: f64,
+    vz_m_per_year: f64,
+    epoch_year: f64,
 }
 
-const STATIONS: [Station; 6] = [
-    Station {
-        name: "DSS-15",
-        itrf_m: [-2353538.9600, -4641649.4082, 3676669.9412],
-    },
-    Station {
-        name: "DSS-24",
-        itrf_m: [-2354906.7148, -4646840.0771, 3669242.2852],
-    },
-    Station {
-        name: "DSS-25",
-        itrf_m: [-2355022.0180, -4646953.1865, 3669040.5265],
-    },
-    Station {
-        name: "DSS-54",
-        itrf_m: [4849434.4781, -360723.8954, 4114618.8518],
-    },
-    Station {
-        name: "DSS-55",
-        itrf_m: [4849525.2464, -360606.0885, 4114495.1006],
-    },
-    Station {
-        name: "NN11",
-        itrf_m: [-2414067.6590, 4907869.5120, -3270604.6270],
-    },
-];
-
-fn station_record(name: &str) -> Option<&'static Station> {
-    STATIONS.iter().find(|station| station.name == name)
+fn load_stations(path: &Path) -> Option<HashMap<String, Station>> {
+    let text = std::fs::read_to_string(path).ok()?;
+    let mut out = HashMap::new();
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut parts = line.split('\t');
+        let Some(name) = parts.next() else {
+            continue;
+        };
+        let Some(body) = parts.next() else {
+            continue;
+        };
+        let numbers: Vec<f64> = (0..7)
+            .map(|_| parts.next().and_then(|p| p.trim().parse::<f64>().ok()))
+            .collect::<Option<Vec<f64>>>()?;
+        out.insert(
+            name.to_string(),
+            Station {
+                body: body.to_string(),
+                x_m: numbers[0],
+                y_m: numbers[1],
+                z_m: numbers[2],
+                vx_m_per_year: numbers[3],
+                vy_m_per_year: numbers[4],
+                vz_m_per_year: numbers[5],
+                epoch_year: numbers[6],
+            },
+        );
+    }
+    (!out.is_empty()).then_some(out)
 }
 
-fn load_ephemeris(path: &Path) -> Option<(String, HashMap<String, BodyEphemeris>)> {
+fn load_ephemeris(path: &Path) -> Option<HashMap<String, BodyEphemeris>> {
     let bytes = std::fs::read(path).ok()?;
     let ephemeris = parse_ephemeris_binary(&bytes)?;
     let name = body_of_ephemeris_asset(path.to_str()?)?;
     let mut map = HashMap::new();
-    map.insert(name.clone(), ephemeris);
-    Some((name, map))
+    map.insert(name, ephemeris);
+    Some(map)
 }
 
 fn station_position(
-    itrf_m: [f64; 3],
+    station: &Station,
     tdb: f64,
-    body: &str,
     ephemerides: &HashMap<String, BodyEphemeris>,
 ) -> Option<[f64; 3]> {
-    body_fixed_vector_to_icrs(body, itrf_m, tdb, ephemerides)
+    let years = tdb / 86400.0 / 365.25 + 2000.0;
+    let dt = years - station.epoch_year;
+    let itrf_m = [
+        station.x_m + station.vx_m_per_year * dt,
+        station.y_m + station.vy_m_per_year * dt,
+        station.z_m + station.vz_m_per_year * dt,
+    ];
+    body_fixed_vector_to_icrs(&station.body, itrf_m, tdb, ephemerides)
 }
 
 fn target_state(
@@ -142,14 +158,25 @@ impl Tally {
     }
 }
 
-fn check_lighttime(package: &Path, earth_path: Option<&Path>) -> Option<Tally> {
+fn check_lighttime(
+    package: &Path,
+    earth_path: Option<&Path>,
+    stations_path: Option<&Path>,
+) -> Option<Tally> {
     let Some(earth_path) = earth_path else {
         println!(
             "rosetta_od: lighttime absent — no --earth: the station has no ICRS address, and the geocentric substitute is not taken"
         );
         return None;
     };
-    let (body, ephemerides) = load_ephemeris(earth_path)?;
+    let Some(stations_path) = stations_path else {
+        println!(
+            "rosetta_od: lighttime absent — no --stations: the compiled station table is the station's address"
+        );
+        return None;
+    };
+    let stations = load_stations(stations_path)?;
+    let ephemerides = load_ephemeris(earth_path)?;
     let oem_path = package.join("ros.oem");
     let text = std::fs::read_to_string(&oem_path).ok()?;
     let segments = oem::parse_oem(&text)?;
@@ -183,7 +210,7 @@ fn check_lighttime(package: &Path, earth_path: Option<&Path>) -> Option<Tally> {
                 tally.absent_time += block.observations.len();
                 continue;
             };
-            let Some(station) = station_record(&station_name) else {
+            let Some(station) = stations.get(&station_name) else {
                 tally.absent_station += block.observations.len();
                 continue;
             };
@@ -198,8 +225,7 @@ fn check_lighttime(package: &Path, earth_path: Option<&Path>) -> Option<Tally> {
                     tally.absent_time += 1;
                     continue;
                 };
-                let Some(position) = station_position(station.itrf_m, label, &body, &ephemerides)
-                else {
+                let Some(position) = station_position(station, label, &ephemerides) else {
                     tally.absent_state += 1;
                     continue;
                 };
@@ -235,8 +261,9 @@ fn check_lighttime(package: &Path, earth_path: Option<&Path>) -> Option<Tally> {
             }
         }
     }
-    let frame =
-        format!("ICRS barycentric (OEM {center}), station rotated through ephemeris_earth.bin");
+    let frame = format!(
+        "ICRS barycentric (OEM {center}), station from the compiled reference table, rotation through ephemeris_earth.bin"
+    );
     println!(
         "rosetta_od: lighttime {} observation(s) — {} solved, {} label absent, {} station absent, {} state absent; state minus label {:.6} .. {:.6} s; frame {frame}",
         tally.observations,
@@ -254,6 +281,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut package = PathBuf::from(".");
     let mut earth = PathBuf::new();
+    let mut stations = PathBuf::new();
     let mut check = false;
     let mut i = 0;
     while i < args.len() {
@@ -267,6 +295,12 @@ fn main() {
             "--earth" => {
                 if let Some(value) = args.get(i + 1) {
                     earth = PathBuf::from(value);
+                }
+                i += 2;
+            }
+            "--stations" => {
+                if let Some(value) = args.get(i + 1) {
+                    stations = PathBuf::from(value);
                 }
                 i += 2;
             }
@@ -288,7 +322,15 @@ fn main() {
     } else {
         Some(earth.as_path())
     };
-    if check_lighttime(&package, earth_arg).is_none() && earth_arg.is_some() {
+    let stations_arg = if stations.as_os_str().is_empty() {
+        None
+    } else {
+        Some(stations.as_path())
+    };
+    if check_lighttime(&package, earth_arg, stations_arg).is_none()
+        && earth_arg.is_some()
+        && stations_arg.is_some()
+    {
         println!(
             "rosetta_od: lighttime absent — {} or {} carry no readable state",
             package.join("ros.oem").display(),
