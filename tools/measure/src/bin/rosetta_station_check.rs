@@ -219,6 +219,119 @@ fn rotation_fit(pairs: &[([f64; 3], [f64; 3])]) -> Option<([f64; 3], f64, f64)> 
     Some((omega, before.sqrt(), after.sqrt()))
 }
 
+fn solve_n(mut a: Vec<Vec<f64>>, mut b: Vec<f64>) -> Option<Vec<f64>> {
+    let n = b.len();
+    for column in 0..n {
+        let mut pivot = column;
+        for row in column + 1..n {
+            if a[row][column].abs() > a[pivot][column].abs() {
+                pivot = row;
+            }
+        }
+        if a[pivot][column].abs() < 1e-18 {
+            return None;
+        }
+        a.swap(column, pivot);
+        b.swap(column, pivot);
+        for row in column + 1..n {
+            let factor = a[row][column] / a[column][column];
+            for k in column..n {
+                a[row][k] -= factor * a[column][k];
+            }
+            b[row] -= factor * b[column];
+        }
+    }
+    let mut x = vec![0.0; n];
+    for row in (0..n).rev() {
+        let mut sum = b[row];
+        for k in row + 1..n {
+            sum -= a[row][k] * x[k];
+        }
+        x[row] = sum / a[row][row];
+    }
+    Some(x)
+}
+
+fn rigid_fit(pairs: &[([f64; 3], [f64; 3])]) -> Option<([f64; 3], [f64; 3], f64, f64)> {
+    let mut normal = vec![vec![0.0f64; 6]; 6];
+    let mut rhs = vec![0.0f64; 6];
+    for (r, d) in pairs {
+        let rows = [
+            [1.0, 0.0, 0.0, 0.0, r[2], -r[1]],
+            [0.0, 1.0, 0.0, -r[2], 0.0, r[0]],
+            [0.0, 0.0, 1.0, r[1], -r[0], 0.0],
+        ];
+        for (row, target) in rows.iter().zip(d.iter()) {
+            for i in 0..6 {
+                for j in 0..6 {
+                    normal[i][j] += row[i] * row[j];
+                }
+                rhs[i] += row[i] * target;
+            }
+        }
+    }
+    let x = solve_n(normal, rhs)?;
+    let translation = [x[0], x[1], x[2]];
+    let omega = [x[3], x[4], x[5]];
+    let mut before = 0.0;
+    let mut after = 0.0;
+    for (r, d) in pairs {
+        before += d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+        let predicted = [
+            translation[0] + omega[1] * r[2] - omega[2] * r[1],
+            translation[1] + omega[2] * r[0] - omega[0] * r[2],
+            translation[2] + omega[0] * r[1] - omega[1] * r[0],
+        ];
+        let e = [
+            d[0] - predicted[0],
+            d[1] - predicted[1],
+            d[2] - predicted[2],
+        ];
+        after += e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    }
+    Some((translation, omega, before.sqrt(), after.sqrt()))
+}
+
+fn residual_after_rigid(translation: [f64; 3], omega: [f64; 3], r: [f64; 3], d: [f64; 3]) -> f64 {
+    let predicted = [
+        translation[0] + omega[1] * r[2] - omega[2] * r[1],
+        translation[1] + omega[2] * r[0] - omega[0] * r[2],
+        translation[2] + omega[0] * r[1] - omega[1] * r[0],
+    ];
+    let e = [
+        d[0] - predicted[0],
+        d[1] - predicted[1],
+        d[2] - predicted[2],
+    ];
+    (e[0] * e[0] + e[1] * e[1] + e[2] * e[2]).sqrt() * 1.0e6
+}
+
+fn velocity_offset(pairs: &[([f64; 3], [f64; 3])], years: f64) -> Option<([f64; 3], f64)> {
+    if pairs.is_empty() || !years.is_finite() || years <= 0.0 {
+        return None;
+    }
+    let mut mean = [0.0f64; 3];
+    for (_, d) in pairs {
+        for axis in 0..3 {
+            mean[axis] += d[axis];
+        }
+    }
+    for axis in 0..3 {
+        mean[axis] /= pairs.len() as f64;
+    }
+    let rate = [
+        mean[0] / years * 1.0e6,
+        mean[1] / years * 1.0e6,
+        mean[2] / years * 1.0e6,
+    ];
+    let mut worst = 0.0f64;
+    for (_, d) in pairs {
+        let e = [d[0] - mean[0], d[1] - mean[1], d[2] - mean[2]];
+        worst = worst.max((e[0] * e[0] + e[1] * e[1] + e[2] * e[2]).sqrt() * 1.0e6);
+    }
+    Some((rate, worst))
+}
+
 fn main() {
     let mut worst_document = 0.0f64;
     let mut worst_station = 0.0f64;
@@ -323,6 +436,14 @@ fn main() {
         );
     }
 
+    match velocity_offset(&station_pairs, 8.0) {
+        Some((rate, spread)) => println!(
+            "station-check: the 1997→2005 residual reads as one velocity offset of the Goldstone site — ({:+.2}, {:+.2}, {:+.2}) mm/year, leaving {:.1} mm spread across the three antennas",
+            rate[0], rate[1], rate[2], spread
+        ),
+        None => println!("station-check: the residual carries no velocity offset"),
+    }
+
     match rotation_fit(&station_pairs) {
         Some((omega, before, after)) => {
             let magnitude_mas = (omega[0] * omega[0] + omega[1] * omega[1] + omega[2] * omega[2])
@@ -419,6 +540,47 @@ fn main() {
             );
         }
         None => println!("station-check: the NAIF residual carries no rotation"),
+    }
+
+    match rigid_fit(&naif_pairs) {
+        Some((translation, omega, before, after)) => {
+            let omega_mas = (omega[0] * omega[0] + omega[1] * omega[1] + omega[2] * omega[2])
+                .sqrt()
+                * 206_264_806.0;
+            println!(
+                "station-check: the NAIF residual under one rigid translation and rotation — T ({:+.1}, {:+.1}, {:+.1}) mm, |omega| {omega_mas:.3} mas, {:.1} mm before the fit, {:.1} mm after",
+                translation[0] * 1.0e6,
+                translation[1] * 1.0e6,
+                translation[2] * 1.0e6,
+                before * 1.0e6,
+                after * 1.0e6
+            );
+            for (index, naif) in NAIF_2020.iter().enumerate() {
+                if let Some((r, d)) = naif_pairs.get(index) {
+                    let rest = residual_after_rigid(translation, omega, *r, *d);
+                    println!(
+                        "station-check: {} keeps {rest:.1} mm after the rigid fit",
+                        naif.name
+                    );
+                }
+            }
+        }
+        None => println!("station-check: the NAIF residual carries no rigid fit"),
+    }
+
+    match velocity_offset(&naif_pairs[0..3], NAIF_EPOCH - 2005.0) {
+        Some((rate, spread)) => println!(
+            "station-check: the Goldstone residual against NAIF reads as one velocity offset — ({:+.2}, {:+.2}, {:+.2}) mm/year, leaving {:.1} mm spread",
+            rate[0], rate[1], rate[2], spread
+        ),
+        None => println!("station-check: the Goldstone residual carries no velocity offset"),
+    }
+    match velocity_offset(&naif_pairs[3..5], NAIF_EPOCH - 1997.0) {
+        Some((rate, spread)) => println!(
+            "station-check: the Madrid residual against NAIF reads as one velocity offset — ({:+.2}, {:+.2}, {:+.2}) mm/year, leaving {:.1} mm spread",
+            rate[0], rate[1], rate[2], spread
+        ),
+        None => println!("station-check: the Madrid residual carries no velocity offset"),
     }
 
     let frozen = [
