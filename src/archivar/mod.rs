@@ -251,6 +251,7 @@ pub mod soho_sem;
 pub mod sorce_ascii;
 pub mod srp;
 pub mod ssusi_aurora;
+pub mod station;
 pub mod substorm;
 pub mod superdarn_cpcp;
 pub mod supermag_index;
