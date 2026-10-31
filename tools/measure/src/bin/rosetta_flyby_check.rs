@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use omegaflow::archivar::geoid::{WGS84_A_M, WGS84_F};
 use omegaflow::archivar::{
     aem, aux, body_barycenter_position, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
-    parse_ephemeris_binary, parse_iso_tdb, tdm,
+    parse_ephemeris_binary, parse_iso_tdb, srp, tdm,
 };
 
 const REFERENCE_ALTITUDE_KM: f64 = 1956.0;
@@ -133,6 +133,7 @@ fn main() {
     let mut gm_km3_s2: Option<f64> = None;
     let mut gm_source = String::new();
     let mut gravity_path = PathBuf::new();
+    let mut flux_w_m2: Option<f64> = None;
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--package"
@@ -145,6 +146,11 @@ fn main() {
         {
             gm_km3_s2 = Some(v);
             gm_source = "argument --gm".to_string();
+            i += 2;
+        } else if args[i] == "--flux"
+            && let Some(v) = args.get(i + 1).and_then(|v| v.parse::<f64>().ok())
+        {
+            flux_w_m2 = Some(v);
             i += 2;
         } else if args[i] == "--gravity"
             && let Some(p) = args.get(i + 1)
@@ -418,6 +424,9 @@ fn main() {
         ),
         None => println!("rosetta-check: perigee epoch does not parse as MJD2000"),
     }
+    let mut mass_at_perigee: Option<f64> = None;
+    let mut array_angle_rad: Option<f64> = None;
+    let mut srp_main_at_perigee: Option<f64> = None;
     if let Some(mjd) = perigee_mjd2000 {
         for (file, label, reference, scale, unit) in [
             ("mass.ascii", "mass", Some(REFERENCE_MASS_KG), 1.0, "kg"),
@@ -453,6 +462,12 @@ fn main() {
             } else {
                 first * scale
             };
+            match file {
+                "mass.ascii" => mass_at_perigee = Some(value),
+                "sa.ascii" => array_angle_rad = Some(first),
+                "srp.ascii" => srp_main_at_perigee = Some(first),
+                _ => {}
+            }
             match reference {
                 Some(r) => println!(
                     "rosetta-check: {label} {value:.6} {unit} at perigee (bracket {left:.6} .. {right:.6}) — reference {r:.4}, delta {:+.6}",
@@ -463,6 +478,82 @@ fn main() {
                 ),
             }
         }
+    }
+
+    match (
+        mass_at_perigee,
+        array_angle_rad,
+        srp_main_at_perigee,
+        flux_w_m2,
+    ) {
+        (Some(mass), Some(angle), Some(main), Some(flux)) => {
+            let normal = [angle.cos(), 0.0, angle.sin()];
+            let faces = [
+                srp::Face {
+                    area_m2: 5.15,
+                    normal: [1.0, 0.0, 0.0],
+                    absorption: 0.909,
+                    diffuse_ratio: 1.0,
+                },
+                srp::Face {
+                    area_m2: 5.15,
+                    normal: [-1.0, 0.0, 0.0],
+                    absorption: 0.853,
+                    diffuse_ratio: 0.925,
+                },
+                srp::Face {
+                    area_m2: 5.4075,
+                    normal: [0.0, 1.0, 0.0],
+                    absorption: 0.795,
+                    diffuse_ratio: 1.0,
+                },
+                srp::Face {
+                    area_m2: 5.4075,
+                    normal: [0.0, -1.0, 0.0],
+                    absorption: 0.750,
+                    diffuse_ratio: 1.0,
+                },
+                srp::Face {
+                    area_m2: 4.2,
+                    normal: [0.0, 0.0, 1.0],
+                    absorption: 0.916,
+                    diffuse_ratio: 1.0,
+                },
+                srp::Face {
+                    area_m2: 4.2,
+                    normal: [0.0, 0.0, -1.0],
+                    absorption: 0.889,
+                    diffuse_ratio: 0.721,
+                },
+                srp::Face {
+                    area_m2: 32.31,
+                    normal,
+                    absorption: 0.840,
+                    diffuse_ratio: 0.313,
+                },
+                srp::Face {
+                    area_m2: 32.31,
+                    normal,
+                    absorption: 0.840,
+                    diffuse_ratio: 0.313,
+                },
+            ];
+            match srp::force_n(&faces, normal, flux) {
+                Some(force) => {
+                    let along = force[0] * normal[0] + force[1] * normal[1] + force[2] * normal[2];
+                    let rebuilt = along / mass / 1000.0;
+                    let implied_flux = flux * main.abs() / rebuilt;
+                    println!(
+                        "rosetta-check: srp rebuilt from the optical table at {flux:.2} W/m2 — {rebuilt:.4e} km/s2 along the sun line, file {main:.4e} (the file counts sunward negative), ratio {:.4}, implied flux {implied_flux:.1} W/m2",
+                        rebuilt / main.abs()
+                    );
+                }
+                None => println!("rosetta-check: the srp rebuild carries no force at this flux"),
+            }
+        }
+        _ => println!(
+            "rosetta-check: the srp rebuild needs the mass, the array angle, the file value and --flux"
+        ),
     }
 
     let alb_path = aux_dir.join("alb.ascii");

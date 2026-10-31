@@ -249,6 +249,7 @@ pub mod soho_eit;
 pub mod soho_lasco;
 pub mod soho_sem;
 pub mod sorce_ascii;
+pub mod srp;
 pub mod ssusi_aurora;
 pub mod substorm;
 pub mod superdarn_cpcp;
