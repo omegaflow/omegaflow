@@ -85,11 +85,13 @@ fn field_shape(line: &str) -> String {
     let parts = tokens(body);
     let key = or_blank(parts.first().cloned());
     let name = or_blank(parts.get(1).cloned());
-    let unit = if parts.len() >= 6 {
-        or_blank(parts.get(4).cloned())
-    } else {
-        or_blank(parts.get(2).cloned())
-    };
+    if parts.len() >= 6 {
+        let kernel = or_blank(parts.get(2).cloned());
+        let force = or_blank(parts.get(3).cloned());
+        let unit = or_blank(parts.get(4).cloned());
+        return format!("field {key} {name} {kernel} {force} {unit}");
+    }
+    let unit = or_blank(parts.get(2).cloned());
     format!("field {key} {name} {unit}")
 }
 

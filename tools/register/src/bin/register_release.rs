@@ -108,6 +108,62 @@ fn report(release: &str, published: &str, label: &str) {
     );
 }
 
+fn expand_artifacts(text: &str) -> String {
+    if !text.lines().any(|line| line.starts_with("artifact ")) {
+        return text.to_string();
+    }
+    let mut out = String::new();
+    for block in text.split("\n\n") {
+        if block.trim().is_empty() {
+            continue;
+        }
+        let mut shared: Vec<&str> = Vec::new();
+        let mut artifacts: Vec<Vec<&str>> = Vec::new();
+        for line in block.lines() {
+            if let Some(rest) = line.strip_prefix("artifact ") {
+                artifacts.push(rest.split_whitespace().collect());
+            } else if !line.starts_with("url ")
+                && !line.starts_with("sha256 ")
+                && !line.starts_with("coverage ")
+            {
+                shared.push(line);
+            }
+        }
+        if artifacts.is_empty() {
+            out.push_str(block.trim_end());
+            out.push_str("\n\n");
+            continue;
+        }
+        for artifact in &artifacts {
+            let url = artifact.first().copied().unwrap_or("");
+            let sha = artifact.get(1).copied().unwrap_or("");
+            let interval = artifact.get(2).copied().unwrap_or("");
+            let coverage = artifact.get(3).copied().unwrap_or("");
+            let origin = artifact.get(4).copied().unwrap_or("");
+            out.push_str(&format!("url {url}\n"));
+            if !sha.is_empty() {
+                out.push_str(&format!("sha256 {sha}\n"));
+            }
+            if !origin.is_empty() {
+                out.push_str(&format!("origin {origin}\n"));
+            }
+            if !coverage.is_empty() {
+                out.push_str(&format!("coverage {coverage}\n"));
+            }
+            for line in &shared {
+                if line.starts_with("field ") && !interval.is_empty() {
+                    out.push_str(&format!("{line} {interval} 0.0 0.0\n"));
+                } else {
+                    out.push_str(line);
+                    out.push('\n');
+                }
+            }
+            out.push('\n');
+        }
+    }
+    out
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let publish = args.iter().any(|a| a == "--publish");
@@ -125,7 +181,8 @@ fn main() {
             std::process::exit(2);
         }
     };
-    let (body, rows, applied, notes) = build(&text);
+    let (built, rows, applied, notes) = build(&text);
+    let body = expand_artifacts(&built);
 
     let target = if publish {
         if std::env::var_os("OMEGAFLOW_REGISTER_RELEASE").is_none() {
