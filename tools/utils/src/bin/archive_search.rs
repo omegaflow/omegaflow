@@ -2823,8 +2823,10 @@ fn usage_full() {
         "  --frbcat    FRBSTATS fast-radio-burst catalogue (live gviz CSV, the sheet fetch_catalogue.py reads; falls back to the repo's raw catalogue.csv), keyless; url + frb/ra/dec/redshift (full result in the temp file)"
     );
     eprintln!(
-        "  --psa       ESA PSA FTP tree crawl: --psa "<name>" [root=<url> depth=<n> pages=<n>]
-    --tap       IVOA TAP sync ADQL query: `--tap \"endpoint=<tap-sync-url> SELECT ...\"`, keyless; rows as col=val (find a service with `--regtap`)"
+        "  --psa       ESA PSA FTP tree crawl: --psa \"<name>\" [root=<url> depth=<n> pages=<n>]"
+    );
+    eprintln!(
+        "  --tap       IVOA TAP sync ADQL query: `--tap \"endpoint=<tap-sync-url> SELECT ...\"`, keyless; rows as col=val (find a service with `--regtap`)"
     );
     eprintln!(
         "  --pangaea   PANGAEA earth-science data search (pangaea.de/advanced/search.php), keyless; doi + title/abstract"
