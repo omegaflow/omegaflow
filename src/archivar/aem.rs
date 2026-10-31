@@ -183,6 +183,121 @@ pub fn euler_angle_deg(a: &[f64; 4], b: &[f64; 4]) -> f64 {
     2.0 * clamped.acos().to_degrees()
 }
 
+pub fn body_to_reference(q: [f64; 4]) -> [[f64; 3]; 3] {
+    let [x, y, z, w] = q;
+    [
+        [
+            1.0 - 2.0 * (y * y + z * z),
+            2.0 * (x * y - z * w),
+            2.0 * (x * z + y * w),
+        ],
+        [
+            2.0 * (x * y + z * w),
+            1.0 - 2.0 * (x * x + z * z),
+            2.0 * (y * z - x * w),
+        ],
+        [
+            2.0 * (x * z - y * w),
+            2.0 * (y * z + x * w),
+            1.0 - 2.0 * (x * x + y * y),
+        ],
+    ]
+}
+
+pub fn to_body_frame(q: [f64; 4], reference_vector: [f64; 3]) -> [f64; 3] {
+    let r = body_to_reference(q);
+    [
+        r[0][0] * reference_vector[0]
+            + r[1][0] * reference_vector[1]
+            + r[2][0] * reference_vector[2],
+        r[0][1] * reference_vector[0]
+            + r[1][1] * reference_vector[1]
+            + r[2][1] * reference_vector[2],
+        r[0][2] * reference_vector[0]
+            + r[1][2] * reference_vector[1]
+            + r[2][2] * reference_vector[2],
+    ]
+}
+
+fn lagrange_at(nodes: &[(f64, [f64; 4])], seconds: f64) -> Option<[f64; 4]> {
+    if nodes.is_empty() {
+        return None;
+    }
+    let mut out = [0.0; 4];
+    for (index, (t_i, q_i)) in nodes.iter().enumerate() {
+        let mut weight = 1.0;
+        for (other, (t_j, _)) in nodes.iter().enumerate() {
+            if other == index {
+                continue;
+            }
+            let denominator = t_i - t_j;
+            if denominator == 0.0 {
+                return None;
+            }
+            weight *= (seconds - t_j) / denominator;
+        }
+        for component in 0..4 {
+            out[component] += weight * q_i[component];
+        }
+    }
+    let norm = (out[0] * out[0] + out[1] * out[1] + out[2] * out[2] + out[3] * out[3]).sqrt();
+    if norm <= 0.0 {
+        return None;
+    }
+    Some([out[0] / norm, out[1] / norm, out[2] / norm, out[3] / norm])
+}
+
+pub fn quaternion_at(
+    segments: &[AemSegment],
+    seconds: f64,
+    lsk: &crate::archivar::LeapSeconds,
+    degree: usize,
+) -> Option<[f64; 4]> {
+    let mut nodes: Vec<(f64, [f64; 4])> = Vec::new();
+    for segment in segments {
+        for record in &segment.records {
+            let Some(t) = crate::archivar::parse_iso_tdb(&record.time, lsk) else {
+                continue;
+            };
+            let Some(q) = record.quaternion_qc_last() else {
+                continue;
+            };
+            nodes.push((t, q));
+        }
+    }
+    nodes.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    nodes.dedup_by(|a, b| a.0 == b.0);
+    for index in 1..nodes.len() {
+        let previous = nodes[index - 1].1;
+        let current = nodes[index].1;
+        let dot = previous[0] * current[0]
+            + previous[1] * current[1]
+            + previous[2] * current[2]
+            + previous[3] * current[3];
+        if dot < 0.0 {
+            nodes[index].1 = [-current[0], -current[1], -current[2], -current[3]];
+        }
+    }
+    if nodes.len() < 2 {
+        return None;
+    }
+    let mut pivot = 0;
+    let mut best = f64::INFINITY;
+    for (index, (t, _)) in nodes.iter().enumerate() {
+        let distance = (t - seconds).abs();
+        if distance < best {
+            best = distance;
+            pivot = index;
+        }
+    }
+    let half = degree / 2;
+    let start = pivot
+        .saturating_sub(half)
+        .min(nodes.len().saturating_sub(degree + 1));
+    let end = (start + degree + 1).min(nodes.len());
+    lagrange_at(&nodes[start..end], seconds)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

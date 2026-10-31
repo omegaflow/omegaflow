@@ -155,6 +155,56 @@ pub fn span(segments: &[OemSegment]) -> Option<(String, String)> {
     Some((first?.to_string(), last?.to_string()))
 }
 
+pub fn positions_in_center(
+    segments: &[OemSegment],
+    center: &str,
+    lsk: &crate::archivar::LeapSeconds,
+) -> Vec<(f64, [f64; 3], [f64; 3])> {
+    let mut out = Vec::new();
+    for segment in segments {
+        if segment.center_name != center {
+            continue;
+        }
+        for record in &segment.records {
+            let Some(seconds) = crate::archivar::parse_iso_tdb(&record.time, lsk) else {
+                continue;
+            };
+            out.push((seconds, record.position_km, record.velocity_km_s));
+        }
+    }
+    out.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    out
+}
+
+pub fn position_at(points: &[(f64, [f64; 3], [f64; 3])], seconds: f64) -> Option<[f64; 3]> {
+    let first = points.first()?;
+    let last = points.last()?;
+    if seconds < first.0 || seconds > last.0 {
+        return None;
+    }
+    let mut low = 0usize;
+    let mut high = points.len() - 1;
+    while high - low > 1 {
+        let middle = (low + high) / 2;
+        if points[middle].0 <= seconds {
+            low = middle;
+        } else {
+            high = middle;
+        }
+    }
+    let (t0, p0, _) = points[low];
+    let (t1, p1, _) = points[high];
+    if t1 == t0 {
+        return Some(p0);
+    }
+    let w = (seconds - t0) / (t1 - t0);
+    Some([
+        p0[0] + (p1[0] - p0[0]) * w,
+        p0[1] + (p1[1] - p0[1]) * w,
+        p0[2] + (p1[2] - p0[2]) * w,
+    ])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

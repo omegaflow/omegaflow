@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use omegaflow::archivar::geoid::{WGS84_A_M, WGS84_F};
 use omegaflow::archivar::{
     aem, aux, body_barycenter_position, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
-    parse_ephemeris_binary, tdm,
+    parse_ephemeris_binary, parse_iso_tdb, tdm,
 };
 
 const REFERENCE_ALTITUDE_KM: f64 = 1956.0;
@@ -19,6 +19,10 @@ const REFERENCE_ARGP_DEG: f64 = 143.09909;
 const REFERENCE_VINF_KM_S: f64 = 3.8634932;
 const REFERENCE_ARRAY_ANGLE_DEG: f64 = 14.5;
 const REFERENCE_ALBEDO_M_S2: f64 = 1.5e-8;
+const REFERENCE_MINUS_X_ENTER: &str = "2005-03-04T21:52:00";
+const REFERENCE_MINUS_X_EXIT: &str = "2005-03-05T00:20:00";
+const REFERENCE_MINUS_Z_ENTER: &str = "2005-03-04T22:17:00";
+const REFERENCE_Y_ORTHOGONAL_DEG: f64 = 8.0;
 
 fn ymd_to_unix(y: i64, m: u32, d: u32) -> Option<i64> {
     if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
@@ -83,6 +87,41 @@ fn files_in(dir: &Path, suffix: &str) -> Vec<PathBuf> {
         }
     }
     out.sort();
+    out
+}
+
+fn plane_crossings(
+    direction: &impl Fn(f64) -> Option<[f64; 3]>,
+    axis: usize,
+    from: f64,
+    to: f64,
+    step: f64,
+) -> Vec<f64> {
+    let mut out = Vec::new();
+    let mut previous: Option<f64> = None;
+    let mut t = from;
+    while t <= to {
+        if let Some(v) = direction(t) {
+            let sign = v[axis];
+            if let Some(p) = previous
+                && p.signum() != sign.signum()
+            {
+                let mut low = t - step;
+                let mut high = t;
+                for _ in 0..60 {
+                    let middle = 0.5 * (low + high);
+                    match direction(middle) {
+                        Some(vm) if vm[axis].signum() == p.signum() => low = middle,
+                        Some(_) => high = middle,
+                        None => break,
+                    }
+                }
+                out.push(high);
+            }
+            previous = Some(sign);
+        }
+        t += step;
+    }
     out
 }
 
@@ -456,6 +495,116 @@ fn main() {
             aem::records(&attitude),
             worst.map(|(d, _)| d)
         );
+        let degree = match attitude.iter().find_map(|s| s.interpolation_degree) {
+            Some(declared) => declared as usize,
+            None => {
+                println!(
+                    "rosetta-check: the AEM declares no interpolation degree — the attitude check is absent"
+                );
+                return;
+            }
+        };
+        let earth_direction = {
+            let norm = radius_km;
+            [
+                -position[0] / norm,
+                -position[1] / norm,
+                -position[2] / norm,
+            ]
+        };
+        for (label, civil) in [
+            ("perigee", epoch.clone()),
+            ("paper 22:17 TDB", "2005-03-04T22:17:00".to_string()),
+        ] {
+            let Some(seconds) = civil_to_unix(&civil).map(|u| u - J2000_UNIX) else {
+                println!("rosetta-check: {label} does not parse");
+                continue;
+            };
+            let Some(q) = aem::quaternion_at(&attitude, seconds, &lsk, degree) else {
+                println!("rosetta-check: {label} carries no attitude interpolation");
+                continue;
+            };
+            let body = aem::to_body_frame(q, earth_direction);
+            let angle_minus_x = (-body[0]).clamp(-1.0, 1.0).acos().to_degrees();
+            let angle_minus_z = (-body[2]).clamp(-1.0, 1.0).acos().to_degrees();
+            println!(
+                "rosetta-check: earth direction in body frame at {label} — x {:+.4}, y {:+.4}, z {:+.4}; angle to -X {angle_minus_x:.2} deg, to -Z {angle_minus_z:.2} deg",
+                body[0], body[1], body[2]
+            );
+        }
+
+        let points = oem::positions_in_center(&segments, "EARTH", &lsk);
+        let direction = |seconds: f64| -> Option<[f64; 3]> {
+            let p = oem::position_at(&points, seconds)?;
+            let q = aem::quaternion_at(&attitude, seconds, &lsk, degree)?;
+            let norm = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+            if norm <= 0.0 {
+                return None;
+            }
+            Some(aem::to_body_frame(
+                q,
+                [-p[0] / norm, -p[1] / norm, -p[2] / norm],
+            ))
+        };
+        if let Some(base) = parse_iso_tdb(&epoch, &lsk) {
+            let minus_x = plane_crossings(
+                &direction,
+                0,
+                base - 4.0 * 3600.0,
+                base + 6.0 * 3600.0,
+                10.0,
+            );
+            let minus_z = plane_crossings(
+                &direction,
+                2,
+                base - 4.0 * 3600.0,
+                base + 6.0 * 3600.0,
+                10.0,
+            );
+            let reference = |civil: &str| parse_iso_tdb(civil, &lsk);
+            let enter = reference(REFERENCE_MINUS_X_ENTER);
+            let exit = reference(REFERENCE_MINUS_X_EXIT);
+            let z_enter = reference(REFERENCE_MINUS_Z_ENTER);
+            let delta = |crossing: f64, printed: Option<f64>| match printed {
+                Some(r) => format!("{:+.0} s", crossing - r),
+                None => "the printed time does not parse".to_string(),
+            };
+            match (minus_x.first(), minus_x.get(1)) {
+                (Some(first), Some(second)) => println!(
+                    "rosetta-check: -X face visible from {:+.1} to {:+.1} min around perigee — paper 21:52 and 00:20, delta {} and {}",
+                    (first - base) / 60.0,
+                    (second - base) / 60.0,
+                    delta(*first, enter),
+                    delta(*second, exit)
+                ),
+                _ => println!("rosetta-check: -X visibility crossings absent"),
+            }
+            match minus_z.first() {
+                Some(first) => println!(
+                    "rosetta-check: -Z face enters visibility at {:+.1} min around perigee — paper 22:17, delta {}",
+                    (first - base) / 60.0,
+                    delta(*first, z_enter)
+                ),
+                None => println!("rosetta-check: -Z visibility crossing absent"),
+            }
+            let mut worst: f64 = 0.0;
+            let mut worst_at = 0.0;
+            let mut t = base - 2.0 * 3600.0;
+            while t <= base + 2.0 * 3600.0 {
+                if let Some(v) = direction(t) {
+                    let deviation = v[1].abs().min(1.0).asin().to_degrees();
+                    if deviation > worst {
+                        worst = deviation;
+                        worst_at = t;
+                    }
+                }
+                t += 20.0;
+            }
+            println!(
+                "rosetta-check: the body Y axis stays {worst:.2} deg from square to the earth direction within two hours (at {:+.0} min) — paper within {REFERENCE_Y_ORTHOGONAL_DEG:.0} deg",
+                (worst_at - base) / 60.0
+            );
+        }
     }
 
     let dsn = files_in(&package.join("DSN_data"), ".tdm.txt");
