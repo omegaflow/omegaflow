@@ -14,6 +14,9 @@ const REFERENCE_VELOCITY_KM_S: f64 = 10.517049;
 const REFERENCE_SEMI_MAJOR_KM: f64 = -26704.0701;
 const REFERENCE_ECCENTRICITY: f64 = 1.3120048;
 const REFERENCE_INCLINATION_DEG: f64 = 144.931532;
+const REFERENCE_NODE_DEG: f64 = 170.17250;
+const REFERENCE_ARGP_DEG: f64 = 143.09909;
+const REFERENCE_VINF_KM_S: f64 = 3.8634932;
 
 fn ymd_to_unix(y: i64, m: u32, d: u32) -> Option<i64> {
     if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
@@ -271,6 +274,26 @@ fn main() {
             ];
             let e = (evec[0] * evec[0] + evec[1] * evec[1] + evec[2] * evec[2]).sqrt();
             let inc = (h[2] / hmag).acos().to_degrees();
+            let n = [-h[1], h[0]];
+            let nmag = (n[0] * n[0] + n[1] * n[1]).sqrt();
+            let mut node_deg = n[1].atan2(n[0]).to_degrees();
+            if node_deg < 0.0 {
+                node_deg += 360.0;
+            }
+            let argp_raw = ((evec[0] * n[0] + evec[1] * n[1]) / (nmag * e))
+                .clamp(-1.0, 1.0)
+                .acos()
+                .to_degrees();
+            let argp_deg = if evec[2] < 0.0 {
+                360.0 - argp_raw
+            } else {
+                argp_raw
+            };
+            let v_inf = if a < 0.0 {
+                Some((gm / -a).sqrt())
+            } else {
+                None
+            };
             semi_major.push(a);
             println!(
                 "rosetta-check: elements with gm {gm:.6} from {gm_source} — v {vmag:.9} km/s (delta {:+.3} mm/s), a {a:.4} km (delta {:+.1} m), e {e:.7} (delta {:+.1e}), i {inc:.6} deg (delta {:+.6} deg)",
@@ -278,6 +301,15 @@ fn main() {
                 (a - REFERENCE_SEMI_MAJOR_KM) * 1000.0,
                 e - REFERENCE_ECCENTRICITY,
                 inc - REFERENCE_INCLINATION_DEG
+            );
+            println!(
+                "rosetta-check: angles — node {node_deg:.5} deg (delta {:+.5}), argp {argp_deg:.5} deg (delta {:+.5}), v_inf {} (reference {REFERENCE_VINF_KM_S:.7} km/s)",
+                node_deg - REFERENCE_NODE_DEG,
+                argp_deg - REFERENCE_ARGP_DEG,
+                match v_inf {
+                    Some(x) => format!("{x:.7} km/s (delta {:+.7})", x - REFERENCE_VINF_KM_S),
+                    None => "absent — a is not negative".to_string(),
+                }
             );
         }
         if semi_major.len() > 1 {
