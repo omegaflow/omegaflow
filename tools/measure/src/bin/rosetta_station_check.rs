@@ -159,9 +159,70 @@ fn enu_residual(target: [f64; 3], moved: [f64; 3]) -> Option<([f64; 3], f64)> {
     Some((enu, magnitude))
 }
 
+fn solve3(a: [[f64; 3]; 3], b: [f64; 3]) -> Option<[f64; 3]> {
+    let det = a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
+        - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0])
+        + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
+    if !det.is_finite() || det.abs() < 1e-18 {
+        return None;
+    }
+    let mut out = [0.0; 3];
+    for column in 0..3 {
+        let mut m = a;
+        for row in 0..3 {
+            m[row][column] = b[row];
+        }
+        let d = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
+            - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+            + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+        out[column] = d / det;
+    }
+    Some(out)
+}
+
+fn rotation_fit(pairs: &[([f64; 3], [f64; 3])]) -> Option<([f64; 3], f64, f64)> {
+    let mut a = [[0.0f64; 3]; 3];
+    let mut b = [0.0f64; 3];
+    for (r, d) in pairs {
+        let r2 = r[0] * r[0] + r[1] * r[1] + r[2] * r[2];
+        for i in 0..3 {
+            for j in 0..3 {
+                a[i][j] += if i == j { r2 } else { 0.0 } - r[i] * r[j];
+            }
+        }
+        let cross = [
+            r[1] * d[2] - r[2] * d[1],
+            r[2] * d[0] - r[0] * d[2],
+            r[0] * d[1] - r[1] * d[0],
+        ];
+        for i in 0..3 {
+            b[i] += cross[i];
+        }
+    }
+    let omega = solve3(a, b)?;
+    let mut before = 0.0;
+    let mut after = 0.0;
+    for (r, d) in pairs {
+        before += d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+        let predicted = [
+            omega[1] * r[2] - omega[2] * r[1],
+            omega[2] * r[0] - omega[0] * r[2],
+            omega[0] * r[1] - omega[1] * r[0],
+        ];
+        let e = [
+            d[0] - predicted[0],
+            d[1] - predicted[1],
+            d[2] - predicted[2],
+        ];
+        after += e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    }
+    Some((omega, before.sqrt(), after.sqrt()))
+}
+
 fn main() {
     let mut worst_document = 0.0f64;
     let mut worst_station = 0.0f64;
+    let mut station_pairs: Vec<([f64; 3], [f64; 3])> = Vec::new();
     for earlier in &TABLE_1997 {
         let Some(later) = TABLE_2005.iter().find(|s| s.name == earlier.name) else {
             println!(
@@ -199,6 +260,14 @@ fn main() {
             (Some((enu_d, mag_d)), Some((enu_s, mag_s))) => {
                 worst_document = worst_document.max(mag_d);
                 worst_station = worst_station.max(mag_s);
+                station_pairs.push((
+                    with_station,
+                    [
+                        target[0] - with_station[0],
+                        target[1] - with_station[1],
+                        target[2] - with_station[2],
+                    ],
+                ));
                 println!(
                     "station-check: {} 1997.0 → 2005.0 — document site rate: east {:+6.1} north {:+6.1} up {:+6.1} mm (|d| {:.1}); station rate: east {:+6.1} north {:+6.1} up {:+6.1} mm (|d| {:.1})",
                     earlier.name,
@@ -218,22 +287,78 @@ fn main() {
     println!(
         "station-check: worst over the three Goldstone antennas — {worst_document:.1} mm with the document site rate, {worst_station:.1} mm with the station rate"
     );
-
-    for naif in &NAIF_2020 {
-        let Some(later) = TABLE_2005.iter().find(|s| s.name == naif.name) else {
+    match rotation_fit(&station_pairs) {
+        Some((omega, before, after)) => {
+            let magnitude_mas = (omega[0] * omega[0] + omega[1] * omega[1] + omega[2] * omega[2])
+                .sqrt()
+                * 206_264_806.0;
             println!(
-                "station-check: {} carries no epoch-2005 counterpart for the NAIF comparison",
-                naif.name
+                "station-check: the 1997→2005 residual is a rotation of {magnitude_mas:.3} mas about ({:+.3e}, {:+.3e}, {:+.3e}) rad — {:.1} mm before the fit, {:.1} mm after",
+                omega[0],
+                omega[1],
+                omega[2],
+                before * 1.0e6,
+                after * 1.0e6
             );
-            continue;
+        }
+        None => println!("station-check: the residual carries no rotation"),
+    }
+
+    let mut naif_pairs: Vec<([f64; 3], [f64; 3])> = Vec::new();
+    for naif in &NAIF_2020 {
+        let source = match TABLE_2005.iter().find(|s| s.name == naif.name) {
+            Some(later) => (
+                [later.x_km, later.y_km, later.z_km],
+                [
+                    later.rate_cm_per_year[0] / 1.0e5,
+                    later.rate_cm_per_year[1] / 1.0e5,
+                    later.rate_cm_per_year[2] / 1.0e5,
+                ],
+                2005.0,
+            ),
+            None => match TABLE_1997.iter().find(|s| s.name == naif.name) {
+                Some(earlier) => match cartesian_from_cylindrical(
+                    earlier.longitude_deg,
+                    earlier.spin_axis_km,
+                    earlier.equator_km,
+                ) {
+                    Some(cartesian) => (
+                        cartesian,
+                        [
+                            earlier.site_rate_cm_per_year[0] / 1.0e5,
+                            earlier.site_rate_cm_per_year[1] / 1.0e5,
+                            earlier.site_rate_cm_per_year[2] / 1.0e5,
+                        ],
+                        1997.0,
+                    ),
+                    None => {
+                        println!(
+                            "station-check: {} gives no Cartesian point for the NAIF comparison",
+                            naif.name
+                        );
+                        continue;
+                    }
+                },
+                None => {
+                    println!(
+                        "station-check: {} carries no counterpart for the NAIF comparison",
+                        naif.name
+                    );
+                    continue;
+                }
+            },
         };
-        let rate = [
-            later.rate_cm_per_year[0] / 1.0e5,
-            later.rate_cm_per_year[1] / 1.0e5,
-            later.rate_cm_per_year[2] / 1.0e5,
-        ];
-        let years = NAIF_EPOCH - 2005.0;
-        let moved = propagate(later.x_km, later.y_km, later.z_km, rate, years);
+        let (start, rate, epoch) = source;
+        let years = NAIF_EPOCH - epoch;
+        let moved = propagate(start[0], start[1], start[2], rate, years);
+        naif_pairs.push((
+            moved,
+            [
+                naif.x_km - moved[0],
+                naif.y_km - moved[1],
+                naif.z_km - moved[2],
+            ],
+        ));
         match enu_residual([naif.x_km, naif.y_km, naif.z_km], moved) {
             Some((enu, magnitude)) => println!(
                 "station-check: {} against NAIF at {NAIF_EPOCH:.2} — east {:+6.1} north {:+6.1} up {:+6.1} mm (|d| {magnitude:.1}) over {years:.1} years",
@@ -241,6 +366,23 @@ fn main() {
             ),
             None => println!("station-check: {} gives no NAIF residual", naif.name),
         }
+    }
+
+    match rotation_fit(&naif_pairs) {
+        Some((omega, before, after)) => {
+            let magnitude_mas = (omega[0] * omega[0] + omega[1] * omega[1] + omega[2] * omega[2])
+                .sqrt()
+                * 206_264_806.0;
+            println!(
+                "station-check: the NAIF residual is a rotation of {magnitude_mas:.3} mas about ({:+.3e}, {:+.3e}, {:+.3e}) rad — {:.1} mm before the fit, {:.1} mm after",
+                omega[0],
+                omega[1],
+                omega[2],
+                before * 1.0e6,
+                after * 1.0e6
+            );
+        }
+        None => println!("station-check: the NAIF residual carries no rotation"),
     }
 
     let frozen = [
