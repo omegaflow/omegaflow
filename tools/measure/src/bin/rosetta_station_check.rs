@@ -287,6 +287,42 @@ fn main() {
     println!(
         "station-check: worst over the three Goldstone antennas — {worst_document:.1} mm with the document site rate, {worst_station:.1} mm with the station rate"
     );
+    for earlier in &TABLE_1997 {
+        let Some(later) = TABLE_2005.iter().find(|s| s.name == earlier.name) else {
+            continue;
+        };
+        let Some(cartesian) = cartesian_from_cylindrical(
+            earlier.longitude_deg,
+            earlier.spin_axis_km,
+            earlier.equator_km,
+        ) else {
+            continue;
+        };
+        let document_rate = [
+            earlier.site_rate_cm_per_year[0] / 1.0e5,
+            earlier.site_rate_cm_per_year[1] / 1.0e5,
+            earlier.site_rate_cm_per_year[2] / 1.0e5,
+        ];
+        let station_rate = [
+            later.rate_cm_per_year[0] / 1.0e5,
+            later.rate_cm_per_year[1] / 1.0e5,
+            later.rate_cm_per_year[2] / 1.0e5,
+        ];
+        let with_document = propagate(cartesian[0], cartesian[1], cartesian[2], document_rate, 8.0);
+        let with_station = propagate(cartesian[0], cartesian[1], cartesian[2], station_rate, 8.0);
+        let spread = [
+            (with_station[0] - with_document[0]) * 1.0e6,
+            (with_station[1] - with_document[1]) * 1.0e6,
+            (with_station[2] - with_document[2]) * 1.0e6,
+        ];
+        let spread_mm =
+            (spread[0] * spread[0] + spread[1] * spread[1] + spread[2] * spread[2]).sqrt();
+        println!(
+            "station-check: {} — the document prints two velocity rows for Goldstone; over eight years they part by {:.1} mm (dx {:+.1}, dy {:+.1}, dz {:+.1})",
+            earlier.name, spread_mm, spread[0], spread[1], spread[2]
+        );
+    }
+
     match rotation_fit(&station_pairs) {
         Some((omega, before, after)) => {
             let magnitude_mas = (omega[0] * omega[0] + omega[1] * omega[1] + omega[2] * omega[2])

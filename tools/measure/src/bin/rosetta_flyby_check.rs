@@ -765,6 +765,73 @@ fn main() {
         }
     }
 
+    {
+        let mut spans: Vec<(f64, f64, String)> = Vec::new();
+        let mut sources: Vec<std::path::PathBuf> = Vec::new();
+        for directory in ["ESTRACK_data", "DSN_data"] {
+            let Ok(entries) = std::fs::read_dir(package.join(directory)) else {
+                continue;
+            };
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                if name.contains("METEO") || !(name.ends_with(".tdm") || name.ends_with(".tdm.txt"))
+                {
+                    continue;
+                }
+                sources.push(path);
+            }
+        }
+        for path in &sources {
+            let Ok(text) = std::fs::read_to_string(path) else {
+                continue;
+            };
+            let Some(parsed) = tdm::parse_tdm(&text) else {
+                continue;
+            };
+            for block in &parsed.blocks {
+                if let (Some(start), Some(stop)) = (
+                    parse_iso_tdb(&block.meta.start_time, &lsk),
+                    parse_iso_tdb(&block.meta.stop_time, &lsk),
+                ) {
+                    let Some(station) = block.meta.participant_1.clone() else {
+                        continue;
+                    };
+                    spans.push((start, stop, station));
+                }
+            }
+        }
+        spans.sort_by(|a, b| a.0.total_cmp(&b.0));
+        let mut merged: Vec<(f64, f64)> = Vec::new();
+        for (start, stop, _) in &spans {
+            match merged.last_mut() {
+                Some((_, last_stop)) if *start <= *last_stop => {
+                    if *stop > *last_stop {
+                        *last_stop = *stop;
+                    }
+                }
+                _ => merged.push((*start, *stop)),
+            }
+        }
+        let mut stations: Vec<String> = spans.iter().map(|s| s.2.clone()).collect();
+        stations.sort();
+        stations.dedup();
+        println!(
+            "rosetta-check: tracking inventory — {} TDM file(s), {} block(s), {} participant(s) [{}], {} contiguous pass(es) when touching blocks are merged — the paper states 39",
+            sources.len(),
+            spans.len(),
+            stations.len(),
+            stations.join(", "),
+            merged.len()
+        );
+        let total: f64 = spans.iter().map(|(a, b, _)| b - a).sum();
+        println!(
+            "rosetta-check: tracking inventory — {:.2} h of coverage in the blocks, {:.2} h in the merged arcs",
+            total / 3600.0,
+            merged.iter().map(|(a, b)| b - a).sum::<f64>() / 3600.0
+        );
+    }
+
     let aem_path = package.join("ros.aem");
     if let Ok(text) = std::fs::read_to_string(&aem_path)
         && let Some(attitude) = aem::parse_aem(&text)
