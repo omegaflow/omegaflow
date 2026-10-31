@@ -52,6 +52,19 @@ impl CspAdjust {
         Some((start, end))
     }
 
+    pub fn at_extrapolated(&self, unix: f64) -> Option<f64> {
+        let (start, end) = self.span()?;
+        if !unix.is_finite() {
+            return None;
+        }
+        let x = 2.0 * ((unix - start) / (end - start)) - 1.0;
+        let mut value = 0.0;
+        for coefficient in self.coefficients.iter().rev() {
+            value = value * x + coefficient;
+        }
+        value.is_finite().then_some(value)
+    }
+
     pub fn at(&self, unix: f64) -> Option<f64> {
         let (start, end) = self.span()?;
         if !unix.is_finite() || unix < start || unix > end {
