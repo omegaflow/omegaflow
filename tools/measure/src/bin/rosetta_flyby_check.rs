@@ -1,7 +1,10 @@
 use std::path::{Path, PathBuf};
 
 use omegaflow::archivar::geoid::{WGS84_A_M, WGS84_F};
-use omegaflow::archivar::{aem, aux, embedded_lsk, oem, tdm};
+use omegaflow::archivar::{
+    aem, aux, body_barycenter_position, embedded_lsk, icrs_to_body_geodetic, oem,
+    parse_ephemeris_binary, tdm,
+};
 
 const REFERENCE_ALTITUDE_KM: f64 = 1956.0;
 const REFERENCE_MASS_KG: f64 = 2895.21;
@@ -76,12 +79,24 @@ fn files_in(dir: &Path, suffix: &str) -> Vec<PathBuf> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut package = PathBuf::from(".");
+    let mut earth_bin = PathBuf::new();
+    let mut body = String::new();
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--package"
             && let Some(p) = args.get(i + 1)
         {
             package = PathBuf::from(p);
+            i += 2;
+        } else if args[i] == "--body"
+            && let Some(b) = args.get(i + 1)
+        {
+            body = b.clone();
+            i += 2;
+        } else if args[i] == "--earth"
+            && let Some(p) = args.get(i + 1)
+        {
+            earth_bin = PathBuf::from(p);
             i += 2;
         } else {
             i += 1;
@@ -124,6 +139,64 @@ fn main() {
         return;
     };
     let (altitude_km, latitude_deg) = geodetic_altitude_km(position[0], position[1], position[2]);
+
+    if !earth_bin.as_os_str().is_empty() {
+        match std::fs::read(&earth_bin) {
+            Ok(bytes) => match parse_ephemeris_binary(&bytes) {
+                Some(earth) => {
+                    let mut map = std::collections::HashMap::new();
+                    map.insert(body.clone(), earth);
+                    let seconds = civil_to_unix(&epoch).map(|u| u - 946_728_000.0);
+                    match seconds {
+                        Some(seconds) => match body_barycenter_position(&body, seconds, &map) {
+                            Some(centre) => {
+                                let magnitude = (centre[0] * centre[0]
+                                    + centre[1] * centre[1]
+                                    + centre[2] * centre[2])
+                                    .sqrt();
+                                println!(
+                                    "rosetta-check: earth barycentric |r| {magnitude:.1} — unit check"
+                                );
+                                let polar = [centre[0], centre[1], centre[2] + WGS84_A_M];
+                                match icrs_to_body_geodetic(
+                                    polar[0], polar[1], polar[2], seconds, &body, &map,
+                                ) {
+                                    Some((lat, _lon, depth)) => println!(
+                                        "rosetta-check: pole test — latitude {lat:.3}, altitude {:.3} km (a-b {:.3} expected)",
+                                        -depth,
+                                        (WGS84_A_M * WGS84_F) / 1000.0
+                                    ),
+                                    None => println!("rosetta-check: pole test returned absent"),
+                                }
+                                let point = [
+                                    centre[0] + position[0] * 1000.0,
+                                    centre[1] + position[1] * 1000.0,
+                                    centre[2] + position[2] * 1000.0,
+                                ];
+                                match icrs_to_body_geodetic(
+                                    point[0], point[1], point[2], seconds, &body, &map,
+                                ) {
+                                    Some((lat, lon, depth)) => println!(
+                                        "rosetta-check: library path — latitude {lat:.4}, longitude {lon:.4}, altitude {:.3} km",
+                                        -depth
+                                    ),
+                                    None => {
+                                        println!("rosetta-check: library path returned absent")
+                                    }
+                                }
+                            }
+                            None => {
+                                println!("rosetta-check: earth position absent at {seconds:.1}")
+                            }
+                        },
+                        None => println!("rosetta-check: perigee epoch does not parse"),
+                    }
+                }
+                None => println!("rosetta-check: {} is not an ephemeris", earth_bin.display()),
+            },
+            Err(_) => println!("rosetta-check: {} absent", earth_bin.display()),
+        }
+    }
 
     let reference_unix = match civil_to_unix(REFERENCE_UNIX) {
         Some(u) => u,
