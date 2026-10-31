@@ -56,7 +56,7 @@ const TABLE_1997: [Cylindrical; 5] = [
     },
 ];
 
-const TABLE_2005: [Itrf; 3] = [
+const TABLE_2005: [Itrf; 5] = [
     Itrf {
         name: "DSS-15",
         x_km: -2353.5389600,
@@ -77,6 +77,20 @@ const TABLE_2005: [Itrf; 3] = [
         y_km: -4646.9531865,
         z_km: 3669.0405265,
         rate_cm_per_year: [-1.56, 0.63, -0.30],
+    },
+    Itrf {
+        name: "DSS-54",
+        x_km: 4849.4344781,
+        y_km: -360.7238954,
+        z_km: 4114.6188518,
+        rate_cm_per_year: [-0.74, 1.92, 1.49],
+    },
+    Itrf {
+        name: "DSS-55",
+        x_km: 4849.5252464,
+        y_km: -360.6060885,
+        z_km: 4114.4951006,
+        rate_cm_per_year: [-0.74, 1.92, 1.49],
     },
 ];
 
@@ -480,7 +494,7 @@ fn main() {
         }
     }
     println!(
-        "station-check: worst over the three Goldstone antennas — {worst_document:.1} mm with the document site rate, {worst_station:.1} mm with the station rate"
+        "station-check: worst over the five stations — {worst_document:.1} mm with the document site rate, {worst_station:.1} mm with the station rate"
     );
     for earlier in &TABLE_1997 {
         let Some(later) = TABLE_2005.iter().find(|s| s.name == earlier.name) else {
@@ -513,14 +527,14 @@ fn main() {
         let spread_mm =
             (spread[0] * spread[0] + spread[1] * spread[1] + spread[2] * spread[2]).sqrt();
         println!(
-            "station-check: {} — the document prints two velocity rows for Goldstone; over eight years they part by {:.1} mm (dx {:+.1}, dy {:+.1}, dz {:+.1})",
+            "station-check: {} — the document prints two velocity rows for this site; over eight years they part by {:.1} mm (dx {:+.1}, dy {:+.1}, dz {:+.1})",
             earlier.name, spread_mm, spread[0], spread[1], spread[2]
         );
     }
 
     match velocity_offset(&station_pairs, 8.0) {
         Some((rate, spread)) => println!(
-            "station-check: the 1997→2005 residual reads as one velocity offset of the Goldstone site — ({:+.2}, {:+.2}, {:+.2}) mm/year, leaving {:.1} mm spread across the three antennas",
+            "station-check: the 1997→2005 residual reads as one velocity offset of the site group — ({:+.2}, {:+.2}, {:+.2}) mm/year, leaving {:.1} mm spread across the three antennas",
             rate[0], rate[1], rate[2], spread
         ),
         None => println!("station-check: the residual carries no velocity offset"),
