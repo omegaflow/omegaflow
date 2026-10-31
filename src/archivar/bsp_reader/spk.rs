@@ -56,6 +56,7 @@ enum SpkPayload {
     Type1(SpkType1),
     Type2(SpkType2),
     Type3(SpkType3),
+    Type8(SpkType8),
     Type9(SpkType9),
     Type13(SpkType13),
     Type20(SpkType20),
@@ -343,6 +344,76 @@ impl DiscreteMeta {
             states_start,
             epochs_start,
         })
+    }
+}
+
+#[derive(Clone)]
+struct SpkType8 {
+    file: DafFile,
+    degree: usize,
+    n_states: usize,
+    states_start: u32,
+    first_epoch: f64,
+    step: f64,
+}
+
+impl SpkType8 {
+    fn from_segment(file: &DafFile, start_addr: u32, end_addr: u32) -> Result<Self, SpkError> {
+        let tail = file.read_doubles(end_addr - 3, end_addr)?;
+        let first_epoch = tail[0];
+        let step = tail[1];
+        let degree = tail[2] as usize;
+        let n_states = tail[3] as usize;
+        if n_states == 0 || !(step > 0.0) || !first_epoch.is_finite() {
+            return Err(SpkError::BadType2("type 8 trailer unusable"));
+        }
+        if degree + 1 > n_states {
+            return Err(SpkError::BadType2("type 8 degree exceeds state count"));
+        }
+        let expected_end = start_addr + (6 * n_states) as u32 + 3;
+        if expected_end != end_addr {
+            return Err(SpkError::BadType2(
+                "type 8 segment size does not match trailer",
+            ));
+        }
+        Ok(SpkType8 {
+            file: file.clone(),
+            degree,
+            n_states,
+            states_start: start_addr,
+            first_epoch,
+            step,
+        })
+    }
+
+    fn evaluate(&self, et: f64) -> Result<[f64; 6], SpkError> {
+        let count = (self.degree + 1).min(self.n_states);
+        let raw = (et - self.first_epoch) / self.step;
+        let last = (self.n_states - 1) as f64;
+        let left = if raw <= 0.0 {
+            0usize
+        } else {
+            (raw.floor().min(last)) as usize
+        };
+        let half = (count - 1) / 2;
+        let start = left.saturating_sub(half).min(self.n_states - count);
+        let states = self.file.doubles_native(
+            self.states_start + (6 * start) as u32,
+            self.states_start + (6 * (start + count) - 1) as u32,
+        )?;
+        let mut epochs = Vec::with_capacity(count);
+        for j in 0..count {
+            epochs.push(self.first_epoch + (start + j) as f64 * self.step);
+        }
+        let mut out = [0.0_f64; 6];
+        let mut component = vec![0.0_f64; count];
+        for k in 0..6 {
+            for j in 0..count {
+                component[j] = states[6 * j + k];
+            }
+            out[k] = lagrange_eval(&epochs, &component, et);
+        }
+        Ok(out)
     }
 }
 
@@ -763,6 +834,7 @@ impl SpkFile {
                 1 => SpkPayload::Type1(SpkType1::from_segment(&daf, start_addr, end_addr)?),
                 2 => SpkPayload::Type2(SpkType2::from_segment(&daf, start_addr, end_addr)?),
                 3 => SpkPayload::Type3(SpkType3::from_segment(&daf, start_addr, end_addr)?),
+                8 => SpkPayload::Type8(SpkType8::from_segment(&daf, start_addr, end_addr)?),
                 9 => SpkPayload::Type9(SpkType9::from_segment(&daf, start_addr, end_addr)?),
                 13 => SpkPayload::Type13(SpkType13::from_segment(&daf, start_addr, end_addr)?),
                 20 => SpkPayload::Type20(SpkType20::from_segment(&daf, start_addr, end_addr)?),
@@ -849,6 +921,7 @@ impl SpkFile {
             SpkPayload::Type1(t) => t.evaluate(et),
             SpkPayload::Type2(t) => t.evaluate(et),
             SpkPayload::Type3(t) => t.evaluate(et),
+            SpkPayload::Type8(t) => t.evaluate(et),
             SpkPayload::Type9(t) => t.evaluate(et),
             SpkPayload::Type13(t) => t.evaluate(et),
             SpkPayload::Type20(t) => t.evaluate(et),
