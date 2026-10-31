@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use omegaflow::archivar::geoid::{WGS84_A_M, WGS84_F};
 use omegaflow::archivar::{
-    aem, aux, body_barycenter_position, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
+    aem, aux, body_barycenter_position, csp, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
     parse_ephemeris_binary, parse_iso_tdb, parse_iso_tdb_label, srp, tdm,
 };
 use omegaflow::mathematikerin::tropo;
@@ -830,6 +830,79 @@ fn main() {
             total / 3600.0,
             merged.iter().map(|(a, b)| b - a).sum::<f64>() / 3600.0
         );
+    }
+
+    let gimcal = package.join("DSN_data/gimcal_226_0503_dopr_20050315.csp");
+    if let Ok(text) = std::fs::read_to_string(&gimcal)
+        && let Some(adjustments) = csp::parse_csp(&text)
+        && let Some(unix) = civil_to_unix(&epoch)
+    {
+        let mut windows = 0usize;
+        for adjustment in &adjustments {
+            if !adjustment.complex.contains("74") || !adjustment.part.contains("CHPART") {
+                continue;
+            }
+            windows += 1;
+            if let Some(value) = adjustment.at(unix) {
+                println!(
+                    "rosetta-check: NN1 ionosphere at perigee — {value:+.4} ({} coefficients, window {} .. {})",
+                    adjustment.coefficients.len(),
+                    adjustment.from,
+                    adjustment.to
+                );
+            }
+        }
+        println!("rosetta-check: gimcal carries {windows} NN1 ionosphere window(s) in this file");
+    }
+
+    let meteo = package.join("ESTRACK_data/NN11_METEO_2005_048-070.tdm");
+    if let Ok(text) = std::fs::read_to_string(&meteo)
+        && let Some(parsed) = tdm::parse_tdm(&text)
+        && let Some(base) = parse_iso_tdb_label(&epoch)
+    {
+        let mut series: Vec<(f64, f64)> = Vec::new();
+        let mut nearest: Option<(f64, f64)> = None;
+        for observation in tdm::observations(&parsed) {
+            if observation.name != "TROPO_DRY" {
+                continue;
+            }
+            let Some(t) = parse_iso_tdb(&observation.time, &lsk) else {
+                continue;
+            };
+            let minutes = (t - base) / 60.0;
+            if minutes.abs() <= 60.0 {
+                series.push((minutes, observation.value * 1000.0));
+            }
+            let distance = minutes.abs();
+            if nearest.is_none_or(|(best, _)| distance < best) {
+                nearest = Some((distance, observation.value * 1000.0));
+            }
+        }
+        series.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        match (tropo::polynomial_fit(&series, 5), nearest) {
+            (Some(coefficients), Some((distance, raw))) => {
+                let smoothed = tropo::polynomial_at(&coefficients, 0.0);
+                let worst = series
+                    .iter()
+                    .filter_map(|(t, v)| {
+                        tropo::polynomial_at(&coefficients, *t).map(|f| (f - v).abs())
+                    })
+                    .fold(0.0f64, f64::max);
+                match smoothed {
+                    Some(value) => println!(
+                        "rosetta-check: dry troposphere at perigee — raw {raw:.3} mm (nearest sample {distance:.0} min away), polynomial 5 over ±60 min {value:.3} mm, worst residual {worst:.3} mm over {} samples",
+                        series.len()
+                    ),
+                    None => println!(
+                        "rosetta-check: the troposphere polynomial carries no value at perigee"
+                    ),
+                }
+            }
+            _ => println!(
+                "rosetta-check: the troposphere series carries no fit ({} samples)",
+                series.len()
+            ),
+        }
     }
 
     let aem_path = package.join("ros.aem");

@@ -129,6 +129,72 @@ pub fn wet_zenith_delay_m(temperature_k: f64, humidity_percent: f64) -> Option<f
     if delay.is_finite() { Some(delay) } else { None }
 }
 
+pub fn polynomial_fit(points: &[(f64, f64)], degree: usize) -> Option<Vec<f64>> {
+    if degree == 0 || points.len() < degree + 1 {
+        return None;
+    }
+    let n = degree + 1;
+    let mut normal = vec![vec![0.0f64; n]; n];
+    let mut rhs = vec![0.0f64; n];
+    for (t, value) in points {
+        if !t.is_finite() || !value.is_finite() {
+            return None;
+        }
+        let mut powers = vec![1.0f64; 2 * degree + 1];
+        for k in 1..powers.len() {
+            powers[k] = powers[k - 1] * t;
+        }
+        for i in 0..n {
+            for j in 0..n {
+                normal[i][j] += powers[i + j];
+            }
+            rhs[i] += powers[i] * value;
+        }
+    }
+    let mut a = normal;
+    let mut b = rhs;
+    for column in 0..n {
+        let mut pivot = column;
+        for row in column + 1..n {
+            if a[row][column].abs() > a[pivot][column].abs() {
+                pivot = row;
+            }
+        }
+        if a[pivot][column].abs() < 1e-18 {
+            return None;
+        }
+        a.swap(column, pivot);
+        b.swap(column, pivot);
+        for row in column + 1..n {
+            let factor = a[row][column] / a[column][column];
+            for k in column..n {
+                a[row][k] -= factor * a[column][k];
+            }
+            b[row] -= factor * b[column];
+        }
+    }
+    let mut x = vec![0.0f64; n];
+    for row in (0..n).rev() {
+        let mut sum = b[row];
+        for k in row + 1..n {
+            sum -= a[row][k] * x[k];
+        }
+        x[row] = sum / a[row][row];
+    }
+    Some(x)
+}
+
+pub fn polynomial_at(coefficients: &[f64], t: f64) -> Option<f64> {
+    if coefficients.is_empty() || !t.is_finite() {
+        return None;
+    }
+    let mut value = 0.0;
+    for coefficient in coefficients.iter().rev() {
+        value = value * t + coefficient;
+    }
+    value.is_finite().then_some(value)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -142,6 +208,29 @@ mod tests {
             b_w: Some(1.36127467401223e-3),
             c_w: Some(3.95329695826997e-2),
         }
+    }
+
+    #[test]
+    fn a_quadratic_is_recovered_exactly() {
+        let points: Vec<(f64, f64)> = (0..10)
+            .map(|i| {
+                let t = i as f64;
+                (t, 2.0 + 3.0 * t - 0.5 * t * t)
+            })
+            .collect();
+        let coefficients = polynomial_fit(&points, 2).expect("a fit");
+        assert!((coefficients[0] - 2.0).abs() < 1e-9);
+        assert!((coefficients[1] - 3.0).abs() < 1e-9);
+        assert!((coefficients[2] + 0.5).abs() < 1e-9);
+        assert!(
+            (polynomial_at(&coefficients, 4.5).expect("a value") - (2.0 + 13.5 - 10.125)).abs()
+                < 1e-9
+        );
+    }
+
+    #[test]
+    fn too_few_points_are_absent() {
+        assert!(polynomial_fit(&[(0.0, 1.0), (1.0, 2.0)], 5).is_none());
     }
 
     #[test]
