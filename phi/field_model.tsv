@@ -1572,3 +1572,14 @@ Z_WAVE	inverse-square	electric
 Z_WAVE	inverse-square	em
 amplitude	inverse-square	em
 ozone_tropospheric_vertical_column	point	diffusion
+G	inverse-square	gravity
+GRAV	inverse-square	gravity
+gravity_free_air_anomaly	inverse-square	gravity
+MAG	inverse-square	em
+Scientific_Data_R	inverse-square	em
+EEG.data	inverse-square	electric
+Ch1..Ch64	inverse-square	electric
+aa	inverse-square	em
+depth	inverse-square	geometry
+streamflow	inverse-square	advective
+K	inverse-square	source-parameter
