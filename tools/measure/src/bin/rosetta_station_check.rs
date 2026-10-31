@@ -631,9 +631,20 @@ fn main() {
         match delta {
             Some(d) => {
                 let magnitude = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+                let enu = match enu_residual(
+                    [jpl.x_km, jpl.y_km, jpl.z_km],
+                    [
+                        jpl.x_km + d[0] / 1.0e6,
+                        jpl.y_km + d[1] / 1.0e6,
+                        jpl.z_km + d[2] / 1.0e6,
+                    ],
+                ) {
+                    Some((enu, _)) => enu,
+                    None => [f64::NAN; 3],
+                };
                 println!(
-                    "station-check: {} against the JPL file of 2013 (ITRF2008, epoch 2005.0) — dx {:+8.1} dy {:+8.1} dz {:+8.1} mm, |d| {magnitude:.1} mm",
-                    jpl.name, d[0], d[1], d[2]
+                    "station-check: {} against the JPL file of 2013 (ITRF2008, epoch 2005.0) — dx {:+8.1} dy {:+8.1} dz {:+8.1} mm, |d| {magnitude:.1} mm; east {:+.1} north {:+.1} up {:+.1}",
+                    jpl.name, d[0], d[1], d[2], enu[0], enu[1], enu[2]
                 );
             }
             None => println!(
@@ -641,6 +652,76 @@ fn main() {
                 jpl.name
             ),
         }
+    }
+
+    for name in ["DSS-54", "DSS-55"] {
+        let Some(earlier) = TABLE_1997.iter().find(|s| s.name == name) else {
+            continue;
+        };
+        let Some(jpl) = JPL_2005.iter().find(|s| s.name == name) else {
+            continue;
+        };
+        let Some(cartesian) = cartesian_from_cylindrical(
+            earlier.longitude_deg,
+            earlier.spin_axis_km,
+            earlier.equator_km,
+        ) else {
+            continue;
+        };
+        let rate_esa = [
+            earlier.site_rate_cm_per_year[0] / 1.0e5,
+            earlier.site_rate_cm_per_year[1] / 1.0e5,
+            earlier.site_rate_cm_per_year[2] / 1.0e5,
+        ];
+        let rate_jpl = [-7.4e-6, 1.92e-5, 1.49e-5];
+        let mut best_esa = (f64::INFINITY, 0.0, [0.0; 3]);
+        let mut best_jpl = (f64::INFINITY, 0.0, [0.0; 3]);
+        let mut offset = -10.0;
+        while offset <= 10.0 {
+            let years = 8.0 + offset;
+            let moved = propagate(cartesian[0], cartesian[1], cartesian[2], rate_esa, years);
+            let moved_jpl = propagate(jpl.x_km, jpl.y_km, jpl.z_km, rate_jpl, offset);
+            let basis = match geodetic_latitude_deg(moved[0], moved[1], moved[2]) {
+                Some(latitude) => {
+                    let longitude = moved[1].atan2(moved[0]).to_degrees();
+                    enu_basis(latitude, longitude)
+                }
+                None => None,
+            };
+            if let Some(basis) = basis {
+                let d = [
+                    (moved[0] - jpl.x_km) * 1.0e6,
+                    (moved[1] - jpl.y_km) * 1.0e6,
+                    (moved[2] - jpl.z_km) * 1.0e6,
+                ];
+                let enu = project_enu(basis, d);
+                let magnitude = (enu[0] * enu[0] + enu[1] * enu[1] + enu[2] * enu[2]).sqrt();
+                if magnitude < best_esa.0 {
+                    best_esa = (magnitude, offset, enu);
+                }
+                let d_jpl = [
+                    (moved_jpl[0] - moved[0]) * 1.0e6,
+                    (moved_jpl[1] - moved[1]) * 1.0e6,
+                    (moved_jpl[2] - moved[2]) * 1.0e6,
+                ];
+                let enu_jpl = project_enu(basis, d_jpl);
+                let magnitude_jpl =
+                    (enu_jpl[0] * enu_jpl[0] + enu_jpl[1] * enu_jpl[1] + enu_jpl[2] * enu_jpl[2])
+                        .sqrt();
+                if magnitude_jpl < best_jpl.0 {
+                    best_jpl = (magnitude_jpl, offset, enu_jpl);
+                }
+            }
+            offset += 0.01;
+        }
+        println!(
+            "station-check: {name} epoch scan with the ESA rate — the residual is smallest at {:+.2} years offset, {:.1} mm left (east {:+.1}, north {:+.1}, up {:+.1})",
+            best_esa.1, best_esa.0, best_esa.2[0], best_esa.2[1], best_esa.2[2]
+        );
+        println!(
+            "station-check: {name} epoch scan with the JPL rate — smallest at {:+.2} years, {:.1} mm left (east {:+.1}, north {:+.1}, up {:+.1})",
+            best_jpl.1, best_jpl.0, best_jpl.2[0], best_jpl.2[1], best_jpl.2[2]
+        );
     }
 
     match velocity_offset(&naif_pairs[0..3], NAIF_EPOCH - 2005.0) {
