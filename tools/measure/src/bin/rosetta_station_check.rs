@@ -87,6 +87,39 @@ struct Naif {
     z_km: f64,
 }
 
+const JPL_2005: [Naif; 5] = [
+    Naif {
+        name: "DSS-15",
+        x_km: -2353.5389600,
+        y_km: -4641.6494082,
+        z_km: 3676.6699412,
+    },
+    Naif {
+        name: "DSS-24",
+        x_km: -2354.9067148,
+        y_km: -4646.8400771,
+        z_km: 3669.2422852,
+    },
+    Naif {
+        name: "DSS-25",
+        x_km: -2355.0220181,
+        y_km: -4646.9531865,
+        z_km: 3669.0405265,
+    },
+    Naif {
+        name: "DSS-54",
+        x_km: 4849.4344781,
+        y_km: -360.7238954,
+        z_km: 4114.6188518,
+    },
+    Naif {
+        name: "DSS-55",
+        x_km: 4849.5252463,
+        y_km: -360.6060885,
+        z_km: 4114.4951006,
+    },
+];
+
 const NAIF_EPOCH: f64 = 2020.81;
 
 const NAIF_2020: [Naif; 5] = [
@@ -566,6 +599,48 @@ fn main() {
             }
         }
         None => println!("station-check: the NAIF residual carries no rigid fit"),
+    }
+
+    for jpl in &JPL_2005 {
+        let mut delta: Option<[f64; 3]> = None;
+        if let Some(esa) = TABLE_2005.iter().find(|s| s.name == jpl.name) {
+            delta = Some([
+                (esa.x_km - jpl.x_km) * 1.0e6,
+                (esa.y_km - jpl.y_km) * 1.0e6,
+                (esa.z_km - jpl.z_km) * 1.0e6,
+            ]);
+        } else if let Some(earlier) = TABLE_1997.iter().find(|s| s.name == jpl.name) {
+            if let Some(cartesian) = cartesian_from_cylindrical(
+                earlier.longitude_deg,
+                earlier.spin_axis_km,
+                earlier.equator_km,
+            ) {
+                let rate = [
+                    earlier.site_rate_cm_per_year[0] / 1.0e5,
+                    earlier.site_rate_cm_per_year[1] / 1.0e5,
+                    earlier.site_rate_cm_per_year[2] / 1.0e5,
+                ];
+                let moved = propagate(cartesian[0], cartesian[1], cartesian[2], rate, 8.0);
+                delta = Some([
+                    (moved[0] - jpl.x_km) * 1.0e6,
+                    (moved[1] - jpl.y_km) * 1.0e6,
+                    (moved[2] - jpl.z_km) * 1.0e6,
+                ]);
+            }
+        }
+        match delta {
+            Some(d) => {
+                let magnitude = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+                println!(
+                    "station-check: {} against the JPL file of 2013 (ITRF2008, epoch 2005.0) — dx {:+8.1} dy {:+8.1} dz {:+8.1} mm, |d| {magnitude:.1} mm",
+                    jpl.name, d[0], d[1], d[2]
+                );
+            }
+            None => println!(
+                "station-check: {} carries no ESA counterpart for the JPL file",
+                jpl.name
+            ),
+        }
     }
 
     match velocity_offset(&naif_pairs[0..3], NAIF_EPOCH - 2005.0) {
