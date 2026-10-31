@@ -119,6 +119,21 @@ impl DafEndian {
         }
     }
 
+    fn guess_from_numbers(numbers: &[u8]) -> Option<Self> {
+        let plausible = |nd: u32, ni: u32| (2..=3).contains(&nd) && (6..=10).contains(&ni);
+        let mut be = [0u8; 4];
+        be.copy_from_slice(&numbers[0..4]);
+        let mut ni_be = [0u8; 4];
+        ni_be.copy_from_slice(&numbers[4..8]);
+        if plausible(u32::from_be_bytes(be), u32::from_be_bytes(ni_be)) {
+            return Some(Self::Big);
+        }
+        if plausible(u32::from_le_bytes(be), u32::from_le_bytes(ni_be)) {
+            return Some(Self::Little);
+        }
+        None
+    }
+
     fn u32(&self, buf: [u8; 4]) -> u32 {
         match self {
             Self::Little => u32::from_le_bytes(buf),
@@ -221,7 +236,10 @@ impl DafFile {
         locfmt.copy_from_slice(&bytes[88..96]);
         let endian = match DafEndian::from_locfmt(&locfmt) {
             Some(e) => e,
-            None => return Err(DafError::UnsupportedFormat(locfmt)),
+            None => match DafEndian::guess_from_numbers(&bytes[8..16]) {
+                Some(e) => e,
+                None => return Err(DafError::UnsupportedFormat(locfmt)),
+            },
         };
 
         let nd = {
