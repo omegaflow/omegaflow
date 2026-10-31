@@ -125,6 +125,57 @@ pub fn column_range(file: &AuxFile, index: usize) -> Option<(f64, f64)> {
     Some((low?, high?))
 }
 
+pub const MJD2000_ORIGIN_UNIX: f64 = 946_684_800.0;
+
+pub fn unix_from_mjd2000(mjd2000: f64) -> f64 {
+    MJD2000_ORIGIN_UNIX + mjd2000 * 86_400.0
+}
+
+pub fn record_pairs<'a>(file: &'a AuxFile) -> impl Iterator<Item = (&'a [f64], &'a [f64])> {
+    file.blocks.iter().flat_map(move |block| {
+        block
+            .records
+            .windows(2)
+            .map(move |pair| (pair[0].as_slice(), pair[1].as_slice()))
+    })
+}
+
+pub fn interpolate_at(file: &AuxFile, mjd2000: f64) -> Option<(Vec<f64>, f64, f64)> {
+    let (left, right) = record_pairs(file).find(|(a, b)| a[0] <= mjd2000 && mjd2000 <= b[0])?;
+    let span = right[0] - left[0];
+    if span <= 0.0 {
+        return None;
+    }
+    let w = (mjd2000 - left[0]) / span;
+    let mut values = Vec::with_capacity(left.len().saturating_sub(1));
+    for index in 1..left.len() {
+        let a = *left.get(index)?;
+        let b = *right.get(index)?;
+        values.push(a + (b - a) * w);
+    }
+    Some((values, left[0], right[0]))
+}
+
+pub fn peak(file: &AuxFile, columns: usize) -> Option<(f64, f64, Vec<f64>)> {
+    let mut best: Option<(f64, f64, Vec<f64>)> = None;
+    for block in &file.blocks {
+        for record in &block.records {
+            let mut norm = 0.0;
+            let mut values = Vec::with_capacity(columns);
+            for index in 0..columns {
+                let v = *record.get(index + 1)?;
+                values.push(v);
+                norm += v * v;
+            }
+            let norm = norm.sqrt();
+            if best.as_ref().is_none_or(|(b, _, _)| norm > *b) {
+                best = Some((norm, record[0], values));
+            }
+        }
+    }
+    best
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -181,5 +232,48 @@ Block header:  0 3 0 0
         assert!((high + 0.80120404773575216).abs() < 1e-12);
         let (low2, high2) = column_range(&file, 1).expect("range");
         assert!(low2 <= high2);
+    }
+
+    #[test]
+    fn the_epoch_origin_is_the_first_of_january_twenty_hundred() {
+        assert_eq!(unix_from_mjd2000(0.0), 946_684_800.0);
+        assert_eq!(unix_from_mjd2000(1.0), 946_771_200.0);
+    }
+
+    #[test]
+    fn an_interpolated_point_sits_between_its_two_records() {
+        let text = SAMPLE
+            .replace(
+                "     1874.5919644884530    -0.80120404773575216     0.17561048387722181",
+                "     1874.5950000000000    -0.60120404773575216     0.27561048387722181",
+            )
+            .replace("Number of columns: 2", "Number of columns: 2");
+        let file = parse_aux(&text).expect("an aux file");
+        let middle = 1874.5920000000000;
+        let (values, left, right) = interpolate_at(&file, middle).expect("a bracket");
+        assert_eq!(left, 1874.5840423192931);
+        assert_eq!(right, 1874.5950000000000);
+        let w = (middle - left) / (right - left);
+        let expected = -0.80120404773575216 + (-0.60120404773575216 + 0.80120404773575216) * w;
+        assert!((values[0] - expected).abs() < 1e-15);
+    }
+
+    #[test]
+    fn an_interpolation_outside_the_records_is_absent() {
+        let file = parse_aux(SAMPLE).expect("an aux file");
+        assert!(interpolate_at(&file, 1875.0).is_none());
+        assert!(interpolate_at(&file, 1800.0).is_none());
+    }
+
+    #[test]
+    fn the_peak_carries_its_epoch_and_components() {
+        let file = parse_aux(SAMPLE).expect("an aux file");
+        let (norm, at, values) = peak(&file, 2).expect("a peak");
+        assert!(
+            (norm - (0.80120404773575216f64.powi(2) + 0.17561048387722181f64.powi(2)).sqrt()).abs()
+                < 1e-15
+        );
+        assert_eq!(at, 1874.5840423192931);
+        assert_eq!(values.len(), 2);
     }
 }

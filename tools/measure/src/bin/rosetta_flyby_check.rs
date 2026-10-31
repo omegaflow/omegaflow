@@ -17,6 +17,8 @@ const REFERENCE_INCLINATION_DEG: f64 = 144.931532;
 const REFERENCE_NODE_DEG: f64 = 170.17250;
 const REFERENCE_ARGP_DEG: f64 = 143.09909;
 const REFERENCE_VINF_KM_S: f64 = 3.8634932;
+const REFERENCE_ARRAY_ANGLE_DEG: f64 = 14.5;
+const REFERENCE_ALBEDO_M_S2: f64 = 1.5e-8;
 
 fn ymd_to_unix(y: i64, m: u32, d: u32) -> Option<i64> {
     if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
@@ -370,27 +372,76 @@ fn main() {
     }
 
     let aux_dir = package.join("AUXILIARY_data");
-    for (file, index, label, reference) in [
-        ("mass.ascii", 0usize, "mass kg", Some(REFERENCE_MASS_KG)),
-        ("srp.ascii", 0usize, "srp km/s2", None),
-    ] {
-        let path = aux_dir.join(file);
-        let Ok(text) = std::fs::read_to_string(&path) else {
-            println!("rosetta-check: {} absent", path.display());
-            continue;
-        };
-        let Some(parsed) = aux::parse_aux(&text) else {
-            println!("rosetta-check: {} does not parse", path.display());
-            continue;
-        };
-        if let Some((low, high)) = aux::column_range(&parsed, index) {
+    let perigee_mjd2000 = civil_to_unix(&epoch).map(|u| (u - aux::MJD2000_ORIGIN_UNIX) / 86_400.0);
+    match perigee_mjd2000 {
+        Some(mjd) => println!(
+            "rosetta-check: perigee MJD2000 {mjd:.6} — aux epochs count from 2000-01-01 00:00 TDB"
+        ),
+        None => println!("rosetta-check: perigee epoch does not parse as MJD2000"),
+    }
+    if let Some(mjd) = perigee_mjd2000 {
+        for (file, label, reference, scale, unit) in [
+            ("mass.ascii", "mass", Some(REFERENCE_MASS_KG), 1.0, "kg"),
+            ("srp.ascii", "srp main component", None, 1.0, "km/s2"),
+            (
+                "sa.ascii",
+                "array angle",
+                Some(REFERENCE_ARRAY_ANGLE_DEG),
+                1.0,
+                "deg",
+            ),
+        ] {
+            let path = aux_dir.join(file);
+            let Ok(text) = std::fs::read_to_string(&path) else {
+                println!("rosetta-check: {} absent", path.display());
+                continue;
+            };
+            let Some(parsed) = aux::parse_aux(&text) else {
+                println!("rosetta-check: {} does not parse", path.display());
+                continue;
+            };
+            let Some((values, left, right)) = aux::interpolate_at(&parsed, mjd) else {
+                println!(
+                    "rosetta-check: {file} carries no bracket for MJD2000 {mjd:.6} — the epoch lies outside its span"
+                );
+                continue;
+            };
+            let Some(first) = values.first().copied() else {
+                continue;
+            };
+            let value = if file == "sa.ascii" {
+                first.to_degrees() * scale
+            } else {
+                first * scale
+            };
             match reference {
                 Some(r) => println!(
-                    "rosetta-check: {label} {low:.2} .. {high:.2} — reference {r:.2}, delta {:+.2}",
-                    low - r
+                    "rosetta-check: {label} {value:.6} {unit} at perigee (bracket {left:.6} .. {right:.6}) — reference {r:.4}, delta {:+.6}",
+                    value - r
                 ),
-                None => println!("rosetta-check: {label} {low:.3e} .. {high:.3e}"),
+                None => println!(
+                    "rosetta-check: {label} {value:.6e} {unit} at perigee (bracket {left:.6} .. {right:.6})"
+                ),
             }
+        }
+    }
+
+    let alb_path = aux_dir.join("alb.ascii");
+    if let Ok(text) = std::fs::read_to_string(&alb_path)
+        && let Some(parsed) = aux::parse_aux(&text)
+    {
+        match (aux::span(&parsed), aux::peak(&parsed, 3), perigee_mjd2000) {
+            (Some((first, last)), Some((norm_magnitude, at, _)), Some(mjd)) => println!(
+                "rosetta-check: albedo spans MJD2000 {first:.5} .. {last:.5} = {:+.2} .. {:+.2} h around perigee; peak {:.4e} km/s2 = {:.3e} m/s2 at {:.2} min after perigee (reference {:.1e}), delta {:+.1} %",
+                (first - mjd) * 24.0,
+                (last - mjd) * 24.0,
+                norm_magnitude,
+                norm_magnitude * 1000.0,
+                (at - mjd) * 24.0 * 60.0,
+                REFERENCE_ALBEDO_M_S2,
+                (norm_magnitude * 1000.0 / REFERENCE_ALBEDO_M_S2 - 1.0) * 100.0
+            ),
+            _ => println!("rosetta-check: albedo carries no peak"),
         }
     }
 
