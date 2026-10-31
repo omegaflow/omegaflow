@@ -2,6 +2,233 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::PathBuf;
 
+fn effective_lines(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for raw in text.lines() {
+        let cols: Vec<&str> = raw.split('\t').collect();
+        let first = match cols.get(1) {
+            Some(correction) if !correction.trim().is_empty() => correction.trim(),
+            _ => cols.first().copied().unwrap_or(""),
+        };
+        if first.starts_with('#') || first.trim().is_empty() || !first.contains(' ') {
+            continue;
+        }
+        out.push(first.to_string());
+    }
+    out
+}
+
+fn blocks_of(lines: &[String]) -> Vec<Vec<String>> {
+    let mut out: Vec<Vec<String>> = Vec::new();
+    let mut current: Vec<String> = Vec::new();
+    for line in lines {
+        if line.starts_with("url ") && !current.is_empty() {
+            out.push(std::mem::take(&mut current));
+        }
+        current.push(line.clone());
+    }
+    if !current.is_empty() {
+        out.push(current);
+    }
+    out
+}
+
+fn field_tokens(field: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut current = String::new();
+    let mut quoted = false;
+    for ch in field.chars() {
+        match ch {
+            '"' => {
+                quoted = !quoted;
+                current.push(ch);
+            }
+            c if c.is_whitespace() && !quoted => {
+                if !current.is_empty() {
+                    out.push(std::mem::take(&mut current));
+                }
+            }
+            c => current.push(c),
+        }
+    }
+    if !current.is_empty() {
+        out.push(current);
+    }
+    out
+}
+
+fn value_of(block: &[String], key: &str) -> Option<String> {
+    let prefix = format!("{key} ");
+    block
+        .iter()
+        .find(|line| line.starts_with(&prefix))
+        .map(|line| line[prefix.len()..].trim().to_string())
+}
+
+fn stage_report(root: &str, show: usize) {
+    let sources_path = format!("{root}/phi/sources.tsv");
+    let model_path = format!("{root}/phi/field_model.tsv");
+    let instruments_path = format!("{root}/phi/instruments.φ");
+    let sources_text = match fs::read_to_string(&sources_path) {
+        Ok(t) => t,
+        Err(e) => {
+            println!("stage-check: {sources_path} unreadable: {e}");
+            return;
+        }
+    };
+    let model_text = match fs::read_to_string(&model_path) {
+        Ok(t) => t,
+        Err(_) => {
+            let fallback = match std::env::var_os("HOME") {
+                Some(home) => PathBuf::from(home).join("projects/omegaflow/phi/field_model.tsv"),
+                None => PathBuf::from("phi/field_model.tsv"),
+            };
+            match fs::read_to_string(&fallback) {
+                Ok(t) => t,
+                Err(e) => {
+                    println!("stage-check: {} unreadable: {e}", fallback.display());
+                    return;
+                }
+            }
+        }
+    };
+    let instruments_text = match fs::read_to_string(&instruments_path) {
+        Ok(t) => t,
+        Err(e) => {
+            println!("stage-check: {instruments_path} unreadable: {e}");
+            return;
+        }
+    };
+    let model_keys: BTreeSet<&str> = model_text
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .filter_map(|line| line.split('\t').next())
+        .collect();
+    let instrument_names: BTreeSet<&str> = instruments_text
+        .lines()
+        .filter_map(|line| line.trim().strip_prefix("instrument "))
+        .map(|rest| rest.trim())
+        .collect();
+
+    let lines = effective_lines(&sources_text);
+    let blocks = blocks_of(&lines);
+    let stages = [
+        "instrument",
+        "field key",
+        "unit",
+        "interval",
+        "anchor",
+        "terms",
+        "reader",
+        "sha256",
+        "url",
+    ];
+    let mut first_failure: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut examples: BTreeMap<&str, Vec<String>> = BTreeMap::new();
+    let mut passed = 0usize;
+    for block in &blocks {
+        let mut failing: Option<&str> = None;
+        let instrument = match value_of(block, "instrument") {
+            Some(v) => v,
+            None => String::new(),
+        };
+        if !instrument_names.contains(instrument.as_str()) {
+            failing = Some("instrument");
+        }
+        let field = match value_of(block, "field") {
+            Some(v) => v,
+            None => String::new(),
+        };
+        let tokens = field_tokens(&field);
+        let key = match tokens.first() {
+            Some(t) => t.trim_matches('"').to_string(),
+            None => String::new(),
+        };
+        if failing.is_none() && !model_keys.contains(key.as_str()) {
+            failing = Some("field key");
+        }
+        let (unit, interval) = if tokens.len() >= 6 {
+            (tokens.get(4), tokens.get(5))
+        } else {
+            (tokens.get(2), tokens.get(3))
+        };
+        if failing.is_none() && unit.map(|u| u.trim().is_empty()).unwrap_or(true) {
+            failing = Some("unit");
+        }
+        if failing.is_none() && interval.and_then(|v| v.parse::<f64>().ok()).is_none() {
+            failing = Some("interval");
+        }
+        let has_anchor = block.iter().any(|line| {
+            [
+                "on ",
+                "at ",
+                "query ",
+                "global ",
+                "coverage ",
+                "orbit ",
+                "track ",
+                "sky ",
+            ]
+            .iter()
+            .any(|prefix| line.starts_with(prefix))
+        });
+        if failing.is_none() && !has_anchor {
+            failing = Some("anchor");
+        }
+        let terms_ok = block.iter().any(|line| line.starts_with("terms "))
+            && block.iter().any(|line| {
+                line.starts_with("terms ")
+                    && (line.contains("http://") || line.contains("https://"))
+            });
+        if failing.is_none() && !terms_ok {
+            failing = Some("terms");
+        }
+        let reader_ok = block
+            .iter()
+            .any(|line| line.starts_with("format ") || line.starts_with("compiler "));
+        if failing.is_none() && !reader_ok {
+            failing = Some("reader");
+        }
+        let hash_ok = block.iter().any(|line| line.starts_with("sha256 "));
+        if failing.is_none() && !hash_ok {
+            failing = Some("sha256");
+        }
+        let url = match value_of(block, "url") {
+            Some(v) => v,
+            None => String::new(),
+        };
+        if failing.is_none() && !(url.starts_with("http://") || url.starts_with("https://")) {
+            failing = Some("url");
+        }
+        match failing {
+            Some(stage) => {
+                *first_failure.entry(stage).or_insert(0) += 1;
+                examples.entry(stage).or_default().push(url.clone());
+            }
+            None => passed += 1,
+        }
+    }
+    println!(
+        "stage-check: {} blocks, verified in order instrument to url",
+        blocks.len()
+    );
+    for stage in stages {
+        let count = match first_failure.get(stage) {
+            Some(n) => *n,
+            None => 0usize,
+        };
+        println!("stage-check: first gap at {stage}: {count}");
+    }
+    println!("stage-check: pass every stage: {passed}");
+    for stage in stages {
+        if let Some(urls) = examples.get(stage) {
+            for url in urls.iter().take(show) {
+                println!("stage-check: {stage} missing at {url}");
+            }
+        }
+    }
+}
+
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
@@ -79,6 +306,17 @@ fn main() {
         Some(v) => v,
         None => "phi/field_spec.tsv".to_string(),
     };
+    if args.iter().any(|a| a == "--stages") {
+        let root = match arg_value(&args, "--root") {
+            Some(v) => v,
+            None => ".".to_string(),
+        };
+        let show = arg_value(&args, "--show")
+            .and_then(|v| v.parse::<usize>().ok())
+            .unwrap_or(5usize);
+        stage_report(&root, show);
+        return;
+    }
     let show = arg_value(&args, "--show")
         .and_then(|v| v.parse::<usize>().ok())
         .unwrap_or(20usize);
