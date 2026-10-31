@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::archivar::units::unit_from_word;
 
 fn or_blank(value: Option<String>) -> String {
     match value {
@@ -210,7 +211,10 @@ fn main() {
             continue;
         }
         let unit = match &column.unit {
-            Some(u) => u.clone(),
+            Some(u) => match unit_from_word(u) {
+                Some(symbol) => symbol.to_string(),
+                None => u.clone(),
+            },
             None => continue,
         };
         let name = format!("{dataset}_{}", slug(&column.name));

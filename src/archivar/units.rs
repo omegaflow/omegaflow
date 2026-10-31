@@ -215,6 +215,18 @@ pub fn normalize_unit(unit: &str) -> String {
         .replace(['\u{b5}', '\u{3bc}'], "u")
 }
 
+pub fn unit_from_word(word: &str) -> Option<&'static str> {
+    match word.trim().to_ascii_lowercase().as_str() {
+        "nanotesla" | "nanoteslas" => Some("nT"),
+        "picotesla" | "picoteslas" => Some("pT"),
+        "microtesla" | "microteslas" => Some("uT"),
+        "millitesla" | "milliteslas" => Some("mT"),
+        "tesla" | "teslas" => Some("T"),
+        "nanotesla per root hertz" => Some("nT/Hz**1/2"),
+        _ => None,
+    }
+}
+
 pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
     let kl = name.to_lowercase();
     if kl.contains("magnetosphere") {
@@ -690,6 +702,14 @@ fn clock_seconds(token: &str) -> Option<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn label_words_map_to_symbols() {
+        assert_eq!(unit_from_word("NANOTESLA"), Some("nT"));
+        assert_eq!(unit_from_word(" Nanotesla "), Some("nT"));
+        assert_eq!(unit_from_word("picoTesla"), Some("pT"));
+        assert_eq!(unit_from_word("kelvin"), None);
+    }
 
     #[test]
     fn cf_time_seconds_resolves_days_and_clock() {
