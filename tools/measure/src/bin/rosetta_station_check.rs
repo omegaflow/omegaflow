@@ -101,6 +101,64 @@ struct Naif {
     z_km: f64,
 }
 
+struct Itrf93 {
+    name: &'static str,
+    x_km: f64,
+    y_km: f64,
+    z_km: f64,
+    vx_km_per_year: f64,
+    vy_km_per_year: f64,
+    vz_km_per_year: f64,
+}
+
+const NAIF_ITRF93_2003: [Itrf93; 5] = [
+    Itrf93 {
+        name: "DSS-15",
+        x_km: -2353.538957500,
+        y_km: -4641.649428700,
+        z_km: 3676.669983700,
+        vx_km_per_year: -0.018015019,
+        vy_km_per_year: 0.006484299,
+        vz_km_per_year: -0.003840958,
+    },
+    Itrf93 {
+        name: "DSS-24",
+        x_km: -2354.906708700,
+        y_km: -4646.840083400,
+        z_km: 3669.242320700,
+        vx_km_per_year: -0.018013937,
+        vy_km_per_year: 0.006485303,
+        vz_km_per_year: -0.003844335,
+    },
+    Itrf93 {
+        name: "DSS-25",
+        x_km: -2355.022014000,
+        y_km: -4646.953204000,
+        z_km: 3669.040566600,
+        vx_km_per_year: -0.018013804,
+        vy_km_per_year: 0.006485618,
+        vz_km_per_year: -0.003844429,
+    },
+    Itrf93 {
+        name: "DSS-54",
+        x_km: 4849.434487700,
+        y_km: -360.723899900,
+        z_km: 4114.618835400,
+        vx_km_per_year: -0.009963351,
+        vy_km_per_year: 0.024205769,
+        vz_km_per_year: 0.015622496,
+    },
+    Itrf93 {
+        name: "DSS-55",
+        x_km: 4849.525256100,
+        y_km: -360.606093200,
+        z_km: 4114.495084300,
+        vx_km_per_year: -0.009963608,
+        vy_km_per_year: 0.024205488,
+        vz_km_per_year: 0.015622768,
+    },
+];
+
 const JPL_2005: [Naif; 5] = [
     Naif {
         name: "DSS-15",
@@ -662,6 +720,23 @@ fn main() {
             }
         }
         None => println!("station-check: the NAIF residual carries no rigid fit"),
+    }
+
+    for naif93 in &NAIF_ITRF93_2003 {
+        let Some(esa) = TABLE_2005.iter().find(|s| s.name == naif93.name) else {
+            continue;
+        };
+        let years = 2.0;
+        let x = naif93.x_km + naif93.vx_km_per_year * 1.0e-3 * years;
+        let y = naif93.y_km + naif93.vy_km_per_year * 1.0e-3 * years;
+        let z = naif93.z_km + naif93.vz_km_per_year * 1.0e-3 * years;
+        match enu_residual([esa.x_km, esa.y_km, esa.z_km], [x, y, z]) {
+            Some((enu, magnitude)) => println!(
+                "station-check: {} ITRF93 2003.0 carried to 2005.0 against ESA/JPL ITRF2008 at 2005.0 — east {:+.1} north {:+.1} up {:+.1} mm (|d| {magnitude:.1})",
+                naif93.name, enu[0], enu[1], enu[2]
+            ),
+            None => println!("station-check: {} gives no frame residual", naif93.name),
+        }
     }
 
     for jpl in &JPL_2005 {
