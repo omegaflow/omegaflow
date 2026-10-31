@@ -1,4 +1,14 @@
-use omegaflow::archivar::station::{cylindrical_from_itrf, propagate};
+use omegaflow::archivar::station::{
+    cartesian_from_cylindrical, cylindrical_from_itrf, enu_basis, project_enu, propagate,
+};
+
+struct Cylindrical {
+    name: &'static str,
+    longitude_deg: f64,
+    spin_axis_km: f64,
+    equator_km: f64,
+    site_rate_cm_per_year: [f64; 3],
+}
 
 struct Itrf {
     name: &'static str,
@@ -8,43 +18,41 @@ struct Itrf {
     rate_cm_per_year: [f64; 3],
 }
 
-struct Cylindrical {
-    name: &'static str,
-    longitude_deg: f64,
-    spin_axis_km: f64,
-    equator_km: f64,
-}
-
-const TABLE_1994: [Cylindrical; 5] = [
+const TABLE_1997: [Cylindrical; 5] = [
     Cylindrical {
         name: "DSS-15",
         longitude_deg: 243.112806431,
         spin_axis_km: 5204.2343009,
         equator_km: 3676.6699607,
+        site_rate_cm_per_year: [-1.61, 0.59, -0.51],
     },
     Cylindrical {
         name: "DSS-24",
         longitude_deg: 243.125207105,
         spin_axis_km: 5209.4825187,
         equator_km: 3669.2423067,
+        site_rate_cm_per_year: [-1.61, 0.59, -0.51],
     },
     Cylindrical {
         name: "DSS-25",
         longitude_deg: 243.124638324,
         spin_axis_km: 5209.6355450,
         equator_km: 3669.0405526,
+        site_rate_cm_per_year: [-1.61, 0.59, -0.51],
     },
     Cylindrical {
         name: "DSS-54",
         longitude_deg: 355.745901454,
         spin_axis_km: 4862.8322727,
         equator_km: 4114.6186914,
+        site_rate_cm_per_year: [-0.76, 1.96, 1.29],
     },
     Cylindrical {
         name: "DSS-55",
         longitude_deg: 355.747364983,
         spin_axis_km: 4862.9140537,
         equator_km: 4114.4949403,
+        site_rate_cm_per_year: [-0.76, 1.96, 1.29],
     },
 ];
 
@@ -114,72 +122,153 @@ const NAIF_2020: [Naif; 5] = [
     },
 ];
 
+const NN1_1997: [f64; 3] = [-2414.066824, 4907.869366, -3270.605535];
+const NN1_2015: [f64; 3] = [-2414.0676590, 4907.8695120, -3270.6046270];
+const NN1_RATE_CM_PER_YEAR: [f64; 3] = [-4.75, 0.94, 4.98];
+
+fn geodetic_latitude_deg(x: f64, y: f64, z: f64) -> Option<f64> {
+    let a = 6378.137;
+    let f = 1.0 / 298.257223563;
+    let e2 = 2.0 * f - f * f;
+    let p = (x * x + y * y).sqrt();
+    if !p.is_finite() || p <= 0.0 {
+        return None;
+    }
+    let mut lat = z.atan2(p * (1.0 - e2));
+    let mut h;
+    for _ in 0..6 {
+        let sl = lat.sin();
+        let n = a / (1.0 - e2 * sl * sl).sqrt();
+        h = p / lat.cos() - n;
+        lat = z.atan2(p * (1.0 - e2 * n / (n + h)));
+    }
+    Some(lat.to_degrees())
+}
+
+fn enu_residual(target: [f64; 3], moved: [f64; 3]) -> Option<([f64; 3], f64)> {
+    let latitude = geodetic_latitude_deg(moved[0], moved[1], moved[2])?;
+    let longitude = moved[1].atan2(moved[0]).to_degrees();
+    let basis = enu_basis(latitude, longitude)?;
+    let displacement = [
+        (target[0] - moved[0]) * 1.0e6,
+        (target[1] - moved[1]) * 1.0e6,
+        (target[2] - moved[2]) * 1.0e6,
+    ];
+    let enu = project_enu(basis, displacement);
+    let magnitude = (enu[0] * enu[0] + enu[1] * enu[1] + enu[2] * enu[2]).sqrt();
+    Some((enu, magnitude))
+}
+
 fn main() {
-    let mut worst_spin = 0.0f64;
-    let mut worst_equator = 0.0f64;
-    let mut worst_longitude = 0.0f64;
-    for later in &TABLE_2005 {
-        let Some(earlier) = TABLE_1994.iter().find(|s| s.name == later.name) else {
+    let mut worst_document = 0.0f64;
+    let mut worst_station = 0.0f64;
+    for earlier in &TABLE_1997 {
+        let Some(later) = TABLE_2005.iter().find(|s| s.name == earlier.name) else {
             println!(
-                "station-check: {} has no epoch-1997 counterpart",
-                later.name
+                "station-check: {} carries no epoch-2005 counterpart in the document",
+                earlier.name
             );
             continue;
         };
-        let rates_km_per_year = [
+        let Some(cartesian) = cartesian_from_cylindrical(
+            earlier.longitude_deg,
+            earlier.spin_axis_km,
+            earlier.equator_km,
+        ) else {
+            println!("station-check: {} gives no Cartesian point", earlier.name);
+            continue;
+        };
+        let document_rate = [
+            earlier.site_rate_cm_per_year[0] / 1.0e5,
+            earlier.site_rate_cm_per_year[1] / 1.0e5,
+            earlier.site_rate_cm_per_year[2] / 1.0e5,
+        ];
+        let station_rate = [
             later.rate_cm_per_year[0] / 1.0e5,
             later.rate_cm_per_year[1] / 1.0e5,
             later.rate_cm_per_year[2] / 1.0e5,
         ];
-        let moved = propagate(later.x_km, later.y_km, later.z_km, rates_km_per_year, -8.0);
-        let Some((longitude, spin_axis, equator)) =
-            cylindrical_from_itrf(moved[0], moved[1], moved[2])
-        else {
-            println!("station-check: {} gives no cylinder", later.name);
-            continue;
-        };
-        let d_longitude = (longitude - earlier.longitude_deg) * 3600.0;
-        let d_spin = (spin_axis - earlier.spin_axis_km) * 1.0e6;
-        let d_equator = (equator - earlier.equator_km) * 1.0e6;
-        worst_spin = worst_spin.max(d_spin.abs());
-        worst_equator = worst_equator.max(d_equator.abs());
-        worst_longitude = worst_longitude.max(d_longitude.abs());
-        println!(
-            "station-check: {} propagated 2005.0 → 1997.0 — longitude {longitude:.9} deg (delta {d_longitude:+.1} mas), spin axis {spin_axis:.7} km (delta {d_spin:+.1} mm), equator {equator:.7} km (delta {d_equator:+.1} mm)",
-            later.name
-        );
+        let target = [later.x_km, later.y_km, later.z_km];
+
+        let with_document = propagate(cartesian[0], cartesian[1], cartesian[2], document_rate, 8.0);
+        let with_station = propagate(cartesian[0], cartesian[1], cartesian[2], station_rate, 8.0);
+        match (
+            enu_residual(target, with_document),
+            enu_residual(target, with_station),
+        ) {
+            (Some((enu_d, mag_d)), Some((enu_s, mag_s))) => {
+                worst_document = worst_document.max(mag_d);
+                worst_station = worst_station.max(mag_s);
+                println!(
+                    "station-check: {} 1997.0 → 2005.0 — document site rate: east {:+6.1} north {:+6.1} up {:+6.1} mm (|d| {:.1}); station rate: east {:+6.1} north {:+6.1} up {:+6.1} mm (|d| {:.1})",
+                    earlier.name,
+                    enu_d[0],
+                    enu_d[1],
+                    enu_d[2],
+                    mag_d,
+                    enu_s[0],
+                    enu_s[1],
+                    enu_s[2],
+                    mag_s
+                );
+            }
+            _ => println!("station-check: {} gives no ENU residual", earlier.name),
+        }
     }
     println!(
-        "station-check: worst of the three — {worst_longitude:.1} mas in longitude, {worst_spin:.1} mm on the spin axis, {worst_equator:.1} mm on the equator"
+        "station-check: worst over the three Goldstone antennas — {worst_document:.1} mm with the document site rate, {worst_station:.1} mm with the station rate"
     );
 
-    let mut worst_naif = 0.0f64;
     for naif in &NAIF_2020 {
         let Some(later) = TABLE_2005.iter().find(|s| s.name == naif.name) else {
             println!(
-                "station-check: {} carries no ESA epoch-2005 counterpart",
+                "station-check: {} carries no epoch-2005 counterpart for the NAIF comparison",
                 naif.name
             );
             continue;
         };
-        let rates_km_per_year = [
+        let rate = [
             later.rate_cm_per_year[0] / 1.0e5,
             later.rate_cm_per_year[1] / 1.0e5,
             later.rate_cm_per_year[2] / 1.0e5,
         ];
         let years = NAIF_EPOCH - 2005.0;
-        let moved = propagate(later.x_km, later.y_km, later.z_km, rates_km_per_year, years);
-        let dx = (naif.x_km - moved[0]) * 1.0e6;
-        let dy = (naif.y_km - moved[1]) * 1.0e6;
-        let dz = (naif.z_km - moved[2]) * 1.0e6;
-        let magnitude = (dx * dx + dy * dy + dz * dz).sqrt();
-        worst_naif = worst_naif.max(magnitude);
-        println!(
-            "station-check: {} against the NAIF kernel at epoch {NAIF_EPOCH:.2} — dx {dx:+.1} mm, dy {dy:+.1} mm, dz {dz:+.1} mm, |d| {magnitude:.1} mm over {years:.1} years",
-            naif.name
-        );
+        let moved = propagate(later.x_km, later.y_km, later.z_km, rate, years);
+        match enu_residual([naif.x_km, naif.y_km, naif.z_km], moved) {
+            Some((enu, magnitude)) => println!(
+                "station-check: {} against NAIF at {NAIF_EPOCH:.2} — east {:+6.1} north {:+6.1} up {:+6.1} mm (|d| {magnitude:.1}) over {years:.1} years",
+                naif.name, enu[0], enu[1], enu[2]
+            ),
+            None => println!("station-check: {} gives no NAIF residual", naif.name),
+        }
     }
+
+    let frozen = [
+        NN1_2015[0] - NN1_1997[0],
+        NN1_2015[1] - NN1_1997[1],
+        NN1_2015[2] - NN1_1997[2],
+    ];
+    let frozen_mm =
+        (frozen[0] * frozen[0] + frozen[1] * frozen[1] + frozen[2] * frozen[2]).sqrt() * 1.0e6;
+    let rate = [
+        NN1_RATE_CM_PER_YEAR[0] / 1.0e5,
+        NN1_RATE_CM_PER_YEAR[1] / 1.0e5,
+        NN1_RATE_CM_PER_YEAR[2] / 1.0e5,
+    ];
+    let carried = propagate(NN1_1997[0], NN1_1997[1], NN1_1997[2], rate, 18.0);
+    let carried_mm = ((carried[0] - NN1_2015[0]).powi(2)
+        + (carried[1] - NN1_2015[1]).powi(2)
+        + (carried[2] - NN1_2015[2]).powi(2))
+    .sqrt()
+        * 1.0e6;
     println!(
-        "station-check: worst against NAIF — {worst_naif:.1} mm after extrapolating the printed rates"
+        "station-check: NN1 1997.0 against 2015.0 — the two printed coordinates stand {frozen_mm:.1} mm apart, and eighteen years at the printed rate would move the 1997 point {carried_mm:.1} mm away from the 2015 one"
     );
+
+    match cylindrical_from_itrf(NN1_2015[0], NN1_2015[1], NN1_2015[2]) {
+        Some((longitude, spin_axis, equator)) => println!(
+            "station-check: NN1 at 2015.0 — longitude {longitude:.9} deg, spin axis {spin_axis:.7} km, equator {equator:.7} km"
+        ),
+        None => println!("station-check: NN1 gives no cylinder"),
+    }
 }
