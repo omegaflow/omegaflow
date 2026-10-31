@@ -5,6 +5,7 @@ use omegaflow::archivar::{
     aem, aux, body_barycenter_position, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
     parse_ephemeris_binary, parse_iso_tdb, srp, tdm,
 };
+use omegaflow::mathematikerin::tropo;
 
 const REFERENCE_ALTITUDE_KM: f64 = 1956.0;
 const REFERENCE_MASS_KG: f64 = 2895.21;
@@ -23,6 +24,8 @@ const REFERENCE_MINUS_X_ENTER: &str = "2005-03-04T21:52:00";
 const REFERENCE_MINUS_X_EXIT: &str = "2005-03-05T00:20:00";
 const REFERENCE_MINUS_Z_ENTER: &str = "2005-03-04T22:17:00";
 const REFERENCE_Y_ORTHOGONAL_DEG: f64 = 8.0;
+const REFERENCE_NN1_ITRF_KM: [f64; 3] = [-2414.0676590, 4907.8695120, -3270.6046270];
+const REFERENCE_NN1_DRY_OFFSET_MM: f64 = -5.039;
 
 fn ymd_to_unix(y: i64, m: u32, d: u32) -> Option<i64> {
     if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
@@ -572,6 +575,101 @@ fn main() {
                 (norm_magnitude * 1000.0 / REFERENCE_ALBEDO_M_S2 - 1.0) * 100.0
             ),
             _ => println!("rosetta-check: albedo carries no peak"),
+        }
+    }
+
+    let meteo_path = package.join("ESTRACK_data/NN11_METEO_2005_048-070.tdm");
+    if let Ok(text) = std::fs::read_to_string(&meteo_path)
+        && let Some(parsed) = tdm::parse_tdm(&text)
+        && let Some(base) = parse_iso_tdb(&epoch, &lsk)
+    {
+        let mut pressure: Option<(f64, f64)> = None;
+        let mut temperature: Option<(f64, f64)> = None;
+        let mut humidity: Option<(f64, f64)> = None;
+        let mut tropo_dry: Option<(f64, f64)> = None;
+        let mut tropo_wet: Option<(f64, f64)> = None;
+        for observation in tdm::observations(&parsed) {
+            let Some(t) = parse_iso_tdb(&observation.time, &lsk) else {
+                continue;
+            };
+            let slot = match observation.name.as_str() {
+                "PRESSURE" => &mut pressure,
+                "TEMPERATURE" => &mut temperature,
+                "RHUMIDITY" => &mut humidity,
+                "TROPO_DRY" => &mut tropo_dry,
+                "TROPO_WET" => &mut tropo_wet,
+                _ => continue,
+            };
+            let distance = (t - base).abs();
+            if slot.is_none_or(|(best, _)| distance < best) {
+                *slot = Some((distance, observation.value));
+            }
+        }
+        println!(
+            "rosetta-check: METEO {} record(s) — pressure {:?}, temperature {:?}",
+            tdm::observations(&parsed).count(),
+            pressure.map(|(_, v)| v),
+            temperature.map(|(_, v)| v)
+        );
+        match (pressure, temperature) {
+            (Some((distance_p, p)), Some((distance_t, t))) => {
+                let station = REFERENCE_NN1_ITRF_KM;
+                let (height_km, latitude_deg) =
+                    geodetic_altitude_km(station[0], station[1], station[2]);
+                match tropo::dry_zenith_delay_m(p, height_km * 1000.0, latitude_deg) {
+                    Some(delay_m) => match tropo::height_scale_m(t) {
+                        Some(scale_m) => {
+                            let gradient_mm_per_m = delay_m * 1000.0 / scale_m;
+                            let implied = -REFERENCE_NN1_DRY_OFFSET_MM / gradient_mm_per_m;
+                            let sea_level = p * (height_km * 1000.0 / scale_m).exp();
+                            println!(
+                                "rosetta-check: NN1 at {height_km:.3} km, {latitude_deg:.3} deg — dry zenith delay {:.2} mm at {p:.1} hPa, {t:.2} K (records {distance_p:.0} s and {distance_t:.0} s from perigee)",
+                                delay_m * 1000.0
+                            );
+                            println!(
+                                "rosetta-check: the printed dry offset {REFERENCE_NN1_DRY_OFFSET_MM:+.3} mm implies the weather station sits {implied:+.1} m from the antenna (gradient {gradient_mm_per_m:.3} mm/m); the pressure reduces to {sea_level:.1} hPa at sea level"
+                            );
+                            match (humidity, tropo_dry, tropo_wet) {
+                                (Some((_, rh)), Some((_, esa_dry)), Some((_, esa_wet))) => {
+                                    println!(
+                                        "rosetta-check: ESA writes {esa_dry:.8} m dry and {esa_wet:.8} m wet at this minute"
+                                    );
+                                    match tropo::dry_zenith_delay_simple_m(p) {
+                                        Some(plain) => println!(
+                                            "rosetta-check: the plain hydrostatic term 0.0022768 times {p:.1} hPa is {plain:.8} m — delta to ESA {:+.4} mm",
+                                            (plain - esa_dry) * 1000.0
+                                        ),
+                                        None => println!(
+                                            "rosetta-check: the plain dry term carries no value"
+                                        ),
+                                    }
+                                    match tropo::wet_zenith_delay_m(t, rh) {
+                                        Some(wet) => println!(
+                                            "rosetta-check: our wet delay {wet:.8} m at {rh:.1} percent — delta to ESA {:+.4} mm",
+                                            (wet - esa_wet) * 1000.0
+                                        ),
+                                        None => {
+                                            println!(
+                                                "rosetta-check: the wet delay carries no value"
+                                            )
+                                        }
+                                    }
+                                }
+                                _ => println!(
+                                    "rosetta-check: the METEO file carries no troposphere lines near perigee"
+                                ),
+                            }
+                        }
+                        None => {
+                            println!("rosetta-check: the METEO temperature carries no height scale")
+                        }
+                    },
+                    None => println!("rosetta-check: the METEO pressure carries no dry delay"),
+                }
+            }
+            _ => println!(
+                "rosetta-check: the METEO file carries no pressure and temperature near perigee"
+            ),
         }
     }
 
