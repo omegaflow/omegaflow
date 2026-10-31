@@ -2,13 +2,18 @@ use std::path::{Path, PathBuf};
 
 use omegaflow::archivar::geoid::{WGS84_A_M, WGS84_F};
 use omegaflow::archivar::{
-    aem, aux, body_barycenter_position, embedded_lsk, icrs_to_body_geodetic, oem,
+    aem, aux, body_barycenter_position, embedded_lsk, gfc, icrs_to_body_geodetic, oem,
     parse_ephemeris_binary, tdm,
 };
 
 const REFERENCE_ALTITUDE_KM: f64 = 1956.0;
 const REFERENCE_MASS_KG: f64 = 2895.21;
 const REFERENCE_UNIX: &str = "2005-03-04T22:09:14";
+const REFERENCE_RADIUS_KM: f64 = 8331.7981;
+const REFERENCE_VELOCITY_KM_S: f64 = 10.517049;
+const REFERENCE_SEMI_MAJOR_KM: f64 = -26704.0701;
+const REFERENCE_ECCENTRICITY: f64 = 1.3120048;
+const REFERENCE_INCLINATION_DEG: f64 = 144.931532;
 
 fn ymd_to_unix(y: i64, m: u32, d: u32) -> Option<i64> {
     if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
@@ -81,12 +86,26 @@ fn main() {
     let mut package = PathBuf::from(".");
     let mut earth_bin = PathBuf::new();
     let mut body = String::new();
+    let mut gm_km3_s2: Option<f64> = None;
+    let mut gm_source = String::new();
+    let mut gravity_path = PathBuf::new();
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--package"
             && let Some(p) = args.get(i + 1)
         {
             package = PathBuf::from(p);
+            i += 2;
+        } else if args[i] == "--gm"
+            && let Some(v) = args.get(i + 1).and_then(|v| v.parse::<f64>().ok())
+        {
+            gm_km3_s2 = Some(v);
+            gm_source = "argument --gm".to_string();
+            i += 2;
+        } else if args[i] == "--gravity"
+            && let Some(p) = args.get(i + 1)
+        {
+            gravity_path = PathBuf::from(p);
             i += 2;
         } else if args[i] == "--body"
             && let Some(b) = args.get(i + 1)
@@ -106,6 +125,27 @@ fn main() {
         println!("rosetta-check: leap seconds absent — the time fold has no leap seconds");
         return;
     };
+
+    if !gravity_path.as_os_str().is_empty() {
+        match std::fs::read(&gravity_path) {
+            Ok(bytes) => match gfc::parse_head(&bytes) {
+                Some((head, _)) => {
+                    gm_km3_s2 = Some(head.gm_m3_s2 / 1e9);
+                    gm_source = format!(
+                        "{} head, model {} to degree {}",
+                        gravity_path.display(),
+                        head.modelname,
+                        head.max_degree
+                    );
+                }
+                None => println!(
+                    "rosetta-check: {} carries no gravity head; the gm argument stands",
+                    gravity_path.display()
+                ),
+            },
+            Err(_) => println!("rosetta-check: {} absent", gravity_path.display()),
+        }
+    }
 
     let oem_path = package.join("ros.oem");
     let Ok(oem_text) = std::fs::read_to_string(&oem_path) else {
@@ -198,6 +238,59 @@ fn main() {
         }
     }
 
+    if let Some(gm) = gm_km3_s2 {
+        let mut candidates: Vec<[f64; 3]> = Vec::new();
+        for segment in &segments {
+            if segment.center_name != "EARTH" {
+                continue;
+            }
+            for record in &segment.records {
+                if record.time == epoch && !candidates.contains(&record.velocity_km_s) {
+                    candidates.push(record.velocity_km_s);
+                }
+            }
+        }
+        if candidates.is_empty() {
+            println!("rosetta-check: no velocity record at the perigee epoch");
+        }
+        let mut semi_major: Vec<f64> = Vec::new();
+        for v in &candidates {
+            let vmag = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+            let a = 1.0 / (2.0 / radius_km - vmag * vmag / gm);
+            let h = [
+                position[1] * v[2] - position[2] * v[1],
+                position[2] * v[0] - position[0] * v[2],
+                position[0] * v[1] - position[1] * v[0],
+            ];
+            let hmag = (h[0] * h[0] + h[1] * h[1] + h[2] * h[2]).sqrt();
+            let rv = position[0] * v[0] + position[1] * v[1] + position[2] * v[2];
+            let evec = [
+                ((vmag * vmag - gm / radius_km) * position[0] - rv * v[0]) / gm,
+                ((vmag * vmag - gm / radius_km) * position[1] - rv * v[1]) / gm,
+                ((vmag * vmag - gm / radius_km) * position[2] - rv * v[2]) / gm,
+            ];
+            let e = (evec[0] * evec[0] + evec[1] * evec[1] + evec[2] * evec[2]).sqrt();
+            let inc = (h[2] / hmag).acos().to_degrees();
+            semi_major.push(a);
+            println!(
+                "rosetta-check: elements with gm {gm:.6} from {gm_source} — v {vmag:.9} km/s (delta {:+.3} mm/s), a {a:.4} km (delta {:+.1} m), e {e:.7} (delta {:+.1e}), i {inc:.6} deg (delta {:+.6} deg)",
+                (vmag - REFERENCE_VELOCITY_KM_S) * 1e6,
+                (a - REFERENCE_SEMI_MAJOR_KM) * 1000.0,
+                e - REFERENCE_ECCENTRICITY,
+                inc - REFERENCE_INCLINATION_DEG
+            );
+        }
+        if semi_major.len() > 1 {
+            let low = semi_major.iter().cloned().fold(f64::INFINITY, f64::min);
+            let high = semi_major.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+            println!(
+                "rosetta-check: the perigee epoch sits on a segment seam — {} distinct velocities, a spread {:.1} m",
+                semi_major.len(),
+                (high - low).abs() * 1000.0
+            );
+        }
+    }
+
     let reference_unix = match civil_to_unix(REFERENCE_UNIX) {
         Some(u) => u,
         None => {
@@ -227,7 +320,8 @@ fn main() {
         oem::records(&segments)
     );
     println!(
-        "rosetta-check: perigee |r| {radius_km:.3} km at {epoch} TDB, latitude {latitude_deg:.3} deg"
+        "rosetta-check: perigee |r| {radius_km:.4} km at {epoch} TDB, latitude {latitude_deg:.3} deg — reference {REFERENCE_RADIUS_KM:.4} km (arXiv 2609.23482), delta {:+.1} m",
+        (radius_km - REFERENCE_RADIUS_KM) * 1000.0
     );
     println!(
         "rosetta-check: geodetic altitude {altitude_km:.2} km — reference {REFERENCE_ALTITUDE_KM:.1} km (arXiv 2609.23482), delta {:+.2} km",
