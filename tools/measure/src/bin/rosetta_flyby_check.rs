@@ -481,6 +481,25 @@ fn main() {
         "rosetta-check: geodetic altitude {altitude_km:.2} km — reference {REFERENCE_ALTITUDE_KM:.1} km (arXiv 2609.23482), delta {:+.2} km",
         altitude_km - REFERENCE_ALTITUDE_KM
     );
+    if let Some(gm) = gm_km3_s2 {
+        let a_of = |v: f64| 1.0 / (2.0 / REFERENCE_RADIUS_KM - v * v / gm);
+        let span = a_of(REFERENCE_VELOCITY_KM_S + 1.0e-6) - a_of(REFERENCE_VELOCITY_KM_S - 1.0e-6);
+        println!(
+            "rosetta-check: vis-viva sensitivity — one mm/s of velocity moves the semi-major axis by {:+.1} m at this perigee",
+            span * 1000.0 / 2.0
+        );
+    }
+    match tropo::wet_zenith_delay_m(293.25, 52.05) {
+        Some(high) => match tropo::wet_zenith_delay_m(293.25, 51.95) {
+            Some(low) => println!(
+                "rosetta-check: wet-delay quantum — the printed humidity step of 0.1 percent carries {:.3} mm of zenith delay at 293.25 K",
+                (high - low) * 1000.0
+            ),
+            None => println!("rosetta-check: the wet delay carries no value at the lower humidity"),
+        },
+        None => println!("rosetta-check: the wet delay carries no value at the upper humidity"),
+    }
+
     match perigee_unix {
         Some(u) => {
             let delta = u - reference_unix;
