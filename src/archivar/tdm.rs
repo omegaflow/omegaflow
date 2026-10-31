@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+use crate::mathematikerin::receiver::two_way_light_time;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct TdmObservation {
     pub name: String,
@@ -17,6 +19,7 @@ pub struct TdmMeta {
     pub participant_2: Option<String>,
     pub mode: Option<String>,
     pub path: Option<String>,
+    pub timetag_ref: Option<String>,
     pub transmit_band: Option<String>,
     pub receive_band: Option<String>,
     pub data_quality: Option<String>,
@@ -137,6 +140,7 @@ pub fn parse_tdm(text: &str) -> Option<Tdm> {
                 "PARTICIPANT_2" => meta.participant_2 = Some(value.to_string()),
                 "MODE" => meta.mode = Some(value.to_string()),
                 "PATH" => meta.path = Some(value.to_string()),
+                "TIMETAG_REF" => meta.timetag_ref = Some(value.to_string()),
                 "TRANSMIT_BAND" => meta.transmit_band = Some(value.to_string()),
                 "RECEIVE_BAND" => meta.receive_band = Some(value.to_string()),
                 "DATA_QUALITY" => meta.data_quality = Some(value.to_string()),
@@ -201,6 +205,118 @@ pub fn counts(tdm: &Tdm) -> BTreeMap<String, usize> {
     }
     out
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TimetagRef {
+    Receive,
+    Transmit,
+}
+
+impl TimetagRef {
+    pub fn parse(value: &str) -> Option<Self> {
+        match value.trim().to_ascii_uppercase().as_str() {
+            "RECEIVE" => Some(Self::Receive),
+            "TRANSMIT" => Some(Self::Transmit),
+            _ => None,
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Receive => "RECEIVE",
+            Self::Transmit => "TRANSMIT",
+        }
+    }
+}
+
+impl TdmMeta {
+    pub fn timetag_reference(&self) -> Option<TimetagRef> {
+        match self.timetag_ref.as_deref() {
+            None => Some(TimetagRef::Receive),
+            Some(value) => TimetagRef::parse(value),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct LightTime {
+    pub label_tdb: f64,
+    pub receive_tdb: f64,
+    pub bounce_tdb: f64,
+    pub transmit_tdb: f64,
+    pub state_minus_label_s: f64,
+    pub range_km: f64,
+}
+
+fn sub3(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+}
+
+fn norm3(a: [f64; 3]) -> f64 {
+    (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]).sqrt()
+}
+
+pub fn observation_light_time<S>(
+    label_tdb: f64,
+    reference: TimetagRef,
+    station_icrs_km: [f64; 3],
+    target_state: S,
+) -> Option<LightTime>
+where
+    S: Fn(f64) -> Option<([f64; 3], [f64; 3])>,
+{
+    if !label_tdb.is_finite() {
+        return None;
+    }
+    let solve = |receive_tdb: f64| {
+        let solution =
+            two_way_light_time(receive_tdb, station_icrs_km, station_icrs_km, &target_state)?;
+        let range_km = norm3(sub3(solution.bounce_pos_icrs_km, station_icrs_km));
+        if !range_km.is_finite() || range_km <= 0.0 {
+            return None;
+        }
+        Some((solution, range_km))
+    };
+
+    let (receive_tdb, solution, range_km) = match reference {
+        TimetagRef::Receive => {
+            let (solution, range_km) = solve(label_tdb)?;
+            (label_tdb, solution, range_km)
+        }
+        TimetagRef::Transmit => {
+            let (first, _) = solve(label_tdb)?;
+            let mut receive_tdb = label_tdb + (label_tdb - first.t_tx_tdb);
+            let mut settled: Option<(f64, crate::mathematikerin::receiver::TwoWayLightTime, f64)> =
+                None;
+            for _ in 0..20 {
+                let (solution, range_km) = solve(receive_tdb)?;
+                let residual = label_tdb - solution.t_tx_tdb;
+                let next = receive_tdb + residual;
+                if !next.is_finite() {
+                    return None;
+                }
+                if (next - receive_tdb).abs() < 1.0e-9 {
+                    settled = Some((receive_tdb, solution, range_km));
+                    break;
+                }
+                receive_tdb = next;
+            }
+            let (receive_tdb, solution, range_km) = settled?;
+            (receive_tdb, solution, range_km)
+        }
+    };
+
+    Some(LightTime {
+        label_tdb,
+        receive_tdb,
+        bounce_tdb: solution.t_bounce_tdb,
+        transmit_tdb: solution.t_tx_tdb,
+        state_minus_label_s: solution.t_bounce_tdb - label_tdb,
+        range_km,
+    })
+}
+
+pub const LIGHT_TIME_CONVENTION: &str = "label is the TDM time tag in its declared TIMETAG_REF; the spacecraft state is evaluated at the bounce epoch; the station is rotated from ITRF to ICRS at the receive epoch; state_minus_label_s = t_bounce - t_label; absent state or station is None, never zero";
 
 #[cfg(test)]
 mod tests {
@@ -297,5 +413,99 @@ DATA_STOP
         assert_eq!(c.get("RECEIVE_FREQ"), Some(&1));
         assert_eq!(c.get("TRANSMIT_FREQ_RATE"), Some(&1));
         assert_eq!(c.get("RANGE"), Some(&1));
+    }
+
+    const C_KM_S: f64 = 299_792.458;
+
+    fn static_target(position: [f64; 3]) -> impl Fn(f64) -> Option<([f64; 3], [f64; 3])> {
+        move |_t| Some((position, [0.0; 3]))
+    }
+
+    #[test]
+    fn a_tdm_carries_its_timetag_reference() {
+        let text = SAMPLE.replace(
+            "PARTICIPANT_2 = ROSETTA",
+            "PARTICIPANT_2 = ROSETTA\nTIMETAG_REF = RECEIVE",
+        );
+        let tdm = parse_tdm(&text).expect("a tdm");
+        assert_eq!(tdm.blocks[0].meta.timetag_ref.as_deref(), Some("RECEIVE"));
+        assert_eq!(
+            tdm.blocks[0].meta.timetag_reference(),
+            Some(TimetagRef::Receive)
+        );
+    }
+
+    #[test]
+    fn an_absent_timetag_reference_reads_as_receive() {
+        let tdm = parse_tdm(SAMPLE).expect("a tdm");
+        assert_eq!(tdm.blocks[0].meta.timetag_ref, None);
+        assert_eq!(
+            tdm.blocks[0].meta.timetag_reference(),
+            Some(TimetagRef::Receive)
+        );
+    }
+
+    #[test]
+    fn an_unknown_timetag_reference_is_absent() {
+        let text = SAMPLE.replace(
+            "PARTICIPANT_2 = ROSETTA",
+            "PARTICIPANT_2 = ROSETTA\nTIMETAG_REF = BOTH",
+        );
+        let tdm = parse_tdm(&text).expect("a tdm");
+        assert_eq!(tdm.blocks[0].meta.timetag_ref.as_deref(), Some("BOTH"));
+        assert_eq!(tdm.blocks[0].meta.timetag_reference(), None);
+    }
+
+    #[test]
+    fn a_static_target_sits_one_light_time_behind_the_label() {
+        let range_km = 300_000.0;
+        let station = [0.0, 0.0, 0.0];
+        let target = static_target([range_km, 0.0, 0.0]);
+        let label = 1_000_000.0;
+        let solution = observation_light_time(label, TimetagRef::Receive, station, target)
+            .expect("a solution");
+        let light_time = range_km / C_KM_S;
+        assert!((solution.state_minus_label_s + light_time).abs() < 1.0e-9);
+        assert!((solution.range_km - range_km).abs() < 1.0e-6);
+        assert!((solution.receive_tdb - label).abs() < 1.0e-12);
+        assert!((solution.bounce_tdb + light_time - label).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn a_receding_target_is_closer_when_the_signal_left() {
+        let station = [0.0, 0.0, 0.0];
+        let speed_km_s = 10.0;
+        let moving = move |t: f64| {
+            Some((
+                [300_000.0 + speed_km_s * t, 0.0, 0.0],
+                [speed_km_s, 0.0, 0.0],
+            ))
+        };
+        let solution =
+            observation_light_time(0.0, TimetagRef::Receive, station, moving).expect("a solution");
+        let static_light_time = 300_000.0 / C_KM_S;
+        assert!(solution.state_minus_label_s < 0.0);
+        assert!(solution.state_minus_label_s > -static_light_time);
+        assert!(solution.range_km < 300_000.0);
+    }
+
+    #[test]
+    fn a_transmit_label_recovers_the_receive_epoch() {
+        let station = [0.0, 0.0, 0.0];
+        let target = static_target([300_000.0, 0.0, 0.0]);
+        let transmit_label = -2.0;
+        let solution =
+            observation_light_time(transmit_label, TimetagRef::Transmit, station, target)
+                .expect("a solution");
+        assert!((solution.transmit_tdb - transmit_label).abs() < 1.0e-9);
+        let expected_receive = transmit_label + 2.0 * 300_000.0 / C_KM_S;
+        assert!((solution.receive_tdb - expected_receive).abs() < 1.0e-6);
+        assert!((solution.state_minus_label_s - 300_000.0 / C_KM_S).abs() < 1.0e-6);
+    }
+
+    #[test]
+    fn an_absent_target_state_is_absent() {
+        let absent = |_t: f64| -> Option<([f64; 3], [f64; 3])> { None };
+        assert!(observation_light_time(0.0, TimetagRef::Receive, [0.0; 3], absent).is_none());
     }
 }
