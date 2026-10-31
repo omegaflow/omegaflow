@@ -183,6 +183,8 @@ mod playwright;
 mod pool;
 #[path = "archive_search/profile.rs"]
 mod profile;
+#[path = "archive_search/psa.rs"]
+mod psa;
 #[path = "archive_search/psychporta.rs"]
 mod psychporta;
 #[path = "archive_search/pubchem.rs"]
@@ -450,6 +452,7 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--dataeuropa" => Some(Mode::Net("dataeuropa")),
         "--opensn" => Some(Mode::Net("opensn")),
         "--tap" => Some(Mode::Net("tap")),
+        "--psa" => Some(Mode::Net("psa")),
         "--pangaea" => Some(Mode::Net("pangaea")),
         "--re3data" => Some(Mode::Net("re3data")),
         "--seanoe" => Some(Mode::Net("seanoe")),
@@ -2739,7 +2742,7 @@ fn usage_full() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--lasair|--perplexity|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--cdse|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--lasair|--perplexity|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--psa|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--cdse|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2820,7 +2823,8 @@ fn usage_full() {
         "  --frbcat    FRBSTATS fast-radio-burst catalogue (live gviz CSV, the sheet fetch_catalogue.py reads; falls back to the repo's raw catalogue.csv), keyless; url + frb/ra/dec/redshift (full result in the temp file)"
     );
     eprintln!(
-        "  --tap       IVOA TAP sync ADQL query: `--tap \"endpoint=<tap-sync-url> SELECT ...\"`, keyless; rows as col=val (find a service with `--regtap`)"
+        "  --psa       ESA PSA FTP tree crawl: --psa "<name>" [root=<url> depth=<n> pages=<n>]
+    --tap       IVOA TAP sync ADQL query: `--tap \"endpoint=<tap-sync-url> SELECT ...\"`, keyless; rows as col=val (find a service with `--regtap`)"
     );
     eprintln!(
         "  --pangaea   PANGAEA earth-science data search (pangaea.de/advanced/search.php), keyless; doi + title/abstract"
