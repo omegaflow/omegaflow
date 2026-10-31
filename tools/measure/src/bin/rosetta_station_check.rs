@@ -365,6 +365,55 @@ fn velocity_offset(pairs: &[([f64; 3], [f64; 3])], years: f64) -> Option<([f64; 
     Some((rate, worst))
 }
 
+fn itrf_frame(
+    x_m: [f64; 3],
+    t_mm: [f64; 3],
+    t_rate_mm: [f64; 3],
+    d_ppb: f64,
+    d_rate_ppb: f64,
+    at: f64,
+) -> [f64; 3] {
+    let dt = at - 2015.0;
+    let scale = 1.0 + (d_ppb + d_rate_ppb * dt) * 1.0e-9;
+    let t = [
+        (t_mm[0] + t_rate_mm[0] * dt) / 1000.0,
+        (t_mm[1] + t_rate_mm[1] * dt) / 1000.0,
+        (t_mm[2] + t_rate_mm[2] * dt) / 1000.0,
+    ];
+    [
+        x_m[0] * scale + t[0],
+        x_m[1] * scale + t[1],
+        x_m[2] * scale + t[2],
+    ]
+}
+
+fn itrf_frame_inverse(
+    x_m: [f64; 3],
+    t_mm: [f64; 3],
+    t_rate_mm: [f64; 3],
+    d_ppb: f64,
+    d_rate_ppb: f64,
+    at: f64,
+) -> [f64; 3] {
+    let dt = at - 2015.0;
+    let scale = 1.0 + (d_ppb + d_rate_ppb * dt) * 1.0e-9;
+    let t = [
+        (t_mm[0] + t_rate_mm[0] * dt) / 1000.0,
+        (t_mm[1] + t_rate_mm[1] * dt) / 1000.0,
+        (t_mm[2] + t_rate_mm[2] * dt) / 1000.0,
+    ];
+    [
+        (x_m[0] - t[0]) / scale,
+        (x_m[1] - t[1]) / scale,
+        (x_m[2] - t[2]) / scale,
+    ]
+}
+
+fn frame_2000_from_2008(x_m: [f64; 3], at: f64) -> [f64; 3] {
+    let x2020 = itrf_frame_inverse(x_m, [0.2, 1.0, 3.3], [0.0, -0.1, 0.1], -0.29, 0.03, at);
+    itrf_frame(x2020, [-0.2, 0.8, -34.2], [0.1, 0.0, -1.7], 2.25, 0.11, at)
+}
+
 fn main() {
     let mut worst_document = 0.0f64;
     let mut worst_station = 0.0f64;
@@ -722,6 +771,44 @@ fn main() {
             "station-check: {name} epoch scan with the JPL rate — smallest at {:+.2} years, {:.1} mm left (east {:+.1}, north {:+.1}, up {:+.1})",
             best_jpl.1, best_jpl.0, best_jpl.2[0], best_jpl.2[1], best_jpl.2[2]
         );
+    }
+
+    for name in ["DSS-54", "DSS-55"] {
+        let Some(earlier) = TABLE_1997.iter().find(|s| s.name == name) else {
+            continue;
+        };
+        let Some(jpl) = JPL_2005.iter().find(|s| s.name == name) else {
+            continue;
+        };
+        let Some(cartesian) = cartesian_from_cylindrical(
+            earlier.longitude_deg,
+            earlier.spin_axis_km,
+            earlier.equator_km,
+        ) else {
+            continue;
+        };
+        let rate = [
+            earlier.site_rate_cm_per_year[0] / 1.0e5,
+            earlier.site_rate_cm_per_year[1] / 1.0e5,
+            earlier.site_rate_cm_per_year[2] / 1.0e5,
+        ];
+        let esa = propagate(cartesian[0], cartesian[1], cartesian[2], rate, 8.0);
+        let jpl_in_2000 = frame_2000_from_2008(
+            [jpl.x_km * 1000.0, jpl.y_km * 1000.0, jpl.z_km * 1000.0],
+            2005.0,
+        );
+        let jpl_2000_km = [
+            jpl_in_2000[0] / 1000.0,
+            jpl_in_2000[1] / 1000.0,
+            jpl_in_2000[2] / 1000.0,
+        ];
+        match enu_residual(jpl_2000_km, esa) {
+            Some((enu, magnitude)) => println!(
+                "station-check: {name} with the official ITRF2000 frame — the JPL position transformed into ITRF2000 at 2005.0 sits {:.1} mm from the ESA value (east {:+.1}, north {:+.1}, up {:+.1}); it was 78.6 mm in ITRF2008",
+                magnitude, enu[0], enu[1], enu[2]
+            ),
+            None => println!("station-check: {name} carries no frame-corrected residual"),
+        }
     }
 
     match velocity_offset(&naif_pairs[0..3], NAIF_EPOCH - 2005.0) {
