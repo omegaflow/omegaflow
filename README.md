@@ -44,8 +44,7 @@ Or open [omegaflow.space/membrane.html](https://omegaflow.space/membrane.html) i
 
 ## Documentation
 
-- [`docs/specs/`](docs/specs/) — the data contract and the CDN form
-- [`docs/reference/`](docs/reference/) — NAIF and NIST references, the source index
+- [`docs/`](docs/README.md) — the index: specifications, references, the publish log
 
 ## License
 

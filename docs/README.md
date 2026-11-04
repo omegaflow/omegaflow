@@ -1,75 +1,15 @@
-<!--
-  title: docs/ — Karte
-  class: ref
-  date: 2026-09-03
-  sha256: ad3a00bdb581b1082996348b3e3d331f7e5d203faf69faba9808cc821f8d141e
-  status: live
--->
-# docs/ — Karte
+# Documentation
 
-Die Ordnung folgt dem Zweck, nicht einer Klassen-Lehre. Ein Ordner trägt,
-was sein Name sagt; Tiefe bleibt bei `docs/<ordner>/<datei>` — eine Ebene
-mehr nur für genuine externe Bündel (`reference/pioneer-anomaly/`).
+Four places, nothing else.
 
-## Ordner
+- `specs/` — the contracts and the baselines the CDN workflows read.
+- `reference/` — external references kept as text: NIST SP 330 and SP 811, the
+  ephemeris source index, the Mariner chain, the search API registration.
+- `state/` — the publish log of the CDN.
+- `LICENSE` — the documentation licence.
 
-| Ordner | Inhalt | Benennung |
-|---|---|---|
-| `concepts/` | stehende Ideen, Philosophie, kybernetische Ethik | kebab-case; Eigenname in Prosa bleibt UPPER_SNAKE |
-| `specs/` | feste Verträge + Register (binäre Protokolle, Force-System, CI-Pläne, lauf-log, ref-Listen) | kebab-case; Register/Listen `ref-<slug>.md` |
-| `surveys/` | datierte Befunde, Snapshot-Surveys | `survey-YYYY-MM-DD-<slug>.md` bzw. `survey-<slug>.md` (stehend) |
-| `handover/` | Übergaben + Session-Pläne | `handover-YYYY-MM-DD-<slug>.md`; unveränderlich, bleibt im Baum — Git ist die Geschichte |
-| `paper/` | publizierbare Messungen (Paper + Ein-Blatt-Verdikte) | kebab-case, `class: paper` |
-| `auftrag/` | Untersuchungsaufträge eines Gates | `auftrag-<slug>.md` |
-| `reference/` | externes Material, nativer Format (kein Header), Originalnamen | Provenienz unangetastet |
+The code documents itself: `src/` carries each contract in a `*_CONVENTION`
+constant beside the code that holds it, and `tools/` carries the readers.
 
-`reference/`-Rohtranskripte fremdmodell-Konsultationen (Arena) gehören nach
-`archive-root/arena/`, nicht hierher.
-
-## Lose Dateien in docs/
-
-- `README.md` — diese Karte.
-- `SOURCE_PORT.md` — der eine Pfad für Source-Arbeit (Kuratierung/Grind/Port).
-- `council.yaml` — Council-Infrastruktur (Stimmen).
-- `LICENSE` — Lizenz.
-
-## Versionierung
-
-Git-only (kein `vN`/`_ancestral` im Namen). Jedes Prosa-Doc trägt einen
-Header-Block mit `title/class/date/version/sha256/status/see-also`; das
-`sha256` deckt den Dateikörper **ohne** den Header
-(`sed '/^<!--/,/^-->/d' <f> | sha256sum`), so dass zwei lokale Kopien in
-einem Befehl verglichen werden. Daten-/Maschinen-Dateien im `reference/`
-sind bewusst nicht `.md`.
-
-Einstieg: das Handover-Register in `docs/handover/` (die thematischen
-Handovers tragen die offene Arbeit) + (Regelwerk).
-
-## phi/ — Register & Arbeitsdaten
-
-Code-gelesen (Archivar/Compiler lesen sie direkt):
-
-| Datei | Rolle | Fundort |
-|---|---|---|
-| `sources.φ` | Live-Quell-Register | main.rs:5134 |
-| `sources_index.φ` | Kernel-Index (ephemeris_compiler --index) | ephemeris_compiler.rs |
-| `pipeline/library.φ` | gewichtete Tags (--learn-gate) | main.rs:11430 |
-| `pipeline/frame_learned.φ` | Route→Frame-Lernen | main.rs:11207 |
-| `pipeline/weights_*.txt` | Probe-Kontext (source_scanner-Ausgaben) | main.rs:11146 |
-| `pipeline/queue/master.φ` | Master-Source-Arbeitsliste (--port) | main.rs:14336 |
-| `pipeline/stage/staging_verified.φ`, `staging_void_ledger.txt` | Staging-Verifikation | main.rs:14707 |
-| `pipeline/catalog/*.φ` | Katalog-Korpora (source_scanner, --draft-context) | source_scanner.rs |
-
-Code-geschrieben (transiente Arbeitsausgaben, teils gitignored): probe_survivors.φ,
-probe_void.txt, probe_live.txt, probe_url_void.txt, probe_drafts.φ,
-probe_drafts_enriched.φ, frame_registry.φ, library_gate_delta.φ.
-
-Arbeitsfläche des Source-Ports (Register/Agent, kein Code-Leser): ledger.φ
-(Zustands-Register), index.φ, prompt.φ (Port-Vorlage), queue/grind_*.φ (Drafts),
-park/ (parser-gap), stage/*_converted.φ (Konvertierungs-Ausgänge).
-
-Eingefroren: `pipeline/interesting_domains.φ` — abgeleiteter Kandidaten-Pool (Stand
-2026-08-17) aus den früheren Dispositions-Registern (entfernt 2026-10-11); kein Code-Leser.
-
-Stehende Ref-Listen zur phi-Register-Landschaft: `specs/ref-phi-register.md`,
-`specs/ref-auth-apis.md`.
+A relative link in this tree must resolve. `.github/workflows/docs-links.yml`
+fails the run when one does not.

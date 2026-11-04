@@ -1,0 +1,35 @@
+name: docs-links
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: every relative link in the markdown resolves
+        run: |
+          set -eu
+          fail=0
+          for f in $(git ls-files '*.md'); do
+            dir=$(dirname "$f")
+            while IFS= read -r link; do
+              case "$link" in
+                http*|mailto:*|"#"*) continue ;;
+              esac
+              target=${link%%#*}
+              [ -n "$target" ] || continue
+              if [ ! -e "$dir/$target" ]; then
+                echo "BROKEN $f -> $link"
+                fail=1
+              fi
+            done < <(grep -oE '\]\([^)]+\)' "$f" | sed -e 's/^](//' -e 's/)$//' || true)
+          done
+          exit "$fail"
