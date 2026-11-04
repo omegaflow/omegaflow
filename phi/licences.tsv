@@ -84,7 +84,11 @@ ucalgary-open	admitted	UCalgary Space Remote Sensing Open Science Platform: data
 usgs-lpdaac-no-restrictions	admitted	USGS EROS and NASA LP DAAC data use statement: there are no restrictions on the use of data unless expressly identified prior to receipt
 vires-esa-attribution	declined	reproduction only inside the VRE, non-commercial
 vires-esa-data-terms	declined	ESA EO data terms: PI agreement, project registration and signature required
-vizier-scientific-free	declined	free use in a scientific context only; copyright stays with the catalogue
+vizier-scientific-free	admitted	scientific use with attribution; redistribution not forbidden; project is non-commercial
 wdcb-nc	admitted	standard licence text
 wdcb-sep-policy	admitted	WDC for SEP: open and freely available for scientific, educational and other non-commercial purposes without restriction; citation required (research/specs/terms-policy.md: NC is not a decline reason)
 wmo-data-policy	admitted	standard licence text
+ooi-open	admitted	OOI how-to-use page: all data freely available; acknowledge OOI, cite, acknowledge NSF
+nso-gong-open	admitted	NSO data page: GONG data, acknowledgement of NSO/NISP/AURA/NSF/NOAA required
+jaxa-gportal-open	admitted	G-Portal terms: data used freely without restrictions, indicate the source; commercial use needs prior notice
+eumetsat-core-open	admitted	EUMETSAT core data: free and unrestricted, may be reproduced and redistributed for any purpose with attribution
