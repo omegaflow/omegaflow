@@ -231,6 +231,12 @@ fn main() {
         std::process::exit(1);
     };
     let text = body.as_str();
+    if text.contains("1201") && text.contains("no data for time range") {
+        eprintln!(
+            "hapi_emit: the answer names no data for this range — the bin stays unwritten (0 honored)"
+        );
+        std::process::exit(1);
+    }
     let Some(json) = parse_json(text) else {
         eprintln!("hapi_emit: body is not JSON");
         std::process::exit(1);
