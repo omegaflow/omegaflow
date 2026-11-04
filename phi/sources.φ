@@ -26309,3 +26309,14 @@ sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+terms ooi-open https://oceanobservatories.org/how-to-use-acknowledge-and-cite-data
+format ooi_pco2
+origin https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/
+instrument CO2-Pro
+compiler tools/harvest/src/bin/ooi_pco2_compiler.rs
+on earth 46.05 -125.0 0
+ttl 86400
+field ooi_pco2_uatm ooi_pco2_uatm uatm
+field hydrosphere_sst_ooi_c hydrosphere_sst_ooi_c C
+
