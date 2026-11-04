@@ -59,7 +59,7 @@ jobs:
       - name: Upload the TIMED worldline to the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          bin/cdn-put celestrak.org data/celestrak.org/timed_orbit.bin \
+          bin/cdn_put celestrak.org data/celestrak.org/timed_orbit.bin \
  \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "timed-orbit-cdn: timed_orbit.bin upload returned void" \

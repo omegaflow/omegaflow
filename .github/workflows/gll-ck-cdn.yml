@@ -53,7 +53,7 @@ jobs:
       - name: Mirror the raw kernel to the CDN (the CI manifestator is the only writer)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          bin/cdn-put naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc
+          bin/cdn_put naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc
       - name: Verify the registered naif.jpl.nasa.gov gll_plt_rec assets are manifested
         run: |
           set -euo pipefail
@@ -137,7 +137,7 @@ jobs:
           for f in ck90341a_rtr.bc ck90341b_rtr.bc ck90342a_rtr.bc ck90342b_rtr.bc \
                    ck90343a_rtr.bc ck90343b_rtr.bc ck90344a_rtr.bc ck90344b_rtr.bc; do
             if [ -f "$f" ]; then
-              bin/cdn-put naif.jpl.nasa.gov "$f"
+              bin/cdn_put naif.jpl.nasa.gov "$f"
             fi
           done
 

@@ -33,7 +33,8 @@ commit that adds it.
 | Class | Shape | Example |
 |---|---|---|
 | Rust source and binaries | snake_case | `fdsn_waveform_compiler.rs` |
-| Registers, tables, shell | snake_case | `field_model_definition.tsv`, `cdn-put` aside |
+| Registers and tables | snake_case | `field_model_definition.tsv` |
+| Shell scripts | snake_case | `cdn_put`, `source_branch_guard` |
 | Workflows | kebab-case | `fdsn-waveform-cdn.yml` |
 | Markdown below the root | kebab-case | `auftrag-2026-11-02-sources-ci.md` |
 | Root markdown | uppercase | `README.md`, `CHANGELOG.md` |

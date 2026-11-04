@@ -34,5 +34,5 @@ jobs:
             > lead_geometry_verdict.txt 2> lead_geometry_sweep.log
           echo "--- sweep diagnostics (stderr) ---"
           cat lead_geometry_sweep.log
-          bin/cdn-put physionet.org \
+          bin/cdn_put physionet.org \
             lead_geometry_verdict.txt

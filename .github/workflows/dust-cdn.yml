@@ -42,4 +42,4 @@ jobs:
             --input kernels/dl07_av.fits --nside 512 --column 3 \
             --screen-pc "${{ inputs.screen_pc }}" --out planck_dust_av_rq_n512.json \
             --mask-run --binding tools/harvest/data/dust-maske.φ --ci-mode
-          bin/cdn-put irsa.ipac.caltech.edu kernels/dl07_av.fits.sha256
+          bin/cdn_put irsa.ipac.caltech.edu kernels/dl07_av.fits.sha256

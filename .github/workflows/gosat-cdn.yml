@@ -127,4 +127,4 @@ jobs:
             exit 0
           fi
           echo "gosat_tanso3.manifest lists $(wc -l < "$tmp/gosat_tanso3.manifest") shards"
-          bin/cdn-put "$TAG" "$tmp/gosat_tanso3.manifest"
+          bin/cdn_put "$TAG" "$tmp/gosat_tanso3.manifest"

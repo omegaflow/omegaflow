@@ -53,7 +53,7 @@ jobs:
       - name: Mirror the raw kernel to the CDN (the CI manifestator is the only writer)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          bin/cdn-put naif.jpl.nasa.gov ura117.bsp
+          bin/cdn_put naif.jpl.nasa.gov ura117.bsp
       - name: Verify the registered naif.jpl.nasa.gov ura117 assets are manifested
         run: |
           set -euo pipefail

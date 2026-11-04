@@ -72,4 +72,4 @@ jobs:
             exit 0
           fi
           echo "$MANIFEST lists $(wc -l < "$tmp/$MANIFEST") shards"
-          bin/cdn-put "$FAMILY" "$tmp/$MANIFEST"
+          bin/cdn_put "$FAMILY" "$tmp/$MANIFEST"
