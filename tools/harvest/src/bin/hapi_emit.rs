@@ -184,6 +184,52 @@ fn parse_time(s: &str) -> Option<f64> {
     Some(days as f64 * 86400.0 + (h * 3600 + mi * 60 + se) as f64)
 }
 
+fn info_stop(url: &str) -> Option<String> {
+    let id = url.split("id=").nth(1)?.split('&').next()?;
+    let base = url.split("/hapi/").next()?;
+    let body = fetch_text(&format!("{base}/hapi/info?id={id}"))?;
+    let json = parse_json(&body)?;
+    match jpath_val(&json, "stopDate") {
+        Some(JsonVal::Str(s)) => Some(s.clone()),
+        _ => None,
+    }
+}
+
+fn iso_of(t: f64) -> String {
+    let secs = t.floor() as i64;
+    let days = secs.div_euclid(86_400);
+    let rem = secs.rem_euclid(86_400);
+    let (y, m, d) = civil_from_days(days);
+    format!(
+        "{y:04}-{m:02}-{d:02}T{:02}:{:02}:{:02}Z",
+        rem / 3600,
+        (rem % 3600) / 60,
+        rem % 60
+    )
+}
+
+fn set_param(url: &str, key: &str, value: &str) -> String {
+    let needle = format!("{key}=");
+    let Some(i) = url.find(&needle) else {
+        return url.to_string();
+    };
+    let rest = &url[i + needle.len()..];
+    let end = rest
+        .find('&')
+        .map(|e| i + needle.len() + e)
+        .unwrap_or(url.len());
+    format!("{}{}{}", &url[..i + needle.len()], value, &url[end..])
+}
+
+fn with_window(url: &str, stop: &str) -> String {
+    let t = parse_time(stop).unwrap_or(0.0);
+    let start = iso_of(t - 3600.0);
+    let out = set_param(url, "time.min", &start);
+    let out = set_param(&out, "time.max", stop);
+    let out = set_param(&out, "start", &start);
+    set_param(&out, "stop", stop)
+}
+
 fn selftest() {
     let body = r#"{"Hapi":"3.0","status":{"code":200},"parameters":[{"name":"Time","units":"UTC"},{"name":"Bx","units":"nT","fill":"99999.0"},{"name":"By","units":"nT"}],"data":[["2024-01-01T00:00:00Z",1.5,99999.0],["2024-01-01T00:00:01Z",2.5,3.5],["2024-01-01T00:00:02Z",99999.0,4.5]]}"#;
     let json = parse_json(body).expect("hapi json");
@@ -230,6 +276,15 @@ fn main() {
         eprintln!("hapi_emit: fetch void ({route})");
         std::process::exit(1);
     };
+    let mut body = body;
+    if body.contains("1201") {
+        if let Some(stop) = info_stop(&url) {
+            let retry = with_window(&url, &stop);
+            if let Some(next) = fetch_text(&retry) {
+                body = next;
+            }
+        }
+    }
     let text = body.as_str();
     if text.contains("1201") && text.contains("no data for time range") {
         eprintln!(
