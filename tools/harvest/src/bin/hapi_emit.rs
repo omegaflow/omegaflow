@@ -1,7 +1,20 @@
-use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::hapi_csv::{HapiParam, write_bin};
 use omegaflow::archivar::json::{JsonVal, jpath_val, parse_json, scalar_of};
 use omegaflow::cdn::upload_release;
+
+fn fetch_text(url: &str) -> Option<String> {
+    let out = std::process::Command::new("curl")
+        .arg("-sSL")
+        .arg("--max-time")
+        .arg("120")
+        .arg(url)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    String::from_utf8(out.stdout).ok()
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -41,10 +54,19 @@ fn resolve(url: &str, now: f64) -> String {
         )
     };
     url.replace("{now}", &iso(now))
-        .replace("{hour_ago}", &iso(now - 3600.0).split('T').next().unwrap_or(""))
-        .replace("{week_ago}", &iso(now - 7.0 * day).split('T').next().unwrap_or(""))
+        .replace(
+            "{hour_ago}",
+            &iso(now - 3600.0).split('T').next().unwrap_or(""),
+        )
+        .replace(
+            "{week_ago}",
+            &iso(now - 7.0 * day).split('T').next().unwrap_or(""),
+        )
         .replace("{today}", &iso(now).split('T').next().unwrap_or(""))
-        .replace("{tomorrow}", &iso(now + day).split('T').next().unwrap_or(""))
+        .replace(
+            "{tomorrow}",
+            &iso(now + day).split('T').next().unwrap_or(""),
+        )
 }
 
 fn civil_from_days(z: i64) -> (i64, i64, i64) {
@@ -171,7 +193,11 @@ fn selftest() {
     let cols = columns(&["Bx=bx_nt".to_string(), "By=by_nt".to_string()], &params);
     assert_eq!(cols.len(), 2);
     let recs = rows(&json, &cols);
-    assert_eq!(recs.len(), 5, "the Bx fill value is skipped, By has no fill");
+    assert_eq!(
+        recs.len(),
+        5,
+        "the Bx fill value is skipped, By has no fill"
+    );
     assert_eq!(recs[0], (1.7040672e9, 1.5, 0u32));
     let bin = write_bin(2, &recs);
     assert_eq!(bin.len(), 12 + recs.len() * 20);
@@ -200,22 +226,26 @@ fn main() {
         .map(|d| d.as_secs_f64())
         .unwrap_or(0.0);
     let route = resolve(&url, now);
-    let Some(body) = fetch_raw_bytes(&route) else {
+    let Some(body) = fetch_text(&route) else {
         eprintln!("hapi_emit: fetch void ({route})");
         std::process::exit(1);
     };
-    let text = String::from_utf8_lossy(&body);
-    let Some(json) = parse_json(&text) else {
+    let text = body.as_str();
+    let Some(json) = parse_json(text) else {
         eprintln!("hapi_emit: body is not JSON");
         std::process::exit(1);
     };
     let mut params = params_of(&json);
     if params.is_empty() {
-        let id = url.split("id=").nth(1).and_then(|s| s.split('&').next()).unwrap_or("");
+        let id = url
+            .split("id=")
+            .nth(1)
+            .and_then(|s| s.split('&').next())
+            .unwrap_or("");
         let base = url.split("/hapi/").next().unwrap_or("");
         let info = format!("{base}/hapi/info?id={id}");
-        if let Some(body) = fetch_raw_bytes(&info) {
-            if let Some(j) = parse_json(&String::from_utf8_lossy(&body)) {
+        if let Some(body) = fetch_text(&info) {
+            if let Some(j) = parse_json(&body) {
                 params = params_of(&j);
             }
         }
