@@ -65,6 +65,7 @@ lasair-copyright	declined	copyright reserved, citation requested, no redistribut
 ligo-public	declined	public alerts; no redistribution grant evidenced
 metno-open	admitted	MET Norway data policy: official data freely available for use, dissemination and further production, credits required
 naoj-copyright	declined	copyright reserved
+neracoos-license	admitted	NERACOOS ERDDAP dataset metadata: the data may be used and redistributed for free (NC_GLOBAL license in the .das); the legal.html page is ERDDAP boilerplate
 nist-srd-copyright	declined	all rights reserved, reproduction only with prior permission
 nmdb-non-commercial	declined	non-commercial access; no redistribution grant evidenced
 no-license	declined	provider states no licence
@@ -80,6 +81,7 @@ pradan-terms	declined	no licence text; access terms missing, kept local-only
 rpw-public-ack	declined	acknowledgement requested; no redistribution grant
 tns-copyright	declined	no licence text; access terms missing, kept local-only
 ucalgary-open	admitted	UCalgary Space Remote Sensing Open Science Platform: data openly and freely available, acknowledge and cite
+usgs-lpdaac-no-restrictions	admitted	USGS EROS and NASA LP DAAC data use statement: there are no restrictions on the use of data unless expressly identified prior to receipt
 vires-esa-attribution	declined	reproduction only inside the VRE, non-commercial
 vires-esa-data-terms	declined	ESA EO data terms: PI agreement, project registration and signature required
 vizier-scientific-free	declined	free use in a scientific context only; copyright stays with the catalogue
