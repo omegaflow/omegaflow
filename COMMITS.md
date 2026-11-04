@@ -27,6 +27,18 @@ Checked with cargo check --workspace under -D warnings.
 - A number carries its unit and where it was measured.
 - A claim without a measurement is written as `pending`, never as a result.
 
+## Where this form comes from
+
+The form is binding in the workshop repository (`bindend/commit.md`); this file
+is its public restatement, so a reader of this repository sees the same rule.
+
+The measured part rests on Tian, Zhang, Stol, Jiang and Liu, *What makes a good
+commit message?*, ICSE 2022, DOI 10.1145/3510003.3510205: across 1,649 labelled
+messages from five active projects, a good message carries the why and the what,
+and about 44 percent of messages could be improved. The 50/72 line width is a
+convention from Tim Pope and Chris Beams, not a measurement; it is used here for
+reading comfort and named as such.
+
 ## What the gate refuses
 
 `.github/workflows/commit-message.yml` checks every pushed commit and fails the
