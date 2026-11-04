@@ -570,7 +570,7 @@ mod tests {
         let gie = std::env::var("PROJ_GIE").unwrap_or_else(|_| "gie".to_string());
         let file = concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/src/archivar/kernels/proj_builtins.gie"
+            "/tests/fixtures/proj_builtins.gie"
         );
         let out = std::process::Command::new(&gie).arg(file).output();
         let Ok(out) = out else {

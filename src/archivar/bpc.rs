@@ -172,7 +172,7 @@ mod tests {
     fn the_bundled_lunar_pck_holds_the_interval_the_table_declares() {
         let path = concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/src/archivar/kernels/moon_pa_de440_200625.bpc"
+            "/tests/fixtures/moon_pa_de440_200625.bpc"
         );
         let bpc = BpcFile::open(path).expect("the bundled lunar pck opens");
         let start = (2287184.5 - 2451545.0) * 86400.0;
@@ -197,7 +197,7 @@ mod tests {
     fn the_two_lunar_segments_meet_within_a_hundredth_of_a_degree() {
         let path = concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/src/archivar/kernels/moon_pa_de440_200625.bpc"
+            "/tests/fixtures/moon_pa_de440_200625.bpc"
         );
         let bpc = BpcFile::open(path).expect("the bundled lunar pck opens");
         let seam = SEGMENT_ONE_INIT + SEGMENT_ONE_RECORDS * SEGMENT_STEP;

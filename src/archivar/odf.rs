@@ -2632,7 +2632,7 @@ mod tests {
 
     #[test]
     fn golden_file_parses() {
-        let bytes = std::fs::read("src/archivar/kernels/odf07155.dat").unwrap();
+        let bytes = std::fs::read("tests/fixtures/odf07155.dat").unwrap();
         let recs = parse_odf(&bytes).unwrap();
         assert!(!recs.is_empty());
         let first = recs[0];

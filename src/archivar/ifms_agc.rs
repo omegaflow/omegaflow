@@ -252,7 +252,7 @@ mod tests {
 
     #[test]
     fn parses_committed_rsi_fixture() {
-        let bytes = std::fs::read("src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW").unwrap();
+        let bytes = std::fs::read("tests/fixtures/r32icl1l1a_ag1_072831317_02.RAW").unwrap();
         let file = parse_ifms_agc(&bytes).unwrap();
         assert_eq!(
             file.fields[0],

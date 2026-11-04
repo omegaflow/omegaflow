@@ -499,7 +499,7 @@ BODY399_NUT_PREC_RA = ( -0.177596746667 -0.0178254 0.\n 0. 0. 0. )\n";
 
     #[test]
     fn every_model_claiming_function_names_its_reference() {
-        let table = std::fs::read_to_string("src/archivar/kernels/reference_coverage.tsv")
+        let table = std::fs::read_to_string("tests/fixtures/reference_coverage.tsv")
             .expect("the reference coverage table");
         let listed: std::collections::HashSet<&str> = table
             .lines()

@@ -312,7 +312,7 @@ mod tests {
         let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
         let xml = std::fs::read_to_string(format!("{dir}/src/archivar/kernels/ucum-essence.xml"))
             .expect("the frozen UCUM essence table");
-        let tsv = std::fs::read_to_string(format!("{dir}/src/archivar/kernels/ucum_verdicts.tsv"))
+        let tsv = std::fs::read_to_string(format!("{dir}/tests/fixtures/ucum_verdicts.tsv"))
             .expect("the NLM verdicts");
         let mut atoms: BTreeSet<String> = attr(&xml, "unit", "Code").into_iter().collect();
         atoms.extend(attr(&xml, "base-unit", "Code"));
