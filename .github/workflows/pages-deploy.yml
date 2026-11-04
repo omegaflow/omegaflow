@@ -47,12 +47,16 @@ jobs:
         cp pkg/omegaflow.js pkg/omegaflow_bg.wasm _site/ 2>/dev/null \
           || echo "wasm bundle absent — the membrane stays an honest black"
     - name: Stage the B assets same-origin (serverless membrane)
+      env:
+        GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
       run: |
         set -euo pipefail
         stage() {
           tag="$1"; name="$2"; want="$3"
+          id=$(gh api "repos/omegaflow/sources/releases/tags/$tag" --jq ".assets[] | select(.name==\"$name\") | .id")
           curl -sSfL --retry 3 --max-time 1800 -o "_site/$name" \
-            "https://github.com/omegaflow/sources/releases/download/$tag/$name"
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/omegaflow/sources/releases/assets/$id"
           got=$(sha256sum "_site/$name" | cut -d' ' -f1)
           if [ "$got" != "$want" ]; then
             echo "sha256 mismatch for $name: got $got want $want — the staged bytes are not the measured asset"
@@ -67,3 +71,4 @@ jobs:
         path: _site
     - uses: actions/deploy-pages@v4
       id: deployment
+
