@@ -367,7 +367,7 @@ fn host_known(tag: &str, hosts: &BTreeSet<String>) -> bool {
 }
 
 fn tag_baseline(root: &str) -> BTreeSet<String> {
-    let path = format!("{}/docs/specs/cdn-tag-baseline.txt", root);
+    let path = format!("{}/state/cdn-tag-baseline.txt", root);
     let mut set = BTreeSet::new();
     if let Ok(text) = std::fs::read_to_string(&path) {
         for l in text.lines() {
@@ -400,7 +400,7 @@ fn contract(root: &str, hosts: &BTreeSet<String>, exempt: &BTreeSet<String>) -> 
 
 fn main() {
     let mut root = String::from(".");
-    let mut out_path = String::from("docs/specs/cdn_reconciliation.json");
+    let mut out_path = String::from("state/cdn_reconciliation.json");
     let mut source_path = String::from("phi/sources.φ");
     let mut fail = false;
     let args: Vec<String> = env::args().collect();

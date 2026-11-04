@@ -991,7 +991,7 @@ mod tests {
 
     #[test]
     fn simple_format3_rgb_fixture_digest() {
-        let bytes = include_bytes!("fixtures/simple.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/simple.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 3);
         assert_eq!(h.point_count, 1065);
@@ -1013,8 +1013,8 @@ mod tests {
 
     #[test]
     fn fullwave_format10_rgb_nir_waveform_fixture_digest() {
-        let laz = include_bytes!("fixtures/fullwave.laz");
-        let las = include_bytes!("fixtures/fullwave.las");
+        let laz = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/fullwave.laz"));
+        let las = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/fullwave.las"));
         let h = LasHeader::parse(laz).unwrap();
         assert_eq!(h.point_format, 10);
         assert_eq!(h.point_count, 10750);
@@ -1030,7 +1030,7 @@ mod tests {
 
     #[test]
     fn autzen_format3_gpstime_unchanged_selector_digest() {
-        let bytes = include_bytes!("fixtures/autzen_trim.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/autzen_trim.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 3);
         assert_eq!(h.point_count, 110000);
@@ -1049,22 +1049,22 @@ mod tests {
 
     #[test]
     fn simple_laz_matches_uncompressed_las_reference() {
-        let laz = include_bytes!("fixtures/simple.laz");
-        let las = include_bytes!("fixtures/simple.las");
+        let laz = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/simple.laz"));
+        let las = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/simple.las"));
         assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
 
     #[test]
     fn autzen_trim_laz_matches_uncompressed_las_reference() {
-        let laz = include_bytes!("fixtures/autzen_trim.laz");
-        let las = include_bytes!("fixtures/autzen_trim.las");
+        let laz = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/autzen_trim.laz"));
+        let las = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/autzen_trim.las"));
         assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
 
     #[test]
     fn pdrf4_pointwise_byte_wavepacket13_fixture_digest() {
-        let laz = include_bytes!("fixtures/pdrf4-1.3.laz");
-        let las = include_bytes!("fixtures/pdrf4-1.3.las");
+        let laz = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/pdrf4-1.3.laz"));
+        let las = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/pdrf4-1.3.las"));
         let h = LasHeader::parse(laz).unwrap();
         assert_eq!(h.point_format, 4);
         assert_eq!(h.point_count, 1024);
@@ -1077,7 +1077,7 @@ mod tests {
 
     #[test]
     fn pdrf4_uncompressed_format4_waveform_fixture_digest() {
-        let bytes = include_bytes!("fixtures/pdrf4-1.3.las");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/pdrf4-1.3.las"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 4);
         assert_eq!(h.point_count, 1024);
@@ -1092,7 +1092,7 @@ mod tests {
 
     #[test]
     fn rgb14_format7_standalone_fixture_digest() {
-        let bytes = include_bytes!("fixtures/1.2-with-color.copc.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/1.2-with-color.copc.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 7);
         assert_eq!(h.point_count, 1065);
@@ -1104,7 +1104,7 @@ mod tests {
 
     #[test]
     fn byte14_extra_bytes_fixture_digest() {
-        let bytes = include_bytes!("fixtures/2019_saipan_waveform.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/2019_saipan_waveform.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 6);
         assert_eq!(h.point_count, 5198);
@@ -1116,7 +1116,7 @@ mod tests {
 
     #[test]
     fn point10_format0_pointwise_fixture_digest() {
-        let bytes = include_bytes!("fixtures/point10.las.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/point10.las.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 0);
         assert_eq!(h.point_count, 1065);
@@ -1128,7 +1128,7 @@ mod tests {
 
     #[test]
     fn point10_rgb12_format2_pointwise_fixture_digest() {
-        let bytes = include_bytes!("fixtures/point-color.las.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/point-color.las.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.point_format, 2);
         assert_eq!(h.point_count, 1065);
@@ -1140,8 +1140,8 @@ mod tests {
 
     #[test]
     fn format6_layered_matches_uncompressed_las_reference() {
-        let laz = include_bytes!("fixtures/1_4_w_evlr.laz");
-        let las = include_bytes!("fixtures/1_4_w_evlr.las");
+        let laz = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/1_4_w_evlr.laz"));
+        let las = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/1_4_w_evlr.las"));
         let h = LasHeader::parse(laz).unwrap();
         assert_eq!(h.point_format, 6);
         let mut dec = LazDecoder::new(&h, laz).unwrap();
@@ -1152,8 +1152,8 @@ mod tests {
 
     #[test]
     fn format7_layered_rgb_matches_uncompressed_las_reference() {
-        let laz = include_bytes!("fixtures/autzen_trim_7.laz");
-        let las = include_bytes!("fixtures/autzen_trim_7.las");
+        let laz = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/autzen_trim_7.laz"));
+        let las = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/autzen_trim_7.las"));
         let h = LasHeader::parse(laz).unwrap();
         assert_eq!(h.point_format, 7);
         let mut dec = LazDecoder::new(&h, laz).unwrap();
@@ -1166,7 +1166,7 @@ mod tests {
 
     #[test]
     fn noaa_copc_f6_variable_chunks_fixture_digest() {
-        let bytes = include_bytes!("fixtures/noaa_copc_f6_variable.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/noaa_copc_f6_variable.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.version_major, 1);
         assert_eq!(h.version_minor, 4);
@@ -1191,7 +1191,7 @@ mod tests {
 
     #[test]
     fn usgs_ept_f1_pointwise_extra_bytes_fixture_digest() {
-        let bytes = include_bytes!("fixtures/usgs_ept_f1_pointwise.laz");
+        let bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/las/usgs_ept_f1_pointwise.laz"));
         let h = LasHeader::parse(bytes).unwrap();
         assert_eq!(h.version_major, 1);
         assert_eq!(h.version_minor, 2);
