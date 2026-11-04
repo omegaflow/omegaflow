@@ -1,0 +1,22 @@
+# nobel_probe_corona.te — TE-Probes-Wanderung: the nobel_probe_corona pair over registered fields.
+# driver: GOES soft X-ray flux (0.05-0.4 nm), noaa_goes_xray_flux_w_m2 (phi/sources.φ:169,
+#   live xrays-7-day.json, `last flux ... where energy 0.05-0.4nm`). nobel_probe_corona.rs:674-680
+#   channel order index 0 "X-Ray"; the first Matrix-1 pair (nobel_probe_corona.rs:689-704).
+# target: GOES EUV line 304, solar_euv_flux_304_wm2 (phi/sources.φ:434, live euvs-7-day.json,
+#   `last value ... where line 304`). nobel_probe_corona.rs:674-680 index 1 "EUV-304".
+# The probe is an all-pairs matrix over the minutes round (Matrix 1, :674-704) plus a
+#   three-channel repeat (Matrix 2, :709-734) and hourly radio/density cells (:769 ff.);
+#   field_te_query carries one driver/target pair, so this descriptor names the first
+#   (coronal) pair, the remaining directed pairs stay the probe's own matrix.
+# cond: none — the probe measures bivariate TE per pair, no conditioning arm.
+# cadence: 1-min grid (nobel_probe_corona.rs:665 dt 60.0 s; lags 0,1,2 :700; 10 phase
+#   surrogates :371-377).
+pair nobel-corona
+register sources
+driver noaa_goes_xray_flux_w_m2
+target solar_euv_flux_304_wm2
+cadence live
+bin 60
+seasonal none
+lags 0,1,2
+surrogate 10

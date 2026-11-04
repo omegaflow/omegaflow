@@ -1,0 +1,42 @@
+name: de441-cdn-watch
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *'
+permissions:
+  contents: read
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Watch the full-de441 bins (size is the measurement)
+        run: |
+          # S14 unblock: the CDN bins carry the metre-accurate generation —
+          # the full de441.bsp compiles to ~183 MB (the truncated
+          # generation was 13.8 MB). The size is the measurement (0 honored):
+          # a bare 200 does not suffice, and the manual upload is just as
+          # valid as a green CI run.
+          base=https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov
+          ok=1
+          for b in sun earth; do
+            len=$(curl -sIL "$base/ephemeris_$b.bin" | awk 'tolower($1)=="content-length:" {print $2}' | tr -d '\r' | tail -1)
+            echo "ephemeris_$b.bin: $len bytes"
+            [ "${len:-0}" -ge 183000000 ] || ok=0
+          done
+          if [ "$ok" = "1" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "de441-cdn: the full bins are present — S14 unblocked" \
+              "ephemeris_sun.bin + ephemeris_earth.bin carry the metre-accurate 183 MB generation (full de441.bsp) on the CDN. Follow-up: strike the TODO item 'metre-accurate CDN bins'; the control room clears the S14 line." \
+              health
+          else
+            echo "the bins do not yet carry the metre-accurate generation — still"
+          fi

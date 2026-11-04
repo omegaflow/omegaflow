@@ -1,0 +1,2261 @@
+use super::*;
+#[cfg(not(target_arch = "wasm32"))]
+pub use omegaflow::archivar::JUMP_GRID;
+pub use omegaflow::archivar::{DiodeState, PresenceState};
+#[cfg(not(target_arch = "wasm32"))]
+use std::io::Write;
+#[cfg(not(target_arch = "wasm32"))]
+use std::sync::atomic::AtomicU8;
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn block_on<F: std::future::Future>(future: F) -> F::Output {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::task::{Context, Poll, Wake, Waker};
+
+    struct ThreadWaker {
+        thread: std::thread::Thread,
+        notified: AtomicBool,
+    }
+
+    impl Wake for ThreadWaker {
+        fn wake(self: std::sync::Arc<Self>) {
+            self.notified.store(true, Ordering::SeqCst);
+            self.thread.unpark();
+        }
+
+        fn wake_by_ref(self: &std::sync::Arc<Self>) {
+            self.notified.store(true, Ordering::SeqCst);
+            self.thread.unpark();
+        }
+    }
+
+    let state = std::sync::Arc::new(ThreadWaker {
+        thread: std::thread::current(),
+        notified: AtomicBool::new(false),
+    });
+    let waker = Waker::from(state.clone());
+    let mut cx = Context::from_waker(&waker);
+    let mut future = std::pin::pin!(future);
+    loop {
+        if let Poll::Ready(value) = future.as_mut().poll(&mut cx) {
+            return value;
+        }
+        while !state.notified.swap(false, Ordering::SeqCst) {
+            std::thread::park();
+        }
+    }
+}
+
+pub const PHI: f64 = std::f64::consts::GOLDEN_RATIO;
+
+pub const C: f64 = omegaflow::archivar::types::C_LIGHT;
+
+pub const GRID_INIT: f64 = 2147483648.0;
+
+pub const PERM_GROUND: f32 = f32::EPSILON;
+
+pub fn perm_target(g: f32, v_c: f32) -> f32 {
+    (v_c / (g + PERM_GROUND)).tanh()
+}
+
+pub const TONE_FLOOR_SCALE: f32 = 0.25;
+
+pub const AIM_HALF_SWEEP_RAD: f32 = std::f32::consts::FRAC_PI_2;
+
+pub const THRUST_AIM_MIN: f64 = 1e-6;
+
+pub const SERVO_NEUTRAL_MS: f32 = 1.5;
+
+pub const FORCE_NAME: [&str; 9] = [
+    "em",
+    "gravity",
+    "acoustic",
+    "seismic-body",
+    "seismic-surface",
+    "thermal",
+    "diffusion",
+    "advective",
+    "electric",
+];
+
+pub const FORCE_SI_UNIT: [&str; 9] = ["W/m2", "m/s2", "Pa", "m", "m", "K", "kg/m3", "m/s", "V/m"];
+
+pub use omegaflow::archivar::EXPOSE_OFFSET_BASE;
+
+pub const OFFSET_RELAX: f32 = 0.03125;
+
+pub const REF_RELAX: f32 = 0.0625;
+
+pub const LOOP_TICK_MS: u64 = 16;
+
+fn pulse_ms(angle: f32) -> f32 {
+    SERVO_NEUTRAL_MS + (angle / AIM_HALF_SWEEP_RAD) * 0.5
+}
+
+pub fn aim_pulse_ms(v: [f64; 3]) -> (Option<f32>, Option<f32>) {
+    let vmag = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    if vmag < THRUST_AIM_MIN {
+        return (None, None);
+    }
+    let azimuth = v[1].atan2(v[0]);
+    let elevation = v[2].atan2(v[0].hypot(v[1]));
+    let pan_ms = Some(pulse_ms(azimuth as f32).clamp(1.0, 2.0));
+    let tilt_ms = Some(pulse_ms(elevation as f32));
+    (pan_ms, tilt_ms)
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn storage_entry(
+    read_only: bool,
+    visibility: wgpu::ShaderStages,
+) -> wgpu::BindGroupLayoutEntry {
+    wgpu::BindGroupLayoutEntry {
+        binding: 0,
+        visibility,
+        ty: wgpu::BindingType::Buffer {
+            ty: wgpu::BufferBindingType::Storage { read_only },
+            has_dynamic_offset: false,
+            min_binding_size: None,
+        },
+        count: None,
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn coupling_descriptor_rows(
+    layer: Option<&omegaflow::archivar::parse::ChannelCouplingLayer>,
+) -> Vec<f32> {
+    use omegaflow::mathematikerin::channel::DensityKind;
+    let Some(layer) = layer else {
+        return Vec::new();
+    };
+    let channels = &layer.channels;
+    let mut rows = Vec::new();
+    for c in layer.couplings.pairs() {
+        let (Some(i), Some(j)) = (channels.index_of(c.from), channels.index_of(c.to)) else {
+            continue;
+        };
+        let Some(coeff) = c.coefficient else {
+            continue;
+        };
+        let (Some(rf), Some(rt)) = (c.density_from.as_ref(), c.density_to.as_ref()) else {
+            continue;
+        };
+        let (Some(mf), Some(mt)) = (rf.species_mass, rt.species_mass) else {
+            continue;
+        };
+        let from_number = (rf.kind == DensityKind::Number) as i32 as f32;
+        let to_number = (rt.kind == DensityKind::Number) as i32 as f32;
+        rows.extend_from_slice(&[i as f32, j as f32, c.kind as u8 as f32, coeff as f32]);
+        rows.extend_from_slice(&[from_number, mf as f32, to_number, mt as f32]);
+    }
+    rows
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub struct OmegaLoop {
+    pub rx: mpsc::Receiver<Arc<Buffer>>,
+    pub req_tx: mpsc::SyncSender<SenseReq>,
+    pub res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
+    pub time: Arc<Mutex<Option<LeapSeconds>>>,
+    pub shutdown: Arc<AtomicBool>,
+    pub consent: Arc<AtomicBool>,
+    pub tone_code: Arc<AtomicU8>,
+    pub acoustic_tx: mpsc::Sender<PresenceFrame>,
+    pub seismic_tx: mpsc::Sender<PresenceFrame>,
+    pub relay_tx: Option<mpsc::Sender<PresenceFrame>>,
+    pub silent: bool,
+    pub presence: Arc<RwLock<PresenceState>>,
+    pub diode: Arc<RwLock<DiodeState>>,
+    pub verdicts: Arc<RwLock<Vec<omegaflow::archivar::VerdictLine>>>,
+
+    pub device: Option<wgpu::Device>,
+    pub queue: Option<wgpu::Queue>,
+    pub probe_pipe: Option<wgpu::ComputePipeline>,
+    pub probe_layout: Option<wgpu::BindGroupLayout>,
+    pub probe_binds: [Option<wgpu::BindGroup>; 2],
+    pub field_bufs: [Option<wgpu::Buffer>; 2],
+    pub meta_bufs: [Option<wgpu::Buffer>; 2],
+    pub vp_buf: Option<wgpu::Buffer>,
+    pub probe_buf: Option<wgpu::Buffer>,
+    pub probe_read: Option<wgpu::Buffer>,
+    pub vol_head_buf: Option<wgpu::Buffer>,
+    pub vol_axis_buf: Option<wgpu::Buffer>,
+    pub vol_cell_buf: Option<wgpu::Buffer>,
+    pub vol_u_buf: Option<wgpu::Buffer>,
+    pub shelf_buf: Option<wgpu::Buffer>,
+    pub coupling_buf: Option<wgpu::Buffer>,
+    pub vol_fingerprint: Option<(usize, usize, usize, usize)>,
+    pub prep_param_buf: Option<wgpu::Buffer>,
+    pub te_pipe: Option<wgpu::ComputePipeline>,
+    pub te_bind: Option<wgpu::BindGroup>,
+    pub te_series_buf: Option<wgpu::Buffer>,
+    pub te_param_buf: Option<wgpu::Buffer>,
+    pub te_out_buf: Option<wgpu::Buffer>,
+    pub te_read_buf: Option<wgpu::Buffer>,
+    pub te_map: Option<Arc<AtomicBool>>,
+    pub te_named: String,
+    pub verdict_named: String,
+    pub s2_pipe: Option<wgpu::ComputePipeline>,
+    pub s2_layout: Option<wgpu::BindGroupLayout>,
+    pub s2_bind: Option<wgpu::BindGroup>,
+    pub s2_osc_buf: Option<wgpu::Buffer>,
+    pub s2_probe_buf: Option<wgpu::Buffer>,
+    pub s2_param_buf: Option<wgpu::Buffer>,
+    pub s2_out_buf: Option<wgpu::Buffer>,
+    pub s2_read_buf: Option<wgpu::Buffer>,
+    pub sky: SkyState,
+    pub sky_named: String,
+    pub sky_fingerprint: Option<(u64, Option<u64>)>,
+    pub vlies_fingerprint: Option<(u64, Option<u64>)>,
+    pub witness_fingerprint: Option<(usize, u64)>,
+    pub sky_perm_t: Option<f64>,
+    pub field_cap: u32,
+    pub buf_sel: usize,
+    pub packed_gen: u64,
+    pub uploaded_gen: u64,
+
+    pub latest_field: Option<Arc<Buffer>>,
+    pub packed_field: Vec<f32>,
+    pub packed_meta: Vec<f32>,
+    pub packed_count: u32,
+    pub last_response_epoch: f64,
+
+    pub p: [f64; 3],
+    pub v: [f64; 3],
+    pub t0: f64,
+    pub t_presence: f64,
+    pub t_thrust: f64,
+    pub band: Option<(f64, f64)>,
+    pub last_tick: Option<std::time::Instant>,
+    pub q: [f64; 4],
+    pub grid_step: f64,
+    pub range: f64,
+    pub expose_offset: f32,
+    pub force_ref: [f32; 9],
+    pub em_color: [f32; 4],
+    pub probe_omega: [f32; 9],
+    pub prev_probe_omega: [f32; 9],
+    pub channels: Option<super::channel::ChannelRegistry>,
+    pub couplings: Option<omegaflow::archivar::parse::ChannelCouplingLayer>,
+    pub probe_flow: [f32; 3],
+    pub probe_r: [f32; CHANNEL_CAP],
+    pub probe_u: [f32; CHANNEL_CAP],
+    pub probe_ring: [[f32; 12]; 256],
+    pub ring_head: usize,
+    pub ring_filled: usize,
+    pub ring_gen: u64,
+    pub pe_ring: Vec<f64>,
+    pub solar: SolarMachine,
+    pub matrix: MatrixMachine,
+    pub te_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
+    pub te_cpu: Option<(usize, usize, Option<f64>, Option<f64>)>,
+    pub field_permeability: [f32; 9],
+    pub tone_scale: f32,
+    pub prev_omega_sum: f32,
+    pub prev_delta: f32,
+    pub prev_in_te: f64,
+    pub direction: i32,
+    pub ticks_since_turn: u64,
+    pub natural_latency_ticks: u64,
+    pub last_hud: Option<std::time::Instant>,
+    pub perm_log: Option<std::fs::File>,
+    pub perm_log_gen: u64,
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl OmegaLoop {
+    pub fn new(
+        rx: mpsc::Receiver<Arc<Buffer>>,
+        req_tx: mpsc::SyncSender<SenseReq>,
+        res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
+        shutdown: Arc<AtomicBool>,
+        ctx: LoopCtx,
+    ) -> Self {
+        let rest = PresenceState::rest();
+        OmegaLoop {
+            rx,
+            req_tx,
+            res_rx,
+            time: ctx.time,
+            shutdown,
+            consent: ctx.consent,
+            tone_code: ctx.tone_code,
+            acoustic_tx: ctx.acoustic_tx,
+            seismic_tx: ctx.seismic_tx,
+            relay_tx: ctx.relay_tx,
+            silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
+            perm_log: std::env::var("OMEGAFLOW_PERM_LOG").ok().and_then(|p| {
+                std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(p)
+                    .ok()
+            }),
+            perm_log_gen: 0,
+            presence: ctx.presence,
+            diode: ctx.diode,
+            verdicts: ctx.verdicts,
+            device: None,
+            queue: None,
+            probe_pipe: None,
+            probe_layout: None,
+            probe_binds: [None, None],
+            field_bufs: [None, None],
+            meta_bufs: [None, None],
+            vp_buf: None,
+            probe_buf: None,
+            probe_read: None,
+            vol_head_buf: None,
+            vol_axis_buf: None,
+            vol_cell_buf: None,
+            vol_u_buf: None,
+            shelf_buf: None,
+            coupling_buf: None,
+            vol_fingerprint: None,
+            prep_param_buf: None,
+            te_pipe: None,
+            te_bind: None,
+            te_series_buf: None,
+            te_param_buf: None,
+            te_out_buf: None,
+            te_read_buf: None,
+            te_map: None,
+            te_named: String::new(),
+            verdict_named: String::new(),
+            s2_pipe: None,
+            s2_layout: None,
+            s2_bind: None,
+            s2_osc_buf: None,
+            s2_probe_buf: None,
+            s2_param_buf: None,
+            s2_out_buf: None,
+            s2_read_buf: None,
+            sky: SkyState::new(),
+            sky_named: String::new(),
+            sky_fingerprint: None,
+            vlies_fingerprint: None,
+            witness_fingerprint: None,
+            sky_perm_t: None,
+            field_cap: 0,
+            buf_sel: 0,
+            packed_gen: 0,
+            uploaded_gen: 0,
+            latest_field: None,
+            packed_field: Vec::new(),
+            packed_meta: Vec::new(),
+            packed_count: 0,
+            last_response_epoch: 0.0,
+            p: rest.p,
+            v: rest.v,
+            t0: 0.0,
+            t_presence: 0.0,
+            t_thrust: 0.0,
+            last_tick: None,
+            q: [1.0, 0.0, 0.0, 0.0],
+            grid_step: rest.grid_step,
+            range: rest.range,
+            band: rest.band,
+            expose_offset: EXPOSE_OFFSET_BASE,
+            force_ref: [0.0; 9],
+            em_color: [0.0; 4],
+            probe_omega: [0.0; 9],
+            prev_probe_omega: [0.0; 9],
+            channels: None,
+            couplings: None,
+            probe_flow: [0.0; 3],
+            probe_r: [0.0; CHANNEL_CAP],
+            probe_u: [0.0; CHANNEL_CAP],
+            probe_ring: [[0.0; 12]; 256],
+            ring_head: 0,
+            ring_filled: 0,
+            ring_gen: 0,
+            pe_ring: Vec::with_capacity(16),
+            solar: SolarMachine::new(ctx.solar_rx),
+            matrix: MatrixMachine::new(ctx.machine_rx),
+            te_topology: None,
+            te_cpu: None,
+            field_permeability: [0.0; 9],
+            tone_scale: 1.0,
+            prev_omega_sum: 0.0,
+            prev_delta: 0.0,
+            prev_in_te: 0.0,
+            direction: 1,
+            ticks_since_turn: 0,
+            natural_latency_ticks: 1,
+            last_hud: None,
+        }
+    }
+
+    pub fn pos(&self) -> [f64; 3] {
+        let dt = self.t_presence - self.t0;
+        [
+            self.p[0] + self.v[0] * dt,
+            self.p[1] + self.v[1] * dt,
+            self.p[2] + self.v[2] * dt,
+        ]
+    }
+
+    pub fn frame(&self) -> ([f64; 3], [f64; 3], [f64; 3]) {
+        (
+            q_rotate(self.q, [1.0, 0.0, 0.0]),
+            q_rotate(self.q, [0.0, 1.0, 0.0]),
+            q_rotate(self.q, [0.0, 0.0, 1.0]),
+        )
+    }
+
+    pub fn presence_frame(&self) -> PresenceFrame {
+        let (pan_ms, tilt_ms) = aim_pulse_ms(self.v);
+        let mut omega = [0.0f32; CHANNEL_CAP];
+        omega[..9].copy_from_slice(&self.probe_omega);
+        let mut aperture = [0.0f32; CHANNEL_CAP];
+        aperture[..9].copy_from_slice(&std::array::from_fn::<f32, 9, _>(|k| {
+            self.field_permeability[k] * self.tone_scale
+        }));
+        let state = aperture_state(&aperture);
+        let fallback;
+        let registry = match &self.channels {
+            Some(r) => r,
+            None => {
+                fallback = super::channel::live_channel_registry();
+                &fallback
+            }
+        };
+        let mut partials_hz = [0.0f32; CHANNEL_CAP];
+        let mut delay_rad = [0.0f32; CHANNEL_CAP];
+        for (k, d) in registry.descriptors().iter().enumerate().take(CHANNEL_CAP) {
+            if let Some(f) = d.fundamental_hz() {
+                partials_hz[k] = f as f32;
+            }
+            if let (Some(wavenumber), true) = (
+                d.carrier_wavenumber(),
+                self.probe_r[k].is_finite() && self.probe_r[k] > 0.0,
+            ) {
+                delay_rad[k] = (wavenumber * self.probe_r[k] as f64) as f32;
+            }
+            if let (Some(speed), true) = (
+                d.phase_velocity_m_s(),
+                self.probe_u[k].is_finite() && self.probe_u[k] != 0.0,
+            ) && speed > 0.0
+            {
+                let shifted = partials_hz[k] as f64 * (1.0 - self.probe_u[k] as f64 / speed);
+                if shifted.is_finite() && shifted > 0.0 {
+                    partials_hz[k] = shifted as f32;
+                }
+            }
+        }
+        if let Some(layer) = &self.couplings {
+            let mut deltas = [0.0f32; CHANNEL_CAP];
+            for c in layer.couplings.pairs() {
+                if let Some((i, from_delta, j, to_delta)) =
+                    layer.couplings.exchange_resolved(c, &omega, registry)
+                {
+                    deltas[i] += from_delta;
+                    deltas[j] += to_delta;
+                }
+            }
+            for (k, d) in deltas.iter().enumerate() {
+                omega[k] += *d;
+            }
+        }
+        PresenceFrame {
+            n: registry.len() as u16,
+            schema_hash: registry.schema_hash(),
+            omega,
+            aperture,
+            state,
+            partials_hz,
+            delay_rad,
+            pan_ms,
+            tilt_ms,
+            tau_ticks: self.natural_latency_ticks,
+        }
+    }
+
+    pub fn read_presence(&mut self) {
+        if let Ok(pres) = self.presence.read() {
+            self.p = pres.p;
+            self.v = pres.v;
+            self.grid_step = pres.grid_step;
+            self.range = pres.range;
+            self.t_thrust = pres.t_thrust;
+            self.band = pres.band;
+        }
+        if self.t_presence == 0.0
+            && let Some(t) = system_now(&self.time)
+        {
+            self.t_presence = t;
+            self.t0 = t;
+        }
+    }
+
+    pub fn publish_diode(&self) {
+        if let Ok(mut d) = self.diode.write() {
+            d.force_ref = self.force_ref;
+            d.expose_offset = self.expose_offset;
+            d.em_color = self.em_color;
+        }
+    }
+
+    pub fn pe_gate(&mut self, pe: Option<f64>) -> bool {
+        let Some(pe) = pe else {
+            return true;
+        };
+        if self.pe_ring.len() == 16 {
+            self.pe_ring.remove(0);
+        }
+        self.pe_ring.push(pe);
+        if self.pe_ring.len() < 8 {
+            return true;
+        }
+        let n = self.pe_ring.len() as f64;
+        let mean = self.pe_ring.iter().sum::<f64>() / n;
+        let var = self
+            .pe_ring
+            .iter()
+            .map(|&p| {
+                let d = p - mean;
+                d * d
+            })
+            .sum::<f64>()
+            / n;
+        (pe - mean).abs() <= 2.0 * var.sqrt()
+    }
+
+    pub fn te_say(&mut self, word: &str) {
+        if self.te_named != word {
+            eprintln!("te {}", word);
+            self.te_named = word.to_string();
+        }
+    }
+
+    pub fn verdict_say(&mut self) {
+        let Ok(v) = self.verdicts.read() else {
+            return;
+        };
+        let now = system_now(&self.time);
+        let riss = omegaflow::archivar::riss_bodies(&v);
+        let named: String = riss
+            .iter()
+            .map(|l| {
+                let knots: Vec<&str> = l
+                    .knot
+                    .iter()
+                    .filter_map(|k| k.as_ref().map(|b| b.word()))
+                    .collect();
+                if omegaflow::archivar::is_stale(l, now) {
+                    format!("stale riss {} ({})", l.name, knots.join(" × "))
+                } else {
+                    format!("riss {} ({})", l.name, knots.join(" × "))
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(" · ");
+        if self.verdict_named == named {
+            return;
+        }
+        self.verdict_named = named;
+        for l in riss {
+            let knot_a = match l.knot[0] {
+                Some(b) => b.word(),
+                None => "",
+            };
+            let knot_b = match l.knot[1] {
+                Some(b) => b.word(),
+                None => "",
+            };
+            if omegaflow::archivar::is_stale(l, now) {
+                eprintln!("stale riss {} ({} × {})", l.name, knot_a, knot_b);
+            } else {
+                eprintln!("riss {} ({} × {})", l.name, knot_a, knot_b);
+            }
+        }
+    }
+
+    pub fn verdict_direction_only(&mut self) -> usize {
+        match self.verdicts.write() {
+            Ok(mut verdicts) => omegaflow::archivar::astrometry_series::merge_direction_only(
+                &mut verdicts,
+                &self.sky.witnesses,
+                self.t_presence,
+            ),
+            Err(poisoned) => omegaflow::archivar::astrometry_series::merge_direction_only(
+                &mut poisoned.into_inner(),
+                &self.sky.witnesses,
+                self.t_presence,
+            ),
+        }
+    }
+
+    pub fn te_probe(
+        &mut self,
+        xs: &[f32],
+        ys: &[f32],
+        m: usize,
+    ) -> Option<omegaflow::te::TopologicalVerdict> {
+        self.te_cpu = omegaflow::te::topological_te_phase(
+            xs,
+            ys,
+            3,
+            3,
+            self.ring_gen.wrapping_add(0x9E37_79B9_7F4A_7C15),
+        )
+        .map(|v| (v.tau_c, v.tau_y, Some(v.te), Some(v.threshold)));
+        let device = self.device.clone()?;
+        let mut carry: Option<omegaflow::te::TopologicalVerdict> = None;
+        if let Some(prev) = self.te_map.take() {
+            if prev.load(Ordering::SeqCst) {
+                let read_buf = self.te_read_buf.as_ref()?;
+                let verdict = te_read_verdict(read_buf);
+                carry = omegaflow::te::topological_verdict_from_gpu(&verdict);
+            } else {
+                self.te_map = Some(prev);
+                self.te_say("readback pending");
+                return None;
+            }
+        }
+        let queue = self.queue.clone()?;
+        let pipe = self.te_pipe.as_ref()?;
+        let bind = self.te_bind.as_ref()?;
+        let series_buf = self.te_series_buf.as_ref()?;
+        let param_buf = self.te_param_buf.as_ref()?;
+        let out_buf = self.te_out_buf.as_ref()?;
+        let read_buf = self.te_read_buf.as_ref()?;
+        let mut data = vec![0f32; omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
+        data[0..m].copy_from_slice(xs);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(ys);
+        let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
+        for s in 0..omegaflow::te::TE_SURR_FLOOR {
+            let surr = omegaflow::te::phase_randomized_surrogate(ys, &mut rng);
+            let off = (2 + s) * TE_SERIES_STRIDE;
+            data[off..off + m].copy_from_slice(&surr);
+        }
+        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
+        let max_lag = (m as f64 / PHI) as u32;
+        let param = [m as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K_PROD];
+        let mut pb = [0u8; 16];
+        for (i, x) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups((omegaflow::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+        }
+        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(100);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            self.te_map = Some(mapped);
+            if carry.is_some() {
+                self.te_say("verdict present");
+            } else {
+                self.te_say("readback pending");
+            }
+            return carry;
+        }
+        let verdict = te_read_verdict(read_buf);
+        let v = omegaflow::te::topological_verdict_from_gpu(&verdict);
+        let final_v = v.or(carry);
+        if final_v.is_some() {
+            self.te_say("verdict present");
+        } else {
+            self.te_say(te_absence_word(&verdict));
+        }
+        final_v
+    }
+
+    pub fn sense(&mut self) {
+        let Some(field) = self.latest_field.clone() else {
+            return;
+        };
+        let center = self.pos();
+        let t = self.t_presence;
+        let pad = self.range;
+        let cache_interval = (self.grid_step / 30000.0).clamp(PHI, PHI * 10.0);
+        let (_, _, forward) = self.frame();
+        let _ = self.req_tx.try_send(SenseReq {
+            field,
+            center,
+            t,
+            pad,
+            cache_interval,
+            forward,
+            expose_offset: self.expose_offset,
+            force_ref: self.force_ref,
+            softening: self.grid_step,
+            band: self.band,
+        });
+    }
+
+    pub fn relax_force_refs(&mut self) {
+        let meds = force_ref_medians(&self.packed_field, &self.packed_meta);
+        for (ft, m) in meds.iter().enumerate() {
+            let Some(median) = m else {
+                continue;
+            };
+            if self.force_ref[ft] == 0.0 {
+                self.force_ref[ft] = *median;
+                continue;
+            }
+            self.force_ref[ft] += (median - self.force_ref[ft]) * REF_RELAX;
+        }
+    }
+
+    pub fn vp_data(&self) -> [f32; 24] {
+        let (fr, fu, ff) = self.frame();
+        let [x, y, z] = self.pos();
+        [
+            0.0,
+            0.0,
+            self.packed_count as f32,
+            self.grid_step as f32,
+            fr[0] as f32,
+            fr[1] as f32,
+            fr[2] as f32,
+            (self.v[0] / C) as f32,
+            fu[0] as f32,
+            fu[1] as f32,
+            fu[2] as f32,
+            (self.v[1] / C) as f32,
+            ff[0] as f32,
+            ff[1] as f32,
+            ff[2] as f32,
+            (self.v[2] / C) as f32,
+            self.expose_offset,
+            self.last_response_epoch as f32,
+            0.0,
+            0.0,
+            x as f32,
+            y as f32,
+            z as f32,
+            self.t_presence as f32,
+        ]
+    }
+
+    pub fn rebuild_binds(&mut self) {
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(probe_layout) = self.probe_layout.clone() else {
+            return;
+        };
+        let Some(vp_buf) = self.vp_buf.clone() else {
+            return;
+        };
+        let Some(probe_buf) = self.probe_buf.clone() else {
+            return;
+        };
+        let Some(prep_param_buf) = self.prep_param_buf.clone() else {
+            return;
+        };
+        let Some(vol_head_buf) = self.vol_head_buf.clone() else {
+            return;
+        };
+        let Some(vol_axis_buf) = self.vol_axis_buf.clone() else {
+            return;
+        };
+        let Some(vol_cell_buf) = self.vol_cell_buf.clone() else {
+            return;
+        };
+        let Some(vol_u_buf) = self.vol_u_buf.clone() else {
+            return;
+        };
+        let Some(shelf_buf) = self.shelf_buf.clone() else {
+            return;
+        };
+        let Some(coupling_buf) = self.coupling_buf.clone() else {
+            return;
+        };
+        for sel in 0..2 {
+            let Some(field_buf) = self.field_bufs[sel].clone() else {
+                continue;
+            };
+            let Some(meta_buf) = self.meta_bufs[sel].clone() else {
+                continue;
+            };
+            self.probe_binds[sel] = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &probe_layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: field_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: meta_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 2,
+                        resource: vp_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 3,
+                        resource: probe_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 4,
+                        resource: prep_param_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: vol_head_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 6,
+                        resource: vol_axis_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 7,
+                        resource: vol_cell_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 8,
+                        resource: vol_u_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 9,
+                        resource: shelf_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 10,
+                        resource: coupling_buf.as_entire_binding(),
+                    },
+                ],
+            }));
+        }
+    }
+
+    pub fn ensure_capacity(&mut self) {
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let n = self.packed_count;
+        if self.field_cap > 0 && self.field_cap >= n {
+            return;
+        }
+        let mut c = if self.field_cap > 0 {
+            self.field_cap
+        } else {
+            256
+        };
+        while c < n {
+            c <<= 1;
+        }
+        let max_buf = device.limits().max_buffer_size;
+        while c as u64 * 96 > max_buf {
+            c >>= 1;
+        }
+        if c < 256 {
+            c = 256;
+        }
+        self.field_cap = c;
+        for sel in 0..2 {
+            self.field_bufs[sel] = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 48,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            }));
+            self.meta_bufs[sel] = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 64,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            }));
+        }
+        let prep_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: c as u64 * 32,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        self.prep_param_buf = Some(prep_param_buf);
+        self.rebuild_binds();
+    }
+
+    pub fn ensure_volumes(&mut self, volumes: &[omegaflow::archivar::volume::Volume]) {
+        let fp = (
+            volumes.len(),
+            volumes.iter().map(|v| v.data.len()).sum::<usize>(),
+            volumes.iter().map(|v| v.mask.len()).sum::<usize>(),
+            volumes
+                .iter()
+                .map(|v| {
+                    v.mask
+                        .iter()
+                        .map(|b| b.count_ones() as usize)
+                        .sum::<usize>()
+                })
+                .sum::<usize>(),
+        );
+        if self.vol_fingerprint == Some(fp) {
+            return;
+        }
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let mut head: Vec<u32> = Vec::with_capacity(volumes.len() * 11);
+        let mut axis: Vec<f32> = Vec::new();
+        let mut cell: Vec<f32> = Vec::new();
+        let mut mask: Vec<u32> = Vec::new();
+        let mask_base = volumes.len() * 11;
+        for v in volumes {
+            let data_off = cell.len() as u32;
+            let mut kinds = [0u32; 3];
+            let mut offs = [0u32; 3];
+            for i in 0..3 {
+                kinds[i] = u32::from(v.axes[i].kind.to_u8());
+                offs[i] = axis.len() as u32;
+                for &val in &v.axes[i].values {
+                    axis.push(val as f32);
+                }
+            }
+            let mask_off = (mask_base + mask.len()) as u32;
+            for w in v.mask.chunks(4) {
+                let mut x = [0u8; 4];
+                x[..w.len()].copy_from_slice(w);
+                mask.push(u32::from_le_bytes(x));
+            }
+            head.extend_from_slice(&[
+                data_off, v.dims[0], v.dims[1], v.dims[2], kinds[0], kinds[1], kinds[2], offs[0],
+                offs[1], offs[2], mask_off,
+            ]);
+            cell.extend_from_slice(&v.data);
+        }
+        let mut head_bytes = Vec::with_capacity(head.len() * 4 + mask.len() * 4);
+        for &w in &head {
+            head_bytes.extend_from_slice(&w.to_le_bytes());
+        }
+        for &w in &mask {
+            head_bytes.extend_from_slice(&w.to_le_bytes());
+        }
+        let axis_bytes = le_bytes_f32(&axis);
+        let cell_bytes = le_bytes_f32(&cell);
+        let mk = |size: u64| {
+            device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: size.max(4),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            })
+        };
+        let head_buf = mk(head_bytes.len() as u64);
+        let axis_buf = mk(axis_bytes.len() as u64);
+        let cell_buf = mk(cell_bytes.len() as u64);
+        queue.write_buffer(&head_buf, 0, &head_bytes);
+        queue.write_buffer(&axis_buf, 0, &axis_bytes);
+        queue.write_buffer(&cell_buf, 0, &cell_bytes);
+        self.vol_head_buf = Some(head_buf);
+        self.vol_axis_buf = Some(axis_buf);
+        self.vol_cell_buf = Some(cell_buf);
+        self.vol_fingerprint = Some(fp);
+        self.rebuild_binds();
+    }
+
+    pub fn upload_volumes(&mut self) {
+        let Some(field) = self.latest_field.clone() else {
+            return;
+        };
+        self.ensure_volumes(&field.volumes);
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let Some(vol_u_buf) = self.vol_u_buf.clone() else {
+            return;
+        };
+        let body = field.volumes.iter().find_map(|v| v.frame_body.as_deref());
+        let (depth, lat, lon, valid) = match body {
+            Some(body) => {
+                let p = self.pos();
+                match omegaflow::archivar::icrs_to_body_geodetic(
+                    p[0],
+                    p[1],
+                    p[2],
+                    self.t_presence,
+                    body,
+                    &field.eph,
+                ) {
+                    Some((la, lo, d)) => (d as f32, la as f32, lo as f32, 1.0f32),
+                    None => (0.0, 0.0, 0.0, 0.0),
+                }
+            }
+            None => (0.0, 0.0, 0.0, 0.0),
+        };
+        let count = field.volumes.len() as f32;
+        let vals = [depth, lat, lon, valid, count, 0.0f32, 0.0f32, 0.0f32];
+        let mut bytes = [0u8; 32];
+        for (i, x) in vals.iter().enumerate() {
+            bytes[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(&vol_u_buf, 0, &bytes);
+    }
+
+    pub fn probe(&mut self) {
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        if self.packed_gen != self.uploaded_gen {
+            self.ensure_capacity();
+            let sel = self.buf_sel ^ 1;
+            if let Some(fb) = &self.field_bufs[sel] {
+                queue.write_buffer(fb, 0, &le_bytes_f32(&self.packed_field));
+            }
+            if let Some(mb) = &self.meta_bufs[sel] {
+                queue.write_buffer(mb, 0, &le_bytes_f32(&self.packed_meta));
+            }
+            self.buf_sel = sel;
+            self.uploaded_gen = self.packed_gen;
+        }
+        let vp = self.vp_data();
+        let mut bytes = [0u8; 96];
+        for (i, x) in vp.iter().enumerate() {
+            bytes[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        let Some(vp_buf) = self.vp_buf.as_ref() else {
+            return;
+        };
+        queue.write_buffer(vp_buf, 0, &bytes);
+        self.upload_volumes();
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            let sel = self.buf_sel;
+            if let (Some(pipe), Some(bind)) =
+                (self.probe_pipe.as_ref(), self.probe_binds[sel].as_ref())
+            {
+                pass.set_pipeline(pipe);
+                pass.set_bind_group(0, bind, &[]);
+                pass.dispatch_workgroups(1, 1, 1);
+            }
+        }
+        queue.submit(std::iter::once(enc.finish()));
+    }
+
+    pub fn probe_readback(&mut self) {
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let Some(probe_buf) = self.probe_buf.clone() else {
+            return;
+        };
+        let Some(probe_read) = self.probe_read.clone() else {
+            return;
+        };
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        enc.copy_buffer_to_buffer(
+            &probe_buf,
+            0,
+            &probe_read,
+            0,
+            ((3 * CHANNEL_CAP + 3) * 4) as u64,
+        );
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = probe_read.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if mapped.load(Ordering::SeqCst) {
+            let data = slice.get_mapped_range();
+            let mut v = [0f32; 3 * CHANNEL_CAP + 3];
+            for (k, slot) in v.iter_mut().enumerate() {
+                let mut b = [0u8; 4];
+                b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+                *slot = f32::from_le_bytes(b);
+            }
+            drop(data);
+            self.probe_omega.copy_from_slice(&v[0..9]);
+            self.probe_flow
+                .copy_from_slice(&v[CHANNEL_CAP..CHANNEL_CAP + 3]);
+            self.probe_r
+                .copy_from_slice(&v[CHANNEL_CAP + 3..2 * CHANNEL_CAP + 3]);
+            self.probe_u
+                .copy_from_slice(&v[2 * CHANNEL_CAP + 3..3 * CHANNEL_CAP + 3]);
+            let mut ring = [0f32; 12];
+            ring[..9].copy_from_slice(&v[..9]);
+            ring[9..12].copy_from_slice(&v[CHANNEL_CAP..CHANNEL_CAP + 3]);
+            self.probe_ring[self.ring_head] = ring;
+            self.ring_head = (self.ring_head + 1) % 256;
+            if self.ring_filled < 256 {
+                self.ring_filled += 1;
+            }
+            self.ring_gen += 1;
+        }
+        probe_read.unmap();
+    }
+
+    pub fn sky_say(&mut self, word: &str) {
+        if self.sky_named != word {
+            eprintln!("sky {}", word);
+            self.sky_named = word.to_string();
+        }
+    }
+
+    pub fn sky_reload(&mut self) {
+        let witness_dir = astrometry_witness_dir();
+        let witness_fp = witness_fingerprint(&witness_dir);
+        if self.witness_fingerprint != witness_fp {
+            self.witness_fingerprint = witness_fp;
+            self.sky.witnesses = load_witnesses(&witness_dir);
+            let samples: usize = self.sky.witnesses.iter().map(|s| s.samples.len()).sum();
+            if samples > 0 {
+                let held = self.verdict_direction_only();
+                self.sky_say(&format!(
+                    "{samples} astrometry direction sample(s) held as S² direction witness (moving direction, no scalar channel); {held} series held as DirectionOnly in the verdict register"
+                ));
+            }
+        }
+        let path = sky_asset_path();
+        let meta = match std::fs::metadata(&path) {
+            Ok(m) => m,
+            Err(_) => {
+                if self.sky_fingerprint.is_some() {
+                    self.sky_fingerprint = None;
+                    self.sky.directions.clear();
+                    self.sky.loaded = false;
+                    self.sky_say("asset absent — the held directions stay held on disk, the layer rests (0 honored)");
+                }
+                return;
+            }
+        };
+        let modified = match meta.modified() {
+            Ok(t) => t
+                .duration_since(std::time::UNIX_EPOCH)
+                .ok()
+                .map(|d| d.as_secs()),
+            Err(_) => None,
+        };
+        let fp = (meta.len(), modified);
+        if self.sky_fingerprint == Some(fp) {
+            return;
+        }
+        self.sky_fingerprint = Some(fp);
+        match load_asset(&path) {
+            Some(dirs) => {
+                let n = dirs.len();
+                let placed = dirs.iter().filter(|d| d.distance_m().is_some()).count();
+                self.sky.directions = dirs;
+                self.sky.loaded = true;
+                self.sky_say(&format!(
+                    "{n} direction(s) held, {placed} distance-bearing — the rest rest on the sphere (0 honored)"
+                ));
+            }
+            None => {
+                self.sky_say("asset refused — the S² layer rests (0 honored)");
+            }
+        }
+    }
+
+    pub fn vlies_reload(&mut self) {
+        let path = omegaflow::archivar::vlies::vlies_asset_path();
+        let meta = match std::fs::metadata(&path) {
+            Ok(m) => m,
+            Err(_) => {
+                if self.vlies_fingerprint.is_some() {
+                    self.vlies_fingerprint = None;
+                    self.sky.vlies = None;
+                    self.sky_say("vlies asset absent — the census stays held on disk, the S² layer rests (0 honored)");
+                }
+                return;
+            }
+        };
+        let modified = match meta.modified() {
+            Ok(t) => t
+                .duration_since(std::time::UNIX_EPOCH)
+                .ok()
+                .map(|d| d.as_secs()),
+            Err(_) => None,
+        };
+        let fp = (meta.len(), modified);
+        if self.vlies_fingerprint == Some(fp) {
+            return;
+        }
+        self.vlies_fingerprint = Some(fp);
+        match omegaflow::archivar::vlies::load_asset(&path) {
+            Some(field) => {
+                self.sky.vlies = Some(field);
+                self.sky_say("vlies census held — the density rests in the S² layer state");
+            }
+            None => {
+                self.sky_say("vlies asset refused — the census rests (0 honored)");
+            }
+        }
+    }
+
+    pub fn sky_tick(&mut self) {
+        self.sky_reload();
+        self.vlies_reload();
+        let t = self.t_presence;
+        let riss = match self.verdicts.read() {
+            Ok(v) => omegaflow::archivar::riss_names(&v, Some(t)),
+            Err(poisoned) => omegaflow::archivar::riss_names(&poisoned.into_inner(), Some(t)),
+        };
+        let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
+        oscs.extend(direction_witness_window(
+            &self.sky.witnesses,
+            t,
+            S2_TAU_DEFAULT_S,
+        ));
+        oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
+        let mut riss_hull: Vec<String> = Vec::new();
+        let mut silent_worldlines = 0usize;
+        if let Some(field) = self.latest_field.clone() {
+            let mut body_names: Vec<&String> = field.eph.keys().collect();
+            body_names.sort();
+            for name in body_names {
+                if riss.contains(name.as_str()) {
+                    riss_hull.push(name.clone());
+                    continue;
+                }
+                match S2Osc::from_body(name, t, &field.eph) {
+                    Some(o) => oscs.push(o),
+                    None => silent_worldlines += 1,
+                }
+            }
+            let mut stations: Vec<(&String, &crate::machines::MetaAnchor, &Option<String>)> = self
+                .matrix
+                .metas
+                .iter()
+                .filter_map(|(name, meta)| match &meta.anchor {
+                    anchor @ crate::machines::MetaAnchor::Surface { .. } => {
+                        Some((name, anchor, &meta.station_code))
+                    }
+                    crate::machines::MetaAnchor::Barycenter { .. } => None,
+                })
+                .collect();
+            stations.sort_by(|a, b| a.0.cmp(b.0));
+            for (_, anchor, station_code) in stations {
+                if let Some(code) = station_code {
+                    let faden = format!("station-{code}");
+                    if riss.contains(&faden) {
+                        riss_hull.push(faden);
+                        continue;
+                    }
+                }
+                let crate::machines::MetaAnchor::Surface {
+                    body_name,
+                    lat,
+                    lon,
+                    alt,
+                } = anchor
+                else {
+                    continue;
+                };
+                match S2Osc::from_station(body_name, *lat, *lon, *alt, t, &field.eph) {
+                    Some(o) => oscs.push(o),
+                    None => silent_worldlines += 1,
+                }
+            }
+        }
+        self.sky.riss = riss_hull;
+        if silent_worldlines > 0 {
+            self.sky_say(&format!(
+                "{silent_worldlines} worldline(s) without coverage rest (0 honored)"
+            ));
+        }
+        if oscs.len() > S2_OSC_CAP as usize {
+            self.sky_say(&format!(
+                "{} oscillator(s) exceed the S² cap {S2_OSC_CAP} — their points rest, the shell and forward field still carry their weight",
+                oscs.len() - S2_OSC_CAP as usize
+            ));
+        }
+        let shell: f64 = oscs.iter().map(|o| o.weight).sum();
+        self.sky.shell_prev = self.sky.shell;
+        self.sky.shell = shell;
+        self.sky.oscs = oscs;
+        let (_, _, forward) = self.frame();
+        let forward_field = field_at(forward, &self.sky.oscs, S2_LMAX);
+        let dt = match self.sky_perm_t {
+            Some(pt) => (t - pt).max(0.0),
+            None => 1.0,
+        };
+        self.sky_perm_t = Some(t);
+        let target = breath_target(shell, self.sky.shell_prev, shell);
+        let alpha = 1.0 - (-dt / S2_PERM_TAU_S).exp();
+        self.sky.permeability += ((target as f32) - self.sky.permeability) * (alpha as f32);
+        self.sky.permeability = self.sky.permeability.clamp(PERM_GROUND, 1.0);
+        self.sky.forward_field = forward_field as f32;
+        self.sky.points.clear();
+        if self.sky.oscs.is_empty() {
+            self.sky_say("the S² layer rests — no direction series, no event epoch, and no worldline carries presence (0 honored)");
+            return;
+        }
+        let pack = pack_oscs(&self.sky.oscs, S2_OSC_CAP);
+        let mut gpu_fields: Option<Vec<f32>> = None;
+        if let (Some(device), Some(queue)) = (&self.device, &self.queue)
+            && pack.count > 0
+            && self.s2_eval_gpu(device, queue, &pack)
+        {
+            gpu_fields = self.s2_read_gpu(&pack.probe_count);
+        }
+        let cap = self.sky.oscs.len().min(S2_OSC_CAP as usize);
+        for (i, o) in self.sky.oscs.iter().take(cap).enumerate() {
+            let field = match &gpu_fields {
+                Some(f) if i < f.len() => f[i] as f64,
+                Some(_) => self_field(o, S2_LMAX),
+                None if i < S2_CPU_PROBE_CAP => field_at(o.p_hat, &self.sky.oscs, S2_LMAX),
+                None => self_field(o, S2_LMAX),
+            };
+            let sigma = match o.sigma_rad {
+                Some(s) if s.is_finite() && s > 0.0 => s as f32,
+                Some(_) => f32::NAN,
+                None => f32::NAN,
+            };
+            self.sky.points.push(SkyPoint {
+                p: [o.p_hat[0] as f32, o.p_hat[1] as f32, o.p_hat[2] as f32],
+                sigma_rad: sigma,
+                activity: o.weight as f32,
+                field: field as f32,
+            });
+        }
+    }
+
+    fn s2_eval_gpu(&self, device: &wgpu::Device, queue: &wgpu::Queue, pack: &S2Pack) -> bool {
+        let (
+            Some(pipe),
+            Some(bind),
+            Some(osc_buf),
+            Some(probe_buf),
+            Some(param_buf),
+            Some(out_buf),
+        ) = (
+            self.s2_pipe.as_ref(),
+            self.s2_bind.as_ref(),
+            self.s2_osc_buf.as_ref(),
+            self.s2_probe_buf.as_ref(),
+            self.s2_param_buf.as_ref(),
+            self.s2_out_buf.as_ref(),
+        )
+        else {
+            return false;
+        };
+        if pack.count == 0 {
+            return false;
+        }
+        queue.write_buffer(osc_buf, 0, &le_bytes_f32(&pack.osc));
+        queue.write_buffer(probe_buf, 0, &le_bytes_f32(&pack.probes));
+        let param = [pack.count, S2_LMAX, pack.probe_count, 0];
+        let mut pb = [0u8; 16];
+        for (i, p) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let groups = pack.probe_count.div_ceil(64);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups(groups, 1, 1);
+        }
+        queue.submit(std::iter::once(enc.finish()));
+        let read_buf = match self.s2_read_buf.as_ref() {
+            Some(b) => b,
+            None => return false,
+        };
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        enc.copy_buffer_to_buffer(
+            out_buf,
+            0,
+            read_buf,
+            0,
+            (pack.probe_count as usize * 4) as u64,
+        );
+        queue.submit(std::iter::once(enc.finish()));
+        true
+    }
+
+    fn s2_read_gpu(&mut self, probe_count: &u32) -> Option<Vec<f32>> {
+        let device = self.device.clone()?;
+        let read_buf = self.s2_read_buf.as_ref()?;
+        let n = (*probe_count as usize) * 4;
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..n as u64);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(200);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            read_buf.unmap();
+            self.sky_say("s2 readback pending");
+            return None;
+        }
+        let data = slice.get_mapped_range();
+        let mut out = vec![0f32; *probe_count as usize];
+        for k in 0..out.len() {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+            out[k] = f32::from_le_bytes(b);
+        }
+        drop(data);
+        read_buf.unmap();
+        Some(out)
+    }
+
+    pub fn init_gpu(&mut self) {
+        if self.device.is_some() {
+            return;
+        }
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+        let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::None,
+            compatible_surface: None,
+            force_fallback_adapter: false,
+        })) {
+            Some(a) => a,
+            None => {
+                eprintln!("adapter request returned void");
+                return;
+            }
+        };
+        let info = adapter.get_info();
+        eprintln!(
+            "adapter: {} | {:?} | {:?} | {}",
+            info.name, info.backend, info.device_type, info.driver_info
+        );
+        let (device, queue) = match block_on(adapter.request_device(
+            &wgpu::DeviceDescriptor {
+                required_limits: adapter.limits(),
+                ..Default::default()
+            },
+            None,
+        )) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(FIELD_WGSL.into()),
+        });
+        let probe_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 1;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 3;
+                    e
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 4;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 5;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 6;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 7;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 8,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 9;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 10;
+                    e
+                },
+            ],
+        });
+        let probe_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&probe_layout],
+            push_constant_ranges: &[],
+        });
+        let probe_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&probe_pipe_layout),
+            module: &module,
+            entry_point: Some("presence_probe"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 96,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: ((3 * CHANNEL_CAP + 3) * 4) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let probe_read = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: ((3 * CHANNEL_CAP + 3) * 4) as u64,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_head_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_axis_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_cell_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_u_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 32,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let shelf_rows = omegaflow::mathematikerin::dispersion::shelf_rows_for_gpu();
+        let shelf_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (shelf_rows.len() * 4).max(4) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        queue.write_buffer(&shelf_buf, 0, &le_bytes_f32(&shelf_rows));
+        let coupling_rows = coupling_descriptor_rows(self.couplings.as_ref());
+        let coupling_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (coupling_rows.len() * 4).max(16) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        queue.write_buffer(&coupling_buf, 0, &le_bytes_f32(&coupling_rows));
+        let te_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(TE_WGSL.into()),
+        });
+        let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 2;
+                    e
+                },
+            ],
+        });
+        let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&te_layout],
+            push_constant_ranges: &[],
+        });
+        let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&te_pipe_layout),
+            module: &te_module,
+            entry_point: Some("te_compute"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: TE_SERIES_BYTES,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: te_verdict_bytes(TE_KSG_K_PROD),
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let te_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: te_verdict_bytes(TE_KSG_K_PROD),
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: te_series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: te_param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: te_out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        let s2_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(S2_WGSL.into()),
+        });
+        let s2_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 2;
+                    e
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 3;
+                    e
+                },
+            ],
+        });
+        let s2_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&s2_layout],
+            push_constant_ranges: &[],
+        });
+        let s2_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&s2_pipe_layout),
+            module: &s2_module,
+            entry_point: Some("s2_field"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let s2_cap_bytes = (S2_OSC_CAP as usize * 32) as u64;
+        let s2_osc_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: s2_cap_bytes,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (S2_OSC_CAP as usize * 16) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (S2_OSC_CAP as usize * 4) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let s2_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (S2_OSC_CAP as usize * 4) as u64,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &s2_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: s2_osc_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: s2_param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: s2_probe_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
+                    resource: s2_out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        self.s2_pipe = Some(s2_pipe);
+        self.s2_layout = Some(s2_layout);
+        self.s2_bind = Some(s2_bind);
+        self.s2_osc_buf = Some(s2_osc_buf);
+        self.s2_probe_buf = Some(s2_probe_buf);
+        self.s2_param_buf = Some(s2_param_buf);
+        self.s2_out_buf = Some(s2_out_buf);
+        self.s2_read_buf = Some(s2_read_buf);
+        self.probe_pipe = Some(probe_pipe);
+        self.probe_layout = Some(probe_layout);
+        self.vp_buf = Some(vp_buf);
+        self.probe_buf = Some(probe_buf);
+        self.probe_read = Some(probe_read);
+        self.vol_head_buf = Some(vol_head_buf);
+        self.vol_axis_buf = Some(vol_axis_buf);
+        self.vol_cell_buf = Some(vol_cell_buf);
+        self.vol_u_buf = Some(vol_u_buf);
+        self.shelf_buf = Some(shelf_buf);
+        self.coupling_buf = Some(coupling_buf);
+        self.te_pipe = Some(te_pipe.clone());
+        self.te_bind = Some(te_bind);
+        self.te_series_buf = Some(te_series_buf);
+        self.te_param_buf = Some(te_param_buf);
+        self.te_out_buf = Some(te_out_buf);
+        self.te_read_buf = Some(te_read_buf);
+        self.solar
+            .bind_gpu(&device, &queue, te_pipe.clone(), &te_layout);
+        self.matrix.load_state();
+        self.matrix
+            .bind_gpu(&device, &queue, te_pipe.clone(), &te_layout);
+        self.device = Some(device);
+        self.queue = Some(queue);
+        self.ensure_capacity();
+    }
+
+    pub fn tick(&mut self) {
+        let now_i = std::time::Instant::now();
+        let raw = match self.last_tick {
+            Some(prev) => now_i.duration_since(prev).as_secs_f64() * 1000.0,
+            None => PHI,
+        };
+        self.last_tick = Some(now_i);
+        self.expose_offset += (EXPOSE_OFFSET_BASE - self.expose_offset) * OFFSET_RELAX;
+        self.read_presence();
+        self.t_presence += (1.0 + self.t_thrust) * raw / 1000.0;
+        if let Ok(field) = self.rx.try_recv() {
+            self.latest_field = Some(field);
+        }
+        while let Ok((packed, t, generation)) = self.res_rx.try_recv() {
+            self.packed_count = packed.count;
+            self.packed_field = packed.field;
+            self.packed_meta = packed.meta;
+            self.packed_gen = generation;
+            self.last_response_epoch = t;
+            self.relax_force_refs();
+            self.em_color = color_emission(&self.packed_field, &self.packed_meta);
+            self.publish_diode();
+        }
+        self.sense();
+        self.probe();
+        if self
+            .last_hud
+            .is_none_or(|i| i.elapsed().as_secs_f64() >= 1.0)
+        {
+            self.last_hud = Some(std::time::Instant::now());
+            self.probe_readback();
+            let mut te_opt: Option<(f64, f64)> = None;
+            if self.ring_filled >= 32 {
+                let m = self.ring_filled;
+                let mut xs = vec![0f32; m];
+                let mut ys = vec![0f32; m];
+                for i in 0..m {
+                    let idx = (self.ring_head + 256 - m + i) % 256;
+                    let v = self.probe_ring[idx];
+                    xs[i] = v[0] + v[1] + v[2] + v[3] + v[4] + v[5] + v[6] + v[7] + v[8];
+                    ys[i] = (v[9] * v[9] + v[10] * v[10] + v[11] * v[11]).sqrt();
+                }
+                if let Some(v) = self.te_probe(&xs, &ys, m) {
+                    self.te_topology = Some((v.tau_c, v.tau_y, v.pe_x, v.pe_y));
+                    if self.pe_gate(v.pe_y) {
+                        te_opt = Some((v.te, v.threshold));
+                    }
+                }
+            }
+            self.solar.tick(self.ring_gen);
+            self.matrix.tick(
+                self.latest_field.clone(),
+                self.pos(),
+                self.t_presence,
+                self.ring_gen,
+            );
+            if let Some((in_te, threshold)) = te_opt {
+                let delta_te = in_te - self.prev_in_te;
+                self.prev_in_te = in_te;
+                self.ticks_since_turn += 1;
+                if self.direction > 0 && delta_te < -threshold {
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 {
+                        1
+                    } else {
+                        self.ticks_since_turn
+                    };
+                    self.ticks_since_turn = 0;
+                    self.direction = -1;
+                }
+                if self.direction < 0
+                    && (delta_te > threshold
+                        || self.field_permeability.iter().all(|&p| p <= PERM_GROUND))
+                {
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 {
+                        1
+                    } else {
+                        self.ticks_since_turn
+                    };
+                    self.ticks_since_turn = 0;
+                    self.direction = 1;
+                }
+                let target =
+                    (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
+                for p in self.field_permeability.iter_mut() {
+                    *p += (target - *p) * alpha;
+                    *p = p.clamp(PERM_GROUND, 1.0);
+                }
+            } else {
+                let omega_sum: f32 = self.probe_omega.iter().sum();
+                let delta = omega_sum - self.prev_omega_sum;
+                if self.prev_delta != 0.0 && delta * self.prev_delta < 0.0 {
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 {
+                        1
+                    } else {
+                        self.ticks_since_turn
+                    };
+                    self.ticks_since_turn = 0;
+                }
+                self.ticks_since_turn += 1;
+                self.prev_delta = delta;
+                self.prev_omega_sum = omega_sum;
+                let g = omega_sum.abs();
+                let v_c = delta.abs();
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
+                for i in 0..9 {
+                    let d_i = self.probe_omega[i] - self.prev_probe_omega[i];
+                    let target = perm_target(self.probe_omega[i].abs(), d_i.abs());
+                    self.field_permeability[i] += (target - self.field_permeability[i]) * alpha;
+                    self.field_permeability[i] = self.field_permeability[i].clamp(PERM_GROUND, 1.0);
+                }
+                self.prev_probe_omega = self.probe_omega;
+                if let Some(f) = self.perm_log.as_mut()
+                    && self.ring_gen != self.perm_log_gen
+                {
+                    self.perm_log_gen = self.ring_gen;
+                    let aperture: [f32; 9] =
+                        std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale);
+                    let amp = match acoustic_amplitude(
+                        &self.probe_omega,
+                        &aperture,
+                        &aperture_state(&aperture),
+                    ) {
+                        Some(v) => format!("{v}"),
+                        None => "absent".to_string(),
+                    };
+                    let _ = writeln!(
+                        f,
+                        "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                        self.ring_gen,
+                        omega_sum,
+                        g,
+                        v_c,
+                        self.field_permeability[0],
+                        self.field_permeability[1],
+                        self.field_permeability[2],
+                        self.field_permeability[3],
+                        self.field_permeability[4],
+                        self.field_permeability[5],
+                        self.field_permeability[6],
+                        self.field_permeability[7],
+                        self.field_permeability[8],
+                        alpha,
+                        self.tone_code.load(std::sync::atomic::Ordering::SeqCst),
+                        self.tone_scale,
+                        amp
+                    );
+                }
+            }
+            let tone_target = if self.tone_code.load(std::sync::atomic::Ordering::SeqCst)
+                == omegaflow::archivar::hrv::TONE_STRESSED
+            {
+                TONE_FLOOR_SCALE
+            } else {
+                1.0
+            };
+            let tone_alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
+            self.tone_scale += (tone_target - self.tone_scale) * tone_alpha;
+            self.sky_tick();
+            self.verdict_say();
+            let frame = self.presence_frame();
+            if !self.silent {
+                if self.consent.load(Ordering::SeqCst) {
+                    let _ = self.acoustic_tx.send(frame);
+                }
+                let _ = self.seismic_tx.send(frame);
+                if let Some(tx) = &self.relay_tx {
+                    let _ = tx.send(frame);
+                }
+            }
+            let rec = if self.consent.load(Ordering::SeqCst) {
+                "on"
+            } else {
+                "silent"
+            };
+            let mut force_tokens = String::new();
+            for k in 0..9 {
+                if k > 0 {
+                    force_tokens.push(' ');
+                }
+                let v = self.probe_omega[k];
+                if v != 0.0 && v.abs() < 0.01 {
+                    force_tokens.push_str(&format!(
+                        "{}[{}]:{:+.1e}",
+                        FORCE_NAME[k], FORCE_SI_UNIT[k], v
+                    ));
+                } else {
+                    force_tokens.push_str(&format!(
+                        "{}[{}]:{:+.2}",
+                        FORCE_NAME[k], FORCE_SI_UNIT[k], v
+                    ));
+                }
+            }
+            let te_word = if self.ring_filled >= 32 {
+                self.te_named.clone()
+            } else {
+                "ring below gate".to_string()
+            };
+            let (te_s, thr_s) = match te_opt {
+                Some((t, h)) => (format!("{:.3}", t), format!("{:.3}", h)),
+                None => ("-".to_string(), "-".to_string()),
+            };
+            let te_cpu_s = match self.te_cpu {
+                Some((_, _, Some(t), Some(h))) => format!("{:.3}/{:.3}", t, h),
+                _ => "-".to_string(),
+            };
+            let (tau_s, pe_s) = match self.te_topology {
+                Some((tx, ty, px, py)) => {
+                    let pe = match (px, py) {
+                        (Some(a), Some(b)) => format!("{:.2}:{:.2}", a, b),
+                        _ => "-".to_string(),
+                    };
+                    (format!("{}:{}", tx, ty), pe)
+                }
+                None => ("-".to_string(), "-".to_string()),
+            };
+            let (_, _, forward) = self.frame();
+            let skyrep = self.sky.report(forward);
+            let vlies_s = match skyrep.vlies_count {
+                Some(c) => c.to_string(),
+                None => "-".to_string(),
+            };
+            let em_word = {
+                let [r, g, b, w] = self.em_color;
+                if w > 0.0 && w.is_finite() {
+                    format!("{:.2} {:.2} {:.2} w{:.1e}", r / w, g / w, b / w, w)
+                } else {
+                    "-".to_string()
+                }
+            };
+            let perm_s = self
+                .field_permeability
+                .iter()
+                .map(|p| format!("{:.2}", p))
+                .collect::<Vec<_>>()
+                .join("/");
+            if self.silent || std::io::IsTerminal::is_terminal(&std::io::stderr()) {
+                eprintln!(
+                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} vlies {} riss {} perm {:.2} pts {}",
+                    self.t_presence,
+                    rec,
+                    self.ring_gen,
+                    self.probe_flow[0],
+                    self.probe_flow[1],
+                    self.probe_flow[2],
+                    force_tokens,
+                    perm_s,
+                    self.expose_offset,
+                    self.force_ref[0],
+                    self.force_ref[1],
+                    self.force_ref[2],
+                    self.force_ref[3],
+                    self.force_ref[4],
+                    self.force_ref[5],
+                    self.force_ref[6],
+                    self.force_ref[7],
+                    self.force_ref[8],
+                    te_s,
+                    thr_s,
+                    te_cpu_s,
+                    tau_s,
+                    pe_s,
+                    te_word,
+                    em_word,
+                    skyrep.osc_count,
+                    skyrep.live_count,
+                    skyrep.shell,
+                    skyrep.forward_field,
+                    vlies_s,
+                    skyrep.riss_count,
+                    skyrep.permeability,
+                    self.sky.points.len(),
+                );
+            }
+        }
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub struct LoopCtx {
+    pub time: Arc<Mutex<Option<LeapSeconds>>>,
+    pub consent: Arc<AtomicBool>,
+    pub tone_code: Arc<AtomicU8>,
+    pub acoustic_tx: mpsc::Sender<PresenceFrame>,
+    pub seismic_tx: mpsc::Sender<PresenceFrame>,
+    pub relay_tx: Option<mpsc::Sender<PresenceFrame>>,
+    pub solar_rx: mpsc::Receiver<SolarCell>,
+    pub machine_rx: crate::machines::FrameRx,
+    pub presence: Arc<RwLock<PresenceState>>,
+    pub diode: Arc<RwLock<DiodeState>>,
+    pub verdicts: Arc<RwLock<Vec<omegaflow::archivar::VerdictLine>>>,
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn run_loop(
+    rx: mpsc::Receiver<Arc<Buffer>>,
+    req_tx: mpsc::SyncSender<SenseReq>,
+    res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
+    shutdown: Arc<AtomicBool>,
+    ctx: LoopCtx,
+    channels: super::channel::ChannelRegistry,
+) {
+    let mut loop_ = OmegaLoop::new(rx, req_tx, res_rx, shutdown.clone(), ctx);
+    loop_.channels = Some(channels);
+    loop_.couplings = Some(omegaflow::archivar::parse::load_channel_coupling_layer());
+    loop_.init_gpu();
+    while !shutdown.load(Ordering::SeqCst) {
+        let t0 = std::time::Instant::now();
+        loop_.tick();
+        let ms = t0.elapsed().as_secs_f64() * 1000.0;
+        if ms < LOOP_TICK_MS as f64 {
+            thread::sleep(std::time::Duration::from_millis(LOOP_TICK_MS - ms as u64));
+        }
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub struct LoopRadiator {
+    pub tx: mpsc::SyncSender<Arc<Buffer>>,
+    pub shutdown: Arc<AtomicBool>,
+    pub _thread: Option<thread::JoinHandle<()>>,
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl LoopRadiator {
+    pub fn new(ctx: LoopCtx, channels: super::channel::ChannelRegistry) -> Self {
+        let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
+        let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
+        let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, f64, u64)>(2);
+        let shutdown = Arc::new(AtomicBool::new(false));
+        let shutdown_clone = shutdown.clone();
+        thread::spawn(move || {
+            let mut generation: u64 = 0;
+            let mut last_bytes: Vec<u8> = Vec::new();
+            while let Ok(mut req) = req_rx.recv() {
+                while let Ok(newer) = req_rx.try_recv() {
+                    req = newer;
+                }
+                let SenseReq {
+                    field,
+                    center,
+                    t,
+                    pad,
+                    cache_interval,
+                    forward,
+                    expose_offset,
+                    force_ref,
+                    softening,
+                    band,
+                    ..
+                } = req;
+                let mut records: Vec<Record> = Vec::new();
+                let eph = field.eph.clone();
+                let scale2 = softening * softening;
+                let mut floor = [0.0f64; 9];
+                for ft in 0..9 {
+                    let r = force_ref[ft] as f64;
+                    if r.is_finite() && r > 0.0 && scale2 > 0.0 {
+                        floor[ft] = r * (0.5f64).powi(expose_offset as i32) / scale2;
+                    }
+                }
+                sense_membrane(
+                    &field,
+                    MembraneCtx {
+                        center,
+                        t2: t,
+                        pad,
+                        delta_t_cache: cache_interval,
+                        floor: &floor,
+                        softening,
+                        forward,
+                        eph: &eph,
+                    },
+                    &mut records,
+                );
+                if let Some(cset) = &field.curves {
+                    emit_curves(cset, center, t, pad, &mut records);
+                }
+                if let Some((lo, hi)) = band {
+                    records.retain(|r| {
+                        if r.22 <= 0.0 {
+                            return true;
+                        }
+                        omegaflow::spectral::band_overlap(r.22, r.23, lo, hi)
+                    });
+                }
+                let packed = pack_window(&records, center);
+                let mut key = Vec::with_capacity(packed.field.len() * 4 + packed.meta.len() * 4);
+                for x in &packed.field {
+                    key.extend_from_slice(&x.to_le_bytes());
+                }
+                for x in &packed.meta {
+                    key.extend_from_slice(&x.to_le_bytes());
+                }
+                if key == last_bytes {
+                    continue;
+                }
+                last_bytes = key;
+                generation = generation.wrapping_add(1);
+                if res_tx.send((packed, t, generation)).is_err() {
+                    break;
+                }
+            }
+        });
+        let handle = thread::spawn(move || {
+            run_loop(rx, req_tx, res_rx, shutdown_clone, ctx, channels);
+        });
+        Self {
+            tx,
+            shutdown,
+            _thread: Some(handle),
+        }
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl Radiator for LoopRadiator {
+    fn accept(&mut self, field: Arc<Buffer>) {
+        if let Err(mpsc::TrySendError::Disconnected(_)) = self.tx.try_send(field) {
+            eprintln!("omega loop channel closed — field buffer dropped");
+        }
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl LoopRadiator {
+    pub fn shutdown_flag(&self) -> Arc<AtomicBool> {
+        self.shutdown.clone()
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl Drop for LoopRadiator {
+    fn drop(&mut self) {
+        self.shutdown.store(true, Ordering::SeqCst);
+    }
+}

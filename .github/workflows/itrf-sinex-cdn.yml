@@ -1,0 +1,44 @@
+name: itrf-sinex-cdn
+
+# Der ITRF2020-SINEX-Compiler (`itrf_sinex_compiler`) als CDN-Manifestator.
+# Quelle ist die IVS-TRF-SSC der ITRF2020-Lösung (itrf.ign.fr, IGN); der
+# `--input`-Pfad bleibt lokal, darum trägt dieser Aufrufer einen eigenen
+# Fetch-Step statt des `cdn-manifest.yml`-Reusable. Die SSC ist eine
+# eingefrorene Release (Zulassung `ttl 31536000`).
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  itrf-sinex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the ITRF2020 IVS TRF SINEX SSC
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/itrf2020-ivs-trf.ssc \
+            "https://itrf.ign.fr/ftp/pub/itrf/itrf2020/ITRF2020-IVS-TRF.SSC"
+      - name: Compile the SINEX station series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin itrf_sinex_compiler -- \
+            --input kernels/itrf2020-ivs-trf.ssc \
+            --out sinex.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "itrf-sinex-cdn: sinex.bin returned void" \
+                 "itrf_sinex_compiler returned void for the ITRF2020 IVS SSC. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

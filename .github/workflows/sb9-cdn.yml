@@ -1,0 +1,22 @@
+name: sb9-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  sb9:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"sb9.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"B/sb9/main\" --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2' --skip-null mag1 --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' --out sb9.json"}
+        ]

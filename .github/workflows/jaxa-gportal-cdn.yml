@@ -1,0 +1,185 @@
+name: jaxa-gportal-cdn
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.dataset }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: 'G-Portal dataset id (e.g. 12001000 = GPM/DPR KuPR L1B, 10003027 = GCOM-C/SGLI)'
+        required: false
+        type: string
+        default: '12001000'
+      from:
+        description: 'observation window start (YYYY/MM/DD)'
+        required: false
+        type: string
+        default: '2015/01/01'
+      to:
+        description: 'observation window end (YYYY/MM/DD)'
+        required: false
+        type: string
+        default: '2015/01/01'
+      count:
+        description: 'page size (records returned)'
+        required: false
+        type: string
+        default: '100'
+      pages:
+        description: 'page count; >1 switches to CSW paging'
+        required: false
+        type: string
+        default: '1'
+      download:
+        description: 'order the first products for download (writes in the JAXA account — per-act consent)'
+        required: false
+        type: boolean
+        default: false
+      download_limit:
+        description: 'number of products to order (>=1)'
+        required: false
+        type: string
+        default: '1'
+      fetch:
+        description: 'fetch the ordered products and upload them to the CDN (implies download)'
+        required: false
+        type: boolean
+        default: false
+      gpm_ku:
+        description: 'compile the fetched KuPR granule into jaxa_gpm_ku.bin and upload it (implies download+fetch)'
+        required: false
+        type: boolean
+        default: false
+  push:
+    paths:
+      - 'tools/harvest/src/bin/jaxa_gportal_compiler.rs'
+      - '.github/workflows/jaxa-gportal-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  JAXA_GPORTAL_USER: ${{ secrets.JAXA_GPORTAL_USER }}
+  JAXA_GPORTAL_PASS: ${{ secrets.JAXA_GPORTAL_PASS }}
+  RUSTFLAGS: -D warnings
+jobs:
+  jaxa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compute the asset name and test idempotence
+        id: idempotence
+        run: |
+          set -euo pipefail
+          DATASET="${{ inputs.dataset }}"
+          FROM="${{ inputs.from }}"
+          TO="${{ inputs.to }}"
+          if [ -z "$DATASET" ]; then DATASET="12001000"; fi
+          if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
+          if [ -z "$TO" ]; then TO="2015/01/01"; fi
+          SLUG="jaxa_gportal_${DATASET}_$(printf '%s' "$FROM" | tr '/' '-')_$(printf '%s' "$TO" | tr '/' '-').json"
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          assets=$(gh release view gportal.jaxa.jp --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if printf '%s\n' "$assets" | grep -qx "$SLUG"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "$SLUG already manifested — skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "$SLUG missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the G-Portal catalogue page
+        if: github.event_name == 'workflow_dispatch' || steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          DATASET="${{ inputs.dataset }}"
+          FROM="${{ inputs.from }}"
+          TO="${{ inputs.to }}"
+          COUNT="${{ inputs.count }}"
+          PAGES="${{ inputs.pages }}"
+          if [ -z "$DATASET" ]; then DATASET="12001000"; fi
+          if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
+          if [ -z "$TO" ]; then TO="2015/01/01"; fi
+          if [ -z "$COUNT" ]; then COUNT="100"; fi
+          if [ -z "$PAGES" ]; then PAGES="1"; fi
+          cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
+            --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" --pages "$PAGES" \
+            --manifest "${{ steps.idempotence.outputs.slug }}" \
+            --quota \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: G-Portal catalogue returned void" \
+                 "jaxa_gportal_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Order the first products for download (per-act consent)
+        if: github.event_name == 'workflow_dispatch' && inputs.download
+        run: |
+          set -euo pipefail
+          DATASET="${{ inputs.dataset }}"
+          FROM="${{ inputs.from }}"
+          TO="${{ inputs.to }}"
+          COUNT="${{ inputs.count }}"
+          PAGES="${{ inputs.pages }}"
+          DL="${{ inputs.download_limit }}"
+          if [ -z "$DATASET" ]; then DATASET="12001000"; fi
+          if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
+          if [ -z "$TO" ]; then TO="2015/01/01"; fi
+          if [ -z "$COUNT" ]; then COUNT="100"; fi
+          if [ -z "$PAGES" ]; then PAGES="1"; fi
+          if [ -z "$DL" ]; then DL="1"; fi
+          mkdir -p data/gportal.jaxa.jp
+          extra=""
+          [ "${{ inputs.fetch }}" = "true" ] && extra="--fetch-file"
+          attempts=5
+          a=1
+          while [ "$a" -le "$attempts" ]; do
+            if cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
+                --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" --pages "$PAGES" \
+                --manifest "${{ steps.idempotence.outputs.slug }}" \
+                --out data/gportal.jaxa.jp \
+                --download --download-limit "$DL" $extra; then
+              exit 0
+            fi
+            echo "jaxa-gportal-cdn: attempt $a/$attempts returned void — JAXA may not have staged the ordered product yet"
+            a=$((a + 1))
+            [ "$a" -le "$attempts" ] && sleep 120
+          done
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "jaxa-gportal-cdn: G-Portal download/fetch returned void after $attempts attempts" \
+            "jaxa_gportal_compiler --download [-f fetch] returned void $attempts times (staging lag or route). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            health
+          exit 1
+      - name: Upload the fetched products to the CDN
+        if: github.event_name == 'workflow_dispatch' && inputs.download && inputs.fetch
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(data/gportal.jaxa.jp/jaxa_gportal_*.bin)
+          [ ${#files[@]} -gt 0 ] \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: fetched payload returned void" \
+                 "no jaxa_gportal_*.bin fetched. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          bin/cdn-put gportal.jaxa.jp "${files[@]}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: payload upload returned void" \
+                 "gh release upload gportal.jaxa.jp returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Compile the fetched KuPR granule into jaxa_gpm_ku.bin
+        if: github.event_name == 'workflow_dispatch' && inputs.fetch && inputs.gpm_ku
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(data/gportal.jaxa.jp/jaxa_gportal_*.bin)
+          [ ${#files[@]} -gt 0 ] \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: fetched payload returned void" \
+                 "no jaxa_gportal_*.bin to compile. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
+            --granule "${files[0]}" \
+            --bin data/gportal.jaxa.jp/jaxa_gpm_ku.bin \
+            --ci-mode

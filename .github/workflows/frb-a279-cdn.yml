@@ -1,0 +1,22 @@
+name: frb-a279-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  frb-a279:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"frb_a279.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table J/A+A/693/A279/frbs --columns 'name:TNS;ra:RAJ2000;dec:DEJ2000;z:z;dm:DM;tausc:tausc' --out frb_a279.json"}
+        ]

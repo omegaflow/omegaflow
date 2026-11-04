@@ -1,0 +1,251 @@
+use std::env;
+use std::fs;
+use std::io::Write;
+use std::process::Command;
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let mut links = false;
+    let mut title_only = false;
+    let mut raw_mode = false;
+    let mut out: Option<String> = None;
+    let mut url: Option<String> = None;
+    let mut want_out = false;
+    for a in args.iter().skip(1) {
+        if want_out {
+            out = Some(a.clone());
+            want_out = false;
+            continue;
+        }
+        match a.as_str() {
+            "--links" => links = true,
+            "--title" => title_only = true,
+            "--raw" => raw_mode = true,
+            "--out" => want_out = true,
+            _ if url.is_none() => url = Some(a.clone()),
+            _ => {}
+        }
+    }
+    if want_out {
+        eprintln!("usage: sfetch [--links] [--title] [--raw] [--out <path>] <url>");
+        std::process::exit(2);
+    }
+    let Some(url) = url else {
+        eprintln!("usage: sfetch [--links] [--title] [--raw] [--out <path>] <url>");
+        std::process::exit(2);
+    };
+    let raw = match Command::new("curl")
+        .arg("-sL")
+        .arg("--max-time")
+        .arg("60")
+        .arg(&url)
+        .output()
+    {
+        Ok(o) if o.status.success() => o.stdout,
+        _ => {
+            eprintln!("sfetch: fetch void");
+            std::process::exit(1);
+        }
+    };
+    if let Some(path) = out.as_deref() {
+        write_fetched(path, &raw, &url);
+        return;
+    }
+    if raw_mode {
+        let _ = std::io::stdout().write_all(&raw);
+        return;
+    }
+    let html = String::from_utf8_lossy(&raw);
+    if title_only {
+        if let Some(t) = extract_title(&html) {
+            println!("{}", t);
+        }
+        return;
+    }
+    if links {
+        for l in extract_links(&html) {
+            println!("{}", l);
+        }
+        return;
+    }
+    if is_markup(&html) {
+        print!("{}", strip_tags(&html));
+    } else {
+        let _ = std::io::stdout().write_all(&raw);
+    }
+}
+
+fn write_fetched(path: &str, bytes: &[u8], source_url: &str) {
+    if let Err(e) = fs::write(path, bytes) {
+        eprintln!("sfetch: {} writes not: {e}", path);
+        std::process::exit(2);
+    }
+    index_fetched(path, bytes);
+    if source_url.is_empty() {
+        return;
+    }
+    let src = format!("{path}.src");
+    if let Err(e) = fs::write(&src, format!("{source_url}\n")) {
+        eprintln!("provenance {src}: sidecar void — {e}");
+    }
+}
+
+fn index_fetched(path: &str, bytes: &[u8]) {
+    let root = match env::var("OMEGAFLOW_SOURCES") {
+        Ok(r) => r,
+        Err(_) => match env::var("OMEGAFLOW_WORK") {
+            Ok(w) => format!("{w}/sources"),
+            Err(_) => return,
+        },
+    };
+    let root = match fs::canonicalize(&root) {
+        Ok(p) => p,
+        Err(_) => std::path::PathBuf::from(&root),
+    };
+    let abs = match fs::canonicalize(path) {
+        Ok(p) => p,
+        Err(_) => return,
+    };
+    let rel = match abs.strip_prefix(&root) {
+        Ok(r) => r.to_string_lossy().into_owned(),
+        Err(_) => return,
+    };
+    let Some(netloc) = rel.split('/').next() else {
+        return;
+    };
+    if rel == "INDEX.tsv" || !rel.contains('/') {
+        return;
+    }
+    let idx = root.join("INDEX.tsv");
+    let existing = match fs::read_to_string(&idx) {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => String::new(),
+        Err(_) => return,
+    };
+    if existing.contains(&format!("\t{rel}\t{}", bytes.len())) {
+        return;
+    }
+    let Ok(mut file) = fs::OpenOptions::new().create(true).append(true).open(&idx) else {
+        return;
+    };
+    if existing.is_empty() {
+        let _ = file.write_all(b"netloc\tpath\tbytes\n");
+    }
+    let _ = file.write_all(format!("{netloc}\t{rel}\t{}\n", bytes.len()).as_bytes());
+}
+
+fn is_markup(body: &str) -> bool {
+    body.trim_start().starts_with('<')
+}
+
+fn extract_title(html: &str) -> Option<String> {
+    let lower = html.to_lowercase();
+    let start = lower.find("<title")?;
+    let end = lower[start..].find('>')? + start;
+    let close = html[end..].find("</title>")? + end;
+    Some(strip_tags(&html[end + 1..close]).trim().to_string())
+}
+
+fn extract_links(html: &str) -> Vec<String> {
+    let mut links = Vec::new();
+    let lower = html.to_lowercase();
+    let mut pos = 0;
+    while let Some(rel) = lower[pos..].find("href") {
+        let idx = pos + rel;
+        let rest = &html[idx + 4..];
+        let mut q = '\0';
+        let mut start = 0;
+        let mut end = 0;
+        for (i, c) in rest.char_indices() {
+            if c == '"' || c == '\'' {
+                if q == '\0' {
+                    q = c;
+                    start = i + c.len_utf8();
+                } else if q == c {
+                    end = i;
+                    break;
+                }
+            }
+        }
+        if start > 0 && end > start {
+            let link = rest[start..end].to_string();
+            if !link.starts_with("javascript:") && !link.starts_with('#') {
+                links.push(link);
+            }
+        }
+        pos = idx + 4;
+    }
+    links
+}
+
+fn strip_tags(html: &str) -> String {
+    let mut out = String::with_capacity(html.len());
+    let mut in_tag = false;
+    for c in html.chars() {
+        if in_tag {
+            if c == '>' {
+                in_tag = false;
+            }
+            continue;
+        }
+        if c == '<' {
+            in_tag = true;
+            continue;
+        }
+        out.push(c);
+    }
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn strips_tags() {
+        let html = "<html><head><title>t</title></head><body><p>hi there</p></body></html>";
+        let text = strip_tags(html);
+        assert!(text.contains("hi there"));
+        assert!(!text.contains('<'));
+    }
+
+    #[test]
+    fn markup_gate() {
+        assert!(is_markup("<!DOCTYPE html><p>x</p>"));
+        assert!(is_markup("  \n<html>"));
+        assert!(!is_markup("/* c */\n#include <stdio.h>\n"));
+    }
+
+    #[test]
+    fn title_extraction() {
+        let html = "<html><head><title>Der Gegenhang</title></head></html>";
+        assert_eq!(extract_title(html).as_deref(), Some("Der Gegenhang"));
+    }
+
+    #[test]
+    fn link_extraction() {
+        let html = "<a href=\"https://omegaflow.space\">x</a><a href='#top'>y</a>";
+        let links = extract_links(html);
+        assert!(links.contains(&"https://omegaflow.space".to_string()));
+        assert!(!links.contains(&"#top".to_string()));
+    }
+
+    #[test]
+    fn out_writes_sidecar_and_url_absent_writes_none() {
+        let base = std::env::temp_dir().join(format!("sfetch-sidecar-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&base);
+        let file = base.join("artifact.bin");
+        let file_s = file.to_string_lossy().to_string();
+        write_fetched(&file_s, b"body", "https://example.org/data/artifact.bin");
+        assert_eq!(std::fs::read(&file).unwrap(), b"body");
+        assert_eq!(
+            std::fs::read_to_string(format!("{file_s}.src")).unwrap(),
+            "https://example.org/data/artifact.bin\n"
+        );
+        let file2 = base.join("no-url.bin");
+        let file2_s = file2.to_string_lossy().to_string();
+        write_fetched(&file2_s, b"body", "");
+        assert!(!std::path::Path::new(&format!("{file2_s}.src")).exists());
+        let _ = std::fs::remove_dir_all(&base);
+    }
+}

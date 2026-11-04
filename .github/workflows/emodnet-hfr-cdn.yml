@@ -1,0 +1,95 @@
+name: emodnet-hfr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 4 * * *'
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  emodnet-hfr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Measure the CDN asset before the refresh
+        run: |
+          set -euo pipefail
+          tag=erddap.emodnet-physics.eu
+          asset=emodnet_hfr_nadr.bin
+          url="https://github.com/omegaflow/sources/releases/download/${tag}/${asset}"
+          code=$(curl -sL -o "$RUNNER_TEMP/emodnet_hfr_before.bin" -w '%{http_code}' --max-time 120 "$url") || code=000
+          echo "before: HTTP ${code} ${url}"
+          case "$code" in
+            200)
+              size=$(stat -c%s "$RUNNER_TEMP/emodnet_hfr_before.bin")
+              sha=$(sha256sum "$RUNNER_TEMP/emodnet_hfr_before.bin" | cut -d' ' -f1)
+              echo "before: ${size} B sha256 ${sha}"
+              ;;
+            404)
+              echo "before: absent (HTTP 404) — this refresh writes the asset"
+              ;;
+            *)
+              echo "before: CDN answered HTTP ${code} — the refresh cannot compare"
+              exit 1
+              ;;
+          esac
+      - name: Ensure the erddap.emodnet-physics.eu release exists on the CDN
+        run: |
+          gh release view erddap.emodnet-physics.eu --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create erddap.emodnet-physics.eu --repo omegaflow/sources \
+                 --title "erddap.emodnet-physics.eu" \
+                 --notes "EMODnet Physics ERDDAP HFR-NAdr surface total current grids (EUHFR_NRTcurrent_HFR-NAdr-Total) packaged to omegaflow binary assets (CDN tag = netloc)"
+      - name: Compile the EMODnet HFR-NAdr grid and upload the bin to the CDN
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-harvest --bin emodnet_hfr_compiler -- --ci-mode
+          out=data/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
+          [ -s "$out" ] || { echo "compile: ${out} absent or empty — no upload happened"; exit 1; }
+          echo "compile: $(stat -c%s "$out") B sha256 $(sha256sum "$out" | cut -d' ' -f1)"
+      - name: Emit and upload the sha256 sidecar
+        run: |
+          set -euo pipefail
+          out=data/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
+          sha256sum "$out" | tee "$out.sha256"
+          bin/cdn-put erddap.emodnet-physics.eu "$out.sha256"
+      - name: Verify the uploaded asset — HTTP 200, size and sha256 match the compiler output
+        run: |
+          set -euo pipefail
+          tag=erddap.emodnet-physics.eu
+          asset=emodnet_hfr_nadr.bin
+          out=data/erddap.emodnet-physics.eu/${asset}
+          url="https://github.com/omegaflow/sources/releases/download/${tag}/${asset}"
+          dir="$RUNNER_TEMP/emodnet_hfr_verify_${{ github.run_id }}"
+          mkdir -p "$dir"
+          local_size=$(stat -c%s "$out")
+          local_sha=$(sha256sum "$out" | cut -d' ' -f1)
+          code=$(curl -sL -o "$dir/$asset" -w '%{http_code}' --max-time 120 "$url") || code=000
+          echo "after: HTTP ${code} ${url}"
+          [ "$code" = "200" ] || { echo "after: expected HTTP 200, got ${code}"; exit 1; }
+          remote_size=$(stat -c%s "$dir/$asset")
+          remote_sha=$(sha256sum "$dir/$asset" | cut -d' ' -f1)
+          release_id=$(gh api "repos/omegaflow/sources/releases/tags/${tag}" --jq '.id')
+          listed=$(gh api --paginate "repos/omegaflow/sources/releases/${release_id}/assets?per_page=100" \
+            --jq ".[] | select(.name == \"$asset\") | .size")
+          [ -n "$listed" ] || { echo "after: ${asset} is not listed in release ${tag}"; exit 1; }
+          scode=$(curl -sL -o "$dir/${asset}.sha256" -w '%{http_code}' --max-time 60 "${url}.sha256") || scode=000
+          echo "after: sidecar HTTP ${scode} ${url}.sha256"
+          [ "$scode" = "200" ] || { echo "after: expected sidecar HTTP 200, got ${scode}"; exit 1; }
+          remote_sc=$(cut -d' ' -f1 "$dir/${asset}.sha256")
+          echo "compiler: ${local_size} B sha256 ${local_sha}"
+          echo "cdn:      ${remote_size} B sha256 ${remote_sha} (release lists ${listed} B, sidecar ${remote_sc})"
+          [ "$remote_size" = "$local_size" ] || { echo "size riss: cdn ${remote_size} B != compiler ${local_size} B"; exit 1; }
+          [ "$remote_sha" = "$local_sha" ] || { echo "sha riss: cdn ${remote_sha} != compiler ${local_sha}"; exit 1; }
+          [ "$listed" = "$local_size" ] || { echo "release listing riss: ${listed} B != compiler ${local_size} B"; exit 1; }
+          [ "$remote_sc" = "$local_sha" ] || { echo "sidecar riss: ${remote_sc} != compiler ${local_sha}"; exit 1; }
+          echo "after: asset equals the compiler output (${local_size} B, sha256 ${local_sha})"

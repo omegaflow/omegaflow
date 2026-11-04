@@ -1,0 +1,48 @@
+name: twomass-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  twomass:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile 2MASS PSC J-band selection and upload to CDN
+        run: |
+          mkdir -p kernels
+          if ! gh release view irsa.ipac.caltech.edu --repo omegaflow/sources --json assets 2>/tmp/gh_listing.err > /tmp/twomass_assets.json; then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          if grep -q twomass_psc.bin /tmp/twomass_assets.json; then
+            echo "twomass_psc.bin present — harvest stands"
+            exit 0
+          fi
+          for f in $(cargo run -p omegaflow-harvest --release --bin twomass_compiler -- --file-list); do
+            curl -sSfL --retry 3 --max-time 3600 \
+              "https://irsa.ipac.caltech.edu/2MASS/download/allsky/$f" \
+              | gzip -dc \
+              | cargo run -p omegaflow-harvest --release --bin twomass_compiler -- --stdin \
+                  --selection jmag --jmag-limit 11.0 \
+                  --rows kernels/twomass_psc_rows.bin \
+              || { echo "psc $f returned void"; exit 1; }
+          done
+          cargo run -p omegaflow-harvest --release --bin twomass_compiler -- --finalize \
+            --rows kernels/twomass_psc_rows.bin \
+            --out twomass_psc.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: twomass_psc returned void" \
+                 "twomass_psc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

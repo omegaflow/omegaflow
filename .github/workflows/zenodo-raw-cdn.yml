@@ -1,0 +1,188 @@
+# harvest: format=raw_zenodo arm=raw_mirror pattern=^<asset>$ idempotent=true timeout=360 tag=zenodo.org
+# Zenodo raw mirrors (CC-BY-4.0) byte-for-byte to the omegaflow/sources CDN. Each matrix
+# entry carries the registered url/origin and one fingerprint: sha256, or the md5 Zenodo
+# publishes for the dataset-scale assets. raw_mirror refuses to index an upload unless the
+# live body hashes to the registered print. A body over the GitHub 2 GiB asset ceiling is
+# fetched window-by-window (`--origin-size`), so the runner never holds more than one part.
+
+name: zenodo-raw-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/raw_mirror.rs'
+      - '.github/workflows/zenodo-raw-cdn.yml'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+  OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+
+jobs:
+  zenodo-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: BC430.tar.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz"
+            origin: "https://zenodo.org/api/records/3558850/files/BC430.tar.gz/content"
+            sha256: 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
+          - asset: pioneer10_SC_23.asc
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer10_SC_23.asc"
+            origin: "https://zenodo.org/api/records/13309156/files/SC_23.asc/content"
+            sha256: 3301268692211bb3f77feb663050b331b873cb702205731c7c59728183a3fe0e
+          - asset: pioneer11_SC_24.asc
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer11_SC_24.asc"
+            origin: "https://zenodo.org/api/records/13309040/files/SC_24.asc/content"
+            sha256: 2718880473fb855384f9b6742ffcbde50986e3ac495096bf1cdcccae7fa06c81
+          - asset: venus_radar_Processed.zip
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip"
+            origin: "https://zenodo.org/api/records/18176179/files/Processed.zip/content"
+            sha256: 8018463de4d911b659f2916830fe91594f6f11cbffa4b7d336f96d9638856a20
+          - asset: Venus_Venera_Backscatter_Global_Polar_840m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif/content"
+            sha256: 98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50
+          - asset: Venus_RadarBasemap_2025_Provenance_2025m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif/content"
+            sha256: 6aa2723571c07e8df6c6622873a1076b4189c02f057ad8aff29bad536ac0c2a4
+          - asset: Venus_Arecibo_1988_Global_440m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Arecibo_1988_Global_440m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_Arecibo_1988_Global_440m_v1.tif/content"
+            sha256: fe5ed9f80c69d570b17b865f5d38c349e71fb2445e69fc9bb89209676f776888
+          - asset: resonance_schumann.csv
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv"
+            origin: "https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content"
+            sha256: 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272
+          - asset: gps_cmonoc.dat
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_cmonoc.dat"
+            origin: "https://zenodo.org/api/records/7798617/files/gps_cmonoc.dat/content"
+            sha256: 7766cd0ac5cc754cfdc8a6cac1de888fe07f770bf0984608ea7c0f13a5c39bde
+          - asset: gps_campaign.dat
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_campaign.dat"
+            origin: "https://zenodo.org/api/records/7798617/files/gps_campaign.dat/content"
+            sha256: 06f66d84a74576716eeeaece77ebf7c4fb641cd46e921f3c5c19ce8ed6757725
+          - asset: cedc_catalog.xlsx
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/cedc_catalog.xlsx"
+            origin: "https://zenodo.org/api/records/8084659/files/CEDC%20catalog.xlsx/content"
+            sha256: 40ba4601d3f8d32753dd8de8eedd7ffe2bb5c341c3ae9f3303e43c474d75dfb4
+          - asset: Venus_RadarBasemap_2025_Global_75m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Global_75m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Global_75m_v1.tif/content"
+            md5: 9d7ccd0d12e402b82a8390ea3837ab1f
+            size: 80909342816
+          - asset: grbr_cnofs_2012_2014.zip
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/grbr_cnofs_2012_2014.zip"
+            origin: "https://zenodo.org/api/records/21380428/files/GRBR%20input%20data.zip/content"
+            sha256: e606ed2182d954407ce6369a0f890d208ac85b6beed32a648a26e0a2e7a0de99
+          - asset: 2018-11_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-11_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2018-11_RBN.gz/content"
+            sha256: cd84e1b7501d590e31790654af9771c2039655c57d4f46d71125ae4074c7c5a4
+            size: 587206195
+          - asset: 2018-12_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-12_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2018-12_RBN.gz/content"
+            sha256: ea29631ca1512380b09eb6ddf4d11e46a0e2be0693d5f0dffbf91c391e119ee5
+            size: 309840215
+          - asset: 2019-01_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-01_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2019-01_RBN.gz/content"
+            sha256: ead2a38ca371fca9c621c113f02d7fc538a72a86ff04d2c91b1b5cc7f801ece1
+            size: 367127222
+          - asset: 2019-02_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-02_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2019-02_RBN.gz/content"
+            sha256: 38bb438edba63806796132df8187832c140aef9392f7443aed971e11359b2daf
+            size: 444119739
+          - asset: 2019-03_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-03_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2019-03_RBN.gz/content"
+            sha256: 75267f67b944107327d413f10bb60e8fa8f3585b62dfcbe58600222ca45ed6de
+            size: 258954484
+          - asset: 2019-04_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-04_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2019-04_RBN.gz/content"
+            sha256: cbfcc88dd6c5d41e296b529bb1da0ea098f021d678afd7a4009dbd364950077e
+            size: 253809034
+          - asset: 2019-05_RBN.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-05_RBN.gz"
+            origin: "https://zenodo.org/api/records/10673982/files/2019-05_RBN.gz/content"
+            sha256: 52f3d812a486f77038895bc902fedeb4ce8c2ed3219e76e238d08db83eada8ab
+            size: 440799800
+          - asset: KC0PEclipseLogU2.txt
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/KC0PEclipseLogU2.txt"
+            origin: "https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content"
+            sha256: 17b46aebe6083e4d9ef97da47fc256b9f83b1c4be6704f6e5f9d83bff1f58c1c
+            size: 2933
+          - asset: WL7C_Zenodo_Upload_Diary.csv
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/WL7C_Zenodo_Upload_Diary.csv"
+            origin: "https://zenodo.org/api/records/1067790/files/WL7C_Zenodo_Upload_Diary.csv/content"
+            sha256: 52717fdefe137a95dac29f88f85bb10ea70b08e87552cbb53b85d494c91b0d98
+            size: 52185
+          - asset: kids_dr4_wl_cat.fits
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_wl_cat.fits"
+            origin: "https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content"
+            md5: 3e764558bb1679c7c7f706786393c542
+            size: 17712469440
+          - asset: epta_dr2.zip
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.zip"
+            origin: "https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content"
+            md5: 307b2b99cd352876b07409899448af8b
+            size: 39275794
+          - asset: uncover_dr4_sps_catalog.fits
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/uncover_dr4_sps_catalog.fits"
+            origin: "https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content"
+            md5: 96a59621fff89208f0cd3272c89fd5d8
+            size: 65905920
+          - asset: ceic_gravity_7112529_datasets.rar
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/ceic_gravity_7112529_datasets.rar"
+            origin: "https://zenodo.org/api/records/7112529/files/datasets.rar/content"
+            md5: 392d1bf3cd696657c72b6ea0938f3267
+            size: 1019033
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          names="$(gh release view zenodo.org --repo omegaflow/sources \
+                   --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          asset='${{ matrix.asset }}'
+          if printf '%s\n' "$names" | grep -qxF "$asset" \
+             || printf '%s\n' "$names" | grep -qxF "$asset.parts"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset $asset already present — mirror skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset $asset missing — mirroring"
+          fi
+      - name: Mirror ${{ matrix.asset }} to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          args=(--ci-mode --url "${{ matrix.url }}" --origin "${{ matrix.origin }}")
+          if [ -n "${{ matrix.sha256 }}" ]; then args+=(--sha256 "${{ matrix.sha256 }}"); fi
+          if [ -n "${{ matrix.md5 }}" ]; then args+=(--md5 "${{ matrix.md5 }}"); fi
+          if [ -n "${{ matrix.size }}" ]; then args+=(--origin-size "${{ matrix.size }}"); fi
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- "${args[@]}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "zenodo-raw-cdn: ${{ matrix.asset }} returned void" \
+                 "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

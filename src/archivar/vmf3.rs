@@ -1,0 +1,727 @@
+use crate::archivar::spectral::civil_from_days;
+use crate::mathematikerin::tropo::Vmf3Coefficients;
+
+use super::vmf3_sh;
+
+pub const MAGIC: [u8; 4] = *b"VMF3";
+pub const GRID_MAGIC: [u8; 4] = *b"VMFG";
+pub const HEADER_BYTES: usize = 8;
+pub const RECORD_BYTES: usize = 84;
+pub const GRID_RECORD_BYTES: usize = 48;
+
+const STATION_BYTES: usize = 16;
+
+const P_PRESSURE: u32 = 1 << 0;
+const P_TEMP: u32 = 1 << 1;
+const P_E: u32 = 1 << 2;
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SiteMf {
+    pub station: String,
+    pub mjd: f64,
+    pub ah: f64,
+    pub aw: f64,
+    pub zhd_m: f64,
+    pub zwd_m: f64,
+    pub pressure_hpa: Option<f64>,
+    pub temp_c: Option<f64>,
+    pub e_hpa: Option<f64>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct GridCell {
+    pub lat_deg: f64,
+    pub lon_deg: f64,
+    pub ah: f64,
+    pub aw: f64,
+    pub zhd_m: f64,
+    pub zwd_m: f64,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct GridHeader {
+    pub epoch_year: i32,
+    pub epoch_month: u32,
+    pub epoch_day: u32,
+    pub epoch_hour: u32,
+    pub epoch_minute: u32,
+    pub epoch_second: f64,
+    pub scale_factor: f64,
+}
+
+fn req_f64(tok: &str) -> Option<f64> {
+    let v: f64 = tok.parse().ok()?;
+    if v.is_finite() { Some(v) } else { None }
+}
+
+fn opt_f64(tok: &str) -> Option<f64> {
+    req_f64(tok)
+}
+
+pub fn parse_site(bytes: &[u8]) -> Option<Vec<SiteMf>> {
+    let text = std::str::from_utf8(bytes).ok()?;
+    let mut out: Vec<SiteMf> = Vec::new();
+    for raw in text.lines() {
+        let line = raw.trim();
+        if line.is_empty() || line.starts_with('!') {
+            continue;
+        }
+        let toks: Vec<&str> = line.split_whitespace().collect();
+        if toks.len() < 6 {
+            continue;
+        }
+        let station = toks[0];
+        if station.is_empty() || station.parse::<f64>().is_ok() {
+            continue;
+        }
+        let (Some(mjd), Some(ah), Some(aw), Some(zhd_m), Some(zwd_m)) = (
+            req_f64(toks[1]),
+            req_f64(toks[2]),
+            req_f64(toks[3]),
+            req_f64(toks[4]),
+            req_f64(toks[5]),
+        ) else {
+            continue;
+        };
+        out.push(SiteMf {
+            station: station.to_string(),
+            mjd,
+            ah,
+            aw,
+            zhd_m,
+            zwd_m,
+            pressure_hpa: toks.get(6).and_then(|t| opt_f64(t)),
+            temp_c: toks.get(7).and_then(|t| opt_f64(t)),
+            e_hpa: toks.get(8).and_then(|t| opt_f64(t)),
+        });
+    }
+    if out.is_empty() { None } else { Some(out) }
+}
+
+pub fn parse_grid(bytes: &[u8]) -> Option<Vec<GridCell>> {
+    let text = std::str::from_utf8(bytes).ok()?;
+    let mut out: Vec<GridCell> = Vec::new();
+    for raw in text.lines() {
+        let line = raw.trim();
+        if line.is_empty() || line.starts_with('!') {
+            continue;
+        }
+        let toks: Vec<&str> = line.split_whitespace().collect();
+        if toks.len() < 6 {
+            continue;
+        }
+        let (Some(lat_deg), Some(lon_deg), Some(ah), Some(aw), Some(zhd_m), Some(zwd_m)) = (
+            req_f64(toks[0]),
+            req_f64(toks[1]),
+            req_f64(toks[2]),
+            req_f64(toks[3]),
+            req_f64(toks[4]),
+            req_f64(toks[5]),
+        ) else {
+            continue;
+        };
+        out.push(GridCell {
+            lat_deg,
+            lon_deg,
+            ah,
+            aw,
+            zhd_m,
+            zwd_m,
+        });
+    }
+    if out.is_empty() { None } else { Some(out) }
+}
+
+pub fn parse_grid_header(bytes: &[u8]) -> Option<GridHeader> {
+    let text = std::str::from_utf8(bytes).ok()?;
+    let mut epoch: Option<(i32, u32, u32, u32, u32, f64)> = None;
+    let mut scale_factor = 1.0f64;
+    for raw in text.lines() {
+        let line = raw.trim();
+        if !line.starts_with('!') {
+            continue;
+        }
+        let rest = line.trim_start_matches('!').trim();
+        if let Some(v) = rest.strip_prefix("Epoch:") {
+            let toks: Vec<&str> = v.split_whitespace().collect();
+            if toks.len() >= 6 {
+                let y = toks[0].parse::<i32>().ok();
+                let mo = toks[1].parse::<u32>().ok();
+                let d = toks[2].parse::<u32>().ok();
+                let h = toks[3].parse::<u32>().ok();
+                let mi = toks[4].parse::<u32>().ok();
+                let s = toks[5].parse::<f64>().ok();
+                if let (Some(y), Some(mo), Some(d), Some(h), Some(mi), Some(s)) =
+                    (y, mo, d, h, mi, s)
+                    && s.is_finite()
+                {
+                    epoch = Some((y, mo, d, h, mi, s));
+                }
+            }
+        } else if let Some(v) = rest.strip_prefix("Scale_factor:")
+            && let Some(x) = v.split_whitespace().next().and_then(req_f64)
+        {
+            scale_factor = x;
+        }
+    }
+    let (epoch_year, epoch_month, epoch_day, epoch_hour, epoch_minute, epoch_second) = epoch?;
+    Some(GridHeader {
+        epoch_year,
+        epoch_month,
+        epoch_day,
+        epoch_hour,
+        epoch_minute,
+        epoch_second,
+        scale_factor,
+    })
+}
+
+fn put_f64(out: &mut Vec<u8>, v: Option<f64>, bit: u32, present: &mut u32) -> bool {
+    match v {
+        Some(x) => {
+            if !x.is_finite() {
+                return false;
+            }
+            *present |= bit;
+            out.extend_from_slice(&x.to_le_bytes());
+        }
+        None => out.extend_from_slice(&0.0f64.to_le_bytes()),
+    }
+    true
+}
+
+fn put_station(out: &mut Vec<u8>, name: &str) -> bool {
+    if !name.is_ascii() || name.len() > STATION_BYTES {
+        return false;
+    }
+    let start = out.len();
+    out.resize(start + STATION_BYTES, 0);
+    out[start..start + name.len()].copy_from_slice(name.as_bytes());
+    true
+}
+
+pub fn write_bin(records: &[SiteMf]) -> Option<Vec<u8>> {
+    if records.is_empty() {
+        return None;
+    }
+    let count = u32::try_from(records.len()).ok()?;
+    let mut out = Vec::with_capacity(HEADER_BYTES + records.len() * RECORD_BYTES);
+    out.extend_from_slice(&MAGIC);
+    out.extend_from_slice(&count.to_le_bytes());
+    for r in records {
+        if !put_station(&mut out, &r.station) {
+            return None;
+        }
+        for v in [r.mjd, r.ah, r.aw, r.zhd_m, r.zwd_m] {
+            if !v.is_finite() {
+                return None;
+            }
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+        let mut present = 0u32;
+        if !put_f64(&mut out, r.pressure_hpa, P_PRESSURE, &mut present) {
+            return None;
+        }
+        if !put_f64(&mut out, r.temp_c, P_TEMP, &mut present) {
+            return None;
+        }
+        if !put_f64(&mut out, r.e_hpa, P_E, &mut present) {
+            return None;
+        }
+        out.extend_from_slice(&present.to_le_bytes());
+    }
+    Some(out)
+}
+
+pub fn write_grid_bin(cells: &[GridCell]) -> Option<Vec<u8>> {
+    if cells.is_empty() {
+        return None;
+    }
+    let count = u32::try_from(cells.len()).ok()?;
+    let mut out = Vec::with_capacity(HEADER_BYTES + cells.len() * GRID_RECORD_BYTES);
+    out.extend_from_slice(&GRID_MAGIC);
+    out.extend_from_slice(&count.to_le_bytes());
+    for c in cells {
+        for v in [c.lat_deg, c.lon_deg, c.ah, c.aw, c.zhd_m, c.zwd_m] {
+            if !v.is_finite() {
+                return None;
+            }
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    Some(out)
+}
+
+struct Reader<'a> {
+    bytes: &'a [u8],
+    off: usize,
+}
+
+impl<'a> Reader<'a> {
+    fn take(&mut self, n: usize) -> Option<&'a [u8]> {
+        let v = self.bytes.get(self.off..self.off.checked_add(n)?)?;
+        self.off += n;
+        Some(v)
+    }
+
+    fn f64(&mut self) -> Option<f64> {
+        let v = f64::from_le_bytes(self.take(8)?.try_into().ok()?);
+        Some(v)
+    }
+
+    fn u32(&mut self) -> Option<u32> {
+        let v = u32::from_le_bytes(self.take(4)?.try_into().ok()?);
+        Some(v)
+    }
+}
+
+fn present_f64(raw: f64, present: u32, bit: u32) -> Option<Option<f64>> {
+    if present & bit != 0 {
+        if raw.is_finite() {
+            Some(Some(raw))
+        } else {
+            None
+        }
+    } else if raw == 0.0 {
+        Some(None)
+    } else {
+        None
+    }
+}
+
+pub fn parse_bin(bytes: &[u8]) -> Option<Vec<SiteMf>> {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC {
+        return None;
+    }
+    let count = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != HEADER_BYTES + count.checked_mul(RECORD_BYTES)? {
+        return None;
+    }
+    let mut rd = Reader {
+        bytes,
+        off: HEADER_BYTES,
+    };
+    let mut out = Vec::with_capacity(count);
+    for _ in 0..count {
+        let station = std::str::from_utf8(rd.take(STATION_BYTES)?)
+            .ok()?
+            .trim_end_matches('\0')
+            .to_string();
+        let mjd = rd.f64()?;
+        let ah = rd.f64()?;
+        let aw = rd.f64()?;
+        let zhd_m = rd.f64()?;
+        let zwd_m = rd.f64()?;
+        let pressure_raw = rd.f64()?;
+        let temp_raw = rd.f64()?;
+        let e_raw = rd.f64()?;
+        let present = rd.u32()?;
+        for v in [mjd, ah, aw, zhd_m, zwd_m] {
+            if !v.is_finite() {
+                return None;
+            }
+        }
+        out.push(SiteMf {
+            station,
+            mjd,
+            ah,
+            aw,
+            zhd_m,
+            zwd_m,
+            pressure_hpa: present_f64(pressure_raw, present, P_PRESSURE)?,
+            temp_c: present_f64(temp_raw, present, P_TEMP)?,
+            e_hpa: present_f64(e_raw, present, P_E)?,
+        });
+    }
+    Some(out)
+}
+
+pub fn parse_grid_bin(bytes: &[u8]) -> Option<Vec<GridCell>> {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != GRID_MAGIC {
+        return None;
+    }
+    let count = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != HEADER_BYTES + count.checked_mul(GRID_RECORD_BYTES)? {
+        return None;
+    }
+    let mut rd = Reader {
+        bytes,
+        off: HEADER_BYTES,
+    };
+    let mut out = Vec::with_capacity(count);
+    for _ in 0..count {
+        let lat_deg = rd.f64()?;
+        let lon_deg = rd.f64()?;
+        let ah = rd.f64()?;
+        let aw = rd.f64()?;
+        let zhd_m = rd.f64()?;
+        let zwd_m = rd.f64()?;
+        for v in [lat_deg, lon_deg, ah, aw, zhd_m, zwd_m] {
+            if !v.is_finite() {
+                return None;
+            }
+        }
+        out.push(GridCell {
+            lat_deg,
+            lon_deg,
+            ah,
+            aw,
+            zhd_m,
+            zwd_m,
+        });
+    }
+    Some(out)
+}
+
+pub const VMF3_PRODUCT_CONVENTION: &str = "VMF3 a_h/a_w/zhd/zwd come from the discrete product: the 1x1 grid (64800 cells, lat 89.5..-89.5 step 1, lon 0.5..359.5 step 1) is interpolated bilinearly at the station lat/lon; the site product is read at the station's nearest daily row; b/c come from the empirical degree-12 spherical-harmonic model (vmf3_sh) at the observation day-of-year, lat and lon; the product carries a single epoch, so no temporal interpolation of a is done (a stays the file epoch's) — a historical observation bound to a 2026 product carries that temporal offset, named, never smoothed";
+
+const GRID_NLAT: usize = 180;
+const GRID_NLON: usize = 360;
+
+const MONTH_DAYS: [u32; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vmf3Product {
+    pub coefficients: Vmf3Coefficients,
+    pub zhd_m: f64,
+    pub zwd_m: f64,
+}
+
+fn is_leap(year: u32) -> bool {
+    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
+}
+
+fn doy_from_mjd(mjd: f64) -> Option<f64> {
+    if !mjd.is_finite() {
+        return None;
+    }
+    let unix = mjd + 40587.0;
+    let (year, month, day) = civil_from_days(unix.floor() as i64)?;
+    if !(1..=12).contains(&month) || !(1..=31).contains(&day) {
+        return None;
+    }
+    let mut doy = 0u32;
+    for days in MONTH_DAYS.iter().take(month as usize - 1) {
+        doy += *days;
+    }
+    if is_leap(year) && month > 2 {
+        doy += 1;
+    }
+    doy += day;
+    let frac = unix - unix.floor();
+    Some(doy as f64 + frac)
+}
+
+fn finite_positive(v: f64) -> Option<f64> {
+    if v.is_finite() && v > 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+fn finite_non_negative(v: f64) -> Option<f64> {
+    if v.is_finite() && v >= 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+fn product_of(
+    ah: f64,
+    aw: f64,
+    zhd_m: f64,
+    zwd_m: f64,
+    mjd: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+) -> Option<Vmf3Product> {
+    let ah = finite_positive(ah)?;
+    let aw = finite_positive(aw)?;
+    let zhd_m = finite_non_negative(zhd_m)?;
+    let zwd_m = finite_non_negative(zwd_m)?;
+    let doy = doy_from_mjd(mjd)?;
+    let bc = vmf3_sh::b_c(doy, lat_deg, lon_deg)?;
+    Some(Vmf3Product {
+        coefficients: Vmf3Coefficients {
+            a_h: Some(ah),
+            b_h: bc.b_h,
+            c_h: bc.c_h,
+            a_w: Some(aw),
+            b_w: bc.b_w,
+            c_w: bc.c_w,
+        },
+        zhd_m,
+        zwd_m,
+    })
+}
+
+pub fn grid_product(
+    cells: &[GridCell],
+    mjd: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+) -> Option<Vmf3Product> {
+    if cells.len() != GRID_NLAT * GRID_NLON {
+        return None;
+    }
+    if !lat_deg.is_finite() || !lon_deg.is_finite() {
+        return None;
+    }
+    if !(-89.5..=89.5).contains(&lat_deg) {
+        return None;
+    }
+    let lon = lon_deg.rem_euclid(360.0);
+    let fi = 89.5 - lat_deg;
+    let i0f = fi.floor();
+    let i0 = i0f.clamp(0.0, (GRID_NLAT - 2) as f64) as usize;
+    let i1 = i0 + 1;
+    let tlat = (fi - i0 as f64).clamp(0.0, 1.0);
+    let fj = lon - 0.5;
+    let j0f = fj.floor();
+    let j0 = j0f.rem_euclid(GRID_NLON as f64) as usize;
+    let j1 = (j0 + 1) % GRID_NLON;
+    let tlon = (fj - j0f).clamp(0.0, 1.0);
+    let cell = |i: usize, j: usize| cells.get(i * GRID_NLON + j).copied();
+    let c00 = cell(i0, j0)?;
+    let c01 = cell(i0, j1)?;
+    let c10 = cell(i1, j0)?;
+    let c11 = cell(i1, j1)?;
+    let w00 = (1.0 - tlat) * (1.0 - tlon);
+    let w01 = (1.0 - tlat) * tlon;
+    let w10 = tlat * (1.0 - tlon);
+    let w11 = tlat * tlon;
+    let blend = |f: fn(&GridCell) -> f64| -> f64 {
+        f(&c00) * w00 + f(&c01) * w01 + f(&c10) * w10 + f(&c11) * w11
+    };
+    product_of(
+        blend(|c| c.ah),
+        blend(|c| c.aw),
+        blend(|c| c.zhd_m),
+        blend(|c| c.zwd_m),
+        mjd,
+        lat_deg,
+        lon_deg,
+    )
+}
+
+pub fn site_product(
+    rows: &[SiteMf],
+    station: &str,
+    mjd: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+) -> Option<Vmf3Product> {
+    let mut best: Option<&SiteMf> = None;
+    let mut best_dt = f64::INFINITY;
+    for r in rows {
+        if r.station == station {
+            let dt = (r.mjd - mjd).abs();
+            if dt < best_dt {
+                best_dt = dt;
+                best = Some(r);
+            }
+        }
+    }
+    let r = best?;
+    product_of(r.ah, r.aw, r.zhd_m, r.zwd_m, mjd, lat_deg, lon_deg)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::archivar::sha256::sha256_hex;
+
+    const SITE_SAMPLE: &str = "AGGO      61042.00  0.00126424  0.00043626  2.2940  0.1199  1005.73  22.79  16.62\n\
+AIRA      61042.00  0.00121746  0.00041399  2.2444  0.0500   983.52   1.96   5.46\n";
+
+    const GRID_SAMPLE: &str = "! Version:            1.0\n\
+! Epoch:              2026 01 01 00 00  0.0\n\
+! Scale_factor:       1.e+00\n\
+ 89.5    0.5  0.00114741  0.00069930  2.2862  0.0158\n\
+ 89.5    1.5  0.00114740  0.00069526  2.2861  0.0158\n";
+
+    fn site_path() -> &'static str {
+        crate::temp_path("2026002.vmf3_r")
+    }
+
+    fn grid_path() -> &'static str {
+        crate::temp_path("VMF3_20260101.H00")
+    }
+
+    const SITE_SHA: &str = "16397c37eaeaf55abcfe72b4d5a0449b08d8be3201d1e266c731f110f87c91f8";
+
+    #[test]
+    fn site_sample_parses_and_roundtrips() {
+        let rows = parse_site(SITE_SAMPLE.as_bytes()).expect("the site sample parses");
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].station, "AGGO");
+        assert_eq!(rows[0].mjd, 61042.0);
+        assert_eq!(rows[0].ah, 0.00126424);
+        assert_eq!(rows[0].aw, 0.00043626);
+        assert_eq!(rows[0].zhd_m, 2.2940);
+        assert_eq!(rows[0].zwd_m, 0.1199);
+        assert_eq!(rows[0].pressure_hpa, Some(1005.73));
+        assert_eq!(rows[0].temp_c, Some(22.79));
+        assert_eq!(rows[0].e_hpa, Some(16.62));
+        let bin = write_bin(&rows).expect("finite site rows encode");
+        assert_eq!(bin.len(), HEADER_BYTES + 2 * RECORD_BYTES);
+        assert_eq!(parse_bin(&bin), Some(rows));
+    }
+
+    #[test]
+    fn grid_sample_parses_and_roundtrips() {
+        let header = parse_grid_header(GRID_SAMPLE.as_bytes()).expect("the grid header parses");
+        assert_eq!(header.epoch_year, 2026);
+        assert_eq!(header.epoch_month, 1);
+        assert_eq!(header.epoch_day, 1);
+        assert_eq!(header.epoch_hour, 0);
+        assert_eq!(header.epoch_minute, 0);
+        assert_eq!(header.epoch_second, 0.0);
+        assert_eq!(header.scale_factor, 1.0);
+        let cells = parse_grid(GRID_SAMPLE.as_bytes()).expect("the grid sample parses");
+        assert_eq!(cells.len(), 2);
+        assert_eq!(
+            cells[0],
+            GridCell {
+                lat_deg: 89.5,
+                lon_deg: 0.5,
+                ah: 0.00114741,
+                aw: 0.00069930,
+                zhd_m: 2.2862,
+                zwd_m: 0.0158,
+            }
+        );
+        let bin = write_grid_bin(&cells).expect("finite grid cells encode");
+        assert_eq!(bin.len(), HEADER_BYTES + 2 * GRID_RECORD_BYTES);
+        assert_eq!(parse_grid_bin(&bin), Some(cells));
+    }
+
+    #[test]
+    fn site_missing_trailing_columns_stays_absent() {
+        let rows = parse_site(b"AGGO      61042.00  0.00126424  0.00043626  2.2940  0.1199\n")
+            .expect("the required six columns parse");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].pressure_hpa, None);
+        assert_eq!(rows[0].temp_c, None);
+        assert_eq!(rows[0].e_hpa, None);
+        let bin = write_bin(&rows).expect("finite site row encodes");
+        assert_eq!(parse_bin(&bin), Some(rows));
+    }
+
+    #[test]
+    fn parse_refuses_foreign_bytes() {
+        assert_eq!(parse_site(b"not a vmf3 site file"), None);
+        assert_eq!(parse_site(b""), None);
+        assert_eq!(parse_grid(b"! only a header\n"), None);
+        assert_eq!(parse_grid(b""), None);
+        assert_eq!(parse_grid_header(b"! Version: 1.0\n"), None);
+    }
+
+    #[test]
+    fn parse_bin_refuses_foreign_and_truncated_bytes() {
+        assert_eq!(parse_bin(b"VMF3"), None);
+        assert_eq!(parse_bin(b"XXXX\x01\x00\x00\x00"), None);
+        assert_eq!(parse_grid_bin(b"VMF3\x01\x00\x00\x00"), None);
+        let rows = parse_site(SITE_SAMPLE.as_bytes()).expect("the site sample parses");
+        let bin = write_bin(&rows).expect("finite site rows encode");
+        assert_eq!(parse_bin(&bin[..bin.len() - 1]), None);
+    }
+
+    #[test]
+    fn site_file_carries_the_measured_rows() {
+        let site_path = site_path();
+        let Ok(bytes) = std::fs::read(site_path) else {
+            eprintln!("site_file_carries_the_measured_rows: {site_path} absent — named skip");
+            return;
+        };
+        assert_eq!(sha256_hex(&bytes), SITE_SHA);
+        let rows = parse_site(&bytes).expect("the site file parses");
+        assert_eq!(rows.len(), 1052);
+        let aggo = rows
+            .iter()
+            .find(|r| r.station == "AGGO")
+            .expect("AGGO stands");
+        assert_eq!(aggo.mjd, 61042.0);
+        assert_eq!(aggo.ah, 0.00126424);
+        assert_eq!(aggo.aw, 0.00043626);
+        assert_eq!(aggo.zhd_m, 2.2940);
+        assert_eq!(aggo.zwd_m, 0.1199);
+        assert_eq!(aggo.pressure_hpa, Some(1005.73));
+        assert_eq!(aggo.temp_c, Some(22.79));
+        assert_eq!(aggo.e_hpa, Some(16.62));
+        let bin = write_bin(&rows).expect("finite site rows encode");
+        assert_eq!(parse_bin(&bin), Some(rows));
+    }
+
+    #[test]
+    fn grid_file_carries_the_measured_rows() {
+        let grid_path = grid_path();
+        let Ok(bytes) = std::fs::read(grid_path) else {
+            eprintln!("grid_file_carries_the_measured_rows: {grid_path} absent — named skip");
+            return;
+        };
+        let cells = parse_grid(&bytes).expect("the grid file parses");
+        assert_eq!(cells.len(), 64800);
+        assert_eq!(
+            cells[0],
+            GridCell {
+                lat_deg: 89.5,
+                lon_deg: 0.5,
+                ah: 0.00114741,
+                aw: 0.00069930,
+                zhd_m: 2.2862,
+                zwd_m: 0.0158,
+            }
+        );
+        let bin = write_grid_bin(&cells).expect("finite grid cells encode");
+        assert_eq!(bin.len(), HEADER_BYTES + 64800 * GRID_RECORD_BYTES);
+        assert_eq!(parse_grid_bin(&bin), Some(cells));
+    }
+
+    const GRID_BIN_PATH: &str = "sources/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
+    const SITE_BIN_PATH: &str = "sources/vmf.geo.tuwien.ac.at/vmf3_site.bin";
+    const GRID_BIN_SHA: &str = "f388b49705a006d4538ae61252de5f5064cdd1a391ca0b0585a59a2f9738bb6a";
+    const SITE_BIN_SHA: &str = "92d40bf8adbf978b1a41e74219815bdebf4d170bdec8481c2b61c1e62f261058";
+
+    #[test]
+    fn cdn_grid_bin_yields_a_finite_coefficient_set() {
+        let Ok(bytes) = std::fs::read(GRID_BIN_PATH) else {
+            eprintln!(
+                "cdn_grid_bin_yields_a_finite_coefficient_set: {GRID_BIN_PATH} absent — named skip"
+            );
+            return;
+        };
+        assert_eq!(sha256_hex(&bytes), GRID_BIN_SHA);
+        let cells = parse_grid_bin(&bytes).expect("the grid bin parses");
+        assert_eq!(cells.len(), 64800);
+        let p =
+            grid_product(&cells, 61049.5, -34.874, -58.140).expect("the grid carries a product");
+        let c = p.coefficients;
+        assert!(c.a_h.is_some() && c.b_h.is_some() && c.c_h.is_some());
+        assert!(c.a_w.is_some() && c.b_w.is_some() && c.c_w.is_some());
+        assert!(p.zhd_m > 0.0 && p.zwd_m >= 0.0);
+    }
+
+    #[test]
+    fn cdn_site_bin_yields_a_finite_coefficient_set() {
+        let Ok(bytes) = std::fs::read(SITE_BIN_PATH) else {
+            eprintln!(
+                "cdn_site_bin_yields_a_finite_coefficient_set: {SITE_BIN_PATH} absent — named skip"
+            );
+            return;
+        };
+        assert_eq!(sha256_hex(&bytes), SITE_BIN_SHA);
+        let rows = parse_bin(&bytes).expect("the site bin parses");
+        assert_eq!(rows.len(), 1052);
+        let p = site_product(&rows, "AGGO", 61042.0, -34.874, -58.140)
+            .expect("the AGGO row carries a product");
+        let c = p.coefficients;
+        assert_eq!(c.a_h, Some(0.00126424));
+        assert_eq!(c.a_w, Some(0.00043626));
+        assert!(c.b_h.is_some() && c.c_h.is_some() && c.b_w.is_some() && c.c_w.is_some());
+        assert_eq!(p.zhd_m, 2.2940);
+        assert_eq!(p.zwd_m, 0.1199);
+    }
+}

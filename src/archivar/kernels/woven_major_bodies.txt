@@ -1,0 +1,11 @@
+# woven major bodies — NAIF ids of the bodies woven against the INPOP/EPM lines.
+# The code carries no body list of its own; this declaration is the register.
+1
+2
+4
+5
+6
+7
+8
+301
+399

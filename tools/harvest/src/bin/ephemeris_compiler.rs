@@ -1,0 +1,1967 @@
+use omegaflow::archivar::ck::{CkFile, CkFrameRef, SclkFile, switch_resolution};
+use omegaflow::bpc::BpcFile;
+use omegaflow::bsp_reader::spk::SpkFile;
+use omegaflow::cdn::{body_url, upload_release};
+use omegaflow::fk::FkFile;
+use omegaflow::lsk::days_from_civil;
+use omegaflow::mat::matmul;
+use omegaflow::pck::PckBody;
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
+use std::io::Write;
+use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
+
+use omegaflow::ephemeris::{
+    ASTEROID_GRANULE_DAYS, CHEBYSHEV_DEGREE, GRANULE_DAYS, J2000_EPOCH, N_SAMPLES, body_table,
+    chebyshev_fit, chebyshev_nodes, extract_granules, iau_angles_from_matrix, libration_matrix,
+    pck_id_of, spacecraft_table, state_ssb_multi, write_binary,
+};
+
+fn emit(line: &str) {
+    eprintln!("{}", line);
+    let path = std::path::Path::new(omegaflow::temp_path("ephemeris_compiler.log"));
+    if let Some(parent) = path.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if let Ok(mut f) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+    {
+        let _ = writeln!(f, "{}", line);
+    }
+}
+
+fn flatten_targets(kernels: &[SpkFile]) -> Vec<(i32, String, Option<i32>, bool)> {
+    let table = body_table();
+    let spacecraft = spacecraft_table();
+    let mut by_id: BTreeMap<i32, (String, Option<i32>, bool)> = BTreeMap::new();
+    for spk in kernels {
+        for seg in spk.segments() {
+            if let Some(b) = table.get(&seg.target) {
+                by_id
+                    .entry(seg.target)
+                    .or_insert_with(|| (b.name.clone(), b.parent, false));
+            } else if let Some(s) = spacecraft.get(&seg.target) {
+                by_id
+                    .entry(seg.target)
+                    .or_insert_with(|| (s.name.clone(), s.parent, true));
+            }
+        }
+    }
+    let mut seen = HashSet::new();
+    by_id
+        .into_iter()
+        .filter(|(_, (name, _, _))| seen.insert(name.clone()))
+        .map(|(id, (name, parent, is_spacecraft))| (id, name, parent, is_spacecraft))
+        .collect()
+}
+
+#[derive(Clone)]
+struct IndexEntry {
+    url: String,
+    name: String,
+    family: String,
+    size: u64,
+    mtime: Option<u64>,
+}
+
+fn family_of(url: &str) -> &'static str {
+    let name = url.rsplit('/').next().unwrap_or(url);
+    if name == "gm_Horizons.pck" || name.starts_with("gm_") {
+        return "gm";
+    }
+    if name == "naif0012.tls" || name.ends_with(".tls") {
+        return "lsk";
+    }
+    if name.contains("dcom") || name.contains("dastcom") {
+        return "dastcom";
+    }
+    if name.ends_with(".bsp") {
+        if url.contains("/satellites/") {
+            return "spk-satellites";
+        }
+        if url.contains("/planets/") {
+            return "spk-planets";
+        }
+        return "spk";
+    }
+    if name.ends_with(".bpc") {
+        return "bpc";
+    }
+    if name.ends_with(".bc") {
+        return "ck";
+    }
+    if name.ends_with(".tpc") || name.ends_with(".ker") {
+        return "pck-text";
+    }
+    if name.ends_with(".tf") {
+        return "fk";
+    }
+    if name.ends_with(".tsc") {
+        return "sclk";
+    }
+    if name.ends_with(".ck") {
+        return "ck";
+    }
+    if name.ends_with(".ti") {
+        return "ik";
+    }
+    if name.ends_with(".db") {
+        return "dbk";
+    }
+    if name.ends_with(".ek") {
+        return "ek";
+    }
+    if name.ends_with(".bds") {
+        return "dsk";
+    }
+    if name.ends_with(".tm") {
+        return "mk";
+    }
+    "misc"
+}
+
+fn fetch_text(url: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSfL")
+        .arg("--max-time")
+        .arg("90")
+        .arg("--retry")
+        .arg("3")
+        .arg(url)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        Some(String::from_utf8_lossy(&out.stdout).to_string())
+    } else {
+        None
+    }
+}
+
+fn text_of(html: &str) -> String {
+    let mut out = String::new();
+    let mut in_tag = false;
+    for c in html.chars() {
+        if c == '<' {
+            in_tag = true;
+            continue;
+        }
+        if c == '>' {
+            in_tag = false;
+            continue;
+        }
+        if !in_tag {
+            out.push(c);
+        }
+    }
+    out
+}
+
+fn extract_meta(after: &str) -> (u64, Option<u64>) {
+    let cap = 400usize.min(after.len());
+    let mut end = cap;
+    while !after.is_char_boundary(end) {
+        end -= 1;
+    }
+    let text = text_of(&after[..end]);
+    let b = text.as_bytes();
+    let mut mtime: Option<u64> = None;
+    let mut size = 0u64;
+    let mut date_end = 0usize;
+    let mut i = 0;
+    while i + 10 < b.len() {
+        if b[i].is_ascii_digit() && b[i + 4] == b'-' && b[i + 7] == b'-' {
+            let ok = text[i..i + 4].parse::<i64>().ok().is_some()
+                && text[i + 5..i + 7].parse::<i64>().ok().is_some()
+                && text[i + 8..i + 10].parse::<i64>().ok().is_some();
+            if ok {
+                let y: i64 = text[i..i + 4].parse().unwrap();
+                let mo: i64 = text[i + 5..i + 7].parse().unwrap();
+                let d: i64 = text[i + 8..i + 10].parse().unwrap();
+                if let Some(days) = days_from_civil(y, mo, d) {
+                    let mut stamp = days as u64 * 86400;
+                    if i + 16 <= b.len() {
+                        if let (Ok(h), Ok(mn)) = (
+                            text[i + 11..i + 13].parse::<u64>(),
+                            text[i + 14..i + 16].parse::<u64>(),
+                        ) {
+                            stamp += h * 3600 + mn * 60;
+                        }
+                    }
+                    mtime = Some(stamp);
+                }
+                date_end = i + 16;
+                break;
+            }
+        }
+        i += 1;
+    }
+    let tail = if date_end > 0 {
+        &text[date_end..]
+    } else {
+        &text[..]
+    };
+    for tok in tail.split_whitespace() {
+        let upper = tok.to_uppercase();
+        let (num, mult) = if let Some(n) = upper.strip_suffix('T') {
+            (n, 1u64 << 40)
+        } else if let Some(n) = upper.strip_suffix('G') {
+            (n, 1u64 << 30)
+        } else if let Some(n) = upper.strip_suffix('M') {
+            (n, 1u64 << 20)
+        } else if let Some(n) = upper.strip_suffix('K') {
+            (n, 1u64 << 10)
+        } else {
+            (upper.as_str(), 1u64)
+        };
+        if num.chars().all(|c| c.is_ascii_digit()) {
+            if let Ok(v) = num.parse::<u64>() {
+                size = v * mult;
+                break;
+            }
+        }
+    }
+    (size, mtime)
+}
+
+fn parse_listing(base: &str, html: &str, files: &mut Vec<IndexEntry>, dirs: &mut Vec<String>) {
+    let mut rest = html;
+    while let Some(pos) = rest.find("href=\"") {
+        rest = &rest[pos + 6..];
+        let end = match rest.find('"') {
+            Some(e) => e,
+            None => break,
+        };
+        let href = &rest[..end];
+        if href.starts_with('?') || href.starts_with('#') || href.starts_with('/') {
+            continue;
+        }
+        if href == "../" || href == "./" || href.contains("Parent Directory") {
+            continue;
+        }
+        let after = &rest[end..];
+        let (size, mtime) = extract_meta(after);
+        let name = href
+            .split('?')
+            .next()
+            .unwrap_or(href)
+            .trim_end_matches('/')
+            .rsplit('/')
+            .next()
+            .unwrap_or("")
+            .replace("%20", " ");
+        let full = if href.starts_with("http") {
+            href.to_string()
+        } else {
+            format!("{}{}", base, href.replace(' ', "%20"))
+        };
+        if href.ends_with('/') {
+            dirs.push(full);
+        } else {
+            let family = family_of(&full).to_string();
+            files.push(IndexEntry {
+                url: full,
+                family,
+                name,
+                size,
+                mtime,
+            });
+        }
+    }
+}
+
+fn load_known_lines(out_path: &str) -> (HashSet<String>, HashSet<String>) {
+    let mut dirs = HashSet::new();
+    let mut files = HashSet::new();
+    if let Ok(content) = std::fs::read_to_string(out_path) {
+        for line in content.lines() {
+            if let Some(url) = line.strip_prefix("dir ") {
+                dirs.insert(url.trim().to_string());
+            } else if let Some(rest) = line.strip_prefix("kernel ") {
+                if let Some(url) = rest.split_whitespace().next() {
+                    files.insert(url.to_string());
+                }
+            }
+        }
+    }
+    (dirs, files)
+}
+
+fn crawl(roots: &[String], depth: usize, out_path: &str, delay_ms: u64, jobs: usize) {
+    let (done_dirs, done_files) = load_known_lines(out_path);
+    let done_dirs = Arc::new(done_dirs);
+    let done_files = Arc::new(done_files);
+    let queue = Arc::new(Mutex::new(VecDeque::new()));
+    for r in roots {
+        queue.lock().unwrap().push_back((r.clone(), 0usize));
+    }
+    let lines = Arc::new(Mutex::new(Vec::new()));
+    let written = Arc::new(Mutex::new(HashSet::new()));
+    let dead = Arc::new(Mutex::new(HashSet::new()));
+    let roots_shared = Arc::new(roots.to_vec());
+    let file_count = Arc::new(AtomicUsize::new(0));
+    let dir_count = Arc::new(AtomicUsize::new(0));
+    let mut workers = Vec::new();
+    for _ in 0..jobs {
+        let queue = Arc::clone(&queue);
+        let lines = Arc::clone(&lines);
+        let written = Arc::clone(&written);
+        let dead = Arc::clone(&dead);
+        let done_dirs = Arc::clone(&done_dirs);
+        let done_files = Arc::clone(&done_files);
+        let roots_shared = Arc::clone(&roots_shared);
+        let file_count = Arc::clone(&file_count);
+        let dir_count = Arc::clone(&dir_count);
+        workers.push(std::thread::spawn(move || {
+            loop {
+                let next = {
+                    let mut q = queue.lock().unwrap();
+                    q.pop_front()
+                };
+                let (url, d) = match next {
+                    Some(v) => v,
+                    None => break,
+                };
+                if done_dirs.contains(&url) {
+                    continue;
+                }
+                let html = match fetch_text(&url) {
+                    Some(h) => h,
+                    None => {
+                        if dead.lock().unwrap().insert(url.clone()) {
+                            eprintln!("index: listing returned void: {}", url);
+                        }
+                        continue;
+                    }
+                };
+                let mut files = Vec::new();
+                let mut sub = Vec::new();
+                parse_listing(&url, &html, &mut files, &mut sub);
+                sub.retain(|s| roots_shared.iter().any(|r| s.starts_with(r.as_str())));
+                {
+                    let mut w = written.lock().unwrap();
+                    let mut l = lines.lock().unwrap();
+                    for f in &files {
+                        if w.insert(f.url.clone()) && !done_files.contains(&f.url) {
+                            let stamp = match f.mtime {
+                                Some(m) => m.to_string(),
+                                None => "absent".to_string(),
+                            };
+                            l.push(format!(
+                                "kernel {} {} {} {}\n",
+                                f.url, f.family, f.size, stamp
+                            ));
+                            file_count.fetch_add(1, Ordering::Relaxed);
+                        }
+                    }
+                    if w.insert(url.clone()) {
+                        l.push(format!("dir {}\n", url));
+                        dir_count.fetch_add(1, Ordering::Relaxed);
+                    }
+                }
+                if depth == 0 || d + 1 < depth {
+                    let mut q = queue.lock().unwrap();
+                    for s in sub {
+                        q.push_back((s, d + 1));
+                    }
+                }
+                if delay_ms > 0 {
+                    std::thread::sleep(Duration::from_millis(delay_ms));
+                }
+            }
+        }));
+    }
+    for w in workers {
+        let _ = w.join();
+    }
+    let mut out = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(out_path);
+    if let Ok(f) = out.as_mut() {
+        let l = lines.lock().unwrap();
+        for line in l.iter() {
+            let _ = std::io::Write::write_all(f, line.as_bytes());
+        }
+    }
+    let _ = out.as_mut().map(|f| f.flush());
+    eprintln!(
+        "index: {} files, {} dirs → {}",
+        file_count.load(Ordering::Relaxed),
+        dir_count.load(Ordering::Relaxed),
+        out_path
+    );
+}
+
+fn load_index(path: &str) -> Vec<IndexEntry> {
+    let mut entries = Vec::new();
+    if let Ok(content) = std::fs::read_to_string(path) {
+        for line in content.lines() {
+            if let Some(rest) = line.strip_prefix("kernel ") {
+                let mut parts = rest.split_whitespace();
+                let url = match parts.next() {
+                    Some(u) => u.to_string(),
+                    None => continue,
+                };
+                let family = match parts.next() {
+                    Some(f) => f.to_string(),
+                    None => continue,
+                };
+                let size: u64 = match parts.next().and_then(|p| p.parse().ok()) {
+                    Some(s) => s,
+                    None => continue,
+                };
+                let mtime = match parts.next() {
+                    Some("absent") => None,
+                    Some(v) => match v.parse::<u64>() {
+                        Ok(m) => Some(m),
+                        Err(_) => continue,
+                    },
+                    None => None,
+                };
+                let name = url.rsplit('/').next().unwrap_or(&url).to_string();
+                entries.push(IndexEntry {
+                    url,
+                    name,
+                    family,
+                    size,
+                    mtime,
+                });
+            }
+        }
+    }
+    entries
+}
+
+fn numeric_of(name: &str) -> Option<u64> {
+    let digits: String = name
+        .chars()
+        .skip_while(|c| !c.is_ascii_digit())
+        .take_while(|c| c.is_ascii_digit())
+        .collect();
+    if digits.is_empty() {
+        None
+    } else {
+        digits.parse().ok()
+    }
+}
+
+fn base_of(name: &str) -> String {
+    let no_part = match name.find("_part-") {
+        Some(i) => &name[..i],
+        None => name,
+    };
+    match no_part.rsplit_once('.') {
+        Some((stem, _)) => stem.to_string(),
+        None => no_part.to_string(),
+    }
+}
+
+fn is_ssd(url: &str) -> bool {
+    url.contains("ssd.jpl.nasa.gov")
+}
+
+fn is_light(name: &str) -> bool {
+    name.contains('l') || name.ends_with('s')
+}
+
+fn pick_spk(candidates: &[IndexEntry]) -> Option<IndexEntry> {
+    candidates
+        .iter()
+        .max_by(|a, b| {
+            numeric_of(&a.name)
+                .cmp(&numeric_of(&b.name))
+                .then(is_ssd(&a.url).cmp(&is_ssd(&b.url)))
+                .then(is_light(&a.name).cmp(&is_light(&b.name)))
+                .then(b.name.len().cmp(&a.name.len()))
+        })
+        .cloned()
+}
+
+fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
+    let mut out = Vec::new();
+    if system == "asteroids" {
+        let mut asteroid_carrier = Vec::new();
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "spk" && e.name == "sb441-n16.bsp")
+        {
+            asteroid_carrier.push(e.clone());
+        }
+        if asteroid_carrier.is_empty() {
+            eprintln!(
+                "asteroids: sb441-n16.bsp absent from the index — the longbow has no carrier"
+            );
+            std::process::exit(1);
+        }
+        out.extend(asteroid_carrier);
+        let mut sun_carrier = Vec::new();
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "spk-planets" && e.name == "de441.bsp")
+        {
+            sun_carrier.push(e.clone());
+        }
+        if sun_carrier.is_empty() {
+            eprintln!(
+                "asteroids: de441.bsp absent from the index — the sun's SSB state has no carrier"
+            );
+            std::process::exit(1);
+        }
+        out.extend(sun_carrier);
+        out.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+        return out;
+    }
+    if system == "planets" {
+        let mut bases: BTreeMap<String, Vec<IndexEntry>> = BTreeMap::new();
+        for e in entries.iter().filter(|e| e.family == "spk-planets") {
+            bases
+                .entry(base_of(&e.name))
+                .or_insert_with(Vec::new)
+                .push(e.clone());
+        }
+        match bases.get("de441") {
+            Some(group) => match group.iter().find(|e| e.name == "de441.bsp") {
+                Some(full) => out.push(full.clone()),
+                None => out.extend(group.clone()),
+            },
+            None => {
+                eprintln!(
+                    "planets: de441 base absent from the index — the full de441.bsp has no carrier"
+                );
+                std::process::exit(1);
+            }
+        }
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "pck-text" && e.name.starts_with("pck0001"))
+        {
+            out.push(e.clone());
+        }
+        let bpc: Vec<IndexEntry> = entries
+            .iter()
+            .filter(|e| e.family == "bpc" && e.name.starts_with("moon_pa"))
+            .cloned()
+            .collect();
+        if let Some(best) = pick_spk(&bpc) {
+            out.push(best);
+        }
+        let fk_sel: Vec<IndexEntry> = entries
+            .iter()
+            .filter(|e| e.family == "fk" && e.name.starts_with("moon_de440"))
+            .cloned()
+            .collect();
+        if let Some(best) = pick_spk(&fk_sel) {
+            out.push(best);
+        }
+        out.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+        return out;
+    }
+    if system == "juice" {
+        for e in entries.iter().filter(|e| {
+            e.family == "spk"
+                && (e.name.starts_with("juice_crema")
+                    || (e.name.starts_with("juice_cog") && e.name != "juice_cog_v00.bsp"))
+        }) {
+            out.push(e.clone());
+        }
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "spk-satellites" && base_of(&e.name) == "jup365")
+        {
+            out.push(e.clone());
+        }
+        out.sort_by(|a, b| a.name.cmp(&b.name));
+        return out;
+    }
+    let prefix: String = system.chars().take(3).collect();
+    if prefix.is_empty() {
+        return out;
+    }
+    let spk: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "spk-satellites" && e.name.starts_with(prefix.as_str()))
+        .cloned()
+        .collect();
+    if spk.is_empty() {
+        return out;
+    }
+    let mut carrier_counts: Vec<(String, usize)> = Vec::new();
+    for e in &spk {
+        let base = base_of(&e.name);
+        match carrier_counts.iter_mut().find(|(b, _)| *b == base) {
+            Some((_, count)) => *count += 1,
+            None => carrier_counts.push((base, 1)),
+        }
+    }
+    let max_count = match carrier_counts.iter().map(|(_, count)| *count).max() {
+        Some(count) => count,
+        None => return out,
+    };
+    let moon_carriers: Vec<String> = carrier_counts
+        .iter()
+        .filter(|(_, count)| *count == max_count)
+        .map(|(base, _)| base.clone())
+        .collect();
+    let mut ranked = spk.clone();
+    ranked.sort_by(|a, b| {
+        numeric_of(&b.name)
+            .cmp(&numeric_of(&a.name))
+            .then(is_ssd(&b.url).cmp(&is_ssd(&a.url)))
+            .then(is_light(&b.name).cmp(&is_light(&a.name)))
+            .then(a.name.len().cmp(&b.name.len()))
+    });
+    let mut bases: Vec<String> = Vec::new();
+    for wanted in moon_carriers {
+        if let Some(e) = spk.iter().find(|e| base_of(&e.name) == *wanted) {
+            let base = base_of(&e.name);
+            if !bases.contains(&base) {
+                bases.push(base);
+            }
+        }
+    }
+    if bases.is_empty() {
+        for e in &ranked {
+            let base = base_of(&e.name);
+            if !bases.contains(&base) {
+                bases.push(base);
+            }
+            if bases.len() >= 2 {
+                break;
+            }
+        }
+    }
+    let mut pushed: HashSet<String> = HashSet::new();
+    for e in &spk {
+        let base = base_of(&e.name);
+        if bases.contains(&base) && pushed.insert(e.name.clone()) {
+            out.push(e.clone());
+        }
+    }
+    let pck: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "pck-text" && e.name.starts_with(&format!("pck.{}", prefix)))
+        .cloned()
+        .collect();
+    if let Some(best) = pick_spk(&pck) {
+        out.push(best);
+    }
+    out
+}
+
+fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
+    let _ = std::fs::create_dir_all(dest);
+    let mut paths = Vec::new();
+    let total = entries.len();
+    for e in entries {
+        let path = format!("{}/{}", dest, e.name);
+        let fresh = std::fs::metadata(&path).map_or(false, |m| m.len() > 0);
+        if fresh {
+            emit(&format!("fetch: {} fresh ({} B)", e.name, e.size));
+        } else {
+            emit(&format!("fetch: {} ({} B)", e.url, e.size));
+            let status = Command::new("curl")
+                .arg("-sSfL")
+                .arg("--retry")
+                .arg("3")
+                .arg("--max-time")
+                .arg("5400")
+                .arg("-o")
+                .arg(&path)
+                .arg(&e.url)
+                .status();
+            match status {
+                Ok(s) if s.success() => {}
+                _ => {
+                    emit(&format!("fetch: {} returned void", e.url));
+                    let _ = std::fs::remove_file(&path);
+                    continue;
+                }
+            }
+            let landed = std::fs::metadata(&path).ok().map(|m| m.len());
+            if !landed.map_or(false, |n| n > 0) {
+                emit(&format!(
+                    "fetch: {} landed 0 bytes — the download stays rejected",
+                    e.url
+                ));
+                let _ = std::fs::remove_file(&path);
+                continue;
+            }
+        }
+        paths.push(path);
+        emit(&format!("progress {} / {}", paths.len(), total));
+        emit(&format!("download {} ({} B)", e.name, e.size));
+    }
+    paths
+}
+
+fn classify(
+    paths: &[String],
+) -> (
+    Vec<String>,
+    Vec<String>,
+    Option<String>,
+    Vec<String>,
+    Vec<String>,
+    Vec<String>,
+    Vec<String>,
+) {
+    let mut kernels = Vec::new();
+    let mut bpcs = Vec::new();
+    let mut fks = Vec::new();
+    let mut cks = Vec::new();
+    let mut sclks = Vec::new();
+    let mut gm_text = String::new();
+    let mut pck_text = String::new();
+    for p in paths {
+        let name = p.rsplit('/').next().unwrap_or(p);
+        let text = match family_of(p) {
+            "gm" | "pck-text" => match std::fs::read_to_string(p) {
+                Ok(t) => Some(t),
+                Err(e) => {
+                    eprintln!("read {}: {}", p, e);
+                    continue;
+                }
+            },
+            "spk-planets" | "spk-satellites" | "spk" => {
+                kernels.push(p.clone());
+                None
+            }
+            "bpc" => {
+                bpcs.push(p.clone());
+                None
+            }
+            "fk" => {
+                fks.push(p.clone());
+                None
+            }
+            "ck" => {
+                cks.push(p.clone());
+                None
+            }
+            "sclk" => {
+                sclks.push(p.clone());
+                None
+            }
+            family => {
+                eprintln!(
+                    "classify: {} family {} not consumed by flattener",
+                    name, family
+                );
+                continue;
+            }
+        };
+        if let Some(t) = text {
+            match family_of(p) {
+                "gm" => {
+                    gm_text.push_str(&t);
+                    gm_text.push('\n');
+                }
+                "pck-text" => {
+                    pck_text.push_str(&t);
+                    pck_text.push('\n');
+                }
+                _ => {}
+            }
+        }
+    }
+    let gm = if gm_text.is_empty() {
+        None
+    } else {
+        Some(gm_text)
+    };
+    (kernels, bpcs, gm, vec![pck_text], fks, cks, sclks)
+}
+
+fn update_index_bodies(index_path: &str, bodies: &[String]) {
+    let content = match std::fs::read_to_string(index_path) {
+        Ok(c) => c,
+        Err(_) => return,
+    };
+    let mut out = String::new();
+    for line in content.lines() {
+        if !line.starts_with("body ") {
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    for name in bodies {
+        out.push_str(&format!("body {} {}\n", name, body_url(name)));
+    }
+    if let Err(e) = std::fs::write(index_path, out) {
+        eprintln!("update index {}: {}", index_path, e);
+    }
+}
+
+fn flatten(
+    kernels: &[String],
+    bpcs: &[String],
+    fks: &[String],
+    gm_text: Option<&str>,
+    pck_text: Option<&str>,
+    ci_mode: bool,
+    omega_g: Option<(String, f64, f64)>,
+    small_bodies_only: bool,
+    release: &str,
+    prefix: &str,
+) -> Vec<String> {
+    let mut spk_files = Vec::new();
+    for kernel_path in kernels {
+        match SpkFile::open(kernel_path) {
+            Ok(s) => spk_files.push(s),
+            Err(e) => {
+                eprintln!("open {}: {}", kernel_path, e);
+                std::process::exit(1);
+            }
+        }
+    }
+    let mut bpc_files = Vec::new();
+    for bpc_path in bpcs {
+        match BpcFile::open(bpc_path) {
+            Ok(b) => bpc_files.push(b),
+            Err(e) => eprintln!("open {}: {}", bpc_path, e),
+        }
+    }
+    let mut fk = FkFile::parse("");
+    for fk_path in fks {
+        match FkFile::open(fk_path) {
+            Ok(f) => fk.insert_file(f),
+            Err(e) => eprintln!("open {}: {}", fk_path, e),
+        }
+    }
+    let pck_bodies: HashMap<i32, PckBody> = omegaflow::pck::parse(gm_text, pck_text);
+    let targets = flatten_targets(&spk_files);
+    let target_count = targets.len();
+    let mut written = Vec::new();
+    let mut upload_failed = 0usize;
+    emit("phase flatten");
+    let absent_pck = PckBody::absent();
+    for (target_id, body_name, _, is_spacecraft) in &targets {
+        if small_bodies_only && *target_id < 2000000 {
+            continue;
+        }
+        let wgccre = match pck_bodies.get(&pck_id_of(*target_id)) {
+            Some(w) => w,
+            None if *is_spacecraft => &absent_pck,
+            None => {
+                eprintln!("  SKIP {}: no PCK params", body_name);
+                continue;
+            }
+        };
+        if *is_spacecraft {
+            let non_inertial = spk_files
+                .iter()
+                .flat_map(|spk| spk.segments().iter())
+                .find(|s| s.target == *target_id && s.frame != 1)
+                .map(|s| s.frame);
+            if let Some(frame) = non_inertial {
+                eprintln!("  SKIP {}: frame {} non-inertial", body_name, frame);
+                continue;
+            }
+        }
+        let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+        let mut rotations: Vec<(f64, [f64; 9])> = Vec::new();
+        let mut nutation: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+        let granule_days = if *target_id >= 2000000 {
+            ASTEROID_GRANULE_DAYS
+        } else {
+            GRANULE_DAYS
+        };
+        for spk in &spk_files {
+            let has_coverage = spk.segments().iter().any(|s| s.target == *target_id);
+            if !has_coverage {
+                continue;
+            }
+            let (g, r, n) = extract_granules(
+                spk,
+                &spk_files,
+                *target_id,
+                &wgccre,
+                &bpc_files,
+                &fk,
+                granule_days,
+            );
+            granules.extend(g);
+            rotations.extend(r);
+            nutation.extend(n);
+        }
+        if granules.is_empty() && *target_id != 10 {
+            eprintln!("  SKIP {}: no granules in any kernel", body_name);
+            continue;
+        }
+        granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        nutation.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        let path = format!("{}{}.bin", prefix, body_name);
+        let og = match &omega_g {
+            Some((n, v, s)) if n == body_name => Some((*v, *s)),
+            _ => None,
+        };
+        if write_binary(
+            &path, body_name, &granules, &rotations, &nutation, &wgccre, og,
+        ) {
+            written.push(body_name.clone());
+            emit(&format!("progress {} / {}", written.len(), target_count));
+            emit(&format!(
+                "flatten {}: {} granules",
+                body_name,
+                granules.len()
+            ));
+            if ci_mode && !upload_release(release, &path) {
+                upload_failed += 1;
+            } else if ci_mode {
+                emit(&format!("upload {} → CDN", body_name));
+            }
+        }
+    }
+    emit(&format!("flatten done: {} bodies", written.len()));
+    if ci_mode && upload_failed > 0 {
+        eprintln!(
+            "upload: {} of {} assets did not reach the CDN",
+            upload_failed,
+            written.len()
+        );
+        std::process::exit(1);
+    }
+    written
+}
+
+const JUICE_SWITCH_FRAME: i32 = -28000;
+const JUICE_COG_BODY: i32 = -28;
+const JUICE_COG_OFFSET_M: [f64; 3] = [0.0, 0.0, -1.5322];
+const JUICE_COG_GRANULE_DAYS: f64 = 0.25;
+const JUICE_COG_REFINE_THRESHOLD_SCALE: u32 = 3;
+const JUICE_COG_REFINE_DEPTH: u32 = 3;
+
+fn matvec(m: &[f64; 9], v: &[f64; 3]) -> [f64; 3] {
+    [
+        m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
+        m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
+        m[6] * v[0] + m[7] * v[1] + m[8] * v[2],
+    ]
+}
+
+fn ck_attitude_at(
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    frame_id: i32,
+    sclk_id: i32,
+    et: f64,
+) -> Option<[f64; 9]> {
+    let tick = sclk_files.iter().find_map(|s| s.et_to_tick(sclk_id, et))?;
+    for ck in ck_files {
+        if let Ok(state) = ck.attitude(frame_id, 1, tick) {
+            return Some(state.matrix);
+        }
+    }
+    None
+}
+
+fn switch_attitude_at(
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    et: f64,
+) -> Option<[f64; 9]> {
+    for frame in aligned.iter().rev() {
+        if let Some(m) = ck_attitude_at(ck_files, sclk_files, frame.id, frame.sclk_id, et) {
+            return Some(m);
+        }
+    }
+    None
+}
+
+fn juice_center_coverage(spk_files: &[SpkFile]) -> Option<(f64, f64)> {
+    let mut min_et = f64::MAX;
+    let mut max_et = f64::MIN;
+    for spk in spk_files {
+        for seg in spk.segments() {
+            if seg.target == JUICE_COG_BODY && matches!(seg.data_type, 2 | 3 | 9 | 13 | 20) {
+                min_et = min_et.min(seg.start_et);
+                max_et = max_et.max(seg.end_et);
+            }
+        }
+    }
+    if max_et <= min_et {
+        None
+    } else {
+        Some((min_et, max_et))
+    }
+}
+
+fn juice_cog_position(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    et: f64,
+) -> Option<[f64; 3]> {
+    let center = state_ssb_multi(spk_files, JUICE_COG_BODY, et)?;
+    let attitude = switch_attitude_at(ck_files, sclk_files, aligned, et)?;
+    let off = matvec(&attitude, &JUICE_COG_OFFSET_M);
+    Some([
+        center[0] * 1000.0 + off[0],
+        center[1] * 1000.0 + off[1],
+        center[2] * 1000.0 + off[2],
+    ])
+}
+
+fn fit_cog_granule(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    nodes: &[f64],
+    mid_jd: f64,
+    half_jd: f64,
+) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
+    let mid_et = (mid_jd - J2000_EPOCH) * 86400.0;
+    let half_sec = half_jd * 86400.0;
+    let mut sx = Vec::with_capacity(nodes.len());
+    let mut sy = Vec::with_capacity(nodes.len());
+    let mut sz = Vec::with_capacity(nodes.len());
+    for tau in nodes {
+        let et = mid_et + tau * half_sec;
+        let p = juice_cog_position(spk_files, ck_files, sclk_files, aligned, et)?;
+        sx.push(p[0]);
+        sy.push(p[1]);
+        sz.push(p[2]);
+    }
+    let combined: Vec<(f64, f64, f64)> = (0..sx.len()).map(|k| (sx[k], sy[k], sz[k])).collect();
+    chebyshev_fit(&combined, CHEBYSHEV_DEGREE)
+}
+
+fn cog_granule_roundtrip(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    nodes: &[f64],
+    mid_jd: f64,
+    half_jd: f64,
+    cx: &[f64],
+    cy: &[f64],
+    cz: &[f64],
+) -> f64 {
+    let mid_et = (mid_jd - J2000_EPOCH) * 86400.0;
+    let half_sec = half_jd * 86400.0;
+    let mut cxa = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+    let mut cya = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+    let mut cza = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+    for k in 0..cxa.len().min(cx.len()) {
+        cxa[k] = cx[k];
+        cya[k] = cy[k];
+        cza[k] = cz[k];
+    }
+    let mut max_err = 0.0f64;
+    for tau in nodes {
+        let et = mid_et + tau * half_sec;
+        let Some(p) = juice_cog_position(spk_files, ck_files, sclk_files, aligned, et) else {
+            continue;
+        };
+        let dx = omegaflow::archivar::chebyshev_evaluate(&cxa, *tau) - p[0];
+        let dy = omegaflow::archivar::chebyshev_evaluate(&cya, *tau) - p[1];
+        let dz = omegaflow::archivar::chebyshev_evaluate(&cza, *tau) - p[2];
+        let e = (dx * dx + dy * dy + dz * dz).sqrt();
+        if e > max_err {
+            max_err = e;
+        }
+    }
+    max_err
+}
+
+fn split_cog_granule(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    fit_nodes: &[f64],
+    probe_nodes: &[f64],
+    mid_jd: f64,
+    half_jd: f64,
+    depth: u32,
+    threshold: f64,
+    cx: &[f64],
+    cy: &[f64],
+    cz: &[f64],
+    out: &mut Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
+) {
+    let err = cog_granule_roundtrip(
+        spk_files,
+        ck_files,
+        sclk_files,
+        aligned,
+        probe_nodes,
+        mid_jd,
+        half_jd,
+        cx,
+        cy,
+        cz,
+    );
+    if err <= threshold || depth >= JUICE_COG_REFINE_DEPTH {
+        out.push((mid_jd, half_jd, cx.to_vec(), cy.to_vec(), cz.to_vec()));
+        return;
+    }
+    let child_half = half_jd / 2.0;
+    let left = fit_cog_granule(
+        spk_files,
+        ck_files,
+        sclk_files,
+        aligned,
+        fit_nodes,
+        mid_jd - child_half,
+        child_half,
+    );
+    let right = fit_cog_granule(
+        spk_files,
+        ck_files,
+        sclk_files,
+        aligned,
+        fit_nodes,
+        mid_jd + child_half,
+        child_half,
+    );
+    match (left, right) {
+        (Some((lcx, lcy, lcz)), Some((rcx, rcy, rcz))) => {
+            split_cog_granule(
+                spk_files,
+                ck_files,
+                sclk_files,
+                aligned,
+                fit_nodes,
+                probe_nodes,
+                mid_jd - child_half,
+                child_half,
+                depth + 1,
+                threshold,
+                &lcx,
+                &lcy,
+                &lcz,
+                out,
+            );
+            split_cog_granule(
+                spk_files,
+                ck_files,
+                sclk_files,
+                aligned,
+                fit_nodes,
+                probe_nodes,
+                mid_jd + child_half,
+                child_half,
+                depth + 1,
+                threshold,
+                &rcx,
+                &rcy,
+                &rcz,
+                out,
+            );
+        }
+        _ => {
+            out.push((mid_jd, half_jd, cx.to_vec(), cy.to_vec(), cz.to_vec()));
+        }
+    }
+}
+
+fn flatten_juice_cog(
+    spk_files: &[SpkFile],
+    fk: &FkFile,
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    ci_mode: bool,
+) -> bool {
+    let aligned = match switch_resolution(fk, JUICE_SWITCH_FRAME) {
+        Some(a) => a,
+        None => {
+            emit("juice_cog: switch -28000 not resolved from the FK");
+            return false;
+        }
+    };
+    let (min_et, max_et) = match juice_center_coverage(spk_files) {
+        Some(r) => r,
+        None => {
+            emit("juice_cog: center -28 carries no position segments in any kernel");
+            return false;
+        }
+    };
+    for frame in &aligned {
+        let mut ck_min = f64::MAX;
+        let mut ck_max = f64::MIN;
+        for ck in ck_files {
+            for seg in ck.segments() {
+                if seg.instrument != frame.id || seg.reference != 1 {
+                    continue;
+                }
+                let lo = sclk_files
+                    .iter()
+                    .find_map(|s| s.tick_to_et(frame.sclk_id, seg.start_tick));
+                let hi = sclk_files
+                    .iter()
+                    .find_map(|s| s.tick_to_et(frame.sclk_id, seg.end_tick));
+                if let (Some(lo), Some(hi)) = (lo, hi) {
+                    ck_min = ck_min.min(lo);
+                    ck_max = ck_max.max(hi);
+                }
+            }
+        }
+        if ck_max < ck_min {
+            emit(&format!(
+                "juice_cog: frame {} sclk {} carries no attitude segments in the loaded CK",
+                frame.id, frame.sclk_id
+            ));
+        } else {
+            emit(&format!(
+                "juice_cog: frame {} sclk {} ck et coverage [{:.3}, {:.3}]",
+                frame.id, frame.sclk_id, ck_min, ck_max
+            ));
+        }
+    }
+    let granule_days = JUICE_COG_GRANULE_DAYS;
+    let half_jd = granule_days / 2.0;
+    let n_granules = ((max_et - min_et) / (granule_days * 86400.0)).ceil() as usize;
+    let fit_nodes = chebyshev_nodes(N_SAMPLES);
+    let probe_nodes = chebyshev_nodes(2 * N_SAMPLES);
+    let mut coarse: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+    for i in 0..n_granules {
+        let mid_et = min_et + (i as f64 + 0.5) * granule_days * 86400.0;
+        let mid_jd = mid_et / 86400.0 + J2000_EPOCH;
+        if let Some((cx, cy, cz)) = fit_cog_granule(
+            spk_files, ck_files, sclk_files, &aligned, &fit_nodes, mid_jd, half_jd,
+        ) {
+            coarse.push((mid_jd, half_jd, cx, cy, cz));
+        }
+    }
+    let mut coarse_errs: Vec<f64> = coarse
+        .iter()
+        .map(|(t0, h, cx, cy, cz)| {
+            cog_granule_roundtrip(
+                spk_files,
+                ck_files,
+                sclk_files,
+                &aligned,
+                &probe_nodes,
+                *t0,
+                *h,
+                cx,
+                cy,
+                cz,
+            )
+        })
+        .collect();
+    coarse_errs.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    let p99_uniform = if coarse_errs.is_empty() {
+        0.0
+    } else {
+        let idx = ((coarse_errs.len() as f64) * 0.99) as usize;
+        coarse_errs[idx.min(coarse_errs.len() - 1)]
+    };
+    let threshold = p99_uniform * (2.0f64).powi(JUICE_COG_REFINE_THRESHOLD_SCALE as i32);
+    let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+    for (mid_jd, h, cx, cy, cz) in coarse {
+        split_cog_granule(
+            spk_files,
+            ck_files,
+            sclk_files,
+            &aligned,
+            &fit_nodes,
+            &probe_nodes,
+            mid_jd,
+            h,
+            0,
+            threshold,
+            &cx,
+            &cy,
+            &cz,
+            &mut granules,
+        );
+    }
+    granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    let final_errs: Vec<f64> = granules
+        .iter()
+        .map(|(t0, h, cx, cy, cz)| {
+            cog_granule_roundtrip(
+                spk_files,
+                ck_files,
+                sclk_files,
+                &aligned,
+                &probe_nodes,
+                *t0,
+                *h,
+                cx,
+                cy,
+                cz,
+            )
+        })
+        .collect();
+    let final_max = final_errs.iter().cloned().fold(0.0f64, f64::max);
+    let mut sorted_errs = final_errs.clone();
+    sorted_errs.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    let final_p99 = if sorted_errs.is_empty() {
+        0.0
+    } else {
+        let idx = ((sorted_errs.len() as f64) * 0.99) as usize;
+        sorted_errs[idx.min(sorted_errs.len() - 1)]
+    };
+    emit(&format!(
+        "juice_cog: switch resolved to {:?}, center coverage [{:.3}, {:.3}] et, {} granules (coarse p99 {:.2} m, threshold {:.2} m, roundtrip max {:.2} m, p99 {:.2} m)",
+        aligned.iter().map(|f| f.id).collect::<Vec<_>>(),
+        min_et,
+        max_et,
+        granules.len(),
+        p99_uniform,
+        threshold,
+        final_max,
+        final_p99
+    ));
+    if granules.is_empty() {
+        emit("juice_cog: no granules fit — the asset stays unwritten");
+        return false;
+    }
+    let absent = PckBody::absent();
+    let written = write_binary(
+        "ephemeris_juice_cog.bin",
+        "juice_cog",
+        &granules,
+        &[],
+        &[],
+        &absent,
+        None,
+    );
+    let mut reached_cdn = false;
+    if written && ci_mode {
+        if upload_release("ssd.jpl.nasa.gov-ephemeris", "ephemeris_juice_cog.bin") {
+            reached_cdn = true;
+            emit("upload ephemeris_juice_cog.bin → CDN");
+        } else {
+            emit("juice_cog: upload returned void");
+        }
+    }
+    if ci_mode && !reached_cdn {
+        eprintln!("juice_cog: ephemeris_juice_cog.bin did not reach the CDN");
+        std::process::exit(1);
+    }
+    written
+}
+
+fn select_juice_cog(entries: &[IndexEntry]) -> Vec<IndexEntry> {
+    let mut out = Vec::new();
+    for e in entries
+        .iter()
+        .filter(|e| e.family == "spk" && e.name.starts_with("juice_crema_5_2_"))
+    {
+        out.push(e.clone());
+    }
+    let de440s: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "spk-planets" && base_of(&e.name) == "de440s")
+        .cloned()
+        .collect();
+    if let Some(d) = pick_spk(&de440s) {
+        out.push(d);
+    }
+    for e in entries
+        .iter()
+        .filter(|e| e.family == "spk-satellites" && base_of(&e.name) == "jup365")
+    {
+        out.push(e.clone());
+    }
+    let mut fks: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "fk" && e.name.starts_with("juice_v"))
+        .cloned()
+        .collect();
+    fks.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+    if let Some(fk) = fks.into_iter().next_back() {
+        out.push(fk);
+    }
+    let mut steps: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "sclk" && e.name.starts_with("juice_step_"))
+        .cloned()
+        .collect();
+    steps.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+    if let Some(step) = steps.into_iter().next_back() {
+        out.push(step);
+    }
+    let mut ficts: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "sclk" && e.name.starts_with("juice_fict_"))
+        .cloned()
+        .collect();
+    ficts.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+    if let Some(fict) = ficts.into_iter().next_back() {
+        out.push(fict);
+    }
+    for e in entries
+        .iter()
+        .filter(|e| e.family == "ck" && e.name.starts_with("juice_sc_crema_5_2_"))
+    {
+        out.push(e.clone());
+    }
+    out
+}
+
+fn run_juice_cog(
+    spk_paths: &[String],
+    fk_paths: &[String],
+    ck_paths: &[String],
+    sclk_paths: &[String],
+    ci_mode: bool,
+) -> bool {
+    let mut spk_files = Vec::new();
+    for p in spk_paths {
+        match SpkFile::open(p) {
+            Ok(s) => spk_files.push(s),
+            Err(e) => {
+                emit(&format!("juice_cog: open {} returned void: {}", p, e));
+                return false;
+            }
+        }
+    }
+    let mut fk = FkFile::parse("");
+    for p in fk_paths {
+        match FkFile::open(p) {
+            Ok(f) => fk.insert_file(f),
+            Err(e) => emit(&format!("juice_cog: open {} returned void: {}", p, e)),
+        }
+    }
+    let mut ck_files = Vec::new();
+    for p in ck_paths {
+        match CkFile::open(p) {
+            Ok(c) => ck_files.push(c),
+            Err(e) => {
+                emit(&format!("juice_cog: open {} returned void: {}", p, e));
+                return false;
+            }
+        }
+    }
+    let mut sclk_files = Vec::new();
+    for p in sclk_paths {
+        match SclkFile::open(p) {
+            Ok(s) => sclk_files.push(s),
+            Err(e) => {
+                emit(&format!("juice_cog: open {} returned void: {}", p, e));
+                return false;
+            }
+        }
+    }
+    if spk_files.is_empty() || ck_files.is_empty() || sclk_files.is_empty() {
+        emit("juice_cog: a kernel class is absent — the chain does not close");
+        return false;
+    }
+    flatten_juice_cog(&spk_files, &fk, &ck_files, &sclk_files, ci_mode)
+}
+
+fn summarize(index_path: &str, out_path: &str) {
+    let entries = load_index(index_path);
+    let mut family_files: BTreeMap<String, (usize, u64, Option<u64>)> = BTreeMap::new();
+    for e in &entries {
+        let slot = family_files.entry(e.family.clone()).or_insert((0, 0, None));
+        slot.0 += 1;
+        slot.1 += e.size;
+        slot.2 = match (slot.2, e.mtime) {
+            (Some(a), Some(b)) => Some(a.max(b)),
+            (None, Some(b)) => Some(b),
+            _ => slot.2,
+        };
+    }
+    let mut rows = String::new();
+    let mut total_bytes = 0u64;
+    for (family, (count, bytes, newest)) in &family_files {
+        total_bytes += bytes;
+        let newest = match newest {
+            Some(m) => m.to_string(),
+            None => "absent".to_string(),
+        };
+        rows.push_str(&format!(
+            "| {} | {} | {} | {}\n",
+            family, count, bytes, newest
+        ));
+    }
+    let mut systems = String::new();
+    let mut sys_list: Vec<String> = vec!["planets".to_string(), "asteroids".to_string()];
+    for e in entries.iter().filter(|e| e.family == "spk-satellites") {
+        let prefix: String = base_of(&e.name).chars().take(3).collect();
+        if !prefix.is_empty() && !sys_list.contains(&prefix) {
+            sys_list.push(prefix);
+        }
+    }
+    sys_list.sort();
+    for sys in &sys_list {
+        let sel = select_system(&entries, sys);
+        let mut spk_name = "—";
+        let mut pck_name = "—";
+        for e in &sel {
+            match e.family.as_str() {
+                "spk-planets" | "spk-satellites" | "spk" => spk_name = &e.name,
+                "pck-text" => pck_name = &e.name,
+                _ => {}
+            }
+        }
+        systems.push_str(&format!("| {} | {} | {} |\n", sys, spk_name, pck_name));
+    }
+    let doc = format!(
+        "# kernel-index — ω-flattener source inventory\n\n\
+         Generated by `ephemeris_compiler --summarize` from the kernel index (the `kernel-flatten` artifact).\n\
+         Canonical is the register `phi/sources.φ`; this document is the reading copy.\n\n\
+         ## Roots\n\
+         - https://ssd.jpl.nasa.gov/ftp/ (JPL SSD — planet/satellite/small-body SPKs, PCKs, DASTCOM)\n\
+         - https://naif.jpl.nasa.gov/pub/ (NAIF SPICE — generic_kernels + mission trees)\n\n\
+         HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded\n\
+         by the flattener (no cameras, no onboard time — NAIF PDF assessment).\n\n\
+         ## Family inventory ({} files, {} B)\n\
+         | Family | Files | Bytes | Newest mtime (unix) |\n|---|---|---|---|\n{}\n\
+         ## System resolution (flattener selection)\n\
+         | System | SPK | PCK |\n|---|---|---|\n{}\n\
+         Selection rule: first digit sequence in the name = version, highest wins; on\n\
+         ties the ssd.jpl.nasa.gov root wins, then the light variant\n\
+         (`l`/`s` suffix), then the shortest name. Planets: highest DE base, on\n\
+         ties full precision (not the `s` short variant); `_part-N` files of one\n\
+         base are loaded completely. pck0001* files are loaded ascending\n\
+         (00011 overrides 00010, NAIF precedence).\n\n\
+         ## Moon PCK finding (session 2026-08-14)\n\
+         The moon text PCKs (ssd.jpl.nasa.gov/ftp/misc/pck/\n\
+         pck.sat441/pck.jup365/pck.mar099/pck.ura182/pck.plu060, each .tpc) carry\n\
+         RADII + POLE for the moons but NO J2/J4 values — the only hits are\n\
+         comment lines (BODYnnn_JCOEF documentation). Moon harmonics from text PCKs\n\
+         therefore manifest 0 (no fabrication). Real zonal terms live in\n\
+         the binary PCKs (moon_pa_de440, satellite .bpc) — that is K02. pck00010.tpc\n\
+         covers Phobos/Triton/Charon with POLE+RADII; the GM of all bodies comes from\n\
+         gm_Horizons.pck (km³/s², parser scales ×1e9).\n\n\
+         ## Force coverage (9-channel matrix)\n\
+         | Channel | What the index carries | Rest |\n|---|---|---|\n\
+         | gravity | SPK (orbits), PCK (GM/radii/J2/J4/poles), DSK (shape, later), DASTCOM (small bodies) | CDDIS (Auth, I03) |\n\
+         | em | DASTCOM albedo; Tycho-2 (K04) does not live on these roots | HEASARC/IRSA/MAST (TAP, sources repo) |\n\
+         | acoustic | — | GONG/SOHO, NOAA (curation) |\n\
+         | seismic-body | — | USGS/IRIS (live), PDS InSight/Apollo (Auth/API) |\n\
+         | seismic-surface | — | USGS (live) |\n\
+         | thermal | DASTCOM H/albedo | GOES thermal (curation) |\n\
+         | diffusion | — | SWPC/OMNI (live) |\n\
+         | advective | — | DSCOVR/SWPC (live) |\n\
+         | electric | — | SWPC/OmniWeb/Swarm (curation) |\n\n\
+          ## Flatten policy\n\
+          K01: planets + moons (SPK/PCK) + probes (Horizons compiler) + the asteroid\n\
+          longbow (`asteroids` = sb441-n16.bsp + de441.bsp for the sun's SSB state,\n\
+          256-day raster, heliocentric segment + SSB chain) + the sb441-n373 split\n\
+          (spk_split streams the 15.2-GB file in one sequential pass — summary chain\n\
+          walk, pointer monotonicity gate, per-body DAF-in-RAM with a uniform address\n\
+          shift — and compiles the TNOs with sources.φ blocks: eris 2136199,\n\
+          haumea 2136108, makemake 2136472; GM from IOM Table 1 via\n\
+          tools/harvest/data/asteroid/asteroid_gm_sb441.φ; roundtrip gate against the\n\
+          stream, 400 epochs, ≤ 100 m). The remaining 370 n373 bodies stay named\n\
+          pending (sources.φ blocks = SOURCE_PORT curation); the 12 bodies without\n\
+          an SPK segment carry the Horizons 12-month windows; DASTCOM (K03) carries\n\
+          their mass/radius.\n",
+        entries.len(),
+        total_bytes,
+        rows,
+        systems
+    );
+    match std::fs::write(out_path, doc) {
+        Ok(()) => eprintln!(
+            "summarize: {} files, {} B → {}",
+            entries.len(),
+            total_bytes,
+            out_path
+        ),
+        Err(e) => eprintln!("write {}: {}", out_path, e),
+    }
+}
+
+fn main() {
+    omegaflow::archivar::cdn::require_ci();
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() < 2 {
+        eprintln!(
+            "usage: ephemeris_compiler <kernel_path>... [--gm <gm>] [--pck <pck>] [--bpc <bpc>] [--ci-mode]"
+        );
+        eprintln!(
+            "       ephemeris_compiler --index --root <url> [--depth N] [--out <file>] [--delay-ms N] [--jobs N]"
+        );
+        eprintln!(
+            "       ephemeris_compiler --summarize <index.φ> <docs/reference/kernel-index.md>"
+        );
+        eprintln!(
+            "       ephemeris_compiler --fetch-from <index.φ> --systems a,b,... [--extras name,...] [--small-bodies] --dest <dir> [--ci-mode] [--index <index.φ>]"
+        );
+        eprintln!("output: ephemeris_<body>.bin in current directory");
+        std::process::exit(1);
+    }
+    if args[1] == "--index" {
+        let mut roots = Vec::new();
+        let mut depth = 0usize;
+        let mut out = "kernel-index.φ".to_string();
+        let mut delay_ms = 300u64;
+        let mut jobs = 1usize;
+        let mut i = 2;
+        while i < args.len() {
+            match args[i].as_str() {
+                "--root" => {
+                    if let Some(r) = args.get(i + 1) {
+                        roots.push(r.clone());
+                    }
+                    i += 1;
+                }
+                "--depth" => {
+                    if let Some(d) = args.get(i + 1).and_then(|d| d.parse::<usize>().ok()) {
+                        depth = d;
+                    }
+                    i += 1;
+                }
+                "--out" => {
+                    if let Some(o) = args.get(i + 1) {
+                        out = o.clone();
+                    }
+                    i += 1;
+                }
+                "--delay-ms" => {
+                    delay_ms = args.get(i + 1).and_then(|d| d.parse().ok()).unwrap_or(300);
+                    i += 1;
+                }
+                "--jobs" => {
+                    if let Some(j) = args.get(i + 1).and_then(|d| d.parse::<usize>().ok()) {
+                        jobs = if j == 0 { 1 } else { j };
+                    }
+                    i += 1;
+                }
+                _ => {}
+            }
+            i += 1;
+        }
+        if roots.is_empty() {
+            eprintln!("--index: no roots given");
+            std::process::exit(1);
+        }
+        crawl(&roots, depth, &out, delay_ms, jobs);
+        return;
+    }
+    if args[1] == "--summarize" {
+        let index_path = match args.get(2) {
+            Some(p) => p,
+            None => {
+                eprintln!("--summarize: index path absent");
+                std::process::exit(1);
+            }
+        };
+        let out_path = match args.get(3) {
+            Some(p) => p,
+            None => {
+                eprintln!("--summarize: output path absent");
+                std::process::exit(1);
+            }
+        };
+        summarize(index_path, out_path);
+        return;
+    }
+    let mut kernel_paths: Vec<String> = Vec::new();
+    let mut gm_path: Option<String> = None;
+    let mut pck_paths: Vec<String> = Vec::new();
+    let mut bpc_paths: Vec<String> = Vec::new();
+    let mut fk_paths: Vec<String> = Vec::new();
+    let mut ck_paths: Vec<String> = Vec::new();
+    let mut sclk_paths: Vec<String> = Vec::new();
+    let mut juice_cog = false;
+    let mut probe_jd: Option<f64> = None;
+    let mut ci_mode = false;
+    let mut index_path: Option<String> = None;
+    let mut fetch_from: Option<String> = None;
+    let mut systems: Vec<String> = Vec::new();
+    let mut extras: Vec<String> =
+        vec!["gm_Horizons.pck".to_string(), "geophysical.ker".to_string()];
+    let mut dest = "kernels".to_string();
+    let mut release = "ssd.jpl.nasa.gov-ephemeris".to_string();
+    let mut prefix = "ephemeris_".to_string();
+    let mut omega_g_path: Option<String> = None;
+    let mut small_bodies_only = false;
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--ci-mode" => ci_mode = true,
+            "--small-bodies" => small_bodies_only = true,
+            "--gm" => {
+                gm_path = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--pck" => {
+                if let Some(p) = args.get(i + 1) {
+                    pck_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--bpc" => {
+                if let Some(p) = args.get(i + 1) {
+                    bpc_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--fk" => {
+                if let Some(p) = args.get(i + 1) {
+                    fk_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--ck" => {
+                if let Some(p) = args.get(i + 1) {
+                    ck_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--sclk" => {
+                if let Some(p) = args.get(i + 1) {
+                    sclk_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--juice-cog" => juice_cog = true,
+            "--probe" => {
+                probe_jd = args.get(i + 1).and_then(|s| s.parse().ok());
+                i += 1;
+            }
+            "--index" => {
+                index_path = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--fetch-from" => {
+                fetch_from = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--systems" => {
+                if let Some(s) = args.get(i + 1) {
+                    systems = s.split(',').map(|x| x.trim().to_string()).collect();
+                }
+                i += 1;
+            }
+            "--extras" => {
+                if let Some(s) = args.get(i + 1) {
+                    extras = s.split(',').map(|x| x.trim().to_string()).collect();
+                }
+                i += 1;
+            }
+            "--dest" => {
+                if let Some(d) = args.get(i + 1) {
+                    dest = d.clone();
+                }
+                i += 1;
+            }
+            "--omega-g" => {
+                omega_g_path = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--release" => {
+                if let Some(r) = args.get(i + 1) {
+                    release = r.clone();
+                }
+                i += 1;
+            }
+            "--prefix" => {
+                if let Some(p) = args.get(i + 1) {
+                    prefix = p.clone();
+                }
+                i += 1;
+            }
+            other => kernel_paths.push(other.to_string()),
+        }
+        i += 1;
+    }
+    let omega_g = match &omega_g_path {
+        Some(p) => match std::fs::read_to_string(p) {
+            Ok(text) => {
+                let mut parts = text.lines().next().unwrap_or("").split_whitespace();
+                let name = parts.next().unwrap_or("").to_string();
+                let nhz = parts.next().and_then(|v| v.parse::<f64>().ok());
+                let sigma_nhz = parts.next().and_then(|v| v.parse::<f64>().ok());
+                match (name.is_empty(), nhz, sigma_nhz) {
+                    (false, Some(v), Some(s)) if v > 0.0 && s > 0.0 => {
+                        Some((name, v * 1e-9, s * 1e-9))
+                    }
+                    _ => {
+                        eprintln!(
+                            "--omega-g {}: the line carries no body/value/sigma triple (nHz)",
+                            p
+                        );
+                        None
+                    }
+                }
+            }
+            Err(_) => {
+                eprintln!("--omega-g {}: read returned void", p);
+                None
+            }
+        },
+        None => None,
+    };
+    if let Some(jd) = probe_jd {
+        let mut fk = FkFile::parse("");
+        for fk_path in &fk_paths {
+            match FkFile::open(fk_path) {
+                Ok(f) => fk.insert_file(f),
+                Err(e) => eprintln!("open {}: {}", fk_path, e),
+            }
+        }
+        for f in &fk.frames {
+            let rel = match f.tk.as_ref().and_then(|t| t.relative.clone()) {
+                Some(s) => s,
+                None => "absent".to_string(),
+            };
+            eprintln!(
+                "fk frame {} {} class {:?} center {:?} tk={}",
+                f.id, f.name, f.class, f.center, rel
+            );
+        }
+        for bpc_path in &bpc_paths {
+            let b = match BpcFile::open(bpc_path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("open {}: {}", bpc_path, e);
+                    continue;
+                }
+            };
+            for frame in fk.frames.iter().filter(|f| f.class == Some(2)) {
+                let et = (jd - J2000_EPOCH) * 86400.0;
+                let Some((phi, theta, psi)) = b.orient(frame.id, 1, et) else {
+                    continue;
+                };
+                eprintln!(
+                    "probe {} ({}) jd {}: phi={:.9} rad theta={:.9} rad psi={:.9} rad",
+                    frame.name, frame.id, jd, phi, theta, psi
+                );
+                let Some(child) = fk.tkframe_child_of(&frame.name) else {
+                    continue;
+                };
+                let Some((rot, via)) = fk.tkframe_rotation(child.id) else {
+                    continue;
+                };
+                let m_me = matmul(&rot, &libration_matrix(phi, theta, psi));
+                let (ra2, dec2, w2) = iau_angles_from_matrix(m_me);
+                eprintln!(
+                    "probe {} ({}) via {}: me=({:.6}, {:.6}, {:.6})",
+                    child.name, child.id, via, ra2, dec2, w2
+                );
+                let et2 = (jd + 10.0 - J2000_EPOCH) * 86400.0;
+                if let Some((phi2, theta2, psi2)) = b.orient(frame.id, 1, et2) {
+                    let m_me2 = matmul(&rot, &libration_matrix(phi2, theta2, psi2));
+                    let (_, _, w3) = iau_angles_from_matrix(m_me2);
+                    let mut drift = w3 - w2;
+                    while drift > 180.0 {
+                        drift -= 360.0;
+                    }
+                    while drift < -180.0 {
+                        drift += 360.0;
+                    }
+                    eprintln!("probe: me-W drift over 10 d = {:.6} deg/d", drift / 10.0);
+                }
+            }
+        }
+        return;
+    }
+    if let Some(index_file) = &fetch_from {
+        if index_path.is_none() {
+            index_path = Some(index_file.clone());
+        }
+        let entries = load_index(index_file);
+        if juice_cog {
+            let selected = select_juice_cog(&entries);
+            if selected.is_empty() {
+                eprintln!("--juice-cog: the index carries no JUICE center/attitude kernels");
+                std::process::exit(1);
+            }
+            for e in &selected {
+                eprintln!("selected: {} ({}, {} B)", e.name, e.family, e.size);
+            }
+            emit("phase download");
+            let paths = download_missing(&selected, &dest);
+            let (kernels, _bpcs, _gm, _pck, fks, cks, sclks) = classify(&paths);
+            if !run_juice_cog(&kernels, &fks, &cks, &sclks, ci_mode) {
+                std::process::exit(1);
+            }
+            return;
+        }
+        let mut selected = Vec::new();
+        let mut seen = HashSet::new();
+        for sys in &systems {
+            for e in select_system(&entries, sys) {
+                if seen.insert(e.name.clone()) {
+                    selected.push(e);
+                }
+            }
+        }
+        for name in &extras {
+            if let Some(e) = entries.iter().find(|e| &e.name == name) {
+                if seen.insert(e.name.clone()) {
+                    selected.push(e.clone());
+                }
+            }
+        }
+        if selected.is_empty() {
+            eprintln!("--fetch-from: selection empty for systems {:?}", systems);
+            std::process::exit(1);
+        }
+        for e in &selected {
+            eprintln!("selected: {} ({}, {} B)", e.name, e.family, e.size);
+        }
+        emit("phase download");
+        let paths = download_missing(&selected, &dest);
+        let (kernels, bpcs, gm_text, pck_texts, fks, _cks, _sclks) = classify(&paths);
+        let pck_merged: String = pck_texts.concat();
+        let pck = if pck_merged.is_empty() {
+            None
+        } else {
+            Some(pck_merged)
+        };
+        let written = flatten(
+            &kernels,
+            &bpcs,
+            &fks,
+            gm_text.as_deref(),
+            pck.as_deref(),
+            ci_mode,
+            omega_g.clone(),
+            small_bodies_only,
+            &release,
+            &prefix,
+        );
+        if ci_mode {
+            if let Some(idx) = &index_path {
+                update_index_bodies(idx, &written);
+            }
+        }
+        return;
+    }
+    if kernel_paths.is_empty() {
+        eprintln!("no kernel paths given");
+        std::process::exit(1);
+    }
+    if juice_cog {
+        if !run_juice_cog(&kernel_paths, &fk_paths, &ck_paths, &sclk_paths, ci_mode) {
+            std::process::exit(1);
+        }
+        return;
+    }
+    let gm_text = gm_path.and_then(|p| std::fs::read_to_string(p).ok());
+    let mut pck_merged = String::new();
+    for p in &pck_paths {
+        if let Ok(t) = std::fs::read_to_string(p) {
+            pck_merged.push_str(&t);
+            pck_merged.push('\n');
+        }
+    }
+    let pck_text = if pck_merged.is_empty() {
+        None
+    } else {
+        Some(pck_merged)
+    };
+    flatten(
+        &kernel_paths,
+        &bpc_paths,
+        &fk_paths,
+        gm_text.as_deref(),
+        pck_text.as_deref(),
+        ci_mode,
+        omega_g,
+        small_bodies_only,
+        &release,
+        &prefix,
+    );
+}

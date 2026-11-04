@@ -1,0 +1,69 @@
+name: pages-deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'static/**'
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'CNAME'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+    - run: |
+        mkdir -p _site
+        cp static/landing.html _site/index.html
+        cp CNAME _site/CNAME 2>/dev/null || true
+        dd if=/dev/urandom of=_site/probe_64k.bin bs=1024 count=64
+        ls -lh _site
+    - name: Stage the membrane page (when it stands)
+      run: cp static/membrane.html _site/membrane.html 2>/dev/null || true
+    - name: Build the wasm module (browser target, no binding generator)
+      continue-on-error: true
+      run: |
+        cargo build --target wasm32-unknown-unknown --release --lib
+        mkdir -p pkg
+        cp static/omegaflow.js pkg/omegaflow.js
+        cp target/wasm32-unknown-unknown/release/omegaflow.wasm pkg/omegaflow_bg.wasm
+    - name: Stage the wasm bundle next to the membrane page
+      run: |
+        cp pkg/omegaflow.js pkg/omegaflow_bg.wasm _site/ 2>/dev/null \
+          || echo "wasm bundle absent — the membrane stays an honest black"
+    - name: Stage the B assets same-origin (serverless membrane)
+      run: |
+        set -euo pipefail
+        stage() {
+          tag="$1"; name="$2"; want="$3"
+          curl -sSfL --retry 3 --max-time 1800 -o "_site/$name" \
+            "https://github.com/omegaflow/sources/releases/download/$tag/$name"
+          got=$(sha256sum "_site/$name" | cut -d' ' -f1)
+          if [ "$got" != "$want" ]; then
+            echo "sha256 mismatch for $name: got $got want $want — the staged bytes are not the measured asset"
+            exit 1
+          fi
+          ls -l "_site/$name"
+        }
+        stage ssd.jpl.nasa.gov-gaia dr3_stars.bin 49ea75958f909314d19a661dace13f7cc73dd20866134d917565a8b2378a0a0e
+    - uses: actions/configure-pages@v4
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: _site
+    - uses: actions/deploy-pages@v4
+      id: deployment

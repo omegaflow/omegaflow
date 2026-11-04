@@ -1,0 +1,25 @@
+name: service-build
+on:
+  workflow_dispatch:
+concurrency:
+  group: service-build
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo build --release -p omegaflow-service
+    - run: cargo build --release -p omegaflow-utils --bin ci_manage
+    - uses: actions/upload-artifact@v4
+      with:
+        name: omegaflow-service-linux
+        path: |
+          target/release/job_monitor
+          target/release/ci_manage

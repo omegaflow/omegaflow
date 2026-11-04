@@ -1,0 +1,51 @@
+name: ceers-cdn
+
+# Der CEERS-NIRSpec-x1d-Compiler (`ceers_spectra_compiler`) als CDN-Manifestator.
+# Ohne diesen Workflow bleibt der `url`-Zeiger
+# `…/web.corral.tacc.utexas.edu/ceers_spectra.bin` unmanifestiert.
+# Der Release-Tag folgt der Quellen-Herkunft (`web.corral.tacc.utexas.edu`);
+# die Probe wächst, sobald eine registrierte MSA-/Master-Liste (`--msa-csv`) vorliegt.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  ceers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Restore harvest workdir
+        uses: actions/cache@v4
+        with:
+          path: phi/ceers_harvest
+          key: ceers-harvest-v1
+      - name: NAIF leap-second kernel laden
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+      - name: Die CEERS-NIRSpec-x1d-Spektren kompilieren und auf das CDN manifestieren
+        run: |
+          cargo run --release -p omegaflow-harvest --bin ceers_spectra_compiler -- \
+            --out ceers_spectra.bin \
+            --lsk kernels/naif0012.tls \
+            --workdir phi/ceers_harvest \
+            --msa 323 \
+            --nirspec 4 \
+            --disperser prism \
+            --ci-mode

@@ -1,0 +1,91 @@
+name: ci-check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  issues: write
+
+# The heavy nightly/on-demand measurement of the whole tree. It is NOT the per-SHA
+# gate — that is `ci-gate.yml` (fast, cancel-in-progress on). Under the old push
+# trigger every pushed run took the single pending slot and each newer push replaced
+# it before a runner got a job (measured 2026-10-07: 15 of 17 ci-check runs cancelled
+# with 0 jobs, 0 success — `cancel-in-progress: false` protects only a running run,
+# never a waiting one). One serialized heavy run per night and on dispatch; the
+# single heavy runner is shared, so a dispatch waits behind the nightly run.
+#
+# Test-Durchsatz (Survey 2026-10-10, Maßnahme 3): the serial `cargo test` suite was
+# measured at ~3.5 h wall-clock. It runs now as a 4-way shard matrix on the free
+# `ubuntu-24.04-arm` runners via `nextest --partition count:N/4` (nextest's
+# deterministic test-list partition), so the whole suite's wall-clock is the slowest
+# shard, not the sum. Doctests (which nextest does not run) stay on shard 1 via
+# `cargo test --doc`; the register/node checks stay on shard 1 (run once, not 4×).
+concurrency:
+  group: ci-check
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - uses: taiki-e/install-action@nextest
+    - run: sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers
+    - run: cargo nextest run --release --features browser_relay --partition count:${{ matrix.shard }}/4
+    - run: cargo nextest run --release -p omegaflow-membrane --partition count:${{ matrix.shard }}/4
+    - run: cargo nextest run --release -p omegaflow-register -p omegaflow-utils --partition count:${{ matrix.shard }}/4
+    - run: cargo nextest run --release -p omegaflow-measure -p omegaflow-gate -p omegaflow-science -p omegaflow-service -p omegaflow-app --partition count:${{ matrix.shard }}/4
+    - run: cargo nextest run --release -p omegaflow-harvest --partition count:${{ matrix.shard }}/4
+    - if: matrix.shard == 1
+      run: cargo test --release --features browser_relay --doc
+    - if: matrix.shard == 1
+      run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
+    - if: matrix.shard == 1
+      run: cargo run -q -p omegaflow-register --release --bin cdn_reconcile -- --fail
+    - if: matrix.shard == 1
+      run: node --test static/presence_frame.test.mjs static/sensorium.test.mjs static/radiator.test.mjs static/verdicts.test.mjs static/constants.test.mjs static/color_lut.test.mjs workers/r2-verifier/test/verify.test.mjs
+    - if: matrix.shard == 1
+      uses: taiki-e/install-action@cargo-llvm-cov
+    - if: matrix.shard == 1
+      name: coverage — the number, not the adjective
+      run: |
+        cargo llvm-cov --release --features browser_relay --summary-only | tee coverage.txt
+    - if: matrix.shard == 1
+      name: Barrierefreiheit — WCAG 2.2 Level AA
+      run: |
+        npx --yes pa11y@8 --standard WCAG2AA --threshold 0 "file://$PWD/static/index.html"
+    - if: matrix.shard == 1
+      name: Prüfprotokoll — what ran, with which toolchain
+      run: |
+        rustc --version > pruefprotokoll.txt
+        cargo --version >> pruefprotokoll.txt
+        git rev-parse HEAD >> pruefprotokoll.txt
+        echo "tests: $(cargo nextest list --release --features browser_relay 2>/dev/null | grep -c '::')" >> pruefprotokoll.txt
+        cat coverage.txt >> pruefprotokoll.txt
+        cat pruefprotokoll.txt
+    - if: matrix.shard == 1
+      uses: actions/upload-artifact@v4
+      with:
+        name: pruefprotokoll
+        path: |
+          pruefprotokoll.txt
+          coverage.txt
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: cargo test returned void" \
+          "Test shard ${{ matrix.shard }}/4 failed on ${{ github.sha }}" \
+          health

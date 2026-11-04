@@ -1,0 +1,44 @@
+name: geofon-waveform-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  geofon-waveform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view geofon.gfz-potsdam.de --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "fdsn_waveform.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset fdsn_waveform.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset fdsn_waveform.bin missing — compiling and manifesting"
+          fi
+      - name: Compile GE.WLF.BHZ ground-velocity samples and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          cargo run -p omegaflow-harvest --release --bin fdsn_station_compiler -- \
+            --network GE --out stations_ge.txt
+          cargo run -p omegaflow-harvest --release --bin fdsn_waveform_compiler -- \
+            --route geofon --stations stations_ge.txt --network GE --station WLF \
+            --channel BHZ --start 2020-01-01T00:00:00 --end 2020-01-01T00:01:00 \
+            --out wlf_bhz.txt --emit-bin fdsn_waveform.bin \
+            --lsk kernels/naif0012.tls --ci-mode

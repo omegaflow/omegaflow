@@ -1,0 +1,22 @@
+name: hizoa-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  hizoa:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"hizoa.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"J/AJ/151/52/table2\" --columns 'ra:RAJ2000;dec:DEJ2000;fhi:FHI;w50:W50;w20:W20;hrv:HRV;vlg:vLG;dist:Dist;logmhi:logMHI' --out hizoa.json"}
+        ]

@@ -1,0 +1,34 @@
+# harvest: format=chime asset=fehlt arm=chime_frb_compiler
+
+name: chime-frb-cdn
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/harvest/src/bin/chime_frb_compiler.rs'
+      - '.github/workflows/chime-frb-cdn.yml'
+
+concurrency:
+  group: chime-frb-cdn
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  chime-frb-cdn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the CHIME/FRB Catalog 2 CSV onto the CDN
+        run: |
+          cargo build -p omegaflow-harvest --release --bin chime_frb_compiler
+          ./target/release/chime_frb_compiler --ci-mode

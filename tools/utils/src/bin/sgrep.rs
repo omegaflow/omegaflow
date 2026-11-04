@@ -1,0 +1,443 @@
+use std::env;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+use std::path::Path;
+use std::process::Command;
+
+macro_rules! out {
+    ($($t:tt)*) => {{
+        use std::io::Write;
+        let _ = writeln!(std::io::stdout(), $($t)*);
+    }};
+}
+
+macro_rules! epr {
+    ($($t:tt)*) => {{
+        eprintln!($($t)*);
+    }};
+}
+
+struct Options {
+    case_insensitive: bool,
+    files_only: bool,
+    count_only: bool,
+    all_files: bool,
+    glob: Option<String>,
+    pattern: String,
+    root: String,
+}
+
+enum Parsed {
+    Run(Options),
+    Help,
+}
+
+fn parse_args(args: &[String]) -> Result<Parsed, String> {
+    let mut case_insensitive = false;
+    let mut files_only = false;
+    let mut count_only = false;
+    let mut all_files = false;
+    let mut glob: Option<String> = None;
+    let mut pattern: Option<String> = None;
+    let mut root = String::from(".");
+    let mut root_given = false;
+    let mut positional_only = false;
+    let mut i = 1;
+    while i < args.len() {
+        let a = args[i].as_str();
+        if positional_only {
+            push_positional(&mut pattern, &mut root, &mut root_given, a)?;
+        } else {
+            match a {
+                "--" => positional_only = true,
+                "-i" => case_insensitive = true,
+                "-l" => files_only = true,
+                "-c" => count_only = true,
+                "--all" => all_files = true,
+                "-g" => {
+                    i += 1;
+                    let Some(v) = args.get(i) else {
+                        return Err("flag -g needs a <glob> value".to_string());
+                    };
+                    glob = Some(v.clone());
+                }
+                "-h" | "--help" => return Ok(Parsed::Help),
+                _ if a.starts_with('-') && a.len() > 1 => {
+                    return Err(format!("unknown flag: {a}"));
+                }
+                _ => push_positional(&mut pattern, &mut root, &mut root_given, a)?,
+            }
+        }
+        i += 1;
+    }
+    let Some(pattern) = pattern else {
+        return Err("no <pattern> given".to_string());
+    };
+    Ok(Parsed::Run(Options {
+        case_insensitive,
+        files_only,
+        count_only,
+        all_files,
+        glob,
+        pattern,
+        root,
+    }))
+}
+
+fn push_positional(
+    pattern: &mut Option<String>,
+    root: &mut String,
+    root_given: &mut bool,
+    a: &str,
+) -> Result<(), String> {
+    if pattern.is_none() {
+        *pattern = Some(a.to_string());
+        Ok(())
+    } else if !*root_given {
+        *root = a.to_string();
+        *root_given = true;
+        Ok(())
+    } else {
+        Err(format!("a second [dir|file] was given: {a}"))
+    }
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let opts = match parse_args(&args) {
+        Ok(Parsed::Help) => {
+            usage();
+            std::process::exit(0);
+        }
+        Ok(Parsed::Run(o)) => o,
+        Err(e) => {
+            epr!("sgrep: {e}");
+            usage();
+            std::process::exit(2);
+        }
+    };
+    let needle = if opts.case_insensitive {
+        opts.pattern.to_lowercase()
+    } else {
+        opts.pattern
+    };
+    let mut matches: u64 = 0;
+    grep_root(
+        &opts.root,
+        &needle,
+        opts.case_insensitive,
+        opts.files_only,
+        opts.count_only,
+        opts.all_files,
+        opts.glob.as_deref(),
+        &mut matches,
+    );
+    if opts.count_only {
+        out!("{}", matches);
+    }
+}
+
+fn usage() {
+    epr!(
+        "sgrep — content search over the live tree (git ls-files; --all walks the tree incl. gitignored)"
+    );
+    epr!("usage: sgrep [-i] [-l] [-c] [--all] [-g <glob>] <pattern> [dir|file]");
+    epr!("flags:");
+    epr!("  -i        case-insensitive (default is case-sensitive)");
+    epr!("  -l        file paths only, one per file with a match");
+    epr!("  -c        print only the total match count");
+    epr!(
+        "  --all     walk the working tree incl. gitignored files (phi/pipeline, queue, stage); skips target/data/cache/.git"
+    );
+    epr!("  -g <glob> restrict to filenames matching the glob (e.g. '*.rs')");
+    epr!("  -h|--help this text");
+    epr!("  --        end of flags (a <pattern> starting with '-' needs this)");
+    epr!("output: `path:line:text` — line numbers are in the output (there is no -n flag).");
+    epr!("an unknown flag or a second [dir|file] is rejected, never a silent empty result.");
+}
+
+fn grep_root(
+    root: &str,
+    needle: &str,
+    ci: bool,
+    files_only: bool,
+    count_only: bool,
+    all_files: bool,
+    glob: Option<&str>,
+    matches: &mut u64,
+) {
+    if Path::new(root).is_file() {
+        grep_file(root, needle, ci, files_only, count_only, matches);
+        return;
+    }
+    let Some(top) = repo_root() else {
+        return;
+    };
+    let files = if all_files {
+        walk_all(&top)
+    } else {
+        match repo_files(&top) {
+            Some(f) => f,
+            None => return,
+        }
+    };
+    let root_prefix = root.trim_matches('/');
+    for f in files {
+        if !root_prefix.is_empty() && root_prefix != "." && !f.starts_with(root_prefix) {
+            continue;
+        }
+        if let Some(g) = glob {
+            let Some(file_name) = Path::new(&f).file_name() else {
+                continue;
+            };
+            if !glob_match(&file_name.to_string_lossy(), g) {
+                continue;
+            }
+        }
+        let full = Path::new(&top).join(&f);
+        grep_file(
+            &full.to_string_lossy(),
+            needle,
+            ci,
+            files_only,
+            count_only,
+            matches,
+        );
+    }
+}
+
+fn repo_root() -> Option<String> {
+    let out = Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .output()
+        .ok()?;
+    let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    if s.is_empty() { None } else { Some(s) }
+}
+
+fn repo_files(top: &str) -> Option<Vec<String>> {
+    let out = Command::new("git")
+        .args([
+            "ls-files",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "-z",
+        ])
+        .current_dir(top)
+        .output()
+        .ok()?;
+    Some(
+        out.stdout
+            .split(|&b| b == 0)
+            .filter_map(|b| std::str::from_utf8(b).ok())
+            .map(|s| s.to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+    )
+}
+
+fn grep_file(
+    path: &str,
+    needle: &str,
+    ci: bool,
+    files_only: bool,
+    count_only: bool,
+    matches: &mut u64,
+) {
+    let Ok(file) = File::open(path) else {
+        return;
+    };
+    let reader = BufReader::new(file);
+    let mut file_matches: u64 = 0;
+    for (idx, line) in reader.lines().enumerate() {
+        let Ok(line) = line else {
+            continue;
+        };
+        let hit = if ci {
+            line.to_lowercase().contains(needle)
+        } else {
+            line.contains(needle)
+        };
+        if !hit {
+            continue;
+        }
+        file_matches += 1;
+        *matches += 1;
+        if !count_only && !files_only {
+            out!("{}:{}:{}", path, idx + 1, line);
+        }
+    }
+    if files_only && file_matches > 0 {
+        out!("{}", path);
+    }
+}
+
+const WALK_SKIP: &[&str] = &[
+    ".git",
+    "target",
+    "data",
+    "cache",
+    "out",
+    "tmp",
+    "node_modules",
+    "archeology",
+    ".playwright-mcp",
+];
+
+fn walk_all(top: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut stack: Vec<std::path::PathBuf> = vec![std::path::PathBuf::from(top)];
+    while let Some(dir) = stack.pop() {
+        let Ok(entries) = std::fs::read_dir(&dir) else {
+            continue;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let name = entry.file_name();
+            let name = name.to_string_lossy();
+            let is_dir = entry.file_type().map(|t| t.is_dir()).unwrap_or(false);
+            if is_dir {
+                if WALK_SKIP.contains(&name.as_ref()) {
+                    continue;
+                }
+                stack.push(path);
+            } else if let Ok(rel) = path.strip_prefix(top) {
+                out.push(rel.to_string_lossy().into_owned());
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
+fn glob_match(name: &str, glob: &str) -> bool {
+    if !glob.contains('*') && !glob.contains('?') {
+        return name == glob;
+    }
+    match_star(name.as_bytes(), glob.as_bytes())
+}
+
+fn match_star(text: &[u8], pattern: &[u8]) -> bool {
+    if pattern.is_empty() {
+        return text.is_empty();
+    }
+    match pattern[0] {
+        b'*' => (0..=text.len()).any(|i| match_star(&text[i..], &pattern[1..])),
+        b'?' => !text.is_empty() && match_star(&text[1..], &pattern[1..]),
+        c => !text.is_empty() && text[0] == c && match_star(&text[1..], &pattern[1..]),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn argv(parts: &[&str]) -> Vec<String> {
+        std::iter::once("sgrep")
+            .chain(parts.iter().copied())
+            .map(String::from)
+            .collect()
+    }
+
+    fn run(parts: &[&str]) -> Options {
+        match parse_args(&argv(parts)) {
+            Ok(Parsed::Run(o)) => o,
+            Ok(Parsed::Help) => panic!("Help"),
+            Err(e) => panic!("the args were rejected: {e}"),
+        }
+    }
+
+    #[test]
+    fn unknown_flag_is_rejected() {
+        assert!(parse_args(&argv(&["-n", "pat", "file"])).is_err());
+        assert!(parse_args(&argv(&["-r", "pat"])).is_err());
+        assert!(parse_args(&argv(&["--line-number", "pat", "file"])).is_err());
+    }
+
+    #[test]
+    fn second_path_is_rejected() {
+        assert!(parse_args(&argv(&["pat", "a", "b"])).is_err());
+    }
+
+    #[test]
+    fn flags_and_single_path_parse() {
+        let o = run(&["-i", "pat", "dir"]);
+        assert!(o.case_insensitive);
+        assert_eq!(o.pattern, "pat");
+        assert_eq!(o.root, "dir");
+    }
+
+    #[test]
+    fn default_root_is_dot() {
+        assert_eq!(run(&["pat"]).root, ".");
+    }
+
+    #[test]
+    fn double_dash_allows_dash_pattern() {
+        assert_eq!(run(&["--", "-n"]).pattern, "-n");
+    }
+
+    #[test]
+    fn missing_glob_value_is_rejected() {
+        assert!(parse_args(&argv(&["-g"])).is_err());
+    }
+
+    #[test]
+    fn missing_pattern_is_rejected() {
+        assert!(parse_args(&argv(&[])).is_err());
+    }
+
+    #[test]
+    fn help_is_accepted() {
+        assert!(matches!(parse_args(&argv(&["-h"])), Ok(Parsed::Help)));
+    }
+
+    #[test]
+    fn all_flag_parses() {
+        assert!(run(&["--all", "pat"]).all_files);
+        assert!(!run(&["pat"]).all_files);
+    }
+
+    #[test]
+    fn walk_all_lists_ignored_and_skips_heavy_dirs() {
+        let base = std::env::temp_dir().join(format!("sgrep_walk_{}", std::process::id()));
+        let vis = base.join("phi");
+        std::fs::create_dir_all(&vis).expect("vis dir");
+        std::fs::create_dir_all(base.join("target")).expect("target dir");
+        std::fs::create_dir_all(base.join("data")).expect("data dir");
+        std::fs::write(vis.join("hidden.\u{3c6}"), "x\n").expect("hidden write");
+        std::fs::write(base.join("target/junk"), "x\n").expect("target write");
+        std::fs::write(base.join("data/junk"), "x\n").expect("data write");
+        let files = walk_all(&base.to_string_lossy());
+        assert!(files.iter().any(|f| f == "phi/hidden.\u{3c6}"));
+        assert!(!files.iter().any(|f| f.starts_with("target/")));
+        assert!(!files.iter().any(|f| f.starts_with("data/")));
+        std::fs::remove_dir_all(&base).expect("cleanup");
+    }
+
+    #[test]
+    fn glob_suffix() {
+        assert!(glob_match("foo.rs", "*.rs"));
+        assert!(!glob_match("foo.rs", "*.toml"));
+    }
+
+    #[test]
+    fn glob_middle_star() {
+        assert!(glob_match("a/b/foo.rs", "*foo*"));
+        assert!(glob_match("foo.rs", "f*.rs"));
+        assert!(!glob_match("foo.rs", "f?.toml"));
+    }
+
+    #[test]
+    fn glob_exact() {
+        assert!(glob_match("foo.rs", "foo.rs"));
+        assert!(!glob_match("foo.rs", "bar.rs"));
+    }
+
+    #[test]
+    fn wildcard_question() {
+        assert!(glob_match("foo.rs", "???.rs"));
+        assert!(!glob_match("fo.rs", "???.rs"));
+    }
+}

@@ -1,0 +1,938 @@
+use super::*;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+pub const CHEBYSHEV_N: usize = 18;
+const GRANULE_TAU_EPS: f64 = 1e-6;
+
+pub fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
+    let mut b0 = 0.0;
+    let mut b1 = 0.0;
+    for i in (0..CHEBYSHEV_N).rev() {
+        let b2 = b1;
+        b1 = b0;
+        b0 = 2.0 * tau * b1 - b2 + coeffs[i];
+    }
+    b0 - tau * b1
+}
+
+pub fn chebyshev_eval_slice(coeffs: &[f64], tau: f64) -> f64 {
+    let mut b0 = 0.0;
+    let mut b1 = 0.0;
+    for i in (0..coeffs.len()).rev() {
+        let b2 = b1;
+        b1 = b0;
+        b0 = 2.0 * tau * b1 - b2 + coeffs[i];
+    }
+    b0 - tau * b1
+}
+
+pub fn chebyshev_evaluate_deriv(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
+    let mut dc = [0.0_f64; CHEBYSHEV_N];
+    for k in (1..CHEBYSHEV_N).rev() {
+        if k + 2 < CHEBYSHEV_N {
+            dc[k] += dc[k + 2];
+        }
+        if k + 1 < CHEBYSHEV_N {
+            dc[k] += 2.0 * (k as f64 + 1.0) * coeffs[k + 1];
+        }
+    }
+    dc[0] += coeffs[1];
+    if CHEBYSHEV_N >= 3 {
+        dc[0] += 0.5 * dc[2];
+    }
+    chebyshev_evaluate(&dc, tau)
+}
+
+pub fn nutation_deltas_at(props: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
+    let records = props.nutation.as_ref()?;
+    let rec = records
+        .iter()
+        .find(|r| (jd - r.mid_jd).abs() <= r.half_jd)?;
+    let tau = ((jd - rec.mid_jd) / rec.half_jd).clamp(-1.0, 1.0);
+    Some((
+        chebyshev_eval_slice(&rec.ra, tau),
+        chebyshev_eval_slice(&rec.dec, tau),
+        chebyshev_eval_slice(&rec.pm, tau),
+    ))
+}
+
+pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
+    let tc = (jd - J2000_EPOCH) / 36525.0;
+    let (d_ra, d_dec, d_pm) = match nutation_deltas_at(bp, jd) {
+        Some(d) => d,
+        None if bp.nutation.is_some() => return None,
+        None => (0.0, 0.0, 0.0),
+    };
+    let ra = bp.α0_deg + bp.dα0_dt_deg_per_century * tc + d_ra;
+    let dec = bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc + d_dec;
+    let pm = bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH) + d_pm;
+    Some((ra, dec, pm))
+}
+pub fn granule_lo(e: &BodyEphemeris, jd: f64) -> Option<usize> {
+    let n = e.granules.len();
+    if n == 0 {
+        return None;
+    }
+    let mut idx = e.granule_hint.load(Ordering::Relaxed).min(n - 1);
+    while idx + 1 < n && e.granules[idx + 1].t0_jd < jd {
+        idx += 1;
+    }
+    while idx > 0 && e.granules[idx].t0_jd >= jd {
+        idx -= 1;
+    }
+    e.granule_hint.store(idx, Ordering::Relaxed);
+    Some(idx)
+}
+
+pub fn body_record_epoch(e: &BodyEphemeris) -> Option<f64> {
+    if let Some(orbit) = &e.orbit {
+        return orbit.times.first().copied();
+    }
+    let g = e.granules.first()?;
+    Some((g.t0_jd - J2000_EPOCH) * 86400.0)
+}
+
+pub fn body_barycenter_position(
+    name: &str,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    if let Some(orbit) = &e.orbit {
+        return crate::wind_orbit::position_at(orbit, tdb).map(|(p, _)| p);
+    }
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let idx = granule_lo(e, jd)?;
+    for i in [idx, idx + 1] {
+        if i >= e.granules.len() {
+            continue;
+        }
+        let g = &e.granules[i];
+        let tau = (jd - g.t0_jd) / g.dt_jd;
+        if (-1.0 - GRANULE_TAU_EPS..=1.0 + GRANULE_TAU_EPS).contains(&tau) {
+            return Some([
+                chebyshev_evaluate(&g.cx, tau),
+                chebyshev_evaluate(&g.cy, tau),
+                chebyshev_evaluate(&g.cz, tau),
+            ]);
+        }
+    }
+    None
+}
+
+pub fn body_barycenter_velocity(
+    name: &str,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let idx = granule_lo(e, jd)?;
+    for i in [idx, idx + 1] {
+        if i >= e.granules.len() {
+            continue;
+        }
+        let g = &e.granules[i];
+        let tau = (jd - g.t0_jd) / g.dt_jd;
+        if (-1.0 - GRANULE_TAU_EPS..=1.0 + GRANULE_TAU_EPS).contains(&tau) {
+            let scale = 1.0 / (g.dt_jd * 86400.0);
+            return Some([
+                chebyshev_evaluate_deriv(&g.cx, tau) * scale,
+                chebyshev_evaluate_deriv(&g.cy, tau) * scale,
+                chebyshev_evaluate_deriv(&g.cz, tau) * scale,
+            ]);
+        }
+    }
+    None
+}
+
+fn vec3_sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+}
+
+fn vec3_norm(v: [f64; 3]) -> Option<f64> {
+    let n = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    if n.is_finite() && n > 0.0 {
+        Some(n)
+    } else {
+        None
+    }
+}
+
+pub fn light_time_worldline(
+    station: [f64; 3],
+    tdb: f64,
+    worldline: &dyn Fn(f64) -> Option<[f64; 3]>,
+) -> Option<([f64; 3], f64)> {
+    let mut emitted = tdb;
+    for _ in 0..12 {
+        let apparent = worldline(emitted)?;
+        let d = vec3_norm(vec3_sub(apparent, station))?;
+        let next = tdb - d / C_LIGHT;
+        if !next.is_finite() {
+            return None;
+        }
+        if (next - emitted).abs() < 1e-9 {
+            emitted = next;
+            break;
+        }
+        emitted = next;
+    }
+    let pos = worldline(emitted)?;
+    Some((pos, emitted))
+}
+
+fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> Option<[f64; 3]> {
+    let lr = lat.to_radians();
+    let nr = lon.to_radians();
+    let f = match bp.radii_c {
+        Some(rc) if bp.radius_m > 0.0 => (bp.radius_m - rc) / bp.radius_m,
+        Some(_) | None => bp.flattening?,
+    };
+    let e2 = f * (2.0 - f);
+    let sl = lr.sin();
+    let n = bp.radius_m / (1.0 - e2 * sl * sl).sqrt();
+    let rb_scale = match bp.radii_b {
+        Some(v) if bp.radius_m > 0.0 => v / bp.radius_m,
+        _ => 1.0,
+    };
+    Some([
+        (n + alt) * lr.cos() * nr.cos(),
+        (n + alt) * lr.cos() * nr.sin() * rb_scale,
+        (n * (1.0 - e2) + alt) * sl,
+    ])
+}
+
+const RECEIVER_MODELS: &str = include_str!("kernels/receiver_models.tsv");
+
+pub const RECEIVER_ABSENCE_CONVENTION: &str = "a declared IAU receiver without an EOP row for its epoch is absent, not zero: the series is produced continuously, so a missing row is pending, not measured (bindend/messzustaende-v3.md, rule 2), never 0.0; body_fixed_to_icrs returns None and the caller decides whether the class may exist at all";
+
+pub fn receiver_model(name: &str) -> Option<&'static str> {
+    RECEIVER_MODELS
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            Some((p.next()?, p.next()?))
+        })
+        .find(|(body, _)| *body == name)
+        .map(|(_, model)| model)
+}
+
+fn iau_receiver_to_icrs(name: &str, xyz_m: [f64; 3], tdb: f64) -> Option<[f64; 3]> {
+    if receiver_model(name)? != "iau2006-2000a" {
+        return None;
+    }
+    let tdb_jd = tdb / 86400.0 + J2000_EPOCH;
+    let lsk = crate::archivar::embedded_lsk()?;
+    let unix_utc = lsk.tdb_to_unix(tdb)?;
+    let mjd_utc = unix_utc / 86400.0 + 40587.0;
+    let eop = crate::archivar::eop::kernel().and_then(|s| s.at(mjd_utc))?;
+    let ut1_jd = (unix_utc + eop.ut1_utc_s) / 86400.0 + 2440587.5;
+    let km = [xyz_m[0] / 1000.0, xyz_m[1] / 1000.0, xyz_m[2] / 1000.0];
+    let icrs_km = crate::mathematikerin::receiver::itrf_to_icrs(km, ut1_jd, tdb_jd, &eop)?;
+    Some([
+        icrs_km[0] * 1000.0,
+        icrs_km[1] * 1000.0,
+        icrs_km[2] * 1000.0,
+    ])
+}
+
+fn iau_icrs_to_receiver(name: &str, xyz_m: [f64; 3], tdb: f64) -> Option<[f64; 3]> {
+    if receiver_model(name)? != "iau2006-2000a" {
+        return None;
+    }
+    let tdb_jd = tdb / 86400.0 + J2000_EPOCH;
+    let lsk = crate::archivar::embedded_lsk()?;
+    let unix_utc = lsk.tdb_to_unix(tdb)?;
+    let mjd_utc = unix_utc / 86400.0 + 40587.0;
+    let eop = crate::archivar::eop::kernel().and_then(|s| s.at(mjd_utc))?;
+    let ut1_jd = (unix_utc + eop.ut1_utc_s) / 86400.0 + 2440587.5;
+    let km = [xyz_m[0] / 1000.0, xyz_m[1] / 1000.0, xyz_m[2] / 1000.0];
+    let itrf_km = crate::mathematikerin::receiver::icrs_to_itrf(km, ut1_jd, tdb_jd, &eop)?;
+    Some([
+        itrf_km[0] * 1000.0,
+        itrf_km[1] * 1000.0,
+        itrf_km[2] * 1000.0,
+    ])
+}
+
+fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> Option<[f64; 3]> {
+    let (ra, dec, pm) = orientation_angles_at(bp, jd)?;
+    let a = (90.0 + ra).to_radians();
+    let d = (90.0 - dec).to_radians();
+    let w = pm.to_radians();
+    let (sw, cw) = w.sin_cos();
+    let (sa, ca) = a.sin_cos();
+    let (sd, cd) = d.sin_cos();
+    let xt = xyz[0] * cw - xyz[1] * sw;
+    let yt = xyz[0] * sw + xyz[1] * cw;
+    let yp = yt * cd - xyz[2] * sd;
+    Some([xt * ca - yp * sa, xt * sa + yp * ca, yt * sd + xyz[2] * cd])
+}
+
+fn rotate_about_pole(m: &[f64; 9], mt: f64, jd: f64, rate_deg_day: f64, v: [f64; 3]) -> [f64; 3] {
+    let angle = rate_deg_day.to_radians() * (jd - mt);
+    let (sa, ca) = angle.sin_cos();
+    let (ax, ay, az) = (m[2], m[5], m[8]);
+    let omc = 1.0 - ca;
+    let dot = ax * v[0] + ay * v[1] + az * v[2];
+    let cross = [
+        ay * v[2] - az * v[1],
+        az * v[0] - ax * v[2],
+        ax * v[1] - ay * v[0],
+    ];
+    [
+        v[0] * ca + ax * dot * omc + cross[0] * sa,
+        v[1] * ca + ay * dot * omc + cross[1] * sa,
+        v[2] * ca + az * dot * omc + cross[2] * sa,
+    ]
+}
+
+pub fn body_fixed_to_icrs(
+    name: &str,
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let bp = e.props.as_ref()?;
+    let [xb, yb, zb] = geodetic_to_body_fixed(bp, lat, lon, alt)?;
+    body_fixed_vector_to_icrs(name, [xb, yb, zb], tdb, eph)
+}
+
+pub fn body_fixed_vector_to_icrs(
+    name: &str,
+    xyz_body_fixed: [f64; 3],
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let bp = e.props.as_ref()?;
+    let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
+    let [xb, yb, zb] = xyz_body_fixed;
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    if let Some([xi, yi, zi]) = iau_receiver_to_icrs(name, [xb, yb, zb], tdb) {
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
+    if receiver_model(name).is_some() {
+        return None;
+    }
+    if bp.nutation.is_some()
+        && let Some([xi, yi, zi]) = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)
+    {
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
+    if !e.rotation_matrices.is_empty() {
+        let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
+        let mut best: Option<(&[f64; 9], f64)> = None;
+        let mut best_d = f64::INFINITY;
+        let lo = idx.saturating_sub(2);
+        let hi = (idx + 2).min(e.rotation_matrices.len().saturating_sub(1));
+        for i in lo..=hi {
+            let (t, m) = &e.rotation_matrices[i];
+            if !t.is_finite() {
+                continue;
+            }
+            let d = (jd - t).abs();
+            if d < best_d {
+                best_d = d;
+                best = Some((m, *t));
+            }
+        }
+        let (rot_m, mt) = best?;
+        let xi0 = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
+        let yi0 = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
+        let zi0 = rot_m[6] * xb + rot_m[7] * yb + rot_m[8] * zb;
+        let [xi, yi, zi] = rotate_about_pole(rot_m, mt, jd, bp.dw_dt_deg_per_day, [xi0, yi0, zi0]);
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
+    let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)?;
+    Some([xi + bx, yi + by, zi + bz])
+}
+
+pub fn body_fixed_to_icrs_smooth(
+    name: &str,
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let bp = e.props.as_ref()?;
+    let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
+    let [xb, yb, zb] = geodetic_to_body_fixed(bp, lat, lon, alt)?;
+    if let Some([xi, yi, zi]) = iau_receiver_to_icrs(name, [xb, yb, zb], tdb) {
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
+    if receiver_model(name).is_some() {
+        return None;
+    }
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)?;
+    Some([xi + bx, yi + by, zi + bz])
+}
+
+pub fn rotate_icrs_to_body_frame(bp: &BodyProperties, r: [f64; 3], jd: f64) -> Option<[f64; 3]> {
+    let (ra, dec, pm) = orientation_angles_at(bp, jd)?;
+    let a = (90.0 + ra).to_radians();
+    let d = (90.0 - dec).to_radians();
+    let w = pm.to_radians();
+    let (sw, cw) = w.sin_cos();
+    let (sa, ca) = a.sin_cos();
+    let (sd, cd) = d.sin_cos();
+    let x1 = r[0] * ca + r[1] * sa;
+    let y1 = -r[0] * sa + r[1] * ca;
+    let y2 = y1 * cd + r[2] * sd;
+    let z2 = -y1 * sd + r[2] * cd;
+    let xb = x1 * cw + y2 * sw;
+    let yb = -x1 * sw + y2 * cw;
+    Some([xb, yb, z2])
+}
+
+pub fn icrs_to_body_fixed(
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    body_name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64, f64)> {
+    let e = eph.get(body_name)?;
+    let [bx, by, bz] = body_barycenter_position(body_name, tdb_secs, eph)?;
+    let rx = x - bx;
+    let ry = y - by;
+    let rz = z - bz;
+    if let Some([xb, yb, zb]) = iau_icrs_to_receiver(body_name, [rx, ry, rz], tdb_secs) {
+        return Some((xb, yb, zb));
+    }
+    if receiver_model(body_name).is_some() {
+        return None;
+    }
+    if !e.rotation_matrices.is_empty() {
+        let bp = e.props.as_ref()?;
+        let jd = tdb_secs / 86400.0 + J2000_EPOCH;
+        let (rot_m, mt) = e
+            .rotation_matrices
+            .iter()
+            .filter(|(t, _)| t.is_finite())
+            .min_by(|a, b| (jd - a.0).abs().total_cmp(&(jd - b.0).abs()))
+            .map(|(t, m)| (m, *t))?;
+        let [ux, uy, uz] = rotate_about_pole(rot_m, mt, jd, -bp.dw_dt_deg_per_day, [rx, ry, rz]);
+        let xt = rot_m[0] * ux + rot_m[3] * uy + rot_m[6] * uz;
+        let yt = rot_m[1] * ux + rot_m[4] * uy + rot_m[7] * uz;
+        let zt = rot_m[2] * ux + rot_m[5] * uy + rot_m[8] * uz;
+        Some((xt, yt, zt))
+    } else {
+        let bp = e.props.as_ref()?;
+        let jd = tdb_secs / 86400.0 + J2000_EPOCH;
+        let [xb, yb, z2] = rotate_icrs_to_body_frame(bp, [rx, ry, rz], jd)?;
+        Some((xb, yb, z2))
+    }
+}
+
+pub fn icrs_to_body_surface(
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    body_name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64)> {
+    let bp = eph.get(body_name)?.props.as_ref()?;
+    let (xb, yb, zb) = icrs_to_body_fixed(x, y, z, tdb_secs, body_name, eph)?;
+    let lon = yb.atan2(xb);
+    let p = (xb * xb + yb * yb).sqrt();
+    let f = bp.flattening?;
+    let e2 = f * (2.0 - f);
+    let r = bp.radius_m;
+    let mut lat = zb.atan2(p * (1.0 - e2));
+    for _ in 0..3 {
+        let sl = lat.sin();
+        let n = r / (1.0 - e2 * sl * sl).sqrt();
+        let h = p / lat.cos() - n;
+        lat = zb.atan2(p * (1.0 - e2 * n / (n + h)));
+    }
+    Some((lat.to_degrees(), lon.to_degrees()))
+}
+
+pub fn icrs_to_body_geodetic(
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    body_name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64, f64)> {
+    let bp = eph.get(body_name)?.props.as_ref()?;
+    let (xb, yb, zb) = icrs_to_body_fixed(x, y, z, tdb_secs, body_name, eph)?;
+    let lon = yb.atan2(xb);
+    let p = (xb * xb + yb * yb).sqrt();
+    let f = bp.flattening?;
+    let e2 = f * (2.0 - f);
+    let r = bp.radius_m;
+    let mut lat = zb.atan2(p * (1.0 - e2));
+    let mut h = 0.0;
+    for _ in 0..3 {
+        let sl = lat.sin();
+        let n = r / (1.0 - e2 * sl * sl).sqrt();
+        h = p / lat.cos() - n;
+        lat = zb.atan2(p * (1.0 - e2 * n / (n + h)));
+    }
+    let depth_km = -h / 1000.0;
+    let lat_deg = lat.to_degrees();
+    let lon_deg = lon.to_degrees();
+    if !lat_deg.is_finite() || !lon_deg.is_finite() || !depth_km.is_finite() {
+        return None;
+    }
+    Some((lat_deg, lon_deg, depth_km))
+}
+
+pub fn finite_pos(p: [f64; 3]) -> Option<[f64; 3]> {
+    if p[0].is_finite() && p[1].is_finite() && p[2].is_finite() {
+        Some(p)
+    } else {
+        None
+    }
+}
+
+impl Motion {
+    pub fn at(&self, t: f64, epoch: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<[f64; 3]> {
+        match self {
+            Motion::Surface {
+                body_name,
+                lat,
+                lon,
+                alt,
+            } => body_fixed_to_icrs(body_name, *lat, *lon, *alt, t, eph),
+            Motion::Barycenter { body_name, scale } => body_barycenter_position(body_name, t, eph)
+                .map(|[x, y, z]| [x * scale, y * scale, z * scale]),
+            Motion::Linear { p, v } => {
+                let dt = t - epoch;
+                Some([p[0] + v[0] * dt, p[1] + v[1] * dt, p[2] + v[2] * dt])
+            }
+            Motion::Kepler { rec } => {
+                let t_jd = t / 86400.0 + J2000_EPOCH;
+                match state_at(rec, t_jd) {
+                    Some((p, _)) => finite_pos(p),
+                    None => None,
+                }
+            }
+            Motion::Spherical { rec } => finite_pos(star_position_at(rec, t).0),
+        }
+    }
+
+    pub fn velocity_at(&self, t: f64) -> Option<[f64; 3]> {
+        match self {
+            Motion::Linear { v, .. } => Some(*v),
+            Motion::Spherical { rec } => Some(star_position_at(rec, t).1),
+            Motion::Kepler { rec } => {
+                let t_jd = t / 86400.0 + J2000_EPOCH;
+                state_at(rec, t_jd).map(|(_, v)| v)
+            }
+            Motion::Surface { .. } | Motion::Barycenter { .. } => None,
+        }
+    }
+
+    pub fn anchor_body(&self) -> Option<&str> {
+        match self {
+            Motion::Surface { body_name, .. } | Motion::Barycenter { body_name, .. } => {
+                Some(body_name)
+            }
+            Motion::Linear { .. } | Motion::Kepler { .. } | Motion::Spherical { .. } => None,
+        }
+    }
+}
+pub fn gestalt_surface_threads(recs: &[crate::geo::GbcoRec], body_name: &str) -> Vec<Motion> {
+    recs.iter()
+        .filter(|r| r.lat.is_finite() && r.lon.is_finite() && r.elev.is_finite())
+        .map(|r| Motion::Surface {
+            body_name: body_name.to_string(),
+            lat: r.lat,
+            lon: r.lon,
+            alt: r.elev,
+        })
+        .collect()
+}
+
+#[derive(Clone)]
+pub struct BodyProperties {
+    pub α0_deg: f64,
+    pub dα0_dt_deg_per_century: f64,
+    pub δ0_deg: f64,
+    pub dδ0_dt_deg_per_century: f64,
+    pub w0_deg: f64,
+    pub dw_dt_deg_per_day: f64,
+    pub radius_m: f64,
+    pub flattening: Option<f64>,
+    pub gm: Option<f64>,
+    pub j2: Option<f64>,
+    pub j4: Option<f64>,
+    pub radii_b: Option<f64>,
+    pub radii_c: Option<f64>,
+    pub nutation: Option<Vec<NutationRecord>>,
+    pub omega_g: Option<(f64, f64)>,
+}
+
+pub fn mean_radius_m(props: &BodyProperties) -> Option<f64> {
+    let b = props.radii_b.unwrap_or(props.radius_m);
+    let c = props.radii_c.unwrap_or(b);
+    let r = (props.radius_m * b * c).cbrt();
+    if r.is_finite() && r > 0.0 {
+        Some(r)
+    } else {
+        None
+    }
+}
+
+#[derive(Clone)]
+pub struct NutationRecord {
+    pub mid_jd: f64,
+    pub half_jd: f64,
+    pub ra: Vec<f64>,
+    pub dec: Vec<f64>,
+    pub pm: Vec<f64>,
+}
+
+#[derive(Clone)]
+pub struct ChebyshevGranule {
+    pub t0_jd: f64,
+    pub dt_jd: f64,
+    pub cx: [f64; CHEBYSHEV_N],
+    pub cy: [f64; CHEBYSHEV_N],
+    pub cz: [f64; CHEBYSHEV_N],
+}
+
+#[derive(Clone)]
+pub struct BodyEphemeris {
+    pub granules: Vec<ChebyshevGranule>,
+    pub rotation_matrices: Vec<(f64, [f64; 9])>,
+    pub props: Option<BodyProperties>,
+    pub medium: Option<crate::media::MediumParams>,
+    pub orbit: Option<std::sync::Arc<crate::wind_orbit::OrbitRec>>,
+    pub granule_hint: std::sync::Arc<AtomicUsize>,
+}
+
+pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
+    if data.len() < 24 || data[0] != 0xCF || data[1] != 0x86 || (data[2] != 0x01 && data[2] != 0x02)
+    {
+        return None;
+    }
+    let version = data[2];
+    let section_count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    let mut pos = 8usize;
+    let mut granules = Vec::new();
+    let mut rotation_matrices = Vec::new();
+    let mut props = None;
+    let mut medium = None;
+    let mut has_stype2 = false;
+    for _ in 0..section_count {
+        if pos + 24 > data.len() {
+            return None;
+        }
+        let stype = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?);
+        pos += 4;
+        let gcount = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?) as usize;
+        pos += 4;
+        let degree = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?) as usize;
+        pos += 4;
+        pos += 4;
+        if stype == 1 {
+            if pos + 96 > data.len() {
+                return None;
+            }
+            let f = |i: usize| -> f64 {
+                let mut buf = [0u8; 8];
+                buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                f64::from_le_bytes(buf)
+            };
+            if gcount != 12 {
+                return None;
+            }
+            let mask: u16 = if version == 0x02 {
+                if pos + 96 + 2 > data.len() {
+                    return None;
+                }
+                u16::from_le_bytes(data[pos + 96..pos + 98].try_into().ok()?)
+            } else {
+                0xFFFF
+            };
+            let slot = |v: f64, bit: usize| -> Option<f64> {
+                if version == 0x02 {
+                    if mask & (1u16 << (bit as u16)) != 0 {
+                        Some(v)
+                    } else {
+                        None
+                    }
+                } else if v != 0.0 {
+                    Some(v)
+                } else {
+                    None
+                }
+            };
+            let radius_m = f(6);
+            let radii_b = slot(f(7), 7);
+            let radii_c = slot(f(8), 8);
+            props = Some(BodyProperties {
+                α0_deg: f(0),
+                dα0_dt_deg_per_century: f(1),
+                δ0_deg: f(2),
+                dδ0_dt_deg_per_century: f(3),
+                w0_deg: f(4),
+                dw_dt_deg_per_day: f(5),
+                radius_m,
+                flattening: match radii_c {
+                    Some(c) if radius_m > 0.0 => Some((radius_m - c) / radius_m),
+                    _ => None,
+                },
+                gm: slot(f(11), 11),
+                j2: slot(f(9), 9),
+                j4: slot(f(10), 10),
+                radii_b,
+                radii_c,
+                nutation: None,
+                omega_g: None,
+            });
+            pos += if version == 0x02 { 104 } else { 96 };
+            continue;
+        }
+        if stype == 7 {
+            let n = degree + 1;
+            let gs = 2 + 3 * n;
+            for _ in 0..gcount {
+                if pos + gs * 8 > data.len() {
+                    return None;
+                }
+                let f = |i: usize| -> f64 {
+                    let mut buf = [0u8; 8];
+                    buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                    f64::from_le_bytes(buf)
+                };
+                let value = f(0);
+                let sigma = f(1);
+                if value > 0.0
+                    && value.is_finite()
+                    && sigma.is_finite()
+                    && let Some(ref mut p) = props
+                {
+                    p.omega_g = Some((value, sigma));
+                }
+                pos += gs * 8;
+            }
+            continue;
+        }
+        if stype == 2 {
+            if pos + 40 > data.len() {
+                return None;
+            }
+            has_stype2 = true;
+            let f = |i: usize| -> f64 {
+                let mut buf = [0u8; 8];
+                buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                f64::from_le_bytes(buf)
+            };
+            medium = Some(crate::media::MediumParams {
+                sound_speed_m_s: f(0),
+                p_wave_m_s: f(1),
+                s_wave_m_s: f(2),
+                thermal_diffusivity_m2_s: f(3),
+                molecular_diffusivity_m2_s: f(4),
+            });
+            pos += 5 * 8;
+            continue;
+        }
+        if stype == 3 {
+            for _ in 0..gcount {
+                if pos + 80 > data.len() {
+                    return None;
+                }
+                let f = |i: usize| -> f64 {
+                    let mut buf = [0u8; 8];
+                    buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                    f64::from_le_bytes(buf)
+                };
+                let t0_jd = f(0);
+                let m: [f64; 9] = [f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8), f(9)];
+                rotation_matrices.push((t0_jd, m));
+                pos += 80;
+            }
+            continue;
+        }
+        if stype == 4 {
+            let n = degree + 1;
+            let gs = 2 + 3 * n;
+            let mut records = Vec::new();
+            for _ in 0..gcount {
+                if pos + gs * 8 > data.len() {
+                    return None;
+                }
+                let f = |i: usize| -> f64 {
+                    let mut buf = [0u8; 8];
+                    buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                    f64::from_le_bytes(buf)
+                };
+                let mid_jd = f(0);
+                let half_jd = f(1);
+                let mut ra = Vec::with_capacity(n);
+                let mut dec = Vec::with_capacity(n);
+                let mut pm = Vec::with_capacity(n);
+                for k in 0..n {
+                    ra.push(f(2 + k));
+                    dec.push(f(2 + n + k));
+                    pm.push(f(2 + 2 * n + k));
+                }
+                records.push(NutationRecord {
+                    mid_jd,
+                    half_jd,
+                    ra,
+                    dec,
+                    pm,
+                });
+                pos += gs * 8;
+            }
+            if let Some(ref mut p) = props {
+                p.nutation = Some(records);
+            }
+            continue;
+        }
+        if stype != 0 {
+            let skip = gcount * (2 + 3 * (degree + 1)) * 8;
+            if pos + skip > data.len() {
+                return None;
+            }
+            pos += skip;
+            continue;
+        }
+        let n = degree + 1;
+        let gs = 2 + 3 * n;
+        for _ in 0..gcount {
+            if pos + gs * 8 > data.len() {
+                return None;
+            }
+            let f = |i: usize| -> f64 {
+                let mut buf = [0u8; 8];
+                buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                f64::from_le_bytes(buf)
+            };
+            let mut cx = [0f64; CHEBYSHEV_N];
+            let mut cy = [0f64; CHEBYSHEV_N];
+            let mut cz = [0f64; CHEBYSHEV_N];
+            for k in 0..n.min(CHEBYSHEV_N) {
+                cx[k] = f(2 + k);
+                cy[k] = f(2 + n + k);
+                cz[k] = f(2 + 2 * n + k);
+            }
+            granules.push(ChebyshevGranule {
+                t0_jd: f(0),
+                dt_jd: f(1),
+                cx,
+                cy,
+                cz,
+            });
+            pos += gs * 8;
+        }
+    }
+    if props.is_some() && !has_stype2 {
+        return None;
+    }
+    if granules.is_empty() {
+        None
+    } else {
+        Some(BodyEphemeris {
+            granules,
+            rotation_matrices,
+            props,
+            medium,
+            orbit: None,
+            granule_hint: std::sync::Arc::new(AtomicUsize::new(0)),
+        })
+    }
+}
+pub fn load_gestalt_surface_threads(path: &str, body_name: &str) -> Option<Vec<Motion>> {
+    let bytes = std::fs::read(path).ok()?;
+    let recs = crate::geo::parse_gbco(&bytes)?;
+    Some(gestalt_surface_threads(&recs, body_name))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn earth_props() -> BodyProperties {
+        BodyProperties {
+            α0_deg: 0.0,
+            dα0_dt_deg_per_century: -0.641,
+            δ0_deg: 90.0,
+            dδ0_dt_deg_per_century: -0.557,
+            w0_deg: 190.147,
+            dw_dt_deg_per_day: 360.9856235,
+            radius_m: 6378136.6,
+            flattening: Some(1.0 / 298.25642),
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nutation: None,
+            omega_g: None,
+        }
+    }
+
+    fn zero_eph(props: BodyProperties) -> BodyEphemeris {
+        BodyEphemeris {
+            granules: vec![ChebyshevGranule {
+                t0_jd: 2461041.0,
+                dt_jd: 2000.0,
+                cx: [0.0; CHEBYSHEV_N],
+                cy: [0.0; CHEBYSHEV_N],
+                cz: [0.0; CHEBYSHEV_N],
+            }],
+            rotation_matrices: Vec::new(),
+            props: Some(props),
+            medium: None,
+            orbit: None,
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    }
+
+    #[test]
+    fn the_receiver_model_is_declared_as_data() {
+        assert_eq!(receiver_model("earth"), Some("iau2006-2000a"));
+        assert_eq!(receiver_model("mars"), None);
+    }
+
+    #[test]
+    fn a_declared_receiver_without_an_eop_row_is_absent() {
+        let props = earth_props();
+        let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
+        map.insert("earth".to_string(), zero_eph(props));
+        let xyz = [6378136.6, 0.0, 0.0];
+        let inside = (61200.0 + 2400000.5 - 2451545.0) * 86400.0;
+        assert!(body_fixed_vector_to_icrs("earth", xyz, inside, &map).is_some());
+        let beyond = (61257.0 + 2400000.5 - 2451545.0) * 86400.0;
+        assert!(body_fixed_vector_to_icrs("earth", xyz, beyond, &map).is_none());
+    }
+
+    #[test]
+    fn the_declared_receiver_takes_the_iau_path_not_the_linear_pole() {
+        let props = earth_props();
+        let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
+        map.insert("earth".to_string(), zero_eph(props.clone()));
+        let tdb = (2461041.0 - J2000_EPOCH) * 86400.0;
+        let jd = tdb / 86400.0 + J2000_EPOCH;
+        let xyz = [6378136.6, 0.0, 0.0];
+        let iau = body_fixed_vector_to_icrs("earth", xyz, tdb, &map).expect("iau path");
+        let lin = iau_rotate_to_icrs(&props, xyz, jd).expect("linear path");
+        let na = (iau[0] * iau[0] + iau[1] * iau[1] + iau[2] * iau[2]).sqrt();
+        let nb = (lin[0] * lin[0] + lin[1] * lin[1] + lin[2] * lin[2]).sqrt();
+        let cos = (iau[0] * lin[0] + iau[1] * lin[1] + iau[2] * lin[2]) / (na * nb);
+        let sep = cos.clamp(-1.0, 1.0).acos().to_degrees();
+        assert!(
+            sep > 0.0,
+            "IAU and the linear pole return the same vector (sep {sep} deg)"
+        );
+    }
+}

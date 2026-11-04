@@ -1,0 +1,13 @@
+# Physikalische Konstanten — value, uncertainty, unit, source
+# exact = per definition, no measurement uncertainty
+key	value	uncertainty	unit	source
+c	299792458	exact	m/s	SI 2019 (defined)
+h	6.62607015e-34	exact	J s	SI 2019 (defined)
+e	1.602176634e-19	exact	C	SI 2019 (defined)
+k_B	1.380649e-23	exact	J/K	SI 2019 (defined)
+N_A	6.02214076e23	exact	1/mol	SI 2019 (defined)
+G	6.67430e-11	1.5e-15	m3/(kg s2)	CODATA 2022
+AU	149597870700	exact	m	IAU 2012 B2 (defined)
+GM_sun	1.3271244e20	exact	m3/s2	IAU 2015 B3 (nominal)
+a_WGS84	6378137	exact	m	WGS84, NIMA TR8350.2
+f_WGS84	0.0033528106647474805	exact	1	WGS84 = 1/298.257223563

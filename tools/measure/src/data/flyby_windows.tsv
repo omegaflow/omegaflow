@@ -1,0 +1,8 @@
+# The flyby windows of the positive control — probe, body, year, month, day.
+# The mission record is data; the code carries no planet name of its own.
+voyager1	jupiter	1979	3	5
+voyager1	saturn	1980	11	12
+voyager2	jupiter	1979	7	9
+voyager2	saturn	1981	8	26
+voyager2	uranus	1986	1	24
+voyager2	neptune	1989	8	25

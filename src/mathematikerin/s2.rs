@@ -1,0 +1,835 @@
+use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
+use crate::archivar::skydirection::{SkyDirection, parse_bin};
+use crate::archivar::vlies::{DensityField, pixel_direction};
+use crate::archivar::{BodyEphemeris, Motion, body_barycenter_position};
+use std::collections::HashMap;
+
+pub const S2_LMAX: u32 = 64;
+
+pub const S2_OSC_CAP: u32 = 8192;
+
+pub const S2_CPU_PROBE_CAP: usize = 256;
+
+const NO_BEAM_WIDTH: f32 = 0.0;
+
+pub const S2_TAU_DEFAULT_S: f64 = 262144.0;
+
+pub const S2_PERM_TAU_S: f64 = 32.0;
+
+pub const S2_EPS: f64 = f64::EPSILON;
+
+pub fn direction_tau_s(d: &SkyDirection, default_tau_s: f64) -> f64 {
+    let mut gaps: Vec<f64> = Vec::new();
+    for band in &d.bands {
+        for w in band.samples.windows(2) {
+            let dt = (w[1].tdb - w[0].tdb).abs();
+            if dt.is_finite() && dt > 0.0 {
+                gaps.push(dt);
+            }
+        }
+    }
+    if gaps.is_empty() {
+        return default_tau_s;
+    }
+    gaps.sort_by(|a, b| a.total_cmp(b));
+    gaps[gaps.len() / 2]
+}
+
+pub fn presence_weight(d: &SkyDirection, t: f64, default_tau_s: f64) -> f64 {
+    let tau = direction_tau_s(d, default_tau_s);
+    if !(tau.is_finite() && tau > 0.0) {
+        return 0.0;
+    }
+    let mut w = 0.0f64;
+    for band in &d.bands {
+        for s in &band.samples {
+            if !s.tdb.is_finite() {
+                continue;
+            }
+            let dt = (t - s.tdb).abs();
+            w += (-dt / tau).exp();
+        }
+    }
+    w
+}
+
+pub struct S2Osc {
+    pub p_hat: [f64; 3],
+    pub sigma_rad: Option<f64>,
+    pub weight: f64,
+}
+
+impl S2Osc {
+    pub fn from_direction(d: &SkyDirection, t: f64, default_tau_s: f64) -> Self {
+        S2Osc {
+            p_hat: d.unit_direction(),
+            sigma_rad: d.angular_uncertainty_rad(),
+            weight: presence_weight(d, t, default_tau_s),
+        }
+    }
+
+    fn from_worldline(position: [f64; 3]) -> Option<S2Osc> {
+        let n = (position[0] * position[0] + position[1] * position[1] + position[2] * position[2])
+            .sqrt();
+        if !(n.is_finite() && n > 0.0) {
+            return None;
+        }
+        Some(S2Osc {
+            p_hat: [position[0] / n, position[1] / n, position[2] / n],
+            sigma_rad: None,
+            weight: 1.0,
+        })
+    }
+
+    pub fn from_body(name: &str, t: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<S2Osc> {
+        let position = body_barycenter_position(name, t, eph)?;
+        S2Osc::from_worldline(position)
+    }
+
+    pub fn from_station(
+        body_name: &str,
+        lat: f64,
+        lon: f64,
+        alt: f64,
+        t: f64,
+        eph: &HashMap<String, BodyEphemeris>,
+    ) -> Option<S2Osc> {
+        let motion = Motion::Surface {
+            body_name: body_name.to_string(),
+            lat,
+            lon,
+            alt,
+        };
+        let position = motion.at(t, t, eph)?;
+        S2Osc::from_worldline(position)
+    }
+}
+
+pub fn osc_window(directions: &[SkyDirection], t: f64, default_tau_s: f64) -> Vec<S2Osc> {
+    directions
+        .iter()
+        .map(|d| S2Osc::from_direction(d, t, default_tau_s))
+        .collect()
+}
+
+pub fn astro_series_tau_s(series: &AstroSeries, default_tau_s: f64) -> f64 {
+    let mut gaps: Vec<f64> = Vec::new();
+    for w in series.samples.windows(2) {
+        let dt = (w[1].tdb - w[0].tdb).abs();
+        if dt.is_finite() && dt > 0.0 {
+            gaps.push(dt);
+        }
+    }
+    if gaps.is_empty() {
+        return default_tau_s;
+    }
+    gaps.sort_by(|a, b| a.total_cmp(b));
+    gaps[gaps.len() / 2]
+}
+
+fn astro_sample_sigma_rad(sample: &AstroSample) -> Option<f64> {
+    let mas = sample.e_ra_mas.max(sample.e_dec_mas);
+    if mas.is_finite() && mas > 0.0 {
+        Some(mas.to_radians() / 3600.0)
+    } else {
+        None
+    }
+}
+
+impl S2Osc {
+    pub fn from_astro_sample(sample: &AstroSample, t: f64, tau_s: f64) -> Self {
+        let ra = sample.ra_deg.to_radians();
+        let dec = sample.dec_deg.to_radians();
+        let (sa, ca) = ra.sin_cos();
+        let (sd, cd) = dec.sin_cos();
+        let weight = if tau_s.is_finite() && tau_s > 0.0 && sample.tdb.is_finite() {
+            (-(t - sample.tdb).abs() / tau_s).exp()
+        } else {
+            0.0
+        };
+        S2Osc {
+            p_hat: [cd * ca, cd * sa, sd],
+            sigma_rad: astro_sample_sigma_rad(sample),
+            weight,
+        }
+    }
+}
+
+pub fn direction_witness_window(series: &[AstroSeries], t: f64, default_tau_s: f64) -> Vec<S2Osc> {
+    let mut oscs = Vec::new();
+    for s in series {
+        let tau = astro_series_tau_s(s, default_tau_s);
+        for sample in &s.samples {
+            oscs.push(S2Osc::from_astro_sample(sample, t, tau));
+        }
+    }
+    oscs
+}
+
+pub fn astrometry_witness_dir() -> std::path::PathBuf {
+    if let Ok(p) = std::env::var("OMEGAFLOW_ASTROMETRY_WITNESS_DIR") {
+        return std::path::PathBuf::from(p);
+    }
+    crate::archivar::zustand_dir().join("astrometry_witness")
+}
+
+pub fn witness_fingerprint(dir: &std::path::Path) -> Option<(usize, u64)> {
+    let entries = std::fs::read_dir(dir).ok()?;
+    let mut count = 0usize;
+    let mut latest = 0u64;
+    for entry in entries.flatten() {
+        let Ok(meta) = entry.metadata() else {
+            continue;
+        };
+        count += 1;
+        if let Some(d) = meta
+            .modified()
+            .ok()
+            .and_then(|m| m.duration_since(std::time::UNIX_EPOCH).ok())
+        {
+            latest = latest.max(d.as_secs());
+        }
+    }
+    Some((count, latest))
+}
+
+pub fn load_witnesses(dir: &std::path::Path) -> Vec<AstroSeries> {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if !path.is_file() {
+            continue;
+        }
+        if let Some(mut series) = std::fs::read(&path)
+            .ok()
+            .and_then(|bytes| crate::archivar::astrometry_series::parse_bin(&bytes))
+        {
+            out.append(&mut series);
+        }
+    }
+    out
+}
+
+pub fn angular_kernel(cos_gamma: f64, sigma_rad: Option<f64>, lmax: u32) -> f64 {
+    let x = cos_gamma.clamp(-1.0, 1.0);
+    let sigma2: Option<f64> = match sigma_rad {
+        Some(s) if s.is_finite() && s > 0.0 => Some(s * s),
+        _ => None,
+    };
+    let band_coef = |l: u32| -> f64 {
+        let Some(s2) = sigma2 else {
+            return 1.0;
+        };
+        let lf = l as f64;
+        (-0.5 * lf * (lf + 1.0) * s2).exp()
+    };
+    let mut acc = 1.0;
+    if lmax >= 1 {
+        acc += 3.0 * band_coef(1) * x;
+    }
+    let mut p0 = 1.0f64;
+    let mut p1 = x;
+    for l in 2..=lmax {
+        let lf = l as f64;
+        let p2 = ((2.0 * lf - 1.0) * x * p1 - (lf - 1.0) * p0) / lf;
+        acc += (2.0 * lf + 1.0) * band_coef(l) * p2;
+        p0 = p1;
+        p1 = p2;
+    }
+    acc / (4.0 * std::f64::consts::PI)
+}
+
+pub fn field_at(q: [f64; 3], oscs: &[S2Osc], lmax: u32) -> f64 {
+    let nq = (q[0] * q[0] + q[1] * q[1] + q[2] * q[2]).sqrt();
+    if !(nq.is_finite() && nq > 0.0) {
+        return 0.0;
+    }
+    let uq = [q[0] / nq, q[1] / nq, q[2] / nq];
+    let mut field = 0.0f64;
+    for o in oscs {
+        if !(o.weight.is_finite() && o.weight > 0.0) {
+            continue;
+        }
+        let cosg = uq[0] * o.p_hat[0] + uq[1] * o.p_hat[1] + uq[2] * o.p_hat[2];
+        field += o.weight * angular_kernel(cosg, o.sigma_rad, lmax);
+    }
+    field
+}
+
+pub fn self_field(o: &S2Osc, lmax: u32) -> f64 {
+    if !(o.weight.is_finite() && o.weight > 0.0) {
+        return 0.0;
+    }
+    o.weight * angular_kernel(1.0, o.sigma_rad, lmax)
+}
+
+pub fn shell_field(oscs: &[S2Osc], lmax: u32) -> Vec<f64> {
+    oscs.iter().map(|o| field_at(o.p_hat, oscs, lmax)).collect()
+}
+
+pub struct S2Pack {
+    pub osc: Vec<f32>,
+    pub probes: Vec<f32>,
+    pub count: u32,
+    pub probe_count: u32,
+}
+
+pub fn pack_oscs(oscs: &[S2Osc], cap: u32) -> S2Pack {
+    let n = oscs.len().min(cap as usize);
+    let mut osc = vec![0.0f32; (cap as usize) * 8];
+    let mut probes = vec![0.0f32; (cap as usize) * 4];
+    for (i, o) in oscs.iter().take(n).enumerate() {
+        let f = i * 8;
+        osc[f] = o.p_hat[0] as f32;
+        osc[f + 1] = o.p_hat[1] as f32;
+        osc[f + 2] = o.p_hat[2] as f32;
+        osc[f + 3] = o.weight as f32;
+        let sigma = match o.sigma_rad {
+            Some(s) if s.is_finite() && s > 0.0 => s as f32,
+            _ => NO_BEAM_WIDTH,
+        };
+        osc[f + 4] = sigma;
+        let p = i * 4;
+        probes[p] = o.p_hat[0] as f32;
+        probes[p + 1] = o.p_hat[1] as f32;
+        probes[p + 2] = o.p_hat[2] as f32;
+    }
+    S2Pack {
+        osc,
+        probes,
+        count: n as u32,
+        probe_count: n as u32,
+    }
+}
+
+pub fn breath_target(shell: f64, shell_prev: f64, level: f64) -> f64 {
+    let v_c = (shell - shell_prev).abs();
+    let g = level.abs();
+    (v_c / (g + S2_EPS)).tanh()
+}
+
+pub struct SkyPoint {
+    pub p: [f32; 3],
+    pub sigma_rad: f32,
+    pub activity: f32,
+    pub field: f32,
+}
+
+pub struct SkyReport {
+    pub osc_count: usize,
+    pub live_count: usize,
+    pub shell: f64,
+    pub shell_prev: f64,
+    pub forward_field: f32,
+    pub permeability: f32,
+    pub tau_s: f64,
+    pub vlies_count: Option<u64>,
+    pub riss_count: usize,
+}
+
+pub struct SkyState {
+    pub directions: Vec<SkyDirection>,
+    pub witnesses: Vec<AstroSeries>,
+    pub vlies: Option<DensityField>,
+    pub events: Vec<S2EventRecord>,
+    pub oscs: Vec<S2Osc>,
+    pub riss: Vec<String>,
+    pub points: Vec<SkyPoint>,
+    pub shell: f64,
+    pub shell_prev: f64,
+    pub forward_field: f32,
+    pub permeability: f32,
+    pub loaded: bool,
+}
+
+impl Default for SkyState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl SkyState {
+    pub fn new() -> Self {
+        SkyState {
+            directions: Vec::new(),
+            witnesses: Vec::new(),
+            vlies: None,
+            events: Vec::new(),
+            oscs: Vec::new(),
+            riss: Vec::new(),
+            points: Vec::new(),
+            shell: 0.0,
+            shell_prev: 0.0,
+            forward_field: 0.0,
+            permeability: 0.0,
+            loaded: false,
+        }
+    }
+
+    pub fn report(&self, forward: [f64; 3]) -> SkyReport {
+        let live_count = self
+            .oscs
+            .iter()
+            .filter(|o| o.weight.is_finite() && o.weight > 0.0)
+            .count();
+        SkyReport {
+            osc_count: self.oscs.len(),
+            live_count,
+            shell: self.shell,
+            shell_prev: self.shell_prev,
+            forward_field: self.forward_field,
+            permeability: self.permeability,
+            tau_s: S2_TAU_DEFAULT_S,
+            vlies_count: self
+                .vlies
+                .as_ref()
+                .and_then(|f| forward_pixel_count(f, forward)),
+            riss_count: self.riss.len(),
+        }
+    }
+}
+
+pub fn forward_pixel_count(field: &DensityField, forward: [f64; 3]) -> Option<u64> {
+    let mut best: Option<(f64, u64)> = None;
+    for (pix, &count) in field.counts.iter().enumerate() {
+        let Some(d) = pixel_direction(field.nside, pix as i64) else {
+            continue;
+        };
+        let dot = d[0] * forward[0] + d[1] * forward[1] + d[2] * forward[2];
+        if best.is_none_or(|(bd, _)| dot > bd) {
+            best = Some((dot, count));
+        }
+    }
+    best.map(|(_, c)| c)
+}
+
+pub fn load_asset(path: &std::path::Path) -> Option<Vec<SkyDirection>> {
+    let bytes = std::fs::read(path).ok()?;
+    parse_bin(&bytes)
+}
+
+pub fn sky_asset_path() -> std::path::PathBuf {
+    if let Ok(p) = std::env::var("OMEGAFLOW_SKY_ASSET") {
+        return std::path::PathBuf::from(p);
+    }
+    let state = crate::archivar::zustand_dir().join("skydirections.bin");
+    if state.exists() {
+        return state;
+    }
+    std::path::PathBuf::from("data/skydirections.bin")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::archivar::skydirection::{SkyBandSeries, SkySample};
+    use crate::archivar::{C_LIGHT, HUBBLE_H0};
+
+    fn direction(name: &str, ra: f64, dec: f64, samples: Vec<(f64, f64)>) -> SkyDirection {
+        SkyDirection {
+            name: name.to_string(),
+            ra_deg: ra,
+            dec_deg: dec,
+            sigma_arcsec: None,
+            bands: vec![SkyBandSeries {
+                band: Some("g".to_string()),
+                samples: samples
+                    .into_iter()
+                    .map(|(tdb, mag)| SkySample { tdb, mag })
+                    .collect(),
+            }],
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        }
+    }
+
+    #[test]
+    fn a_single_direction_oscillator_creates_angular_field_mass_at_its_direction() {
+        let d = direction("flare", 30.0, 60.0, vec![(8.4e8, 18.5)]);
+        let t = 8.3e8;
+        let oscs = osc_window(&[d], t, S2_TAU_DEFAULT_S);
+        assert_eq!(oscs.len(), 1);
+        let field = field_at(oscs[0].p_hat, &oscs, S2_LMAX);
+        assert!(field.is_finite());
+        assert!(field > 0.0);
+        let peak = oscs[0].weight * ((S2_LMAX + 1) as f64).powi(2) / (4.0 * std::f64::consts::PI);
+        let rel = ((field - peak) / peak).abs();
+        assert!(
+            rel < 1e-9,
+            "self-field carries the full band-limited peak: field {field} peak {peak} rel {rel}"
+        );
+    }
+
+    #[test]
+    fn the_presence_weight_relaxes_exponentially_from_the_directions_own_samples() {
+        let d = direction("fading", 10.0, 20.0, vec![(8.4e8, 19.0)]);
+        let w_now = presence_weight(&d, 8.4e8, S2_TAU_DEFAULT_S);
+        assert!((w_now - 1.0).abs() < 1e-9);
+        let w_later = presence_weight(&d, 8.4e8 + S2_TAU_DEFAULT_S, S2_TAU_DEFAULT_S);
+        assert!((w_later - (-1.0f64).exp()).abs() < 1e-9);
+        let w_early = presence_weight(&d, 8.4e8 - S2_TAU_DEFAULT_S, S2_TAU_DEFAULT_S);
+        assert!((w_early - (-1.0f64).exp()).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_direction_without_a_band_series_stays_silent() {
+        let d = SkyDirection {
+            name: "fink".to_string(),
+            ra_deg: 150.0,
+            dec_deg: -10.0,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        };
+        let oscs = osc_window(&[d], 8.4e8, S2_TAU_DEFAULT_S);
+        assert_eq!(oscs[0].weight, 0.0);
+        let field = field_at(oscs[0].p_hat, &oscs, S2_LMAX);
+        assert_eq!(field, 0.0);
+    }
+
+    #[test]
+    fn an_astrometry_series_radiates_as_a_moving_direction_witness_not_a_scalar() {
+        let series = AstroSeries {
+            name: "Camargo+2015 Uranu".to_string(),
+            samples: vec![
+                AstroSample {
+                    tdb: 2.4e9,
+                    ra_deg: 288.7273,
+                    dec_deg: -22.7528,
+                    e_ra_mas: 57.0,
+                    e_dec_mas: 49.0,
+                },
+                AstroSample {
+                    tdb: 2.4e9 + 86400.0,
+                    ra_deg: 288.7291,
+                    dec_deg: -22.7521,
+                    e_ra_mas: 47.0,
+                    e_dec_mas: 42.0,
+                },
+            ],
+        };
+        let oscs = direction_witness_window(std::slice::from_ref(&series), 2.4e9, S2_TAU_DEFAULT_S);
+        assert_eq!(
+            oscs.len(),
+            2,
+            "one oscillator per measured direction sample"
+        );
+        for o in &oscs {
+            let n = (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2])
+                .sqrt();
+            assert!(
+                (n - 1.0).abs() < 1e-12,
+                "the witness rests on the unit sphere"
+            );
+            assert!(
+                o.sigma_rad.is_some_and(|s| s > 0.0),
+                "the measured arcsec errors broaden the kernel"
+            );
+        }
+        assert!(
+            oscs[0].weight > 0.0 && oscs[1].weight > 0.0,
+            "both epochs are live at the first sample epoch"
+        );
+        let d0 = oscs[0].p_hat;
+        let d1 = oscs[1].p_hat;
+        let sep = (d0[0] - d1[0]).powi(2) + (d0[1] - d1[1]).powi(2) + (d0[2] - d1[2]).powi(2);
+        assert!(
+            sep > 0.0,
+            "the direction moves between the measured samples"
+        );
+        let field = field_at(oscs[0].p_hat, &oscs, S2_LMAX);
+        assert!(
+            field.is_finite() && field > 0.0,
+            "the witness radiates on S²"
+        );
+    }
+
+    #[test]
+    fn an_empty_sky_is_an_empty_field() {
+        let oscs = osc_window(&[], 8.4e8, S2_TAU_DEFAULT_S);
+        assert!(oscs.is_empty());
+        assert_eq!(field_at([1.0, 0.0, 0.0], &oscs, S2_LMAX), 0.0);
+        let shell = shell_field(&oscs, S2_LMAX);
+        assert!(shell.is_empty());
+    }
+
+    #[test]
+    fn a_measured_sigma_broadens_the_kernel_below_the_band_peak() {
+        let d = direction("sharp", 45.0, 45.0, vec![(8.4e8, 17.0)]);
+        let mut wide = direction("wide", 45.0, 45.0, vec![(8.4e8, 17.0)]);
+        wide.sigma_arcsec = Some(0.0);
+        let sharp = osc_window(&[d], 8.4e8, S2_TAU_DEFAULT_S);
+        let wide_oscs = osc_window(&[wide], 8.4e8, S2_TAU_DEFAULT_S);
+        let field_sharp = field_at(sharp[0].p_hat, &sharp, S2_LMAX);
+        let field_wide = field_at(wide_oscs[0].p_hat, &wide_oscs, S2_LMAX);
+        assert_eq!(field_sharp, field_wide);
+        let mut broad = direction("broad", 45.0, 45.0, vec![(8.4e8, 17.0)]);
+        broad.sigma_arcsec = Some(20626.5);
+        let osc2 = osc_window(&[broad], 8.4e8, S2_TAU_DEFAULT_S);
+        let field_broad = field_at(osc2[0].p_hat, &osc2, S2_LMAX);
+        assert!(field_broad < field_sharp);
+        assert!(field_broad > 0.0);
+    }
+
+    #[test]
+    fn absent_distance_stays_on_the_sphere_and_delivered_distance_enters_the_block() {
+        let absent = direction("no_dist", 30.0, 60.0, vec![(8.4e8, 18.0)]);
+        assert_eq!(absent.distance_m(), None);
+        assert_eq!(absent.spatial_position(), None);
+        let oscs = osc_window(&[absent], 8.4e8, S2_TAU_DEFAULT_S);
+        assert!((oscs[0].weight - 1.0).abs() < 1e-9);
+        let placed_deg = 0.05;
+        let dist = placed_deg * C_LIGHT / HUBBLE_H0;
+        let mut placed = direction("redshifted", 30.0, 60.0, vec![(8.4e8, 18.0)]);
+        placed.redshift = Some(placed_deg);
+        let pos = placed.spatial_position().unwrap();
+        let p = placed.unit_direction();
+        for k in 0..3 {
+            assert!((pos[k] - p[k] * dist).abs() < dist * 1e-9);
+        }
+    }
+
+    #[test]
+    fn pack_roundtrip_holds_oscillators_and_probes() {
+        let dirs = vec![
+            direction("a", 0.0, 0.0, vec![(8.4e8, 18.0)]),
+            direction("b", 90.0, 0.0, vec![(8.4e8, 19.0)]),
+        ];
+        let oscs = osc_window(&dirs, 8.4e8, S2_TAU_DEFAULT_S);
+        let pack = pack_oscs(&oscs, S2_OSC_CAP);
+        assert_eq!(pack.count, 2);
+        assert_eq!(pack.probe_count, 2);
+        assert_eq!(pack.osc.len(), S2_OSC_CAP as usize * 8);
+        assert_eq!(pack.probes.len(), S2_OSC_CAP as usize * 4);
+        let n0 =
+            (pack.osc[0] * pack.osc[0] + pack.osc[1] * pack.osc[1] + pack.osc[2] * pack.osc[2])
+                .sqrt();
+        assert!((n0 - 1.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn the_breath_target_is_the_tanh_of_the_shell_derivative() {
+        let t = breath_target(2.0, 1.0, 1.5);
+        assert!((t - (1.0f64 / (1.5 + S2_EPS)).tanh()).abs() < 1e-12);
+        let quiet = breath_target(1.0, 1.0, 1.0);
+        assert!(quiet.abs() < 1e-12);
+    }
+
+    fn body_eph(
+        name: &str,
+        t0: f64,
+        t1: f64,
+        props: Option<crate::archivar::BodyProperties>,
+    ) -> HashMap<String, BodyEphemeris> {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t0, [1.0e9, 0.0, 0.0], [0.0, 0.0, 0.0]),
+            (t1, [1.0e9, 0.0, 0.0], [0.0, 0.0, 0.0]),
+        ]);
+        let eph = BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props,
+            medium: None,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        };
+        let mut map = HashMap::new();
+        map.insert(name.to_string(), eph);
+        map
+    }
+
+    fn body_props() -> crate::archivar::BodyProperties {
+        crate::archivar::BodyProperties {
+            α0_deg: 0.0,
+            dα0_dt_deg_per_century: 0.0,
+            δ0_deg: 90.0,
+            dδ0_dt_deg_per_century: 0.0,
+            w0_deg: 0.0,
+            dw_dt_deg_per_day: 360.0,
+            radius_m: 6371000.0,
+            flattening: Some(0.0),
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nutation: None,
+            omega_g: None,
+        }
+    }
+
+    #[test]
+    fn a_covered_body_manifests_a_unit_oscillator() {
+        let t = 8.3e8;
+        let eph = body_eph("earth", t - 10.0, t + 10.0, None);
+        let o = S2Osc::from_body("earth", t, &eph).expect("a covered body carries a worldline");
+        assert!((o.weight - 1.0).abs() < 1e-12);
+        assert_eq!(o.sigma_rad, None);
+        let n =
+            (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
+        assert!((n - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn a_body_without_a_covering_granule_manifests_no_oscillator() {
+        let t = 8.3e8;
+        let eph = body_eph("earth", t + 100.0, t + 200.0, None);
+        assert!(S2Osc::from_body("earth", t, &eph).is_none());
+        let empty: HashMap<String, BodyEphemeris> = HashMap::new();
+        assert!(S2Osc::from_body("earth", t, &empty).is_none());
+    }
+
+    #[test]
+    fn a_station_manifests_a_unit_oscillator() {
+        let t = 8.3e8;
+        let eph = body_eph("earth", t - 10.0, t + 10.0, Some(body_props()));
+        let o = S2Osc::from_station("earth", 52.0, 13.0, 100.0, t, &eph)
+            .expect("a station on a covered body carries a worldline");
+        assert!((o.weight - 1.0).abs() < 1e-12);
+        assert_eq!(o.sigma_rad, None);
+        let n =
+            (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
+        assert!((n - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn an_absent_worldline_vector_manifests_none_not_zero() {
+        assert!(S2Osc::from_worldline([0.0, 0.0, 0.0]).is_none());
+        assert!(S2Osc::from_worldline([f64::NAN, 1.0, 0.0]).is_none());
+        assert!(S2Osc::from_worldline([f64::INFINITY, 1.0, 0.0]).is_none());
+    }
+}
+
+use crate::archivar::s2event::S2EventRecord;
+
+pub fn event_scalar(e: &S2EventRecord) -> f64 {
+    match e.energy {
+        Some(v) if v.is_finite() && v > 0.0 => v,
+        _ => match e.signalness {
+            Some(v) if v.is_finite() && v > 0.0 => v,
+            _ => 1.0,
+        },
+    }
+}
+
+pub fn event_presence(e: &S2EventRecord, t: f64, tau_s: f64) -> f64 {
+    let Some(tdb) = e.epoch_tdb else {
+        return 0.0;
+    };
+    if !(tau_s.is_finite() && tau_s > 0.0 && tdb.is_finite()) {
+        return 0.0;
+    }
+    let dt = (t - tdb).abs();
+    event_scalar(e) * (-dt / tau_s).exp()
+}
+
+impl S2Osc {
+    pub fn from_event(e: &S2EventRecord, t: f64, tau_s: f64) -> Self {
+        S2Osc {
+            p_hat: e.unit_direction(),
+            sigma_rad: e.angular_uncertainty_rad(),
+            weight: event_presence(e, t, tau_s),
+        }
+    }
+}
+
+pub fn event_window(events: &[S2EventRecord], t: f64, tau_s: f64) -> Vec<S2Osc> {
+    events
+        .iter()
+        .map(|e| S2Osc::from_event(e, t, tau_s))
+        .collect()
+}
+
+#[cfg(test)]
+mod s2event_tests {
+    use super::{S2_LMAX, S2_TAU_DEFAULT_S, S2Osc, event_presence, event_window, field_at};
+    use crate::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
+
+    fn evt(ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>) -> S2EventRecord {
+        S2EventRecord {
+            ra_deg: ra as f32,
+            dec_deg: dec as f32,
+            sigma_arcsec: None,
+            epoch_tdb: epoch,
+            energy,
+            signalness: None,
+            far: None,
+            particle_root: ROOT_NEUTRINO,
+        }
+    }
+
+    #[test]
+    fn an_event_with_an_epoch_manifests_at_its_direction_with_its_energy_scalar() {
+        let e = evt(30.0, 60.0, Some(8.4e8), Some(187.0));
+        let o = S2Osc::from_event(&e, 8.4e8, S2_TAU_DEFAULT_S);
+        assert!((o.weight - 187.0).abs() < 1e-6);
+        let p = e.unit_direction();
+        for (a, b) in o.p_hat.iter().zip(p.iter()) {
+            assert!((a - b).abs() < 1e-12);
+        }
+        let field = field_at(o.p_hat, &[o], S2_LMAX);
+        assert!(field.is_finite());
+        assert!(field > 0.0);
+        let peak = 187.0 * ((S2_LMAX + 1) as f64).powi(2) / (4.0 * std::f64::consts::PI);
+        let rel = ((field - peak) / peak).abs();
+        assert!(
+            rel < 1e-9,
+            "event self-field carries the full band-limited peak: field {field} peak {peak} rel {rel}"
+        );
+    }
+
+    #[test]
+    fn an_event_without_an_epoch_has_the_gate_closed_and_stays_silent() {
+        let e = evt(30.0, 60.0, None, Some(187.0));
+        let o = S2Osc::from_event(&e, 8.4e8, S2_TAU_DEFAULT_S);
+        assert_eq!(o.weight, 0.0);
+        assert_eq!(field_at(o.p_hat, &[o], S2_LMAX), 0.0);
+    }
+
+    #[test]
+    fn an_event_presence_relaxes_exponentially_from_its_epoch() {
+        let e = evt(10.0, 20.0, Some(8.4e8), Some(187.0));
+        assert!((event_presence(&e, 8.4e8, S2_TAU_DEFAULT_S) - 187.0).abs() < 1e-6);
+        let later = event_presence(&e, 8.4e8 + S2_TAU_DEFAULT_S, S2_TAU_DEFAULT_S);
+        assert!((later - 187.0 * (-1.0f64).exp()).abs() < 1e-6);
+    }
+
+    #[test]
+    fn an_event_without_a_scalar_still_manifests_unit_presence() {
+        let e = evt(10.0, 20.0, Some(8.4e8), None);
+        assert!((event_presence(&e, 8.4e8, S2_TAU_DEFAULT_S) - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_measured_sigma_arcsec_broadens_an_event_kernel_below_the_band_peak() {
+        let sharp = evt(45.0, 45.0, Some(8.4e8), Some(17.0));
+        let mut wide = evt(45.0, 45.0, Some(8.4e8), Some(17.0));
+        wide.sigma_arcsec = Some(20626.5);
+        let o_sharp = S2Osc::from_event(&sharp, 8.4e8, S2_TAU_DEFAULT_S);
+        let o_wide = S2Osc::from_event(&wide, 8.4e8, S2_TAU_DEFAULT_S);
+        let field_sharp = field_at(o_sharp.p_hat, &[o_sharp], S2_LMAX);
+        let field_wide = field_at(o_wide.p_hat, &[o_wide], S2_LMAX);
+        assert!(field_wide < field_sharp);
+        assert!(field_wide > 0.0);
+        let wrad = wide.angular_uncertainty_rad().unwrap();
+        let expect = 20626.5 * std::f64::consts::PI / 648000.0;
+        assert!((wrad - expect).abs() < 1e-12);
+    }
+
+    #[test]
+    fn event_window_builds_one_oscillator_per_thread() {
+        let es = vec![
+            evt(0.0, 0.0, Some(8.4e8), None),
+            evt(90.0, 0.0, Some(8.4e8), None),
+        ];
+        let ws = event_window(&es, 8.4e8, S2_TAU_DEFAULT_S);
+        assert_eq!(ws.len(), 2);
+        assert!((ws[0].weight - 1.0).abs() < 1e-9);
+    }
+}

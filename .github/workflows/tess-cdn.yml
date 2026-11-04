@@ -1,0 +1,22 @@
+name: tess-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  tess:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tess_compiler","netloc":"exofop.ipac.caltech.edu","asset":"tess_lightcurves.bin","args":"--out tess_lightcurves.bin --limit 16"}
+        ]

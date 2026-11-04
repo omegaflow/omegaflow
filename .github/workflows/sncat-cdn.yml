@@ -1,0 +1,22 @@
+name: sncat-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  sncat:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"sncat.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"B/sn/sncat\" --columns 'ra:RAJ2000;dec:DEJ2000;z:z;mag:MaxMag' --skip-null z --out sncat.json"}
+        ]

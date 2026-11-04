@@ -1,0 +1,22 @@
+name: swiftgrb-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  swiftgrb:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"swiftgrb.json","args":"--root https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync --table swiftgrb --text --cols-unquoted --columns 'name:name;ra:ra;dec:dec;z:redshift;fluence:bat_fluence;t90:bat_t90' --skip-null z --out swiftgrb.json"}
+        ]

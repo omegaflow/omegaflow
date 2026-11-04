@@ -1,0 +1,2114 @@
+use omegaflow::cdn::upload_release;
+use omegaflow::json::{JsonVal, parse_json};
+use std::io::Write;
+use std::process::Command;
+
+fn tap_curl_timeout() -> String {
+    match std::env::var("OMEGAFLOW_TAP_TIMEOUT") {
+        Ok(v) => v,
+        Err(_) => "180".to_string(),
+    }
+}
+
+fn tap_query(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("--fail-with-body")
+        .arg("-m")
+        .arg(tap_curl_timeout())
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=json")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        let body = String::from_utf8_lossy(&out.stdout);
+        eprintln!(
+            "tap_query http {}: {} body={}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim(),
+            &body[..body.len().min(1600)]
+        );
+        None
+    }
+}
+
+fn tap_query_votable(root: &str, adql: &str, td: bool, maxrec: usize) -> Option<String> {
+    let format = if td { "votable/td" } else { "votable" };
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("--fail-with-body")
+        .arg("-m")
+        .arg(tap_curl_timeout())
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg(format!("FORMAT={}", format))
+        .arg("--data-urlencode")
+        .arg(format!("MAXREC={}", maxrec))
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        let body = String::from_utf8_lossy(&out.stdout);
+        eprintln!(
+            "tap_query_votable http {}: {} body={}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim(),
+            &body[..body.len().min(1600)]
+        );
+        None
+    }
+}
+
+fn tap_query_csv(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("--fail-with-body")
+        .arg("-m")
+        .arg("300")
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=csv")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        let body = String::from_utf8_lossy(&out.stdout);
+        eprintln!(
+            "tap_query_csv http {}: {} body={}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim(),
+            &body[..body.len().min(1600)]
+        );
+        None
+    }
+}
+
+fn csv_line(line: &str) -> Option<Vec<String>> {
+    let mut out = Vec::new();
+    let mut cur = String::new();
+    let mut in_q = false;
+    let mut chars = line.chars().peekable();
+    while let Some(c) = chars.next() {
+        if in_q {
+            if c == '"' {
+                if chars.peek() == Some(&'"') {
+                    chars.next();
+                    cur.push('"');
+                } else {
+                    in_q = false;
+                }
+            } else {
+                cur.push(c);
+            }
+        } else if c == '"' {
+            in_q = true;
+        } else if c == ',' {
+            out.push(std::mem::take(&mut cur));
+        } else if c != '\r' {
+            cur.push(c);
+        }
+    }
+    out.push(cur);
+    Some(out)
+}
+
+fn fetch_csv_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query_csv(root, adql)?;
+    let mut lines = body.split('\n');
+    let fields = csv_line(lines.next()?)?;
+    let mut rows = Vec::new();
+    for line in lines {
+        if line.trim().is_empty() {
+            continue;
+        }
+        if let Some(cells) = csv_line(line) {
+            rows.push(cells);
+        }
+    }
+    eprintln!("csv: {} fields, {} rows", fields.len(), rows.len());
+    Some((fields, rows))
+}
+
+fn tap_query_text(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSf")
+        .arg("-m")
+        .arg("300")
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=text")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        eprintln!(
+            "tap_query_text http {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        None
+    }
+}
+
+fn fetch_text_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query_text(root, adql)?;
+    let mut lines = body.split('\n');
+    let fields: Vec<String> = lines
+        .next()?
+        .split('|')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    let mut rows = Vec::new();
+    for line in lines {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with("Number of") {
+            continue;
+        }
+        let cells: Vec<String> = t
+            .split('|')
+            .map(|s| {
+                let c = s.trim().to_string();
+                if c == "null" { String::new() } else { c }
+            })
+            .collect();
+        rows.push(cells);
+    }
+    eprintln!("text: {} fields, {} rows", fields.len(), rows.len());
+    Some((fields, rows))
+}
+
+fn uws_phase(job: &str) -> Option<String> {
+    Command::new("curl")
+        .arg("-sS")
+        .arg(format!("{}/phase", job))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+}
+
+fn tag_text(xml: &str, tag: &str) -> Option<String> {
+    let open = format!("<{tag}>");
+    let close = format!("</{tag}>");
+    let body = xml.split_once(&open)?.1.split_once(&close)?.0.trim();
+    if body.is_empty() {
+        None
+    } else {
+        Some(body.to_string())
+    }
+}
+
+fn uws_error(job: &str) -> Option<String> {
+    let document = Command::new("curl")
+        .arg("-sS")
+        .arg(job)
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .and_then(|s| tag_text(&s, "errorSummary").or_else(|| tag_text(&s, "message")));
+    document.or_else(|| {
+        Command::new("curl")
+            .arg("-sS")
+            .arg(format!("{}/error", job))
+            .output()
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+    })
+}
+
+fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
+    let base = root.replace("/tap/sync", "/tap/async");
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("-D")
+        .arg("-")
+        .arg("-o")
+        .arg("/dev/null")
+        .arg("-X")
+        .arg("POST")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=votable/td")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(&base)
+        .output()
+        .ok()?;
+    let headers = String::from_utf8_lossy(&out.stdout);
+    let job = headers
+        .lines()
+        .find(|l| l.to_lowercase().starts_with("location:"))
+        .map(|l| l["location:".len()..].trim().to_string())?;
+    eprintln!("uws job: {}", job);
+    let mut phase = uws_phase(&job)?;
+    if phase == "PENDING" {
+        let run = Command::new("curl")
+            .arg("-sS")
+            .arg("-o")
+            .arg("/dev/null")
+            .arg("-X")
+            .arg("POST")
+            .arg("--data-urlencode")
+            .arg("PHASE=RUN")
+            .arg(format!("{}/phase", job))
+            .output()
+            .ok()?;
+        eprintln!("uws phase run posted: {}", run.status);
+    }
+    for _ in 0..(poll_secs / 10 + 1) {
+        if phase == "COMPLETED" {
+            break;
+        }
+        if phase == "ERROR" || phase == "ABORTED" {
+            match uws_error(&job) {
+                Some(msg) => eprintln!("uws job phase {phase} — {msg}"),
+                None => eprintln!("uws job phase {phase} — the query stays unharvested"),
+            }
+            return None;
+        }
+        std::thread::sleep(std::time::Duration::from_secs(10));
+        phase = uws_phase(&job)?;
+    }
+    if phase != "COMPLETED" {
+        eprintln!("uws job phase: {} after {} s", phase, poll_secs);
+        return None;
+    }
+    Command::new("curl")
+        .arg("-sS")
+        .arg("-m")
+        .arg("3600")
+        .arg(format!("{}/results/result", job))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+}
+
+fn votable_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let mut fields: Vec<String> = Vec::new();
+    for f in body.split("<FIELD").skip(1) {
+        let seg = match f.split_once('>') {
+            Some((s, _)) => s,
+            None => continue,
+        };
+        let name = if let Some(attr) = seg.split("name=\"").nth(1) {
+            attr.split_once('"')?.0.trim().to_string()
+        } else {
+            let inner = match f.split_once('>') {
+                Some((_, rest)) => match rest.split_once('<') {
+                    Some((i, _)) => i.trim().to_string(),
+                    None => continue,
+                },
+                None => continue,
+            };
+            if inner.is_empty() {
+                continue;
+            }
+            inner
+        };
+        fields.push(name);
+    }
+    let data = match body.split("<DATA>").nth(1) {
+        Some(d) => d,
+        None => {
+            eprintln!(
+                "votable: <DATA> absent, felder={} len={}",
+                fields.len(),
+                body.len()
+            );
+            return None;
+        }
+    };
+    let mut rows = Vec::new();
+    for tr in data.split("<TR>").skip(1) {
+        let end = match tr.split_once("</TR>") {
+            Some((e, _)) => e,
+            None => continue,
+        };
+        let mut cells = Vec::new();
+        for td in end.split("<TD>").skip(1) {
+            let raw = match td.split_once("</TD>") {
+                Some((r, _)) => r.trim(),
+                None => continue,
+            };
+            let v = if let Some(c) = raw.strip_prefix("<![CDATA[") {
+                c.strip_suffix("]]>").unwrap_or(c).trim().to_string()
+            } else {
+                raw.to_string()
+            };
+            cells.push(v);
+        }
+        rows.push(cells);
+    }
+    eprintln!("votable: {} fields, {} rows", fields.len(), rows.len());
+    Some((fields, rows))
+}
+
+fn cell_num(c: &JsonVal) -> Option<f64> {
+    match c {
+        JsonVal::Num(v) => Some(*v),
+        JsonVal::Str(s) => s.parse().ok(),
+        _ => None,
+    }
+}
+
+fn json_metadata_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let parsed = parse_json(body)?;
+    let (meta_opt, data) = match &parsed {
+        JsonVal::Obj(m) => (
+            m.get("metadata")
+                .or_else(|| m.get("columns"))
+                .and_then(as_arr),
+            m.get("data").and_then(as_arr),
+        ),
+        JsonVal::Arr(a) => (None, Some(a)),
+        _ => return None,
+    };
+    let mut col_names = Vec::new();
+    if let Some(meta) = meta_opt {
+        for md in meta {
+            if let Some(o) = as_obj(md) {
+                if let Some(nm) = get_str(o, "name") {
+                    col_names.push(nm);
+                }
+            }
+        }
+    } else if let Some(JsonVal::Obj(o)) = data.as_ref().and_then(|d| d.first()) {
+        for k in o.keys() {
+            col_names.push(k.clone());
+        }
+    }
+    let data = data?;
+    let mut rows = Vec::new();
+    for row in data {
+        let mut cells = Vec::new();
+        if let Some(r) = as_arr(row) {
+            for c in r {
+                cells.push(match c {
+                    JsonVal::Str(s) => s.clone(),
+                    JsonVal::Num(v) => format!("{}", v),
+                    _ => String::new(),
+                });
+            }
+        } else if let Some(o) = as_obj(row) {
+            for nm in &col_names {
+                cells.push(match o.get(nm) {
+                    Some(JsonVal::Str(s)) => s.clone(),
+                    Some(JsonVal::Num(v)) => format!("{}", v),
+                    _ => String::new(),
+                });
+            }
+        } else {
+            continue;
+        }
+        rows.push(cells);
+    }
+    Some((col_names, rows))
+}
+
+fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query(root, adql)?;
+    json_metadata_rows(&body)
+}
+
+const STAR_BIN_STRIDE: usize = 56;
+
+const ABSENT_SIGMA_PAD: f32 = 0.0;
+
+fn sigma_slot(v: Option<f64>) -> f32 {
+    match v {
+        Some(x) if x.is_finite() && x > 0.0 => x as f32,
+        _ => ABSENT_SIGMA_PAD,
+    }
+}
+
+fn sigma_plx_from_bj(r_lo: Option<f64>, r_hi: Option<f64>) -> Option<f64> {
+    match (r_lo, r_hi) {
+        (Some(lo), Some(hi)) if lo.is_finite() && hi.is_finite() && lo > 0.0 && hi > 0.0 => {
+            let v = 0.5 * (1000.0 / lo - 1000.0 / hi);
+            if v.is_finite() && v > 0.0 {
+                Some(v)
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
+fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Vec<u8>> {
+    let get = |k: &str| -> Option<f64> {
+        col_idx
+            .iter()
+            .find(|(key, _)| key == k)
+            .and_then(|(_, i)| cells.get(*i))
+            .and_then(|s| s.parse::<f64>().ok())
+    };
+    let ra = get("ra")?;
+    let dec = get("dec")?;
+    let dist_pc = get("dist_pc")?;
+    let mag = get("mag")?;
+    let Some(pmra) = get("pmra") else {
+        return None;
+    };
+    let Some(pmdec) = get("pmdec") else {
+        return None;
+    };
+    if !dist_pc.is_finite()
+        || !(dist_pc > 0.0)
+        || !ra.is_finite()
+        || !dec.is_finite()
+        || !mag.is_finite()
+    {
+        return None;
+    }
+    let ci = match (get("bpmag"), get("rpmag")) {
+        (Some(b), Some(r)) if b.is_finite() && r.is_finite() => b - r,
+        _ => return None,
+    };
+    let plx_mas = 1000.0 / dist_pc;
+    let Some(rv_km_s) = get("rv") else {
+        return None;
+    };
+    let rv = rv_km_s * 1000.0;
+    let flux = 10f64.powf(-0.4 * mag) as f32;
+    let sigma_plx = sigma_plx_from_bj(get("rlo"), get("rhi"));
+    let mut out = Vec::with_capacity(STAR_BIN_STRIDE);
+    out.extend_from_slice(&ra.to_le_bytes());
+    out.extend_from_slice(&dec.to_le_bytes());
+    out.extend_from_slice(&(pmra as f32).to_le_bytes());
+    out.extend_from_slice(&(pmdec as f32).to_le_bytes());
+    out.extend_from_slice(&(plx_mas as f32).to_le_bytes());
+    out.extend_from_slice(&(mag as f32).to_le_bytes());
+    out.extend_from_slice(&flux.to_le_bytes());
+    out.extend_from_slice(&(ci as f32).to_le_bytes());
+    out.extend_from_slice(&(rv as f32).to_le_bytes());
+    out.extend_from_slice(&sigma_slot(sigma_plx).to_le_bytes());
+    out.extend_from_slice(&sigma_slot(get("pmra_err")).to_le_bytes());
+    out.extend_from_slice(&sigma_slot(get("pmdec_err")).to_le_bytes());
+    Some(out)
+}
+
+fn star_bin_mag_key(record: &[u8]) -> Option<f32> {
+    let m = f32::from_le_bytes([record[28], record[29], record[30], record[31]]);
+    if m.is_finite() { Some(m) } else { None }
+}
+
+fn sort_star_bin_by_magnitude(path: &str) {
+    if path.is_empty() {
+        return;
+    }
+    let Ok(bytes) = std::fs::read(path) else {
+        return;
+    };
+    if bytes.is_empty() || bytes.len() % STAR_BIN_STRIDE != 0 {
+        return;
+    }
+    let mut records: Vec<&[u8]> = bytes.chunks_exact(STAR_BIN_STRIDE).collect();
+    records.sort_by(|a, b| match (star_bin_mag_key(a), star_bin_mag_key(b)) {
+        (Some(ma), Some(mb)) => ma.total_cmp(&mb),
+        (Some(_), None) => std::cmp::Ordering::Less,
+        (None, Some(_)) => std::cmp::Ordering::Greater,
+        (None, None) => std::cmp::Ordering::Equal,
+    });
+    let mut out = Vec::with_capacity(bytes.len());
+    for r in &records {
+        out.extend_from_slice(r);
+    }
+    if let Err(err) = std::fs::write(path, &out) {
+        eprintln!("star bin: magnitude sort write {}: {}", path, err);
+    }
+}
+
+fn lattice_rank(rng: &mut u64) -> f64 {
+    *rng = rng
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64) * 0.5
+}
+
+fn emit_rows(
+    col_idx: &[(String, usize)],
+    epoch_prop: Option<f64>,
+    cells_rows: &[Vec<String>],
+    skip_nulls: &[String],
+    lattice: Option<i64>,
+    rng: &mut u64,
+) -> Vec<String> {
+    let i_ra = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
+    let i_dec = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
+    let i_pmra = col_idx.iter().find(|(k, _)| k == "pmra").map(|(_, i)| *i);
+    let i_pmdec = col_idx.iter().find(|(k, _)| k == "pmdec").map(|(_, i)| *i);
+    let skip_is: Vec<usize> = skip_nulls
+        .iter()
+        .filter_map(|k| col_idx.iter().find(|(kk, _)| kk == k).map(|(_, i)| *i))
+        .collect();
+    let mut rows_out = Vec::new();
+    for cells in cells_rows {
+        let mut ra_v = i_ra
+            .and_then(|i| cells.get(i))
+            .and_then(|s| s.parse::<f64>().ok());
+        let mut dec_v = i_dec
+            .and_then(|i| cells.get(i))
+            .and_then(|s| s.parse::<f64>().ok());
+        if ra_v.is_none() || dec_v.is_none() {
+            continue;
+        }
+        if skip_is
+            .iter()
+            .any(|i| cells.get(*i).and_then(|s| s.parse::<f64>().ok()).is_none())
+        {
+            continue;
+        }
+        if let (Some(epoch), Some(ra), Some(dec), Some(i_pmra), Some(i_pmdec)) =
+            (epoch_prop, ra_v, dec_v, i_pmra, i_pmdec)
+        {
+            if let (Some(pmra), Some(pmdec)) = (
+                cells.get(i_pmra).and_then(|s| s.parse::<f64>().ok()),
+                cells.get(i_pmdec).and_then(|s| s.parse::<f64>().ok()),
+            ) {
+                ra_v =
+                    Some(ra + pmra / (3.6e6 * dec.to_radians().cos().max(1e-6)) * (2000.0 - epoch));
+                dec_v = Some(dec + pmdec / 3.6e6 * (2000.0 - epoch));
+            }
+        }
+        let mut obj = String::from("{");
+        let mut pos = 0;
+        for (k, i) in col_idx {
+            if pos > 0 {
+                obj.push(',');
+            }
+            pos += 1;
+            let out = if k == "ra" {
+                match ra_v {
+                    Some(v) => format!("{}", v),
+                    None => "null".to_string(),
+                }
+            } else if k == "dec" {
+                match dec_v {
+                    Some(v) => format!("{}", v),
+                    None => "null".to_string(),
+                }
+            } else {
+                let raw = cells.get(*i).map(|s| s.as_str()).unwrap_or("");
+                if raw.is_empty() {
+                    "null".to_string()
+                } else if raw.parse::<f64>().is_ok() {
+                    raw.to_string()
+                } else {
+                    json_string(raw)
+                }
+            };
+            obj.push_str(&format!("\"{}\":{}", k, out));
+        }
+        if let (Some(n), Some(ra), Some(dec)) = (lattice, ra_v, dec_v) {
+            let dec_idx = (((dec + 90.0) / 180.0 * n as f64).floor() as i64).clamp(0, n - 1);
+            let ra_idx = ((ra / 360.0 * n as f64).floor() as i64).clamp(0, n - 1);
+            obj.push_str(&format!(
+                ",\"cell\":{},\"rank\":{}",
+                dec_idx * n + ra_idx,
+                lattice_rank(rng)
+            ));
+        }
+        obj.push('}');
+        rows_out.push(obj);
+    }
+    rows_out
+}
+
+fn json_string(s: &str) -> String {
+    let mut o = String::from("\"");
+    for c in s.chars() {
+        match c {
+            '"' => o.push_str("\\\""),
+            '\\' => o.push_str("\\\\"),
+            _ => o.push(c),
+        }
+    }
+    o.push('"');
+    o
+}
+
+fn get_str(o: &std::collections::HashMap<String, JsonVal>, k: &str) -> Option<String> {
+    match o.get(k) {
+        Some(JsonVal::Str(s)) => Some(s.clone()),
+        Some(JsonVal::Num(v)) => Some(format!("{}", v)),
+        _ => None,
+    }
+}
+
+fn as_arr(j: &JsonVal) -> Option<&Vec<JsonVal>> {
+    match j {
+        JsonVal::Arr(a) => Some(a),
+        _ => None,
+    }
+}
+
+fn as_obj(j: &JsonVal) -> Option<&std::collections::HashMap<String, JsonVal>> {
+    match j {
+        JsonVal::Obj(m) => Some(m),
+        _ => None,
+    }
+}
+
+fn numeric_arg(args: &[String], slot: usize, name: &str) -> f64 {
+    match args.get(slot).and_then(|s| s.parse::<f64>().ok()) {
+        Some(v) => v,
+        None => {
+            eprintln!("{name}: the value at slot {slot} carries no number");
+            std::process::exit(2);
+        }
+    }
+}
+
+fn dedup_crossmatch(
+    cells_rows: Vec<Vec<String>>,
+    ra_i: usize,
+    dec_i: usize,
+    dist_i: Option<usize>,
+) -> Vec<Vec<String>> {
+    use std::collections::HashMap;
+    let mut seen: HashMap<(String, String), usize> = HashMap::new();
+    let mut keep: Vec<Vec<String>> = Vec::with_capacity(cells_rows.len());
+    for row in cells_rows.into_iter() {
+        let key = (
+            match row.get(ra_i) {
+                Some(s) => s.clone(),
+                None => String::new(),
+            },
+            match row.get(dec_i) {
+                Some(s) => s.clone(),
+                None => String::new(),
+            },
+        );
+        let has_dist = dist_i
+            .map(|i2| row.get(i2).map(|s| !s.is_empty()).unwrap_or(false))
+            .unwrap_or(false);
+        match seen.get(&key) {
+            Some(&idx) => {
+                let stored_has_dist = dist_i
+                    .map(|i2| keep[idx].get(i2).map(|s| !s.is_empty()).unwrap_or(false))
+                    .unwrap_or(false);
+                if has_dist && !stored_has_dist {
+                    keep[idx] = row;
+                }
+            }
+            None => {
+                seen.insert(key, keep.len());
+                keep.push(row);
+            }
+        }
+    }
+    keep
+}
+
+fn join_from(table_ref: &str, join_table: &str, join_col: &str, left: bool) -> String {
+    let kind = if left { "LEFT JOIN" } else { "JOIN" };
+    format!(
+        "{} AS t {} {} AS j ON t.{} = j.{}",
+        table_ref, kind, join_table, join_col, join_col
+    )
+}
+
+fn main() {
+    omegaflow::archivar::cdn::require_ci();
+    let args: Vec<String> = std::env::args().collect();
+    let mut root: Option<String> = None;
+    let mut out: Option<String> = None;
+    let mut table: Option<String> = None;
+    let mut columns: Option<String> = None;
+    let mut ci_mode = false;
+    let mut probe: Option<String> = None;
+    let mut limit: usize = 50_000;
+    let mut index_mode = false;
+    let mut style = String::from("uws");
+    let mut async_mode: Option<u64> = None;
+    let mut epoch_prop: Option<f64> = None;
+    let mut votable_flag = false;
+    let mut order_by: Option<String> = None;
+    let mut where_clause: Option<String> = None;
+    let mut join_spec: Option<(String, String)> = None;
+    let mut join_left = false;
+    let mut crossmatch_spec: Option<String> = None;
+    let mut crossmatch_z_spec: Option<String> = None;
+    let mut crossmatch_pm: Option<String> = None;
+
+    let mut xmatch_radius: f64 = 1.5;
+    let mut mag_bands: Option<(f64, f64, f64)> = None;
+    let mut band_spec: Option<(String, f64, f64, f64)> = None;
+    let mut star_bin = false;
+    let mut union_bright: Option<String> = None;
+    let mut skip_nulls: Vec<String> = Vec::new();
+    let mut cols_unquoted = false;
+    let mut votable_td = false;
+    let mut csv_flag = false;
+    let mut text_flag = false;
+    let mut lattice: Option<i64> = None;
+    let mut release_tag: Option<String> = None;
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--root" => {
+                root = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--out" => {
+                out = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--table" => {
+                table = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--columns" => {
+                columns = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--limit" => {
+                limit = args
+                    .get(i + 1)
+                    .and_then(|s| s.parse().ok())
+                    .unwrap_or(50_000);
+                i += 1;
+            }
+            "--async" => {
+                async_mode = args.get(i + 1).and_then(|s| s.parse().ok()).or(Some(600));
+                i += 1;
+            }
+            "--epoch" => {
+                epoch_prop = args.get(i + 1).and_then(|s| s.parse().ok());
+                i += 1;
+            }
+            "--votable" => votable_flag = true,
+            "--join" => {
+                join_spec = Some((
+                    match args.get(i + 1) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                    match args.get(i + 2) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                ));
+                i += 2;
+            }
+            "--join-left" => {
+                join_spec = Some((
+                    match args.get(i + 1) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                    match args.get(i + 2) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                ));
+                join_left = true;
+                i += 2;
+            }
+            "--crossmatch" => {
+                crossmatch_spec = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--crossmatch-z" => {
+                crossmatch_z_spec = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--crossmatch-pm" => {
+                crossmatch_pm = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--xmatch-radius" => {
+                xmatch_radius = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(1.5);
+                i += 1;
+            }
+            "--star-bin" => star_bin = true,
+            "--union-bright" => {
+                union_bright = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--mag-bands" => {
+                mag_bands = Some((
+                    numeric_arg(&args, i + 1, "--mag-bands lo"),
+                    numeric_arg(&args, i + 2, "--mag-bands hi"),
+                    numeric_arg(&args, i + 3, "--mag-bands step"),
+                ));
+                i += 3;
+            }
+            "--band" => {
+                band_spec = Some((
+                    match args.get(i + 1) {
+                        Some(a) => a.clone(),
+                        None => {
+                            eprintln!("--band: the band name is missing");
+                            std::process::exit(2);
+                        }
+                    },
+                    numeric_arg(&args, i + 2, "--band lo"),
+                    numeric_arg(&args, i + 3, "--band hi"),
+                    numeric_arg(&args, i + 4, "--band step"),
+                ));
+                i += 4;
+            }
+            "--order" => {
+                order_by = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--where" => {
+                where_clause = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--skip-null" => {
+                skip_nulls.push(match args.get(i + 1) {
+                    Some(a) => a.clone(),
+                    None => String::new(),
+                });
+                i += 1;
+            }
+            "--cols-unquoted" => cols_unquoted = true,
+            "--votable-td" => votable_td = true,
+            "--csv" => csv_flag = true,
+            "--text" => text_flag = true,
+            "--lattice" => {
+                lattice = args.get(i + 1).and_then(|s| s.parse().ok());
+                i += 1;
+            }
+            "--ci-mode" => ci_mode = true,
+            "--release-tag" => {
+                release_tag = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--probe" => {
+                probe = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--index" => index_mode = true,
+            "--style" => {
+                style = match args.get(i + 1) {
+                    Some(s) => s.clone(),
+                    None => "uws".to_string(),
+                };
+                i += 1;
+            }
+            _ => {}
+        }
+        i += 1;
+    }
+    let root = match root {
+        Some(r) => r,
+        None => {
+            eprintln!("--root absent");
+            std::process::exit(1);
+        }
+    };
+    let mut lattice_rng: u64 = 0x9E37_79B9_7F4A_7C15;
+    if index_mode {
+        let adql = "SELECT table_name, table_type, schema_name, description FROM tap_schema.tables";
+        let mast = style == "mast";
+        let fetch = |format: &str| -> Option<String> {
+            let mut cmd = Command::new("curl");
+            cmd.arg("-sSL").arg("-m").arg("120");
+            if mast {
+                cmd.arg("-X")
+                    .arg("POST")
+                    .arg("--data-urlencode")
+                    .arg(format!("query={}", adql))
+                    .arg("--data-urlencode")
+                    .arg(format!("format={}", format));
+            } else {
+                cmd.arg("-G")
+                    .arg("--data-urlencode")
+                    .arg("REQUEST=doQuery")
+                    .arg("--data-urlencode")
+                    .arg("LANG=ADQL")
+                    .arg("--data-urlencode")
+                    .arg(format!("FORMAT={}", format))
+                    .arg("--data-urlencode")
+                    .arg(format!("QUERY={}", adql));
+            }
+            let out = cmd.arg(&root).output().ok()?;
+            if !out.status.success() {
+                eprintln!(
+                    "index http {}: {}",
+                    out.status,
+                    String::from_utf8_lossy(&out.stderr).trim()
+                );
+                return None;
+            }
+            String::from_utf8(out.stdout).ok()
+        };
+        let preview = |label: &str, body: &str| {
+            let flat: String = body
+                .chars()
+                .filter(|c| !c.is_whitespace())
+                .take(240)
+                .collect();
+            eprintln!("{} body[240]: {}", label, flat);
+        };
+        let mut triples: Vec<(String, String, String)> = Vec::new();
+        if votable_flag {
+            let Some(body) = fetch("votable") else {
+                eprintln!("index query returned void");
+                std::process::exit(1);
+            };
+            let Some((fields, rows)) = votable_rows(&body) else {
+                preview("votable", &body);
+                eprintln!("index votable returned void");
+                std::process::exit(1);
+            };
+            let pos = |name: &str| fields.iter().position(|f| f.eq_ignore_ascii_case(name));
+            let (Some(tn), Some(tt), Some(sn)) =
+                (pos("table_name"), pos("table_type"), pos("schema_name"))
+            else {
+                eprintln!("index votable columns absent: {:?}", fields);
+                std::process::exit(1);
+            };
+            for r in &rows {
+                let name = match r.get(tn) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                };
+                if name.is_empty() {
+                    continue;
+                }
+                let schema = match r.get(sn) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                };
+                let typ = match r.get(tt) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                };
+                triples.push((name, schema, typ));
+            }
+        } else {
+            let Some(body) = fetch("json") else {
+                eprintln!("index query returned void");
+                std::process::exit(1);
+            };
+            let parsed = match parse_json(&body) {
+                Some(p) => p,
+                None => {
+                    preview("json", &body);
+                    let dump = "tmp/tap_index_body.txt";
+                    if let Ok(mut f) = std::fs::File::create(dump) {
+                        let _ = f.write_all(body.as_bytes());
+                    }
+                    eprintln!(
+                        "index json returned void, body → {} ({} B)",
+                        dump,
+                        body.len()
+                    );
+                    std::process::exit(1);
+                }
+            };
+            let cols = match &parsed {
+                JsonVal::Obj(m) => m.get("data").and_then(as_arr),
+                JsonVal::Arr(a) => Some(a),
+                _ => None,
+            };
+            let Some(cols) = cols else {
+                preview("json-data", &body);
+                eprintln!("index data absent");
+                std::process::exit(1);
+            };
+            for row in cols {
+                let (name, schema, typ) = if let Some(r) = as_arr(row) {
+                    if r.len() < 4 {
+                        continue;
+                    }
+                    (row_str(&r[0]), row_str(&r[2]), row_str(&r[1]))
+                } else if let Some(o) = as_obj(row) {
+                    (
+                        match o.get("table_name") {
+                            Some(v) => row_str(v),
+                            None => String::new(),
+                        },
+                        match o.get("schema_name") {
+                            Some(v) => row_str(v),
+                            None => String::new(),
+                        },
+                        match o.get("table_type") {
+                            Some(v) => row_str(v),
+                            None => String::new(),
+                        },
+                    )
+                } else {
+                    continue;
+                };
+                triples.push((name, schema, typ));
+            }
+        }
+        let out_path = match out {
+            Some(p) => p,
+            None => "tap_index.φ".to_string(),
+        };
+        let mut buf = String::new();
+        buf.push_str(&format!("inventar {}\n", root));
+        for (name, schema, typ) in &triples {
+            buf.push_str(&format!("catalog {} {} {}\n", name, schema, typ));
+        }
+        match std::fs::File::create(&out_path) {
+            Ok(mut f) => {
+                if let Err(err) = f.write_all(buf.as_bytes()) {
+                    eprintln!("write {}: {}", out_path, err);
+                    std::process::exit(1);
+                }
+            }
+            Err(_) => {
+                eprintln!("write {} returned void", out_path);
+                std::process::exit(1);
+            }
+        }
+        eprintln!("tap index: {} tables → {}", triples.len(), out_path);
+        return;
+    }
+    let table = match table {
+        Some(t) => t,
+        None => {
+            eprintln!("--table absent");
+            std::process::exit(1);
+        }
+    };
+    let columns = match columns {
+        Some(c) => c,
+        None => {
+            eprintln!("--columns absent (mapping: name:ColA;ra:ColB;...)");
+            std::process::exit(1);
+        }
+    };
+    let mut mapping: Vec<(String, String)> = columns
+        .split(';')
+        .filter(|s| !s.is_empty())
+        .filter_map(|s| {
+            let mut it = s.splitn(2, ':');
+            Some((it.next()?.trim().to_string(), it.next()?.trim().to_string()))
+        })
+        .collect();
+    if mapping.is_empty() {
+        eprintln!("--columns empty");
+        std::process::exit(1);
+    }
+    let mut col_names: Vec<String> = Vec::new();
+    let col_idx: Vec<(String, usize)>;
+    let any_positional = mapping.iter().any(|(_, c)| c.starts_with('@'));
+    let table_ref = if table.contains('/') {
+        format!("\"{}\"", table)
+    } else {
+        table.clone()
+    };
+    let xq = |c: &str| -> String {
+        if c.contains('.') {
+            c.to_string()
+        } else {
+            format!("\"{}\"", c)
+        }
+    };
+    let alias_col = |alias: &str, c: &str| -> String {
+        if c.contains('.') {
+            c.to_string()
+        } else {
+            format!("{}.{}", alias, xq(c))
+        }
+    };
+    let (cols_sel, from_clause) = match (&crossmatch_spec, &crossmatch_z_spec) {
+        (Some(spec), _) => {
+            let parts: Vec<&str> = spec.split(':').collect();
+            if parts.len() != 4 {
+                eprintln!("--crossmatch format: table:ra_col:dec_col:dist_col");
+                std::process::exit(1);
+            }
+            let (xtable, xra, xdec, xdist) = (parts[0], parts[1], parts[2], parts[3]);
+            let cat_ra = mapping
+                .iter()
+                .find(|(k, _)| k == "ra")
+                .map(|(_, c)| c.clone());
+            let cat_dec = mapping
+                .iter()
+                .find(|(k, _)| k == "dec")
+                .map(|(_, c)| c.clone());
+            let (Some(cra), Some(cdec)) = (cat_ra, cat_dec) else {
+                eprintln!("--crossmatch needs ra + dec in --columns");
+                std::process::exit(1);
+            };
+            let radius_deg = xmatch_radius / 3600.0;
+            let fc = format!(
+                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', {}, {}), CIRCLE('ICRS', {}, {}, {}))",
+                table_ref,
+                xtable,
+                alias_col("t", &cra),
+                alias_col("t", &cdec),
+                alias_col("j", xra),
+                alias_col("j", xdec),
+                radius_deg
+            );
+            let mut cs = if any_positional {
+                eprintln!("--crossmatch needs named columns, not @positional");
+                std::process::exit(1);
+            } else {
+                let mut s = mapping
+                    .iter()
+                    .map(|(_, c)| alias_col("t", c))
+                    .collect::<Vec<_>>()
+                    .join(",");
+                s.push_str(&format!(", j.{} AS \"dist_pc\"", xq(xdist)));
+                s
+            };
+            if let Some(pm) = &crossmatch_pm {
+                let parts: Vec<&str> = pm.split(':').collect();
+                for (alias, idx) in [
+                    ("pmra", 0usize),
+                    ("pmdec", 1),
+                    ("plx", 2),
+                    ("rv", 3),
+                    ("gaia_teff", 4),
+                    ("bpmag", 5),
+                    ("rpmag", 6),
+                    ("gmag", 7),
+                ] {
+                    if let Some(pc) = parts.get(idx).filter(|c| !c.is_empty()) {
+                        cs.push_str(&format!(", j.{} AS \"{}\"", xq(pc), alias));
+                        mapping.push((alias.to_string(), alias.to_string()));
+                    }
+                }
+            }
+            mapping.push(("dist_pc".to_string(), "dist_pc".to_string()));
+            (cs, fc)
+        }
+        (None, Some(spec)) => {
+            let parts: Vec<&str> = spec.split(':').collect();
+            if parts.len() != 4 {
+                eprintln!("--crossmatch-z format: table:ra_col:dec_col:z_col");
+                std::process::exit(1);
+            }
+            let (xtable, xra, xdec, xz) = (parts[0], parts[1], parts[2], parts[3]);
+            let cat_ra = mapping
+                .iter()
+                .find(|(k, _)| k == "ra")
+                .map(|(_, c)| c.clone());
+            let cat_dec = mapping
+                .iter()
+                .find(|(k, _)| k == "dec")
+                .map(|(_, c)| c.clone());
+            let (Some(cra), Some(cdec)) = (cat_ra, cat_dec) else {
+                eprintln!("--crossmatch-z needs ra + dec in --columns");
+                std::process::exit(1);
+            };
+            let radius_deg = xmatch_radius / 3600.0;
+            let fc = format!(
+                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', {}, {}), CIRCLE('ICRS', {}, {}, {}))",
+                table_ref,
+                xtable,
+                alias_col("t", &cra),
+                alias_col("t", &cdec),
+                alias_col("j", xra),
+                alias_col("j", xdec),
+                radius_deg
+            );
+            let cs = if any_positional {
+                eprintln!("--crossmatch-z needs named columns, not @positional");
+                std::process::exit(1);
+            } else {
+                let mut s = mapping
+                    .iter()
+                    .map(|(_, c)| alias_col("t", c))
+                    .collect::<Vec<_>>()
+                    .join(",");
+                s.push_str(&format!(", j.{} AS \"z\"", xq(xz)));
+                s
+            };
+            mapping.push(("z".to_string(), "z".to_string()));
+            (cs, fc)
+        }
+        (None, None) => {
+            let cs = if any_positional {
+                "*".to_string()
+            } else if cols_unquoted {
+                mapping
+                    .iter()
+                    .map(|(_, c)| c.clone())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            } else {
+                mapping
+                    .iter()
+                    .map(|(_, c)| xq(c))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            };
+            let fc = match &join_spec {
+                Some((jt, oc)) => join_from(&table_ref, jt, oc, join_left),
+                None => table_ref.clone(),
+            };
+            (cs, fc)
+        }
+    };
+    let mut cells_rows: Vec<Vec<String>>;
+    if let Some(poll) = async_mode {
+        let mut adql = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(w) = &where_clause {
+            adql.push_str(&format!(" WHERE {}", w));
+        }
+        if let Some(o) = &order_by {
+            adql.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
+        let Some(body) = tap_async(&root, &adql, poll) else {
+            eprintln!("async returned void");
+            std::process::exit(1);
+        };
+        let Some((fields, rows)) = votable_rows(&body) else {
+            eprintln!("votable returned void");
+            std::process::exit(1);
+        };
+        col_names = fields;
+        cells_rows = rows;
+    } else if votable_flag {
+        let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(w) = &where_clause {
+            q.push_str(&format!(" WHERE {}", w));
+        }
+        if let Some(o) = &order_by {
+            q.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
+        let Some(body) = tap_query_votable(&root, &q, votable_td, limit) else {
+            eprintln!("query returned void");
+            std::process::exit(1);
+        };
+        match votable_rows(&body) {
+            Some((fields, rows)) => {
+                col_names = fields;
+                cells_rows = rows;
+            }
+            None => {
+                eprintln!(
+                    "votable returned void, body[:160] = {}",
+                    &body[..body.len().min(160)]
+                );
+                std::process::exit(1);
+            }
+        }
+    } else if mag_bands.is_none() && band_spec.is_none() {
+        let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(w) = &where_clause {
+            q.push_str(&format!(" WHERE {}", w));
+        }
+        if let Some(o) = &order_by {
+            q.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
+        let fetched = if csv_flag {
+            fetch_csv_rows(&root, &q)
+        } else if text_flag {
+            fetch_text_rows(&root, &q)
+        } else {
+            fetch_json_rows(&root, &q)
+        };
+        match fetched {
+            Some((names, rows)) => {
+                col_names = names;
+                cells_rows = rows;
+            }
+            None => {
+                eprintln!("query returned void");
+                std::process::exit(1);
+            }
+        }
+    } else {
+        let band_col = band_spec
+            .as_ref()
+            .map(|(c, _, _, _)| c.clone())
+            .or_else(|| {
+                mapping
+                    .iter()
+                    .find(|(k, _)| k == "mag")
+                    .map(|(_, c)| c.clone())
+            });
+        let band_bounds = band_spec
+            .as_ref()
+            .map(|(_, lo, hi, step)| (*lo, *hi, *step))
+            .or(mag_bands);
+        let is_xm = crossmatch_spec.is_some() || crossmatch_z_spec.is_some();
+        let aliases_t = is_xm || join_spec.is_some();
+        let band_qual = |c: &str| -> String { if aliases_t { alias_col("t", c) } else { xq(c) } };
+        let mut ranges: Vec<(f64, f64)> = match (&band_spec, band_bounds) {
+            (Some(_), Some((lo, hi, step))) => {
+                let mut out = Vec::new();
+                let mut a = lo;
+                while a < hi {
+                    let b = (a + step).min(hi);
+                    out.push((a, b));
+                    a = b;
+                }
+                out
+            }
+            (None, Some((lo, hi, step))) => {
+                let mut queue = vec![(lo, hi)];
+                let mut out = Vec::new();
+                while let Some((a, b)) = queue.pop() {
+                    if b - a <= step {
+                        out.push((a, b));
+                        continue;
+                    }
+                    let w = match band_col.as_ref() {
+                        Some(c) => format!(
+                            " WHERE {} >= {} AND {} < {}",
+                            band_qual(c),
+                            a,
+                            band_qual(c),
+                            b
+                        ),
+                        None => String::new(),
+                    };
+                    let count_adql = format!("SELECT COUNT(*) FROM {} {}", from_clause, w);
+                    let n = tap_query(&root, &count_adql)
+                        .and_then(|body| parse_json(&body))
+                        .and_then(|j| {
+                            let JsonVal::Obj(m) = j else { return None };
+                            let data = m.get("data")?;
+                            let JsonVal::Arr(rows) = data else {
+                                return None;
+                            };
+                            match rows.first()? {
+                                JsonVal::Arr(a) => a.first().and_then(cell_num),
+                                JsonVal::Obj(o) => o
+                                    .get("COUNT_ALL")
+                                    .or_else(|| o.get("COUNT"))
+                                    .and_then(cell_num),
+                                _ => None,
+                            }
+                        });
+                    match n {
+                        Some(v) if v.is_finite() && (v as usize) <= limit => out.push((a, b)),
+                        _ => {
+                            let mid = (a + b) / 2.0;
+                            queue.push((mid, b));
+                            queue.push((a, mid));
+                        }
+                    }
+                }
+                out
+            }
+            (_, None) => vec![(f64::NEG_INFINITY, f64::INFINITY)],
+        };
+        ranges.sort_by(|x, y| x.0.partial_cmp(&y.0).unwrap_or(std::cmp::Ordering::Equal));
+        let mut n_bands = 0usize;
+        let mut resumed = 0usize;
+        let mut void_bands = 0usize;
+        let mut total = 0usize;
+        let mut col_idx_band: Option<Vec<(String, usize)>> = None;
+        let out_path_band = match out {
+            Some(p) => p,
+            None => String::new(),
+        };
+        let mut out_file: Option<std::fs::File> = None;
+        let mut first_row = true;
+        for &(a, b) in &ranges {
+            let part_path = format!("{}.part{:.4}", out_path_band, a);
+            if star_bin && !out_path_band.is_empty() {
+                let part = match std::fs::read(&part_path) {
+                    Ok(bytes) => bytes,
+                    Err(_) => Vec::new(),
+                };
+                if !part.is_empty() && part.len() % STAR_BIN_STRIDE == 0 {
+                    if out_file.is_none() {
+                        match std::fs::File::create(&out_path_band) {
+                            Ok(f) => out_file = Some(f),
+                            Err(_) => {
+                                eprintln!("write {} returned void", out_path_band);
+                                std::process::exit(1);
+                            }
+                        }
+                    }
+                    if let Some(f) = out_file.as_mut() {
+                        if let Err(err) = f.write_all(&part) {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
+                        total += part.len() / STAR_BIN_STRIDE;
+                        resumed += 1;
+                        eprintln!(
+                            "band [{:.4}, {:.4}) resumed: +{} records (total {})",
+                            a,
+                            b,
+                            part.len() / STAR_BIN_STRIDE,
+                            total
+                        );
+                        continue;
+                    }
+                }
+            }
+            let mut w = match band_col.as_ref().filter(|_| b.is_finite()) {
+                Some(c) => format!(
+                    " WHERE {} >= {} AND {} < {}",
+                    band_qual(c),
+                    a,
+                    band_qual(c),
+                    b
+                ),
+                None => String::new(),
+            };
+            if let Some(wc) = &where_clause {
+                if w.is_empty() {
+                    w = format!(" WHERE {}", wc);
+                } else {
+                    w.push_str(&format!(" AND {}", wc));
+                }
+            }
+            let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+            q.push_str(&w);
+            if let Some(o) = &order_by {
+                q.push_str(&format!(" ORDER BY \"{}\"", o));
+            }
+            let mut fetched: Option<(Vec<String>, Vec<Vec<String>>)> = None;
+            for attempt in 0..3 {
+                match fetch_json_rows(&root, &q) {
+                    Some(pair) => {
+                        fetched = Some(pair);
+                        break;
+                    }
+                    None => {
+                        eprintln!(
+                            "band [{:.4}, {:.4}) attempt {} returned void",
+                            a,
+                            b,
+                            attempt + 1
+                        );
+                        if attempt < 2 {
+                            std::thread::sleep(std::time::Duration::from_secs(60));
+                        }
+                    }
+                }
+            }
+            match fetched {
+                Some((names, rows)) => {
+                    if col_names.is_empty() {
+                        col_names = names;
+                        let idx_of = |col: &str| -> Option<usize> {
+                            if let Some(n) = col.strip_prefix('@') {
+                                n.parse::<usize>().ok()
+                            } else {
+                                let base = col.rsplit('.').next().unwrap_or(col);
+                                let sanitized = col.replace('.', "_");
+                                col_names
+                                    .iter()
+                                    .position(|c| c == col || c == base || c == sanitized.as_str())
+                            }
+                        };
+                        col_idx_band = Some(
+                            mapping
+                                .iter()
+                                .filter_map(|(k, c)| idx_of(c).map(|i| (k.clone(), i)))
+                                .collect(),
+                        );
+                        if col_idx_band.as_ref().map(|v| v.len()).map_or(0, |l| l) != mapping.len()
+                        {
+                            for (k, c) in &mapping {
+                                if idx_of(c).is_none() {
+                                    eprintln!(
+                                        "column absent: {} ({}), available: {:?}",
+                                        c, k, col_names
+                                    );
+                                }
+                            }
+                            std::process::exit(1);
+                        }
+                    }
+                    let Some(ci) = col_idx_band.as_ref() else {
+                        continue;
+                    };
+                    if out_file.is_none() {
+                        if out_path_band.is_empty() {
+                            eprintln!("--out absent");
+                            std::process::exit(1);
+                        }
+                        match std::fs::File::create(&out_path_band) {
+                            Ok(f) => {
+                                out_file = Some(f);
+                            }
+                            Err(_) => {
+                                eprintln!("write {} returned void", out_path_band);
+                                std::process::exit(1);
+                            }
+                        }
+                    }
+                    let Some(f) = out_file.as_mut() else {
+                        continue;
+                    };
+                    if star_bin {
+                        let mut part_bytes: Vec<u8> = Vec::new();
+                        for cells in &rows {
+                            if let Some(rec) = star_record_bytes(cells, ci) {
+                                part_bytes.extend_from_slice(&rec);
+                            }
+                        }
+                        if let Err(err) = f.write_all(&part_bytes) {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
+                        total += part_bytes.len() / STAR_BIN_STRIDE;
+                        n_bands += 1;
+                        eprintln!(
+                            "band [{:.4}, {:.4}): +{} records (total {})",
+                            a,
+                            b,
+                            part_bytes.len() / STAR_BIN_STRIDE,
+                            total
+                        );
+                        if !out_path_band.is_empty() {
+                            let tmp = format!("{}.tmp", part_path);
+                            match std::fs::write(&tmp, &part_bytes) {
+                                Ok(_) => {
+                                    if let Err(err) = std::fs::rename(&tmp, &part_path) {
+                                        eprintln!("write {}: {}", part_path, err);
+                                    }
+                                }
+                                Err(err) => eprintln!("write {}: {}", tmp, err),
+                            }
+                        }
+                        continue;
+                    }
+                    if first_row {
+                        if let Err(err) = f.write_all(b"[") {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
+                    }
+                    let emitted = emit_rows(
+                        ci,
+                        epoch_prop,
+                        &rows,
+                        &skip_nulls,
+                        lattice,
+                        &mut lattice_rng,
+                    );
+                    for r in &emitted {
+                        if !first_row {
+                            if let Err(err) = f.write_all(b",") {
+                                eprintln!("write {}: {}", out_path_band, err);
+                                std::process::exit(1);
+                            }
+                        }
+                        if let Err(err) = f.write_all(r.as_bytes()) {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
+                        first_row = false;
+                    }
+                    total += emitted.len();
+                    n_bands += 1;
+                    eprintln!(
+                        "band [{:.2}, {:.2}): +{} (total {})",
+                        a,
+                        b,
+                        emitted.len(),
+                        total
+                    );
+                }
+                None => {
+                    void_bands += 1;
+                    eprintln!(
+                        "band [{:.4}, {:.4}) returned void after 3 attempts — parts kept, the field stays incomplete",
+                        a, b
+                    );
+                }
+            }
+        }
+        if let Some(mut f) = out_file.take() {
+            if !star_bin {
+                if let Err(err) = f.write_all(b"]\n") {
+                    eprintln!("write {}: {}", out_path_band, err);
+                    std::process::exit(1);
+                }
+            }
+            if star_bin {
+                if let Some(up) = &union_bright {
+                    if let Ok(text) = std::fs::read_to_string(up) {
+                        if let Some(JsonVal::Arr(rows)) = parse_json(&text) {
+                            let mut added = 0usize;
+                            for r in &rows {
+                                if let Some(o) = as_obj(r) {
+                                    let get = |k: &str| -> Option<f64> {
+                                        match o.get(k) {
+                                            Some(JsonVal::Num(v)) => Some(*v),
+                                            Some(JsonVal::Str(s)) => s.parse().ok(),
+                                            _ => None,
+                                        }
+                                    };
+                                    if let (
+                                        Some(ra),
+                                        Some(dec),
+                                        Some(mag),
+                                        Some(dist_pc),
+                                        Some(rv),
+                                        Some(pmra),
+                                        Some(pmdec),
+                                    ) = (
+                                        get("ra"),
+                                        get("dec"),
+                                        get("mag"),
+                                        get("dist_pc"),
+                                        get("rv"),
+                                        get("pmra"),
+                                        get("pmdec"),
+                                    ) {
+                                        if dist_pc > 0.0 && ra.is_finite() && dec.is_finite() {
+                                            let Some(ci) = get("bp_rp") else {
+                                                continue;
+                                            };
+                                            let plx_mas = 1000.0 / dist_pc;
+                                            let flux = 10f64.powf(-0.4 * mag) as f32;
+                                            let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);
+                                            rec.extend_from_slice(&ra.to_le_bytes());
+                                            rec.extend_from_slice(&dec.to_le_bytes());
+                                            rec.extend_from_slice(&(pmra as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(pmdec as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(plx_mas as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(mag as f32).to_le_bytes());
+                                            rec.extend_from_slice(&flux.to_le_bytes());
+                                            rec.extend_from_slice(&(ci as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(rv as f32).to_le_bytes());
+                                            rec.extend_from_slice(
+                                                &sigma_slot(get("sig_plx")).to_le_bytes(),
+                                            );
+                                            rec.extend_from_slice(
+                                                &sigma_slot(get("sig_pmra")).to_le_bytes(),
+                                            );
+                                            rec.extend_from_slice(
+                                                &sigma_slot(get("sig_pmdec")).to_le_bytes(),
+                                            );
+                                            if let Err(err) = f.write_all(&rec) {
+                                                eprintln!("write {}: {}", out_path_band, err);
+                                                std::process::exit(1);
+                                            }
+                                            added += 1;
+                                        }
+                                    }
+                                }
+                            }
+                            total += added;
+                            eprintln!("union-bright: +{} records (total {})", added, total);
+                        }
+                    }
+                }
+                sort_star_bin_by_magnitude(&out_path_band);
+                if total > 0 && total % 11 == 0 {
+                    match f.set_len(((total - 1) * STAR_BIN_STRIDE) as u64) {
+                        Ok(_) => {
+                            total -= 1;
+                            eprintln!(
+                                "star bin: the record count collides with the legacy 44 B stride — the length would read as both 56 B and 44 B records; the trailing record is withheld: {} records kept",
+                                total
+                            );
+                        }
+                        Err(err) => {
+                            eprintln!(
+                                "star bin: the record count {} collides with the legacy 44 B stride and set_len returned void: {}",
+                                total, err
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        eprintln!(
+            "bands: {} ({} resumed, {} void), rows: {} → {}",
+            n_bands, resumed, void_bands, total, out_path_band
+        );
+        if void_bands > 0 {
+            eprintln!(
+                "{} bands returned void — upload refused, parts kept for resume",
+                void_bands
+            );
+            std::process::exit(1);
+        }
+        for &(a, _) in &ranges {
+            let part_path = format!("{}.part{:.4}", out_path_band, a);
+            let _ = std::fs::remove_file(&part_path);
+        }
+        if ci_mode && !out_path_band.is_empty() {
+            let reached = match release_tag.as_deref() {
+                Some(tag) => upload_release(tag, &out_path_band),
+                None => upload_release("tapvizier.cds.unistra.fr", &out_path_band),
+            };
+            if !reached {
+                eprintln!("upload: {} did not reach the CDN", out_path_band);
+                std::process::exit(1);
+            }
+        }
+        return;
+    }
+    let idx_of = |col: &str| -> Option<usize> {
+        if let Some(n) = col.strip_prefix('@') {
+            n.parse::<usize>().ok()
+        } else {
+            let base = col.rsplit('.').next().unwrap_or(col);
+            let sanitized = col.replace('.', "_");
+            col_names
+                .iter()
+                .position(|c| c == col || c == base || c == sanitized.as_str())
+        }
+    };
+    col_idx = mapping
+        .iter()
+        .filter_map(|(k, c)| idx_of(c).map(|i| (k.clone(), i)))
+        .collect();
+    if col_idx.len() != mapping.len() {
+        for (k, c) in &mapping {
+            if idx_of(c).is_none() {
+                eprintln!("column absent: {} ({}), available: {:?}", c, k, col_names);
+            }
+        }
+        std::process::exit(1);
+    }
+    let xmatch_col = if crossmatch_spec.is_some() {
+        Some("dist_pc")
+    } else if crossmatch_z_spec.is_some() {
+        Some("z")
+    } else {
+        None
+    };
+    if let Some(xc) = xmatch_col {
+        let ra_i = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
+        let dec_i = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
+        let dist_i = col_idx.iter().find(|(k, _)| k == xc).map(|(_, i)| *i);
+        if let (Some(ri), Some(di)) = (ra_i, dec_i) {
+            cells_rows = dedup_crossmatch(cells_rows, ri, di, dist_i);
+        }
+    }
+    let rows_out = emit_rows(
+        &col_idx,
+        epoch_prop,
+        &cells_rows,
+        &skip_nulls,
+        lattice,
+        &mut lattice_rng,
+    );
+    eprintln!(
+        "tap fetch: {} columns, {} rows",
+        col_names.len(),
+        rows_out.len()
+    );
+    if let Some(name) = &probe {
+        for r in &rows_out {
+            if r.contains(&format!("\"name\":\"{}", name)) || r.contains(name) {
+                eprintln!("probe: {}", r);
+                return;
+            }
+        }
+        eprintln!("probe: {} not present", name);
+        return;
+    }
+    let out_path = match out {
+        Some(p) => p,
+        None => {
+            eprintln!("--out absent");
+            std::process::exit(1);
+        }
+    };
+    let mut buf = String::from("[");
+    for (k, r) in rows_out.iter().enumerate() {
+        if k > 0 {
+            buf.push(',');
+        }
+        buf.push_str(r);
+    }
+    buf.push_str("]\n");
+    match std::fs::File::create(&out_path) {
+        Ok(mut f) => {
+            if let Err(err) = f.write_all(buf.as_bytes()) {
+                eprintln!("write {}: {}", out_path, err);
+                std::process::exit(1);
+            }
+        }
+        Err(_) => {
+            eprintln!("write {} returned void", out_path);
+            std::process::exit(1);
+        }
+    }
+    eprintln!(
+        "tap: {} rows → {} ({} B)",
+        rows_out.len(),
+        out_path,
+        buf.len()
+    );
+    if ci_mode {
+        let reached = match release_tag.as_deref() {
+            Some(tag) => upload_release(tag, &out_path),
+            None => upload_release("tapvizier.cds.unistra.fr", &out_path),
+        };
+        if !reached {
+            eprintln!("upload: {} did not reach the CDN", out_path);
+            std::process::exit(1);
+        }
+    }
+}
+
+fn row_str(j: &JsonVal) -> String {
+    match j {
+        JsonVal::Str(s) => s.trim_matches('"').to_string(),
+        JsonVal::Num(v) => format!("{}", v),
+        _ => String::new(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        STAR_BIN_STRIDE, dedup_crossmatch, join_from, json_metadata_rows, star_record_bytes,
+    };
+
+    fn row(ra: &str, dec: &str, dist: &str) -> Vec<String> {
+        vec![ra.to_string(), dec.to_string(), dist.to_string()]
+    }
+
+    #[test]
+    fn dedup_keeps_first_row_with_dist() {
+        let rows = vec![
+            row("10.0", "20.0", ""),
+            row("10.0", "20.0", "1238"),
+            row("10.0", "20.0", "900"),
+        ];
+        let out = dedup_crossmatch(rows, 0, 1, Some(2));
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0][2], "1238");
+    }
+
+    #[test]
+    fn dedup_keeps_dist_when_first_row_lacks_it() {
+        let rows = vec![
+            row("10.0", "20.0", ""),
+            row("11.0", "21.0", ""),
+            row("11.0", "21.0", "500"),
+        ];
+        let out = dedup_crossmatch(rows, 0, 1, Some(2));
+        assert_eq!(out.len(), 2);
+        assert_eq!(out[0][2], "");
+        assert_eq!(out[1][2], "500");
+    }
+
+    #[test]
+    fn dedup_preserves_distinct_positions() {
+        let rows = vec![
+            row("10.0", "20.0", "100"),
+            row("11.0", "21.0", "200"),
+            row("12.0", "22.0", "300"),
+        ];
+        let out = dedup_crossmatch(rows, 0, 1, Some(2));
+        assert_eq!(out.len(), 3);
+    }
+
+    #[test]
+    fn dedup_without_dist_column_keeps_first_only() {
+        let rows = vec![
+            row("10.0", "20.0", "x"),
+            row("10.0", "20.0", "y"),
+            row("11.0", "21.0", "z"),
+        ];
+        let out = dedup_crossmatch(rows, 0, 1, None);
+        assert_eq!(out.len(), 2);
+        assert_eq!(out[0][2], "x");
+    }
+
+    #[test]
+    fn dedup_empty_rows_is_empty() {
+        let out = dedup_crossmatch(Vec::new(), 0, 1, Some(2));
+        assert!(out.is_empty());
+    }
+
+    #[test]
+    fn join_from_builds_inner_equi_join() {
+        let fc = join_from(
+            "catalogue.mer_catalogue",
+            "q1.phz_physical_parameters",
+            "object_id",
+            false,
+        );
+        assert_eq!(
+            fc,
+            "catalogue.mer_catalogue AS t JOIN q1.phz_physical_parameters AS j ON t.object_id = j.object_id"
+        );
+    }
+
+    #[test]
+    fn join_from_builds_left_join() {
+        let fc = join_from(
+            "catalogue.mer_catalogue",
+            "q1.phz_physical_parameters",
+            "object_id",
+            true,
+        );
+        assert_eq!(
+            fc,
+            "catalogue.mer_catalogue AS t LEFT JOIN q1.phz_physical_parameters AS j ON t.object_id = j.object_id"
+        );
+    }
+
+    #[test]
+    fn json_metadata_rows_resolve_named_column() {
+        let fixture = r#"{
+            "metadata": [
+                {"name": "s_ra", "datatype": "double", "ucd": "pos.eq.ra"},
+                {"name": "s_dec", "datatype": "double", "ucd": "pos.eq.dec"},
+                {"name": "obs_collection", "datatype": "char", "ucd": "meta.id"}
+            ],
+            "data": [
+                [53.233597, -29.70548535, "sedm"],
+                [null, -47.09244499, "sedm"]
+            ]
+        }"#;
+        let (cols, rows) = json_metadata_rows(fixture).expect("metadata rows resolve");
+        assert_eq!(
+            cols,
+            vec![
+                "s_ra".to_string(),
+                "s_dec".to_string(),
+                "obs_collection".to_string()
+            ]
+        );
+        assert_eq!(rows.len(), 2);
+        let ra_i = cols.iter().position(|c| c == "s_ra").unwrap();
+        let dec_i = cols.iter().position(|c| c == "s_dec").unwrap();
+        let col_i = cols.iter().position(|c| c == "obs_collection").unwrap();
+        assert_eq!(rows[0][ra_i], "53.233597");
+        assert_eq!(rows[0][dec_i], "-29.70548535");
+        assert_eq!(rows[0][col_i], "sedm");
+        assert_eq!(rows[1][ra_i], "");
+        assert_eq!(rows[1][col_i], "sedm");
+    }
+
+    fn star_cols(keys: &[&str]) -> Vec<(String, usize)> {
+        keys.iter()
+            .enumerate()
+            .map(|(i, k)| (k.to_string(), i))
+            .collect()
+    }
+
+    #[test]
+    fn star_record_carries_sigma_in_56_bytes() {
+        let cols = star_cols(&[
+            "ra",
+            "dec",
+            "dist_pc",
+            "mag",
+            "pmra",
+            "pmdec",
+            "bpmag",
+            "rpmag",
+            "rv",
+            "rlo",
+            "rhi",
+            "pmra_err",
+            "pmdec_err",
+        ]);
+        let cells: Vec<String> = vec![
+            "10.0".into(),
+            "20.0".into(),
+            "100.0".into(),
+            "5.0".into(),
+            "1.5".into(),
+            "-2.5".into(),
+            "6.0".into(),
+            "5.0".into(),
+            "30.0".into(),
+            "90.0".into(),
+            "110.0".into(),
+            "0.04".into(),
+            "0.03".into(),
+        ];
+        let rec = star_record_bytes(&cells, &cols).expect("56-byte star record");
+        assert_eq!(rec.len(), STAR_BIN_STRIDE);
+        assert_eq!(rec.len(), 56);
+        let rv = f32::from_le_bytes(rec[40..44].try_into().expect("rv slot"));
+        assert!((rv - 30000.0).abs() < 1e-3);
+        let sigma_plx = f32::from_le_bytes(rec[44..48].try_into().expect("sigma_plx slot"));
+        let expect_plx = 0.5 * (1000.0 / 90.0 - 1000.0 / 110.0);
+        assert!((sigma_plx - expect_plx as f32).abs() < 1e-2);
+        let sigma_pmra = f32::from_le_bytes(rec[48..52].try_into().expect("sigma_pmra slot"));
+        assert!((sigma_pmra - 0.04).abs() < 1e-6);
+        let sigma_pmdec = f32::from_le_bytes(rec[52..56].try_into().expect("sigma_pmdec slot"));
+        assert!((sigma_pmdec - 0.03).abs() < 1e-6);
+    }
+
+    #[test]
+    fn star_record_absent_sigma_is_pad_not_fabricated() {
+        let cols = star_cols(&[
+            "ra", "dec", "dist_pc", "mag", "pmra", "pmdec", "bpmag", "rpmag", "rv",
+        ]);
+        let cells: Vec<String> = vec![
+            "10.0".into(),
+            "20.0".into(),
+            "100.0".into(),
+            "5.0".into(),
+            "1.5".into(),
+            "-2.5".into(),
+            "6.0".into(),
+            "5.0".into(),
+            "30.0".into(),
+        ];
+        let rec = star_record_bytes(&cells, &cols).expect("56-byte star record");
+        assert_eq!(rec.len(), STAR_BIN_STRIDE);
+        let sigma_plx = f32::from_le_bytes(rec[44..48].try_into().expect("sigma_plx slot"));
+        assert_eq!(sigma_plx, 0.0);
+        let sigma_pmra = f32::from_le_bytes(rec[48..52].try_into().expect("sigma_pmra slot"));
+        assert_eq!(sigma_pmra, 0.0);
+        let sigma_pmdec = f32::from_le_bytes(rec[52..56].try_into().expect("sigma_pmdec slot"));
+        assert_eq!(sigma_pmdec, 0.0);
+    }
+
+    #[test]
+    fn star_record_absent_rv_is_none_not_zero() {
+        let cols = star_cols(&[
+            "ra", "dec", "dist_pc", "mag", "pmra", "pmdec", "bpmag", "rpmag",
+        ]);
+        let cells: Vec<String> = vec![
+            "10.0".into(),
+            "20.0".into(),
+            "100.0".into(),
+            "5.0".into(),
+            "1.5".into(),
+            "-2.5".into(),
+            "6.0".into(),
+            "5.0".into(),
+        ];
+        assert!(star_record_bytes(&cells, &cols).is_none());
+    }
+}

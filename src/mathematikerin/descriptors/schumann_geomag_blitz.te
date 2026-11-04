@@ -1,0 +1,19 @@
+# schumann_geomag_blitz.te — the F4-conditioned form (abk->f1 | Blitz), Nadel XIV.
+# The unconditional matrix (schumann_geomag.te, bin 3600) stays hourly against the
+# hourly Schumann target. The matrix form carries cond rest|none only, so the named
+# confounder runs as a conditional PAIR. The confounder is the global lightning
+# channel (WGLC), which is DAILY; a daily series is never forward-filled onto 3600
+# (that would fabricate intra-hour variation), so this pair runs at bin 86400.
+# f2/f3 take the same form with target freq2/freq3.
+# The confounder channel is declared `pending`: the register row / CDN series waits on
+# Mountain's admission (field/ttl) and Mycelium's manifestation (xfer:mycelium-356-5).
+pair schumann_geomag_blitz
+register sources
+driver abk_dbdt_pt1h
+target freq1
+cond wglc_strokes pending
+cadence live
+bin 86400
+seasonal none
+lags 0,1
+surrogate 10

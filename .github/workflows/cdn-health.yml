@@ -1,0 +1,81 @@
+name: cdn-health
+
+# Port des lokalen cds_watchdog (systemd-Timer): prüft die zehn überwachten
+# CDN-Assets auf Erreichbarkeit (HTTP-Code) UND ob der Pfad im Register
+# phi/sources.φ steht. Die Auswahl ist die des lokalen cds_watchdog, NICHT
+# register-gebunden (das Register ist der Kanon; eine fehlende Zeile wird als
+# UNREGISTERED benannt, nie erfunden). Rot nur, wenn ein Asset nicht
+# erreichbar ist; eine fehlende Register-Zeile ist eine Meldung, kein Rot.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Die zehn überwachten CDN-Assets prüfen (Erreichbarkeit + Register-Deckung)
+        run: |
+          set +e
+          base="https://github.com/omegaflow/sources/releases/download"
+          register=phi/sources.φ
+          fail=0
+          check() {
+            local asset="$1" release="$2" code reg
+            code="$(curl -sIL -o /dev/null -w '%{http_code}' --max-time 20 "$base/$release/$asset" 2>/dev/null || echo void)"
+            if grep -qF "$base/$release/$asset" "$register"; then
+              reg=register
+            else
+              reg=UNREGISTERED
+            fi
+            printf '%-26s %-26s %-6s %s\n' "$release" "$asset" "$code" "$reg" | tee -a cdn-health.txt
+            case "$code" in 200|302) ;; *) fail=1 ;; esac
+          }
+          check curated48_spectra.bin exoplanetarchive.ipac.caltech.edu
+          check spectra.bin ssd.jpl.nasa.gov
+          check nvss.json ssd.jpl.nasa.gov
+          check first14.json ssd.jpl.nasa.gov
+          check chandra_csc.json tapvizier.cds.unistra.fr
+          check ztf_lightcurves.bin irsa.ipac.caltech.edu
+          check ztf_lightcurves_fresh.bin irsa.ipac.caltech.edu
+          check dr3_stars.bin ssd.jpl.nasa.gov
+          check twomass_psc.bin irsa.ipac.caltech.edu
+          check ephemeris_sun.bin ssd.jpl.nasa.gov-ephemeris
+          pin_asset=ephemeris_juice_official.bin
+          pin_release=ssd.jpl.nasa.gov-ephemeris
+          pin="$(awk '/^url .*\/ephemeris_juice_official\.bin$/{f=1;next} f&&/^sha256 /{print $2;exit}' "$register")"
+          if [ -n "$pin" ] && curl -fsSL --max-time 120 "$base/$pin_release/$pin_asset" -o "$pin_asset"; then
+            got="$(sha256sum "$pin_asset" | cut -d' ' -f1)"
+            if [ "$got" = "$pin" ]; then
+              printf '%-26s %-26s %-6s %s\n' "$pin_release" "$pin_asset" "pin" "placed" | tee -a cdn-health.txt
+            else
+              printf '%-26s %-26s %-6s %s\n' "$pin_release" "$pin_asset" "pin" "riss ($got)" | tee -a cdn-health.txt
+              fail=1
+            fi
+          else
+            printf '%-26s %-26s %-6s %s\n' "$pin_release" "$pin_asset" "pin" "pending" | tee -a cdn-health.txt
+            fail=1
+          fi
+          {
+            printf '## cdn-health — %s\n' "$(date -u +%FT%TZ)"
+            printf '```\n'
+            cat cdn-health.txt
+            printf '```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $fail
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cdn-health
+          path: cdn-health.txt

@@ -1,0 +1,7 @@
+git
+grep
+sqlite
+gemessen
+gemeldet
+zählt
+läuft

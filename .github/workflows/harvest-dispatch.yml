@@ -1,0 +1,170 @@
+name: harvest-dispatch
+
+concurrency:
+  group: harvest-dispatch
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'phi/sources.φ'
+      - 'tools/harvest/src/bin/**'
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Resolve the changed harvest formats and dispatch the missing ones
+        env:
+          GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          before='${{ github.event.before }}'
+          if [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            before='${{ github.sha }}^'
+          fi
+
+          # the token after "<key>=" up to the next space; args carries the tail
+          field() { printf '%s\n' "$1" | sed -n "s/.*[[:space:]]$2=\([^ ]*\).*/\1/p"; }
+          # the "<path>:<header line>" of the workflow that carries format <name>
+          header_of() {
+            grep -H '^# harvest: ' .github/workflows/*.yml \
+              | awk -v f="format=$1" '{ for(i=1;i<=NF;i++) if($i==f){ print; exit } }'
+          }
+
+          formats=""
+          for path in $(git diff --name-only "$before" '${{ github.sha }}' -- 'tools/harvest/src/bin/*.rs' || true); do
+            stem=$(basename "$path" .rs)
+            found=$(grep -h '^# harvest: ' .github/workflows/*.yml \
+              | awk -v a="arm=$stem" '{
+                  hit=0; f="";
+                  for(i=1;i<=NF;i++){ if($i==a) hit=1; if(substr($i,1,7)=="format=") f=substr($i,8) }
+                  if(hit && f!="") print f
+                }')
+            if [ -z "$found" ]; then
+              echo "arm $stem changed — no harvest header names it, register duty"
+              continue
+            fi
+            formats="$formats $found"
+          done
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | sed -n 's/^+format //p' || true)"
+          # an explicit manifestation line names its actor ("harvest raw_zenodo"); it is
+          # read like a format token, so header_of resolves the workflow that declares
+          # "# harvest: format=<actor>". A bare "format <name>" stays the parser arm alone.
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | sed -n 's/^+harvest \([a-z0-9_]*\).*/\1/p' || true)"
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- '.github/workflows/*.yml' | sed -n 's/^+# harvest: .*format=\([a-z0-9_]*\).*/\1/p' || true)"
+          formats=$(printf '%s\n' $formats | sort -u)
+
+          args_changed=""
+          for fmt in $formats; do
+            entry=$(header_of "$fmt")
+            [ -z "$entry" ] && continue
+            wfpath="${entry%%:*}"
+            old_line=$(git show "$before:$wfpath" 2>/dev/null | grep -m1 "^# harvest: format=$fmt " || true)
+            [ -z "$old_line" ] && continue
+            new_args=$(printf '%s\n' "${entry#*:}" | sed -n 's/.* args=//p')
+            old_args=$(printf '%s\n' "$old_line" | sed -n 's/.* args=//p')
+            if [ "$old_args" != "$new_args" ]; then
+              args_changed="$args_changed $fmt"
+            fi
+          done
+
+          bad=0
+          dispatch() {
+            local fmt="$1" wf="$2" tmo="$3" force="$4"
+            local inputs=()
+            if grep -qE '^[[:space:]]+format:' ".github/workflows/$wf"; then
+              inputs+=(-f format="$fmt")
+            fi
+            if [ -n "$tmo" ] && grep -qE '^[[:space:]]+timeout:' ".github/workflows/$wf"; then
+              inputs+=(-f timeout="$tmo")
+            fi
+            if [ "$force" = "true" ] && grep -qE '^[[:space:]]+force:' ".github/workflows/$wf"; then
+              inputs+=(-f force=true)
+            fi
+            if [ ${#inputs[@]} -eq 0 ]; then
+              echo "format $fmt: $wf declares no matching input — dispatch without inputs"
+            fi
+            gh workflow run "$wf" "${inputs[@]}" --repo '${{ github.repository }}' \
+              || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
+          }
+          for fmt in $formats; do
+            entry=$(header_of "$fmt")
+            if [ -z "$entry" ]; then
+              if [ "$fmt" = raw_mirror ]; then
+                echo "format $fmt: the generic register-manifest job mirrors it - no per-format dispatch"
+              else
+                echo "format $fmt: no measured harvest header — register duty, no dispatch"
+              fi
+              continue
+            fi
+            wf=$(basename "${entry%%:*}")
+            line="${entry#*:}"
+            asset=$(field "$line" asset)
+            tmo=$(field "$line" timeout)
+            idem=$(field "$line" idempotent)
+            case "$asset" in
+              fehlt)
+                echo "format $fmt: asset fehlt — dispatch $wf"
+                dispatch "$fmt" "$wf" "$tmo" false
+                ;;
+              present)
+                case " $args_changed " in
+                  *" $fmt "*)
+                    if [ "$idem" != "true" ]; then
+                      echo "format $fmt: asset present, args changed, no idempotence gate — dispatch $wf"
+                      dispatch "$fmt" "$wf" "$tmo" false
+                    elif grep -qE '^[[:space:]]+force:' ".github/workflows/$wf"; then
+                      echo "format $fmt: asset present, args changed — dispatch $wf force=true"
+                      dispatch "$fmt" "$wf" "$tmo" true
+                    else
+                      echo "format $fmt: args changed, $wf declares no force input — manual dispatch register duty"
+                    fi
+                    ;;
+                  *)
+                    echo "format $fmt: asset present — no dispatch"
+                    ;;
+                esac
+                ;;
+              *)
+                echo "format $fmt: harvest header unmeasured — register duty, no dispatch"
+                ;;
+            esac
+          done
+          exit "$bad"
+
+  # the generic register -> manifest actor: a block carrying the explicit
+  # manifestation line "harvest raw_mirror" is mirrored by raw_mirror for the
+  # changed blocks of this push. The manifestation line selects the actor; a
+  # bare format line does not. Four gates: licence (terms), fingerprint
+  # (registered sha256), format (arm = manifestation), registration
+  # (url/origin/sha256 stand in the register). It does not replace any matrix
+  # workflow; raw_zenodo keeps its own zenodo-raw-cdn matrix.
+  raw-mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      RUSTFLAGS: -D warnings
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+      OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror the changed harvest raw_mirror blocks
+        run: bash .github/workflows/scripts/raw_mirror_blocks.sh "${{ github.event.before }}" "${{ github.sha }}"

@@ -1,0 +1,43 @@
+name: ams02-tdat-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ams02-tdat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view heasarc.gsfc.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ams02_spec.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ams02_spec.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ams02_spec.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the heasarc.gsfc.nasa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view heasarc.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create heasarc.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "heasarc.gsfc.nasa.gov" \
+              --notes "HEASARC TDAT heasarc_ams02spec catalog packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the AMS-02 spectral catalog to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin ams02_tdat_compiler -- --ci-mode

@@ -1,0 +1,1571 @@
+use omegaflow::archivar::omni2::{COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
+use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
+use omegaflow::mathematikerin::wy_max_t;
+use omegaflow::te::{
+    PcmciParams, TeEstimator, TeNull, kde_n_eff, pcmci_links, phase_randomized_surrogate,
+    surrogate_stats_phase_n, transfer_entropy_lag, transfer_entropy_lag_h,
+};
+use std::time::{SystemTime, UNIX_EPOCH};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum NullMode {
+    Plugin,
+    MaxT,
+}
+
+const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const N_SURR: usize = 100;
+const LAG_MAX_H: usize = 6;
+const PERM_FROM_FIRST: usize = 0;
+const KDE_FACTORS: [f64; 6] = [0.5, 0.75, 1.0, 1.5, 2.0, 3.0];
+const STATION_HAPI: &str =
+    "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf";
+const FILL_NT: f64 = 99999.0;
+const MINUTE: f64 = 60.0;
+const HOUR: f64 = 3600.0;
+const DAY: f64 = 86400.0;
+const OMNI2_BIN: &str = "omni2_serie.bin";
+const OMNI2_CDN_BASE: &str =
+    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov";
+const FIRST_YEAR: i64 = 1994;
+const DEFAULT_STATION: &str = "ABK";
+const DEFAULT_HOUR_START: &str = "2024-01-01";
+const DEFAULT_HOUR_END: &str = "2024-12-31";
+const J2000_UNIX_OFFSET: f64 = 946728000.0;
+
+fn now_unix() -> Option<f64> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|d| d.as_secs_f64())
+}
+
+fn iso_to_unix(s: &str) -> Option<f64> {
+    let s = s.trim();
+    let (date, time) = if let Some((d, t)) = s.split_once('T') {
+        (d, t)
+    } else {
+        s.split_once(' ')?
+    };
+    let mut dp = date.split('-');
+    let y: i64 = dp.next()?.parse().ok()?;
+    let m: i64 = dp.next()?.parse().ok()?;
+    let d: i64 = dp.next()?.parse().ok()?;
+    let t = time
+        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .next()?;
+    let mut tp = t.split(':');
+    let hh: i64 = tp.next()?.parse().ok()?;
+    let mm: i64 = match tp.next() {
+        Some(v) => v,
+        None => "0",
+    }
+    .parse()
+    .ok()?;
+    let ss: i64 = match tp.next() {
+        Some(v) => v,
+        None => "0",
+    }
+    .parse()
+    .ok()?;
+    let a = (14 - m) / 12;
+    let yy = y + 4800 - a;
+    let jdn =
+        d + (153 * (m + 12 * a - 3) + 2) / 5 + 365 * yy + yy / 4 - yy / 100 + yy / 400 - 32045;
+    Some((jdn - 2440588) as f64 * DAY + hh as f64 * HOUR + mm as f64 * MINUTE + ss as f64)
+}
+
+fn iso_utc(unix: f64) -> String {
+    let total = (unix.max(0.0) / DAY).floor() as i64;
+    let day_secs = unix.max(0.0) - total as f64 * DAY;
+    let z = total + 719468;
+    let era = if z >= 0 { z } else { z - 146096 } / 146097;
+    let doe = z - era * 146097;
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = if m <= 2 { y + 1 } else { y };
+    let hh = (day_secs / HOUR) as i64;
+    let mm = ((day_secs - hh as f64 * HOUR) / MINUTE) as i64;
+    let ss = (day_secs - hh as f64 * HOUR - mm as f64 * MINUTE) as i64;
+    format!("{y:04}-{m:02}-{d:02}T{hh:02}:{mm:02}:{ss:02}Z")
+}
+
+fn edge_iso(t: Option<f64>) -> String {
+    match t {
+        Some(v) => iso_utc(v),
+        None => "absent".to_string(),
+    }
+}
+
+fn shared_window(
+    a: &[(f64, f64)],
+    b: &[(f64, f64)],
+    lo_clamp: Option<f64>,
+    hi_clamp: Option<f64>,
+) -> Option<(f64, f64)> {
+    let (Some(a0), Some(a1)) = (a.first().map(|&(t, _)| t), a.last().map(|&(t, _)| t)) else {
+        return None;
+    };
+    let (Some(b0), Some(b1)) = (b.first().map(|&(t, _)| t), b.last().map(|&(t, _)| t)) else {
+        return None;
+    };
+    let lo = match lo_clamp {
+        Some(c) => a0.max(b0).max(c),
+        None => a0.max(b0),
+    };
+    let hi = match hi_clamp {
+        Some(c) => a1.min(b1).min(c),
+        None => a1.min(b1),
+    };
+    if hi <= lo { None } else { Some((lo, hi)) }
+}
+
+fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
+    args.iter()
+        .position(|a| a == flag)
+        .and_then(|i| args.get(i + 1))
+        .map(|s| s.as_str())
+}
+
+fn args_after_all(args: &[String], flag: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    if let Some(i) = args.iter().position(|a| a == flag) {
+        for a in &args[i + 1..] {
+            if a.starts_with("--") {
+                break;
+            }
+            out.push(a.clone());
+        }
+    }
+    out
+}
+
+fn write_null_matrix(path: &str, nulls: &[Vec<f64>]) -> bool {
+    let m = nulls.first().map_or(0, |row| row.len());
+    let mut bytes = Vec::with_capacity(nulls.len() * m * 8);
+    for row in nulls {
+        for &v in row.iter() {
+            bytes.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    std::fs::write(path, bytes).is_ok()
+}
+
+fn read_null_matrix(path: &str, m_expected: usize) -> Option<Vec<Vec<f64>>> {
+    let bytes = std::fs::read(path).ok()?;
+    if bytes.len() % 8 != 0 || m_expected == 0 {
+        return None;
+    }
+    let total = bytes.len() / 8;
+    if total % m_expected != 0 {
+        return None;
+    }
+    let b = total / m_expected;
+    let mut out = Vec::with_capacity(b);
+    for r in 0..b {
+        let mut row = Vec::with_capacity(m_expected);
+        for c in 0..m_expected {
+            let i = (r * m_expected + c) * 8;
+            let arr: [u8; 8] = bytes[i..i + 8].try_into().ok()?;
+            row.push(f64::from_le_bytes(arr));
+        }
+        out.push(row);
+    }
+    Some(out)
+}
+
+fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
+    if let Ok(bytes) = std::fs::read(path) {
+        if let Some(recs) = parse_bin(&bytes) {
+            return recs;
+        }
+        eprintln!("{path} parses void — fetching the CDN asset");
+    } else {
+        eprintln!("{path} reads void — fetching the CDN asset");
+    }
+    let name = match std::path::Path::new(path).file_name() {
+        Some(n) => n.to_string_lossy().into_owned(),
+        None => {
+            eprintln!("{path} carries no asset name — the CDN fetch stays pending");
+            return Vec::new();
+        }
+    };
+    let url = format!("{OMNI2_CDN_BASE}/{name}");
+    let Some(bytes) = fetch_raw_bytes(&url) else {
+        eprintln!("{url} fetch stays pending — the top series stays unmeasured");
+        return Vec::new();
+    };
+    let _ = std::fs::write(path, &bytes);
+    match parse_bin(&bytes) {
+        Some(recs) => recs,
+        None => {
+            eprintln!("{path} parses void after fetch — the top series stays unmeasured");
+            Vec::new()
+        }
+    }
+}
+
+const CACHE_BASE: &str = "abk_dbdt_daily";
+
+fn disk_cache(name: &str) -> String {
+    omegaflow::archivar::content_dir()
+        .join("bz_retro")
+        .join(name)
+        .to_string_lossy()
+        .into_owned()
+}
+
+const IMAG_CDN_BASE: &str =
+    "https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk";
+
+fn load_cdn_station_dbdt(station: &str) -> Option<Vec<(f64, f64)>> {
+    let asset = format!("{}_dbdt_1h.bin", station.to_lowercase());
+    let local = disk_cache(&asset);
+    let bytes = std::fs::read(&local).ok().or_else(|| {
+        let url = format!("{IMAG_CDN_BASE}/{asset}");
+        match fetch_raw_bytes(&url) {
+            Some(b) => {
+                let _ = std::fs::write(&local, &b);
+                Some(b)
+            }
+            None => None,
+        }
+    })?;
+    let recs = omegaflow::intermagnet::parse_bin(&bytes)?;
+    Some(recs.into_iter().map(|(t, v, _)| (t, v)).collect())
+}
+
+fn load_cache(path: &str) -> Option<Vec<(f64, f64)>> {
+    let body = std::fs::read_to_string(path).ok()?;
+    let mut out = Vec::new();
+    for line in body.lines() {
+        let mut it = line.split_whitespace();
+        let t: f64 = it.next()?.parse().ok()?;
+        let v: f64 = it.next()?.parse().ok()?;
+        out.push((t, v));
+    }
+    Some(out)
+}
+
+fn write_cache(path: &str, series: &[(f64, f64)]) {
+    let mut s = String::new();
+    for &(t, v) in series {
+        s.push_str(&format!("{t} {v}\n"));
+    }
+    let _ = std::fs::write(path, s);
+}
+
+fn harvest_station_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<(f64, f64)> {
+    let Some(now) = now_unix() else {
+        return Vec::new();
+    };
+    let mut peaks: Vec<(f64, f64)> = Vec::new();
+    let mut bucket_epoch = 0.0f64;
+    let mut bucket_peak = f64::NEG_INFINITY;
+    let mut prev: Option<(f64, [f64; 3])> = None;
+    for month in 1..=12i64 {
+        let (ny, nm) = if month == 12 {
+            (year + 1, 1)
+        } else {
+            (year, month + 1)
+        };
+        let start = format!("{year:04}-{month:02}-01T00:00:00Z");
+        let mut stop = format!("{ny:04}-{nm:02}-01T00:00:00Z");
+        if let Some(stop_t) = iso_to_unix(&stop) {
+            if stop_t > now - 2.0 * HOUR {
+                stop = iso_utc(now - 2.0 * HOUR);
+            }
+        }
+        let (Some(stop_t), Some(start_t)) = (iso_to_unix(&stop), iso_to_unix(&start)) else {
+            continue;
+        };
+        if stop_t <= start_t {
+            continue;
+        }
+        let url = format!(
+            "{}&start={start}&stop={stop}&format=json",
+            STATION_HAPI.replace("{station}", station)
+        );
+        let mut root_json: Option<omegaflow::archivar::JsonVal> = None;
+        for attempt in 0..3 {
+            if attempt > 0 {
+                std::thread::sleep(std::time::Duration::from_secs(20));
+            }
+            match fetch_raw(&url, None, &[]).and_then(|b| parse_json(&b)) {
+                Some(j) => {
+                    root_json = Some(j);
+                    break;
+                }
+                None => {
+                    eprintln!(
+                        "{station} {year}-{month:02}: fetch void (attempt {})",
+                        attempt + 1
+                    );
+                }
+            }
+        }
+        let Some(j) = root_json else {
+            continue;
+        };
+        let JsonVal::Obj(root) = j else {
+            continue;
+        };
+        let Some(JsonVal::Arr(data)) = root.get("data") else {
+            continue;
+        };
+        for row in data {
+            let JsonVal::Arr(cells) = row else {
+                continue;
+            };
+            let Some(t) = cells.first().and_then(|c| match c {
+                JsonVal::Str(s) => iso_to_unix(s),
+                _ => None,
+            }) else {
+                continue;
+            };
+            let JsonVal::Arr(vec) = &cells[1] else {
+                continue;
+            };
+            let cx = vec.get(0).and_then(scalar_of);
+            let cy = vec.get(1).and_then(scalar_of);
+            let cz = vec.get(2).and_then(scalar_of);
+            let comp = match (cx, cy, cz) {
+                (Some(a), Some(b), Some(c))
+                    if a.is_finite()
+                        && b.is_finite()
+                        && c.is_finite()
+                        && a != FILL_NT
+                        && b != FILL_NT
+                        && c != FILL_NT =>
+                {
+                    Some((a, b, c))
+                }
+                _ => None,
+            };
+            let Some((vx, vy, vz)) = comp else {
+                prev = None;
+                continue;
+            };
+            if let Some((pt, [px, py, pz])) = prev {
+                let dt = t - pt;
+                if (MINUTE - 2.0..=MINUTE + 2.0).contains(&dt) {
+                    let dx = vx - px;
+                    let dy = vy - py;
+                    let dz = vz - pz;
+                    let dbdt = (dx * dx + dy * dy + dz * dz).sqrt();
+                    let this_bucket = (t / bucket_s).floor() * bucket_s;
+                    if this_bucket != bucket_epoch {
+                        if bucket_peak.is_finite() {
+                            peaks.push((bucket_epoch, bucket_peak));
+                        }
+                        bucket_epoch = this_bucket;
+                        bucket_peak = f64::NEG_INFINITY;
+                    }
+                    if dbdt > bucket_peak {
+                        bucket_peak = dbdt;
+                    }
+                }
+            }
+            prev = Some((t, [vx, vy, vz]));
+        }
+    }
+    if bucket_peak.is_finite() {
+        peaks.push((bucket_epoch, bucket_peak));
+    }
+    peaks
+}
+
+fn bin_cells(series: &[(f64, f64)], t0: f64, dt: f64, n: usize) -> Vec<Option<f32>> {
+    let mut sums = vec![0.0f64; n];
+    let mut counts = vec![0u32; n];
+    for &(t, v) in series {
+        let idx = ((t - t0) / dt).floor();
+        if idx < 0.0 || idx >= n as f64 {
+            continue;
+        }
+        let i = idx as usize;
+        sums[i] += v;
+        counts[i] += 1;
+    }
+    (0..n)
+        .map(|i| {
+            if counts[i] > 0 {
+                Some((sums[i] / counts[i] as f64) as f32)
+            } else {
+                None
+            }
+        })
+        .collect()
+}
+
+fn bin_cells_median(series: &[(f64, f64)], t0: f64, dt: f64, n: usize) -> Vec<Option<f32>> {
+    let mut cells: Vec<Vec<f64>> = vec![Vec::new(); n];
+    for &(t, v) in series {
+        let idx = ((t - t0) / dt).floor();
+        if idx < 0.0 || idx >= n as f64 {
+            continue;
+        }
+        cells[idx as usize].push(v);
+    }
+    cells
+        .into_iter()
+        .map(|mut c| {
+            if c.is_empty() {
+                return None;
+            }
+            c.sort_by(|a, b| a.total_cmp(b));
+            let m = c.len() / 2;
+            let med = if c.len() % 2 == 1 {
+                c[m]
+            } else {
+                0.5 * (c[m - 1] + c[m])
+            };
+            Some(med as f32)
+        })
+        .collect()
+}
+
+fn newell_from_cells(
+    by: &[Option<f32>],
+    bz: &[Option<f32>],
+    speed: &[Option<f32>],
+) -> Vec<Option<f32>> {
+    by.iter()
+        .zip(bz.iter())
+        .zip(speed.iter())
+        .map(|((b, z), s)| match (b, z, s) {
+            (Some(by), Some(bz), Some(v)) => {
+                let bt = ((*by as f64) * (*by as f64) + (*bz as f64) * (*bz as f64)).sqrt();
+                let theta = (*by as f64).atan2(*bz as f64);
+                let val = (*v as f64).powf(4.0 / 3.0)
+                    * bt.powf(2.0 / 3.0)
+                    * (theta / 2.0).sin().abs().powf(8.0 / 3.0);
+                if val.is_finite() {
+                    Some(val as f32)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn bs_from_cells(bz: &[Option<f32>]) -> Vec<Option<f32>> {
+    bz.iter()
+        .map(|z| match z {
+            Some(v) => Some((-(*v as f64)).max(0.0) as f32),
+            None => None,
+        })
+        .collect()
+}
+
+fn clock_angle_from_cells(by: &[Option<f32>], bz: &[Option<f32>]) -> Vec<Option<f32>> {
+    by.iter()
+        .zip(bz.iter())
+        .map(|(b, z)| match (b, z) {
+            (Some(by), Some(bz)) => {
+                let deg = (*by as f64).atan2(*bz as f64).to_degrees();
+                let deg = if deg < 0.0 { deg + 360.0 } else { deg };
+                if deg.is_finite() {
+                    Some(deg as f32)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn pdyn_from_cells(density: &[Option<f32>], speed: &[Option<f32>]) -> Vec<Option<f32>> {
+    density
+        .iter()
+        .zip(speed.iter())
+        .map(|(n, v)| match (n, v) {
+            (Some(n), Some(v)) => {
+                let val = 1.67e-6 * (*n as f64) * (*v as f64) * (*v as f64);
+                if val.is_finite() {
+                    Some(val as f32)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn mach_from_cells(
+    bx: &[Option<f32>],
+    by: &[Option<f32>],
+    bz: &[Option<f32>],
+    speed: &[Option<f32>],
+    density: &[Option<f32>],
+) -> Vec<Option<f32>> {
+    bx.iter()
+        .zip(by.iter())
+        .zip(bz.iter())
+        .zip(speed.iter())
+        .zip(density.iter())
+        .map(|((((x, b), z), v), n)| match (x, b, z, v, n) {
+            (Some(bx), Some(by), Some(bz), Some(v), Some(n)) => {
+                let bt = ((*bx as f64) * (*bx as f64)
+                    + (*by as f64) * (*by as f64)
+                    + (*bz as f64) * (*bz as f64))
+                    .sqrt();
+                let nn = *n as f64;
+                if bt > 0.0 && nn > 0.0 {
+                    let val = (*v as f64) * nn.sqrt() / (21.8 * bt);
+                    if val.is_finite() {
+                        Some(val as f32)
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
+    let mut xs = Vec::new();
+    let mut ys = Vec::new();
+    for (ca, cb) in a.iter().zip(b.iter()) {
+        if let (Some(x), Some(y)) = (ca, cb) {
+            xs.push(*x);
+            ys.push(*y);
+        }
+    }
+    (xs, ys)
+}
+
+fn align_channels(channels: &[&[Option<f32>]]) -> Vec<Vec<f32>> {
+    let n = match channels.iter().map(|c| c.len()).min() {
+        Some(n) => n,
+        None => return Vec::new(),
+    };
+    let mut out: Vec<Vec<f32>> = vec![Vec::new(); channels.len()];
+    for i in 0..n {
+        if !channels.iter().all(|c| c[i].is_some()) {
+            continue;
+        }
+        for (ci, c) in channels.iter().enumerate() {
+            if let Some(v) = c[i] {
+                out[ci].push(v);
+            }
+        }
+    }
+    out
+}
+
+fn pcmci_crosscheck(
+    dbdt: &[Option<f32>],
+    bz: &[Option<f32>],
+    speed: &[Option<f32>],
+    density: &[Option<f32>],
+) {
+    println!();
+    println!("=== PCMCI cross-check (Bz → dB/dt edge, conditioned on Speed + Density) ===");
+    let aligned = align_channels(&[dbdt, bz, speed, density]);
+    let n = aligned[0].len();
+    if n < 8 {
+        println!("PCMCI absent — the aligned series carries {n} cells (n < 8)");
+        return;
+    }
+    let series: Vec<&[f32]> = aligned.iter().map(|s| s.as_slice()).collect();
+    let params = PcmciParams {
+        max_lag: LAG_MAX_H,
+        null_lag: LAG_MAX_H,
+        bins: 8,
+        seed: SURROGATE_SEED,
+        n_surr: N_SURR,
+        null: TeNull::Phase,
+        block: 0,
+        est: TeEstimator::Binned,
+        k: 4,
+        p_max: 2,
+        alpha: 0.05,
+    };
+    let Some(links) = pcmci_links(&series, params) else {
+        println!("PCMCI absent — the link scan returned no result (null fit void)");
+        return;
+    };
+    const CH: [&str; 4] = ["dB/dt", "Bz", "Speed", "Density"];
+    for l in &links {
+        let (Some(d), Some(t)) = (CH.get(l.driver), CH.get(l.target)) else {
+            continue;
+        };
+        let verdict = if l.te > l.threshold {
+            "survives"
+        } else {
+            "removed"
+        };
+        let fdr = if l.fdr_pass { " | fdr" } else { "" };
+        println!(
+            "{d} → {t} | lag {:>2} h | cond TE {:.4e} | thr {:.4e} | p {:.4e} | {verdict}{fdr}",
+            l.lag, l.te, l.threshold, l.p_value
+        );
+    }
+    let bz_edge: Vec<_> = links
+        .iter()
+        .filter(|l| l.driver == 1 && l.target == 0)
+        .collect();
+    let surviving = bz_edge.iter().filter(|l| l.te > l.threshold).count();
+    match (bz_edge.is_empty(), surviving) {
+        (true, _) => println!(
+            "Bz → dB/dt edge: removed by conditioning — no lag survives; the yearly arrow is not confirmed by PCMCI"
+        ),
+        (false, 0) => println!(
+            "Bz → dB/dt edge: 0 of {} lag(s) survive conditioning — the PCMCI cross-check does not confirm the yearly arrow",
+            bz_edge.len()
+        ),
+        (false, k) => println!(
+            "Bz → dB/dt edge: {k} of {} lag(s) survive conditioning — the PCMCI cross-check confirms a direct Bz edge",
+            bz_edge.len()
+        ),
+    }
+}
+
+fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f64> {
+    let mut rng = seed.wrapping_add(0x9e37_79b9_7f4a_7c15);
+    let mut vals = Vec::new();
+    for _ in 0..N_SURR {
+        let ys = phase_randomized_surrogate(from, &mut rng);
+        if let Some(te) = transfer_entropy_lag(to, &ys, lag) {
+            vals.push(te);
+        }
+    }
+    vals
+}
+
+fn mean_plus_2sigma(vals: &[f64]) -> Option<f64> {
+    if vals.len() < 2 {
+        return None;
+    }
+    let m = vals.iter().sum::<f64>() / vals.len() as f64;
+    let var = vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
+    Some(m + 2.0 * var.sqrt())
+}
+
+fn te_h_null(x: &[f32], y: &[f32], lag: usize, factor: f64) -> Option<(f64, f64)> {
+    let te = transfer_entropy_lag_h(x, y, lag, factor)?;
+    let mut rng = SURROGATE_SEED.wrapping_add(0x9e37_79b9_7f4a_7c15);
+    let mut vals = Vec::with_capacity(N_SURR);
+    for _ in 0..N_SURR {
+        let ys = phase_randomized_surrogate(y, &mut rng);
+        if let Some(t) = transfer_entropy_lag_h(x, &ys, lag, factor) {
+            vals.push(t);
+        }
+    }
+    let thr = mean_plus_2sigma(&vals)?;
+    Some((te, thr))
+}
+
+fn family_bound(pairs: &[(&str, &str, &[f32], &[f32])], lags: &[usize]) -> f64 {
+    let mut fam = f64::NEG_INFINITY;
+    for (_, _, to, from) in pairs {
+        for &lag in lags {
+            for te in surrogate_te_values(to, from, lag, SURROGATE_SEED) {
+                if te > fam {
+                    fam = te;
+                }
+            }
+        }
+    }
+    fam
+}
+
+fn surrogate_p_value(obs: f64, surrs: &[f64]) -> f64 {
+    let exceed = surrs.iter().filter(|&&v| v >= obs).count() as f64;
+    (exceed + 1.0) / (surrs.len() as f64 + 1.0)
+}
+
+fn row(from: &str, to: &str, to_s: &[f32], from_s: &[f32], lags: &[usize], fam: f64, unit: &str) {
+    let mut best: Option<(usize, f64)> = None;
+    for &lag in lags {
+        if let Some(te) = transfer_entropy_lag(to_s, from_s, lag) {
+            if best.map_or(true, |(_, b)| te > b) {
+                best = Some((lag, te));
+            }
+        }
+    }
+    let Some((lag, te)) = best else {
+        println!("{from:>12} → {to:<12} | no TE (n < 8)");
+        return;
+    };
+    match surrogate_stats_phase_n(to_s, from_s, lag, SURROGATE_SEED, N_SURR) {
+        Some((mean, sd, thr)) => {
+            let fam_v = if te > fam { "arrow" } else { "family bound" };
+            println!(
+                "{from:>12} → {to:<12} | lag {lag} {unit} | TE {te:>10.4e} | thr {thr:>10.4e} (mean {mean:.3e}, σ {sd:.3e}) | fam {fam:.4e} | {fam_v}"
+            );
+        }
+        None => {
+            println!(
+                "{from:>12} → {to:<12} | lag {lag} {unit} | TE {te:>10.4e} | fam {fam:.4e} | threshold absent"
+            );
+        }
+    }
+}
+
+fn family_bound_resumable(
+    pairs: &[(&str, &str, &[f32], &[f32])],
+    lags: &[usize],
+    state_path: &str,
+) -> f64 {
+    let mut chunks_done = 0usize;
+    let mut fam = f64::NEG_INFINITY;
+    if let Ok(s) = std::fs::read_to_string(state_path) {
+        let mut it = s.split_whitespace();
+        if let (Some(c), Some(f)) = (it.next(), it.next()) {
+            if let (Ok(cd), Ok(fv)) = (c.parse::<usize>(), f.parse::<f64>()) {
+                chunks_done = cd.min(12);
+                fam = fv;
+            }
+        }
+    }
+    let mut idx = 0usize;
+    for (_, _, to, from) in pairs {
+        for &lag in lags {
+            if idx >= chunks_done {
+                for te in surrogate_te_values(to, from, lag, SURROGATE_SEED) {
+                    if te > fam {
+                        fam = te;
+                    }
+                }
+                let _ = std::fs::write(state_path, format!("{} {:.17e}", idx + 1, fam));
+                eprintln!("fam chunk {}/12: running fam {fam:.4e}", idx + 1);
+            }
+            idx += 1;
+        }
+    }
+    fam
+}
+
+fn report_max_t(members: &[wy_max_t::Member], nulls: &[Vec<f64>], alpha: f64, n_mt: usize) {
+    let sigma = wy_max_t::sigma_per_statistic(nulls);
+    let null_means = wy_max_t::null_means_per_statistic(nulls);
+    let stud = wy_max_t::studentized_maxima(nulls, &null_means, &sigma);
+    let mut finite: Vec<f64> = stud.iter().copied().filter(|v| v.is_finite()).collect();
+    finite.sort_by(|a, b| a.total_cmp(b));
+    match wy_max_t::quantile(&finite, alpha) {
+        Some(q) => {
+            let observed = wy_max_t::observed_family(members);
+            let obs_stud: Vec<Option<f64>> = observed
+                .iter()
+                .enumerate()
+                .map(|(mi, o)| {
+                    let m = null_means.get(mi).copied().flatten()?;
+                    let s = sigma.get(mi).copied().flatten()?;
+                    Some(((*o)? - m) / s)
+                })
+                .collect();
+            let obs_max = obs_stud
+                .iter()
+                .flatten()
+                .copied()
+                .fold(f64::NEG_INFINITY, f64::max);
+            println!(
+                "max-T (1-alpha) quantile = {q:.4e} | B = {} finite | n = {n_mt} | alpha = {alpha}",
+                finite.len()
+            );
+            if obs_max.is_finite() {
+                println!(
+                    "observed studentized family maximum = {obs_max:.4e} | clears max-T quantile: {}",
+                    obs_max > q
+                );
+            } else {
+                println!(
+                    "observed studentized family maximum: pending — no statistic carries a measured spread"
+                );
+            }
+            for (mi, m) in members.iter().enumerate() {
+                if let Some(s) = sigma.get(mi).copied().flatten() {
+                    println!("MDE {:<18} | lag {} | {}", m.label, m.lag, q * s);
+                }
+            }
+            for (m, o) in members.iter().zip(obs_stud.iter()) {
+                let neff = match kde_n_eff(&m.target, &m.driver, m.lag) {
+                    Some(ne) => format!("{ne:.4e}"),
+                    None => "pending".to_string(),
+                };
+                match o {
+                    Some(t) => println!(
+                        "{:<18} | lag {} | n_eff {neff} | T_stud {t:.4e}",
+                        m.label, m.lag
+                    ),
+                    None => println!(
+                        "{:<18} | lag {} | n_eff {neff} | T_stud pending",
+                        m.label, m.lag
+                    ),
+                }
+            }
+        }
+        None => println!(
+            "max-T (1-alpha) quantile: pending — no finite replicate carries a spread (B = {}, n = {n_mt})",
+            nulls.len()
+        ),
+    }
+}
+
+fn run_hourly(
+    station: &str,
+    hour_start: &str,
+    hour_end: &str,
+    harvest_only: bool,
+    force_harvest: bool,
+    yearly_round: bool,
+    threads: usize,
+    null_mode: NullMode,
+    n_perm: usize,
+    alpha: f64,
+    perm_from: usize,
+    perm_to: usize,
+    out_null: Option<&str>,
+    combine_paths: &[String],
+) {
+    let sy: i64 = hour_start
+        .get(..4)
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(2024);
+    let ey: i64 = hour_end
+        .get(..4)
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(2026);
+    let cache_1h = disk_cache(&format!("abk_dbdt_1h_{station}_{sy}.tsv"));
+    let omni2_1h = disk_cache("omni2_serie_1h.bin").to_string();
+    let h_start = iso_to_unix(&format!("{hour_start}T00:00:00Z"));
+    let h_end = iso_to_unix(&format!("{hour_end}T00:00:00Z"));
+
+    let omni = load_omni2(&omni2_1h);
+    let omni_bz: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_BZ)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_by: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_BY)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_bx: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_BX)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_speed: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_V1800)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_density: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_N1800)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    println!(
+        "omni2_serie_1h.bin: Bx {:<6} | Bz {:<6} | Speed {:<6} | Density {:<6} (60-min-Buckets, 1994→2026, TDB→unix)",
+        omni_bx.len(),
+        omni_bz.len(),
+        omni_speed.len(),
+        omni_density.len()
+    );
+    println!(
+        "derived: Bs = max(-Bz,0) | Clock = atan2(By,Bz) deg 0-360 | P_dyn = 1.67e-6·n·v² [nPa] | M_A = v·√n/(21.8·B), B = sqrt(Bx²+By²+Bz²)"
+    );
+
+    let mut dbdt_1h: Vec<(f64, f64)> = Vec::new();
+    if !force_harvest {
+        if let Some(recs) = load_cdn_station_dbdt(station) {
+            if !recs.is_empty() {
+                eprintln!(
+                    "CDN {}_dbdt_1h.bin: {} hours (flat series, imag-data.bgs.ac.uk)",
+                    station.to_lowercase(),
+                    recs.len()
+                );
+                dbdt_1h = recs;
+            }
+        }
+        if dbdt_1h.is_empty() {
+            match load_cache(&cache_1h) {
+                Some(c) if !c.is_empty() => {
+                    eprintln!(
+                        "cache {cache_1h}: {} hours loaded — the CDN asset is not local",
+                        c.len()
+                    );
+                    dbdt_1h = c;
+                }
+                _ => {}
+            };
+        }
+    }
+    if dbdt_1h.is_empty() {
+        for y in sy..=ey {
+            let mut hours = harvest_station_year_buckets(station, y, HOUR);
+            if hours.is_empty() {
+                eprintln!("ABK {y}: no hourly cells — the year stays empty");
+                continue;
+            }
+            eprintln!(
+                "ABK {y}: {} hours harvested (hourly max |dB/dt|)",
+                hours.len()
+            );
+            dbdt_1h.append(&mut hours);
+        }
+        dbdt_1h.sort_by(|a, b| a.0.total_cmp(&b.0));
+        write_cache(&cache_1h, &dbdt_1h);
+        eprintln!("cache {cache_1h}: {} hours written", dbdt_1h.len());
+    }
+    if harvest_only {
+        println!(
+            "Harvest complete — cache {cache_1h} stands; the measurement run without --harvest-only."
+        );
+        return;
+    }
+    println!(
+        "ABK hourly max |dB/dt|: {} hours ({} → {})",
+        dbdt_1h.len(),
+        edge_iso(dbdt_1h.first().map(|&(t, _)| t)),
+        edge_iso(dbdt_1h.last().map(|&(t, _)| t))
+    );
+
+    let Some((lo, hi)) = shared_window(&omni_bz, &dbdt_1h, h_start, h_end) else {
+        println!("common hourly window: absent — no hour shared by OMNI2 and ABK |dB/dt|");
+        return;
+    };
+    let t0 = (lo / HOUR).floor() * HOUR;
+    let n_cells = ((hi - t0) / HOUR).floor().max(1.0) as usize;
+    println!(
+        "common hourly window: {} → {} | {} hours",
+        iso_utc(t0),
+        iso_utc(t0 + n_cells as f64 * HOUR),
+        n_cells
+    );
+
+    let bz = bin_cells(&omni_bz, t0, HOUR, n_cells);
+    let bz_med = bin_cells_median(&omni_bz, t0, HOUR, n_cells);
+    let bx = bin_cells(&omni_bx, t0, HOUR, n_cells);
+    let by = bin_cells(&omni_by, t0, HOUR, n_cells);
+    let speed = bin_cells(&omni_speed, t0, HOUR, n_cells);
+    let density = bin_cells(&omni_density, t0, HOUR, n_cells);
+    let newell = newell_from_cells(&by, &bz, &speed);
+    let bs = bs_from_cells(&bz);
+    let clock = clock_angle_from_cells(&by, &bz);
+    let pdyn = pdyn_from_cells(&density, &speed);
+    let ma = mach_from_cells(&bx, &by, &bz, &speed, &density);
+    let dbdt = bin_cells(&dbdt_1h, t0, HOUR, n_cells);
+
+    let (dbdt_bz, bz_dbdt) = pair_cells(&dbdt, &bz);
+    let (dbdt_bz_med, bz_med_dbdt) = pair_cells(&dbdt, &bz_med);
+    let (dbdt_newell, newell_dbdt) = pair_cells(&dbdt, &newell);
+    let (dbdt_speed, speed_dbdt) = pair_cells(&dbdt, &speed);
+    let (dbdt_density, density_dbdt) = pair_cells(&dbdt, &density);
+    let (dbdt_bs, bs_dbdt) = pair_cells(&dbdt, &bs);
+    let (dbdt_clock, clock_dbdt) = pair_cells(&dbdt, &clock);
+    let (dbdt_pdyn, pdyn_dbdt) = pair_cells(&dbdt, &pdyn);
+    let (dbdt_ma, ma_dbdt) = pair_cells(&dbdt, &ma);
+    println!(
+        "paired hours: Bz {:<6} | Bz_med {:<6} | Newell {:<6} | Speed {:<6} | Density {:<6} | Bs {:<6} | Clock {:<6} | P_dyn {:<6} | M_A {:<6}",
+        bz_dbdt.len(),
+        bz_med_dbdt.len(),
+        newell_dbdt.len(),
+        speed_dbdt.len(),
+        density_dbdt.len(),
+        bs_dbdt.len(),
+        clock_dbdt.len(),
+        pdyn_dbdt.len(),
+        ma_dbdt.len()
+    );
+
+    let lags: Vec<usize> = if yearly_round {
+        vec![0, 1]
+    } else {
+        (0..=LAG_MAX_H).collect()
+    };
+    let pairs: Vec<(&str, &str, &[f32], &[f32])> = if yearly_round {
+        vec![
+            ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
+            ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
+            ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
+            ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
+            ("Density", "dB/dt", &dbdt_density, &density_dbdt),
+            ("dB/dt", "Density", &density_dbdt, &dbdt_density),
+        ]
+    } else {
+        vec![
+            ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
+            ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
+            ("Bz_med", "dB/dt", &dbdt_bz_med, &bz_med_dbdt),
+            ("Newell", "dB/dt", &dbdt_newell, &newell_dbdt),
+            ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
+            ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
+            ("Density", "dB/dt", &dbdt_density, &density_dbdt),
+            ("dB/dt", "Density", &density_dbdt, &dbdt_density),
+            ("Bs", "dB/dt", &dbdt_bs, &bs_dbdt),
+            ("Clock", "dB/dt", &dbdt_clock, &clock_dbdt),
+            ("P_dyn", "dB/dt", &dbdt_pdyn, &pdyn_dbdt),
+            ("M_A", "dB/dt", &dbdt_ma, &ma_dbdt),
+        ]
+    };
+
+    if yearly_round {
+        println!();
+        println!(
+            "=== Yearly round — six pairs, lag 0/1 h (TE | own threshold | fam, n_surr = {N_SURR}) ==="
+        );
+        let jobs: Vec<(&str, &str, usize, &[f32], &[f32])> = pairs
+            .iter()
+            .flat_map(|(from, to, to_s, from_s)| {
+                lags.iter()
+                    .map(move |&lag| (*from, *to, lag, *to_s, *from_s))
+            })
+            .collect();
+        let mut results: Vec<Option<(f64, f64, f64)>> = vec![None; jobs.len()];
+        if threads > 1 && jobs.len() > 1 {
+            use std::sync::atomic::{AtomicUsize, Ordering};
+            let next = std::sync::Arc::new(AtomicUsize::new(0));
+            let partials = std::thread::scope(|s| {
+                let mut handles = Vec::new();
+                for _ in 0..threads.min(jobs.len()) {
+                    let next = std::sync::Arc::clone(&next);
+                    let jobs = &jobs;
+                    handles.push(s.spawn(move || {
+                        let mut out = Vec::new();
+                        loop {
+                            let i = next.fetch_add(1, Ordering::Relaxed);
+                            if i >= jobs.len() {
+                                break;
+                            }
+                            let (_, _, lag, to_s, from_s) = jobs[i];
+                            let Some(te) = transfer_entropy_lag(to_s, from_s, lag) else {
+                                continue;
+                            };
+                            let vals = surrogate_te_values(to_s, from_s, lag, SURROGATE_SEED);
+                            let fam_partial =
+                                vals.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+                            let Some(thr) = mean_plus_2sigma(&vals) else {
+                                continue;
+                            };
+                            out.push((i, Some((te, thr, fam_partial))));
+                        }
+                        out
+                    }));
+                }
+                handles
+                    .into_iter()
+                    .map(|h| h.join().expect("worker thread joins"))
+                    .collect::<Vec<_>>()
+            });
+            for p in partials {
+                for (i, v) in p {
+                    results[i] = v;
+                }
+            }
+        } else {
+            for (i, (_, _, lag, to_s, from_s)) in jobs.iter().enumerate() {
+                let Some(te) = transfer_entropy_lag(to_s, from_s, *lag) else {
+                    continue;
+                };
+                let vals = surrogate_te_values(to_s, from_s, *lag, SURROGATE_SEED);
+                let fam_partial = vals.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+                let Some(thr) = mean_plus_2sigma(&vals) else {
+                    continue;
+                };
+                results[i] = Some((te, thr, fam_partial));
+            }
+        }
+        let fam = results.iter().flatten().fold(
+            f64::NEG_INFINITY,
+            |m, &(_, _, fp)| if fp > m { fp } else { m },
+        );
+        println!("fam = {fam:.4e}");
+        for (i, (from, to, lag, _, _)) in jobs.iter().enumerate() {
+            let Some((te, thr, _)) = results[i] else {
+                continue;
+            };
+            let v = if te > fam {
+                "arrow"
+            } else if te > thr {
+                "family bound"
+            } else {
+                "silent"
+            };
+            println!(
+                "{from:>12} → {to:<12} | lag {lag} h | TE {te:.4e} | thr {thr:.4e} | fam {fam:.4e} | {v}"
+            );
+        }
+
+        if null_mode == NullMode::MaxT {
+            let channels = [&dbdt, &bz, &speed, &density];
+            let mut aligned: Vec<Vec<f32>> = vec![Vec::new(); 4];
+            let mut aligned_times: Vec<f64> = Vec::new();
+            for i in 0..n_cells {
+                if channels.iter().all(|c| c[i].is_some()) {
+                    for (ci, c) in channels.iter().enumerate() {
+                        if let Some(v) = c[i] {
+                            aligned[ci].push(v);
+                        }
+                    }
+                    aligned_times.push(t0 + i as f64 * HOUR);
+                }
+            }
+            let n_mt = aligned.first().map_or(0, |c| c.len());
+            println!();
+            println!(
+                "=== Westfall-Young max-T null (rank-Gauss, seasonal driver bootstrap, alpha = {alpha}, B = {n_perm}, block = 24 h) ==="
+            );
+            println!("plugin fam = {fam:.4e}");
+            println!(
+                "GPD tail: pending — the empirical max-T quantile carries the family bound; the estimator stays untouched."
+            );
+            if n_mt < 8 {
+                println!(
+                    "max-T null: pending — the aligned family carries {n_mt} complete hours (n < 8)"
+                );
+            } else {
+                let members = wy_max_t::prepare_members(&aligned);
+                if members.len() != wy_max_t::FAMILY_K {
+                    println!(
+                        "max-T null: pending — {} distinct statistics, {} declared",
+                        members.len(),
+                        wy_max_t::FAMILY_K
+                    );
+                } else {
+                    let seed = wy_max_t::round_seed(0, station, sy);
+                    let phase = wy_max_t::phase_data(&aligned_times);
+                    if !combine_paths.is_empty() {
+                        let mut pooled: Vec<Vec<f64>> = Vec::new();
+                        for path in combine_paths {
+                            match read_null_matrix(path, members.len()) {
+                                Some(rows) => {
+                                    println!("pooled shard {path}: {} replicates", rows.len());
+                                    pooled.extend(rows);
+                                }
+                                None => {
+                                    println!(
+                                        "{path} reads void — the pooled null stays incomplete; no measurement"
+                                    );
+                                    return;
+                                }
+                            }
+                        }
+                        println!(
+                            "combine: pooled B = {} | m = {} | alpha = {alpha} | seed = {seed} (shards carried the same seed and global replicate indices)",
+                            pooled.len(),
+                            members.len()
+                        );
+                        report_max_t(&members, &pooled, alpha, n_mt);
+                        return;
+                    }
+                    let nulls = wy_max_t::null_matrix(
+                        &members,
+                        perm_from..perm_to,
+                        24,
+                        wy_max_t::ResampleMode::Driver,
+                        seed,
+                        threads,
+                        &phase,
+                    );
+                    if let Some(path) = out_null {
+                        if write_null_matrix(path, &nulls) {
+                            println!(
+                                "null matrix written: {path} | rows = {} | m = {} (NaN rows kept)",
+                                nulls.len(),
+                                members.len()
+                            );
+                        } else {
+                            println!("{path} writes void — the null matrix stays unwritten");
+                        }
+                    }
+                    println!(
+                        "shard: seed = {seed} | global replicates [{perm_from}..{perm_to}) | B = {}",
+                        nulls.len()
+                    );
+                    report_max_t(&members, &nulls, alpha, n_mt);
+                }
+            }
+        }
+        return;
+    }
+
+    println!();
+    println!(
+        "=== Pair verdicts (threshold at the best lag, fam = multiple-comparison correction) ==="
+    );
+    let fam_state = omegaflow::archivar::content_dir()
+        .join("bz_retro")
+        .join(format!("fam_state_{station}_{sy}.txt"))
+        .to_string_lossy()
+        .into_owned();
+    let fam = family_bound_resumable(&pairs, &lags, &fam_state);
+    println!("fam = {fam:.4e}");
+    for (from, to, to_s, from_s) in pairs.iter() {
+        row(from, to, to_s, from_s, &lags, fam, "h");
+    }
+
+    println!();
+    println!(
+        "=== Full lag sweep — Bz → dB/dt vs the round family bound (every lag, fam = {fam:.4e}) ==="
+    );
+    for &lag in &lags {
+        match transfer_entropy_lag(&dbdt_bz, &bz_dbdt, lag) {
+            Some(te) => println!(
+                "Bz → dB/dt | lag {lag:>2} h | TE {te:.4e} | fam {fam:.4e} | {}",
+                if te > fam { "arrow" } else { "family bound" }
+            ),
+            None => println!("Bz → dB/dt | lag {lag:>2} h | TE absent (n < 8)"),
+        }
+    }
+
+    println!();
+    println!("=== Bz arrow p-value (surrogate null rank) ===");
+    let mut bz_best: Option<(usize, f64)> = None;
+    for &lag in &lags {
+        if let Some(te) = transfer_entropy_lag(&dbdt_bz, &bz_dbdt, lag) {
+            if bz_best.map_or(true, |(_, b)| te > b) {
+                bz_best = Some((lag, te));
+            }
+        }
+    }
+    if let Some((lag, obs)) = bz_best {
+        let per_lag = surrogate_te_values(&dbdt_bz, &bz_dbdt, lag, SURROGATE_SEED);
+        let per_p = surrogate_p_value(obs, &per_lag);
+        let per_exceed = per_lag.iter().filter(|&&v| v >= obs).count();
+        let mut pool: Vec<f64> = Vec::new();
+        for (_, _, to, from) in pairs.iter() {
+            for &l in &lags {
+                pool.extend(surrogate_te_values(to, from, l, SURROGATE_SEED));
+            }
+        }
+        let fam_exceed = pool.iter().filter(|&&v| v >= obs).count();
+        let fam_p = surrogate_p_value(obs, &pool);
+        println!(
+            "Bz → dB/dt | lag {lag} h | TE {obs:.4e} | per-lag p = {per_p:.4e} ({per_exceed} of {} surrogates ≥ observed) | family p = {fam_p:.4e} ({fam_exceed} of {} surrogates ≥ observed)",
+            per_lag.len(),
+            pool.len()
+        );
+    }
+
+    println!();
+    println!("=== KDE-h sensitivity on Bz → dB/dt (bandwidth factor, n_surr = {N_SURR}) ===");
+    if let Some((lag, _)) = bz_best {
+        println!(
+            " {:>7} | {:>10} | {:>12} | {:>12} | verdict",
+            "factor", "TE(h)", "thr(h)", "excess"
+        );
+        for f in KDE_FACTORS {
+            match te_h_null(&dbdt_bz, &bz_dbdt, lag, f) {
+                Some((te, thr)) => println!(
+                    " {:>7.2} | {:>10.4e} | {:>12.4e} | {:>+12.4e} | {}",
+                    f,
+                    te,
+                    thr,
+                    te - thr,
+                    if te > thr { "arrow" } else { "still" }
+                ),
+                None => println!(" {:>7.2} | absent", f),
+            }
+        }
+    }
+
+    pcmci_crosscheck(&dbdt, &bz, &speed, &density);
+
+    println!();
+    println!("=== THE BLATT (1-h row) ===");
+    let headline = |from: &str, to_s: &[f32], from_s: &[f32]| -> String {
+        let mut best: Option<(usize, f64)> = None;
+        for &lag in &lags {
+            if let Some(te) = transfer_entropy_lag(to_s, from_s, lag) {
+                if best.map_or(true, |(_, b)| te > b) {
+                    best = Some((lag, te));
+                }
+            }
+        }
+        match best {
+            Some((lag, te)) => {
+                let fam_v = if te > fam { "arrow" } else { "family bound" };
+                format!(
+                    "TE({from} → dB/dt) = {te:.4e} | fam {fam:.4e} | lag {lag} h | n {} | {fam_v}",
+                    to_s.len()
+                )
+            }
+            None => format!("TE({from} → dB/dt) = pending"),
+        }
+    };
+    println!("{}", headline("Bz", &dbdt_bz, &bz_dbdt));
+    println!("{}", headline("Speed", &dbdt_speed, &speed_dbdt));
+    println!(
+        "Window: {} → {} | 1-h grid | ABK hourly max |dB/dt| × OMNI2 hourly (60-min buckets)",
+        iso_utc(t0),
+        iso_utc(t0 + n_cells as f64 * HOUR)
+    );
+    println!("Verdict: what the machine measures — still is a finding (0 honored).");
+    println!(
+        "Boundary named: lag 1 h straddles the L1 travel time (30–60 min); the hourly arrow is the fam test over the storm year."
+    );
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let harvest_only = args.iter().any(|a| a == "--harvest-only");
+    let force_harvest = args.iter().any(|a| a == "--force-harvest");
+    let hourly = args.iter().any(|a| a == "--hourly");
+    let yearly_round = args.iter().any(|a| a == "--yearly-round");
+    let station = match arg_after(&args, "--station") {
+        Some(v) => v.to_string(),
+        None => DEFAULT_STATION.to_string(),
+    };
+    let hour_start = match arg_after(&args, "--hour-start") {
+        Some(v) => v.to_string(),
+        None => DEFAULT_HOUR_START.to_string(),
+    };
+    let hour_end = match arg_after(&args, "--hour-end") {
+        Some(v) => v.to_string(),
+        None => DEFAULT_HOUR_END.to_string(),
+    };
+    let stride = match arg_after(&args, "--stride").and_then(|v| v.parse::<usize>().ok()) {
+        Some(s) if s > 0 => s,
+        _ => 1,
+    };
+    let threads = arg_after(&args, "--threads")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|&t| t > 0)
+        .unwrap_or(1usize);
+    let null_mode = match arg_after(&args, "--null").unwrap_or("plugin") {
+        "plugin" => NullMode::Plugin,
+        "max-t" => NullMode::MaxT,
+        other => {
+            eprintln!("--null {other} names no mode — plugin|max-t; plugin stands");
+            NullMode::Plugin
+        }
+    };
+    let alpha = arg_after(&args, "--alpha")
+        .and_then(|v| v.parse::<f64>().ok())
+        .filter(|v| v.is_finite() && *v > 0.0 && *v < 1.0)
+        .unwrap_or(0.05);
+    let n_perm = arg_after(&args, "--n-perm")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|&v| v > 0)
+        .unwrap_or(10_000);
+    let perm_from = arg_after(&args, "--perm-from")
+        .and_then(|v| v.parse::<usize>().ok())
+        .map_or(PERM_FROM_FIRST, |v| v);
+    let perm_to = arg_after(&args, "--perm-to")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(n_perm);
+    let out_null = arg_after(&args, "--out-null").map(|s| s.to_string());
+    let combine_paths = args_after_all(&args, "--combine");
+    if combine_paths.is_empty() && perm_to <= perm_from {
+        println!("replicate range [{perm_from}..{perm_to}) is empty — no measurement");
+        return;
+    }
+    let Some(now) = now_unix() else {
+        return;
+    };
+    println!("=== Bz retro probe — the driver over 60 years (storm ensemble) ===");
+    println!("system time: {}", iso_utc(now));
+    let null_name = match null_mode {
+        NullMode::Plugin => "plugin (max surrogate TE of the round)",
+        NullMode::MaxT => {
+            "max-t (studentized Westfall-Young, rank-Gauss, seasonal driver bootstrap)"
+        }
+    };
+    println!(
+        "Estimator: KDE-TE (Silverman); null = {null_name}; plugin surrogates = phase-randomized (f64 FFT, {N_SURR} realizations); max-t offline B = {n_perm}, alpha = {alpha}."
+    );
+    if null_mode == NullMode::MaxT && !(hourly && yearly_round) {
+        println!(
+            "max-t selector: the Westfall-Young max-T null is wired to the hourly yearly round (--hourly --yearly-round); this path carries the plugin threshold."
+        );
+    }
+
+    if hourly {
+        run_hourly(
+            &station,
+            &hour_start,
+            &hour_end,
+            harvest_only,
+            force_harvest,
+            yearly_round,
+            threads,
+            null_mode,
+            n_perm,
+            alpha,
+            perm_from,
+            perm_to,
+            out_null.as_deref(),
+            &combine_paths,
+        );
+        return;
+    }
+
+    let omni = load_omni2(&disk_cache(OMNI2_BIN));
+    let omni_bz: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_BZ)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_speed: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_V1800)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_density: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_N1800)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    println!(
+        "omni2_serie.bin: Bz {:<6} | Speed {:<6} | Density {:<6} (daily decimation 1440 min, 1963→2026, TDB→unix)",
+        omni_bz.len(),
+        omni_speed.len(),
+        omni_density.len()
+    );
+
+    let mut dbdt_daily: Vec<(f64, f64)> = if !force_harvest {
+        match load_cache(&disk_cache(&format!("{CACHE_BASE}_{station}.tsv"))) {
+            Some(c) if !c.is_empty() => {
+                eprintln!(
+                    "cache {CACHE_BASE}_{station}: {} days loaded — the harvest is skipped",
+                    c.len()
+                );
+                c
+            }
+            _ => Vec::new(),
+        }
+    } else {
+        Vec::new()
+    };
+    if dbdt_daily.is_empty() {
+        let this_year = 2026i64;
+        for y in FIRST_YEAR..=this_year {
+            let mut days = harvest_station_year_buckets(&station, y, DAY);
+            if days.is_empty() {
+                eprintln!("ABK {y}: no daily cells — the year stays empty");
+                continue;
+            }
+            eprintln!("ABK {y}: {} days harvested (daily max |dB/dt|)", days.len());
+            dbdt_daily.append(&mut days);
+        }
+        dbdt_daily.sort_by(|a, b| a.0.total_cmp(&b.0));
+        write_cache(
+            &disk_cache(&format!("{CACHE_BASE}_{station}.tsv")),
+            &dbdt_daily,
+        );
+        eprintln!(
+            "cache {CACHE_BASE}_{station}: {} days written",
+            dbdt_daily.len()
+        );
+    }
+    if harvest_only {
+        println!(
+            "Harvest complete — cache {CACHE_BASE}_{station} stands; the measurement run without --harvest-only."
+        );
+        return;
+    }
+    println!(
+        "ABK daily max |dB/dt|: {} days ({} → {})",
+        dbdt_daily.len(),
+        edge_iso(dbdt_daily.first().map(|&(t, _)| t)),
+        edge_iso(dbdt_daily.last().map(|&(t, _)| t))
+    );
+
+    let Some((lo, hi)) = shared_window(&omni_bz, &dbdt_daily, None, None) else {
+        println!("common daily window: absent — no day shared by OMNI2 and ABK |dB/dt|");
+        return;
+    };
+    let t0 = (lo / DAY).floor() * DAY;
+    let n_days = ((hi - t0) / DAY).floor().max(1.0) as usize;
+    println!(
+        "common daily window: {} → {} | {} days",
+        iso_utc(t0),
+        iso_utc(t0 + n_days as f64 * DAY),
+        n_days
+    );
+
+    let mut bz = bin_cells(&omni_bz, t0, DAY, n_days);
+    let mut speed = bin_cells(&omni_speed, t0, DAY, n_days);
+    let mut density = bin_cells(&omni_density, t0, DAY, n_days);
+    let mut dbdt = bin_cells(&dbdt_daily, t0, DAY, n_days);
+    if stride > 1 {
+        bz = bz.into_iter().step_by(stride).collect();
+        speed = speed.into_iter().step_by(stride).collect();
+        density = density.into_iter().step_by(stride).collect();
+        dbdt = dbdt.into_iter().step_by(stride).collect();
+        println!(
+            "named subgrid: every {stride}. day (lag 1 = {stride} days; lag 0 stays the storm day)"
+        );
+    }
+
+    let (dbdt_bz, bz_dbdt) = pair_cells(&dbdt, &bz);
+    let (dbdt_speed, speed_dbdt) = pair_cells(&dbdt, &speed);
+    let (dbdt_density, density_dbdt) = pair_cells(&dbdt, &density);
+    println!(
+        "paired days: Bz {:<6} | Speed {:<6} | Density {:<6}",
+        bz_dbdt.len(),
+        speed_dbdt.len(),
+        density_dbdt.len()
+    );
+
+    let lags: [usize; 2] = [0, 1];
+    let pairs: [(&str, &str, &[f32], &[f32]); 6] = [
+        ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
+        ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
+        ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
+        ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
+        ("Density", "dB/dt", &dbdt_density, &density_dbdt),
+        ("dB/dt", "Density", &density_dbdt, &dbdt_density),
+    ];
+
+    println!();
+    println!(
+        "=== Pair verdicts (threshold at the best lag, fam = multiple-comparison correction) ==="
+    );
+    let fam = family_bound(&pairs, &lags);
+    println!("fam = {fam:.4e}");
+    for (from, to, to_s, from_s) in pairs.iter() {
+        row(from, to, to_s, from_s, &lags, fam, "d");
+    }
+
+    println!();
+    println!("=== THE BLATT (retro row) ===");
+    let headline = |from: &str, to_s: &[f32], from_s: &[f32]| -> String {
+        let mut best: Option<(usize, f64)> = None;
+        for &lag in &lags {
+            if let Some(te) = transfer_entropy_lag(to_s, from_s, lag) {
+                if best.map_or(true, |(_, b)| te > b) {
+                    best = Some((lag, te));
+                }
+            }
+        }
+        match best {
+            Some((lag, te)) => {
+                let fam_v = if te > fam { "arrow" } else { "family bound" };
+                format!(
+                    "TE({from} → dB/dt) = {te:.4e} | fam {fam:.4e} | lag {lag} d | n {} | {fam_v}",
+                    to_s.len()
+                )
+            }
+            None => format!("TE({from} → dB/dt) = pending"),
+        }
+    };
+    println!("{}", headline("Bz", &dbdt_bz, &bz_dbdt));
+    println!("{}", headline("Speed", &dbdt_speed, &speed_dbdt));
+    println!(
+        "Window: {} → {} | day grid | ABK daily max |dB/dt| × OMNI2 daily mean | ABK = auroral zone (68.36°N)",
+        iso_utc(t0),
+        iso_utc(t0 + n_days as f64 * DAY)
+    );
+    println!("Verdict: what the machine measures — still is a finding (0 honored).");
+    println!(
+        "Boundary named: the day grid identifies the DRIVER, not the minute lag; the minute arrow (live, 60 min) is its own row."
+    );
+}

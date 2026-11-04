@@ -1,0 +1,182 @@
+#![allow(mixed_script_confusables)]
+pub mod archivar;
+pub mod mathematikerin;
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
+pub mod weberin;
+
+
+pub fn or_temp(value: Option<&str>, name: &str) -> String {
+    match value {
+        Some(v) => v.to_string(),
+        None => temp_path(name).to_string(),
+    }
+}
+
+pub fn temp_path(name: &str) -> &'static str {
+    let base = match std::env::var_os("TMPDIR") {
+        Some(v) => std::path::PathBuf::from(v),
+        None => {
+            let house = std::path::PathBuf::from("scratch");
+            if house.is_dir() {
+                house
+            } else {
+                std::env::temp_dir()
+            }
+        }
+    };
+    Box::leak(
+        base.join(name)
+            .to_string_lossy()
+            .into_owned()
+            .into_boxed_str(),
+    )
+}
+
+pub use archivar::ak135;
+pub use archivar::amanda;
+pub use archivar::amon;
+pub use archivar::ampere_fac;
+pub use archivar::atdf;
+pub use archivar::auger;
+pub use archivar::bayestar;
+pub use archivar::bepicolombo;
+pub use archivar::bison_basu;
+pub use archivar::bison_shift;
+pub use archivar::bison_velocity;
+pub use archivar::bl_narrowband;
+pub use archivar::blinkverse;
+pub use archivar::bpc;
+pub use archivar::brainvision;
+pub use archivar::bsp_reader;
+pub use archivar::callisto;
+pub use archivar::carisma_mag;
+pub use archivar::cdaweb_roti;
+pub use archivar::cdaweb_tec;
+pub use archivar::cdf;
+pub use archivar::cdf25;
+pub use archivar::cdn;
+pub use archivar::cif;
+pub use archivar::cometels;
+pub use archivar::copernicus;
+pub use archivar::cors;
+pub use archivar::dastcom;
+pub use archivar::de2_raw;
+pub use archivar::decaps;
+pub use archivar::demeter;
+pub use archivar::des_y6;
+pub use archivar::dmap;
+pub use archivar::dmsp16_ssj;
+pub use archivar::ebhis;
+pub use archivar::eels;
+pub use archivar::emc;
+pub use archivar::ephemeris;
+pub use archivar::fits;
+pub use archivar::fk;
+pub use archivar::flyby_encounters;
+pub use archivar::gaia_sso;
+pub use archivar::galileo_odr;
+pub use archivar::gdp_drifter;
+pub use archivar::geo;
+pub use archivar::gk2a_ami;
+pub use archivar::goes_abi;
+pub use archivar::goes16_mag;
+pub use archivar::gong;
+pub use archivar::gong_series;
+pub use archivar::grib2;
+pub use archivar::gsfc_ssi;
+pub use archivar::hapi_csv;
+pub use archivar::harvest_table;
+pub use archivar::hdf4;
+pub use archivar::hdf5;
+pub use archivar::helios_merged;
+pub use archivar::hmi_polar;
+pub use archivar::hsd;
+pub use archivar::ifms_agc;
+pub use archivar::imp8_mag;
+pub use archivar::inflate;
+pub use archivar::intermagnet;
+pub use archivar::ionex;
+pub use archivar::ionocal;
+pub use archivar::iris;
+pub use archivar::json;
+pub use archivar::jwst;
+pub use archivar::jwst_equilibrium;
+pub use archivar::kbo;
+pub use archivar::keogram;
+pub use archivar::kepler;
+pub use archivar::kpvt_polar;
+pub use archivar::las;
+pub use archivar::lro_utf;
+pub use archivar::lsk;
+pub use archivar::lzw;
+pub use archivar::matfile;
+pub use archivar::maxi;
+pub use archivar::mdi_polar;
+pub use archivar::mpcorb;
+pub use archivar::mwo_magnetogram;
+pub use archivar::nc4;
+pub use archivar::ndk;
+pub use archivar::netcdf;
+pub use archivar::noaa_nodd;
+pub use archivar::odf;
+pub use archivar::odp;
+pub use archivar::opendap;
+pub use archivar::openneuro_eeg;
+pub use archivar::ossos;
+pub use archivar::parquet;
+pub use archivar::pck;
+pub use archivar::pcn;
+pub use archivar::pioneer_telemetry;
+pub use archivar::poes19_meped;
+#[cfg(feature = "browser_relay")]
+pub use archivar::relay;
+pub use archivar::rinex;
+pub use archivar::rixs;
+pub use archivar::rpw;
+pub use archivar::s2event;
+pub use archivar::sexagesimal;
+pub use archivar::sha256;
+pub use archivar::sk_atm_bins;
+pub use archivar::skydirection;
+pub use archivar::skymap;
+pub use archivar::snirf;
+pub use archivar::soho_eit;
+pub use archivar::soho_lasco;
+pub use archivar::soho_sem;
+pub use archivar::sorce_ascii;
+pub use archivar::spectral;
+pub use archivar::ssusi_aurora;
+pub use archivar::stac;
+pub use archivar::substorm;
+pub use archivar::superdarn_cpcp;
+pub use archivar::supermag_index;
+pub use archivar::suprastrom;
+pub use archivar::swarm_fac;
+pub use archivar::swpc_efield;
+pub use archivar::tdat;
+pub use archivar::themis_asi;
+pub use archivar::themis_mag;
+pub use archivar::thermochem;
+pub use archivar::timed_see;
+pub use archivar::twomass;
+pub use archivar::twomrs;
+pub use archivar::uvfits;
+pub use archivar::vlf_awesome;
+pub use archivar::vlies;
+pub use archivar::volume;
+pub use archivar::wdc_ae;
+pub use archivar::wind;
+pub use archivar::wind_orbit;
+pub use archivar::witness;
+pub use archivar::wso_polar;
+pub use archivar::ztf;
+pub use mathematikerin::doppler;
+pub use mathematikerin::equilibrium;
+pub use mathematikerin::force;
+pub use mathematikerin::healpix;
+pub use mathematikerin::least_squares;
+pub use mathematikerin::mat;
+pub use mathematikerin::media;
+pub use mathematikerin::s2;
+pub use mathematikerin::te;

@@ -1,0 +1,142 @@
+name: de2-conditional-te
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      bin_seconds:
+        description: 'common bin width in seconds (DE-2 and AE are averaged into it)'
+        required: false
+        type: string
+        default: '300'
+      cond_seconds:
+        description: 'conditioner bin width in seconds; 0 = same as bin_seconds (coarsen the conditioner alone, e.g. 10800 for Kp cadence)'
+        required: false
+        type: string
+        default: '0'
+      cond_field:
+        description: 'conditioner series, comma-separated: ae | dst | symd (WDC bin), kp (WDC Kyoto csv), lt | alt (DE-2 orbit), lunar (tidal phase, needs the ephemeris bins)'
+        required: false
+        type: string
+        default: 'ae'
+      max_lag:
+        description: 'lag sweep in bins, 1..max_lag'
+        required: false
+        type: string
+        default: '3'
+      surr:
+        description: 'ARX surrogate draws per TE cell'
+        required: false
+        type: string
+        default: '50'
+      bins:
+        description: 'bins per conditioner (joint Z multiplies: 5 conds at 4 bins = 1024 cells)'
+        required: false
+        type: string
+        default: '8'
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the registered DE-2 CSV and the WDC AE bin
+        run: |
+          set -euo pipefail
+          mkdir -p data/cdaweb.gsfc.nasa.gov data/wdc.kugi.kyoto-u.ac.jp
+          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+            -o data/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv \
+            'https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv'
+          echo 'c128daa832b1fb14a749d019fff8bbc66f136702bd2783559191912355ac0067  data/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv' | sha256sum -c -
+          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+            -o data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin \
+            'https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin'
+      - name: Fetch the WDC Kyoto Kp series (3-hourly)
+        if: contains(inputs.cond_field, 'kp')
+        run: |
+          set -euo pipefail
+          mkdir -p data/wdc.kugi.kyoto-u.ac.jp
+          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+            -o data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
+            'https://wdc.kugi.kyoto-u.ac.jp/hapi/data?id=hour3h_kp&start=1981-08-08T00:00:00Z&stop=1983-02-17T00:00:00Z&format=csv'
+      - name: Fetch the DE-2 orbit from SSCWeb (radial length, local time, lat/lon)
+        if: contains(inputs.cond_field, 'lt') || contains(inputs.cond_field, 'alt') || contains(inputs.cond_field, 'lunar')
+        run: |
+          set -euo pipefail
+          mkdir -p data/cdaweb.gsfc.nasa.gov
+          cargo build --release -q -p omegaflow-measure --bin de2_ssc_orbit
+          out=data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv
+          : > "$out"
+          for range in \
+            "1981-08-15 1981-09-01" \
+            "1981-09-01 1981-10-01" \
+            "1981-10-01 1981-11-01" \
+            "1981-11-01 1981-12-01" \
+            "1981-12-01 1982-01-01" \
+            "1982-01-01 1982-02-01" \
+            "1982-02-01 1982-03-01" \
+            "1982-03-01 1982-04-01" \
+            "1982-04-01 1982-05-01" \
+            "1982-05-01 1982-06-01" \
+            "1982-06-01 1982-07-01" \
+            "1982-07-01 1982-08-01" \
+            "1982-08-01 1982-09-01" \
+            "1982-09-01 1982-10-01" \
+            "1982-10-01 1982-11-01" \
+            "1982-11-01 1982-12-01" \
+            "1982-12-01 1983-01-01" \
+            "1983-01-01 1983-02-01" \
+            "1983-02-01 1983-02-17"
+          do
+            set -- $range
+            xml=$(mktemp)
+            csv=$(mktemp)
+            curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+              "https://sscweb.gsfc.nasa.gov/WS/sscr/2/locations/de2/${1//-/}T000000Z,${2//-/}T000000Z/GEO" -o "$xml"
+            ./target/release/de2_ssc_orbit "$xml" "$csv"
+            cat "$csv" >> "$out"
+            rm -f "$xml" "$csv"
+          done
+          test "$(wc -l < "$out")" -gt 500000
+          head -1 "$out"
+          tail -1 "$out"
+      - name: Run the conditioned TE (both directions, raw vs conditioned)
+        run: |
+          moon_args=()
+          if [[ "${{ inputs.cond_field }}" == *lunar* ]]; then
+            mkdir -p data/ssd.jpl.nasa.gov
+            base=https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris
+            curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
+              -o data/ssd.jpl.nasa.gov/ephemeris_moon.bin "$base/ephemeris_moon.bin"
+            curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
+              -o data/ssd.jpl.nasa.gov/ephemeris_earth.bin "$base/ephemeris_earth.bin"
+            moon_args=(--moon-bin data/ssd.jpl.nasa.gov/ephemeris_moon.bin \
+                       --earth-bin data/ssd.jpl.nasa.gov/ephemeris_earth.bin)
+          fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "BIN_SECONDS ${{ inputs.bin_seconds }} COND ${{ inputs.cond_field }} COND_SECONDS ${{ inputs.cond_seconds }} MAX_LAG ${{ inputs.max_lag }} SURR ${{ inputs.surr }}"
+            cargo run --release -p omegaflow-measure --bin de2_conditional_te -- \
+              --bin-seconds '${{ inputs.bin_seconds }}' \
+              --cond '${{ inputs.cond_field }}' \
+              --cond-seconds '${{ inputs.cond_seconds }}' \
+              --kp-csv data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
+              --orbit-csv data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv \
+              --max-lag '${{ inputs.max_lag }}' \
+              --surr '${{ inputs.surr }}' \
+              --bins '${{ inputs.bins }}' \
+              "${moon_args[@]}"
+          } > de2-conditional-te.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: de2-conditional-te
+          path: de2-conditional-te.txt

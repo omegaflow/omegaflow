@@ -1,0 +1,1318 @@
+pub const FIELD_WGSL: &str = r#"
+struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_ex: vec4f, presence: vec4f };
+const C_VACUUM: f32 = 299792458.0;
+const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
+    C_VACUUM,
+    C_VACUUM,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    C_VACUUM,
+);
+const TWO_PI: f32 = 6.283185307179586;
+const BEAT_PAIR_CAP: u32 = 64u;
+const CHANNEL_CAP: u32 = 16u;
+
+@group(0) @binding(0) var<storage, read> field: array<vec4f>;
+@group(0) @binding(1) var<storage, read> props: array<vec4f>;
+@group(0) @binding(2) var<uniform> vp: VP;
+@group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
+@group(0) @binding(4) var<storage, read_write> pp: array<vec4f>;
+@group(0) @binding(5) var<storage, read> vol_head: array<u32>;
+@group(0) @binding(6) var<storage, read> vol_axis: array<f32>;
+@group(0) @binding(7) var<storage, read> vol_cell: array<f32>;
+@group(0) @binding(8) var<uniform> vol_u: VolUniform;
+@group(0) @binding(9) var<storage, read> shelf: array<vec4f>;
+@group(0) @binding(10) var<storage, read> coupling_at: array<vec4f>;
+
+struct VolUniform { geo: vec4f, count: vec4f };
+
+fn erfc(x: f32) -> f32 {
+    let xa = abs(x);
+    let t = 1.0 / (1.0 + 0.3275911 * xa);
+    let poly = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+    let y = poly * exp(-xa * xa);
+    return select(y, 2.0 - y, x < 0.0);
+}
+
+fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    let e2 = max(extent * extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
+
+    if (kernel_id == 0u) {
+        return 1.0 / (d2 + cut2);
+    } else if (kernel_id == 1u) {
+        return exp(-d2 / (2.0 * cut2)) / (d2 + cut2);
+    } else if (kernel_id == 2u) {
+        if (d2 <= e2) {
+            return 1.0;
+        } else {
+            return 0.0;
+        }
+    } else if (kernel_id == 3u) {
+        return erfc(d_mag / (cut * sqrt(2.0)));
+    } else if (kernel_id == 4u) {
+        return exp(-d_mag / cut);
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let core = exp(-d2 / (2.0 * cut2));
+        let tail = pow(cut2, beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
+        return (1.0 - alpha) * core + alpha * tail;
+    } else if (kernel_id == 6u) {
+        return 1.0 / (d_mag + cut);
+    } else {
+        return exp(-d2 / (2.0 * cut2)) / max(d2 + s2, s2);
+    }
+}
+
+fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    if (d_mag > 1e13) {
+        return 0.0;
+    }
+    let e2 = max(extent * extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
+    let d = max(d_mag, 1e-9);
+
+    if (kernel_id == 0u) {
+        let denom = d2 + cut2;
+        return -2.0 * d / (denom * denom);
+    } else if (kernel_id == 1u) {
+        let denom = d2 + cut2;
+        return -exp(-d2 / (2.0 * cut2)) * d * (denom / cut2 + 2.0) / (denom * denom);
+    } else if (kernel_id == 2u) {
+        return 0.0;
+    } else if (kernel_id == 3u) {
+        let scale = cut * sqrt(2.0);
+        return -2.0 / sqrt(3.141592653589793) * exp(-d2 / (scale * scale)) / scale;
+    } else if (kernel_id == 4u) {
+        return -exp(-d / cut) / cut;
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let e = cut2;
+        let core_grad = -d / e * exp(-d2 / (2.0 * e));
+        let denom = max(d2 + s2, s2);
+        let tail_grad = -beta * d * pow(e, beta * 0.5) / pow(denom, beta * 0.5 + 1.0);
+        return (1.0 - alpha) * core_grad + alpha * tail_grad;
+    } else if (kernel_id == 6u) {
+        let denom = d_mag + cut;
+        return -1.0 / (denom * denom);
+    } else {
+        let e = cut2;
+        let denom = max(d2 + s2, s2);
+        return -exp(-d2 / (2.0 * e)) * (d / e * denom + 2.0 * d) / (denom * denom);
+    }
+}
+
+fn val_eff_at(pre: vec4f, tm: vec4f, ft: u32, v: f32, d_mag: f32) -> f32 {
+    let temporal = abs(vp.presence.w - tm.x);
+    var val = pre.w;
+    let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
+    if (corr > tm.y * 1e-4) {
+        val = pre.w * exp(corr / max(tm.y, 1e-9));
+    }
+    return val;
+}
+
+fn shelf_band_hit(ft: f32, freq: f32, bin_width: f32, row: vec4f) -> bool {
+    if (freq <= 0.0 || row.x != ft) {
+        return false;
+    }
+    let half = abs(bin_width * 0.5);
+    let band_lo = freq - half;
+    let band_hi = freq + half;
+    let rhalf = abs(row.z * 0.5);
+    let rlo = row.y - rhalf;
+    let rhi = row.y + rhalf;
+    return band_hi >= rlo && band_lo <= rhi;
+}
+
+fn propagation_v(ft: u32, advection: f32, presence: f32, freq: f32, bin_width: f32) -> f32 {
+    let advection_measured = (u32(presence) & 4u) != 0u;
+    let flat = select(PROPAGATION_SPEED[ft], advection, ft == 7u && advection_measured);
+    let fft = f32(ft);
+    let rows = arrayLength(&shelf);
+    for (var i = 0u; i < rows; i = i + 1u) {
+        if (shelf_band_hit(fft, freq, bin_width, shelf[i])) {
+            return shelf[i].w;
+        }
+    }
+    return flat;
+}
+
+fn val_eff_grad(pre: vec4f, tm: vec4f, v: f32, d_mag: f32) -> f32 {
+    if (v <= 0.0 || d_mag <= 0.0) {
+        return 0.0;
+    }
+    let temporal = abs(vp.presence.w - tm.x);
+    let corr = d_mag / v;
+    if (corr >= temporal || corr <= tm.y * 1e-4) {
+        return 0.0;
+    }
+    return pre.w * exp(corr / max(tm.y, 1e-9)) / max(tm.y, 1e-9) / v;
+}
+
+fn force_absorption(ft: u32, alpha: f32, d_mag: f32) -> f32 {
+    if (ft == 1u || alpha <= 0.0) {
+        return 1.0;
+    }
+    return exp(-alpha * d_mag);
+}
+
+fn force_absorption_grad(ft: u32, alpha: f32, kp: f32, k: f32) -> f32 {
+    if (ft == 1u || alpha <= 0.0) {
+        return kp;
+    }
+    return kp - alpha * k;
+}
+
+fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
+    let tm = field[j * 3u + 1u];
+    let fm = field[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let delta = pre.xyz - rel;
+    let d2 = dot(delta, delta);
+    let d_mag = sqrt(d2);
+    let sd = dot(pre.xyz, vp.forward.xyz);
+    let t2 = max(d2 - sd * sd, 0.0);
+    let t_mag = sqrt(t2);
+    let ft = u32(tm.z);
+    let kid = u32(mt.z);
+    let mt2 = props[j * 4u + 2u];
+    let mt3 = props[j * 4u + 3u];
+    if (ft == 7u && (u32(mt3.z) & 4u) == 0u) {
+        return vec2f(0.0, f32(ft));
+    }
+    let v = propagation_v(ft, fm.x, mt3.z, mt2.w, mt3.x);
+    var val_eff = val_eff_at(pre, tm, ft, v, d_mag);
+    if (ft == 0u && (u32(mt3.z) & 8u) != 0u) {
+        let z1 = 1.0 + mt.w;
+        val_eff = val_eff / (z1 * z1);
+    }
+    var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    sk = sk * force_absorption(ft, f32(tm.w), d_mag);
+    return vec2f(val_eff * sk, f32(ft));
+}
+
+fn osc_flow(j: u32, pre: vec4f) -> vec3f {
+    let tm = field[j * 3u + 1u];
+    let fm = field[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let delta = pre.xyz;
+    let d2 = dot(delta, delta);
+    let d_mag = sqrt(d2);
+    let ft = u32(tm.z);
+    let kid = u32(mt.z);
+    let mt2 = props[j * 4u + 2u];
+    let mt3 = props[j * 4u + 3u];
+    if (ft == 7u && (u32(mt3.z) & 4u) == 0u) {
+        return vec3f(0.0);
+    }
+    let v = propagation_v(ft, fm.x, mt3.z, mt2.w, mt3.x);
+    var z_aperture = 1.0;
+    if (ft == 0u && (u32(mt3.z) & 8u) != 0u) {
+        let z1 = 1.0 + mt.w;
+        z_aperture = 1.0 / (z1 * z1);
+    }
+    let val_eff = val_eff_at(pre, tm, ft, v, d_mag) * z_aperture;
+    let vp_grad = val_eff_grad(pre, tm, v, d_mag) * z_aperture;
+    let k = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    let kp = field_spatial_grad(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    let dhat = delta / max(d_mag, 1e-9);
+    let att = force_absorption(ft, f32(tm.w), d_mag);
+    let kp_damped = force_absorption_grad(ft, f32(tm.w), kp, k);
+
+    var g = -dhat * (vp_grad * k + val_eff * kp_damped) * att;
+    return g;
+}
+
+fn vol_axis_val(kind: u32, axis_off: u32, i: u32) -> f32 {
+    if (kind == 0u) {
+        return vol_axis[axis_off] + f32(i) * vol_axis[axis_off + 1u];
+    }
+    return vol_axis[axis_off + i];
+}
+
+fn vol_frac(kind: u32, axis_off: u32, n: u32, coord: f32) -> f32 {
+    if (n == 0u) {
+        return -1.0;
+    }
+    let first = vol_axis_val(kind, axis_off, 0u);
+    let last = vol_axis_val(kind, axis_off, n - 1u);
+    let lo = min(first, last);
+    let hi = max(first, last);
+    if (coord < lo || coord > hi) {
+        return -1.0;
+    }
+    if (kind == 0u) {
+        return (coord - first) / vol_axis[axis_off + 1u];
+    }
+    let ascending = first <= last;
+    var lo_i = 0u;
+    var hi_i = n - 1u;
+    while (hi_i - lo_i > 1u) {
+        let mid = (lo_i + hi_i) / 2u;
+        let v = vol_axis[axis_off + mid];
+        let before = select(v >= coord, v <= coord, ascending);
+        if (before) {
+            lo_i = mid;
+        } else {
+            hi_i = mid;
+        }
+    }
+    let v0 = vol_axis[axis_off + lo_i];
+    let v1 = vol_axis[axis_off + hi_i];
+    let denom = v1 - v0;
+    if (abs(denom) < 1e-12) {
+        return f32(lo_i);
+    }
+    return f32(lo_i) + (coord - v0) / denom;
+}
+
+fn vol_bracket3(f: f32, n: u32) -> vec3f {
+    if (n <= 1u) {
+        return vec3f(0.0, 0.0, 0.0);
+    }
+    let fc = clamp(f, 0.0, f32(n - 1u));
+    let i = u32(floor(fc));
+    if (i >= n - 1u) {
+        return vec3f(f32(n - 1u), f32(n - 1u), 0.0);
+    }
+    return vec3f(f32(i), f32(i + 1u), fc - f32(i));
+}
+
+fn vol_mask_bit(mask_off: u32, idx: u32) -> bool {
+    let w = vol_head[mask_off + idx / 32u];
+    return (w & (1u << (idx % 32u))) != 0u;
+}
+
+fn sample_volume(vol: u32, depth: f32, lat: f32, lon: f32) -> vec2f {
+    let h0 = vol * 11u;
+    let data_off = vol_head[h0];
+    let nd = vol_head[h0 + 1u];
+    let nlat = vol_head[h0 + 2u];
+    let nlon = vol_head[h0 + 3u];
+    let mask_off = vol_head[h0 + 10u];
+    let f0 = vol_frac(vol_head[h0 + 4u], vol_head[h0 + 7u], nd, depth);
+    if (f0 < 0.0) {
+        return vec2f(0.0, 0.0);
+    }
+    let f1 = vol_frac(vol_head[h0 + 5u], vol_head[h0 + 8u], nlat, lat);
+    if (f1 < 0.0) {
+        return vec2f(0.0, 0.0);
+    }
+    let f2 = vol_frac(vol_head[h0 + 6u], vol_head[h0 + 9u], nlon, lon);
+    if (f2 < 0.0) {
+        return vec2f(0.0, 0.0);
+    }
+    let b0 = vol_bracket3(f0, nd);
+    let b1 = vol_bracket3(f1, nlat);
+    let b2 = vol_bracket3(f2, nlon);
+    let i0 = u32(b0.x);
+    let i1 = u32(b0.y);
+    let t0 = b0.z;
+    let j0 = u32(b1.x);
+    let j1 = u32(b1.y);
+    let t1 = b1.z;
+    let k0 = u32(b2.x);
+    let k1 = u32(b2.y);
+    let t2 = b2.z;
+    let n000 = (i0 * nlat + j0) * nlon + k0;
+    let n001 = (i0 * nlat + j0) * nlon + k1;
+    let n010 = (i0 * nlat + j1) * nlon + k0;
+    let n011 = (i0 * nlat + j1) * nlon + k1;
+    let n100 = (i1 * nlat + j0) * nlon + k0;
+    let n101 = (i1 * nlat + j0) * nlon + k1;
+    let n110 = (i1 * nlat + j1) * nlon + k0;
+    let n111 = (i1 * nlat + j1) * nlon + k1;
+    if (vol_mask_bit(mask_off, n000) || vol_mask_bit(mask_off, n001) || vol_mask_bit(mask_off, n010) || vol_mask_bit(mask_off, n011) || vol_mask_bit(mask_off, n100) || vol_mask_bit(mask_off, n101) || vol_mask_bit(mask_off, n110) || vol_mask_bit(mask_off, n111)) {
+        return vec2f(0.0, 0.0);
+    }
+    let c000 = vol_cell[data_off + n000];
+    let c001 = vol_cell[data_off + n001];
+    let c010 = vol_cell[data_off + n010];
+    let c011 = vol_cell[data_off + n011];
+    let c100 = vol_cell[data_off + n100];
+    let c101 = vol_cell[data_off + n101];
+    let c110 = vol_cell[data_off + n110];
+    let c111 = vol_cell[data_off + n111];
+    let c00 = c000 + (c100 - c000) * t0;
+    let c01 = c001 + (c101 - c001) * t0;
+    let c10 = c010 + (c110 - c010) * t0;
+    let c11 = c011 + (c111 - c011) * t0;
+    let c0 = c00 + (c10 - c00) * t1;
+    let c1 = c01 + (c11 - c01) * t1;
+    return vec2f(c0 + (c1 - c0) * t2, 1.0);
+}
+
+fn beat_pair(
+    freq_a: f32, phase_a: f32, pres_a: f32,
+    freq_b: f32, phase_b: f32, pres_b: f32,
+    t: f32, dt: f32, val_a: f32, val_b: f32,
+) -> f32 {
+    if (pres_a < 0.5 || pres_b < 0.5 || freq_a <= 0.0 || freq_b <= 0.0) {
+        return 0.0;
+    }
+    let df = abs(freq_a - freq_b);
+    if (df <= 0.0 || dt <= 0.0 || df * dt >= 0.5) {
+        return 0.0;
+    }
+    return val_a * val_b * cos(TWO_PI * df * t + (phase_a - phase_b));
+}
+
+fn apply_couplings(omegas: ptr<function, array<f32, CHANNEL_CAP>>) {
+    let npairs = arrayLength(&coupling_at) / 2u;
+    var deltas = array<f32, CHANNEL_CAP>();
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { deltas[i] = 0.0; }
+    for (var p = 0u; p < npairs; p = p + 1u) {
+        let a = coupling_at[p * 2u];
+        let b = coupling_at[p * 2u + 1u];
+        let i = u32(a.x);
+        let j = u32(a.y);
+        if (i >= CHANNEL_CAP || j >= CHANNEL_CAP) { continue; }
+        let k = a.w;
+        let raw_i = (*omegas)[i];
+        let raw_j = (*omegas)[j];
+        let rho_from = select(raw_i, b.y * raw_i, b.x > 0.5);
+        let rho_to = select(raw_j, b.w * raw_j, b.z > 0.5);
+        let m_sum = b.y + b.w;
+        if (!(rho_from >= 0.0) || !(rho_to > 0.0) || !(m_sum > 0.0)) { continue; }
+        if (u32(a.z) == 0u) {
+            let rate = k * rho_to / m_sum;
+            let d = raw_j - raw_i;
+            let from_delta = rate * d;
+            let to_delta = -from_delta * (rho_from / rho_to);
+            deltas[i] = deltas[i] + from_delta;
+            deltas[j] = deltas[j] + to_delta;
+        } else {
+            let product = k * raw_i * raw_j;
+            deltas[i] = deltas[i] + product;
+            deltas[j] = deltas[j] + product;
+        }
+    }
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { (*omegas)[i] = (*omegas)[i] + deltas[i]; }
+}
+
+@compute @workgroup_size(1)
+fn presence_probe() {
+    let count = u32(vp.surface.z);
+    var omegas = array<f32, CHANNEL_CAP>();
+    var dist = array<f32, CHANNEL_CAP>();
+    var radial = array<f32, CHANNEL_CAP>();
+    var wsum = array<f32, CHANNEL_CAP>();
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { omegas[i] = 0.0; dist[i] = 0.0; radial[i] = 0.0; wsum[i] = 0.0; }
+    var flow = vec3f(0.0);
+    let dt = vp.presence.w - vp.expose_ex.y;
+    let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let m = field[j * 3u];
+        let tm = field[j * 3u + 1u];
+        let fm = field[j * 3u + 2u];
+        let mt = props[j * 4u];
+        let v_rel = fm.yzw - v_obs;
+        let propagated = m.xyz + v_rel * dt;
+        let temporal = abs(vp.presence.w - tm.x);
+        let ft = u32(tm.z);
+        let kid = u32(mt.z);
+        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)));
+        pp[j] = pre;
+        var fast = 0.0;
+        if ((kid == 0u || kid == 6u) && (ft != 1u) && (temporal < tm.y * 1e-4)) {
+            fast = 1.0;
+        }
+        pp[u32(vp.surface.z) + j] = vec4f(f32(ft), mt.x, f32(kid), fast);        let c = osc_field(j, vec3f(0.0), pre);
+        let f = u32(c.y);
+        if (f < CHANNEL_CAP) {
+            omegas[f] += c.x;
+            let w = abs(c.x);
+            if (w > 0.0) {
+                let rel = propagated - vp.presence.xyz;
+                let d = length(rel);
+                let n = select(vec3f(0.0), rel / d, d > 0.0);
+                dist[f] += w * d;
+                radial[f] += w * dot(fm.yzw, n);
+                wsum[f] += w;
+            }
+        }
+        if ((u32(props[j * 4u + 3u].z) & 16u) == 0u) {
+            flow = flow + osc_flow(j, pre);
+        }
+    }
+    var phase_idx = array<u32, BEAT_PAIR_CAP>();
+    var phase_n: u32 = 0u;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let qj = props[j * 4u + 3u];
+        if ((u32(qj.z) & 16u) == 0u && qj.z > 0.5 && props[j * 4u + 2u].w > 0.0 && phase_n < BEAT_PAIR_CAP) {
+            phase_idx[phase_n] = j;
+            phase_n = phase_n + 1u;
+        }
+    }
+    for (var a = 0u; a < phase_n; a = a + 1u) {
+        let ja = phase_idx[a];
+        let fta = u32(field[ja * 3u + 1u].z);
+        for (var b = a + 1u; b < phase_n; b = b + 1u) {
+            let jb = phase_idx[b];
+            let ftb = u32(field[jb * 3u + 1u].z);
+            if (fta == ftb && fta < CHANNEL_CAP) {
+                omegas[fta] += beat_pair(
+                    props[ja * 4u + 2u].w, props[ja * 4u + 3u].y, props[ja * 4u + 3u].z,
+                    props[jb * 4u + 2u].w, props[jb * 4u + 3u].y, props[jb * 4u + 3u].z,
+                    vp.presence.w, dt, field[ja * 3u].w, field[jb * 3u].w,
+                );
+            }
+        }
+    }
+    let vcount = u32(vol_u.count.x);
+    if (vol_u.geo.w > 0.5 && vcount > 0u) {
+        let depth = vol_u.geo.x;
+        let lat = vol_u.geo.y;
+        let lon = vol_u.geo.z;
+        for (var v = 0u; v < vcount; v = v + 1u) {
+            let sv = sample_volume(v, depth, lat, lon);
+            if (sv.y > 0.5) {
+                omegas[3] += sv.x;
+            }
+        }
+    }
+    apply_couplings(&omegas);
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { probe_out[i] = omegas[i]; }
+    probe_out[CHANNEL_CAP] = flow.x;
+    probe_out[CHANNEL_CAP + 1u] = flow.y;
+    probe_out[CHANNEL_CAP + 2u] = flow.z;
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {
+        probe_out[CHANNEL_CAP + 3u + i] = select(0.0, dist[i] / wsum[i], wsum[i] > 0.0);
+        probe_out[CHANNEL_CAP + 3u + CHANNEL_CAP + i] = select(0.0, radial[i] / wsum[i], wsum[i] > 0.0);
+    }
+}
+"#;
+
+pub const TE_WGSL: &str = r#"
+const RING_MAX: u32 = 1024u;
+const SERIES_COUNT: u32 = 101u;
+const DIM: u32 = 3u;
+const ORDER: u32 = 3u;
+const F32_EPS: f32 = 1.19e-07;
+const LOG2_FACTORIAL: f32 = 2.584962500721156;
+
+@group(0) @binding(0) var<storage, read> series: array<f32>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read_write> verdict: array<f32>;
+
+fn ser_at(s: u32, i: u32) -> f32 {
+    return series[s * RING_MAX + i];
+}
+
+fn find_mi_lag(s: u32, n: u32, max_lag: u32) -> i32 {
+    if (max_lag < 3u) { return -1; }
+    var mi_prev2: f32 = 0.0;
+    var mi_prev: f32 = 0.0;
+    for (var lag = 1u; lag <= max_lag; lag = lag + 1u) {
+        let w = n - lag;
+        var mn: f32 = ser_at(s, 0u);
+        var mx: f32 = mn;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let v = ser_at(s, i);
+            mn = min(mn, v);
+            mx = max(mx, v);
+        }
+        let range = mx - mn;
+        if (range <= 0.0) { return -1; }
+        let mid = mn + range * 0.5;
+        var h00: u32 = 0u;
+        var h01: u32 = 0u;
+        var h10: u32 = 0u;
+        var h11: u32 = 0u;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let b1 = ser_at(s, i) > mid;
+            let b2 = ser_at(s, i + lag) > mid;
+            if (!b1 && !b2) { h00 = h00 + 1u; }
+            else if (!b1 && b2) { h01 = h01 + 1u; }
+            else if (b1 && !b2) { h10 = h10 + 1u; }
+            else { h11 = h11 + 1u; }
+        }
+        let total = f32(w);
+        let p0 = (f32(h00) + f32(h01)) / total;
+        let p1 = (f32(h10) + f32(h11)) / total;
+        let q0 = (f32(h00) + f32(h10)) / total;
+        let q1 = (f32(h01) + f32(h11)) / total;
+        var mi: f32 = 0.0;
+        if (h00 > 0u) {
+            let p = f32(h00) / total;
+            mi = mi + p * log2(p / (p0 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h01 > 0u) {
+            let p = f32(h01) / total;
+            mi = mi + p * log2(p / (p0 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (h10 > 0u) {
+            let p = f32(h10) / total;
+            mi = mi + p * log2(p / (p1 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h11 > 0u) {
+            let p = f32(h11) / total;
+            mi = mi + p * log2(p / (p1 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (lag >= 3u && mi_prev2 > mi_prev && mi_prev <= mi) {
+            return i32(lag - 1u);
+        }
+        mi_prev2 = mi_prev;
+        mi_prev = mi;
+    }
+    return -1;
+}
+
+fn find_cross_mi_lag(st: u32, sd: u32, n: u32, max_lag: u32) -> i32 {
+    if (n < 8u || max_lag < 1u || max_lag >= n) { return -1; }
+    var best_mi: f32 = -1.0;
+    var best_lag: i32 = -1;
+    for (var lag = 1u; lag <= max_lag; lag = lag + 1u) {
+        let w = n - lag;
+        var mn_t: f32 = ser_at(st, lag);
+        var mx_t: f32 = mn_t;
+        var mn_d: f32 = ser_at(sd, 0u);
+        var mx_d: f32 = mn_d;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let vd = ser_at(sd, i);
+            let vt = ser_at(st, i + lag);
+            mn_d = min(mn_d, vd);
+            mx_d = max(mx_d, vd);
+            mn_t = min(mn_t, vt);
+            mx_t = max(mx_t, vt);
+        }
+        let range_t = mx_t - mn_t;
+        let range_d = mx_d - mn_d;
+        if (range_t <= 0.0 || range_d <= 0.0) { continue; }
+        let mid_t = mn_t + range_t * 0.5;
+        let mid_d = mn_d + range_d * 0.5;
+        var h00: u32 = 0u;
+        var h01: u32 = 0u;
+        var h10: u32 = 0u;
+        var h11: u32 = 0u;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let bd = ser_at(sd, i) > mid_d;
+            let bt = ser_at(st, i + lag) > mid_t;
+            if (!bd && !bt) { h00 = h00 + 1u; }
+            else if (!bd && bt) { h01 = h01 + 1u; }
+            else if (bd && !bt) { h10 = h10 + 1u; }
+            else { h11 = h11 + 1u; }
+        }
+        let total = f32(w);
+        let p0 = (f32(h00) + f32(h01)) / total;
+        let p1 = (f32(h10) + f32(h11)) / total;
+        let q0 = (f32(h00) + f32(h10)) / total;
+        let q1 = (f32(h01) + f32(h11)) / total;
+        var mi: f32 = 0.0;
+        if (h00 > 0u) {
+            let p = f32(h00) / total;
+            mi = mi + p * log2(p / (p0 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h01 > 0u) {
+            let p = f32(h01) / total;
+            mi = mi + p * log2(p / (p0 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (h10 > 0u) {
+            let p = f32(h10) / total;
+            mi = mi + p * log2(p / (p1 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h11 > 0u) {
+            let p = f32(h11) / total;
+            mi = mi + p * log2(p / (p1 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (best_lag < 0 || mi > best_mi) {
+            best_mi = mi;
+            best_lag = i32(lag);
+        }
+    }
+    return best_lag;
+}
+
+fn permutation_entropy(s: u32, n: u32) -> vec2f {
+    let span = ORDER - 1u;
+    if (n <= span) { return vec2f(0.0, 0.0); }
+    let total_windows = n - span;
+    var counts = array<f32, 6>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    var used: f32 = 0.0;
+    for (var i = 0u; i < total_windows; i = i + 1u) {
+        let v0 = ser_at(s, i);
+        let v1 = ser_at(s, i + 1u);
+        let v2 = ser_at(s, i + 2u);
+        if (v0 == v1 || v0 == v2 || v1 == v2) { continue; }
+        var rank = array<u32, 3>(0u, 0u, 0u);
+        rank[0] = select(0u, 1u, v1 < v0) + select(0u, 1u, v2 < v0);
+        rank[1] = select(0u, 1u, v0 < v1) + select(0u, 1u, v2 < v1);
+        rank[2] = select(0u, 1u, v0 < v2) + select(0u, 1u, v1 < v2);
+        let l0 = select(0u, 1u, rank[1] < rank[0]) + select(0u, 1u, rank[2] < rank[0]);
+        let l1 = select(0u, 1u, rank[2] < rank[1]);
+        let key = l0 * 2u + l1;
+        counts[key] = counts[key] + 1.0;
+        used = used + 1.0;
+    }
+    if (used <= 0.0) { return vec2f(0.0, 0.0); }
+    var entropy: f32 = 0.0;
+    for (var k = 0u; k < 6u; k = k + 1u) {
+        if (counts[k] > 0.0) {
+            let p = counts[k] / used;
+            entropy = entropy - p * log2(p);
+        }
+    }
+    return vec2f(entropy / LOG2_FACTORIAL, used);
+}
+
+fn embedded_silverman(s: u32, tau: u32, n: u32) -> f32 {
+    let back = (DIM - 1u) * tau;
+    if (back >= n) { return -1.0; }
+    let n_emb = n - back;
+    var mean = array<f32, 3>(0.0, 0.0, 0.0);
+    for (var k = 0u; k < DIM; k = k + 1u) {
+        var acc: f32 = 0.0;
+        for (var u = 0u; u < n_emb; u = u + 1u) {
+            acc = acc + ser_at(s, u + k * tau);
+        }
+        mean[k] = acc / f32(n_emb);
+    }
+    var var_acc: f32 = 0.0;
+    for (var u = 0u; u < n_emb; u = u + 1u) {
+        var d2: f32 = 0.0;
+        for (var k = 0u; k < DIM; k = k + 1u) {
+            let d = ser_at(s, u + k * tau) - mean[k];
+            d2 = d2 + d * d;
+        }
+        var_acc = var_acc + d2;
+    }
+    var_acc = var_acc / f32(n_emb);
+    if (var_acc <= 0.0) { return -1.0; }
+    return 1.06 * sqrt(var_acc) * pow(f32(n_emb), -0.2);
+}
+
+fn future_silverman(t_low: u32, tau_x: u32, n: u32) -> f32 {
+    let start = t_low + tau_x;
+    if (start >= n) { return -1.0; }
+    let cnt = n - start;
+    if (cnt < 2u) { return -1.0; }
+    var acc: f32 = 0.0;
+    for (var i = start; i < n; i = i + 1u) {
+        acc = acc + ser_at(0u, i);
+    }
+    let mean = acc / f32(cnt);
+    var var_acc: f32 = 0.0;
+    for (var i = start; i < n; i = i + 1u) {
+        let d = ser_at(0u, i) - mean;
+        var_acc = var_acc + d * d;
+    }
+    var_acc = var_acc / f32(cnt);
+    if (var_acc <= 0.0) { return -1.0; }
+    return 1.06 * sqrt(var_acc) * pow(f32(cnt), -0.2);
+}
+
+fn state_d2(s: u32, t: u32, q: u32, tau: u32) -> f32 {
+    var d2: f32 = 0.0;
+    for (var k = 0u; k < DIM; k = k + 1u) {
+        let i_t = t - (DIM - 1u - k) * tau;
+        let i_q = q - (DIM - 1u - k) * tau;
+        let d = ser_at(s, i_t) - ser_at(s, i_q);
+        d2 = d2 + d * d;
+    }
+    return d2;
+}
+
+fn te_embedded_kde(tau_x: u32, tau_y: u32, sy: u32, h_f: f32, h_x: f32, h_y: f32, n: u32) -> f32 {
+    let back_x = (DIM - 1u) * tau_x;
+    let back_y = (DIM - 1u) * tau_y;
+    let t_low = max(back_x, back_y);
+    let t_high = n - tau_x - 1u;
+    let m = t_high - t_low + 1u;
+    let n_x = n - back_x;
+    let n_xy = n - t_low;
+    let inv2_hf = 0.5 / (h_f * h_f);
+    let inv2_hx = 0.5 / (h_x * h_x);
+    let inv2_hy = 0.5 / (h_y * h_y);
+    var te: f32 = 0.0;
+    for (var t = t_low; t <= t_high; t = t + 1u) {
+        let fut = ser_at(0u, t + tau_x);
+        var k3: f32 = 0.0;
+        for (var q = t_low; q <= t_high; q = q + 1u) {
+            let df = fut - ser_at(0u, q + tau_x);
+            k3 = k3 + exp(-df * df * inv2_hf - state_d2(0u, t, q, tau_x) * inv2_hx - state_d2(sy, t, q, tau_y) * inv2_hy);
+        }
+        var k1: f32 = 0.0;
+        for (var q = back_x; q < n; q = q + 1u) {
+            k1 = k1 + exp(-state_d2(0u, t, q, tau_x) * inv2_hx);
+        }
+        var k2xy: f32 = 0.0;
+        for (var q = t_low; q < n; q = q + 1u) {
+            k2xy = k2xy + exp(-state_d2(0u, t, q, tau_x) * inv2_hx - state_d2(sy, t, q, tau_y) * inv2_hy);
+        }
+        var k2x: f32 = 0.0;
+        for (var q = t_low; q <= t_high; q = q + 1u) {
+            let df = fut - ser_at(0u, q + tau_x);
+            k2x = k2x + exp(-df * df * inv2_hf - state_d2(0u, t, q, tau_x) * inv2_hx);
+        }
+        let p3 = k3 / f32(m);
+        let p1 = k1 / f32(n_x);
+        let p2xy = k2xy / f32(n_xy);
+        let p2x = k2x / f32(m);
+        te = te + log(p3 * p1 / max(p2xy * p2x, 1e-30));
+    }
+    return te / f32(m);
+}
+
+fn digamma_f32(x: f32) -> f32 {
+    var v = x;
+    var acc: f32 = 0.0;
+    while (v < 8.0) {
+        acc = acc - 1.0 / v;
+        v = v + 1.0;
+    }
+    let inv = 1.0 / v;
+    let inv2 = inv * inv;
+    return acc + log(v) - 0.5 * inv - inv2 * (1.0 / 12.0 - inv2 * (1.0 / 120.0 - inv2 * (1.0 / 252.0 - inv2 * (1.0 / 240.0))));
+}
+
+fn ksg_joint_max(sy: u32, i: u32, j: u32, tau_x: u32, tau_y: u32) -> f32 {
+    var d: f32 = 0.0;
+    let df = abs(ser_at(0u, i + tau_x) - ser_at(0u, j + tau_x));
+    d = max(d, df);
+    for (var di = 0u; di < DIM; di = di + 1u) {
+        let i_x = i - (DIM - 1u - di) * tau_x;
+        let j_x = j - (DIM - 1u - di) * tau_x;
+        d = max(d, abs(ser_at(0u, i_x) - ser_at(0u, j_x)));
+    }
+    for (var di = 0u; di < DIM; di = di + 1u) {
+        let i_y = i - (DIM - 1u - di) * tau_y;
+        let j_y = j - (DIM - 1u - di) * tau_y;
+        d = max(d, abs(ser_at(sy, i_y) - ser_at(sy, j_y)));
+    }
+    return d;
+}
+
+fn ksg_eps(sy: u32, i: u32, t_low: u32, m: u32, tau_x: u32, tau_y: u32, k_eff: u32) -> f32 {
+    var remaining = k_eff;
+    var floor_v: f32 = 0.0;
+    var have_floor = false;
+    while (remaining > 0u) {
+        var best: f32 = 3.4028235e38;
+        var count: u32 = 0u;
+        for (var j = t_low; j < t_low + m; j = j + 1u) {
+            if (j == i) { continue; }
+            let d = ksg_joint_max(sy, i, j, tau_x, tau_y);
+            if (have_floor && d <= floor_v) { continue; }
+            if (d < best) { best = d; count = 1u; }
+            else if (d == best) { count = count + 1u; }
+        }
+        if (count >= remaining) { return best; }
+        remaining = remaining - count;
+        floor_v = best;
+        have_floor = true;
+    }
+    return 3.4028235e38;
+}
+
+fn te_embedded_ksg(tau_x: u32, tau_y: u32, sy: u32, n: u32, k: u32) -> f32 {
+    let back_x = (DIM - 1u) * tau_x;
+    let back_y = (DIM - 1u) * tau_y;
+    let t_low = max(back_x, back_y);
+    let t_high = n - tau_x - 1u;
+    let m = t_high - t_low + 1u;
+    let k_eff = min(k, m - 1u);
+    var sum: f32 = 0.0;
+    for (var i = t_low; i <= t_high; i = i + 1u) {
+        let eps = ksg_eps(sy, i, t_low, m, tau_x, tau_y, k_eff);
+        var n_x: u32 = 0u;
+        var n_xx: u32 = 0u;
+        var n_xy: u32 = 0u;
+        for (var j = t_low; j <= t_high; j = j + 1u) {
+            if (j == i) { continue; }
+            let fut = abs(ser_at(0u, i + tau_x) - ser_at(0u, j + tau_x)) < eps;
+            var sx = true;
+            for (var di = 0u; di < DIM; di = di + 1u) {
+                let i_x = i - (DIM - 1u - di) * tau_x;
+                let j_x = j - (DIM - 1u - di) * tau_x;
+                if (abs(ser_at(0u, i_x) - ser_at(0u, j_x)) >= eps) {
+                    sx = false;
+                    break;
+                }
+            }
+            var sy_ok = true;
+            for (var di = 0u; di < DIM; di = di + 1u) {
+                let i_y = i - (DIM - 1u - di) * tau_y;
+                let j_y = j - (DIM - 1u - di) * tau_y;
+                if (abs(ser_at(sy, i_y) - ser_at(sy, j_y)) >= eps) {
+                    sy_ok = false;
+                    break;
+                }
+            }
+            if (fut && sx) { n_x = n_x + 1u; }
+            if (sx) { n_xx = n_xx + 1u; }
+            if (sx && sy_ok) { n_xy = n_xy + 1u; }
+        }
+        sum = sum + digamma_f32(f32(n_xx + 1u)) - digamma_f32(f32(n_x + 1u)) - digamma_f32(f32(n_xy + 1u));
+    }
+    return digamma_f32(f32(k_eff)) + sum / f32(m);
+}
+
+@compute @workgroup_size(16)
+fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
+    let tid = gid.x;
+    let n = params.x;
+    let max_lag = params.y;
+    let k = params.w;
+    if (tid >= SERIES_COUNT) { return; }
+    var tau: f32 = 0.0;
+    var te: f32 = 0.0;
+    var pe: f32 = 0.0;
+    var motifs: f32 = 0.0;
+    var valid: f32 = 0.0;
+    var pe_valid: f32 = 0.0;
+    var ksg_te: f32 = 0.0;
+    var ksg_valid: f32 = 0.0;
+    var finite_ok: bool = true;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let va = ser_at(tid, i);
+        let vb = ser_at(0u, i);
+        if (!(va == va) || !(vb == vb) || abs(va) >= 3.4028235e38 || abs(vb) >= 3.4028235e38) {
+            finite_ok = false;
+        }
+    }
+    if (tid == 0u) {
+        if (finite_ok && n >= 8u) {
+            let ty_real = find_mi_lag(1u, n, max_lag);
+            if (ty_real >= 0) {
+                let tc_real = find_cross_mi_lag(0u, 1u, n, u32(ty_real));
+                if (tc_real >= 0) {
+                    tau = f32(tc_real);
+                    valid = 1.0;
+                }
+            }
+        }
+        let pev = permutation_entropy(0u, n);
+        pe = pev.x;
+        motifs = pev.y;
+        if (pev.y > 0.0 && finite_ok) {
+            pe_valid = 1.0;
+        }
+    } else {
+        if (finite_ok && n >= 8u) {
+            let ty = find_mi_lag(tid, n, max_lag);
+            if (ty >= 0) {
+                let u_ty = u32(ty);
+                let tc = find_cross_mi_lag(0u, tid, n, u_ty);
+                if (tc >= 0) {
+                    let u_tc = u32(tc);
+                    let back_x = (DIM - 1u) * u_tc;
+                    let back_y = (DIM - 1u) * u_ty;
+                    let t_low = max(back_x, back_y);
+                    let t_high_ok = u_tc + 1u < n;
+                    var t_high: u32 = 0u;
+                    if (t_high_ok) {
+                        t_high = n - u_tc - 1u;
+                    }
+                    if (back_x < n && back_y < n && t_high_ok && t_low <= t_high) {
+                        let m = t_high - t_low + 1u;
+                        if (m >= 8u) {
+                            let h_scale = bitcast<f32>(params.z);
+                            let h_f = future_silverman(t_low, u_tc, n) * h_scale;
+                            let h_x = embedded_silverman(0u, u_tc, n) * h_scale;
+                            let h_y = embedded_silverman(tid, u_ty, n) * h_scale;
+                            if (h_f > 0.0 && h_x > 0.0 && h_y > 0.0) {
+                                tau = f32(u_ty);
+                                te = te_embedded_kde(u_tc, u_ty, tid, h_f, h_x, h_y, n);
+                                valid = 1.0;
+                            }
+                        }
+                        if (m >= 8u && k > 0u) {
+                            tau = f32(u_ty);
+                            ksg_te = te_embedded_ksg(u_tc, u_ty, tid, n, k);
+                            ksg_valid = 1.0;
+                        }
+                    }
+                }
+            }
+        }
+        if (tid == 1u) {
+            let pev = permutation_entropy(1u, n);
+            pe = pev.x;
+            motifs = pev.y;
+            if (pev.y > 0.0 && finite_ok) {
+                pe_valid = 1.0;
+            }
+        }
+    }
+    let o = tid * 6u;
+    verdict[o + 0u] = tau;
+    verdict[o + 1u] = te;
+    verdict[o + 2u] = pe;
+    verdict[o + 3u] = motifs;
+    verdict[o + 4u] = valid;
+    verdict[o + 5u] = pe_valid;
+    if (k > 0u) {
+        let o_ksg = SERIES_COUNT * 6u + tid * 2u;
+        verdict[o_ksg + 0u] = ksg_te;
+        verdict[o_ksg + 1u] = ksg_valid;
+    }
+}
+"#;
+
+pub const SCALAR_TE_WGSL: &str = r#"
+const S_RING_MAX: u32 = 1024u;
+
+@group(0) @binding(0) var<storage, read> series: array<f32>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read_write> verdict: array<f32>;
+
+fn s_at(s: u32, i: u32) -> f32 {
+    return series[s * S_RING_MAX + i];
+}
+
+fn scalar_silverman(s: u32, n: u32) -> f32 {
+    var acc: f32 = 0.0;
+    var mn: f32 = s_at(s, 0u);
+    var mx: f32 = mn;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let v = s_at(s, i);
+        acc = acc + v;
+        mn = min(mn, v);
+        mx = max(mx, v);
+    }
+    if (mx == mn) {
+        return -1.0;
+    }
+    let mean = acc / f32(n);
+    var var_acc: f32 = 0.0;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let d = s_at(s, i) - mean;
+        var_acc = var_acc + d * d;
+    }
+    var_acc = var_acc / f32(n);
+    if (var_acc <= 0.0) {
+        return -1.0;
+    }
+    return 1.06 * sqrt(var_acc) * pow(f32(n), -0.2);
+}
+
+fn scalar_te(sf: u32, sd: u32, n: u32, shift: u32, hx: f32, hy: f32) -> f32 {
+    let m = n - shift;
+    let inv2_hx = 0.5 / (hx * hx);
+    let inv2_hy = 0.5 / (hy * hy);
+    var te: f32 = 0.0;
+    for (var t = 0u; t < m; t = t + 1u) {
+        let xt = s_at(sf, t);
+        let xt1 = s_at(sf, t + shift);
+        let yt = s_at(sd, t);
+        var k3: f32 = 0.0;
+        for (var s = 0u; s < m; s = s + 1u) {
+            let d1 = xt1 - s_at(sf, s + shift);
+            let d2 = xt - s_at(sf, s);
+            let d3 = yt - s_at(sd, s);
+            k3 = k3 + exp(-(d1 * d1) * inv2_hx - (d2 * d2) * inv2_hx - (d3 * d3) * inv2_hy);
+        }
+        let p3 = k3 / f32(m);
+        var k1: f32 = 0.0;
+        for (var s = 0u; s < n; s = s + 1u) {
+            let d = xt - s_at(sf, s);
+            k1 = k1 + exp(-(d * d) * inv2_hx);
+        }
+        let p1 = k1 / f32(n);
+        var k2xy: f32 = 0.0;
+        for (var s = 0u; s < n; s = s + 1u) {
+            let d1 = xt - s_at(sf, s);
+            let d2 = yt - s_at(sd, s);
+            k2xy = k2xy + exp(-(d1 * d1) * inv2_hx - (d2 * d2) * inv2_hy);
+        }
+        let p2xy = k2xy / f32(n);
+        var k2x: f32 = 0.0;
+        for (var s = 0u; s < m; s = s + 1u) {
+            let d1 = xt1 - s_at(sf, s + shift);
+            let d2 = xt - s_at(sf, s);
+            k2x = k2x + exp(-(d1 * d1) * inv2_hx - (d2 * d2) * inv2_hx);
+        }
+        let p2x = k2x / f32(m);
+        te = te + log(p3 * p1 / max(p2xy * p2x, 1e-30));
+    }
+    return te / f32(m);
+}
+
+@compute @workgroup_size(64)
+fn scalar_te_compute(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let tid = gid.x;
+    let n = params.x;
+    let n_lags = params.y;
+    if (tid >= 286u) {
+        return;
+    }
+    let dir = tid / 143u;
+    let k = (tid % 143u) / 13u;
+    let lag = tid % 13u;
+    let shift = max(lag, 1u);
+    var te: f32 = 0.0;
+    var valid: f32 = 0.0;
+    if (lag < n_lags && n >= 8u && n - shift >= 8u) {
+        let sf = select(k + 1u, 0u, dir == 0u);
+        let sd = select(0u, k + 1u, dir == 0u);
+        let hx = scalar_silverman(sf, n);
+        let hy = scalar_silverman(sd, n);
+        if (hx > 0.0 && hy > 0.0) {
+            te = scalar_te(sf, sd, n, shift, hx, hy);
+            valid = 1.0;
+        }
+    }
+    let o = tid * 2u;
+    verdict[o] = te;
+    verdict[o + 1u] = valid;
+}
+"#;
+
+pub const S2_WGSL: &str = r#"
+const FOUR_PI_INV: f32 = 0.07957747154594767;
+
+@group(0) @binding(0) var<storage, read> osc: array<vec4f>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read> probes: array<vec4f>;
+@group(0) @binding(3) var<storage, read_write> out: array<f32>;
+
+fn band_coef(sigma2: f32, l: u32) -> f32 {
+    if (sigma2 <= 0.0) { return 1.0; }
+    return exp(-0.5 * f32(l) * f32(l + 1u) * sigma2);
+}
+
+fn kernel_at(cosg: f32, sigma2: f32, lmax: u32) -> f32 {
+    let x = clamp(cosg, -1.0, 1.0);
+    var acc: f32 = 1.0;
+    if (lmax >= 1u) {
+        acc = acc + 3.0 * band_coef(sigma2, 1u) * x;
+    }
+    var p0: f32 = 1.0;
+    var p1: f32 = x;
+    for (var l = 2u; l <= lmax; l = l + 1u) {
+        let p2 = (f32(2u * l - 1u) * x * p1 - f32(l - 1u) * p0) / f32(l);
+        acc = acc + f32(2u * l + 1u) * band_coef(sigma2, l) * p2;
+        p0 = p1;
+        p1 = p2;
+    }
+    return acc * FOUR_PI_INV;
+}
+
+@compute @workgroup_size(64)
+fn s2_field(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let pid = gid.x;
+    let osc_count = params.x;
+    let lmax = params.y;
+    let probe_count = params.z;
+    if (pid >= probe_count) { return; }
+    let q = probes[pid].xyz;
+    var field: f32 = 0.0;
+    for (var j = 0u; j < osc_count; j = j + 1u) {
+        let a = osc[j * 2u];
+        let b = osc[j * 2u + 1u];
+        let act = a.w;
+        if (act <= 0.0) { continue; }
+        let cosg = dot(q, a.xyz);
+        let sigma2 = b.x * b.x;
+        field = field + act * kernel_at(cosg, sigma2, lmax);
+    }
+    out[pid] = field;
+}
+"#;
+
+#[cfg(test)]
+mod tests {
+    struct Slot {
+        freq: f32,
+        phase: f32,
+        pres: f32,
+    }
+
+    fn slot(freq: f32, phase: f32, pres: f32) -> Slot {
+        Slot { freq, phase, pres }
+    }
+
+    fn beat_pair(a: Slot, b: Slot, t: f32, dt: f32, val_a: f32, val_b: f32) -> f32 {
+        if a.pres < 0.5 || b.pres < 0.5 || a.freq <= 0.0 || b.freq <= 0.0 {
+            return 0.0;
+        }
+        let df = (a.freq - b.freq).abs();
+        if df <= 0.0 || dt <= 0.0 || df * dt >= 0.5 {
+            return 0.0;
+        }
+        val_a * val_b * (2.0 * std::f32::consts::PI * df * t + (a.phase - b.phase)).cos()
+    }
+
+    #[test]
+    fn beat_pair_two_phase_slots_contribute_the_interference_term() {
+        let b = beat_pair(
+            slot(1.0e6, 1.0, 1.0),
+            slot(1.0e6 + 1.0, 2.0, 1.0),
+            0.0,
+            0.01,
+            2.0,
+            3.0,
+        );
+        let expected = 2.0 * 3.0 * (1.0f32 - 2.0f32).cos();
+        assert!(
+            (b - expected).abs() < 1e-6,
+            "the pair term is A_a·A_b·cos(Δφ): {b}"
+        );
+    }
+
+    #[test]
+    fn beat_pair_one_slot_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6 + 1.0, 2.0, 0.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 0.0),
+                slot(1.0e6 + 1.0, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_without_a_band_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(0.0, 1.0, 1.0),
+                slot(1.0e6, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(0.0, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_identical_tone_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_outside_the_probe_cadence_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6 + 100.0, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6 + 1.0, 2.0, 1.0),
+                0.0,
+                0.0,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    fn force_absorption(ft: u32, alpha: f32, d_mag: f32) -> f32 {
+        if ft == 1 || alpha <= 0.0 {
+            return 1.0;
+        }
+        (-alpha * d_mag).exp()
+    }
+
+    fn force_absorption_grad(ft: u32, alpha: f32, kp: f32, k: f32) -> f32 {
+        if ft == 1 || alpha <= 0.0 {
+            return kp;
+        }
+        kp - alpha * k
+    }
+
+    const ABSORBING_FORCES: [u32; 8] = [0, 2, 3, 4, 5, 6, 7, 8];
+
+    #[test]
+    fn force_absorption_gravity_never_absorbs() {
+        assert_eq!(force_absorption(1, 0.5, 1000.0), 1.0);
+        assert_eq!(force_absorption_grad(1, 0.5, 2.0, 3.0), 2.0);
+    }
+
+    #[test]
+    fn force_absorption_null_or_negative_alpha_is_no_damping() {
+        for ft in ABSORBING_FORCES {
+            assert_eq!(force_absorption(ft, 0.0, 1000.0), 1.0);
+            assert_eq!(force_absorption(ft, -0.1, 1000.0), 1.0);
+            assert_eq!(force_absorption_grad(ft, 0.0, 2.0, 3.0), 2.0);
+            assert_eq!(force_absorption_grad(ft, -0.1, 2.0, 3.0), 2.0);
+        }
+    }
+
+    #[test]
+    fn force_absorption_positive_alpha_damps_beer_lambert() {
+        for ft in ABSORBING_FORCES {
+            let att = force_absorption(ft, 0.1, 10.0);
+            assert!((att - (-1.0f32).exp()).abs() < 1e-6, "ft {ft}: {att}");
+            assert!(force_absorption(ft, 0.1, 0.0) - 1.0 < 1e-6);
+        }
+    }
+
+    #[test]
+    fn force_absorption_gradient_follows_the_product_rule() {
+        let kp = -2.0;
+        let k = 3.0;
+        let alpha = 0.1;
+        for ft in ABSORBING_FORCES {
+            let g = force_absorption_grad(ft, alpha, kp, k);
+            assert!((g - (kp - alpha * k)).abs() < 1e-6, "ft {ft}: {g}");
+        }
+    }
+
+    #[test]
+    fn gate_te_wgsl_series_count_matches_rust() {
+        let needle = format!("const SERIES_COUNT: u32 = {}u;", crate::te::TE_SERIES_COUNT);
+        assert!(
+            super::TE_WGSL.contains(&needle),
+            "the WGSL SERIES_COUNT drifts from TE_SERIES_COUNT ({})",
+            crate::te::TE_SERIES_COUNT
+        );
+    }
+}

@@ -1,0 +1,8 @@
+binding dust-maske
+url https://irsa.ipac.caltech.edu/data/Planck/release_2/all-sky-maps/maps/component-maps/foregrounds/COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits
+sha256 90f0ff42e2eced3105281ee70a5a8faef9758851a4faaac01d687d889a750cef
+column 3
+r_v 3.1
+nside 512
+screen_pc 205
+note Planck-DL07-AV_RQ-Staub-Vordergrund, Rats-Verdikt 2026-09-05: AV_RQ Spalte 3, R_V 3.1 mag, nside 512, Screen 205 pc (Bayestar19-Zentroid 194±71 pc). dust_map_compiler --mask-run. Prosa: docs/concepts/bindings-dust-maske-gebco.md.

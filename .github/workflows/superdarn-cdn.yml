@@ -1,0 +1,39 @@
+name: superdarn-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  superdarn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the zenodo.org release exists on the CDN
+        run: |
+          if ! gh release view zenodo.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create zenodo.org --repo omegaflow/sources \
+              --title "zenodo.org" \
+              --notes "SuperDARN FITACF line-of-sight velocity compiled from the sdc-serv.usask.ca DMAP route to a geo-series (superdarn_fitacf). Record stride 60 B LE: t (f64, TDB s), lat (f64, deg), lon (f64, deg), alt (f64, km), freq (f64), bin_width (f64), val (f64, m/s), comp (u32, 1 = v)."
+          fi
+      - name: Compile the FITACF DMAP file and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin superdarn_fitacf_compiler -- \
+            --body earth \
+            --url https://sdc-serv.usask.ca/data/2026/08/20260820.1630.41.rkn.a.fitacf.bz2 \
+            --radar rkn \
+            --out-bin superdarn_fitacf.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "superdarn-cdn: superdarn_fitacf.bin returned void" \
+                 "superdarn_fitacf compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

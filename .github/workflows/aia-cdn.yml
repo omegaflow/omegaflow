@@ -1,0 +1,97 @@
+name: aia-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: start TAI date (YYYY.MM.DD)
+        required: true
+        type: string
+        default: "2014.03.01"
+      end:
+        description: end TAI date (YYYY.MM.DD)
+        required: true
+        type: string
+        default: "2014.05.30"
+      bands:
+        description: comma-separated wavelengths (Angstrom)
+        required: false
+        type: string
+        default: "94,131,171,193,211,304,335"
+      asset:
+        description: output asset name on the CDN (netloc jsoc.stanford.edu)
+        required: true
+        type: string
+        default: aia2014_lines.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  aia-lines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view jsoc.stanford.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the AIA line series to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --harvest --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
+            --bands "${{ inputs.bands }}" --chunk-days 1 \
+            --out "${{ inputs.asset }}" --ci-mode
+  aia-fullyear:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if all three fullyear bins already exist on the CDN
+        id: idempotence
+        run: |
+          assets=$(gh release view jsoc.stanford.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null)
+          if echo "$assets" | grep -qx "aia2013_fullyear.bin" && \
+             echo "$assets" | grep -qx "aia2014_fullyear.bin" && \
+             echo "$assets" | grep -qx "aia2015_fullyear.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "fullyear bins present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "fullyear bins missing — merging and manifesting"
+          fi
+      - name: Merge the CDN monthlies into the fullyear bins and manifest them
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          mkdir -p aia-merge
+          gh release download jsoc.stanford.edu --repo omegaflow/sources \
+            --pattern 'aia2013_0?.bin' --pattern 'aia2013_1?.bin' \
+            --pattern 'aia2014_0?.bin' --pattern 'aia2014_1?.bin' \
+            --pattern 'aia2015_0?.bin' --pattern 'aia2015_1?.bin' \
+            --clobber --dir aia-merge
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --merge aia-merge/aia2013_01.bin,aia-merge/aia2013_02.bin,aia-merge/aia2013_03.bin,aia-merge/aia2013_04.bin,aia-merge/aia2013_05.bin,aia-merge/aia2013_06.bin,aia-merge/aia2013_07.bin,aia-merge/aia2013_08.bin,aia-merge/aia2013_09.bin,aia-merge/aia2013_10.bin,aia-merge/aia2013_11.bin,aia-merge/aia2013_12.bin \
+            --out aia2013_fullyear.bin --ci-mode
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --merge aia-merge/aia2014_01.bin,aia-merge/aia2014_02.bin,aia-merge/aia2014_03.bin,aia-merge/aia2014_04.bin,aia-merge/aia2014_05.bin,aia-merge/aia2014_06.bin,aia-merge/aia2014_07.bin,aia-merge/aia2014_08.bin,aia-merge/aia2014_09.bin,aia-merge/aia2014_10.bin,aia-merge/aia2014_11.bin,aia-merge/aia2014_12.bin \
+            --out aia2014_fullyear.bin --ci-mode
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --merge aia-merge/aia2015_01.bin,aia-merge/aia2015_02.bin,aia-merge/aia2015_03.bin,aia-merge/aia2015_04.bin,aia-merge/aia2015_05.bin,aia-merge/aia2015_06.bin,aia-merge/aia2015_07.bin,aia-merge/aia2015_08.bin,aia-merge/aia2015_09.bin,aia-merge/aia2015_10.bin,aia-merge/aia2015_11.bin,aia-merge/aia2015_12.bin \
+            --out aia2015_fullyear.bin --ci-mode

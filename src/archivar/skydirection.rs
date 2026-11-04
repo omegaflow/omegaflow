@@ -1,0 +1,848 @@
+use crate::archivar::C_LIGHT;
+use crate::archivar::HUBBLE_H0;
+use crate::archivar::{JsonVal, fetch_raw, jnum, parse_json};
+use std::sync::OnceLock;
+
+pub const MAGIC: [u8; 4] = *b"SKD1";
+pub const HEADER_BYTES: usize = 8;
+pub const OMEGA_M: f64 = 0.3153;
+
+#[derive(Clone)]
+pub struct SkySample {
+    pub tdb: f64,
+    pub mag: f64,
+}
+
+#[derive(Clone)]
+pub struct SkyBandSeries {
+    pub band: Option<String>,
+    pub samples: Vec<SkySample>,
+}
+
+#[derive(Clone)]
+pub struct SkyFluxSample {
+    pub tdb: f64,
+    pub flux_njy: f64,
+    pub flux_err_njy: Option<f64>,
+}
+
+#[derive(Clone)]
+pub struct SkyFluxSeries {
+    pub band: Option<String>,
+    pub samples: Vec<SkyFluxSample>,
+}
+
+#[derive(Clone)]
+pub struct SkyDirection {
+    pub name: String,
+    pub ra_deg: f64,
+    pub dec_deg: f64,
+    pub sigma_arcsec: Option<f64>,
+    pub bands: Vec<SkyBandSeries>,
+    pub flux_bands: Vec<SkyFluxSeries>,
+    pub distance: Option<f64>,
+    pub redshift: Option<f64>,
+}
+
+impl SkyDirection {
+    pub fn unit_direction(&self) -> [f64; 3] {
+        let ra = self.ra_deg.to_radians();
+        let dec = self.dec_deg.to_radians();
+        let (sa, ca) = ra.sin_cos();
+        let (sd, cd) = dec.sin_cos();
+        [cd * ca, cd * sa, sd]
+    }
+
+    pub fn angular_uncertainty_rad(&self) -> Option<f64> {
+        match self.sigma_arcsec {
+            Some(s) if s.is_finite() && s > 0.0 => Some(s.to_radians() / 3600.0),
+            Some(_) => None,
+            None => None,
+        }
+    }
+
+    pub fn distance_m(&self) -> Option<f64> {
+        match (self.distance, self.redshift) {
+            (Some(d), _) if d.is_finite() && d > 0.0 => Some(d),
+            (None, Some(z)) if z.is_finite() && z > 0.0 => {
+                self.distance_m_with_vpec(cosmicflows_vpec_m_s(self.ra_deg, self.dec_deg))
+            }
+            _ => None,
+        }
+    }
+
+    pub fn distance_m_with_vpec(&self, vpec_m_s: Option<f64>) -> Option<f64> {
+        match (self.distance, self.redshift) {
+            (Some(d), _) if d.is_finite() && d > 0.0 => Some(d),
+            (None, Some(z)) if z.is_finite() && z > 0.0 => match vpec_m_s {
+                Some(v) => near_flow_distance_m(z, v),
+                None => Some(z * C_LIGHT / HUBBLE_H0),
+            },
+            _ => None,
+        }
+    }
+
+    pub fn spatial_position(&self) -> Option<[f64; 3]> {
+        let dist = self.distance_m()?;
+        let p = self.unit_direction();
+        Some([p[0] * dist, p[1] * dist, p[2] * dist])
+    }
+}
+
+pub fn near_flow_distance_m(z: f64, vpec_m_s: f64) -> Option<f64> {
+    if !z.is_finite() || z <= 0.0 || !vpec_m_s.is_finite() {
+        return None;
+    }
+    let d = (z * C_LIGHT - vpec_m_s) / HUBBLE_H0;
+    if d.is_finite() && d > 0.0 {
+        Some(d)
+    } else {
+        None
+    }
+}
+
+pub fn far_flow_distance_m(z: f64) -> Option<f64> {
+    if !z.is_finite() || z <= 0.0 {
+        return None;
+    }
+    let omega_lambda = 1.0 - OMEGA_M;
+    let n = 256usize;
+    let dz = z / n as f64;
+    let mut sum = 0.0;
+    for i in 0..=n {
+        let zi = i as f64 * dz;
+        let e = (OMEGA_M * (1.0 + zi).powi(3) + omega_lambda).sqrt();
+        let weight = if i == 0 || i == n {
+            1.0
+        } else if i % 2 == 1 {
+            4.0
+        } else {
+            2.0
+        };
+        sum += weight / e;
+    }
+    let d = C_LIGHT / HUBBLE_H0 * sum * dz / 3.0;
+    if d.is_finite() && d > 0.0 {
+        Some(d)
+    } else {
+        None
+    }
+}
+
+pub const COSMICFLOWS_CDN_URL: &str = "https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json";
+
+pub const COSMICFLOWS_MATCH_RADIUS_ARCSEC: f64 = 30.0;
+
+#[derive(Clone, Copy)]
+pub struct Cf4Entry {
+    pub ra_deg: f64,
+    pub dec_deg: f64,
+    pub vpec_m_s: f64,
+}
+
+pub fn parse_cosmicflows_cf4(body: &str) -> Vec<Cf4Entry> {
+    let Some(JsonVal::Arr(rows)) = parse_json(body) else {
+        return Vec::new();
+    };
+    let mut entries = Vec::with_capacity(rows.len());
+    for r in &rows {
+        let (Some(ra), Some(dec), Some(vpec_km_s)) =
+            (jnum(r, "ra"), jnum(r, "dec"), jnum(r, "vpec"))
+        else {
+            continue;
+        };
+        if !ra.is_finite() || !dec.is_finite() || !vpec_km_s.is_finite() {
+            continue;
+        }
+        if !(0.0..360.0).contains(&ra) || !(-90.0..=90.0).contains(&dec) {
+            continue;
+        }
+        entries.push(Cf4Entry {
+            ra_deg: ra,
+            dec_deg: dec,
+            vpec_m_s: vpec_km_s * 1000.0,
+        });
+    }
+    entries
+}
+
+pub fn nearest_cf4_vpec_m_s(
+    entries: &[Cf4Entry],
+    ra_deg: f64,
+    dec_deg: f64,
+    tol_arcsec: f64,
+) -> Option<f64> {
+    if !ra_deg.is_finite() || !dec_deg.is_finite() || !tol_arcsec.is_finite() || tol_arcsec <= 0.0 {
+        return None;
+    }
+    let ra = ra_deg.to_radians();
+    let dec = dec_deg.to_radians();
+    let (sa, ca) = ra.sin_cos();
+    let (sd, cd) = dec.sin_cos();
+    let u = [cd * ca, cd * sa, sd];
+    let cos_tol = (tol_arcsec.to_radians() / 3600.0).cos();
+    let mut best_cos = cos_tol;
+    let mut best: Option<f64> = None;
+    for e in entries {
+        let era = e.ra_deg.to_radians();
+        let edec = e.dec_deg.to_radians();
+        let (esa, eca) = era.sin_cos();
+        let (esd, ecd) = edec.sin_cos();
+        let v = [ecd * eca, ecd * esa, esd];
+        let cos = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+        if cos >= best_cos {
+            best_cos = cos;
+            best = Some(e.vpec_m_s);
+        }
+    }
+    best
+}
+
+pub fn cosmicflows_vpec_m_s(ra_deg: f64, dec_deg: f64) -> Option<f64> {
+    static CATALOG: OnceLock<Option<Vec<Cf4Entry>>> = OnceLock::new();
+    let entries = CATALOG.get_or_init(|| {
+        fetch_raw(COSMICFLOWS_CDN_URL, None, &[]).map(|body| parse_cosmicflows_cf4(&body))
+    });
+    entries
+        .as_deref()
+        .and_then(|e| nearest_cf4_vpec_m_s(e, ra_deg, dec_deg, COSMICFLOWS_MATCH_RADIUS_ARCSEC))
+}
+
+pub fn write_bin(directions: &[SkyDirection]) -> Option<Vec<u8>> {
+    let mut out = Vec::with_capacity(HEADER_BYTES + directions.len() * 96);
+    out.extend_from_slice(&MAGIC);
+    out.extend_from_slice(&(directions.len() as u32).to_le_bytes());
+    for d in directions {
+        if !d.ra_deg.is_finite() || !d.dec_deg.is_finite() {
+            return None;
+        }
+        let name_len = u32::try_from(d.name.len()).ok()?;
+        out.extend_from_slice(&name_len.to_le_bytes());
+        out.extend_from_slice(d.name.as_bytes());
+        out.extend_from_slice(&d.ra_deg.to_le_bytes());
+        out.extend_from_slice(&d.dec_deg.to_le_bytes());
+        match d.sigma_arcsec {
+            Some(s) if s.is_finite() && s > 0.0 => {
+                out.push(1);
+                out.extend_from_slice(&s.to_le_bytes());
+            }
+            Some(_) => return None,
+            None => out.push(0),
+        }
+        match d.distance {
+            Some(v) if v.is_finite() => {
+                out.push(1);
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+            Some(_) => return None,
+            None => out.push(0),
+        }
+        match d.redshift {
+            Some(v) if v.is_finite() => {
+                out.push(1);
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+            Some(_) => return None,
+            None => out.push(0),
+        }
+        let bands_len = u32::try_from(d.bands.len()).ok()?;
+        out.extend_from_slice(&bands_len.to_le_bytes());
+        for b in &d.bands {
+            match &b.band {
+                Some(name) => {
+                    let len = u32::try_from(name.len()).ok()?;
+                    out.extend_from_slice(&len.to_le_bytes());
+                    out.extend_from_slice(name.as_bytes());
+                }
+                None => out.extend_from_slice(&0u32.to_le_bytes()),
+            }
+            let samples_len = u32::try_from(b.samples.len()).ok()?;
+            out.extend_from_slice(&samples_len.to_le_bytes());
+            for s in &b.samples {
+                if !s.tdb.is_finite() || !s.mag.is_finite() {
+                    return None;
+                }
+                out.extend_from_slice(&s.tdb.to_le_bytes());
+                out.extend_from_slice(&s.mag.to_le_bytes());
+            }
+        }
+        let flux_bands_len = u32::try_from(d.flux_bands.len()).ok()?;
+        out.extend_from_slice(&flux_bands_len.to_le_bytes());
+        for b in &d.flux_bands {
+            match &b.band {
+                Some(name) => {
+                    let len = u32::try_from(name.len()).ok()?;
+                    out.extend_from_slice(&len.to_le_bytes());
+                    out.extend_from_slice(name.as_bytes());
+                }
+                None => out.extend_from_slice(&0u32.to_le_bytes()),
+            }
+            let samples_len = u32::try_from(b.samples.len()).ok()?;
+            out.extend_from_slice(&samples_len.to_le_bytes());
+            for s in &b.samples {
+                if !s.tdb.is_finite() || !s.flux_njy.is_finite() {
+                    return None;
+                }
+                out.extend_from_slice(&s.tdb.to_le_bytes());
+                out.extend_from_slice(&s.flux_njy.to_le_bytes());
+                match s.flux_err_njy {
+                    Some(v) if v.is_finite() => {
+                        out.push(1);
+                        out.extend_from_slice(&v.to_le_bytes());
+                    }
+                    Some(_) => return None,
+                    None => out.push(0),
+                }
+            }
+        }
+    }
+    Some(out)
+}
+
+pub fn parse_bin(bytes: &[u8]) -> Option<Vec<SkyDirection>> {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC {
+        return None;
+    }
+    let count = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    let mut off = HEADER_BYTES;
+    let mut directions = Vec::with_capacity(count);
+    for _ in 0..count {
+        let name_len = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+        off += 4;
+        let name_bytes = bytes.get(off..off + name_len)?;
+        off += name_len;
+        let name = std::str::from_utf8(name_bytes).ok()?.to_string();
+        let f64_at = |o: &mut usize| -> Option<f64> {
+            let v = f64::from_le_bytes(bytes.get(*o..*o + 8)?.try_into().ok()?);
+            *o += 8;
+            Some(v)
+        };
+        let ra_deg = f64_at(&mut off)?;
+        let dec_deg = f64_at(&mut off)?;
+        if !ra_deg.is_finite() || !dec_deg.is_finite() {
+            return None;
+        }
+        let opt_f64 = |o: &mut usize| -> Option<Option<f64>> {
+            let flag = *bytes.get(*o)?;
+            *o += 1;
+            if flag == 0 {
+                return Some(None);
+            }
+            if flag != 1 {
+                return None;
+            }
+            let v = f64::from_le_bytes(bytes.get(*o..*o + 8)?.try_into().ok()?);
+            *o += 8;
+            if !v.is_finite() {
+                return None;
+            }
+            Some(Some(v))
+        };
+        let sigma_arcsec = opt_f64(&mut off)?;
+        let distance = opt_f64(&mut off)?;
+        let redshift = opt_f64(&mut off)?;
+        let bands_len = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+        off += 4;
+        let mut bands = Vec::with_capacity(bands_len);
+        for _ in 0..bands_len {
+            let band_name_len =
+                u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+            off += 4;
+            let band = if band_name_len == 0 {
+                None
+            } else {
+                let b = bytes.get(off..off + band_name_len)?;
+                off += band_name_len;
+                Some(std::str::from_utf8(b).ok()?.to_string())
+            };
+            let samples_len =
+                u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+            off += 4;
+            let mut samples = Vec::with_capacity(samples_len);
+            for _ in 0..samples_len {
+                let tdb = f64_at(&mut off)?;
+                let mag = f64_at(&mut off)?;
+                if !tdb.is_finite() || !mag.is_finite() {
+                    return None;
+                }
+                samples.push(SkySample { tdb, mag });
+            }
+            bands.push(SkyBandSeries { band, samples });
+        }
+        let mut flux_bands = Vec::new();
+        if off < bytes.len() {
+            let flux_bands_len =
+                u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+            off += 4;
+            for _ in 0..flux_bands_len {
+                let band_name_len =
+                    u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+                off += 4;
+                let band = if band_name_len == 0 {
+                    None
+                } else {
+                    let b = bytes.get(off..off + band_name_len)?;
+                    off += band_name_len;
+                    Some(std::str::from_utf8(b).ok()?.to_string())
+                };
+                let samples_len =
+                    u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+                off += 4;
+                let mut samples = Vec::with_capacity(samples_len);
+                for _ in 0..samples_len {
+                    let tdb = f64_at(&mut off)?;
+                    let flux_njy = f64_at(&mut off)?;
+                    if !tdb.is_finite() || !flux_njy.is_finite() {
+                        return None;
+                    }
+                    let flux_err_njy = opt_f64(&mut off)?;
+                    samples.push(SkyFluxSample {
+                        tdb,
+                        flux_njy,
+                        flux_err_njy,
+                    });
+                }
+                flux_bands.push(SkyFluxSeries { band, samples });
+            }
+        }
+        directions.push(SkyDirection {
+            name,
+            ra_deg,
+            dec_deg,
+            sigma_arcsec,
+            bands,
+            flux_bands,
+            distance,
+            redshift,
+        });
+    }
+    if off != bytes.len() {
+        return None;
+    }
+    Some(directions)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::archivar::PARSEC_M;
+
+    fn sample_direction() -> SkyDirection {
+        SkyDirection {
+            name: "ZTF21abxxjrh".to_string(),
+            ra_deg: 37.284397,
+            dec_deg: 9.258595,
+            sigma_arcsec: None,
+            bands: vec![SkyBandSeries {
+                band: None,
+                samples: vec![SkySample {
+                    tdb: 8.2e8,
+                    mag: 19.45389747619629,
+                }],
+            }],
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        }
+    }
+
+    #[test]
+    fn unit_direction_is_the_measured_icrs_unit_vector() {
+        let d = SkyDirection {
+            name: "north".to_string(),
+            ra_deg: 0.0,
+            dec_deg: 90.0,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        };
+        let n = d.unit_direction();
+        assert!((n[0]).abs() < 1e-15);
+        assert!((n[1]).abs() < 1e-15);
+        assert!((n[2] - 1.0).abs() < 1e-15);
+        let d = SkyDirection {
+            name: "equator".to_string(),
+            ra_deg: 90.0,
+            dec_deg: 0.0,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        };
+        let e = d.unit_direction();
+        assert!((e[0]).abs() < 1e-15);
+        assert!((e[1] - 1.0).abs() < 1e-15);
+        assert!(e[2].abs() < 1e-15);
+        let d = SkyDirection {
+            name: "spiral".to_string(),
+            ra_deg: 30.0,
+            dec_deg: 60.0,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        };
+        let u = d.unit_direction();
+        let norm = (u[0] * u[0] + u[1] * u[1] + u[2] * u[2]).sqrt();
+        assert!((norm - 1.0).abs() < 1e-12);
+        let ra = 30f64.to_radians();
+        let dec = 60f64.to_radians();
+        assert!((u[0] - dec.cos() * ra.cos()).abs() < 1e-12);
+        assert!((u[1] - dec.cos() * ra.sin()).abs() < 1e-12);
+        assert!((u[2] - dec.sin()).abs() < 1e-12);
+    }
+
+    #[test]
+    fn bin_roundtrip_preserves_absent_distance_as_none() {
+        let directions = vec![sample_direction()];
+        let bytes = write_bin(&directions).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].name, "ZTF21abxxjrh");
+        assert_eq!(parsed[0].ra_deg, 37.284397);
+        assert_eq!(parsed[0].dec_deg, 9.258595);
+        assert_eq!(parsed[0].bands.len(), 1);
+        assert_eq!(parsed[0].bands[0].band, None);
+        assert_eq!(parsed[0].bands[0].samples.len(), 1);
+        assert_eq!(parsed[0].bands[0].samples[0].tdb, 8.2e8);
+        assert_eq!(parsed[0].bands[0].samples[0].mag, 19.45389747619629);
+        assert_eq!(parsed[0].distance, None);
+        assert_eq!(parsed[0].redshift, None);
+    }
+
+    #[test]
+    fn bin_roundtrip_preserves_a_delivered_distance() {
+        let mut d = sample_direction();
+        d.distance = Some(1.234e23);
+        d.redshift = Some(0.05);
+        d.bands[0].band = Some("g".to_string());
+        let bytes = write_bin(&[d]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].distance, Some(1.234e23));
+        assert_eq!(parsed[0].redshift, Some(0.05));
+        assert_eq!(parsed[0].bands[0].band.as_deref(), Some("g"));
+    }
+
+    #[test]
+    fn bin_roundtrip_holds_multiple_band_series() {
+        let d = SkyDirection {
+            name: "multiband".to_string(),
+            ra_deg: 210.5,
+            dec_deg: 30.25,
+            sigma_arcsec: None,
+            bands: vec![
+                SkyBandSeries {
+                    band: Some("g".to_string()),
+                    samples: vec![
+                        SkySample {
+                            tdb: 8.1e8,
+                            mag: 15.2,
+                        },
+                        SkySample {
+                            tdb: 8.2e8,
+                            mag: 15.4,
+                        },
+                    ],
+                },
+                SkyBandSeries {
+                    band: Some("r".to_string()),
+                    samples: vec![SkySample {
+                        tdb: 8.1e8,
+                        mag: 14.9,
+                    }],
+                },
+            ],
+            flux_bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        };
+        let bytes = write_bin(&[d]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].bands.len(), 2);
+        assert_eq!(parsed[0].bands[0].samples.len(), 2);
+        assert_eq!(parsed[0].bands[1].samples.len(), 1);
+    }
+
+    #[test]
+    fn bin_roundtrip_holds_a_measured_negative_flux_and_its_absent_error() {
+        let d = SkyDirection {
+            name: "fink_r".to_string(),
+            ra_deg: 148.8745712297,
+            dec_deg: 2.5208047616,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: vec![SkyFluxSeries {
+                band: Some("r".to_string()),
+                samples: vec![
+                    SkyFluxSample {
+                        tdb: 8.2e8,
+                        flux_njy: -12200.908,
+                        flux_err_njy: Some(1779.0398),
+                    },
+                    SkyFluxSample {
+                        tdb: 8.3e8,
+                        flux_njy: 0.0,
+                        flux_err_njy: None,
+                    },
+                ],
+            }],
+            distance: None,
+            redshift: None,
+        };
+        let bytes = write_bin(&[d]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].flux_bands.len(), 1);
+        assert_eq!(parsed[0].flux_bands[0].band.as_deref(), Some("r"));
+        assert_eq!(parsed[0].flux_bands[0].samples.len(), 2);
+        assert_eq!(parsed[0].flux_bands[0].samples[0].flux_njy, -12200.908);
+        assert_eq!(
+            parsed[0].flux_bands[0].samples[0].flux_err_njy,
+            Some(1779.0398)
+        );
+        assert_eq!(parsed[0].flux_bands[0].samples[1].flux_njy, 0.0);
+        assert_eq!(parsed[0].flux_bands[0].samples[1].flux_err_njy, None);
+    }
+
+    #[test]
+    fn a_flux_absent_asset_reads_back_with_empty_flux_bands() {
+        let bytes = write_bin(&[sample_direction()]).unwrap();
+        let old = &bytes[..bytes.len() - 4];
+        let parsed = parse_bin(old).unwrap();
+        assert!(parsed[0].flux_bands.is_empty());
+        assert_eq!(parsed[0].bands.len(), 1);
+    }
+
+    #[test]
+    fn bin_refuses_non_finite_flux() {
+        let mut d = sample_direction();
+        d.flux_bands.push(SkyFluxSeries {
+            band: Some("r".to_string()),
+            samples: vec![SkyFluxSample {
+                tdb: 8.2e8,
+                flux_njy: f64::NAN,
+                flux_err_njy: None,
+            }],
+        });
+        assert!(write_bin(&[d]).is_none());
+    }
+
+    #[test]
+    fn bin_refuses_malformed() {
+        assert!(parse_bin(b"SKD1").is_none());
+        assert!(parse_bin(b"SKD2").is_none());
+        let bytes = write_bin(&[sample_direction()]).unwrap();
+        assert!(parse_bin(&bytes[..bytes.len() - 1]).is_none());
+        assert!(parse_bin(b"").is_none());
+    }
+
+    #[test]
+    fn bin_refuses_non_finite_magnitude() {
+        let mut d = sample_direction();
+        d.bands[0].samples[0].mag = f64::NAN;
+        assert!(write_bin(&[d]).is_none());
+    }
+
+    #[test]
+    fn empty_asset_is_a_valid_held_state() {
+        let bytes = write_bin(&[]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert!(parsed.is_empty());
+    }
+
+    #[test]
+    fn sigma_roundtrip_carries_the_measured_uncertainty_and_absent_stays_absent() {
+        let mut d = sample_direction();
+        d.sigma_arcsec = Some(0.512);
+        let bytes = write_bin(&[d]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].sigma_arcsec, Some(0.512));
+        let bytes = write_bin(&[sample_direction()]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].sigma_arcsec, None);
+    }
+
+    #[test]
+    fn sigma_rad_converts_arcsec_and_refuses_unplausible() {
+        let mut d = sample_direction();
+        d.sigma_arcsec = Some(1.0);
+        let r = d.angular_uncertainty_rad().unwrap();
+        assert!((r - std::f64::consts::PI / 648000.0).abs() < 1e-18);
+        d.sigma_arcsec = Some(0.0);
+        assert_eq!(d.angular_uncertainty_rad(), None);
+        d.sigma_arcsec = None;
+        assert_eq!(d.angular_uncertainty_rad(), None);
+        assert!(write_bin(&[d]).is_some());
+    }
+
+    #[test]
+    fn absent_distance_stays_absent_and_spatial_position_stays_none() {
+        let d = sample_direction();
+        assert_eq!(d.distance_m(), None);
+        assert_eq!(d.spatial_position(), None);
+    }
+
+    #[test]
+    fn delivered_distance_places_the_direction_in_the_block() {
+        let mut d = SkyDirection {
+            name: "gaia_placed".to_string(),
+            ra_deg: 30.0,
+            dec_deg: 60.0,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: Vec::new(),
+            distance: Some(2.0 * PARSEC_M),
+            redshift: None,
+        };
+        let pos = d.spatial_position().unwrap();
+        let p = d.unit_direction();
+        let expect = [
+            p[0] * 2.0 * PARSEC_M,
+            p[1] * 2.0 * PARSEC_M,
+            p[2] * 2.0 * PARSEC_M,
+        ];
+        for k in 0..3 {
+            assert!((pos[k] - expect[k]).abs() < 1.0);
+        }
+        d.distance = None;
+        d.redshift = Some(0.05);
+        let hd = d.distance_m_with_vpec(None).unwrap();
+        let expect_hd = 0.05 * C_LIGHT / HUBBLE_H0;
+        assert!((hd - expect_hd).abs() < expect_hd * 1e-12);
+        let p = d.unit_direction();
+        let pos = [p[0] * hd, p[1] * hd, p[2] * hd];
+        for k in 0..3 {
+            assert!((pos[k] - p[k] * expect_hd).abs() < expect_hd * 1e-9);
+        }
+    }
+
+    #[test]
+    fn bin_refuses_non_finite_sigma() {
+        let mut d = sample_direction();
+        d.sigma_arcsec = Some(f64::NAN);
+        assert!(write_bin(&[d]).is_none());
+        let mut d = sample_direction();
+        d.sigma_arcsec = Some(-1.0);
+        assert!(write_bin(&[d]).is_none());
+    }
+
+    #[test]
+    fn near_flow_without_peculiar_velocity_is_the_linear_circle() {
+        let d = near_flow_distance_m(0.05, 0.0).unwrap();
+        let expect = 0.05 * C_LIGHT / HUBBLE_H0;
+        assert!((d - expect).abs() < expect * 1e-12);
+    }
+
+    #[test]
+    fn a_receding_peculiar_velocity_shortens_the_near_flow_distance() {
+        let rest = near_flow_distance_m(0.05, 0.0).unwrap();
+        let receding = near_flow_distance_m(0.05, 3.0e5).unwrap();
+        let infall = near_flow_distance_m(0.05, -3.0e5).unwrap();
+        assert!(receding < rest);
+        assert!(infall > rest);
+    }
+
+    #[test]
+    fn near_flow_absorbs_a_peculiar_velocity_larger_than_the_hubble_share_as_absent() {
+        assert_eq!(near_flow_distance_m(0.05, 0.05 * C_LIGHT + 1.0), None);
+        assert_eq!(near_flow_distance_m(0.05, f64::NAN), None);
+        assert_eq!(near_flow_distance_m(0.0, 0.0), None);
+    }
+
+    #[test]
+    fn far_flow_comoving_distance_at_redshift_one_matches_the_flat_lcdm_integral() {
+        let d = far_flow_distance_m(1.0).unwrap();
+        let expect = 1.010362670790e26;
+        assert!((d - expect).abs() < expect * 1e-9);
+    }
+
+    #[test]
+    fn far_flow_stays_below_the_linear_circle_and_grows_monotonically() {
+        let d1 = far_flow_distance_m(1.0).unwrap();
+        assert!(d1 < C_LIGHT / HUBBLE_H0);
+        assert!(far_flow_distance_m(0.5).unwrap() < d1);
+    }
+
+    #[test]
+    fn zero_or_negative_redshift_reads_absent_in_the_far_flow() {
+        assert_eq!(far_flow_distance_m(0.0), None);
+        assert_eq!(far_flow_distance_m(-0.1), None);
+        assert_eq!(far_flow_distance_m(f64::NAN), None);
+    }
+
+    #[test]
+    fn cosmicflows_asset_parses_the_producer_rows_and_scales_km_s_to_m_s() {
+        let body = r#"[
+            {"ra":44.9736,"dec":1.16,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":45.5982,"dec":0.9793,"dist_mpc":10.0,"vpec":-55.5}
+        ]"#;
+        let entries = parse_cosmicflows_cf4(body);
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].vpec_m_s, 300_000.0);
+        assert_eq!(entries[1].vpec_m_s, -55_500.0);
+        assert_eq!(entries[0].ra_deg, 44.9736);
+        assert_eq!(entries[1].dec_deg, 0.9793);
+    }
+
+    #[test]
+    fn cosmicflows_asset_refuses_rows_without_a_finite_radial_field() {
+        let body = r#"[
+            {"ra":44.9,"dec":1.1,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":null,"dec":1.1,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":400.0,"dec":1.1,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":44.9,"dec":1.1,"dist_mpc":100.0}
+        ]"#;
+        let entries = parse_cosmicflows_cf4(body);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].vpec_m_s, 300_000.0);
+    }
+
+    #[test]
+    fn nearest_cf4_vpec_reads_the_match_inside_the_radius_and_absent_outside() {
+        let entries = vec![
+            Cf4Entry {
+                ra_deg: 30.0,
+                dec_deg: 60.0,
+                vpec_m_s: 123_000.0,
+            },
+            Cf4Entry {
+                ra_deg: 90.0,
+                dec_deg: 0.0,
+                vpec_m_s: -456_000.0,
+            },
+        ];
+        assert_eq!(
+            nearest_cf4_vpec_m_s(&entries, 30.0, 60.0, 30.0),
+            Some(123_000.0)
+        );
+        assert_eq!(
+            nearest_cf4_vpec_m_s(&entries, 30.0001, 60.0, 30.0),
+            Some(123_000.0)
+        );
+        assert_eq!(nearest_cf4_vpec_m_s(&entries, 180.0, 0.0, 30.0), None);
+        assert_eq!(nearest_cf4_vpec_m_s(&[], 30.0, 60.0, 30.0), None);
+    }
+
+    #[test]
+    fn distance_m_applies_the_peculiar_velocity_only_when_a_redshift_stands() {
+        let mut d = sample_direction();
+        d.redshift = Some(0.05);
+        let linear = d.distance_m_with_vpec(None).unwrap();
+        let receding = d.distance_m_with_vpec(Some(3.0e5)).unwrap();
+        let infall = d.distance_m_with_vpec(Some(-3.0e5)).unwrap();
+        assert!(receding < linear);
+        assert!(infall > linear);
+        let delivered = SkyDirection {
+            distance: Some(2.0 * PARSEC_M),
+            redshift: Some(0.05),
+            ..sample_direction()
+        };
+        assert_eq!(
+            delivered.distance_m_with_vpec(Some(3.0e5)),
+            Some(2.0 * PARSEC_M)
+        );
+    }
+}

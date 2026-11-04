@@ -1,0 +1,20 @@
+# Drei unabhängige Prüfklassen je Format — die Zahl, die das Gate führt.
+#
+# struktur  die Datei hält ihr eigenes Gesetz: Signatur, Länge, Satzbreite,
+#           Kopf gegen Daten. Aus dem Deskriptor, ohne fremde Quelle.
+# leser     eine zweite, fremde Implementierung liest dieselbe Datei und
+#           liefert dieselben Zeilen. Unser eigener Writer zählt nicht:
+#           gleiche Abstammung ist eine Klasse, nicht zwei.
+# gesetz    eine Aussage außerhalb der Datei: Zeitordnung, Spanne, physikalische
+#           Schranke, Einheiten-Dimension, oder ein zweiter Datensatz
+#           derselben Größe aus einer anderen Institution.
+#
+# Werte: gemessen | absent.  Ein Format ohne drei gemessene Klassen gibt
+# seine Assets nicht frei, auch wenn der Deskriptor parst.
+#
+# Quellen der Messung stehen im Auftrag (projects/auftrag-2026-10-29-pruefschuld-formate.md).
+#
+# format	struktur	leser	gesetz
+mariner_occlt	gemessen	absent	gemessen
+mariner4_odg	gemessen	absent	gemessen
+mariner_rst	gemessen	absent	gemessen

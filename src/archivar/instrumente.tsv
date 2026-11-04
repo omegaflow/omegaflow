@@ -1,0 +1,21 @@
+# Instrument inventory — per measurement class the instrument, its band, and the evidence.
+#
+# Why this file: the register (phi/sources.φ) carries force, unit and cadence per
+# field, but neither the instrument nor its band. Without that column the only
+# search axis left is the brand in the URL — exactly the mistake that cost the
+# Schumann route and the MISCHA blocks.
+#
+# Columns: klasse <TAB> instrument <TAB> band <TAB> beleg
+#   klasse      force/unit, as counted by `bin/instrumente` (lower case)
+#   instrument  measuring device (not brand), e.g. "Fluxgate-Magnetometer"; a
+#               tool is not one: a compiler or a search measures nothing
+#   band        measurement band, e.g. "DC-64 Hz" — empty while unread
+#   beleg       URL carrying the sentence; empty = not researched yet
+#
+# `bin/instrumente` counts rows/cadences/licenses per class from the register
+# and joins them with this table. Empty rows are the work list; they are
+# worked top (most fields) to bottom.
+klasse	instrument	band	beleg
+em/nt	Fluxgate-Magnetometer	DC-64 Hz	https://themis.ssl.berkeley.edu/instrument_fgm.shtml
+acoustic/m	Wellenpegel (spektrale Energiedichte)	0.03-0.4 Hz	https://www.ndbc.noaa.gov/measdes.shtml
+em/nt/hz**1/2	Fluxgate-Magnetometer (Spektrum, 15 Bänder à 0,625 Hz)	0.039-9.961 Hz	https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0110f.lbl

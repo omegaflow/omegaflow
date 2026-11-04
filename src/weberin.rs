@@ -1,0 +1,2182 @@
+use std::collections::HashMap;
+use std::sync::Arc;
+
+use crate::archivar::cometels::CometelsRec;
+use crate::archivar::dastcom::{CometRec, comet_state_at};
+use crate::archivar::gaia_sso::{GaiaBody, ang_sep_arcsec, predicted_radec, tno_table};
+#[cfg(test)]
+use crate::archivar::kepler::{AU_M, GM_SUN_M3_S2};
+use crate::archivar::mpcorb::{self, MpcorbRec};
+use crate::archivar::{
+    AsteroidRec, BodyEphemeris, J2000_EPOCH, body_barycenter_position, state_at,
+};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Verdict {
+    Placed,
+    Absent,
+    DirectionOnly,
+}
+
+impl Verdict {
+    pub fn word(&self) -> &'static str {
+        match self {
+            Verdict::Placed => "placed",
+            Verdict::Absent => "absent",
+            Verdict::DirectionOnly => "direction-only",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BodyLine {
+    Spk,
+    Dastcom,
+    Mpc,
+    Inpop,
+    Epm,
+}
+
+impl BodyLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            BodyLine::Spk => "spk-ephemeris",
+            BodyLine::Dastcom => "dastcom-keplerian",
+            BodyLine::Mpc => "mpc-keplerian",
+            BodyLine::Inpop => "inpop-ephemeris",
+            BodyLine::Epm => "epm-ephemeris",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StationLine {
+    IntermagnetGround,
+    SwarmOverflight,
+}
+
+impl StationLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            StationLine::IntermagnetGround => "intermagnet-ground",
+            StationLine::SwarmOverflight => "swarm-overflight",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WitnessLine {
+    Body(BodyLine),
+    Station(StationLine),
+}
+
+impl WitnessLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            WitnessLine::Body(line) => line.word(),
+            WitnessLine::Station(line) => line.word(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TriadFold {
+    United,
+    Shared { line: BodyLine },
+    Outlier { line: BodyLine, knot: [BodyLine; 2] },
+    Severed,
+}
+
+impl TriadFold {
+    pub fn word(&self) -> &'static str {
+        match self {
+            TriadFold::United => "united",
+            TriadFold::Shared { .. } => "shared",
+            TriadFold::Outlier { .. } => "outlier",
+            TriadFold::Severed => "severed",
+        }
+    }
+}
+
+pub struct ThreeWayVerdict {
+    pub name: String,
+    pub spk_inpop: Agreement,
+    pub spk_epm: Agreement,
+    pub inpop_epm: Agreement,
+    pub fold: TriadFold,
+}
+
+pub fn three_way_fold(
+    spk_inpop: &Agreement,
+    spk_epm: &Agreement,
+    inpop_epm: &Agreement,
+) -> TriadFold {
+    let placed = |a: &Agreement| matches!(a, Agreement::Placed { .. });
+    match (placed(spk_inpop), placed(spk_epm), placed(inpop_epm)) {
+        (true, true, true) => TriadFold::United,
+        (false, false, false) => TriadFold::Severed,
+        (true, true, false) => TriadFold::Shared {
+            line: BodyLine::Spk,
+        },
+        (true, false, true) => TriadFold::Shared {
+            line: BodyLine::Inpop,
+        },
+        (false, true, true) => TriadFold::Shared {
+            line: BodyLine::Epm,
+        },
+        (true, false, false) => TriadFold::Outlier {
+            line: BodyLine::Epm,
+            knot: [BodyLine::Spk, BodyLine::Inpop],
+        },
+        (false, true, false) => TriadFold::Outlier {
+            line: BodyLine::Inpop,
+            knot: [BodyLine::Spk, BodyLine::Epm],
+        },
+        (false, false, true) => TriadFold::Outlier {
+            line: BodyLine::Spk,
+            knot: [BodyLine::Inpop, BodyLine::Epm],
+        },
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Agreement {
+    Placed { sep: f64 },
+    Riss { sep: f64 },
+}
+
+pub fn classify(sep: f64, tol_m: f64) -> Agreement {
+    if sep <= tol_m {
+        Agreement::Placed { sep }
+    } else {
+        Agreement::Riss { sep }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum BodyOutcome {
+    Placed {
+        sep: f64,
+    },
+    Absent {
+        line: BodyLine,
+    },
+    Riss {
+        sep: f64,
+        knot: [Option<WitnessLine>; 2],
+    },
+}
+
+impl BodyOutcome {
+    pub fn fadenpruefung(&self) -> Option<Verdict> {
+        match self {
+            BodyOutcome::Placed { .. } => Some(Verdict::Placed),
+            BodyOutcome::Absent { .. } => Some(Verdict::Absent),
+            BodyOutcome::Riss { .. } => None,
+        }
+    }
+
+    pub fn word(&self) -> &'static str {
+        match self {
+            BodyOutcome::Placed { .. } => "placed",
+            BodyOutcome::Absent { .. } => "absent",
+            BodyOutcome::Riss { .. } => "riss",
+        }
+    }
+}
+
+pub struct BodyVerdict {
+    pub name: String,
+    pub outcome: BodyOutcome,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CometelsLine {
+    Spk,
+    Cometels,
+}
+
+impl CometelsLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            CometelsLine::Spk => "spk-ephemeris",
+            CometelsLine::Cometels => "cometels-keplerian",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum CometelsOutcome {
+    Placed { sep: f64 },
+    Riss { sep: f64, knot: [CometelsLine; 2] },
+    Absent { line: CometelsLine },
+}
+
+pub struct CometelsVerdict {
+    pub name: String,
+    pub outcome: CometelsOutcome,
+}
+
+pub struct BodyThread {
+    pub name: String,
+    pub rec: Option<AsteroidRec>,
+    pub comet: Option<CometRec>,
+    pub mpc: Option<MpcorbRec>,
+}
+
+pub struct WeberinFeed {
+    pub eph: Arc<HashMap<String, BodyEphemeris>>,
+    pub sun: Arc<HashMap<String, BodyEphemeris>>,
+    pub eph_inpop: Arc<HashMap<String, BodyEphemeris>>,
+    pub eph_epm: Arc<HashMap<String, BodyEphemeris>>,
+    pub recs: Vec<AsteroidRec>,
+    pub comets: Vec<CometRec>,
+    pub mpc_recs: Vec<MpcorbRec>,
+    pub frame_origin: Option<String>,
+    pub major_bodies: Vec<String>,
+}
+
+pub struct Weberin {
+    pub threads: Vec<BodyThread>,
+    pub verdicts: Vec<BodyVerdict>,
+    pub mpc_verdicts: Vec<BodyVerdict>,
+    pub triads: Vec<ThreeWayVerdict>,
+    pub eph: Option<Arc<HashMap<String, BodyEphemeris>>>,
+    pub sun: Option<Arc<HashMap<String, BodyEphemeris>>>,
+    pub eph_inpop: Option<Arc<HashMap<String, BodyEphemeris>>>,
+    pub eph_epm: Option<Arc<HashMap<String, BodyEphemeris>>>,
+    pub frame_origin: Option<String>,
+    pub major_bodies: Vec<String>,
+    pub woven: bool,
+}
+
+pub const WEBERIN_TOL_M: f64 = 1.0e6;
+
+pub const PLANET_WEBERIN_TOL_M: f64 = 1.0e5;
+
+const WOVEN_MAJOR_BODIES_DECL: &str = include_str!("archivar/kernels/woven_major_bodies.txt");
+
+const FRAME_ORIGIN_DECL: &str = include_str!("archivar/kernels/frame_origin.txt");
+
+pub fn woven_major_bodies() -> Vec<String> {
+    let table = crate::archivar::ephemeris::body_table();
+    let mut names: Vec<String> = Vec::new();
+    for line in WOVEN_MAJOR_BODIES_DECL.lines() {
+        let id: i32 = match line.trim().parse() {
+            Ok(id) => id,
+            Err(_) => continue,
+        };
+        if let Some(b) = table.get(&id) {
+            names.push(b.name.clone());
+        }
+    }
+    names
+}
+
+pub fn planetary_bodies() -> Vec<String> {
+    let table = crate::archivar::ephemeris::body_table();
+    let Some(origin) = frame_origin_name() else {
+        return Vec::new();
+    };
+    let Some(origin_id) = table
+        .iter()
+        .find(|(_, b)| b.name == origin)
+        .map(|(id, _)| *id)
+    else {
+        return Vec::new();
+    };
+    woven_major_bodies()
+        .into_iter()
+        .filter(|n| {
+            table
+                .values()
+                .any(|b| &b.name == n && b.parent == Some(origin_id))
+        })
+        .collect()
+}
+
+pub fn frame_origin_name() -> Option<String> {
+    let declared = FRAME_ORIGIN_DECL
+        .lines()
+        .map(str::trim)
+        .find(|l| !l.is_empty() && !l.starts_with('#'))?;
+    let table = crate::archivar::ephemeris::body_table();
+    table
+        .values()
+        .find(|b| b.name == declared)
+        .map(|b| b.name.clone())
+}
+
+const SMALL_BODY_NUMBERS_TSV: &str = include_str!("archivar/kernels/small_body_numbers.tsv");
+
+pub fn body_number_table() -> Vec<(&'static str, u32)> {
+    SMALL_BODY_NUMBERS_TSV
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            let n = p.next()?;
+            let num = p.next()?.parse().ok()?;
+            Some((n, num))
+        })
+        .collect()
+}
+
+pub fn body_number(name: &str) -> Option<u32> {
+    body_number_table()
+        .into_iter()
+        .find(|(n, _)| *n == name)
+        .map(|(_, num)| num)
+}
+
+pub fn class_body_table(class: &str) -> Vec<(&'static str, u32)> {
+    SMALL_BODY_NUMBERS_TSV
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            let n = p.next()?;
+            let num = p.next()?.parse().ok()?;
+            let declared = p.next()?;
+            (declared == class).then_some((n, num))
+        })
+        .collect()
+}
+
+pub fn small_body_number(name: &str) -> Option<u32> {
+    body_number(name)
+}
+
+pub const BODY_COMET: &[(&str, &str)] = &[("encke", "2P")];
+
+pub fn comet_desig(name: &str) -> Option<&str> {
+    BODY_COMET
+        .iter()
+        .find(|(n, _)| *n == name)
+        .map(|(_, desig)| *desig)
+}
+
+pub const BODY_COMETELS: &[(&str, &str)] = &[("encke", "2P/Encke")];
+
+pub fn cometels_desig(name: &str) -> Option<&str> {
+    BODY_COMETELS
+        .iter()
+        .find(|(n, _)| *n == name)
+        .map(|(_, desig)| *desig)
+}
+
+fn trim(bytes: &[u8]) -> String {
+    String::from_utf8_lossy(bytes).trim().to_string()
+}
+
+fn primary_desig(rec: &CometRec) -> String {
+    let desig = trim(&rec.desig);
+    if !desig.is_empty() {
+        desig
+    } else {
+        trim(&rec.comnam)
+    }
+}
+
+fn best_comet_by_desig(comets: &[CometRec]) -> HashMap<String, &CometRec> {
+    let mut by_desig: HashMap<String, &CometRec> = HashMap::new();
+    for c in comets {
+        let key = primary_desig(c);
+        match by_desig.get(&key) {
+            Some(current) => {
+                if c.epoch_jd > current.epoch_jd {
+                    by_desig.insert(key, c);
+                }
+            }
+            None => {
+                by_desig.insert(key, c);
+            }
+        }
+    }
+    by_desig
+}
+
+pub fn build_threads(
+    body_names: &[String],
+    recs: &[AsteroidRec],
+    comets: &[CometRec],
+    mpc_recs: &[MpcorbRec],
+) -> Vec<BodyThread> {
+    let mut by_num: HashMap<u32, &AsteroidRec> = HashMap::new();
+    for r in recs {
+        by_num.entry(r.number).or_insert(r);
+    }
+    let by_desig = best_comet_by_desig(comets);
+    let mut mpc_by_num: HashMap<u32, MpcorbRec> = HashMap::new();
+    for r in mpc_recs {
+        if r.number != 0 {
+            mpc_by_num.entry(r.number).or_insert(*r);
+        }
+    }
+    let mut threads = Vec::new();
+    for name in body_names {
+        let rec = body_number(name)
+            .and_then(|num| by_num.get(&num).copied())
+            .cloned();
+        let comet = comet_desig(name)
+            .and_then(|desig| by_desig.get(desig).copied())
+            .cloned();
+        let mpc = small_body_number(name).and_then(|num| mpc_by_num.get(&num).copied());
+        threads.push(BodyThread {
+            name: name.clone(),
+            rec,
+            comet,
+            mpc,
+        });
+    }
+    threads.sort_by(|a, b| a.name.cmp(&b.name));
+    threads
+}
+
+pub fn separation_m(a: [f64; 3], b: [f64; 3]) -> f64 {
+    let dx = a[0] - b[0];
+    let dy = a[1] - b[1];
+    let dz = a[2] - b[2];
+    (dx * dx + dy * dy + dz * dz).sqrt()
+}
+
+pub fn add_sun(helio: [f64; 3], sun: [f64; 3]) -> [f64; 3] {
+    [helio[0] + sun[0], helio[1] + sun[1], helio[2] + sun[2]]
+}
+
+impl Default for Weberin {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Weberin {
+    pub fn new() -> Self {
+        Weberin {
+            threads: Vec::new(),
+            verdicts: Vec::new(),
+            mpc_verdicts: Vec::new(),
+            triads: Vec::new(),
+            eph: None,
+            sun: None,
+            eph_inpop: None,
+            eph_epm: None,
+            frame_origin: None,
+            major_bodies: Vec::new(),
+            woven: false,
+        }
+    }
+
+    pub fn feed(&mut self, feed: WeberinFeed) {
+        let eph = feed.eph;
+        let mut names: Vec<String> = eph.keys().cloned().collect();
+        for (n, _) in body_number_table() {
+            if !names.iter().any(|k| k.as_str() == n) {
+                names.push(n.to_string());
+            }
+        }
+        for (n, _) in BODY_COMET {
+            if !names.iter().any(|k| k == n) {
+                names.push((*n).to_string());
+            }
+        }
+        for (n, _) in tno_table() {
+            if !names.iter().any(|k| k == n) {
+                names.push((*n).to_string());
+            }
+        }
+        for k in feed.eph_inpop.keys() {
+            if !names.iter().any(|n| n == k) {
+                names.push(k.clone());
+            }
+        }
+        for k in feed.eph_epm.keys() {
+            if !names.iter().any(|n| n == k) {
+                names.push(k.clone());
+            }
+        }
+        self.threads = build_threads(&names, &feed.recs, &feed.comets, &feed.mpc_recs);
+        self.eph = Some(eph);
+        self.sun = Some(feed.sun);
+        self.eph_inpop = Some(feed.eph_inpop);
+        self.eph_epm = Some(feed.eph_epm);
+        self.frame_origin = feed.frame_origin;
+        self.major_bodies = feed.major_bodies;
+    }
+
+    pub fn weave(&mut self, tdb: f64, tol_kepler_m: f64) {
+        let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
+            return;
+        };
+        let Some(origin) = self.frame_origin.clone() else {
+            return;
+        };
+        let Some(sun) = body_barycenter_position(&origin, tdb, sun_map) else {
+            return;
+        };
+        let inpop_map = self.eph_inpop.as_ref();
+        let epm_map = self.eph_epm.as_ref();
+        self.verdicts.clear();
+        self.mpc_verdicts.clear();
+        self.triads.clear();
+        let jd = tdb / 86400.0 + J2000_EPOCH;
+        for t in &self.threads {
+            let spk = body_barycenter_position(&t.name, tdb, eph);
+            let kepler = match (&t.rec, &t.comet) {
+                (Some(r), _) => state_at(r, jd),
+                (None, Some(c)) => comet_state_at(c, jd),
+                (None, None) => None,
+            };
+            let mpc = t.mpc.as_ref().and_then(|r| mpcorb::state_at(r, jd));
+            let inpop_woven = self.major_bodies.contains(&t.name);
+            let inpop = if inpop_woven {
+                match inpop_map {
+                    Some(m) => body_barycenter_position(&t.name, tdb, m),
+                    None => None,
+                }
+            } else {
+                None
+            };
+            let epm_woven = epm_map.is_some_and(|m| m.contains_key(&t.name));
+            let epm = if epm_woven {
+                match epm_map {
+                    Some(m) => body_barycenter_position(&t.name, tdb, m),
+                    None => None,
+                }
+            } else {
+                None
+            };
+            let outcome = if inpop_woven {
+                match (spk, inpop) {
+                    (Some(spk_p), Some(inp_p)) => {
+                        let sep = separation_m(spk_p, inp_p);
+                        match classify(sep, PLANET_WEBERIN_TOL_M) {
+                            Agreement::Placed { sep } => BodyOutcome::Placed { sep },
+                            Agreement::Riss { sep } => BodyOutcome::Riss {
+                                sep,
+                                knot: [
+                                    Some(WitnessLine::Body(BodyLine::Spk)),
+                                    Some(WitnessLine::Body(BodyLine::Inpop)),
+                                ],
+                            },
+                        }
+                    }
+                    (Some(_), None) => BodyOutcome::Absent {
+                        line: BodyLine::Inpop,
+                    },
+                    (None, _) => BodyOutcome::Absent {
+                        line: BodyLine::Spk,
+                    },
+                }
+            } else {
+                match (spk, kepler) {
+                    (Some(spk_p), Some((helio, _))) => {
+                        let sep = separation_m(spk_p, add_sun(helio, sun));
+                        match classify(sep, tol_kepler_m) {
+                            Agreement::Placed { sep } => BodyOutcome::Placed { sep },
+                            Agreement::Riss { sep } => BodyOutcome::Riss {
+                                sep,
+                                knot: [
+                                    Some(WitnessLine::Body(BodyLine::Spk)),
+                                    Some(WitnessLine::Body(BodyLine::Dastcom)),
+                                ],
+                            },
+                        }
+                    }
+                    (Some(_), None) => BodyOutcome::Absent {
+                        line: BodyLine::Dastcom,
+                    },
+                    (None, _) => BodyOutcome::Absent {
+                        line: BodyLine::Spk,
+                    },
+                }
+            };
+            if epm_woven && let (Some(spk_p), Some(inp_p), Some(epm_p)) = (spk, inpop, epm) {
+                let spk_inpop = classify(separation_m(spk_p, inp_p), PLANET_WEBERIN_TOL_M);
+                let spk_epm = classify(separation_m(spk_p, epm_p), PLANET_WEBERIN_TOL_M);
+                let inpop_epm = classify(separation_m(inp_p, epm_p), PLANET_WEBERIN_TOL_M);
+                let fold = three_way_fold(&spk_inpop, &spk_epm, &inpop_epm);
+                self.triads.push(ThreeWayVerdict {
+                    name: t.name.clone(),
+                    spk_inpop,
+                    spk_epm,
+                    inpop_epm,
+                    fold,
+                });
+            }
+            self.verdicts.push(BodyVerdict {
+                name: t.name.clone(),
+                outcome,
+            });
+            if small_body_number(&t.name).is_some() {
+                let mpc_outcome = match (spk, mpc) {
+                    (Some(spk_p), Some((helio, _))) => {
+                        let sep = separation_m(spk_p, add_sun(helio, sun));
+                        match classify(sep, tol_kepler_m) {
+                            Agreement::Placed { sep } => BodyOutcome::Placed { sep },
+                            Agreement::Riss { sep } => BodyOutcome::Riss {
+                                sep,
+                                knot: [
+                                    Some(WitnessLine::Body(BodyLine::Spk)),
+                                    Some(WitnessLine::Body(BodyLine::Mpc)),
+                                ],
+                            },
+                        }
+                    }
+                    (Some(_), None) => BodyOutcome::Absent {
+                        line: BodyLine::Mpc,
+                    },
+                    (None, _) => BodyOutcome::Absent {
+                        line: BodyLine::Spk,
+                    },
+                };
+                self.mpc_verdicts.push(BodyVerdict {
+                    name: t.name.clone(),
+                    outcome: mpc_outcome,
+                });
+            }
+        }
+        self.woven = true;
+    }
+
+    pub fn weave_cometels(
+        &self,
+        cometels: &[CometelsRec],
+        tdb: f64,
+        tol_kepler_m: f64,
+    ) -> Vec<CometelsVerdict> {
+        let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
+            return Vec::new();
+        };
+        let Some(origin) = self.frame_origin.clone() else {
+            return Vec::new();
+        };
+        let Some(sun) = body_barycenter_position(&origin, tdb, sun_map) else {
+            return Vec::new();
+        };
+        let jd = tdb / 86400.0 + J2000_EPOCH;
+        let mut verdicts = Vec::new();
+        for (name, desig) in BODY_COMETELS {
+            let spk = body_barycenter_position(name, tdb, eph);
+            let kepler = cometels
+                .iter()
+                .find(|c| crate::archivar::cometels::desig_of(c) == *desig)
+                .and_then(|c| c.state_at(jd));
+            let outcome = match (spk, kepler) {
+                (Some(spk_p), Some((helio, _))) => {
+                    let sep = separation_m(spk_p, add_sun(helio, sun));
+                    match classify(sep, tol_kepler_m) {
+                        Agreement::Placed { sep } => CometelsOutcome::Placed { sep },
+                        Agreement::Riss { sep } => CometelsOutcome::Riss {
+                            sep,
+                            knot: [CometelsLine::Spk, CometelsLine::Cometels],
+                        },
+                    }
+                }
+                (Some(_), None) => CometelsOutcome::Absent {
+                    line: CometelsLine::Cometels,
+                },
+                (None, _) => CometelsOutcome::Absent {
+                    line: CometelsLine::Spk,
+                },
+            };
+            verdicts.push(CometelsVerdict {
+                name: (*name).to_string(),
+                outcome,
+            });
+        }
+        verdicts
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::archivar::motion::{CHEBYSHEV_N, ChebyshevGranule};
+    use std::sync::atomic::AtomicUsize;
+
+    fn rec(number: u32) -> AsteroidRec {
+        AsteroidRec {
+            number,
+            epoch_jd: J2000_EPOCH,
+            a_au: 2.7,
+            e: 0.07,
+            incl_deg: 10.0,
+            node_deg: 80.0,
+            peri_deg: 73.0,
+            ma_deg: 10.0,
+            h: 0.0,
+            g: 0.0,
+            albedo: 0.0,
+            rot_period_h: 0.0,
+            radius_km: 0.0,
+            gm_km3_s2: 0.0,
+            sptype: [0; 5],
+        }
+    }
+
+    fn comet_encke() -> CometRec {
+        CometRec {
+            number: 90000091,
+            nobs: 156,
+            epoch_jd: J2000_EPOCH,
+            ma_deg: 3.0,
+            w_deg: 186.0,
+            om_deg: 334.0,
+            in_deg: 11.8,
+            ec: 0.848,
+            a_au: 2.21,
+            qr_au: 0.336,
+            tp_jd: J2000_EPOCH - 40.0,
+            h: 99.0,
+            g: 99.0,
+            m1: 15.6,
+            rad_km: 2.4,
+            albedo: 0.046,
+            sbnam: [0; 12],
+            desig: *b"2P           ",
+            comnam: *b"Encke                        ",
+        }
+    }
+
+    fn cometels_encke() -> CometelsRec {
+        let mut desig = [0u8; crate::archivar::cometels::DESIG_BYTES];
+        desig[..8].copy_from_slice(b"2P/Encke");
+        CometelsRec {
+            desig,
+            epoch_jd: J2000_EPOCH,
+            e: 0.848,
+            q_au: 0.336,
+            incl_deg: 11.8,
+            node_deg: 334.0,
+            peri_deg: 186.0,
+            tp_jd: J2000_EPOCH - 40.0,
+        }
+    }
+
+    fn mpc_rec(number: u32, a_au: f64) -> MpcorbRec {
+        MpcorbRec {
+            number,
+            desig: [0; 16],
+            epoch_jd: J2000_EPOCH,
+            a_au,
+            e: 0.0,
+            incl_deg: 0.0,
+            node_deg: 0.0,
+            peri_deg: 0.0,
+            ma_deg: 0.0,
+            h_mag: 0.0,
+            g_mag: 0.0,
+            flags: 0,
+        }
+    }
+
+    fn constant_eph(p: [f64; 3], jd: f64) -> BodyEphemeris {
+        let mut cx = [0.0; CHEBYSHEV_N];
+        let mut cy = [0.0; CHEBYSHEV_N];
+        let mut cz = [0.0; CHEBYSHEV_N];
+        cx[0] = p[0];
+        cy[0] = p[1];
+        cz[0] = p[2];
+        BodyEphemeris {
+            granules: vec![ChebyshevGranule {
+                t0_jd: jd,
+                dt_jd: 365.25,
+                cx,
+                cy,
+                cz,
+            }],
+            rotation_matrices: Vec::new(),
+            props: None,
+            medium: None,
+            orbit: None,
+            granule_hint: Arc::new(AtomicUsize::new(0)),
+        }
+    }
+
+    fn map_of(pairs: &[(&str, [f64; 3])]) -> Arc<HashMap<String, BodyEphemeris>> {
+        Arc::new(
+            pairs
+                .iter()
+                .map(|(n, p)| ((*n).to_string(), constant_eph(*p, J2000_EPOCH)))
+                .collect(),
+        )
+    }
+
+    fn woven(
+        eph_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        recs: Vec<AsteroidRec>,
+        comets: Vec<CometRec>,
+        tol: f64,
+    ) -> Weberin {
+        woven_with_inpop(eph_pairs, &[], sun, recs, comets, tol)
+    }
+
+    fn woven_with_inpop(
+        eph_pairs: &[(&str, [f64; 3])],
+        inpop_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        recs: Vec<AsteroidRec>,
+        comets: Vec<CometRec>,
+        tol: f64,
+    ) -> Weberin {
+        woven_with_lines(eph_pairs, inpop_pairs, &[], sun, recs, comets, tol)
+    }
+
+    fn woven_with_lines(
+        eph_pairs: &[(&str, [f64; 3])],
+        inpop_pairs: &[(&str, [f64; 3])],
+        epm_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        recs: Vec<AsteroidRec>,
+        comets: Vec<CometRec>,
+        tol: f64,
+    ) -> Weberin {
+        let eph = map_of(eph_pairs);
+        let sun_map = map_of(&[("sun", sun)]);
+        let inpop_map = map_of(inpop_pairs);
+        let epm_map = map_of(epm_pairs);
+        let mut w = Weberin::new();
+        w.feed(WeberinFeed {
+            eph,
+            sun: sun_map,
+            eph_inpop: inpop_map,
+            eph_epm: epm_map,
+            recs,
+            comets,
+            mpc_recs: Vec::new(),
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
+        });
+        w.weave(0.0, tol);
+        w
+    }
+
+    fn woven_mpc(
+        eph_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        mpc_recs: Vec<MpcorbRec>,
+        tol: f64,
+    ) -> Weberin {
+        let mut w = Weberin::new();
+        w.feed(WeberinFeed {
+            eph: map_of(eph_pairs),
+            sun: map_of(&[("sun", sun)]),
+            eph_inpop: map_of(&[]),
+            eph_epm: map_of(&[]),
+            recs: Vec::new(),
+            comets: Vec::new(),
+            mpc_recs,
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
+        });
+        w.weave(0.0, tol);
+        w
+    }
+
+    fn cometels_weaver(eph_pairs: &[(&str, [f64; 3])], sun: [f64; 3]) -> Weberin {
+        let mut w = Weberin::new();
+        w.feed(WeberinFeed {
+            eph: map_of(eph_pairs),
+            sun: map_of(&[("sun", sun)]),
+            eph_inpop: map_of(&[]),
+            eph_epm: map_of(&[]),
+            recs: Vec::new(),
+            comets: Vec::new(),
+            mpc_recs: Vec::new(),
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
+        });
+        w
+    }
+
+    fn outcome<'a>(w: &'a Weberin, name: &str) -> Option<&'a BodyOutcome> {
+        w.verdicts
+            .iter()
+            .find(|v| v.name == name)
+            .map(|v| &v.outcome)
+    }
+
+    fn mpc_outcome<'a>(w: &'a Weberin, name: &str) -> Option<&'a BodyOutcome> {
+        w.mpc_verdicts
+            .iter()
+            .find(|v| v.name == name)
+            .map(|v| &v.outcome)
+    }
+
+    fn cometels_fold<'a>(v: &'a [CometelsVerdict], name: &str) -> Option<&'a CometelsOutcome> {
+        v.iter().find(|x| x.name == name).map(|x| &x.outcome)
+    }
+
+    fn triad<'a>(w: &'a Weberin, name: &str) -> Option<&'a ThreeWayVerdict> {
+        w.triads.iter().find(|t| t.name == name)
+    }
+
+    #[test]
+    fn body_number_maps_known_bodies() {
+        assert_eq!(body_number("ceres"), Some(1));
+        assert_eq!(body_number("vesta"), Some(4));
+        assert_eq!(body_number("bennu"), Some(101955));
+        assert_eq!(body_number("apophis"), Some(99942));
+        assert_eq!(body_number("pluto"), Some(134340));
+        assert_eq!(body_number("juno_asteroid"), Some(3));
+        assert_eq!(body_number("juno"), None);
+        assert_eq!(body_number("moon"), None);
+        assert_eq!(body_number("charon"), None);
+    }
+
+    #[test]
+    fn spacecraft_juno_does_not_pair_with_asteroid_three() {
+        let mut w = Weberin::new();
+        w.feed(WeberinFeed {
+            eph: map_of(&[("juno", [0.0; 3])]),
+            sun: map_of(&[("sun", [0.0; 3])]),
+            eph_inpop: map_of(&[]),
+            eph_epm: map_of(&[]),
+            recs: vec![rec(3)],
+            comets: Vec::new(),
+            mpc_recs: Vec::new(),
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
+        });
+        w.weave(0.0, WEBERIN_TOL_M);
+        match outcome(&w, "juno") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
+            other => panic!("the spacecraft juno reads {other:?}, not absent-dastcom"),
+        }
+        match outcome(&w, "juno_asteroid") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the asteroid juno reads {other:?}, not absent-spk"),
+        }
+    }
+
+    #[test]
+    fn build_threads_keeps_every_union_body_with_its_second_line_optional() {
+        let names: Vec<String> = ["ceres", "vesta", "charon"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let recs = vec![rec(1), rec(4)];
+        let comets = vec![comet_encke()];
+        let threads = build_threads(&names, &recs, &comets, &[]);
+        assert_eq!(threads.len(), 3);
+        let ceres = threads.iter().find(|t| t.name == "ceres").unwrap();
+        assert!(ceres.rec.is_some());
+        assert!(ceres.comet.is_none());
+        let vesta = threads.iter().find(|t| t.name == "vesta").unwrap();
+        assert!(vesta.rec.is_some());
+        assert!(vesta.comet.is_none());
+        let charon = threads.iter().find(|t| t.name == "charon").unwrap();
+        assert!(charon.rec.is_none());
+        assert!(charon.comet.is_none());
+    }
+
+    #[test]
+    fn encke_thread_carries_its_comet_line_from_the_designation_map() {
+        let names: Vec<String> = ["encke", "vesta", "halley"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let comets = vec![comet_encke()];
+        let threads = build_threads(&names, &[], &comets, &[]);
+        let encke = threads.iter().find(|t| t.name == "encke").unwrap();
+        assert!(encke.rec.is_none());
+        assert!(encke.comet.is_some());
+        assert_eq!(&trim(&encke.comet.as_ref().unwrap().desig)[..2], "2P");
+        let vesta = threads.iter().find(|t| t.name == "vesta").unwrap();
+        assert!(vesta.comet.is_none());
+        let halley = threads.iter().find(|t| t.name == "halley").unwrap();
+        assert!(halley.comet.is_none());
+    }
+
+    #[test]
+    fn comet_desig_maps_encke_and_leaves_asteroid_names_void() {
+        assert_eq!(comet_desig("encke"), Some("2P"));
+        assert_eq!(comet_desig("ceres"), None);
+        assert_eq!(comet_desig("halley"), None);
+    }
+
+    #[test]
+    fn cometels_desig_maps_encke_and_leaves_asteroid_names_void() {
+        assert_eq!(cometels_desig("encke"), Some("2P/Encke"));
+        assert_eq!(cometels_desig("ceres"), None);
+        assert_eq!(cometels_desig("halley"), None);
+    }
+
+    #[test]
+    fn small_body_number_maps_tnos_and_asteroids_alike() {
+        assert_eq!(small_body_number("ceres"), Some(1));
+        assert_eq!(small_body_number("quaoar"), Some(50000));
+        assert_eq!(small_body_number("orcus"), Some(90482));
+        assert_eq!(small_body_number("pluto"), Some(134340));
+        assert_eq!(small_body_number("moon"), None);
+        assert_eq!(small_body_number("charon"), None);
+    }
+
+    #[test]
+    fn cometels_state_at_epoch_matches_two_body_radius() {
+        let rec = cometels_encke();
+        let (p, _) = rec.state_at(rec.epoch_jd).unwrap();
+        let r_au = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt() / AU_M;
+        let a_au = rec.q_au / (1.0 - rec.e);
+        let a_m = a_au * AU_M;
+        let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
+        let ma_rad = (n * (rec.epoch_jd - rec.tp_jd) * 86400.0).rem_euclid(std::f64::consts::TAU);
+        let ecc = crate::archivar::kepler::solve_kepler_ecc(ma_rad, rec.e);
+        let expect = a_au * (1.0 - rec.e * ecc.cos());
+        assert!(
+            (r_au - expect).abs() < 1e-9,
+            "r {r_au} au, expect {expect} au"
+        );
+    }
+
+    #[test]
+    fn cometels_weave_places_the_second_comet_kepler_line_against_spk() {
+        let cometels = cometels_encke();
+        let jd = J2000_EPOCH;
+        let (helio, _) = cometels.state_at(jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = cometels_weaver(&[("encke", [0.0; 3])], sun);
+        let v = w.weave_cometels(&[cometels], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M, "sep {sep:e}");
+            }
+            other => panic!("the cometels line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn cometels_weave_risses_when_the_two_lines_refuse_to_converge() {
+        let w = cometels_weaver(&[("encke", [0.0; 3])], [0.0; 3]);
+        let v = w.weave_cometels(&[cometels_encke()], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(
+                    *sep > WEBERIN_TOL_M,
+                    "the refusing lines sit far apart: {sep}"
+                );
+                match knot {
+                    [CometelsLine::Spk, CometelsLine::Cometels] => {}
+                    other => panic!("the cometels riss knot reads {other:?}"),
+                }
+            }
+            other => panic!("the refusing cometels lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn cometels_weave_absent_names_the_cometels_line_when_the_catalog_is_void() {
+        let w = cometels_weaver(&[("encke", [0.0; 3])], [0.0; 3]);
+        let v = w.weave_cometels(&[], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Absent { line }) => {
+                assert!(matches!(line, CometelsLine::Cometels));
+            }
+            other => panic!("the cometels-void weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn cometels_weave_absent_names_the_spk_line_when_only_the_cometels_catalog_lies_in() {
+        let w = cometels_weaver(&[], [0.0; 3]);
+        let v = w.weave_cometels(&[cometels_encke()], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Absent { line }) => {
+                assert!(matches!(line, CometelsLine::Spk));
+            }
+            other => panic!("the cometels-only weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn tno_mpc_weave_names_the_missing_spk_line() {
+        let w = woven_mpc(&[], [0.0; 3], vec![mpc_rec(50000, 43.6)], WEBERIN_TOL_M);
+        match mpc_outcome(&w, "quaoar") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the spk-less TNO reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn classify_places_within_tolerance_and_risses_beyond() {
+        assert!(matches!(classify(1.0, 10.0), Agreement::Placed { .. }));
+        assert!(matches!(classify(10.0, 10.0), Agreement::Placed { .. }));
+        assert!(matches!(classify(10.1, 10.0), Agreement::Riss { .. }));
+    }
+
+    #[test]
+    fn separation_is_euclidean() {
+        assert_eq!(separation_m([0.0, 0.0, 0.0], [3.0, 4.0, 0.0]), 5.0);
+    }
+
+    #[test]
+    fn add_sun_shifts_helio_to_barycenter() {
+        let bary = add_sun([1.0, 2.0, 3.0], [4.0, 5.0, 6.0]);
+        assert_eq!(bary, [5.0, 7.0, 9.0]);
+    }
+
+    #[test]
+    fn weave_places_two_converging_lines() {
+        let ceres = rec(1);
+        let jd = J2000_EPOCH;
+        let (helio, _) = state_at(&ceres, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven(
+            &[("ceres", [0.0; 3])],
+            sun,
+            vec![ceres],
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M);
+                assert!(matches!(
+                    outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Placed)
+                ));
+            }
+            other => panic!("the folded lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_places_a_comet_against_its_dcom5_kepler_line() {
+        let encke = comet_encke();
+        let jd = J2000_EPOCH;
+        let (helio, _) = comet_state_at(&encke, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven(
+            &[("encke", [0.0; 3])],
+            sun,
+            Vec::new(),
+            vec![encke],
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "encke") {
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M, "sep {sep:e}");
+            }
+            other => panic!("the comet line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_absent_names_the_comet_line_when_the_dcom5_catalog_is_void() {
+        let w = woven(
+            &[("encke", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "encke") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
+            other => panic!("the comet-void weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_absent_names_the_spk_line_when_only_the_comet_catalog_lies_in() {
+        let w = woven(
+            &[],
+            [0.0; 3],
+            Vec::new(),
+            vec![comet_encke()],
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "encke") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the comet-only weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_risses_when_two_present_lines_refuse_to_converge() {
+        let ceres = rec(1);
+        let w = woven(
+            &[("ceres", [0.0; 3])],
+            [0.0; 3],
+            vec![ceres],
+            Vec::new(),
+            1.0e6,
+        );
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(*sep > 1.0e6, "the refusing lines sit far apart: {sep}");
+                match knot {
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Dastcom)),
+                    ] => {}
+                    other => panic!("the riss knot reads {other:?}"),
+                }
+                assert_eq!(
+                    outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    None,
+                    "a riss is not a fadenpruefung verdict"
+                );
+            }
+            other => panic!("the refusing lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_absent_names_the_missing_dastcom_line() {
+        let w = woven(
+            &[("ceres", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => {
+                assert!(matches!(line, BodyLine::Dastcom));
+                assert!(matches!(
+                    outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Absent)
+                ));
+            }
+            other => panic!("the record-less line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_absent_names_the_missing_spk_line() {
+        let w = woven(&[], [0.0; 3], vec![rec(1)], Vec::new(), WEBERIN_TOL_M);
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => {
+                assert!(matches!(line, BodyLine::Spk));
+            }
+            other => panic!("the ephemeris-less line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_covers_the_full_body_union_even_when_only_the_second_line_lies_in() {
+        let w = woven(&[], [0.0; 3], vec![rec(134340)], Vec::new(), WEBERIN_TOL_M);
+        assert!(
+            outcome(&w, "pluto").is_some(),
+            "pluto is woven from its record alone"
+        );
+        assert!(
+            outcome(&w, "ceres").is_some(),
+            "ceres is woven from the body number alone"
+        );
+        assert!(w.woven);
+    }
+
+    #[test]
+    fn inpop_weave_places_a_planet_whose_two_ephemeris_lineages_converge() {
+        let w = woven_with_inpop(
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite());
+                assert!(*sep <= WEBERIN_TOL_M);
+                assert!(matches!(
+                    outcome(&w, "mars").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Placed)
+                ));
+            }
+            other => panic!("the converging planet lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn inpop_weave_risses_when_the_two_ephemeris_lineages_refuse_to_converge() {
+        let w = woven_with_inpop(
+            &[("mars", [0.0; 3])],
+            &[("mars", [5.0e6, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(*sep > WEBERIN_TOL_M);
+                match knot {
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Inpop)),
+                    ] => {}
+                    other => panic!("the inpop riss knot reads {other:?}"),
+                }
+            }
+            other => panic!("the refusing planet lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn inpop_weave_absent_names_the_inpop_line_when_only_the_spk_line_lies_in() {
+        let w = woven_with_inpop(
+            &[("mars", [0.0; 3])],
+            &[],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Inpop)),
+            other => panic!("the de-only planet reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn inpop_weave_absent_names_the_spk_line_when_only_the_inpop_line_lies_in() {
+        let w = woven_with_inpop(
+            &[],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the inpop-only planet reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn inpop_weave_leaves_an_asteroid_on_its_dastcom_line() {
+        let w = woven_with_inpop(
+            &[("ceres", [0.0; 3])],
+            &[("ceres", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
+            other => panic!("an inpop-uncovered asteroid reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_places_a_planet_whose_three_lineages_converge() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite());
+                assert!(*sep <= PLANET_WEBERIN_TOL_M);
+            }
+            other => panic!("the three converging planet lines read {other:?}"),
+        }
+        match triad(&w, "mars") {
+            Some(t) => {
+                assert!(matches!(t.fold, TriadFold::United));
+                assert!(matches!(t.spk_inpop, Agreement::Placed { .. }));
+                assert!(matches!(t.spk_epm, Agreement::Placed { .. }));
+                assert!(matches!(t.inpop_epm, Agreement::Placed { .. }));
+            }
+            None => panic!("the three-way of the converging planet is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_names_the_de_line_as_outlier_when_inpop_and_epm_converge() {
+        let w = woven_with_lines(
+            &[("uranus", [2.0e6, 0.0, 0.0])],
+            &[("uranus", [0.0; 3])],
+            &[("uranus", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "uranus") {
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(*sep > PLANET_WEBERIN_TOL_M);
+                match knot {
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Inpop)),
+                    ] => {}
+                    other => panic!("the single de-vs-inpop line keeps its knot {other:?}"),
+                }
+            }
+            other => panic!("the de-vs-inpop pair reads {other:?}"),
+        }
+        match triad(&w, "uranus") {
+            Some(t) => match &t.fold {
+                TriadFold::Outlier { line, knot } => {
+                    assert_eq!(*line, BodyLine::Spk);
+                    assert_eq!(*knot, [BodyLine::Inpop, BodyLine::Epm]);
+                }
+                other => panic!("the converged inpop+epm pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the ice giant is void"),
+        }
+        let t = triad(&w, "uranus").unwrap();
+        assert!(matches!(t.inpop_epm, Agreement::Placed { .. }));
+        assert!(matches!(t.spk_inpop, Agreement::Riss { .. }));
+        assert!(matches!(t.spk_epm, Agreement::Riss { .. }));
+    }
+
+    #[test]
+    fn epm_weave_names_inpop_as_outlier_when_de_and_epm_converge() {
+        let w = woven_with_lines(
+            &[("neptune", [0.0; 3])],
+            &[("neptune", [2.0e6, 0.0, 0.0])],
+            &[("neptune", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "neptune") {
+            Some(t) => match &t.fold {
+                TriadFold::Outlier { line, knot } => {
+                    assert_eq!(*line, BodyLine::Inpop);
+                    assert_eq!(*knot, [BodyLine::Spk, BodyLine::Epm]);
+                }
+                other => panic!("the converged de+epm pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the ice giant is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_names_epm_as_outlier_when_de_and_inpop_converge() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            &[("mars", [2.0e6, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "mars") {
+            Some(t) => match &t.fold {
+                TriadFold::Outlier { line, knot } => {
+                    assert_eq!(*line, BodyLine::Epm);
+                    assert_eq!(*knot, [BodyLine::Spk, BodyLine::Inpop]);
+                }
+                other => panic!("the converged de+inpop pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the planet is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_reads_shared_when_two_pairs_converge_on_de() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[("mars", [6.0e4, 0.0, 0.0])],
+            &[("mars", [-6.0e4, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "mars") {
+            Some(t) => match &t.fold {
+                TriadFold::Shared { line } => assert_eq!(*line, BodyLine::Spk),
+                other => panic!("the de-centred pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the planet is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_reads_severed_when_no_pair_converges() {
+        let w = woven_with_lines(
+            &[("uranus", [0.0; 3])],
+            &[("uranus", [2.0e6, 0.0, 0.0])],
+            &[("uranus", [4.0e6, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "uranus") {
+            Some(t) => match &t.fold {
+                TriadFold::Severed => {}
+                other => panic!("the three mutually refusing lines read {other:?}"),
+            },
+            None => panic!("the three-way of the ice giant is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_absent_names_the_missing_inpop_line_even_with_epm_present() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Inpop)),
+            other => panic!("the inpop-less three-way reads {other:?}"),
+        }
+        assert!(
+            triad(&w, "mars").is_none(),
+            "the incomplete three-way stays unjudged"
+        );
+    }
+
+    #[test]
+    fn epm_weave_absent_names_the_spk_line_when_only_the_epm_line_lies_in() {
+        let w = woven_with_lines(
+            &[],
+            &[],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the epm-only planet reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn planet_tolerance_sits_between_the_measured_convergence_and_divergence() {
+        let seven_body_max_m = 3.05e4;
+        let ice_giant_min_m = 4.3e5;
+        assert!(
+            PLANET_WEBERIN_TOL_M > seven_body_max_m,
+            "the planet law must hold the measured seven-body convergence (max {seven_body_max_m} m)"
+        );
+        assert!(
+            PLANET_WEBERIN_TOL_M < ice_giant_min_m,
+            "the planet law must stay below the measured ice-giant divergence (min {ice_giant_min_m} m)"
+        );
+        assert!(
+            matches!(
+                classify(2.3e4, PLANET_WEBERIN_TOL_M),
+                Agreement::Placed { .. }
+            ),
+            "an inner-planet separation reads placed"
+        );
+        assert!(
+            matches!(
+                classify(3.0e4, PLANET_WEBERIN_TOL_M),
+                Agreement::Placed { .. }
+            ),
+            "the measured seven-body ceiling reads placed"
+        );
+        assert!(
+            matches!(
+                classify(1.592e6, PLANET_WEBERIN_TOL_M),
+                Agreement::Riss { .. }
+            ),
+            "the measured uranus separation reads riss"
+        );
+        assert!(
+            matches!(
+                classify(1.075e6, PLANET_WEBERIN_TOL_M),
+                Agreement::Riss { .. }
+            ),
+            "the measured neptune separation reads riss"
+        );
+    }
+
+    #[test]
+    fn planet_weave_judges_against_the_planet_class_law_not_the_kepler_law() {
+        let w = woven_with_inpop(
+            &[("mars", [0.0; 3])],
+            &[("mars", [5.0e5, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(
+                    *sep > PLANET_WEBERIN_TOL_M,
+                    "sep {sep:e} exceeds the planet law {PLANET_WEBERIN_TOL_M:e}"
+                );
+                assert!(
+                    *sep < WEBERIN_TOL_M,
+                    "sep {sep:e} would read placed under the kepler law"
+                );
+                match knot {
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Inpop)),
+                    ] => {}
+                    other => panic!("the inpop riss knot reads {other:?}"),
+                }
+            }
+            other => panic!("the two ephemeris lineages 5e5 m apart read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn kepler_weave_keeps_the_measured_small_body_law() {
+        let ceres = rec(1);
+        let jd = J2000_EPOCH;
+        let (helio, _) = state_at(&ceres, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven(
+            &[("ceres", [5.0e5, 0.0, 0.0])],
+            sun,
+            vec![ceres],
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(
+                    *sep <= WEBERIN_TOL_M,
+                    "the kepler line judges at its own measured law"
+                );
+            }
+            other => panic!("the 5e5 m kepler-line separation reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_line_word_names_the_mpc_keplerian_line() {
+        assert_eq!(BodyLine::Mpc.word(), "mpc-keplerian");
+    }
+
+    #[test]
+    fn build_threads_carries_the_mpc_line_by_number() {
+        let names: Vec<String> = ["ceres", "vesta", "pluto"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let threads = build_threads(&names, &[], &[], &[mpc_rec(1, 2.7), mpc_rec(134340, 39.5)]);
+        let ceres = threads.iter().find(|t| t.name == "ceres").unwrap();
+        assert!(ceres.mpc.is_some());
+        assert!((ceres.mpc.as_ref().unwrap().a_au - 2.7).abs() < 1e-12);
+        let vesta = threads.iter().find(|t| t.name == "vesta").unwrap();
+        assert!(vesta.mpc.is_none());
+        let pluto = threads.iter().find(|t| t.name == "pluto").unwrap();
+        assert!(pluto.mpc.is_some());
+        assert!((pluto.mpc.as_ref().unwrap().a_au - 39.5).abs() < 1e-12);
+    }
+
+    #[test]
+    fn mpc_weave_places_two_converging_lines() {
+        let ceres = mpc_rec(1, 2.7);
+        let jd = J2000_EPOCH;
+        let (helio, _) = mpcorb::state_at(&ceres, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven_mpc(&[("ceres", [0.0; 3])], sun, vec![ceres], WEBERIN_TOL_M);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M);
+                assert!(matches!(
+                    mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Placed)
+                ));
+            }
+            other => panic!("the folded mpc lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_risses_when_the_two_lines_refuse_to_converge() {
+        let ceres = mpc_rec(1, 2.7);
+        let w = woven_mpc(&[("ceres", [0.0; 3])], [0.0; 3], vec![ceres], 1.0e6);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(*sep > 1.0e6, "the refusing lines sit far apart: {sep}");
+                match knot {
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Mpc)),
+                    ] => {}
+                    other => panic!("the mpc riss knot reads {other:?}"),
+                }
+                assert_eq!(
+                    mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    None,
+                    "a riss is not a fadenpruefung verdict"
+                );
+            }
+            other => panic!("the refusing mpc lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_absent_names_the_missing_mpc_line() {
+        let w = woven_mpc(&[("ceres", [0.0; 3])], [0.0; 3], Vec::new(), WEBERIN_TOL_M);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => {
+                assert!(matches!(line, BodyLine::Mpc));
+                assert!(matches!(
+                    mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Absent)
+                ));
+            }
+            other => panic!("the mpc-less line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_absent_names_the_missing_spk_line() {
+        let w = woven_mpc(&[], [0.0; 3], vec![mpc_rec(1, 2.7)], WEBERIN_TOL_M);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => {
+                assert!(matches!(line, BodyLine::Spk));
+            }
+            other => panic!("the spk-less mpc line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_judges_only_the_small_body_number_set() {
+        let w = woven_mpc(
+            &[("moon", [0.0; 3]), ("ceres", [0.0; 3])],
+            [0.0; 3],
+            vec![mpc_rec(1, 2.7)],
+            WEBERIN_TOL_M,
+        );
+        assert!(
+            mpc_outcome(&w, "ceres").is_some(),
+            "the numbered small body carries an mpc verdict"
+        );
+        assert!(
+            mpc_outcome(&w, "moon").is_none(),
+            "a moon lies outside the mpc line domain — no mpc verdict"
+        );
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum GaiaFold {
+    Placed {
+        total: usize,
+        within_sigma: usize,
+        median_sep_arcsec: f64,
+        median_sigma_arcsec: f64,
+        max_sep_arcsec: f64,
+    },
+    Riss {
+        total: usize,
+        within_sigma: usize,
+        median_sep_arcsec: f64,
+        median_sigma_arcsec: f64,
+        max_sep_arcsec: f64,
+    },
+    Absent {
+        line: &'static str,
+    },
+    Unjudgeable {
+        transits: usize,
+    },
+}
+
+impl GaiaFold {
+    pub fn word(&self) -> &'static str {
+        match self {
+            GaiaFold::Placed { .. } => "placed",
+            GaiaFold::Riss { .. } => "riss",
+            GaiaFold::Absent { .. } => "absent",
+            GaiaFold::Unjudgeable { .. } => "unjudgeable",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ReceiverWorldline<'a> {
+    Body(&'a str),
+    ReferencePoint(&'a str),
+}
+
+impl ReceiverWorldline<'_> {
+    pub fn label(&self) -> &str {
+        match self {
+            ReceiverWorldline::Body(name) => name,
+            ReceiverWorldline::ReferencePoint(name) => name,
+        }
+    }
+}
+
+pub struct BodyGaiaVerdict {
+    pub name: &'static str,
+    pub receiver: String,
+    pub fold: GaiaFold,
+}
+
+fn median_of(v: &mut [f64]) -> Option<f64> {
+    if v.is_empty() {
+        return None;
+    }
+    v.sort_by(|a, b| a.total_cmp(b));
+    Some(v[v.len() / 2])
+}
+
+enum GaiaKepler {
+    Dast(AsteroidRec),
+    Mpc(MpcorbRec),
+}
+
+impl GaiaKepler {
+    fn helio(&self, jd: f64) -> Option<[f64; 3]> {
+        match self {
+            GaiaKepler::Dast(r) => state_at(r, jd).map(|(p, _)| p),
+            GaiaKepler::Mpc(r) => mpcorb::state_at(r, jd).map(|(p, _)| p),
+        }
+    }
+}
+
+impl Weberin {
+    pub fn weave_gaia_line(
+        &self,
+        receiver: ReceiverWorldline,
+        dastcom: &[AsteroidRec],
+        mpcorb_recs: &[MpcorbRec],
+        gaia_bodies: &[GaiaBody],
+    ) -> Vec<BodyGaiaVerdict> {
+        let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
+            return Vec::new();
+        };
+        let mut verdicts = Vec::new();
+        for (name, number_mp) in tno_table() {
+            let kepler = dastcom
+                .iter()
+                .find(|r| r.number == number_mp)
+                .map(|r| GaiaKepler::Dast(r.clone()))
+                .or_else(|| {
+                    mpcorb_recs
+                        .iter()
+                        .find(|r| r.number == number_mp)
+                        .map(|r| GaiaKepler::Mpc(*r))
+                });
+            let gaia_group = gaia_bodies.iter().find(|b| b.number_mp == number_mp);
+            match (kepler, gaia_group) {
+                (None, None) => {}
+                (None, Some(_)) => verdicts.push(BodyGaiaVerdict {
+                    name,
+                    receiver: receiver.label().to_string(),
+                    fold: GaiaFold::Absent {
+                        line: "mpc-keplerian",
+                    },
+                }),
+                (Some(_), None) => verdicts.push(BodyGaiaVerdict {
+                    name,
+                    receiver: receiver.label().to_string(),
+                    fold: GaiaFold::Absent {
+                        line: "gaia-astrometry",
+                    },
+                }),
+                (Some(kepler), Some(group)) => {
+                    let mut seps: Vec<f64> = Vec::with_capacity(group.transits.len());
+                    let mut sigmas: Vec<f64> = Vec::with_capacity(group.transits.len());
+                    let mut within_sigma = 0usize;
+                    let mut max_sep_arcsec: Option<f64> = None;
+                    for t in &group.transits {
+                        let jd = t.tdb / 86400.0 + J2000_EPOCH;
+                        let helio = kepler.helio(jd);
+                        let sun = sun_map
+                            .keys()
+                            .next()
+                            .and_then(|o| body_barycenter_position(o, t.tdb, sun_map));
+                        let receiver_pos = match receiver {
+                            ReceiverWorldline::Body(name) => {
+                                body_barycenter_position(name, t.tdb, eph)
+                            }
+                            ReceiverWorldline::ReferencePoint(_) => Some([0.0; 3]),
+                        };
+                        let (Some(helio), Some(sun), Some(receiver_pos)) =
+                            (helio, sun, receiver_pos)
+                        else {
+                            continue;
+                        };
+                        let Some((pred_ra, pred_dec)) = predicted_radec(helio, sun, receiver_pos)
+                        else {
+                            continue;
+                        };
+                        let sep = ang_sep_arcsec(pred_ra, pred_dec, t.ra_deg, t.dec_deg);
+                        seps.push(sep);
+                        sigmas.push(t.sigma_arcsec);
+                        if sep <= t.sigma_arcsec {
+                            within_sigma += 1;
+                        }
+                        match max_sep_arcsec {
+                            Some(m) if m >= sep => {}
+                            _ => max_sep_arcsec = Some(sep),
+                        }
+                    }
+                    if seps.is_empty() {
+                        verdicts.push(BodyGaiaVerdict {
+                            name,
+                            receiver: receiver.label().to_string(),
+                            fold: GaiaFold::Unjudgeable {
+                                transits: group.transits.len(),
+                            },
+                        });
+                        continue;
+                    }
+                    let (Some(median_sep), Some(median_sigma), Some(max_sep)) =
+                        (median_of(&mut seps), median_of(&mut sigmas), max_sep_arcsec)
+                    else {
+                        verdicts.push(BodyGaiaVerdict {
+                            name,
+                            receiver: receiver.label().to_string(),
+                            fold: GaiaFold::Unjudgeable {
+                                transits: group.transits.len(),
+                            },
+                        });
+                        continue;
+                    };
+                    let fold = if median_sep <= median_sigma {
+                        GaiaFold::Placed {
+                            total: seps.len(),
+                            within_sigma,
+                            median_sep_arcsec: median_sep,
+                            median_sigma_arcsec: median_sigma,
+                            max_sep_arcsec: max_sep,
+                        }
+                    } else {
+                        GaiaFold::Riss {
+                            total: seps.len(),
+                            within_sigma,
+                            median_sep_arcsec: median_sep,
+                            median_sigma_arcsec: median_sigma,
+                            max_sep_arcsec: max_sep,
+                        }
+                    };
+                    verdicts.push(BodyGaiaVerdict {
+                        name,
+                        receiver: receiver.label().to_string(),
+                        fold,
+                    });
+                }
+            }
+        }
+        verdicts
+    }
+}
+
+#[cfg(test)]
+mod gaia_tests {
+    use super::*;
+    use crate::archivar::gaia_sso::GaiaTransit;
+    use crate::archivar::motion::{CHEBYSHEV_N, ChebyshevGranule};
+    use std::sync::atomic::AtomicUsize;
+
+    fn mpc_rec(number: u32, epoch_jd: f64, a_au: f64) -> MpcorbRec {
+        MpcorbRec {
+            number,
+            desig: [0; 16],
+            epoch_jd,
+            a_au,
+            e: 0.0,
+            incl_deg: 0.0,
+            node_deg: 0.0,
+            peri_deg: 0.0,
+            ma_deg: 0.0,
+            h_mag: 0.0,
+            g_mag: 0.0,
+            flags: 0,
+        }
+    }
+
+    fn constant_eph(p: [f64; 3], jd: f64) -> BodyEphemeris {
+        let mut cx = [0.0; CHEBYSHEV_N];
+        let mut cy = [0.0; CHEBYSHEV_N];
+        let mut cz = [0.0; CHEBYSHEV_N];
+        cx[0] = p[0];
+        cy[0] = p[1];
+        cz[0] = p[2];
+        BodyEphemeris {
+            granules: vec![ChebyshevGranule {
+                t0_jd: jd,
+                dt_jd: 365.25,
+                cx,
+                cy,
+                cz,
+            }],
+            rotation_matrices: Vec::new(),
+            props: None,
+            medium: None,
+            orbit: None,
+            granule_hint: Arc::new(AtomicUsize::new(0)),
+        }
+    }
+
+    fn map_of(pairs: &[(&str, [f64; 3])]) -> Arc<HashMap<String, BodyEphemeris>> {
+        Arc::new(
+            pairs
+                .iter()
+                .map(|(n, p)| ((*n).to_string(), constant_eph(*p, J2000_EPOCH)))
+                .collect(),
+        )
+    }
+
+    fn weaver_with(
+        eph_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        gaia_off: (f64, f64),
+        sigma_arcsec: f64,
+    ) -> (Weberin, MpcorbRec, Vec<GaiaBody>) {
+        let number = 50000;
+        let earth = eph_pairs
+            .iter()
+            .find(|(n, _)| *n == "earth")
+            .map(|(_, p)| *p)
+            .unwrap_or([0.0; 3]);
+        let eph = map_of(eph_pairs);
+        let sun_map = map_of(&[("sun", sun)]);
+        let mut w = Weberin::new();
+        w.eph = Some(eph);
+        w.sun = Some(sun_map);
+        let rec = mpc_rec(number, J2000_EPOCH, 40.0);
+        let helio = mpcorb::state_at(&rec, J2000_EPOCH).unwrap().0;
+        let los = [
+            helio[0] + sun[0] - earth[0],
+            helio[1] + sun[1] - earth[1],
+            helio[2] + sun[2] - earth[2],
+        ];
+        let (ra_deg, dec_deg) = crate::archivar::gaia_sso::direction_to_radec(&los).unwrap();
+        let bodies = vec![GaiaBody {
+            number_mp: number,
+            transits: vec![GaiaTransit {
+                tdb: 0.0,
+                ra_deg: ra_deg + gaia_off.0,
+                dec_deg: dec_deg + gaia_off.1,
+                sigma_arcsec,
+            }],
+        }];
+        (w, rec, bodies)
+    }
+
+    fn fold_of(v: &[BodyGaiaVerdict], name: &str) -> Option<GaiaFold> {
+        v.iter().find(|x| x.name == name).map(|x| x.fold)
+    }
+
+    #[test]
+    fn gaia_weave_places_a_kepler_line_within_the_measured_sigma() {
+        let (w, rec, bodies) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
+        assert_eq!(
+            v[0].receiver, "earth",
+            "the receiver is echoed in the provenance"
+        );
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Placed {
+                total,
+                within_sigma,
+                median_sep_arcsec,
+                ..
+            }) => {
+                assert_eq!(total, 1);
+                assert_eq!(within_sigma, 1);
+                assert!(median_sep_arcsec < 1e-6, "sep {median_sep_arcsec}");
+            }
+            other => panic!("the folded lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_risses_when_the_lines_refuse_to_converge_on_sky() {
+        let (w, rec, bodies) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.01, 0.0), 1.0);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Riss {
+                total,
+                within_sigma,
+                median_sep_arcsec,
+                ..
+            }) => {
+                assert_eq!(total, 1);
+                assert_eq!(within_sigma, 0);
+                assert!(median_sep_arcsec > 30.0, "sep {median_sep_arcsec}");
+            }
+            other => panic!("the refusing lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_absent_names_the_gaia_line_when_no_transit_lies_in() {
+        let (w, rec, _) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &[]);
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Absent { line }) => assert_eq!(line, "gaia-astrometry"),
+            other => panic!("the transit-less line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_absent_names_the_kepler_line_when_no_elements_lie_in() {
+        let (w, _, bodies) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[], &bodies);
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Absent { line }) => assert_eq!(line, "mpc-keplerian"),
+            other => panic!("the element-less line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_stays_unjudgeable_without_the_receiver_ephemeris() {
+        let (w, rec, bodies) = weaver_with(&[], [0.0; 3], (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Unjudgeable { transits }) => assert_eq!(transits, 1),
+            other => panic!("the receiver-less fold reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_reference_point_receiver_needs_no_body_line() {
+        let (w, rec, bodies) = weaver_with(&[], [0.0; 3], (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(
+            ReceiverWorldline::ReferencePoint("ssb"),
+            &[],
+            &[rec],
+            &bodies,
+        );
+        assert_eq!(v[0].receiver, "ssb", "the reference point is echoed");
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Placed { .. }) => {}
+            other => panic!("the reference-point fold reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_folds_an_off_axis_receiver_position() {
+        let sun = [-1.0e11, 0.0, 0.0];
+        let (w, rec, bodies) =
+            weaver_with(&[("earth", [-1.0e11, 1.0e10, 0.0])], sun, (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Placed {
+                median_sep_arcsec, ..
+            }) => assert!(median_sep_arcsec < 1e-6, "sep {median_sep_arcsec}"),
+            other => panic!("the off-axis fold reads {other:?}"),
+        }
+    }
+}

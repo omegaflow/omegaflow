@@ -1,0 +1,59 @@
+# auto-dispatch: manual — the start year and the station set are per-act inputs; auto-dispatch cannot supply them
+name: intermagnet-xyz-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      stations:
+        description: 'JSON array of INTERMAGNET codes, e.g. ["abk","sod"]'
+        required: true
+        type: string
+        default: '["abk","sod"]'
+      start:
+        description: start year (YYYY)
+        required: true
+        type: string
+        default: "2000"
+      end:
+        description: end year (YYYY)
+        required: true
+        type: string
+        default: "2024"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  intermagnet-xyz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        station: ${{ fromJSON(inputs.stations) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view imag-data.bgs.ac.uk --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ matrix.station }}_xyz_1m.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ matrix.station }}_xyz_1m.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ matrix.station }}_xyz_1m.bin missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the station xyz series
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin intermagnet_xyz_compiler -- \
+            --station "${{ matrix.station }}" --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
+            --out "${{ matrix.station }}_xyz_1m.bin" --ci-mode

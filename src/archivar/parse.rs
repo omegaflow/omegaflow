@@ -1,0 +1,5623 @@
+use std::collections::{BTreeMap, BTreeSet};
+
+use super::*;
+use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
+use crate::mathematikerin::channel::{
+    ChannelDescriptor, ChannelRegistry, Conserved, ConstraintRegistry, CouplingRegistry,
+    CouplingSpec, FluxKind, Interaction, Medium, PdeRegime, PdeType, QuantityRole,
+    QuasiNeutralConstraint, TransportOp, channel_ref_of_descriptor, conserved_for_quantity,
+    conserved_name, coupling_spec_from_line, descriptor_from_axes, interaction_of,
+    quasi_neutral_constraint_from_line, unit_token,
+};
+
+fn split_directive(line: &str) -> Vec<&str> {
+    let bytes = line.as_bytes();
+    let mut tokens = Vec::new();
+    let mut i = 0;
+    let len = bytes.len();
+    while i < len {
+        if bytes[i].is_ascii_whitespace() {
+            i += 1;
+            continue;
+        }
+        if bytes[i] == b'"' {
+            i += 1;
+            let start = i;
+            while i < len && bytes[i] != b'"' {
+                i += 1;
+            }
+            tokens.push(&line[start..i]);
+            if i < len {
+                i += 1;
+            }
+        } else {
+            let start = i;
+            let mut depth: usize = 0;
+            while i < len {
+                match bytes[i] {
+                    b'(' => {
+                        depth += 1;
+                        i += 1;
+                    }
+                    b')' => {
+                        depth = depth.saturating_sub(1);
+                        i += 1;
+                    }
+                    _ if depth == 0 && bytes[i].is_ascii_whitespace() => break,
+                    _ => i += 1,
+                }
+            }
+            tokens.push(&line[start..i]);
+        }
+    }
+    tokens
+}
+
+fn field_in_extracts<'a>(extracts: &'a mut [Extract], key: &str) -> Option<&'a mut FieldConfig> {
+    for e in extracts.iter_mut().rev() {
+        let fc = match e {
+            Extract::Field(fc) | Extract::Count(fc) | Extract::LastRow(fc) => Some(fc),
+            Extract::First(fc, _) | Extract::Last(fc, _) => Some(fc),
+            _ => None,
+        };
+        if let Some(fc) = fc
+            && fc.key == key
+        {
+            return Some(fc);
+        }
+    }
+    None
+}
+
+fn push_field(cur_extracts: &mut Vec<Extract>, fc: FieldConfig) {
+    if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::Flatten { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::CmrPolygon { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::CelestialPolygon { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::KeplerMap { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::EpnCore { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else {
+        cur_extracts.push(Extract::Field(fc));
+    }
+}
+
+pub fn load_sources() -> Vec<SourceConfig> {
+    let content = match std::fs::read_to_string("phi/sources.φ") {
+        Ok(c) => c,
+        Err(_) => return Vec::new(),
+    };
+    refuse_shard_overlaps(parse_sources(&content))
+}
+
+pub(crate) fn field_model()
+-> &'static std::collections::HashMap<&'static str, (&'static str, &'static str)> {
+    static MODEL: std::sync::OnceLock<
+        std::collections::HashMap<&'static str, (&'static str, &'static str)>,
+    > = std::sync::OnceLock::new();
+    MODEL.get_or_init(|| {
+        let mut m = std::collections::HashMap::new();
+        for line in include_str!("../../phi/field_model.tsv").lines() {
+            let p: Vec<&str> = line.split('\t').collect();
+            if p.len() == 3 {
+                m.entry(p[0]).or_insert((p[1], p[2]));
+            }
+        }
+        m
+    })
+}
+
+pub(crate) fn field_model_definition() -> &'static std::collections::HashMap<
+    String,
+    (
+        &'static str,
+        &'static str,
+        Option<&'static str>,
+        Option<f64>,
+        Option<f64>,
+    ),
+> {
+    static MODEL: std::sync::OnceLock<
+        std::collections::HashMap<
+            String,
+            (
+                &'static str,
+                &'static str,
+                Option<&'static str>,
+                Option<f64>,
+                Option<f64>,
+            ),
+        >,
+    > = std::sync::OnceLock::new();
+    MODEL.get_or_init(|| {
+        let mut m = std::collections::HashMap::new();
+        for line in include_str!("../../phi/field_model_definition.tsv").lines() {
+            let p: Vec<&str> = line.split('\t').collect();
+            if p.len() >= 4 {
+                let aperture = p.get(4).filter(|s| !s.is_empty()).copied();
+                let freq = p.get(5).and_then(|s| s.parse::<f64>().ok());
+                let tau = p.get(6).and_then(|s| s.parse::<f64>().ok());
+                m.entry(format!("{}\t{}", p[0], p[1]))
+                    .or_insert((p[2], p[3], aperture, freq, tau));
+            }
+        }
+        m
+    })
+}
+
+fn definition_id_from(shared: &[&str]) -> String {
+    let mut lines = shared.to_vec();
+    lines.sort_unstable();
+    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    for line in lines {
+        for byte in line.as_bytes() {
+            h ^= u64::from(*byte);
+            h = h.wrapping_mul(0x0000_0100_0000_01b3);
+        }
+    }
+    format!("{h:016x}")
+}
+
+fn definition_ids(content: &str) -> std::collections::HashMap<String, String> {
+    let mut map = std::collections::HashMap::new();
+    for block in content.split("\n\n") {
+        let mut url: Option<String> = None;
+        let mut shared: Vec<&str> = Vec::new();
+        for line in block.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            let parts = split_directive(line);
+            if parts.is_empty() {
+                continue;
+            }
+            match parts[0] {
+                "url" if parts.len() >= 2 => {
+                    if let Some(u) = url.take() {
+                        map.insert(u, definition_id_from(&shared));
+                        shared.clear();
+                    }
+                    url = Some(parts[1].to_string());
+                }
+                "sha256" | "coverage" | "origin" | "artifact" | "interval" => {}
+                _ => shared.push(line),
+            }
+        }
+        if let Some(u) = url {
+            map.insert(u, definition_id_from(&shared));
+        }
+    }
+    map
+}
+
+pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
+    let mut sources = Vec::new();
+    let mut unmodelled: usize = 0;
+
+    let mut cur_ttl: u64 = 0;
+    let mut cur_url = String::new();
+    let mut cur_format = String::new();
+    let mut cur_model_kind: Option<ModelKind> = None;
+    let mut cur_gm: Option<f64> = None;
+    let mut cur_radius: Option<f64> = None;
+    let mut cur_norm: Option<crate::archivar::gfc::Norm> = None;
+    let mut cur_tide: Option<String> = None;
+    let mut cur_max_degree: Option<u32> = None;
+    let mut cur_extracts: Vec<Extract> = Vec::new();
+    let mut cur_channels: Vec<ChannelDescriptor> = Vec::new();
+    let mut cur_headers: Vec<(String, String)> = Vec::new();
+    let mut cur_target: Option<String> = None;
+    let mut cur_catalog: Option<String> = None;
+    let mut cur_range: Option<RangeAxis> = None;
+    let mut cur_max_freq: Option<f64> = None;
+    let mut cur_min_freq: Option<f64> = None;
+    let mut cur_body: Option<String> = None;
+    let mut cur_post_body: Option<String> = None;
+    let mut cur_origin: Option<String> = None;
+    let mut cur_compiler: Option<String> = None;
+    let mut cur_terms: Option<String> = None;
+    let mut cur_medium: Option<MediumLine> = None;
+    let mut cur_band: Option<String> = None;
+    let mut cur_footprint: Option<String> = None;
+    let mut cur_witness: Option<String> = None;
+    let mut cur_rights_identifier: Option<String> = None;
+    let mut cur_rights_scheme: Option<String> = None;
+    let mut cur_rights_uri: Option<String> = None;
+
+    let mut cur_stations_url: Option<String> = None;
+    let mut cur_stations_path = String::from("stations");
+    let mut cur_stations_lat = String::from("lat");
+    let mut cur_stations_lon = String::from("lng");
+    let mut cur_stations_id = String::from("id");
+    let mut cur_hapi_fill: HashMap<String, f64> = HashMap::new();
+    let mut cur_flux_from_mag: Option<String> = None;
+    let mut cur_abs_mag_from: Option<String> = None;
+    let mut cur_catalog_epoch: Option<f64> = None;
+    let mut cur_repeat_ra_bins: u32 = 0;
+    let mut cur_fanout_cap: u32 = 0;
+    let mut cur_fanout_center: Option<QueryCenter> = None;
+    let mut cur_stations_flatten = String::new();
+    let mut cur_stations_filter: Option<(String, String)> = None;
+    let mut cur_station_code: Option<String> = None;
+    let mut cur_cgm_lat: Option<f64> = None;
+    let mut cur_cgm_source: Option<String> = None;
+    let mut cur_geomag_lat: Option<f64> = None;
+    let mut cur_weberin_role: Option<WeberinRole> = None;
+    let mut cur_fanout_delay: u64 = 0;
+    let mut cur_anchor: Option<Anchor> = None;
+    let mut cur_sha256: Option<String> = None;
+    let mut cur_window: Option<(f64, f64)> = None;
+    let mut cur_live_only = false;
+    let definition_ids = definition_ids(content);
+    let mut cur_definition_id = String::new();
+    let mut active = false;
+
+    macro_rules! flush {
+        () => {
+            if active && cur_ttl > 0 && !cur_url.is_empty() {
+                if cur_format == "kernel_text"
+                    || cur_format == "reference"
+                    || cur_format == "fp01"
+                    || cur_anchor.is_some()
+                    || !cur_extracts.is_empty()
+                    || !cur_channels.is_empty()
+                    || cur_witness.is_some()
+                    || cur_range.is_some()
+                {
+                    if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
+                        eprintln!(
+                            "source refused: flux_from_mag + abs_mag_from conflict at {}",
+                            cur_url
+                        );
+                    } else {
+                        sources.push(SourceConfig {
+                            ttl: cur_ttl,
+                            url: std::mem::take(&mut cur_url),
+                            anchor: cur_anchor.clone(),
+                            model_kind: cur_model_kind.or_else(|| source_model_kind(&cur_format)),
+                            format: std::mem::take(&mut cur_format),
+                            extracts: std::mem::take(&mut cur_extracts),
+                            channels: std::mem::take(&mut cur_channels),
+                            headers: std::mem::take(&mut cur_headers),
+                            post_body: cur_post_body.clone(),
+                            target: cur_target.clone(),
+                            origin: cur_origin.clone(),
+                            compiler: cur_compiler.clone(),
+                            terms: cur_terms.clone(),
+                            medium: cur_medium.clone(),
+                            band: cur_band.clone(),
+                            footprint: cur_footprint.clone(),
+                            witness: cur_witness.clone(),
+                            rights_identifier: cur_rights_identifier.clone(),
+                            rights_scheme: cur_rights_scheme.clone(),
+                            rights_uri: cur_rights_uri.clone(),
+                            catalog: cur_catalog.clone(),
+                            range: cur_range,
+                            max_freq: cur_max_freq,
+                            min_freq: cur_min_freq,
+                            body: cur_body.clone(),
+                            stations_url: cur_stations_url.clone(),
+                            stations_path: std::mem::take(&mut cur_stations_path),
+                            stations_lat: std::mem::take(&mut cur_stations_lat),
+                            stations_lon: std::mem::take(&mut cur_stations_lon),
+                            stations_id: std::mem::take(&mut cur_stations_id),
+                            hapi_fill: std::mem::take(&mut cur_hapi_fill),
+                            flux_from_mag: cur_flux_from_mag.clone(),
+                            abs_mag_from: cur_abs_mag_from.clone(),
+                            catalog_epoch: cur_catalog_epoch,
+                            repeat_ra_bins: cur_repeat_ra_bins,
+                            fanout_cap: cur_fanout_cap,
+                            fanout_center: cur_fanout_center,
+                            stations_flatten: std::mem::take(&mut cur_stations_flatten),
+                            station_code: cur_station_code.clone(),
+                            stations_filter: cur_stations_filter.take(),
+                            fanout_delay: cur_fanout_delay,
+                            sha256: cur_sha256.clone(),
+                            window: cur_window,
+                            live_only: cur_live_only,
+                            cgm_lat: cur_cgm_lat,
+                            cgm_source: cur_cgm_source.clone(),
+                            geomag_lat: cur_geomag_lat,
+                            weberin_role: cur_weberin_role,
+                            head: match (cur_gm, cur_radius, cur_norm, cur_max_degree) {
+                                (Some(gm), Some(radius), Some(norm), Some(max_degree)) => {
+                                    Some(ModelHead {
+                                        gm_m3_s2: gm,
+                                        radius_m: radius,
+                                        norm,
+                                        tide_system: cur_tide.clone(),
+                                        max_degree,
+                                    })
+                                }
+                                (None, None, None, None) => None,
+                                _ => {
+                                    report_anomaly(
+                                        "Invalid Syntax",
+                                        &cur_url,
+                                        "partial model head: gm/radius/norm/max_degree must stand together",
+                                    );
+                                    None
+                                }
+                            },
+                        });
+                    }
+                }
+            }
+        };
+    }
+
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            cur_definition_id.clear();
+            continue;
+        }
+        let parts: Vec<&str> = split_directive(line);
+        if parts.is_empty() {
+            continue;
+        }
+
+        match parts[0] {
+            "url" if parts.len() >= 2 => {
+                flush!();
+                cur_definition_id = match definition_ids.get(parts[1]) {
+                    Some(id) => id.clone(),
+                    None => String::new(),
+                };
+                cur_url = parts[1].to_string();
+                cur_format.clear();
+                cur_model_kind = None;
+                cur_gm = None;
+                cur_radius = None;
+                cur_norm = None;
+                cur_tide = None;
+                cur_max_degree = None;
+                cur_extracts.clear();
+                cur_channels.clear();
+                cur_headers.clear();
+                cur_ttl = 0;
+                cur_target = None;
+                cur_catalog = None;
+                cur_range = None;
+                cur_max_freq = None;
+                cur_min_freq = None;
+                cur_body = None;
+                cur_post_body = None;
+                cur_origin = None;
+                cur_compiler = None;
+                cur_terms = None;
+                cur_medium = None;
+                cur_band = None;
+                cur_footprint = None;
+                cur_witness = None;
+                cur_rights_identifier = None;
+                cur_rights_scheme = None;
+                cur_rights_uri = None;
+                cur_stations_url = None;
+                cur_stations_path = String::from("stations");
+                cur_stations_lat = String::from("lat");
+                cur_stations_lon = String::from("lng");
+                cur_stations_id = String::from("id");
+                cur_hapi_fill.clear();
+                cur_flux_from_mag = None;
+                cur_abs_mag_from = None;
+                cur_catalog_epoch = None;
+                cur_repeat_ra_bins = 0;
+                cur_fanout_cap = 0;
+                cur_fanout_center = None;
+                cur_stations_flatten = String::new();
+                cur_stations_filter = None;
+                cur_station_code = None;
+                cur_cgm_lat = None;
+                cur_cgm_source = None;
+                cur_geomag_lat = None;
+                cur_weberin_role = None;
+                cur_fanout_delay = 0;
+                cur_anchor = None;
+                cur_sha256 = None;
+                cur_window = None;
+                cur_live_only = false;
+                active = true;
+            }
+            "origin" => {
+                let rest = line.strip_prefix("origin").unwrap_or("").trim();
+                cur_origin = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "compiler" => {
+                let rest = line.strip_prefix("compiler").unwrap_or("").trim();
+                cur_compiler = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "terms" => {
+                let rest = line.strip_prefix("terms").unwrap_or("").trim();
+                cur_terms = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "band" if !(parts.len() >= 5 && parts[3] == "pivot") => {
+                let rest = line.strip_prefix("band").unwrap_or("").trim();
+                cur_band = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "footprint" => {
+                let rest = line.strip_prefix("footprint").unwrap_or("").trim();
+                cur_footprint = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "witness" if parts.len() >= 2 => {
+                cur_witness = Some(parts[1].to_string());
+            }
+            "record" if parts.len() >= 2 => {}
+            "rights" => {
+                cur_rights_identifier = parts.get(1).map(|s| s.to_string());
+                cur_rights_scheme = parts.get(2).map(|s| s.to_string());
+                cur_rights_uri = parts.get(3).map(|s| s.to_string());
+            }
+            "medium" => match parse_medium_line(&parts) {
+                Ok(medium) => cur_medium = Some(medium),
+                Err(e) => {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("medium {}: {}", e, line),
+                    );
+                }
+            },
+            "ttl" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    cur_ttl = v;
+                } else {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("ttl non-numeric: {}", line),
+                    );
+                }
+            }
+            "no-sampling" => {
+                cur_ttl = NO_CADENCE;
+            }
+            "interval" => {}
+            "harvest" if parts.len() >= 2 => {}
+            "harvest" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("harvest needs <actor>: {}", line),
+                );
+            }
+            "live" => {
+                cur_live_only = true;
+            }
+            "weberin" if parts.len() >= 2 => match WeberinRole::parse(parts[1]) {
+                Some(role) => cur_weberin_role = Some(role),
+                None => report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("unknown weberin role \"{}\": {}", parts[1], line),
+                ),
+            },
+            "weberin" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("weberin needs <role>: {}", line),
+                );
+            }
+            "at" if parts.len() >= 2 => {
+                if cur_anchor.is_some() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("second anchor refused: {}", line),
+                    );
+                    continue;
+                }
+                let body = parts[1].to_string();
+                match parse_anchor_directive(AnchorKind::At, &parts, parts.len() == 2) {
+                    Ok(anchor) => cur_anchor = Some(anchor),
+                    Err(e) => {
+                        report_anomaly("Invalid Syntax", &cur_url, &format!("at {}: {}", e, line));
+                        continue;
+                    }
+                }
+                cur_body = Some(body.clone());
+            }
+            "on" if parts.len() >= 2 => {
+                if cur_anchor.is_some() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("second anchor refused: {}", line),
+                    );
+                    continue;
+                }
+                let body = parts[1].to_string();
+                let keyed = parts.iter().skip(2).any(|p| p.contains('='));
+                if keyed {
+                    let anchor = match parse_anchor_directive(AnchorKind::On, &parts, false) {
+                        Ok(anchor) => anchor,
+                        Err(e) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on {}: {}", e, line),
+                            );
+                            continue;
+                        }
+                    };
+                    let lat_ok = anchor
+                        .attrs
+                        .get("lat")
+                        .is_some_and(|v| v.parse::<f64>().is_ok());
+                    let lon_ok = anchor
+                        .attrs
+                        .get("lon")
+                        .is_some_and(|v| v.parse::<f64>().is_ok());
+                    if !lat_ok || !lon_ok {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on lat/lon non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                    if let Some(value) = anchor.attrs.get("alt").map(String::as_str)
+                        && !matches!(value, "absent" | "pending")
+                        && value.parse::<f64>().is_err()
+                    {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on alt non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                    cur_anchor = Some(anchor);
+                    cur_body = Some(body.clone());
+                } else {
+                    if parts.len() < 4 {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on needs <body> <lat> <lon> [alt]: {}", line),
+                        );
+                        continue;
+                    }
+                    let lat: f64 = match parts[2].parse() {
+                        Ok(v) => v,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lat non-numeric: {}", line),
+                            );
+                            continue;
+                        }
+                    };
+                    let lon: f64 = match parts[3].parse() {
+                        Ok(v) => v,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lon non-numeric: {}", line),
+                            );
+                            continue;
+                        }
+                    };
+                    let alt_token = parts.get(4).copied();
+                    if let Some(value) = alt_token
+                        && !matches!(value, "absent" | "pending")
+                        && value.parse::<f64>().is_err()
+                    {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on alt non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                    let mut attrs = BTreeMap::new();
+                    attrs.insert("lat".to_string(), lat.to_string());
+                    attrs.insert("lon".to_string(), lon.to_string());
+                    attrs.insert(
+                        "alt".to_string(),
+                        match alt_token {
+                            Some("pending") => "pending".to_string(),
+                            Some("absent") | None => "absent".to_string(),
+                            Some(value) => value.to_string(),
+                        },
+                    );
+                    cur_anchor = Some(Anchor {
+                        kind: AnchorKind::On,
+                        body: Some(body.clone()),
+                        attrs,
+                        legacy: true,
+                    });
+                    cur_body = Some(body.clone());
+                }
+            }
+            "global" | "coverage" | "orbit" | "query" | "track" | "sky" | "absent" => {
+                if cur_anchor.is_some() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("second anchor refused: {}", line),
+                    );
+                    continue;
+                }
+                let kind = match parts[0] {
+                    "global" => AnchorKind::Global,
+                    "coverage" => AnchorKind::Coverage,
+                    "orbit" => AnchorKind::Orbit,
+                    "query" => AnchorKind::Query,
+                    "track" => AnchorKind::Track,
+                    "sky" => AnchorKind::Sky,
+                    _ => AnchorKind::Absent,
+                };
+                match parse_anchor_directive(kind, &parts, false) {
+                    Ok(anchor) => {
+                        if let Some(body) = &anchor.body {
+                            cur_body = Some(body.clone());
+                        }
+                        cur_anchor = Some(anchor);
+                    }
+                    Err(e) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("{} {}: {}", parts[0], e, line),
+                        );
+                    }
+                }
+            }
+            "map" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::Map {
+                    arr_path: parts[1].to_string(),
+                    lat_key: String::new(),
+                    lon_key: String::new(),
+                    alt_key: String::new(),
+                    epoch_key: String::new(),
+                    val_key: String::new(),
+                    alt_scale: 1.0,
+                    vel_key: String::new(),
+                    vel_scale: 1.0,
+                    trk_key: String::new(),
+                    vr_key: String::new(),
+                    fields: Vec::new(),
+                    lat_sign: None,
+                    lon_sign: None,
+                    epoch_scale: 1.0,
+                    tau_key: String::new(),
+                    mag_type_key: String::new(),
+                });
+            }
+            "cmap" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::CelestialMap {
+                    arr_path: parts[1].to_string(),
+                    ra_key: String::new(),
+                    dec_key: String::new(),
+                    dist_key: String::new(),
+                    dist_scale: None,
+                    plx_key: String::new(),
+                    z_key: String::new(),
+                    pmra_key: String::new(),
+                    pmdec_key: String::new(),
+                    rv_key: String::new(),
+                    rv_scale: None,
+                    epoch_key: String::new(),
+                    epoch_mjd: false,
+                    fields: Vec::new(),
+                    tau_key: String::new(),
+                });
+            }
+            "profile" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::ProfileMap {
+                    arr_path: parts[1].to_string(),
+                    lat_key: String::new(),
+                    lon_key: String::new(),
+                    epoch_key: String::new(),
+                    pressure_var: String::new(),
+                    pressure_scale: 1.0,
+                    fields: Vec::new(),
+                });
+            }
+            "epncore" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::EpnCore {
+                    arr_path: parts[1].to_string(),
+                    body_key: String::new(),
+                    lon_min_key: String::new(),
+                    lon_max_key: String::new(),
+                    lat_min_key: String::new(),
+                    lat_max_key: String::new(),
+                    alt_min_key: String::new(),
+                    alt_max_key: String::new(),
+                    s_region_key: String::new(),
+                    epoch_key: String::new(),
+                    epoch_mjd: false,
+                    val_key: String::new(),
+                    fields: Vec::new(),
+                });
+            }
+            "volume" if parts.len() >= 3 => {
+                cur_extracts.push(Extract::Volume {
+                    value_key: parts[2].to_string(),
+                    lat_key: String::new(),
+                    lon_key: String::new(),
+                    depth_key: String::new(),
+                    depth_scale: 1.0,
+                    name: parts[1].to_string(),
+                    frame_body: cur_anchor.as_ref().and_then(|anchor| {
+                        let body = frame_body_name(&anchor.frame()).to_string();
+                        (!body.is_empty()).then_some(body)
+                    }),
+                });
+            }
+            "rows" => {
+                cur_extracts.push(Extract::Rows {
+                    last_line: false,
+                    lat_key: String::new(),
+                    lon_key: String::new(),
+                    fields: Vec::new(),
+                    tau_key: String::new(),
+                    epoch_cols: Vec::new(),
+                    gates: Vec::new(),
+                    bin_s: 0,
+                    name_prefix: String::new(),
+                });
+            }
+            "prefix" if parts.len() == 2 => {
+                let holder = match cur_extracts.last_mut() {
+                    Some(Extract::Rows { name_prefix, .. }) => Some(name_prefix),
+                    _ => None,
+                };
+                match holder {
+                    Some(p) => *p = parts[1].to_string(),
+                    None => {
+                        eprintln!("prefix refused at {}: no rows holder", parts[1]);
+                    }
+                }
+            }
+            "bin" if parts.len() == 2 => {
+                let Some(secs) = parts[1].parse::<u64>().ok() else {
+                    continue;
+                };
+                let holder = match cur_extracts.last_mut() {
+                    Some(Extract::Rows { bin_s, .. }) => Some(bin_s),
+                    _ => None,
+                };
+                match holder {
+                    Some(bs) => *bs = secs,
+                    None => {
+                        eprintln!("bin refused at {}: no rows holder", secs);
+                    }
+                }
+            }
+            "epoch" if parts.len() == 6 => {
+                let holder = match cur_extracts.last_mut() {
+                    Some(Extract::Rows { epoch_cols, .. }) => Some(epoch_cols),
+                    _ => None,
+                };
+                match holder {
+                    Some(cols) => {
+                        *cols = parts[1..6].iter().map(|s| s.to_string()).collect();
+                    }
+                    None => {
+                        eprintln!(
+                            "epoch refused at {}: no rows holder",
+                            parts.get(1).copied().unwrap_or("?")
+                        );
+                    }
+                }
+            }
+            "gate" if parts.len() == 4 => {
+                let (Some(min), Some(max)) =
+                    (parts[2].parse::<f64>().ok(), parts[3].parse::<f64>().ok())
+                else {
+                    eprintln!(
+                        "gate refused at {}: min/max non-numeric",
+                        parts.get(1).copied().unwrap_or("?")
+                    );
+                    continue;
+                };
+                let holder = match cur_extracts.last_mut() {
+                    Some(Extract::Rows { gates, .. }) => Some(gates),
+                    _ => None,
+                };
+                match holder {
+                    Some(gs) => gs.push((parts[1].to_string(), min, max)),
+                    None => {
+                        eprintln!(
+                            "gate refused at {}: no rows holder",
+                            parts.get(1).copied().unwrap_or("?")
+                        );
+                    }
+                }
+            }
+            "field" | "first" | "last" | "lastrow" | "quantity"
+                if parts.len() == 5 || parts.len() == 4 =>
+            {
+                let definition = cur_definition_id.clone();
+                let model_key = format!("{definition}\t{}", parts[1]);
+                let (kernel_s, force_s, aperture_s, model_freq, model_tau) =
+                    if let Some(v) = field_model_definition().get(&model_key) {
+                        *v
+                    } else if let Some((k, f)) = field_model().get(parts[1]).copied() {
+                        (k, f, None, None, None)
+                    } else if let Some((k, f)) = field_model().get(parts[2]).copied() {
+                        (k, f, None, None, None)
+                    } else {
+                        unmodelled += 1;
+                        continue;
+                    };
+                let Some(kernel) = kernel_id_of(kernel_s) else {
+                    continue;
+                };
+                let channel_ref = match force_id_of(force_s) {
+                    Some(f) => Some(f),
+                    None => match quantity_kind_of(force_s) {
+                        Some(_) => None,
+                        None => continue,
+                    },
+                };
+                let (tau, tau_src) = match model_tau {
+                    Some(tau) if tau.is_finite() && tau >= 0.0 => {
+                        (tau, crate::archivar::types::TauSource::Measured)
+                    }
+                    _ => (0.0, crate::archivar::types::TauSource::Pending),
+                };
+                let aperture = match aperture_s {
+                    Some(class) => match Aperture::of_class(class) {
+                        Some(a) => a,
+                        None => continue,
+                    },
+                    None => Aperture::None,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel,
+                    channel_ref,
+                    tau,
+                    tau_src,
+                    absorption: SLOT_ABSENT,
+                    advection: SLOT_ABSENT,
+                    unit: parts[3].to_string(),
+                    freq: model_freq.unwrap_or(crate::spectral::SPECTRAL_NO_BAND),
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture,
+                };
+                match parts[0] {
+                    "first" => cur_extracts.push(Extract::First(fc, None)),
+                    "last" => cur_extracts.push(Extract::Last(fc, None)),
+                    "lastrow" => cur_extracts.push(Extract::LastRow(fc)),
+                    _ => push_field(&mut cur_extracts, fc),
+                }
+            }
+            "where" if parts.len() == 4 => {
+                let key = parts[1];
+                let col = parts[2].to_string();
+                let val = parts[3].to_string();
+                for e in cur_extracts.iter_mut().rev() {
+                    match e {
+                        Extract::First(fc, w) | Extract::Last(fc, w) if fc.key == key => {
+                            *w = Some((col, val));
+                            break;
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            "band" if parts.len() >= 5 && parts[3] == "pivot" => {
+                let key = parts[1];
+                let Some(lam_m) = parse_wavelength_m(parts[4]) else {
+                    continue;
+                };
+                let freq = C_LIGHT / lam_m;
+                let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
+                if parts.len() > 5 {
+                    if parts[5] != "edges" || parts.len() < 7 {
+                        continue;
+                    }
+                    let Some((lo_m, hi_m)) = parse_wavelength_range_m(parts[6]) else {
+                        continue;
+                    };
+                    bin_width = (C_LIGHT / lo_m - C_LIGHT / hi_m).abs();
+                }
+                if let Some(fc) = field_in_extracts(cur_extracts.as_mut_slice(), key) {
+                    fc.band_id = Some(parts[2].to_string());
+                    fc.freq = freq;
+                    fc.bin_width = bin_width;
+                }
+            }
+            "first" if parts.len() >= 7 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let filter = match parse_where(&parts) {
+                    Ok(f) => f,
+                    Err(_) => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::First(fc, filter));
+            }
+            "last" if parts.len() >= 7 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let filter = match parse_where(&parts) {
+                    Ok(f) => f,
+                    Err(_) => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::Last(fc, filter));
+            }
+            "count" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::Count(FieldConfig {
+                    key: parts[1].to_string(),
+                    name: if parts.len() >= 3 {
+                        parts[2].to_string()
+                    } else {
+                        parts[1].to_string()
+                    },
+                    band_id: None,
+                    kernel: 0,
+                    channel_ref: Some(0),
+                    tau: 0.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                }));
+            }
+            "lastrow" if parts.len() >= 7 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::LastRow(fc));
+            }
+            "lastobj" if parts.len() >= 5 => {
+                cur_extracts.push(Extract::LastObj(
+                    parts[1].to_string(),
+                    parts[2].to_string(),
+                    parts[3].to_string(),
+                    parts[4].to_string(),
+                ));
+            }
+            "lastline" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::LastLine(parts[1].to_string()));
+            }
+            "objlast" if parts.len() >= 7 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::ObjLast(fc));
+            }
+            "geojson" if parts.len() >= 6 => {
+                let mag_key = parts[1].to_string();
+                let min_mag: f64 = match parts[2].parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let mut outputs = Vec::new();
+                for p in &parts[3..parts.len().min(5)] {
+                    outputs.push(p.to_string());
+                }
+                let tau: f64 = match parts.get(5).and_then(|s| s.parse().ok()) {
+                    Some(v) if v > 0.0 => v,
+                    _ => continue,
+                };
+                let absorption: f64 = match parts.get(6).and_then(|s| s.parse().ok()) {
+                    Some(v) => v,
+                    _ => continue,
+                };
+                let advection: f64 = match parts.get(7).and_then(|s| s.parse().ok()) {
+                    Some(v) => v,
+                    _ => continue,
+                };
+                cur_extracts.push(Extract::GeojsonEvents {
+                    mag_key,
+                    min_mag,
+                    outputs,
+                    tau,
+                    absorption,
+                    advection,
+                    mag_type_key: String::new(),
+                });
+            }
+            "quakeml" if parts.len() >= 6 => {
+                let tau: f64 = match parts[3].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => continue,
+                };
+                let absorption: f64 = match parts[4].parse() {
+                    Ok(v) => v,
+                    _ => continue,
+                };
+                let advection: f64 = match parts[5].parse() {
+                    Ok(v) => v,
+                    _ => continue,
+                };
+                cur_extracts.push(Extract::QuakeMlEvents {
+                    outputs: vec![parts[1].to_string(), parts[2].to_string()],
+                    tau,
+                    absorption,
+                    advection,
+                });
+            }
+            "path" if parts.len() >= 9 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::Path(fc));
+            }
+            "deep" if parts.len() >= 9 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::Deep(fc));
+            }
+            "regex" if parts.len() >= 9 => {
+                let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                cur_extracts.push(Extract::Regex(fc));
+            }
+            "flatten" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::Flatten {
+                    arr_path: parts[1].to_string(),
+                    geom_path: if parts.len() >= 3 {
+                        parts[2].to_string()
+                    } else {
+                        String::new()
+                    },
+                    epoch_key: if parts.len() >= 4 {
+                        parts[3].to_string()
+                    } else {
+                        String::new()
+                    },
+                    fields: Vec::new(),
+                });
+            }
+            "cmrpolygon" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::CmrPolygon {
+                    arr_path: parts[1].to_string(),
+                    fields: Vec::new(),
+                    epoch_key: if parts.len() >= 3 {
+                        parts[2].to_string()
+                    } else {
+                        String::new()
+                    },
+                    alt_key: if parts.len() >= 4 {
+                        parts[3].to_string()
+                    } else {
+                        String::new()
+                    },
+                    val_key: if parts.len() >= 5 {
+                        parts[4].to_string()
+                    } else {
+                        String::new()
+                    },
+                });
+            }
+            "celestialpolygon" if parts.len() >= 2 => {
+                let radius: f64 = match parts.get(2).and_then(|s| s.parse().ok()) {
+                    Some(v) => v,
+                    None => {
+                        eprintln!(
+                            "celestialpolygon radius parse returned void: {:?}",
+                            parts.get(2)
+                        );
+                        continue;
+                    }
+                };
+                cur_extracts.push(Extract::CelestialPolygon {
+                    arr_path: parts[1].to_string(),
+                    radius,
+                    fields: Vec::new(),
+                    epoch_key: if parts.len() >= 4 {
+                        parts[3].to_string()
+                    } else {
+                        String::new()
+                    },
+                    val_key: if parts.len() >= 5 {
+                        parts[4].to_string()
+                    } else {
+                        String::new()
+                    },
+                });
+            }
+            "keplermap" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::KeplerMap {
+                    arr_path: parts[1].to_string(),
+                    a_key: if parts.len() >= 3 {
+                        parts[2].to_string()
+                    } else {
+                        String::new()
+                    },
+                    e_key: if parts.len() >= 4 {
+                        parts[3].to_string()
+                    } else {
+                        String::new()
+                    },
+                    i_key: if parts.len() >= 5 {
+                        parts[4].to_string()
+                    } else {
+                        String::new()
+                    },
+                    om_key: String::new(),
+                    w_key: String::new(),
+                    ma_key: String::new(),
+                    epoch_key: String::new(),
+                    q_key: String::new(),
+                    tp_key: String::new(),
+                    fields: Vec::new(),
+                });
+            }
+            "hapi" if parts.len() >= 2 => {
+                let mut params = Vec::new();
+                for s in &parts[1..] {
+                    if let Some((k, v)) = s.split_once('=') {
+                        params.push((k.to_string(), v.to_string()));
+                    }
+                }
+                cur_extracts.push(Extract::Hapi(params));
+            }
+            "hapi_fill" if parts.len() >= 2 => {
+                for s in &parts[1..] {
+                    if let Some((k, v)) = s.split_once('=')
+                        && let Ok(fv) = v.parse::<f64>()
+                    {
+                        cur_hapi_fill.insert(k.to_string(), fv);
+                    }
+                }
+            }
+            "alerce" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::Alerce(parts[1].to_string()));
+            }
+            "xmlcount" if parts.len() >= 3 => {
+                cur_extracts.push(Extract::XmlCount(
+                    parts[1].to_string(),
+                    parts[2].to_string(),
+                ));
+            }
+            "ephemeris" | "vectors" => {
+                eprintln!(
+                    "{} refused: Horizons-text extract is superseded by format ephemeris_binary + body channels (value would be a fabricated range)",
+                    parts[0]
+                );
+            }
+            "field" if parts.len() == 6 => {
+                let f = match force_id_of(parts[2]) {
+                    Some(f) => f,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("unknown force \"{}\": {}", parts[2], line),
+                        );
+                        continue;
+                    }
+                };
+                report_physics_mismatch(f, parts[3], parts[1], &cur_url);
+                let tau: f64 = match parts[4].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => continue,
+                };
+                let k = match kernel_id_of(parts[5]) {
+                    Some(k) => k,
+                    None => match kernel_id_for_force(f) {
+                        Some(k) => k,
+                        None => continue,
+                    },
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[1].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: Some(f),
+                    tau,
+                    tau_src: TauSource::Pending,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: parts[3].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                if let Some(ext) = cur_extracts.last_mut() {
+                    let fields: Option<&mut Vec<FieldConfig>> = match ext {
+                        Extract::Map { fields, .. } => Some(fields),
+                        Extract::CelestialMap { fields, .. } => Some(fields),
+                        Extract::Rows { fields, .. } => Some(fields),
+                        Extract::Flatten { fields, .. } => Some(fields),
+                        Extract::CmrPolygon { fields, .. } => Some(fields),
+                        Extract::CelestialPolygon { fields, .. } => Some(fields),
+                        Extract::KeplerMap { fields, .. } => Some(fields),
+                        Extract::EpnCore { fields, .. } => Some(fields),
+                        Extract::ProfileMap { .. } => {
+                            eprintln!(
+                                "field refused at {}: 5/6-token field inside a profile block is an orphan — the 9-token form carries the pressure arm",
+                                parts[1]
+                            );
+                            continue;
+                        }
+                        _ => None,
+                    };
+                    if let Some(flds) = fields {
+                        flds.push(fc);
+                    } else {
+                        cur_extracts.push(Extract::Field(fc.clone()));
+                    }
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
+            "field" if parts.len() == 5 => {
+                let legacy = force_id_of(parts[2]).is_some();
+                let canonical = !legacy && force_id_of(parts[3]).is_some();
+                if !legacy && !canonical {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("unknown force \"{}\": {}", parts[2], line),
+                    );
+                    continue;
+                }
+                let (key, name, kernel_token, force_token, unit_token) = if canonical {
+                    (parts[1], parts[2], Some(parts[2]), parts[3], parts[4])
+                } else {
+                    (parts[1], parts[1], None, parts[2], parts[3])
+                };
+                let f = match force_id_of(force_token) {
+                    Some(f) => f,
+                    None => continue,
+                };
+                report_physics_mismatch(f, unit_token, key, &cur_url);
+                let tau: f64 = f64::default();
+                let fc = FieldConfig {
+                    key: key.to_string(),
+                    name: name.to_string(),
+                    band_id: None,
+                    kernel: match kernel_token {
+                        Some(token) => match kernel_id_of(token) {
+                            Some(k) => k,
+                            None => continue,
+                        },
+                        None => match kernel_id_for_force(f) {
+                            Some(k) => k,
+                            None => continue,
+                        },
+                    },
+                    channel_ref: Some(f),
+                    tau,
+                    tau_src: TauSource::Pending,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: unit_token.to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                if let Some(ext) = cur_extracts.last_mut() {
+                    let fields: Option<&mut Vec<FieldConfig>> = match ext {
+                        Extract::Map { fields, .. } => Some(fields),
+                        Extract::CelestialMap { fields, .. } => Some(fields),
+                        Extract::Rows { fields, .. } => Some(fields),
+                        Extract::Flatten { fields, .. } => Some(fields),
+                        Extract::CmrPolygon { fields, .. } => Some(fields),
+                        Extract::CelestialPolygon { fields, .. } => Some(fields),
+                        Extract::KeplerMap { fields, .. } => Some(fields),
+                        Extract::EpnCore { fields, .. } => Some(fields),
+                        Extract::ProfileMap { .. } => {
+                            eprintln!(
+                                "field refused at {}: 5/6-token field inside a profile block is an orphan — the 9-token form carries the pressure arm",
+                                parts[1]
+                            );
+                            continue;
+                        }
+                        _ => None,
+                    };
+                    if let Some(flds) = fields {
+                        flds.push(fc);
+                    } else {
+                        cur_extracts.push(Extract::Field(fc.clone()));
+                    }
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
+            "channel" if parts.len() >= 3 => {
+                let unit = match unit_token(parts[2]) {
+                    Some(u) => u,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("unknown channel unit \"{}\": {}", parts[2], line),
+                        );
+                        continue;
+                    }
+                };
+                let mut alias: Option<String> = None;
+                let mut charge: Option<f64> = None;
+                let mut species: Option<String> = None;
+                let mut refused = false;
+                let mut i = 3;
+                while i < parts.len() {
+                    match parts[i] {
+                        "alias" if i + 1 < parts.len() => {
+                            alias = Some(parts[i + 1].to_string());
+                            i += 2;
+                        }
+                        "species" if i + 1 < parts.len() => {
+                            species = Some(parts[i + 1].to_string());
+                            i += 2;
+                        }
+                        "charge" if i + 1 < parts.len() => match parts[i + 1].parse::<f64>() {
+                            Ok(z) if z.is_finite() => {
+                                charge = Some(z);
+                                i += 2;
+                            }
+                            _ => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!(
+                                        "invalid channel charge \"{}\": {}",
+                                        parts[i + 1],
+                                        line
+                                    ),
+                                );
+                                refused = true;
+                                break;
+                            }
+                        },
+                        other => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("unknown channel token \"{}\": {}", other, line),
+                            );
+                            refused = true;
+                            break;
+                        }
+                    }
+                }
+                if refused {
+                    continue;
+                }
+                match ChannelDescriptor::parse_spec(parts[1], unit) {
+                    Ok(d) => cur_channels.push(
+                        d.with_alias(alias)
+                            .with_charge(charge)
+                            .with_species(species),
+                    ),
+                    Err(reason) => {
+                        report_anomaly("Invalid Syntax", &cur_url, &format!("{}: {}", reason, line))
+                    }
+                }
+            }
+            "field" if parts.len() == 3 => {
+                eprintln!(
+                    "field refused at {}: 3-token field carries no tau (τ-Gate)",
+                    parts[1]
+                );
+            }
+            "field_in" if parts.len() >= 3 => {
+                eprintln!(
+                    "field_in refused at {}: legacy directive — the --gold port migrates field_in to field (τ-Gate)",
+                    parts[1]
+                );
+            }
+            "quantity" if parts.len() >= 9 => {
+                let k = match kernel_id_of(parts[3]) {
+                    Some(k) => k,
+                    None => continue,
+                };
+                let kind = match quantity_kind_of(parts[4]) {
+                    Some(k) => k,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("unknown quantity kind \"{}\": {}", parts[4], line),
+                        );
+                        continue;
+                    }
+                };
+                if !matches!(kind, QuantityKind::Geometry | QuantityKind::SourceParameter)
+                    && !allowed_units_for_quantity(quantity_kind_id(kind))
+                        .contains(&normalize_unit(parts[5]).as_str())
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "unknown quantity unit \"{}\" for kind \"{}\": {}",
+                            parts[5], parts[4], line
+                        ),
+                    );
+                    continue;
+                }
+                let tau: f64 = match parts[6].parse() {
+                    Ok(v) => v,
+                    Err(_) => f64::default(),
+                };
+                let absorption: f64 = match parts[7].parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let advection: f64 = match parts[8].parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let mut freq = crate::spectral::SPECTRAL_NO_BAND;
+                let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
+                let mut band_declared = false;
+                if parts.len() > 9 {
+                    if parts[9] != "band" {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "quantity {} carries an unknown trailing token \"{}\": {}",
+                                parts[1], parts[9], line
+                            ),
+                        );
+                        continue;
+                    }
+                    if parts.len() < 13 || parts[11] != "pivot" {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "quantity {} band clause malformed (band <id> pivot <lambda><unit> [edges <lo>-<hi><unit>]): {}",
+                                parts[1], line
+                            ),
+                        );
+                        continue;
+                    }
+                    let lam_m = match parse_wavelength_m(parts[12]) {
+                        Some(m) => m,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "quantity {} pivot wavelength \"{}\" unmeasurable: {}",
+                                    parts[1], parts[12], line
+                                ),
+                            );
+                            continue;
+                        }
+                    };
+                    freq = C_LIGHT / lam_m;
+                    band_declared = true;
+                    if parts.len() > 13 {
+                        if parts[13] != "edges" || parts.len() < 15 {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "quantity {} edges clause malformed (edges <lo>-<hi><unit>): {}",
+                                    parts[1], line
+                                ),
+                            );
+                            continue;
+                        }
+                        match parse_wavelength_range_m(parts[14]) {
+                            Some((lo_m, hi_m)) => {
+                                bin_width = (C_LIGHT / lo_m - C_LIGHT / hi_m).abs();
+                            }
+                            None => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!(
+                                        "quantity {} edges \"{}\" unmeasurable: {}",
+                                        parts[1], parts[14], line
+                                    ),
+                                );
+                                continue;
+                            }
+                        }
+                    }
+                }
+                if kind == QuantityKind::Scale
+                    && normalize_unit(parts[5]) == "nmgy"
+                    && !band_declared
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "photometric flux {} without band: declare band <id> pivot <lambda> [edges <lo>-<hi>]",
+                            parts[1]
+                        ),
+                    );
+                    continue;
+                }
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: if band_declared {
+                        Some(parts[10].to_string())
+                    } else {
+                        None
+                    },
+                    kernel: k,
+                    channel_ref: None,
+                    tau,
+                    tau_src: TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq,
+                    bin_width,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::Flatten { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CmrPolygon { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CelestialPolygon { fields, .. }) =
+                    cur_extracts.last_mut()
+                {
+                    fields.push(fc);
+                } else if let Some(Extract::KeplerMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::EpnCore { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
+            "field"
+                if parts.len() >= 12
+                    && QuantityRole::parse(parts[3]).is_some()
+                    && Conserved::parse(parts[4]).is_some() =>
+            {
+                let (i, declared_regime) = match PdeRegime::parse(parts[9]) {
+                    Some(r) => (10, Some(r)),
+                    None => (9, None),
+                };
+                if parts.len() < i + 3 {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "field {} carries no kernel/unit/tau after the boundary (a regime token shifts the kernel by one)",
+                            parts[1]
+                        ),
+                    );
+                    continue;
+                }
+                let k = match kernel_id_of(parts[i]) {
+                    Some(k) => k,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries \"{}\" where a kernel (or a regime token) is expected",
+                                parts[1], parts[i]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let unit = match unit_token(parts[i + 1]) {
+                    Some(u) => u,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries an unknown unit \"{}\": {}",
+                                parts[1],
+                                parts[i + 1],
+                                line
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let tau: f64 = match parts[i + 2].parse() {
+                    Ok(v) => v,
+                    Err(_) => f64::default(),
+                };
+                let absorption: f64 = match parts.get(i + 3) {
+                    Some(s) => match s.parse() {
+                        Ok(v) => v,
+                        Err(_) => continue,
+                    },
+                    None => SLOT_ABSENT,
+                };
+                let advection: f64 = match parts.get(i + 4) {
+                    Some(s) => match s.parse() {
+                        Ok(v) => v,
+                        Err(_) => continue,
+                    },
+                    None => SLOT_ABSENT,
+                };
+                let desc = match descriptor_from_axes(
+                    parts[3], parts[4], parts[5], parts[6], parts[7], parts[8], unit,
+                ) {
+                    Ok(d) => d,
+                    Err(reason) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("field {}: {}", parts[1], reason),
+                        );
+                        continue;
+                    }
+                };
+                if let Some(declared) = declared_regime
+                    && declared != desc.regime
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "field {} declares regime {} but the descriptor carries {} — a contradiction, not a default",
+                            parts[1],
+                            declared.name(),
+                            desc.regime.name()
+                        ),
+                    );
+                    continue;
+                }
+                let f = match channel_ref_of_descriptor(&desc) {
+                    Some(f) => f,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} descriptor ({}/{}/{}/{}/{}/{}) matches no channel — unresolved",
+                                parts[1],
+                                parts[3],
+                                parts[4],
+                                parts[5],
+                                parts[6],
+                                parts[7],
+                                parts[8]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: Some(f),
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[i + 1].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                push_field(&mut cur_extracts, fc);
+            }
+            "field"
+                if parts.len() >= 10
+                    && TransportOp::parse(parts[3]).is_some()
+                    && PdeType::parse(parts[4]).is_some()
+                    && Medium::parse(parts[5]).is_some() =>
+            {
+                let op = match TransportOp::parse(parts[3]) {
+                    Some(op) => op,
+                    None => continue,
+                };
+                let conserved = match op {
+                    TransportOp::Flux(FluxKind::Fick) => "mass",
+                    TransportOp::Flux(FluxKind::Fourier) => "energy",
+                    TransportOp::Flux(FluxKind::Ohm) => "charge",
+                    TransportOp::Flux(FluxKind::NewtonViscous) => "momentum",
+                    TransportOp::Creep => "momentum",
+                    TransportOp::Advective
+                    | TransportOp::Wave
+                    | TransportOp::Maxwell
+                    | TransportOp::Poisson => match conserved_for_quantity(parts[2]) {
+                        Some(c) => conserved_name(c),
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "field {}: quantity \"{}\" resolves to no conserved quantity for operator \"{}\" — pending, never a default",
+                                    parts[1], parts[2], parts[3]
+                                ),
+                            );
+                            continue;
+                        }
+                    },
+                };
+                let (role, role_idx, declared_interaction) = match interaction_or_role(&parts, 6) {
+                    Ok(resolved) => resolved,
+                    Err(reason) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("field {}: {}", parts[1], reason),
+                        );
+                        continue;
+                    }
+                };
+                let unit_idx = role_idx + 1;
+                let tau_idx = role_idx + 2;
+                if parts.len() < tau_idx + 2 {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "field {} carries no unit/tau/kernel after the role",
+                            parts[1]
+                        ),
+                    );
+                    continue;
+                }
+                let k = match kernel_id_of(parts[parts.len() - 1]) {
+                    Some(k) => k,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries \"{}\" where a kernel is expected",
+                                parts[1],
+                                parts[parts.len() - 1]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let unit = match unit_token(parts[unit_idx]) {
+                    Some(u) => u,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries an unknown unit \"{}\": {}",
+                                parts[1], parts[unit_idx], line
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let tau: f64 = match parts[tau_idx].parse() {
+                    Ok(v) => v,
+                    Err(_) => f64::default(),
+                };
+                let tail = &parts[tau_idx + 1..];
+                let (absorption, advection) = match tail.len() {
+                    1 => (0.0, 0.0),
+                    2 => match tail[0].parse() {
+                        Ok(v) => (v, 0.0),
+                        Err(_) => continue,
+                    },
+                    3 => match (tail[0].parse(), tail[1].parse()) {
+                        (Ok(a), Ok(b)) => (a, b),
+                        _ => continue,
+                    },
+                    _ => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries {} trailing tokens after tau where [abs] [adv] <kernel> is expected",
+                                parts[1],
+                                tail.len()
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let desc = match descriptor_from_axes(
+                    role, conserved, parts[3], parts[4], parts[5], "none", unit,
+                ) {
+                    Ok(d) => d,
+                    Err(reason) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("field {}: {}", parts[1], reason),
+                        );
+                        continue;
+                    }
+                };
+                let f = match channel_ref_of_descriptor(&desc) {
+                    Some(f) => f,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} descriptor ({}/{}/{}/{}/{}/{}) matches no channel — unresolved",
+                                parts[1], role, conserved, parts[3], parts[4], parts[5], unit
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                if let Some(declared) = declared_interaction {
+                    let derived = interaction_of(f);
+                    if derived != Some(declared) {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} declares interaction {} but the mechanism derives {} — the interaction is derived over the mechanisms FK, never declared",
+                                parts[1],
+                                declared.name(),
+                                derived.map(|d| d.name()).unwrap_or("none")
+                            ),
+                        );
+                        continue;
+                    }
+                }
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: Some(f),
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
+                    unit: parts[unit_idx].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                push_field(&mut cur_extracts, fc);
+            }
+            "field" if parts.len() >= 7 => {
+                if parts.len() >= 10 && parts[9] == "where" {
+                    eprintln!(
+                        "where refused at {}: the row filter lives on first/last, not on field",
+                        parts[1]
+                    );
+                    continue;
+                }
+                let k = match kernel_id_of(parts[3]) {
+                    Some(k) => k,
+                    None => continue,
+                };
+                let f = match force_id_of(parts[4]) {
+                    Some(f) => f,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("unknown force \"{}\": {}", parts[4], line),
+                        );
+                        continue;
+                    }
+                };
+                report_physics_mismatch(f, parts[5], parts[1], &cur_url);
+                let tau: f64 = match parts[6].parse() {
+                    Ok(v) => v,
+                    Err(_) => f64::default(),
+                };
+                let tau_src = match parts.get(7).copied() {
+                    Some("measured") => TauSource::Measured,
+                    Some("derived") => TauSource::Derived,
+                    Some("pending") => TauSource::Pending,
+                    _ => TauSource::Pending,
+                };
+                let (abs_index, adv_index, extras_start) = match parts.get(7).copied() {
+                    Some("measured" | "derived" | "pending") => (8, 9, 10),
+                    _ => (7, 8, 9),
+                };
+                let absorption: f64 = match parts.get(abs_index).map(|s| s.parse()) {
+                    Some(Ok(v)) => v,
+                    Some(Err(_)) => continue,
+                    None => SLOT_ABSENT,
+                };
+                let advection: f64 = match parts.get(adv_index).map(|s| s.parse()) {
+                    Some(Ok(v)) => v,
+                    Some(Err(_)) => continue,
+                    None => SLOT_ABSENT,
+                };
+                let mut freq = crate::spectral::SPECTRAL_NO_BAND;
+                let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
+                if let Some(idx) = parts.iter().position(|p| p.starts_with("norm:")) {
+                    let tok = parts[idx].strip_prefix("norm:").unwrap_or("");
+                    match crate::archivar::gfc::Norm::parse(tok) {
+                        Some(n) if Some(n) == cur_norm => {}
+                        Some(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "field {}: norm token contradicts the source head — never silently agreed",
+                                    parts[1]
+                                ),
+                            );
+                            continue;
+                        }
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("field {}: unknown norm token \"{}\"", parts[1], tok),
+                            );
+                            continue;
+                        }
+                    }
+                }
+                let aperture_idx = parts.iter().position(|p| p.starts_with("aperture:"));
+                let declared_aperture = match aperture_idx {
+                    Some(i) => {
+                        match Aperture::of_class(parts[i].strip_prefix("aperture:").unwrap_or("")) {
+                            Some(a) => Some(a),
+                            None => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!("unknown aperture class \"{}\": {}", parts[i], line),
+                                );
+                                continue;
+                            }
+                        }
+                    }
+                    None => None,
+                };
+                let block_has_z = matches!(
+                    cur_extracts.last(),
+                    Some(Extract::CelestialMap { z_key, .. }) if !z_key.is_empty()
+                );
+                let aperture_mandatory = block_has_z && f == 0;
+                let aperture = match (declared_aperture, aperture_mandatory) {
+                    (Some(a), _) => a,
+                    (None, false) => Aperture::None,
+                    (None, true) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries no aperture token in a z-block (mandatory)",
+                                parts[1]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let extras: Vec<f64> = parts
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| *i >= extras_start && Some(*i) != aperture_idx)
+                    .filter_map(|(_, s)| s.parse::<f64>().ok())
+                    .filter(|v| v.is_finite() && *v > 0.0)
+                    .collect();
+                if let Some(v) = extras.first() {
+                    freq = *v;
+                }
+                if let Some(v) = extras.get(1) {
+                    bin_width = *v;
+                }
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: Some(f),
+
+                    tau,
+                    tau_src,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq,
+                    bin_width,
+                    fold: None,
+                    aperture,
+                };
+                if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::Flatten { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CmrPolygon { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CelestialPolygon { fields, .. }) =
+                    cur_extracts.last_mut()
+                {
+                    fields.push(fc);
+                } else if let Some(Extract::KeplerMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::EpnCore { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
+            "field" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("field arity {}: {}", parts.len(), line),
+                );
+            }
+            "lat" | "lat_key" if parts.len() >= 2 => match cur_extracts.last_mut() {
+                Some(Extract::Map { lat_key, .. })
+                | Some(Extract::ProfileMap { lat_key, .. })
+                | Some(Extract::Rows { lat_key, .. })
+                | Some(Extract::Volume { lat_key, .. }) => {
+                    *lat_key = parts[1].to_string();
+                }
+                _ => {}
+            },
+            "lon" | "lon_key" if parts.len() >= 2 => match cur_extracts.last_mut() {
+                Some(Extract::Map { lon_key, .. })
+                | Some(Extract::ProfileMap { lon_key, .. })
+                | Some(Extract::Rows { lon_key, .. })
+                | Some(Extract::Volume { lon_key, .. }) => {
+                    *lon_key = parts[1].to_string();
+                }
+                _ => {}
+            },
+            "depth" if parts.len() >= 2 => {
+                if let Some(Extract::Volume {
+                    depth_key,
+                    depth_scale,
+                    ..
+                }) = cur_extracts.last_mut()
+                {
+                    *depth_key = parts[1].to_string();
+                    if parts.len() >= 3
+                        && let Ok(s) = parts[2].parse::<f64>()
+                    {
+                        *depth_scale = s;
+                    }
+                }
+            }
+            "lat_sign" if parts.len() >= 2 => {
+                if let Some(Extract::Map { lat_sign, .. }) = cur_extracts.last_mut() {
+                    *lat_sign = Some(parts[1].to_string());
+                }
+            }
+            "lon_sign" if parts.len() >= 2 => {
+                if let Some(Extract::Map { lon_sign, .. }) = cur_extracts.last_mut() {
+                    *lon_sign = Some(parts[1].to_string());
+                }
+            }
+            "epoch_scale" if parts.len() >= 2 => {
+                if let Ok(s) = parts[1].parse::<f64>()
+                    && let Some(Extract::Map { epoch_scale, .. }) = cur_extracts.last_mut()
+                {
+                    *epoch_scale = s;
+                }
+            }
+            "alt" if parts.len() >= 2 => {
+                let scale = match parts.get(2) {
+                    None => 1.0,
+                    Some(&"m") => 1.0,
+                    Some(&"km") => 1000.0,
+                    Some(&"ft") => 0.3048,
+                    Some(&"cm") => 0.01,
+                    Some(&"mm") => 0.001,
+                    Some(&"-m") => -1.0,
+                    Some(&"-km") => -1000.0,
+                    Some(&"decibar") => 1.0,
+                    Some(_) => continue,
+                };
+                if let Some(Extract::Map {
+                    alt_key, alt_scale, ..
+                }) = cur_extracts.last_mut()
+                {
+                    *alt_key = parts[1].to_string();
+                    *alt_scale = scale;
+                } else if let Some(Extract::ProfileMap {
+                    pressure_var,
+                    pressure_scale,
+                    ..
+                }) = cur_extracts.last_mut()
+                {
+                    *pressure_var = parts[1].to_string();
+                    *pressure_scale = scale;
+                }
+            }
+            "epoch" if parts.len() >= 2 => match cur_extracts.last_mut() {
+                Some(Extract::Map { epoch_key, .. })
+                | Some(Extract::KeplerMap { epoch_key, .. })
+                | Some(Extract::ProfileMap { epoch_key, .. }) => {
+                    *epoch_key = parts[1].to_string();
+                }
+                Some(Extract::Rows { epoch_cols, .. }) => {
+                    *epoch_cols = vec![parts[1].to_string()];
+                }
+                Some(Extract::CelestialMap {
+                    epoch_key,
+                    epoch_mjd,
+                    ..
+                }) => {
+                    *epoch_key = parts[1].to_string();
+                    if parts.len() >= 3 && parts[2] == "mjd" {
+                        *epoch_mjd = true;
+                    }
+                }
+                Some(Extract::EpnCore {
+                    epoch_key,
+                    epoch_mjd,
+                    ..
+                }) => {
+                    *epoch_key = parts[1].to_string();
+                    if parts.len() >= 3 && parts[2] == "mjd" {
+                        *epoch_mjd = true;
+                    }
+                }
+                _ => {}
+            },
+            "target_name" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { body_key, .. }) = cur_extracts.last_mut() {
+                    *body_key = parts[1].to_string();
+                }
+            }
+            "lonmin" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lon_min_key, .. }) = cur_extracts.last_mut() {
+                    *lon_min_key = parts[1].to_string();
+                }
+            }
+            "lonmax" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lon_max_key, .. }) = cur_extracts.last_mut() {
+                    *lon_max_key = parts[1].to_string();
+                }
+            }
+            "latmin" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lat_min_key, .. }) = cur_extracts.last_mut() {
+                    *lat_min_key = parts[1].to_string();
+                }
+            }
+            "latmax" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lat_max_key, .. }) = cur_extracts.last_mut() {
+                    *lat_max_key = parts[1].to_string();
+                }
+            }
+            "altmin" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { alt_min_key, .. }) = cur_extracts.last_mut() {
+                    *alt_min_key = parts[1].to_string();
+                }
+            }
+            "altmax" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { alt_max_key, .. }) = cur_extracts.last_mut() {
+                    *alt_max_key = parts[1].to_string();
+                }
+            }
+            "region" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { s_region_key, .. }) = cur_extracts.last_mut() {
+                    *s_region_key = parts[1].to_string();
+                }
+            }
+            "pressure" if parts.len() >= 2 => {
+                if let Some(Extract::ProfileMap {
+                    pressure_var,
+                    pressure_scale,
+                    ..
+                }) = cur_extracts.last_mut()
+                {
+                    *pressure_var = parts[1].to_string();
+                    if parts.len() >= 3
+                        && let Ok(s) = parts[2].parse::<f64>()
+                    {
+                        *pressure_scale = s;
+                    }
+                }
+            }
+            "a" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { a_key, .. }) = cur_extracts.last_mut() {
+                    *a_key = parts[1].to_string();
+                }
+            }
+            "e" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { e_key, .. }) = cur_extracts.last_mut() {
+                    *e_key = parts[1].to_string();
+                }
+            }
+            "i" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { i_key, .. }) = cur_extracts.last_mut() {
+                    *i_key = parts[1].to_string();
+                }
+            }
+            "om" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { om_key, .. }) = cur_extracts.last_mut() {
+                    *om_key = parts[1].to_string();
+                }
+            }
+            "w" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { w_key, .. }) = cur_extracts.last_mut() {
+                    *w_key = parts[1].to_string();
+                }
+            }
+            "ma" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { ma_key, .. }) = cur_extracts.last_mut() {
+                    *ma_key = parts[1].to_string();
+                }
+            }
+            "qr" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { q_key, .. }) = cur_extracts.last_mut() {
+                    *q_key = parts[1].to_string();
+                }
+            }
+            "tp" if parts.len() >= 2 => {
+                if let Some(Extract::KeplerMap { tp_key, .. }) = cur_extracts.last_mut() {
+                    *tp_key = parts[1].to_string();
+                }
+            }
+            "vel" if parts.len() >= 2 => {
+                if let Some(Extract::Map {
+                    vel_key, vel_scale, ..
+                }) = cur_extracts.last_mut()
+                {
+                    if parts.len() >= 3 {
+                        match convert_to_si(1.0, parts[2]) {
+                            Some(scale) if scale > 0.0 => {
+                                *vel_scale = scale;
+                                *vel_key = parts[1].to_string();
+                            }
+                            _ => {
+                                eprintln!(
+                                    "vel refused: unit \"{}\" unconverted — SI absent (pending curation)",
+                                    parts[2]
+                                );
+                            }
+                        }
+                    } else {
+                        *vel_key = parts[1].to_string();
+                    }
+                }
+            }
+            "tau_key" if parts.len() >= 2 => {
+                let target = match cur_extracts.last_mut() {
+                    Some(Extract::Map { tau_key, .. })
+                    | Some(Extract::CelestialMap { tau_key, .. })
+                    | Some(Extract::Rows { tau_key, .. }) => Some(tau_key),
+                    _ => None,
+                };
+                if let Some(tk) = target {
+                    *tk = parts[1].to_string();
+                }
+            }
+            "mag_type_key" if parts.len() >= 2 => {
+                let target = match cur_extracts.last_mut() {
+                    Some(Extract::Map { mag_type_key, .. })
+                    | Some(Extract::GeojsonEvents { mag_type_key, .. }) => Some(mag_type_key),
+                    _ => None,
+                };
+                if let Some(mt) = target {
+                    *mt = parts[1].to_string();
+                }
+            }
+            "fold" if parts.len() == 8 || parts.len() == 7 => {
+                let op = match parts[1] {
+                    "mean" => 1u8,
+                    "diff" => 2,
+                    "sum" => 3,
+                    "sin_deg" => 4,
+                    "cos_deg" => 5,
+                    other => {
+                        eprintln!(
+                            "fold refused: op \"{}\" unknown (mean|diff|sum|sin_deg|cos_deg)",
+                            other
+                        );
+                        continue;
+                    }
+                };
+                let (k, f, tau, unit) = if parts.len() == 8 {
+                    let k = match kernel_id_of(parts[4]) {
+                        Some(k) => k,
+                        None => continue,
+                    };
+                    let f = match force_id_of(parts[5]) {
+                        Some(f) => f,
+                        None => continue,
+                    };
+                    let tau: f64 = match parts[7].parse() {
+                        Ok(v) if v > 0.0 => v,
+                        _ => continue,
+                    };
+                    (k, f, tau, parts[6].to_string())
+                } else {
+                    let f = match force_id_of(parts[4]) {
+                        Some(f) => f,
+                        None => continue,
+                    };
+                    let tau: f64 = match parts[6].parse() {
+                        Ok(v) if v > 0.0 => v,
+                        _ => continue,
+                    };
+                    let k = match kernel_id_for_force(f) {
+                        Some(k) => k,
+                        None => continue,
+                    };
+                    (k, f, tau, parts[5].to_string())
+                };
+                let fc = FieldConfig {
+                    key: parts[2].to_string(),
+                    name: format!("fold_{}_{}_{}", parts[1], parts[2], parts[3]),
+                    band_id: None,
+                    kernel: k,
+                    channel_ref: Some(f),
+                    tau,
+                    tau_src: TauSource::Pending,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: Some((op, parts[3].to_string())),
+                    aperture: Aperture::None,
+                };
+                let holder = match cur_extracts.last_mut() {
+                    Some(Extract::Map { fields, .. })
+                    | Some(Extract::CelestialMap { fields, .. })
+                    | Some(Extract::Flatten { fields, .. })
+                    | Some(Extract::Rows { fields, .. }) => Some(fields),
+                    _ => None,
+                };
+                match holder {
+                    Some(flds) => flds.push(fc),
+                    None => {
+                        eprintln!(
+                            "fold refused: no map/cmap/flatten/rows holder at {} {}",
+                            parts[2], parts[3]
+                        );
+                    }
+                }
+            }
+            "trk" if parts.len() >= 2 => {
+                if let Some(Extract::Map { trk_key, .. }) = cur_extracts.last_mut() {
+                    *trk_key = parts[1].to_string();
+                }
+            }
+            "vr" if parts.len() >= 2 => {
+                if let Some(Extract::Map { vr_key, .. }) = cur_extracts.last_mut() {
+                    *vr_key = parts[1].to_string();
+                }
+            }
+            "val" if parts.len() >= 2 => {
+                if let Some(Extract::Map { val_key, .. }) = cur_extracts.last_mut() {
+                    *val_key = parts[1].to_string();
+                } else if let Some(Extract::EpnCore { val_key, .. }) = cur_extracts.last_mut() {
+                    *val_key = parts[1].to_string();
+                }
+            }
+            "ra" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { ra_key, .. }) = cur_extracts.last_mut() {
+                    *ra_key = parts[1].to_string();
+                }
+            }
+            "dec" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { dec_key, .. }) = cur_extracts.last_mut() {
+                    *dec_key = parts[1].to_string();
+                }
+            }
+            "z" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { z_key, .. }) = cur_extracts.last_mut() {
+                    *z_key = parts[1].to_string();
+                }
+            }
+            "plx" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { plx_key, .. }) = cur_extracts.last_mut() {
+                    *plx_key = parts[1].to_string();
+                }
+            }
+            "pmra" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { pmra_key, .. }) = cur_extracts.last_mut() {
+                    *pmra_key = parts[1].to_string();
+                }
+            }
+            "pmdec" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { pmdec_key, .. }) = cur_extracts.last_mut() {
+                    *pmdec_key = parts[1].to_string();
+                }
+            }
+            "radvel" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { rv_key, .. }) = cur_extracts.last_mut() {
+                    *rv_key = parts[1].to_string();
+                }
+            }
+            "dist" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { dist_key, .. }) = cur_extracts.last_mut() {
+                    *dist_key = parts[1].to_string();
+                }
+            }
+            "dist_scale" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>()
+                    && let Some(Extract::CelestialMap { dist_scale, .. }) = cur_extracts.last_mut()
+                {
+                    *dist_scale = Some(v);
+                }
+            }
+            "rv_scale" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>()
+                    && let Some(Extract::CelestialMap { rv_scale, .. }) = cur_extracts.last_mut()
+                {
+                    *rv_scale = Some(v);
+                }
+            }
+            "tname" if parts.len() >= 2 => {}
+            "tra" if parts.len() >= 2 => {}
+            "tdec" if parts.len() >= 2 => {}
+            "tdist" if parts.len() >= 2 => {}
+            "tdist_scale" if parts.len() >= 2 => {}
+            "ta" if parts.len() >= 2 => {}
+            "te" if parts.len() >= 2 => {}
+            "ti" if parts.len() >= 2 => {}
+            "tw" if parts.len() >= 2 => {}
+            "ttranmid" if parts.len() >= 2 => {}
+            "tperiod" if parts.len() >= 2 => {}
+            "trp" if parts.len() >= 2 => {}
+            "trs" if parts.len() >= 2 => {}
+            "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
+            "model_kind" if parts.len() >= 2 => {
+                cur_model_kind = parse_model_kind(parts[1]);
+                if cur_model_kind.is_none() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("model_kind void: {}", line),
+                    );
+                }
+            }
+            "gm" if parts.len() >= 2 => {
+                cur_gm = parts[1].parse::<f64>().ok();
+                if !cur_gm.map(|v| v.is_finite() && v > 0.0).unwrap_or(false) {
+                    report_anomaly("Invalid Syntax", &cur_url, &format!("gm void: {line}"));
+                }
+            }
+            "radius" if parts.len() >= 2 => {
+                cur_radius = parts[1].parse::<f64>().ok();
+                if !cur_radius
+                    .map(|v| v.is_finite() && v > 0.0)
+                    .unwrap_or(false)
+                {
+                    report_anomaly("Invalid Syntax", &cur_url, &format!("radius void: {line}"));
+                }
+            }
+            "norm" if parts.len() >= 2 => {
+                cur_norm = crate::archivar::gfc::Norm::parse(parts[1]);
+                if cur_norm.is_none() {
+                    report_anomaly("Invalid Syntax", &cur_url, &format!("norm void: {line}"));
+                }
+            }
+            "tide" if parts.len() >= 2 => cur_tide = Some(parts[1].to_string()),
+            "max_degree" if parts.len() >= 2 => {
+                cur_max_degree = parts[1].parse::<u32>().ok();
+                if cur_max_degree.is_none() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("max_degree void: {line}"),
+                    );
+                }
+            }
+            "sha256" if parts.len() >= 2 => cur_sha256 = Some(parts[1].to_string()),
+            "body" if parts.len() >= 2 => {
+                cur_body = Some(parts[1].to_string());
+            }
+            "force" if parts.len() >= 2 => {
+                if cur_witness.is_none() {
+                    eprintln!(
+                        "force directive refused at {}: force is a field token, not a standalone directive",
+                        parts[1]
+                    );
+                }
+            }
+            "header" if parts.len() >= 3 => {
+                cur_headers.push((parts[1].to_string(), parts[2..].join(" ")));
+            }
+            "post_body" if parts.len() >= 2 => cur_post_body = Some(parts[1].to_string()),
+            "target" if parts.len() >= 2 => cur_target = Some(parts[1].to_string()),
+            "catalog" if parts.len() >= 2 => cur_catalog = Some(parts[1].to_string()),
+            "range" if parts.len() == 3 => {
+                let start = parts[1].parse::<f64>();
+                let step = parts[2].parse::<f64>();
+                match (start, step) {
+                    (Ok(s), Ok(d)) if s.is_finite() && s >= 0.0 && d.is_finite() && d > 0.0 => {
+                        cur_range = Some(RangeAxis {
+                            start_m: s,
+                            step_m: d,
+                        });
+                    }
+                    _ => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("range void: {}", line),
+                        );
+                    }
+                }
+            }
+            "range" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("range arity {}: {}", parts.len(), line),
+                );
+            }
+            "max_freq" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    cur_max_freq = Some(v);
+                }
+            }
+            "min_freq" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    cur_min_freq = Some(v);
+                }
+            }
+            "stations" if parts.len() >= 2 => cur_stations_url = Some(parts[1].to_string()),
+            "station" if parts.len() >= 2 => cur_station_code = Some(parts[1].to_string()),
+            "stations_path" if parts.len() >= 2 => cur_stations_path = parts[1].to_string(),
+            "stations_lat" if parts.len() >= 2 => cur_stations_lat = parts[1].to_string(),
+            "stations_lon" if parts.len() >= 2 => cur_stations_lon = parts[1].to_string(),
+            "stations_id" if parts.len() >= 2 => cur_stations_id = parts[1].to_string(),
+            "stations_flatten" if parts.len() >= 2 => cur_stations_flatten = parts[1].to_string(),
+            "stations_filter" if parts.len() >= 3 => {
+                cur_stations_filter = Some((parts[1].to_string(), parts[2].to_string()));
+            }
+            "fanout_delay" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    cur_fanout_delay = v;
+                }
+            }
+            "fanout" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u32>() {
+                    cur_fanout_cap = v;
+                }
+            }
+            "fanout_center" if parts.len() >= 2 => {
+                cur_fanout_center = match parts[1] {
+                    "receiver" => Some(QueryCenter::Receiver),
+                    "anchor" => Some(QueryCenter::Anchor),
+                    other => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("fanout_center unknown arm: {}", other),
+                        );
+                        None
+                    }
+                };
+            }
+            "flux_from_mag" if parts.len() >= 2 => cur_flux_from_mag = Some(parts[1].to_string()),
+            "abs_mag_from" if parts.len() >= 2 => cur_abs_mag_from = Some(parts[1].to_string()),
+            "catalog_epoch" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    cur_catalog_epoch = Some(v);
+                }
+            }
+            "cgm_lat" if parts.len() >= 2 => {
+                let v: f64 = match parts[1].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("cgm_lat non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                cur_cgm_lat = Some(v);
+            }
+            "cgm_source" if parts.len() >= 2 => {
+                cur_cgm_source = Some(parts[1].to_string());
+            }
+            "geomag_lat" if parts.len() >= 2 => {
+                let v: f64 = match parts[1].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("geomag_lat non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                cur_geomag_lat = Some(v);
+            }
+            "repeat" if parts.len() >= 2 => {
+                if parts[1] == "ra" && parts.len() >= 5 {
+                    if let Ok(v) = parts[4].parse::<u32>() {
+                        cur_repeat_ra_bins = v;
+                    }
+                } else if let Ok(v) = parts[1].parse::<u32>() {
+                    cur_repeat_ra_bins = v;
+                }
+            }
+            "window" if parts.len() >= 3 => {
+                let from: f64 = match parts[1].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("window from non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                let until: f64 = match parts[2].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("window until non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                if from <= until {
+                    cur_window = Some((from, until));
+                } else {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("window from > until: {}", line),
+                    );
+                }
+            }
+            _ => {}
+        }
+    }
+    flush!();
+    if unmodelled > 0 {
+        eprintln!(
+            "field model: {unmodelled} field line(s) skipped — key and name stand in no row of field_model.tsv, so the archive reads nothing for them"
+        );
+    }
+    sources
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DeclineReason {
+    Unphysical,
+    Model,
+    Registry,
+    Commercial,
+    Superseded,
+}
+
+impl DeclineReason {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "unphysical" => Some(Self::Unphysical),
+            "model" => Some(Self::Model),
+            "registry" => Some(Self::Registry),
+            "commercial" => Some(Self::Commercial),
+            "superseded" => Some(Self::Superseded),
+            _ => None,
+        }
+    }
+
+    pub fn token(&self) -> &'static str {
+        match self {
+            Self::Unphysical => "unphysical",
+            Self::Model => "model",
+            Self::Registry => "registry",
+            Self::Commercial => "commercial",
+            Self::Superseded => "superseded",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DeclinedSource {
+    pub reason: DeclineReason,
+    pub url: String,
+}
+
+pub fn parse_declined(content: &str) -> Vec<DeclinedSource> {
+    let mut out = Vec::new();
+    for line in content.lines() {
+        let trimmed = line.trim();
+        let mut parts = trimmed.split_whitespace();
+        if parts.next() != Some("decline") {
+            continue;
+        }
+        let (Some(token), Some(url)) = (parts.next(), parts.next()) else {
+            continue;
+        };
+        match DeclineReason::parse(token) {
+            Some(reason) => out.push(DeclinedSource {
+                reason,
+                url: url.to_string(),
+            }),
+            None => report_anomaly(
+                "Invalid Syntax",
+                url,
+                &format!("decline reason token unknown: {trimmed}"),
+            ),
+        }
+    }
+    out
+}
+
+pub fn parse_couplings(content: &str) -> Vec<CouplingSpec> {
+    let mut out = Vec::new();
+    for line in content.lines() {
+        let trimmed = line.trim();
+        let mut parts = trimmed.split_whitespace();
+        if parts.next() != Some("coupling") {
+            continue;
+        }
+        match coupling_spec_from_line(trimmed) {
+            Ok(spec) => out.push(spec),
+            Err(reason) => eprintln!("coupling refused: {reason}"),
+        }
+    }
+    out
+}
+
+pub fn parse_constraints(content: &str) -> Vec<QuasiNeutralConstraint> {
+    let mut out = Vec::new();
+    for line in content.lines() {
+        let trimmed = line.trim();
+        let mut parts = trimmed.split_whitespace();
+        if parts.next() != Some("constraint") {
+            continue;
+        }
+        match quasi_neutral_constraint_from_line(trimmed) {
+            Ok(constraint) => out.push(constraint),
+            Err(reason) => eprintln!("constraint refused: {reason}"),
+        }
+    }
+    out
+}
+
+pub struct ChannelCouplingLayer {
+    pub channels: ChannelRegistry,
+    pub constraints: ConstraintRegistry,
+    pub couplings: CouplingRegistry,
+}
+
+impl ChannelCouplingLayer {
+    pub fn from_sources(sources: &[SourceConfig], content: &str) -> Self {
+        let mut channels = ChannelRegistry::with_capacity(16);
+        for source in sources {
+            for descriptor in &source.channels {
+                if let Err(conflict) = channels.register_checked(descriptor.clone()) {
+                    eprintln!("channel unit refused: {conflict}");
+                }
+                if let Some(name) = &descriptor.alias {
+                    channels.alias(name, descriptor);
+                }
+            }
+        }
+        let constraints = ConstraintRegistry::from_constraints(&parse_constraints(content));
+        let couplings =
+            CouplingRegistry::from_specs(&parse_couplings(content), &channels, &constraints);
+        Self {
+            channels,
+            constraints,
+            couplings,
+        }
+    }
+}
+
+pub fn load_channel_coupling_layer() -> ChannelCouplingLayer {
+    match std::fs::read_to_string("phi/sources.φ") {
+        Ok(content) => ChannelCouplingLayer::from_sources(&parse_sources(&content), &content),
+        Err(reason) => {
+            eprintln!(
+                "channel couplings absent: phi/sources.φ not read ({reason}) — the layer is empty, no coupling applied"
+            );
+            ChannelCouplingLayer::from_sources(&[], "")
+        }
+    }
+}
+
+#[cfg(feature = "browser_relay")]
+pub fn parse_path(s: &str) -> String {
+    let Some(fl) = s.lines().next() else {
+        return "/".to_string();
+    };
+    let p: Vec<&str> = fl.split_whitespace().collect();
+    if p.len() >= 2 {
+        p[1].to_string()
+    } else {
+        "/".to_string()
+    }
+}
+
+pub fn parse_iso_unix(s: &str) -> Option<f64> {
+    let s = s.trim();
+    let (date, time) = if let Some((d, t)) = s.split_once('T') {
+        (d, t)
+    } else if let Some((d, t)) = s.split_once(' ') {
+        (d, t)
+    } else if let Some((d, t)) = s.split_once('/') {
+        (d, t)
+    } else {
+        (s, "0")
+    };
+    let mut dp = date.split('-');
+    let y: i64 = dp.next()?.parse().ok()?;
+    let m: u32 = dp.next()?.parse().ok()?;
+    let d: u32 = dp.next()?.parse().ok()?;
+    let time = time.trim_end_matches(['Z', 'z']);
+    let (clock, fraction) = match time.split_once('.') {
+        Some((clock, fraction)) => (clock, Some(fraction)),
+        None => (time, None),
+    };
+    let mut tp = clock.split(':');
+    let hh: u32 = tp.next()?.parse().ok()?;
+    let mm: u32 = tp.next().unwrap_or("0").parse().ok()?;
+    let ss: u32 = tp.next().unwrap_or("0").parse().ok()?;
+    let days = ymd_to_days(y, m, d)? as i64;
+    let whole = (days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64) as f64;
+    match fraction {
+        Some(fraction) => {
+            let digits: String = fraction.chars().take_while(char::is_ascii_digit).collect();
+            if digits.is_empty() {
+                return None;
+            }
+            let value: f64 = format!("0.{digits}").parse().ok()?;
+            Some(whole + value)
+        }
+        None => Some(whole),
+    }
+}
+
+pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
+    lsk.unix_to_tdb(parse_iso_unix(s)?)
+}
+
+pub fn parse_iso_tdb_label(s: &str) -> Option<f64> {
+    Some(parse_iso_unix(s)? - super::types::J2000_UNIX_OFFSET)
+}
+
+fn parse_anchor_attrs(
+    parts: &[&str],
+    start: usize,
+) -> Result<(Option<String>, BTreeMap<String, String>), String> {
+    let mut body: Option<String> = None;
+    let mut attrs = BTreeMap::new();
+    for token in parts.iter().skip(start) {
+        if let Some((key, value)) = token.split_once('=') {
+            if key.is_empty() || value.is_empty() {
+                return Err(format!("invalid attribute '{}'", token));
+            }
+            attrs.insert(key.to_string(), value.to_string());
+        } else if body.is_none() {
+            body = Some((*token).to_string());
+        } else {
+            return Err(format!("extra token '{}'", token));
+        }
+    }
+    Ok((body, attrs))
+}
+
+fn require_attr<'a>(attrs: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str, String> {
+    attrs
+        .get(key)
+        .map(String::as_str)
+        .ok_or_else(|| format!("missing {}", key))
+}
+
+fn parse_anchor_directive(
+    kind: AnchorKind,
+    parts: &[&str],
+    legacy: bool,
+) -> Result<Anchor, String> {
+    let (body, attrs) = parse_anchor_attrs(parts, 1)?;
+    if matches!(
+        kind,
+        AnchorKind::At
+            | AnchorKind::On
+            | AnchorKind::Global
+            | AnchorKind::Coverage
+            | AnchorKind::Orbit
+            | AnchorKind::Query
+            | AnchorKind::Track
+    ) && body.is_none()
+    {
+        return Err("body absent".to_string());
+    }
+    match kind {
+        AnchorKind::At => {
+            if !legacy {
+                require_attr(&attrs, "frame")?;
+            }
+        }
+        AnchorKind::On => {
+            require_attr(&attrs, "lat")?;
+            require_attr(&attrs, "lon")?;
+            require_attr(&attrs, "alt")?;
+        }
+        AnchorKind::Global => {
+            require_attr(&attrs, "method")?;
+        }
+        AnchorKind::Coverage => {
+            if !attrs.contains_key("bbox") && !attrs.contains_key("footprint") {
+                return Err("bbox or footprint absent".to_string());
+            }
+        }
+        AnchorKind::Orbit => {
+            require_attr(&attrs, "frame")?;
+        }
+        AnchorKind::Query | AnchorKind::Track => {
+            for key in ["lat_key", "lon_key", "alt_key", "time_key"] {
+                require_attr(&attrs, key)?;
+            }
+        }
+        AnchorKind::Sky => {
+            for key in ["ra_key", "dec_key", "epoch"] {
+                require_attr(&attrs, key)?;
+            }
+        }
+        AnchorKind::Absent => {
+            require_attr(&attrs, "reason")?;
+        }
+    }
+    Ok(Anchor {
+        kind,
+        body,
+        attrs,
+        legacy,
+    })
+}
+
+fn parse_medium_value(token: &str) -> Option<MediumValue> {
+    match token {
+        "absent" => Some(MediumValue::Absent),
+        "pending" => Some(MediumValue::Pending),
+        _ => token
+            .parse::<f64>()
+            .ok()
+            .filter(|v| v.is_finite() && *v >= 0.0)
+            .map(MediumValue::Measured),
+    }
+}
+
+fn parse_medium_line(parts: &[&str]) -> Result<MediumLine, String> {
+    let mut absorption: Option<(MediumValue, Option<String>)> = None;
+    let mut advection: Option<(MediumValue, Option<String>)> = None;
+    let mut i = 1;
+    while i < parts.len() {
+        let (key, value) = parts[i]
+            .split_once('=')
+            .ok_or_else(|| format!("token '{}' carries no key=value", parts[i]))?;
+        let parsed =
+            parse_medium_value(value).ok_or_else(|| format!("invalid value '{}'", value))?;
+        let mut unit: Option<String> = None;
+        if let Some(next) = parts.get(i + 1)
+            && !next.contains('=')
+        {
+            unit = Some((*next).to_string());
+            i += 1;
+        }
+        if matches!(parsed, MediumValue::Measured(_)) && unit.is_none() {
+            return Err(format!("{} requires a unit", key));
+        }
+        let slot = match key {
+            "absorption" => &mut absorption,
+            "advection" => &mut advection,
+            _ => return Err(format!("unknown medium key '{}'", key)),
+        };
+        if slot.is_some() {
+            return Err(format!("duplicate {}", key));
+        }
+        *slot = Some((parsed, unit));
+        i += 1;
+    }
+    let (absorption, absorption_unit) =
+        absorption.ok_or_else(|| "absorption absent".to_string())?;
+    let (advection, advection_unit) = advection.ok_or_else(|| "advection absent".to_string())?;
+    Ok(MediumLine {
+        absorption,
+        absorption_unit,
+        advection,
+        advection_unit,
+    })
+}
+
+pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f64)> {
+    let kernel = kernel_id_of(parts[3])?;
+    let channel_ref = match force_id_of(parts[4]) {
+        Some(f) => Some(f),
+        None => match quantity_kind_of(parts[4]) {
+            Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => None,
+            _ => return None,
+        },
+    };
+    let tau: f64 = match parts[6].parse() {
+        Ok(v) if v > 0.0 => v,
+        _ => return None,
+    };
+    let absorption: f64 = if parts.len() > 7 {
+        match parts[7].parse() {
+            Ok(v) => v,
+            Err(_) => return None,
+        }
+    } else {
+        SLOT_ABSENT
+    };
+    let advection: f64 = if parts.len() > 8 {
+        match parts[8].parse() {
+            Ok(v) => v,
+            Err(_) => return None,
+        }
+    } else {
+        SLOT_ABSENT
+    };
+    Some((kernel, channel_ref, tau, absorption, advection))
+}
+
+pub struct WhereRefused;
+
+pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, WhereRefused> {
+    if parts.len() < 10 || parts[9] != "where" {
+        return Ok(None);
+    }
+    if parts.len() != 12 {
+        eprintln!(
+            "where refused at {}: the filter clause carries exactly `where <key> <value>`",
+            parts.get(1).copied().unwrap_or("?")
+        );
+        return Err(WhereRefused);
+    }
+    Ok(Some((parts[10].to_string(), parts[11].to_string())))
+}
+
+pub fn load_sources_from(content: &str) -> Vec<SourceConfig> {
+    parse_sources(content)
+}
+
+pub fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
+    let mut sources = Vec::new();
+    let dir_path = std::path::Path::new(dir);
+    if let Ok(entries) = std::fs::read_dir(dir_path) {
+        for e in entries.flatten() {
+            let p = e.path();
+            if p.is_dir() {
+                let is_fetch_only = p.file_name().is_some_and(|n| {
+                    let n = n.to_string_lossy();
+                    n == "research" || n == "port"
+                });
+                if is_fetch_only {
+                    continue;
+                }
+                let path_str = p.to_string_lossy().to_string();
+                sources.extend(load_all_sources(&path_str));
+            } else if p.extension().is_some_and(|x| x == "φ")
+                && let Ok(content) = std::fs::read_to_string(&p)
+            {
+                sources.extend(load_sources_from(&content));
+            }
+        }
+    }
+    sources
+}
+
+fn shard_range_of(src: &SourceConfig) -> Option<(f64, f64)> {
+    let filename = src.url.rsplit('/').next()?;
+    let (name, lo, hi) = odf::parse_podf_shard_name(filename)?;
+    if name != src.format.as_str() {
+        return None;
+    }
+    Some((lo, hi))
+}
+
+pub fn refuse_shard_overlaps(sources: Vec<SourceConfig>) -> Vec<SourceConfig> {
+    let mut accepted: HashMap<String, Vec<(f64, f64)>> = HashMap::new();
+    let mut kept = Vec::with_capacity(sources.len());
+    for src in sources {
+        match shard_range_of(&src) {
+            None => kept.push(src),
+            Some((lo, hi)) => {
+                if lo.partial_cmp(&hi) != Some(std::cmp::Ordering::Less) {
+                    eprintln!(
+                        "source refused: shard TDB range [{}, {}) is not half-open at {}",
+                        lo, hi, src.url
+                    );
+                    continue;
+                }
+                let ranges = accepted.entry(src.format.clone()).or_default();
+                let overlaps = ranges.iter().any(|&(alo, ahi)| lo < ahi && alo < hi);
+                if overlaps {
+                    eprintln!(
+                        "source refused: shard TDB range [{}, {}) overlaps an accepted range at {} — never merged",
+                        lo, hi, src.url
+                    );
+                    continue;
+                }
+                ranges.push((lo, hi));
+                kept.push(src);
+            }
+        }
+    }
+    kept
+}
+
+fn wavelength_value_and_scale(token: &str) -> Option<(f64, f64)> {
+    let (value, factor) = if let Some(v) = token.strip_suffix("angstrom") {
+        (v, 1e-10)
+    } else if let Some(v) = token.strip_suffix("nm") {
+        (v, 1e-9)
+    } else {
+        let v = token.strip_suffix("um")?;
+        (v, 1e-6)
+    };
+    let value: f64 = value.parse().ok()?;
+    Some((value, factor))
+}
+
+fn parse_wavelength_m(token: &str) -> Option<f64> {
+    let (value, factor) = wavelength_value_and_scale(token)?;
+    let m = value * factor;
+    if m.is_finite() && m > 0.0 {
+        Some(m)
+    } else {
+        None
+    }
+}
+
+fn parse_wavelength_range_m(token: &str) -> Option<(f64, f64)> {
+    let (lo_str, hi_str) = token.split_once('-')?;
+    let (hi_value, factor) = wavelength_value_and_scale(hi_str)?;
+    let lo_value: f64 = lo_str.parse().ok()?;
+    let lo_m = lo_value * factor;
+    let hi_m = hi_value * factor;
+    if lo_m.is_finite() && hi_m.is_finite() && lo_m > 0.0 && lo_m < hi_m {
+        Some((lo_m, hi_m))
+    } else {
+        None
+    }
+}
+
+fn interaction_or_role<'a>(
+    parts: &[&'a str],
+    idx: usize,
+) -> Result<(&'a str, usize, Option<Interaction>), String> {
+    if QuantityRole::parse(parts[idx]).is_some() {
+        return Ok((parts[idx], idx, None));
+    }
+    let interaction = match Interaction::parse(parts[idx]) {
+        Some(i) => i,
+        None => {
+            return Err(format!(
+                "carries \"{}\" where an interaction (gravity/em) or a role is expected",
+                parts[idx]
+            ));
+        }
+    };
+    match parts.get(idx + 1) {
+        Some(role) if QuantityRole::parse(role).is_some() => {
+            Ok((*role, idx + 1, Some(interaction)))
+        }
+        Some(other) => Err(format!(
+            "carries \"{}\" where a role (primary/derived/geometry/source-parameter) is expected after the interaction token",
+            other
+        )),
+        None => Err(format!(
+            "carries interaction \"{}\" with no role after it",
+            parts[idx]
+        )),
+    }
+}
+
+struct SourceBlockBuilder {
+    url: Option<String>,
+    terms: Option<String>,
+    origin: Option<String>,
+    ttl: Option<u64>,
+    position: Option<SourcePosition>,
+    alt_ref: Option<f64>,
+    alt_key: Option<String>,
+    datum: Option<String>,
+    time: Option<String>,
+    time_key: Option<String>,
+    time_parts: Option<Vec<String>>,
+    time_scale: Option<String>,
+    fields: Vec<SourceField>,
+}
+
+fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<SourceBlock, String> {
+    let url = builder
+        .url
+        .ok_or_else(|| format!("line {line}: url absent"))?;
+    let terms = builder
+        .terms
+        .ok_or_else(|| format!("line {line}: terms absent"))?;
+    let ttl = builder
+        .ttl
+        .ok_or_else(|| format!("line {line}: ttl absent"))?;
+    if ttl == 0 {
+        return Err(format!("line {line}: ttl must be positive"));
+    }
+    let position = builder
+        .position
+        .ok_or_else(|| format!("line {line}: block position absent"))?;
+    if let SourcePosition::Fixed { lat, lon } = &position
+        && (!(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon))
+    {
+        return Err(format!("line {line}: lat/lon outside range"));
+    }
+    if !matches!(
+        position,
+        SourcePosition::At { .. } | SourcePosition::Sky { .. }
+    ) && builder.alt_ref.is_some() == builder.alt_key.is_some()
+    {
+        return Err(format!(
+            "line {line}: exactly one of alt_ref/alt_key required"
+        ));
+    }
+    let time_refs = usize::from(builder.time.is_some())
+        + usize::from(builder.time_key.is_some())
+        + usize::from(builder.time_parts.is_some());
+    let sky = matches!(position, SourcePosition::Sky { .. });
+    if time_refs != 1 && !(sky && time_refs == 0) {
+        return Err(format!(
+            "line {line}: exactly one of time/time_key/time_parts required"
+        ));
+    }
+    if let Some(parts) = &builder.time_parts
+        && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.is_empty()))
+    {
+        return Err(format!(
+            "line {line}: time_parts needs five or six non-empty keys (Y,M,D,h,m[,s])"
+        ));
+    }
+    if matches!(&position, SourcePosition::Moving { .. }) && builder.time_key.is_none() {
+        return Err(format!(
+            "line {line}: moving block needs time_key and one of alt_ref/alt_key"
+        ));
+    }
+    let datum = match (&position, builder.datum) {
+        (SourcePosition::At { frame, .. }, None) => frame.clone(),
+        (SourcePosition::Sky { frame, epoch, .. }, None) => format!("{frame} {epoch}"),
+        (_, Some(datum)) => datum,
+        (_, None) => return Err(format!("line {line}: datum absent")),
+    };
+    let time_scale = match builder.time_scale {
+        Some(scale) => scale,
+        None if sky => String::new(),
+        None => return Err(format!("line {line}: time_scale absent")),
+    };
+    if builder.fields.is_empty() {
+        return Err(format!("line {line}: fields absent"));
+    }
+    Ok(SourceBlock {
+        url,
+        terms,
+        origin: builder.origin,
+        ttl,
+        position,
+        alt_ref: builder.alt_ref,
+        alt_key: builder.alt_key,
+        datum,
+        time: builder.time,
+        time_key: builder.time_key,
+        time_parts: builder.time_parts,
+        time_scale,
+        fields: builder.fields,
+    })
+}
+
+pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
+    let mut out = Vec::new();
+    let mut current: Option<SourceBlockBuilder> = None;
+    for (index, raw) in content.lines().enumerate() {
+        let line = raw.split('#').next().unwrap_or("").trim();
+        if line.is_empty() {
+            continue;
+        }
+        let line_no = index + 1;
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let head = parts.first().copied().unwrap_or("");
+        if head == "url" {
+            if let Some(builder) = current.take() {
+                out.push(finish_source_block(builder, line_no - 1)?);
+            }
+            if parts.len() != 2 {
+                return Err(format!("line {line_no}: url needs one value"));
+            }
+            current = Some(SourceBlockBuilder {
+                url: Some(parts[1].to_string()),
+                terms: None,
+                origin: None,
+                ttl: None,
+                position: None,
+                alt_ref: None,
+                alt_key: None,
+                datum: None,
+                time: None,
+                time_key: None,
+                time_parts: None,
+                time_scale: None,
+                fields: Vec::new(),
+            });
+            continue;
+        }
+        let Some(builder) = current.as_mut() else {
+            return Err(format!("line {line_no}: {head} outside a source block"));
+        };
+        match head {
+            "terms" if parts.len() >= 2 => builder.terms = Some(parts[1..].join(" ")),
+            "origin" if parts.len() >= 2 => builder.origin = Some(parts[1..].join(" ")),
+            "ttl" if parts.len() == 2 => {
+                builder.ttl = Some(
+                    parts[1]
+                        .parse::<u64>()
+                        .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
+                );
+            }
+            "no-sampling" => builder.ttl = Some(NO_CADENCE),
+            "at" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: at needs a body before attributes"));
+                }
+                let body = parts[1].to_string();
+                let mut frame = None;
+                let mut distance_au = None;
+                let mut time = None;
+                let mut time_key = None;
+                let mut time_parts = None;
+                let mut time_scale = None;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: at token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: at attribute {key} is empty"));
+                    }
+                    match key {
+                        "frame" => frame = Some(value.to_string()),
+                        "distance_au" => {
+                            distance_au = Some(value.parse::<f64>().map_err(|_| {
+                                format!("line {line_no}: distance_au {value} is not a number")
+                            })?)
+                        }
+                        "time" => time = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "time_parts" => {
+                            time_parts = Some(
+                                value
+                                    .split(',')
+                                    .map(|part| part.trim().to_string())
+                                    .collect::<Vec<_>>(),
+                            )
+                        }
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        _ => return Err(format!("line {line_no}: unknown at attribute {key}")),
+                    }
+                }
+                let frame = frame.ok_or_else(|| format!("line {line_no}: at needs frame="))?;
+                builder.position = Some(SourcePosition::At {
+                    body,
+                    frame,
+                    distance_au,
+                });
+                builder.time = time;
+                builder.time_key = time_key;
+                builder.time_parts = time_parts;
+                builder.time_scale = time_scale;
+            }
+            "sky" => {
+                let mut frame = None;
+                let mut ra_key = None;
+                let mut dec_key = None;
+                let mut epoch = None;
+                let mut plx_key = None;
+                let mut dist_key = None;
+                for token in &parts[1..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: sky token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: sky attribute {key} is empty"));
+                    }
+                    match key {
+                        "frame" => frame = Some(value.to_string()),
+                        "ra_key" => ra_key = Some(value.to_string()),
+                        "dec_key" => dec_key = Some(value.to_string()),
+                        "epoch" => epoch = Some(value.to_string()),
+                        "plx_key" => plx_key = Some(value.to_string()),
+                        "dist_key" => dist_key = Some(value.to_string()),
+                        _ => return Err(format!("line {line_no}: unknown sky attribute {key}")),
+                    }
+                }
+                let (Some(ra_key), Some(dec_key), Some(epoch)) = (ra_key, dec_key, epoch) else {
+                    return Err(format!(
+                        "line {line_no}: sky needs ra_key, dec_key and epoch"
+                    ));
+                };
+                let frame = frame.ok_or_else(|| format!("line {line_no}: sky needs frame="))?;
+                builder.position = Some(SourcePosition::Sky {
+                    frame,
+                    ra_key,
+                    dec_key,
+                    epoch,
+                    plx_key,
+                    dist_key,
+                });
+            }
+            "on" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: on needs a body before attributes"));
+                }
+                let mut lat = None;
+                let mut lon = None;
+                let mut alt_ref = None;
+                let mut alt_key = None;
+                let mut datum = None;
+                let mut time = None;
+                let mut time_key = None;
+                let mut time_parts = None;
+                let mut time_scale = None;
+                let mut has_frame = false;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: on token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: on attribute {key} is empty"));
+                    }
+                    match key {
+                        "lat" => lat = value.parse::<f64>().ok(),
+                        "lon" => lon = value.parse::<f64>().ok(),
+                        "alt" | "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt_key" => alt_key = Some(value.to_string()),
+                        "datum" => datum = Some(value.to_string()),
+                        "time" => time = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "time_parts" => {
+                            time_parts = Some(
+                                value
+                                    .split(',')
+                                    .map(|part| part.trim().to_string())
+                                    .collect::<Vec<_>>(),
+                            )
+                        }
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        "frame" => has_frame = true,
+                        _ => return Err(format!("line {line_no}: unknown on attribute {key}")),
+                    }
+                }
+                if !has_frame {
+                    return Err(format!("line {line_no}: on needs frame="));
+                }
+                if let (Some(lat), Some(lon)) = (lat, lon) {
+                    builder.position = Some(SourcePosition::Fixed { lat, lon });
+                }
+                builder.alt_ref = alt_ref;
+                builder.alt_key = alt_key;
+                builder.datum = datum;
+                builder.time = time;
+                builder.time_key = time_key;
+                builder.time_parts = time_parts;
+                builder.time_scale = time_scale;
+            }
+            "query" | "track" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!(
+                        "line {line_no}: {head} needs a body before attributes"
+                    ));
+                }
+                let mut lat_key = None;
+                let mut lon_key = None;
+                let mut alt_ref = None;
+                let mut alt_key = None;
+                let mut time_key = None;
+                let mut datum = None;
+                let mut time_scale = None;
+                let mut has_frame = false;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: {head} token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
+                    }
+                    match key {
+                        "lat_key" => lat_key = Some(value.to_string()),
+                        "lon_key" => lon_key = Some(value.to_string()),
+                        "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt_key" => {
+                            if value == "absent" || value == "pending" {
+                                return Err(format!(
+                                    "line {line_no}: alt_key carries the sentinel {value}; use alt_ref"
+                                ));
+                            }
+                            alt_key = Some(value.to_string())
+                        }
+                        "time_key" => time_key = Some(value.to_string()),
+                        "datum" => datum = Some(value.to_string()),
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        "frame" => has_frame = true,
+                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
+                    }
+                }
+                if !has_frame {
+                    return Err(format!("line {line_no}: {head} needs frame="));
+                }
+                let (Some(lat_key), Some(lon_key), Some(time_key)) = (lat_key, lon_key, time_key)
+                else {
+                    return Err(format!(
+                        "line {line_no}: {head} needs lat_key, lon_key and time_key"
+                    ));
+                };
+                if alt_ref.is_some() == alt_key.is_some() {
+                    return Err(format!(
+                        "line {line_no}: {head} needs exactly one of alt_ref/alt_key"
+                    ));
+                }
+                builder.position = Some(SourcePosition::Moving { lat_key, lon_key });
+                builder.alt_ref = alt_ref;
+                builder.alt_key = alt_key;
+                builder.time_key = Some(time_key);
+                builder.datum = datum;
+                builder.time_scale = time_scale;
+            }
+            "field" | "first" | "last" | "lastrow" | "quantity" if parts.len() >= 5 => {
+                let extract = match head {
+                    "first" => SourceExtract::First,
+                    "last" => SourceExtract::Last,
+                    "lastrow" => SourceExtract::LastRow,
+                    "quantity" => SourceExtract::Quantity,
+                    _ => SourceExtract::Field,
+                };
+                let key = parts[1].to_string();
+                let name = parts[2].to_string();
+                let unit = parts[3].to_string();
+                let mut source_column = None;
+                let mut source_key = None;
+                let mut alt_offset = None;
+                let mut alt_min_offset = None;
+                let mut alt_max_offset = None;
+                let mut where_clause = None;
+                let mut idx = 4usize;
+                while idx < parts.len() {
+                    if parts[idx] == "where" {
+                        where_clause = Some(parts[idx + 1..].join(" "));
+                        break;
+                    }
+                    let token = parts[idx];
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: {head} token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
+                    }
+                    if value == "absent" || value == "pending" {
+                        return Err(format!(
+                            "line {line_no}: {head} attribute {key} carries the sentinel {value}"
+                        ));
+                    }
+                    let parsed = value.parse::<f64>().ok().filter(|v| v.is_finite());
+                    match key {
+                        "source_column" => {
+                            source_column = value.parse::<usize>().ok();
+                            if source_column.is_none() {
+                                return Err(format!(
+                                    "line {line_no}: source_column {value} is not a column"
+                                ));
+                            }
+                        }
+                        "source_key" => source_key = Some(value.to_string()),
+                        "alt_offset" => alt_offset = parsed,
+                        "alt_min_offset" => alt_min_offset = parsed,
+                        "alt_max_offset" => alt_max_offset = parsed,
+                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
+                    }
+                    idx += 1;
+                }
+                if source_column.is_some() == source_key.is_some() {
+                    return Err(format!(
+                        "line {line_no}: exactly one of source_column/source_key required"
+                    ));
+                }
+                let alt_offset =
+                    alt_offset.ok_or_else(|| format!("line {line_no}: alt_offset absent"))?;
+                if alt_min_offset.is_some() != alt_max_offset.is_some() {
+                    return Err(format!(
+                        "line {line_no}: layer needs both alt_min_offset and alt_max_offset"
+                    ));
+                }
+                if let (Some(min), Some(max)) = (alt_min_offset, alt_max_offset)
+                    && min >= max
+                {
+                    return Err(format!("line {line_no}: layer min must be below max"));
+                }
+                builder.fields.push(SourceField {
+                    key,
+                    name,
+                    unit,
+                    extract,
+                    where_clause,
+                    source_column,
+                    source_key,
+                    alt_offset,
+                    alt_min_offset,
+                    alt_max_offset,
+                });
+            }
+            _ => return Err(format!("line {line_no}: unread source directive {head}")),
+        }
+    }
+    if let Some(builder) = current {
+        out.push(finish_source_block(builder, content.lines().count())?);
+    }
+    Ok(out)
+}
+
+pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>> {
+    let mut errors = Vec::new();
+    let mut fields_by_url: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for (index, block) in blocks.iter().enumerate() {
+        let at = |message: String| format!("block {}: {message}", index + 1);
+        if block.url.trim().is_empty() {
+            errors.push(at("url is empty".to_string()));
+        }
+        if block.terms.trim().is_empty() {
+            errors.push(at("terms is empty".to_string()));
+        }
+        if block.ttl == 0 {
+            errors.push(at("ttl must be positive".to_string()));
+        }
+        if block.datum.trim().is_empty() {
+            errors.push(at("datum is empty".to_string()));
+        }
+        if block.time_scale.trim().is_empty()
+            && !matches!(&block.position, SourcePosition::Sky { .. })
+        {
+            errors.push(at("time_scale is empty".to_string()));
+        }
+        match &block.position {
+            SourcePosition::Fixed { lat, lon } => {
+                if !lat.is_finite() || !lon.is_finite() {
+                    errors.push(at("lat/lon must be finite".to_string()));
+                } else if !(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon) {
+                    errors.push(at("lat/lon outside range".to_string()));
+                }
+            }
+            SourcePosition::Moving { lat_key, lon_key } => {
+                if lat_key.trim().is_empty() || lon_key.trim().is_empty() {
+                    errors.push(at("moving position needs lat_key and lon_key".to_string()));
+                }
+            }
+            SourcePosition::At { body, frame, .. } => {
+                if body.trim().is_empty() || frame.trim().is_empty() {
+                    errors.push(at("body-frame position needs body and frame".to_string()));
+                }
+            }
+            SourcePosition::Sky {
+                frame,
+                ra_key,
+                dec_key,
+                epoch,
+                ..
+            } => {
+                if frame.trim().is_empty()
+                    || ra_key.trim().is_empty()
+                    || dec_key.trim().is_empty()
+                    || epoch.trim().is_empty()
+                {
+                    errors.push(at(
+                        "sky position needs frame, ra_key, dec_key and epoch".to_string()
+                    ));
+                }
+            }
+        }
+        if !matches!(
+            &block.position,
+            SourcePosition::At { .. } | SourcePosition::Sky { .. }
+        ) && block.alt_ref.is_some() == block.alt_key.is_some()
+        {
+            errors.push(at("exactly one of alt_ref/alt_key required".to_string()));
+        }
+        let time_refs = usize::from(block.time.is_some())
+            + usize::from(block.time_key.is_some())
+            + usize::from(block.time_parts.is_some());
+        let sky = matches!(&block.position, SourcePosition::Sky { .. });
+        if time_refs != 1 && !(sky && time_refs == 0) {
+            errors.push(at(
+                "exactly one of time/time_key/time_parts required".to_string()
+            ));
+        }
+        if let Some(parts) = &block.time_parts
+            && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.trim().is_empty()))
+        {
+            errors.push(at("time_parts needs five or six non-empty keys".to_string()));
+        }
+        if block.fields.is_empty() {
+            errors.push(at("fields are empty".to_string()));
+        }
+        let seen = fields_by_url.entry(block.url.clone()).or_default();
+        for field in &block.fields {
+            if field.key.trim().is_empty()
+                || field.name.trim().is_empty()
+                || field.unit.trim().is_empty()
+            {
+                errors.push(at(format!(
+                    "field {} has an empty key/name/unit",
+                    field.key
+                )));
+            }
+            if field.source_column.is_some() == field.source_key.is_some() {
+                errors.push(at(format!(
+                    "field {} needs exactly one of source_column/source_key",
+                    field.key
+                )));
+            }
+            if let Some(source_key) = &field.source_key
+                && source_key.trim().is_empty()
+            {
+                errors.push(at(format!("field {} has an empty source_key", field.key)));
+            }
+            if !field.alt_offset.is_finite() {
+                errors.push(at(format!(
+                    "field {} has a non-finite alt_offset",
+                    field.key
+                )));
+            }
+            if field.alt_min_offset.is_some() != field.alt_max_offset.is_some() {
+                errors.push(at(format!(
+                    "field {} needs both alt_min_offset and alt_max_offset",
+                    field.key
+                )));
+            }
+            if let (Some(min), Some(max)) = (field.alt_min_offset, field.alt_max_offset) {
+                if !min.is_finite() || !max.is_finite() {
+                    errors.push(at(format!("field {} has a non-finite layer", field.key)));
+                } else if min >= max {
+                    errors.push(at(format!(
+                        "field {} layer min must be below max (got {min} .. {max})",
+                        field.key
+                    )));
+                }
+            }
+            if !seen.insert(field.key.clone()) {
+                errors.push(at(format!(
+                    "field key {} appears twice for the same URL; url#field would be ambiguous",
+                    field.key
+                )));
+            }
+        }
+    }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::mathematikerin::channel::{CouplingKind, DensityKind};
+
+    fn shard(url: &str, format: &str) -> SourceConfig {
+        SourceConfig {
+            ttl: 604800,
+            url: url.into(),
+            origin: None,
+            compiler: None,
+            terms: None,
+            medium: None,
+            anchor: None,
+            band: None,
+            footprint: None,
+            witness: None,
+            rights_identifier: None,
+            rights_scheme: None,
+            rights_uri: None,
+            model_kind: source_model_kind(format),
+            head: None,
+            format: format.into(),
+            channels: Vec::new(),
+            extracts: Vec::new(),
+            headers: Vec::new(),
+            post_body: None,
+            target: None,
+            catalog: None,
+            range: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            hapi_fill: HashMap::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            fanout_center: None,
+            stations_flatten: String::new(),
+            station_code: None,
+            stations_filter: None,
+            fanout_delay: 0,
+            sha256: None,
+            window: None,
+            live_only: false,
+            cgm_lat: None,
+            cgm_source: None,
+            geomag_lat: None,
+            weberin_role: None,
+        }
+    }
+
+    #[test]
+    fn field_ten_token_reads_tau_src() {
+        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        let field = s[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(f) => Some(f),
+                _ => None,
+            })
+            .expect("one field");
+        assert_eq!(field.tau_src, TauSource::Measured);
+        assert_eq!(field.tau, 60.0);
+    }
+
+    #[test]
+    fn field_nine_token_is_legacy_pending() {
+        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        let field = s[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(f) => Some(f),
+                _ => None,
+            })
+            .expect("one field");
+        assert_eq!(
+            field.tau_src,
+            TauSource::Pending,
+            "the 9-token form is migration input; it must not claim a measured tau"
+        );
+    }
+
+    #[test]
+    fn on_without_alt_declares_no_measured_height() {
+        let content = "url https://example.org/x\nttl 60\non earth 0 0\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1, "on without alt parses");
+        match &s[0].frame() {
+            Frame::Surface { lat, lon, alt, .. } => {
+                assert_eq!(*lat, 0.0);
+                assert_eq!(*lon, 0.0);
+                assert_eq!(*alt, None, "no alt token is no height, never 0 m");
+            }
+            _ => panic!("expected a Surface frame"),
+        }
+    }
+
+    #[test]
+    fn on_absent_alt_declares_no_measured_height() {
+        for token in ["absent", "pending"] {
+            let content = format!(
+                "url https://example.org/x\nttl 60\non earth 0 0 {token}\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n"
+            );
+            let s = load_sources_from(&content);
+            assert_eq!(s.len(), 1, "on {token} parses");
+            match &s[0].frame() {
+                Frame::Surface { alt, .. } => {
+                    assert_eq!(*alt, None, "{token} is no height, never 0 m");
+                }
+                _ => panic!("expected a Surface frame"),
+            }
+        }
+    }
+
+    #[test]
+    fn on_with_alt_keeps_the_measured_height() {
+        let content = "url https://example.org/x\nttl 60\non earth 0 0 5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        match &s[0].frame() {
+            Frame::Surface { alt, .. } => assert_eq!(*alt, Some(5.0)),
+            _ => panic!("expected a Surface frame"),
+        }
+    }
+
+    #[test]
+    fn compiler_directive_is_read_into_source_config() {
+        let content = "url https://example.org/x\nttl 60\nat sun\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        assert_eq!(
+            s[0].compiler.as_deref(),
+            Some("tools/harvest/src/bin/x.rs"),
+            "compiler must be read, not silently ignored"
+        );
+    }
+
+    const URL_A: &str = "https://cdn.example/x/odyssey_odf_t700000000_800000000.bin";
+    const URL_B: &str = "https://cdn.example/x/odyssey_odf_t800000000_900000000.bin";
+    const URL_C: &str = "https://cdn.example/x/odyssey_odf_t900000000_1000000000.bin";
+
+    #[test]
+    fn a_coupling_directive_parses_to_a_spec() {
+        let content = "coupling ion-neutral-friction from ion to neutral rate pending density_from number:ion:30.0 density_to mass:neutral region ionosphere\n";
+        let specs = parse_couplings(content);
+        assert_eq!(specs.len(), 1);
+        assert_eq!(specs[0].kind, CouplingKind::IonNeutralFriction);
+        assert_eq!(
+            specs[0].rate, None,
+            "pending is absent, never a fabricated value"
+        );
+        assert_eq!(specs[0].density_from.kind, DensityKind::Number);
+        assert_eq!(specs[0].density_from.species_mass, Some(30.0));
+        assert_eq!(specs[0].density_to.kind, DensityKind::Mass);
+        assert_eq!(specs[0].density_to.species_mass, None);
+    }
+
+    #[test]
+    fn a_coupling_directive_without_a_species_mass_is_dropped() {
+        let content = "coupling ion-neutral-friction from ion to neutral rate pending density_from number:ion density_to mass:neutral\n";
+        let specs = parse_couplings(content);
+        assert_eq!(
+            specs.len(),
+            0,
+            "a number density without its species mass is refused"
+        );
+    }
+
+    #[test]
+    fn a_quasi_neutral_constraint_directive_parses_to_its_region() {
+        let content = "constraint quasi-neutral ionosphere_qn region ionosphere\n";
+        let constraints = parse_constraints(content);
+        assert_eq!(constraints.len(), 1);
+        assert_eq!(constraints[0].name, "ionosphere_qn");
+        assert_eq!(constraints[0].region, "ionosphere");
+    }
+
+    #[test]
+    fn a_constraint_without_a_region_clause_is_dropped() {
+        let content = "constraint quasi-neutral x\n";
+        let constraints = parse_constraints(content);
+        assert_eq!(
+            constraints.len(),
+            0,
+            "a quasi-neutral constraint without a region is refused"
+        );
+    }
+
+    #[test]
+    fn a_channel_coupling_layer_resolves_the_register_aliases() {
+        let content = "url https://example.com/champ\nttl 600\nat earth\n\
+channel charge:primary:flux-ohm:parabolic:plasma:line:dirichlet kg/m^3 alias champ_ion charge -1\n\
+channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3 alias champ_neutral\n\
+constraint quasi-neutral ionosphere_qn region ionosphere\n\
+coupling ion-neutral-friction from champ_ion to champ_neutral rate pending density_from number:champ_ion:5.49e-4 density_to mass:champ_neutral region ionosphere quasi-neutral ionosphere_qn\n";
+        let sources = parse_sources(content);
+        let layer = ChannelCouplingLayer::from_sources(&sources, content);
+        assert_eq!(layer.channels.len(), 2, "both density channels register");
+        assert_eq!(
+            layer
+                .constraints
+                .get("ionosphere_qn")
+                .map(|c| c.region.as_str()),
+            Some("ionosphere")
+        );
+        assert_eq!(
+            layer.couplings.len(),
+            1,
+            "the coupling resolves both aliases and the quasi-neutral constraint"
+        );
+    }
+
+    #[test]
+    fn a_descriptor_field_line_resolves_to_its_registered_channel() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary energy flux-fourier parabolic fluid none exponential-decay K 60.0 0.0 0.0\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        let field = sources[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .expect("the descriptor field is admitted");
+        assert_eq!(
+            field.channel_ref,
+            Some(7),
+            "Fourier/energy/fluid resolves to thermal"
+        );
+        assert_eq!(field.unit, "K");
+    }
+
+    #[test]
+    fn the_cmonoc_descriptor_fields_resolve_to_the_momentum_channel() {
+        let fields_of = |content: &str| -> Vec<(Option<u8>, String)> {
+            parse_sources(content)
+                .first()
+                .map(|s| {
+                    s.extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some((fc.channel_ref, fc.unit.clone())),
+                            _ => None,
+                        })
+                        .collect()
+                })
+                .unwrap_or_default()
+        };
+        let head = "url https://example.com/x\nttl 600\nat earth\n";
+        let campaign = format!(
+            "{head}field cmonoc_campaign_velocity cmonoc_campaign_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0\n"
+        );
+        let continuous = format!(
+            "{head}field cmonoc_continuous_velocity cmonoc_continuous_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0\n"
+        );
+        assert_eq!(
+            fields_of(&campaign),
+            vec![(Some(9), "mm/yr".to_string())],
+            "the campaign line runs as a descriptor field on the momentum channel"
+        );
+        assert_eq!(
+            fields_of(&continuous),
+            vec![(Some(9), "mm/yr".to_string())],
+            "the continuous line runs as a descriptor field on the momentum channel"
+        );
+
+        let seismic = format!(
+            "{head}field probe probe primary energy wave hyperbolic elastic-solid none gaussian-inverse-square Pa 60 0.0 0.0\n"
+        );
+        assert_eq!(
+            fields_of(&seismic),
+            vec![(Some(1), "Pa".to_string())],
+            "seismic-body keeps channel 1 untouched"
+        );
+        let advective = format!("{head}field probe probe patch-levy advective m/s 60 0.0 0.0\n");
+        let adv_desc = descriptor_from_axes(
+            "primary",
+            "mass",
+            "advective",
+            "advective",
+            "fluid",
+            "none",
+            "kg/(m^2 s)",
+        )
+        .expect("the advective axes build");
+        assert_eq!(
+            channel_ref_of_descriptor(&adv_desc),
+            Some(4),
+            "the advective descriptor alone resolves to channel 4"
+        );
+        assert_eq!(
+            fields_of(&advective),
+            vec![(Some(4), "m/s".to_string())],
+            "the flat advective line keeps channel 4 untouched"
+        );
+    }
+
+    #[test]
+    fn a_descriptor_field_line_without_a_registered_channel_is_refused() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary momentum flux-newton-viscous mixed fluid none patch-levy m/s 60.0 0.0 0.0\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert!(
+            sources[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "no registered channel → the field is refused, never a default"
+        );
+    }
+
+    #[test]
+    fn p10_2a_target_grammar_parses() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        let field = sources[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .expect("the P10.2a target line is admitted");
+        assert_eq!(field.kernel, 0, "inverse-square is kernel 0");
+        assert_eq!(
+            field.channel_ref,
+            Some(6),
+            "maxwell/elliptic/vacuum resolves to electric"
+        );
+        assert_eq!(field.unit, "V/m");
+
+        let invalid = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz bogus elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let skipped = parse_sources(invalid);
+        assert!(
+            skipped[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "an unknown operator is skipped, never defaulted"
+        );
+
+        let unresolved = "url https://example.com/x\nttl 600\nat sun\nfield x xyzzy maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let pending = parse_sources(unresolved);
+        assert!(
+            pending[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "a quantity that resolves to no conserved quantity is pending, never defaulted"
+        );
+    }
+
+    #[test]
+    fn a_force_descriptor_separates_the_quantity_name_from_the_channel_key() {
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+                       field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n";
+        let field = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .expect("the gravity descriptor is admitted");
+        assert_eq!(
+            field.key, "gravity",
+            "the channel key stays the register key"
+        );
+        assert_eq!(
+            field.name, "agrav_gravity_ms2",
+            "the physical quantity name is not collapsed into the channel key"
+        );
+        assert_eq!(field.channel_ref, Some(2), "Poisson/mass/vacuum is gravity");
+        assert_eq!(field.unit, "m/s2", "the measured unit stays untouched");
+        assert_eq!(field.kernel, 0);
+    }
+
+    #[test]
+    fn the_descriptor_conserved_token_is_not_derived_from_the_quantity_name() {
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+                       field gravityz temperature primary mass poisson elliptic vacuum none inverse-square m/s2 60 0.0 0.0\n";
+        let field = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .expect("an explicit conserved token carries the line");
+        assert_eq!(
+            field.channel_ref,
+            Some(2),
+            "temperature would resolve to energy in the name arm; the explicit mass token wins"
+        );
+    }
+
+    #[test]
+    fn the_seven_gravity_fields_keep_their_keys_names_and_units() {
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+                       field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field igets_gravity_nm_s2 igets_gravity_nm_s2 primary mass poisson elliptic vacuum none inverse-square nm/s2 86400 0.0 0.0\n\
+                       field gx lpf_drs_dg_x_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field gy lpf_drs_dg_y_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field gz lpf_drs_dg_z_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field ACCELERATION viking_grav_acceleration_mm_s2 primary mass poisson elliptic vacuum none inverse-square mm/s2 604800 0.0 0.0\n\
+                       field gw250207_115645 gw250207_115645 primary mass poisson elliptic vacuum none inverse-square 1 31536000 0.0 0.0\n";
+        let fields: Vec<FieldConfig> = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(fields.len(), 7);
+        let got: Vec<(&str, &str, &str)> = fields
+            .iter()
+            .map(|fc| (fc.key.as_str(), fc.name.as_str(), fc.unit.as_str()))
+            .collect();
+        assert_eq!(
+            got,
+            vec![
+                ("gravity", "agrav_gravity_ms2", "m/s2"),
+                ("igets_gravity_nm_s2", "igets_gravity_nm_s2", "nm/s2"),
+                ("gx", "lpf_drs_dg_x_ms2", "m/s2"),
+                ("gy", "lpf_drs_dg_y_ms2", "m/s2"),
+                ("gz", "lpf_drs_dg_z_ms2", "m/s2"),
+                ("ACCELERATION", "viking_grav_acceleration_mm_s2", "mm/s2"),
+                ("gw250207_115645", "gw250207_115645", "1"),
+            ]
+        );
+        assert!(fields.iter().all(|fc| fc.channel_ref == Some(2)));
+    }
+
+    #[test]
+    fn the_two_wave_fields_stay_two_descriptor_fields() {
+        let content = "url https://example.com/geofon.bin\nttl 60\nat earth\n\
+                       field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n\
+                       url https://example.com/earthscope.bin\nttl 60\nat earth\n\
+                       field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n";
+        let sources = parse_sources(content);
+        let fields: Vec<FieldConfig> = sources
+            .iter()
+            .flat_map(|s| s.extracts.iter())
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            fields.len(),
+            2,
+            "neither wave field is folded into the other"
+        );
+        assert!(fields.iter().all(|fc| {
+            fc.key == "fdsn_waveform_bhz_ms"
+                && fc.name == "fdsn_waveform_bhz_ms"
+                && fc.unit == "m/s"
+                && fc.channel_ref == Some(5)
+        }));
+    }
+
+    #[test]
+    fn p10_2a_interaction_absent_form_parses() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        let field = sources[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .expect("the optional interaction may be absent — the line is admitted, never silently dropped");
+        assert_eq!(
+            field.channel_ref,
+            Some(6),
+            "the interaction-absent form resolves to the same channel as the interaction-present form"
+        );
+        assert_eq!(field.unit, "V/m");
+    }
+
+    #[test]
+    fn p10_2a_bogus_interaction_refused() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum bogus primary V/m 60.0 inverse-square\n";
+        let sources = parse_sources(content);
+        assert!(
+            sources[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "a token that is neither an interaction (gravity/em) nor a role is refused, never defaulted"
+        );
+    }
+
+    #[test]
+    fn p10_2a_declared_interaction_must_match_the_derived_one() {
+        let contradiction = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum gravity primary V/m 60.0 inverse-square\n";
+        let refused = parse_sources(contradiction);
+        assert!(
+            refused[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "a declared interaction contradicting the mechanism is refused, never smoothed"
+        );
+
+        let matching = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let flows = parse_sources(matching);
+        assert!(
+            flows[0]
+                .extracts
+                .iter()
+                .any(|e| matches!(e, Extract::Field(_))),
+            "the derived interaction as a declared token is admitted"
+        );
+    }
+
+    #[test]
+    fn volume_frame_body_declared_and_refused_when_absent() {
+        let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n";
+        let with = parse_sources(declared);
+        let body = with[0].extracts.iter().find_map(|e| match e {
+            Extract::Volume { frame_body, .. } => Some(frame_body.clone()),
+            _ => None,
+        });
+        assert_eq!(body, Some(Some("earth".to_string())));
+
+        let absent =
+            "url https://cdn.example/x/x.volume.bin\nformat volume\nttl 604800\nvolume v v\n";
+        let without = parse_sources(absent);
+        let body2 = without[0].extracts.iter().find_map(|e| match e {
+            Extract::Volume { frame_body, .. } => Some(frame_body.clone()),
+            _ => None,
+        });
+        assert_eq!(body2, Some(None), "no `at` → absent, never a default body");
+    }
+
+    #[test]
+    fn cgm_lat_directive_is_carried() {
+        let declared =
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 40.5\n";
+        let with = parse_sources(declared);
+        assert_eq!(with[0].cgm_lat, Some(40.5));
+        assert_eq!(with[0].cgm_source, None);
+    }
+
+    #[test]
+    fn rows_accepts_lat_key_and_lon_key_as_the_named_column_spelling() {
+        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-sampling\n";
+        let sources = parse_sources(declared);
+        match &sources[0].extracts[0] {
+            Extract::Rows {
+                lat_key, lon_key, ..
+            } => {
+                assert_eq!(lat_key, "Lat");
+                assert_eq!(lon_key, "Lon");
+            }
+            _ => panic!("expected Rows"),
+        }
+    }
+
+    #[test]
+    fn cgm_source_directive_is_carried_and_orthogonal_to_cgm_lat() {
+        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 11.23\ncgm_source bgs-quasi-dipole\n";
+        let with = parse_sources(declared);
+        assert_eq!(with[0].cgm_lat, Some(11.23));
+        assert_eq!(with[0].cgm_source.as_deref(), Some("bgs-quasi-dipole"));
+    }
+
+    #[test]
+    fn rights_triple_is_carried_and_absent_without_directive() {
+        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights CC-BY-4.0 SPDX https://spdx.org/licenses/CC-BY-4.0.html\n";
+        let with = parse_sources(declared);
+        assert_eq!(with[0].rights_identifier.as_deref(), Some("CC-BY-4.0"));
+        assert_eq!(with[0].rights_scheme.as_deref(), Some("SPDX"));
+        assert_eq!(
+            with[0].rights_uri.as_deref(),
+            Some("https://spdx.org/licenses/CC-BY-4.0.html")
+        );
+
+        let absent =
+            parse_sources("url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n");
+        assert_eq!(absent[0].rights_identifier, None);
+        assert_eq!(absent[0].rights_scheme, None);
+        assert_eq!(absent[0].rights_uri, None);
+
+        let partial = parse_sources(
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights NONE\n",
+        );
+        assert_eq!(partial[0].rights_identifier.as_deref(), Some("NONE"));
+        assert_eq!(partial[0].rights_scheme, None);
+        assert_eq!(partial[0].rights_uri, None);
+    }
+
+    #[test]
+    fn shard_overlap_is_refused() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(
+                "https://cdn.example/x/odyssey_odf_t750000000_850000000.bin",
+                "odyssey_odf",
+            ),
+        ]);
+        assert_eq!(kept.len(), 1);
+        assert_eq!(kept[0].url, URL_A);
+    }
+
+    #[test]
+    fn shard_disjoint_is_accepted() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(URL_C, "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn no_cadence_keeps_a_static_source_active() {
+        let content =
+            "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\nno-sampling\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].ttl, NO_CADENCE);
+    }
+
+    #[test]
+    fn a_source_without_ttl_or_no_cadence_is_inactive() {
+        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\n";
+        assert!(parse_sources(content).is_empty());
+    }
+
+    #[test]
+    fn range_directive_records_start_and_step_metres() {
+        let content =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0.15\nttl 604800\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(
+            sources[0].range,
+            Some(RangeAxis {
+                start_m: 300.0,
+                step_m: 0.15,
+            })
+        );
+    }
+
+    #[test]
+    fn range_directive_with_zero_or_negative_step_stays_unrecorded() {
+        let zero =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun\nttl 604800\n";
+        let negative = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun\nttl 604800\n";
+        assert_eq!(parse_sources(zero)[0].range, None);
+        assert_eq!(parse_sources(negative)[0].range, None);
+    }
+
+    #[test]
+    fn range_directive_with_void_arity_stays_unrecorded() {
+        let content =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun\nttl 604800\n";
+        assert_eq!(parse_sources(content)[0].range, None);
+    }
+
+    #[test]
+    fn range_directive_resets_at_the_next_url() {
+        let content = "url https://example.com/a.bin\nformat gras_2c\nrange 300.0 0.15\nat mars\n\
+                       ttl 604800\nurl https://example.com/b.bin\nformat gras_2c\nat mars\n\
+                       ttl 604800\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 2);
+        assert!(sources[0].range.is_some());
+        assert_eq!(sources[1].range, None);
+    }
+
+    #[test]
+    fn shard_touching_boundaries_are_accepted() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(URL_B, "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn shard_identical_ranges_are_refused() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(
+                "https://cdn.example/x/odyssey_odf_t700000000_800000000_1.bin",
+                "odyssey_odf",
+            ),
+        ]);
+        assert_eq!(kept.len(), 1);
+    }
+
+    #[test]
+    fn shard_not_half_open_is_refused() {
+        let kept = refuse_shard_overlaps(vec![shard(
+            "https://cdn.example/x/odyssey_odf_t800000000_800000000.bin",
+            "odyssey_odf",
+        )]);
+        assert_eq!(kept.len(), 0);
+    }
+
+    #[test]
+    fn shard_of_a_different_name_is_not_compared() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(
+                "https://cdn.example/x/mro_odf_t700000000_800000000.bin",
+                "mro_odf",
+            ),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn a_non_shard_url_does_not_trigger_the_gate() {
+        let kept = refuse_shard_overlaps(vec![
+            shard("https://cdn.example/x/mro_odf.bin", "mro_odf"),
+            shard(URL_A, "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn every_cdn_source_carries_its_origin_and_producer_or_is_a_reference() {
+        let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
+        let mut missing: Vec<String> = Vec::new();
+        let mut url = String::new();
+        let mut cdn = false;
+        let mut origin = false;
+        let mut compiler = false;
+        let mut format = false;
+        let mut witness = false;
+        for line in content.lines() {
+            let mut words = line.split_whitespace();
+            match words.next() {
+                Some("url") => {
+                    if cdn && !witness && !(origin && (compiler || format)) {
+                        missing.push(url.clone());
+                    }
+                    url = words.next().map_or(String::new(), str::to_string);
+                    cdn = url.contains("/releases/download/");
+                    origin = false;
+                    compiler = false;
+                    format = false;
+                    witness = false;
+                }
+                Some("origin") => origin = true,
+                Some("compiler") => compiler = true,
+                Some("format") => format = true,
+                Some("witness") => witness = true,
+                _ => {}
+            }
+        }
+        if cdn && !witness && !(origin && (compiler || format)) {
+            missing.push(url);
+        }
+        assert!(
+            missing.is_empty(),
+            "CDN sources without origin/producer: {missing:?}"
+        );
+    }
+
+    #[test]
+    fn the_register_declares_a_channel_for_every_live_force_tag() {
+        use crate::mathematikerin::channel::{
+            FIXED_CHANNELS, Medium, PdeType, TransportOp, mechanism_of, unit_token,
+        };
+        let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
+        let mut declared: Vec<(
+            crate::mathematikerin::channel::Conserved,
+            TransportOp,
+            PdeType,
+            Medium,
+        )> = Vec::new();
+        for line in content.lines() {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.len() < 3 || parts[0] != "channel" {
+                continue;
+            }
+            let unit = unit_token(parts[2]).or_else(|| {
+                parts
+                    .get(3)
+                    .and_then(|t| unit_token(&format!("{} {}", parts[2], t)))
+            });
+            let Some(unit) = unit else {
+                continue;
+            };
+            if let Ok(d) = ChannelDescriptor::parse_spec(parts[1], unit) {
+                declared.push((d.conserved, d.op, d.pde_type, d.medium));
+            }
+        }
+        let mut missing: Vec<&str> = Vec::new();
+        for fc in FIXED_CHANNELS.iter() {
+            let Some(m) = mechanism_of(fc.tag) else {
+                missing.push(fc.tag);
+                continue;
+            };
+            let covered = declared.iter().any(|(c, op, pde, med)| {
+                *c == fc.conserved && *op == m.operator && *pde == m.pde_type && *med == fc.medium
+            });
+            if !covered {
+                missing.push(fc.tag);
+            }
+        }
+        assert!(
+            missing.is_empty(),
+            "the register declares no channel directive for these live force tags: {missing:?}"
+        );
+    }
+
+    #[test]
+    fn field_without_absorption_advection_declares_absent_not_zero() {
+        let short = split_directive("field x y inverse-square em nT 3600");
+        let (_, _, tau, absorption, advection) = parse_field_config(&short).unwrap();
+        assert_eq!(tau, 3600.0);
+        assert_eq!(
+            absorption, SLOT_ABSENT,
+            "absent absorption must not read as 0.0"
+        );
+        assert_eq!(
+            advection, SLOT_ABSENT,
+            "absent advection must not read as 0.0"
+        );
+
+        let full = split_directive("field x y inverse-square em nT 3600 0.0 0.0");
+        let (_, _, _, absorption, advection) = parse_field_config(&full).unwrap();
+        assert_eq!(absorption, 0.0, "a declared 0.0 stays the measured value");
+        assert_eq!(advection, 0.0, "a declared 0.0 stays the measured value");
+    }
+
+    #[test]
+    fn presence_flags_carry_the_measured_bits_and_pad_the_slots() {
+        assert_eq!(
+            presence_flags(None, SLOT_ABSENT, SLOT_ABSENT, SLOT_ABSENT),
+            0.0
+        );
+        assert_eq!(
+            presence_flags(Some(0.0), SLOT_ABSENT, SLOT_ABSENT, SLOT_ABSENT),
+            PRESENCE_FLAG_PHASE
+        );
+        assert_eq!(
+            presence_flags(Some(1.5), 0.25, SLOT_ABSENT, SLOT_ABSENT),
+            PRESENCE_FLAG_PHASE + PRESENCE_FLAG_ABSORPTION
+        );
+        assert_eq!(
+            presence_flags(Some(1.5), 0.25, 3.0, SLOT_ABSENT),
+            PRESENCE_FLAG_PHASE + PRESENCE_FLAG_ABSORPTION + PRESENCE_FLAG_ADVECTION
+        );
+        assert_eq!(slot_or_pad(SLOT_ABSENT), 0.0);
+        assert_eq!(slot_or_pad(0.0), 0.0, "a measured zero stays the value");
+        assert_eq!(slot_or_pad(0.25), 0.25);
+        assert_eq!(slot_or_pad(f64::NAN), 0.0, "NaN never crosses the wire");
+        assert!(!slot_measured(SLOT_ABSENT));
+        assert!(slot_measured(0.0), "a measured zero is a measurement");
+    }
+
+    #[test]
+    fn field_and_quantity_are_disjoint_taxonomies() {
+        let field_of = |content: &str| -> Option<u8> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => fc.channel_ref,
+                    _ => None,
+                })
+            })
+        };
+
+        let valid = "url https://example.com/q.bin\nttl 604800\n\
+                     quantity qkey qname inverse-square mass kg 3600 0.0 0.0\n";
+        assert_eq!(field_of(valid), None);
+
+        let force_as_kind = "url https://example.com/q.bin\nttl 604800\n\
+                             quantity qkey qname inverse-square em kg 3600 0.0 0.0\n";
+        assert_eq!(
+            field_of(force_as_kind),
+            None,
+            "quantity with a force name in the kind slot must not become a field"
+        );
+
+        let kind_as_force = "url https://example.com/q.bin\nttl 604800\n\
+                             field qkey qname inverse-square mass kg 3600 0.0 0.0\n";
+        assert_eq!(
+            field_of(kind_as_force),
+            None,
+            "field with a quantity kind in the force slot must not become a field"
+        );
+    }
+
+    #[test]
+    fn a_last_selector_migrates_a_geometry_value_out_of_the_force_taxonomy() {
+        let last_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Last(fc, _) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+        let geometry = "url https://example.com/g.bin\nttl 604800\n\
+                        last items.value river_stage inverse-square geometry m 900.0 0.0 0.0\n";
+        let fc = last_of(geometry).expect("a last selector with a geometry kind flows");
+        assert_eq!(
+            fc.channel_ref, None,
+            "a geometry value leaves Σω through the last arm, like the quantity arm"
+        );
+        assert_eq!(fc.unit, "m", "the geometry unit stays free");
+
+        let source_parameter = "url https://example.com/g.bin\nttl 604800\n\
+                                last mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
+        assert_eq!(
+            last_of(source_parameter).and_then(|f| f.channel_ref),
+            None,
+            "a source parameter leaves Σω through the last arm"
+        );
+
+        let still_a_force = "url https://example.com/g.bin\nttl 604800\n\
+                             last data.v tide_height inverse-square gravity m 3600 0.0 0.0\n";
+        assert_eq!(
+            last_of(still_a_force).and_then(|f| f.channel_ref),
+            Some(2),
+            "a force token in the same slot keeps its channel"
+        );
+    }
+
+    #[test]
+    fn the_field_regime_token_is_resolved_or_refused_never_defaulted() {
+        let force_of = |content: &str| -> Option<u8> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => fc.channel_ref,
+                    _ => None,
+                })
+            })
+        };
+        let bare = "url https://example.com/f.bin\nttl 604800\n\
+                    field fkey fname primary energy maxwell mixed vacuum none inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(bare),
+            Some(0),
+            "the regime is derived from the axes when no token is declared"
+        );
+
+        let declared = "url https://example.com/f.bin\nttl 604800\n\
+                        field fkey fname primary energy maxwell mixed vacuum none radiating inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(declared),
+            Some(0),
+            "a declared regime that matches the descriptor resolves"
+        );
+
+        let contradicted = "url https://example.com/f.bin\nttl 604800\n\
+                            field fkey fname primary energy maxwell mixed vacuum none quasi-static inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(contradicted),
+            None,
+            "a declared regime contradicting the descriptor is refused, never defaulted"
+        );
+
+        let electric = "url https://example.com/f.bin\nttl 604800\n\
+                        field fkey fname primary energy maxwell elliptic vacuum none quasi-static inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(electric),
+            Some(6),
+            "the quasi-static regime selects the electric channel"
+        );
+    }
+
+    #[test]
+    fn derived_magnetic_index_is_a_quantity_not_a_force_field() {
+        let field_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+        let q = "url https://example.com/q.bin\nttl 604800\n\
+                 quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
+        let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
+        assert_eq!(fc.channel_ref, None, "a derived index stays outside Σω");
+    }
+
+    #[test]
+    fn a_geometry_and_source_parameter_quantity_flow_without_a_unit_gate() {
+        let field_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+        let geometry = "url https://example.com/q.bin\nttl 604800\n\
+                        quantity tide_ft tide_ft inverse-square geometry ft 3600 0.0 0.0\n";
+        let fc = field_of(geometry).expect("a geometry quantity flows");
+        assert_eq!(fc.channel_ref, None);
+        assert_eq!(
+            fc.unit, "ft",
+            "the geometry unit is free (length, angle, mass …)"
+        );
+
+        let source_parameter = "url https://example.com/q.bin\nttl 604800\n\
+                                quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
+        assert_eq!(
+            field_of(source_parameter).and_then(|f| f.channel_ref),
+            None,
+            "a source parameter flows as a quantity, never a field"
+        );
+    }
+
+    #[test]
+    fn photometric_flux_without_band_is_refused_and_with_band_carries_the_band() {
+        let field_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+
+        let bandless = "url https://example.com/q.bin\nttl 604800\n\
+                        quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0\n";
+        assert!(
+            field_of(bandless).is_none(),
+            "a photometric scale nmgy quantity without a band reference is refused, never a 0.0 band"
+        );
+
+        let with_band = "url https://example.com/q.bin\nttl 604800\n\
+                         quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom\n";
+        let fc = field_of(with_band).expect("the band-declared photometric quantity flows");
+        assert!(
+            fc.freq > 0.0,
+            "the pivot wavelength resolves to a positive frequency"
+        );
+        assert!(
+            fc.bin_width > 0.0,
+            "the edges resolve to a positive bandwidth"
+        );
+        assert_eq!(
+            fc.band_id.as_deref(),
+            Some("DECam_g"),
+            "the band id persists on the parsed field"
+        );
+    }
+
+    #[test]
+    fn a_channel_directive_carries_the_descriptor() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].channels.len(), 1);
+        let expected = crate::mathematikerin::channel::descriptor_for_force(
+            "gravity",
+            crate::mathematikerin::channel::Medium::Vacuum,
+        )
+        .expect("gravity descriptor");
+        assert_eq!(sources[0].channels[0].hash(), expected.hash());
+    }
+
+    #[test]
+    fn a_channel_directive_carries_the_geometry_extent() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel energy:primary:wave:hyperbolic:fluid:circle:dirichlet:2.0 Pa\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].channels.len(), 1);
+        let d = &sources[0].channels[0];
+        assert_eq!(d.extent, Some(2.0));
+        assert!(d.mode_wavenumbers(3).is_some(), "geometry carries modes");
+    }
+
+    #[test]
+    fn a_channel_directive_with_an_unknown_unit_is_refused() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:poisson:elliptic:vacuum:unspecified:none furlongs\n";
+        let sources = parse_sources(content);
+        assert!(
+            sources
+                .first()
+                .map(|s| s.channels.is_empty())
+                .unwrap_or(true)
+        );
+    }
+
+    #[test]
+    fn a_channel_unit_with_a_space_stays_one_token() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(
+            sources[0].channels.len(),
+            1,
+            "kg/(m^2 s) is one unit, not a unit followed by a stray token"
+        );
+        let d = &sources[0].channels[0];
+        assert_eq!(d.unit, "kg/(m^2 s)");
+        assert_eq!(d.alias.as_deref(), Some("de2_neutral_wind"));
+    }
+
+    #[test]
+    fn a_descriptor_unit_with_a_space_stays_one_token() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       field flux_q flux_q primary mass advective advective fluid none gaussian-inverse-square kg/(m^2 s) 3600 0.0 0.0\n";
+        let sources = parse_sources(content);
+        let fc = sources
+            .first()
+            .and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+            .expect("the descriptor field with a spaced unit flows");
+        assert_eq!(fc.unit, "kg/(m^2 s)");
+        assert_eq!(fc.tau, 3600.0, "the unit does not swallow tau");
+        assert_eq!(fc.absorption, 0.0);
+        assert_eq!(fc.advection, 0.0);
+        assert_eq!(
+            fc.channel_ref,
+            Some(4),
+            "mass/fluid/advective stays index 4"
+        );
+    }
+
+    #[test]
+    fn split_directive_keeps_spaced_units_and_leaves_existing_units_alone() {
+        assert_eq!(
+            split_directive("channel spec kg/(m^2 s) alias x charge 1"),
+            vec!["channel", "spec", "kg/(m^2 s)", "alias", "x", "charge", "1"]
+        );
+        for unit in ["m/s", "mm/yr", "nT", "1"] {
+            let line = format!("field x y inverse-square em {unit} 3600");
+            assert_eq!(
+                split_directive(&line),
+                vec!["field", "x", "y", "inverse-square", "em", unit, "3600"],
+                "existing unit {unit} keeps its token"
+            );
+        }
+    }
+
+    #[test]
+    fn a_channel_directive_carries_alias_and_charge() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2 alias gravity_channel charge 2\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].channels.len(), 1);
+        let d = &sources[0].channels[0];
+        assert_eq!(d.alias.as_deref(), Some("gravity_channel"));
+        assert_eq!(d.charge, Some(2.0));
+    }
+
+    #[test]
+    fn decline_lines_parse_into_the_closed_reason_set() {
+        let content = "decline registry https://api.open-notify.org/astros.json\n\
+                       decline commercial https://example.com/proprietary\n";
+        let declined = parse_declined(content);
+        assert_eq!(declined.len(), 2);
+        assert_eq!(declined[0].reason, DeclineReason::Registry);
+        assert_eq!(declined[0].url, "https://api.open-notify.org/astros.json");
+        assert_eq!(declined[1].reason, DeclineReason::Commercial);
+    }
+
+    #[test]
+    fn a_decline_token_outside_the_set_is_refused() {
+        let declined = parse_declined("decline made-up https://example.com/x\n");
+        assert!(declined.is_empty());
+    }
+
+    #[test]
+    fn a_decline_line_never_becomes_a_source() {
+        let sources = parse_sources("decline registry https://example.com/x\n");
+        assert!(sources.is_empty());
+        assert_eq!(
+            parse_declined("decline registry https://example.com/x\n").len(),
+            1
+        );
+    }
+
+    #[test]
+    fn an_explicit_model_kind_directive_overrides_the_format_derivation() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\nmodel_kind time_variable\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].model_kind, Some(ModelKind::TimeVariable));
+    }
+
+    #[test]
+    fn a_model_kind_falls_back_to_the_format_when_undeclared() {
+        let sources =
+            parse_sources("url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n");
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].model_kind, Some(ModelKind::Static));
+    }
+
+    #[test]
+    fn the_model_head_directives_assemble_the_head() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\ntide zero_tide\nmax_degree 2190\n",
+        );
+        assert_eq!(sources.len(), 1);
+        let head = sources[0].head.as_ref().expect("the head stands");
+        assert_eq!(head.gm_m3_s2, 3.986004415E14);
+        assert!((head.radius_m - 6378136.3).abs() < 1e-6);
+        assert_eq!(head.norm, crate::archivar::gfc::Norm::FullyNormalized);
+        assert_eq!(head.tide_system.as_deref(), Some("zero_tide"));
+        assert_eq!(head.max_degree, 2190);
+    }
+
+    #[test]
+    fn an_unmeasured_norm_leaves_the_head_absent() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.9E14\nradius 6371000\nnorm schmidt\nmax_degree 2190\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert!(sources[0].head.is_none());
+    }
+
+    #[test]
+    fn a_partial_model_head_stays_absent() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.9E14\nnorm fully_normalized\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert!(sources[0].head.is_none());
+    }
+
+    #[test]
+    fn medium_line_reads_numeric_units_and_states() {
+        let sources = parse_sources(
+            "url https://example.invalid/medium\nformat text\nttl 60\non earth 0 0 0\n\
+             medium absorption=0.25 1/m advection=pending\n",
+        );
+        assert_eq!(sources.len(), 1);
+        let medium = sources[0].medium.as_ref().expect("medium line");
+        assert_eq!(medium.absorption, MediumValue::Measured(0.25));
+        assert_eq!(medium.absorption_unit.as_deref(), Some("1/m"));
+        assert_eq!(medium.advection, MediumValue::Pending);
+        assert_eq!(medium.advection_unit, None);
+    }
+
+    #[test]
+    fn anchors_are_one_truth_and_old_forms_are_legacy() {
+        let old_at = parse_sources("url https://example.invalid/a\nformat text\nttl 60\nat sun\n");
+        let anchor = old_at[0].anchor.as_ref().expect("old at anchor");
+        assert_eq!(anchor.kind, AnchorKind::At);
+        assert!(anchor.legacy);
+
+        let old_on = parse_sources(
+            "url https://example.invalid/b\nformat text\nttl 60\non earth 10 20 30\n",
+        );
+        let anchor = old_on[0].anchor.as_ref().expect("old on anchor");
+        assert_eq!(anchor.kind, AnchorKind::On);
+        assert!(anchor.legacy);
+        assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("30"));
+
+        let old_on_absent = parse_sources(
+            "url https://example.invalid/b2\nformat text\nttl 60\non earth 10 20 absent\n",
+        );
+        let anchor = old_on_absent[0].anchor.as_ref().expect("old on absent");
+        assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("absent"));
+
+        let new_on = parse_sources(
+            "url https://example.invalid/c\nformat text\nttl 60\n\
+             on mars frame=body lat=1 lon=2 alt=absent datum=IAU_2015 epoch=2000-01-01T12:00:00\n",
+        );
+        let anchor = new_on[0].anchor.as_ref().expect("new on anchor");
+        assert_eq!(anchor.kind, AnchorKind::On);
+        assert!(!anchor.legacy);
+        assert!(matches!(
+            new_on[0].frame(),
+            Frame::Surface { alt: None, .. }
+        ));
+    }
+
+    #[test]
+    fn anchor_required_attributes_are_not_invented() {
+        assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"], false).is_err());
+        assert!(
+            parse_anchor_directive(AnchorKind::At, &["at", "sun", "frame=icrs"], false).is_ok()
+        );
+        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "other=x"], false).is_err());
+    }
+
+    #[test]
+    fn every_v3_anchor_directive_is_parsed() {
+        let cases = [
+            ("global earth frame=body method=mean", AnchorKind::Global),
+            (
+                "coverage earth frame=body bbox=1,2,3,4",
+                AnchorKind::Coverage,
+            ),
+            ("orbit iss frame=icrs alt=400000", AnchorKind::Orbit),
+            (
+                "query earth frame=body lat_key=lat lon_key=lon alt_key=alt time_key=t",
+                AnchorKind::Query,
+            ),
+            (
+                "track buoy frame=body lat_key=lat lon_key=lon alt_key=alt time_key=t",
+                AnchorKind::Track,
+            ),
+            (
+                "sky frame=icrs ra_key=ra dec_key=dec epoch=J2000",
+                AnchorKind::Sky,
+            ),
+            ("absent reason=no-open-data", AnchorKind::Absent),
+        ];
+        for (line, kind) in cases {
+            let content =
+                format!("url https://example.invalid/{kind:?}\nformat text\nttl 60\n{line}\n");
+            let sources = parse_sources(&content);
+            assert_eq!(sources.len(), 1, "{line}");
+            let anchor = sources[0].anchor.as_ref().expect("anchor");
+            assert_eq!(anchor.kind, kind, "{line}");
+            assert!(!anchor.legacy, "{line}");
+        }
+    }
+
+    #[test]
+    fn a_field_norm_token_must_agree_with_the_source_head() {
+        let matching = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:fully_normalized\n",
+        );
+        assert_eq!(matching.len(), 1);
+        assert!(matching[0].head.is_some());
+        assert!(
+            matching[0]
+                .extracts
+                .iter()
+                .any(|e| matches!(e, Extract::Field(_)))
+        );
+        let contradicting = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:unnormalized\n",
+        );
+        assert_eq!(contradicting.len(), 1);
+        assert!(
+            contradicting[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_)))
+        );
+    }
+    #[test]
+    fn source_blocks_require_reference_and_field_offset() {
+        let content = "url https://example.org/ndbc/51003.txt\n\
+terms PD-USGov https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
+field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n\
+field WTMP water_temp C source_column=14 alt_offset=-0.6\n";
+        let blocks = parse_source_blocks(content).expect("source block parses");
+        assert_eq!(blocks.len(), 1);
+        assert_eq!(blocks[0].fields.len(), 2);
+        assert_eq!(blocks[0].fields[0].alt_offset, 4.0);
+        assert_eq!(blocks[0].fields[1].alt_offset, -0.6);
+
+        let missing_offset = content.replace(" alt_offset=4.0", "");
+        assert!(parse_source_blocks(&missing_offset).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_layer_offsets_and_refuse_nominal_midpoint() {
+        let layer = "url https://example.org/hfradar\n\
+terms CC-BY-4.0 https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
+field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_offset=0.0\n";
+        let blocks = parse_source_blocks(layer).expect("layer parses");
+        assert_eq!(blocks[0].fields[0].source_column, Some(3));
+        assert_eq!(blocks[0].fields[0].alt_min_offset, Some(-2.5));
+        assert_eq!(blocks[0].fields[0].alt_max_offset, Some(0.0));
+
+        let partial = layer.replace(" alt_max_offset=0.0", "");
+        assert!(parse_source_blocks(&partial).is_err());
+        let pending = layer.replace("alt_offset=0.0", "alt_offset=pending");
+        assert!(parse_source_blocks(&pending).is_err());
+    }
+
+    #[test]
+    fn published_absorption_is_a_field_not_a_medium_slot() {
+        let content = concat!(
+            "url https://example.org/riometer\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field absorption_db absorption dB source_column=1 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("published absorption is a field");
+        assert_eq!(blocks[0].fields[0].key, "absorption_db");
+        assert_eq!(blocks[0].fields[0].unit, "dB");
+
+        let medium_slot = content.replace("field absorption_db", "medium absorption_db");
+        assert!(parse_source_blocks(&medium_slot).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_five_part_time_without_century_guess() {
+        let content = concat!(
+            "url https://example.org/ndbc/51003.txt\n",
+            "terms PD-USGov https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
+            " time_parts=YY,MM,DD,hh,mm time_scale=UTC\n",
+            "field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("five-part time parses");
+        let parts = blocks[0].time_parts.as_ref().expect("time_parts");
+        assert_eq!(
+            parts,
+            &vec![
+                "YY".to_string(),
+                "MM".to_string(),
+                "DD".to_string(),
+                "hh".to_string(),
+                "mm".to_string(),
+            ]
+        );
+        assert!(blocks[0].time.is_none());
+        assert!(blocks[0].time_key.is_none());
+
+        let short = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh");
+        assert!(parse_source_blocks(&short).is_err());
+        let two_forms = content.replace("time_scale=UTC", "time_scale=UTC time_key=timestamp");
+        assert!(parse_source_blocks(&two_forms).is_err());
+
+        let dart = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh,mm,ss");
+        let blocks = parse_source_blocks(&dart).expect("DART seconds are explicit");
+        assert_eq!(blocks[0].time_parts.as_ref().map(Vec::len), Some(6));
+    }
+
+    #[test]
+    fn source_blocks_allow_one_url_with_two_datums() {
+        let content = concat!(
+            "url https://example.org/mixed\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field air air C source_column=1 alt_offset=2.0\n",
+            "url https://example.org/mixed\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field water water C source_column=2 alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("same URL may carry two datums");
+        assert_eq!(blocks.len(), 2);
+        assert_eq!(blocks[0].url, blocks[1].url);
+        assert_eq!(blocks[0].datum, "msl");
+        assert_eq!(blocks[1].datum, "sea_surface");
+        assert_ne!(blocks[0].fields[0].key, blocks[1].fields[0].key);
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let ambiguous = content.replace("field water water", "field air air");
+        let blocks =
+            parse_source_blocks(&ambiguous).expect("duplicate keys parse, then fail validation");
+        assert!(validate_source_blocks(&blocks).is_err());
+    }
+
+    #[test]
+    fn source_blocks_keep_block_datum_and_signed_layer_offsets() {
+        let content = concat!(
+            "url https://example.org/water\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field water water C source_column=1 alt_offset=-0.6 alt_min_offset=-2.5 alt_max_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("signed layer parses");
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let flat = content.replace(
+            "alt_min_offset=-2.5 alt_max_offset=0.0",
+            "alt_min_offset=0 alt_max_offset=0",
+        );
+        assert!(parse_source_blocks(&flat).is_err());
+
+        let mut blocks = blocks;
+        blocks[0].fields[0].alt_min_offset = Some(0.0);
+        blocks[0].fields[0].alt_max_offset = Some(0.0);
+        assert!(validate_source_blocks(&blocks).is_err());
+
+        let field_datum = content.replace("alt_offset=-0.6", "alt_offset=-0.6 datum=msl");
+        assert!(parse_source_blocks(&field_datum).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_body_frame_position() {
+        let content = concat!(
+            "url https://example.org/ace\n",
+            "terms PD-USGov https://example.org/terms\n",
+            "at earth frame=barycenter distance_au=0.99 time_key=time_tag time_scale=UTC\n",
+            "ttl 3600\n",
+            "field 0.gsm_bx bx nT source_key=gsm_bx alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("body-frame block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::At { body, frame, distance_au }
+                if body == "earth" && frame == "barycenter" && *distance_au == Some(0.99)
+        ));
+        assert_eq!(blocks[0].datum, "barycenter");
+        assert_eq!(blocks[0].time_key.as_deref(), Some("time_tag"));
+        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("gsm_bx"));
+    }
+
+    #[test]
+    fn source_blocks_accept_sky_position_without_time() {
+        let content = concat!(
+            "url https://example.org/cat\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "sky frame=icrs ra_key=RAJ2000 dec_key=DEJ2000 epoch=J2000\n",
+            "ttl 604800\n",
+            "field ra ra deg source_key=RAJ2000 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("sky block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::Sky { ra_key, dec_key, epoch, .. }
+                if ra_key == "RAJ2000" && dec_key == "DEJ2000" && epoch == "J2000"
+        ));
+        assert_eq!(blocks[0].datum, "icrs J2000");
+    }
+
+    #[test]
+    fn source_blocks_accept_last_with_where() {
+        let content = concat!(
+            "url https://example.org/x\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "at sun frame=barycenter time_key=time_tag time_scale=UTC\n",
+            "ttl 60\n",
+            "last flux f wm2 source_key=flux alt_offset=0 where energy 0.05-0.4nm\n",
+        );
+        let blocks = parse_source_blocks(content).expect("last block parses");
+        assert_eq!(blocks[0].fields[0].extract, SourceExtract::Last);
+        assert_eq!(
+            blocks[0].fields[0].where_clause.as_deref(),
+            Some("energy 0.05-0.4nm")
+        );
+        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("flux"));
+    }
+
+    #[test]
+    fn source_blocks_accept_moving_platform_keys() {
+        let content = concat!(
+            "url https://example.org/track\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "query earth frame=body lat_key=lat lon_key=lon alt_key=height time_key=t datum=ellipsoid time_scale=UTC\n",
+            "field u current m/s source_column=3 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("moving block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::Moving { lat_key, lon_key }
+                if lat_key == "lat" && lon_key == "lon"
+        ));
+        assert_eq!(blocks[0].alt_key.as_deref(), Some("height"));
+        assert_eq!(blocks[0].time_key.as_deref(), Some("t"));
+    }
+
+    #[test]
+    fn moving_platform_accepts_fixed_alt_ref_without_invented_key() {
+        let content = concat!(
+            "url https://example.org/hfradar\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "query earth frame=body lat_key=LAT lon_key=LON alt_ref=0",
+            " time_key=T datum=sea_surface time_scale=UTC\n",
+            "field VELO radial_velocity m/s source_column=3 alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("moving block with fixed alt_ref");
+        assert_eq!(blocks[0].alt_ref, Some(0.0));
+        assert_eq!(blocks[0].alt_key, None);
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let sentinel = content.replace("alt_ref=0", "alt_key=absent");
+        assert!(parse_source_blocks(&sentinel).is_err());
+    }
+
+    #[test]
+    fn source_field_keeps_column_or_key() {
+        let content = concat!(
+            "url https://example.org/hfradar-wave\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field MWHT wave_height m source_column=3 alt_offset=0.0\n",
+            "field MWPD mean_period s source_key=MWPD alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("column and key fields parse");
+        assert_eq!(blocks[0].fields[0].source_column, Some(3));
+        assert_eq!(blocks[0].fields[0].source_key, None);
+        assert_eq!(blocks[0].fields[1].source_column, None);
+        assert_eq!(blocks[0].fields[1].source_key.as_deref(), Some("MWPD"));
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let missing = content.replace(" source_column=3", "");
+        assert!(parse_source_blocks(&missing).is_err());
+    }
+    #[test]
+    fn source_blocks_refuse_two_reference_forms() {
+        let content = "url https://example.org/x\n\
+terms CC-BY-4.0 https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=1 lon=2 alt_ref=0 alt_key=height datum=msl time=epoch time_key=t time_scale=UTC\n\
+field u u m/s source_column=1 alt_offset=0\n";
+        assert!(parse_source_blocks(content).is_err());
+    }
+}

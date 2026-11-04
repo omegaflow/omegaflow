@@ -1,0 +1,59 @@
+name: gll-rss-odr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gll-rss-odr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-rings.seti.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qF "gll_rss_odr.manifest"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "gll_rss_odr.manifest present — the sharded series is complete, manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "gll_rss_odr.manifest missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-rings.seti.org release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-rings.seti.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-rings.seti.org --repo omegaflow/sources \
+              --title "pds-rings.seti.org" \
+              --notes "Galileo gll.rss PDS4 RSC-11-11 ODR files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the Galileo RSC-11-11 ODR files to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin gll_rss_odr_compiler -- --ci-mode
+      - name: Verify the registered pds-rings.seti.org gll_rss_odr assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh pds-rings.seti.org gll_rss_odr)
+          if [ -z "$expected" ]; then
+            echo "no gll_rss_odr asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view pds-rings.seti.org --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered pds-rings.seti.org gll_rss_odr assets all present"

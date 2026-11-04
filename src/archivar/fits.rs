@@ -1,0 +1,2320 @@
+use crate::mathematikerin::healpix;
+use std::str::from_utf8;
+
+const FITS_ZERO_ABSENT: f64 = 0.0;
+const FITS_BINTABLE_PCOUNT_DEFAULT: usize = 0;
+const FITS_TOTVALS_ABSENT: usize = 0;
+
+#[derive(Debug)]
+pub struct FitsHeader {
+    cards: Vec<(String, String)>,
+}
+
+impl FitsHeader {
+    pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        let mut cards = Vec::new();
+        let mut off = hdu_start;
+        let mut end_found = false;
+        while off + 80 <= buf.len() {
+            let card = &buf[off..off + 80];
+            let kw = from_utf8(&card[0..8]).ok()?.trim().to_string();
+            if kw == "END" {
+                end_found = true;
+                off += 80;
+                break;
+            }
+            if !kw.is_empty() {
+                let raw = from_utf8(&card[10..]).ok()?.trim().to_string();
+                let value = if let Some(q) = raw.strip_prefix('\'') {
+                    let mut v = String::new();
+                    let mut chars = q.chars().peekable();
+                    while let Some(c) = chars.next() {
+                        if c == '\'' {
+                            if chars.peek() == Some(&'\'') {
+                                v.push('\'');
+                                chars.next();
+                            } else {
+                                break;
+                            }
+                        } else {
+                            v.push(c);
+                        }
+                    }
+                    format!("'{}'", v)
+                } else {
+                    raw.split('/').next().unwrap_or("").trim().to_string()
+                };
+                cards.push((kw, value));
+            }
+            off += 80;
+        }
+        if !end_found {
+            return None;
+        }
+        let rel = off - hdu_start;
+        let aligned = hdu_start + rel.div_ceil(2880) * 2880;
+        Some((Self { cards }, aligned))
+    }
+
+    pub fn value(&self, key: &str) -> Option<&str> {
+        self.cards
+            .iter()
+            .find(|(k, _)| k == key)
+            .map(|(_, v)| v.as_str())
+    }
+
+    pub fn int(&self, key: &str) -> Option<i64> {
+        self.value(key).and_then(|v| v.parse().ok())
+    }
+
+    pub fn f64(&self, key: &str) -> Option<f64> {
+        self.value(key).and_then(|v| v.parse().ok())
+    }
+
+    pub fn str_unescaped(&self, key: &str) -> Option<String> {
+        self.value(key).map(|v| {
+            let inner = v
+                .strip_prefix('\'')
+                .unwrap_or(v)
+                .strip_suffix('\'')
+                .unwrap_or(v);
+            inner.replace("''", "'")
+        })
+    }
+}
+
+#[derive(Debug)]
+pub struct FitsColumn {
+    pub name: String,
+    pub code: char,
+    pub repeat: usize,
+    pub width: usize,
+    pub tbcol: usize,
+    pub tscal: f64,
+    pub tzero: f64,
+    pub unit: Option<String>,
+}
+
+#[derive(Debug)]
+pub struct FitsTable {
+    pub n_rows: usize,
+    pub row_bytes: usize,
+    pub heap_bytes: usize,
+    pub columns: Vec<FitsColumn>,
+    pub data_start: usize,
+}
+
+fn code_width(code: char) -> Option<usize> {
+    match code {
+        'E' => Some(4),
+        'D' => Some(8),
+        'J' => Some(4),
+        'I' => Some(2),
+        'K' => Some(8),
+        'B' => Some(1),
+        'L' => Some(1),
+        'A' => Some(1),
+        'P' => Some(8),
+        'Q' => Some(16),
+        _ => None,
+    }
+}
+
+fn parse_tform(tform: &str) -> Option<(char, usize, Option<char>)> {
+    let inner = match tform.strip_suffix(')') {
+        Some(i) => i.rsplit_once('(')?.0,
+        None => tform,
+    };
+    let core = match inner.rfind('.') {
+        Some(dot) if inner[dot + 1..].bytes().all(|b| b.is_ascii_digit()) => &inner[..dot],
+        _ => inner,
+    };
+    let bytes = core.as_bytes();
+    let pos = bytes.iter().position(|b| b.is_ascii_alphabetic())?;
+    let code = bytes[pos] as char;
+    let repeat: usize = if pos == 0 {
+        1
+    } else {
+        from_utf8(&bytes[..pos]).ok()?.parse().ok()?
+    };
+    let elem = if (code == 'P' || code == 'Q') && bytes.len() > pos + 1 {
+        Some(bytes[pos + 1] as char)
+    } else {
+        None
+    };
+    Some((code, repeat, elem))
+}
+
+impl FitsTable {
+    pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        Self::parse_mode(buf, hdu_start, true)
+    }
+
+    pub fn parse_lenient(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        Self::parse_mode(buf, hdu_start, false)
+    }
+
+    fn parse_mode(buf: &[u8], hdu_start: usize, require_full: bool) -> Option<(Self, usize)> {
+        let (header, data_start) = FitsHeader::parse(buf, hdu_start)?;
+        if header.value("XTENSION") != Some("'BINTABLE'") {
+            return None;
+        }
+        let row_bytes = header.int("NAXIS1")? as usize;
+        let n_rows = header.int("NAXIS2")? as usize;
+        let heap_bytes = match header.int("PCOUNT") {
+            Some(v) => v as usize,
+            None => FITS_BINTABLE_PCOUNT_DEFAULT,
+        };
+        let tfields = header.int("TFIELDS")? as usize;
+        let mut columns = Vec::new();
+        let mut next_tbcol = 1usize;
+        for i in 1..=tfields {
+            let name = header
+                .str_unescaped(&format!("TTYPE{}", i))
+                .unwrap_or(String::new())
+                .trim()
+                .to_string();
+            let tform = header
+                .value(&format!("TFORM{}", i))?
+                .trim_matches('\'')
+                .trim()
+                .to_string();
+            let (code, repeat, _elem) = parse_tform(&tform)?;
+            let width = match code {
+                'P' => 8,
+                'Q' => 16,
+                _ => code_width(code)? * repeat,
+            };
+            let tbcol = match header.int(&format!("TBCOL{}", i)) {
+                Some(t) if t > 0 => t as usize,
+                _ => next_tbcol,
+            };
+            if tbcol == 0 || tbcol + width > row_bytes + 1 {
+                return None;
+            }
+            next_tbcol = tbcol + width;
+            let tscal = header.f64(&format!("TSCAL{}", i)).unwrap_or(1.0);
+            let tzero = header
+                .f64(&format!("TZERO{}", i))
+                .unwrap_or(FITS_ZERO_ABSENT);
+            let unit = header
+                .str_unescaped(&format!("TUNIT{}", i))
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty());
+            columns.push(FitsColumn {
+                name,
+                code,
+                repeat,
+                width,
+                tbcol,
+                tscal,
+                tzero,
+                unit,
+            });
+        }
+        if columns.is_empty() {
+            return None;
+        }
+        let table_bytes = row_bytes * n_rows;
+        if require_full && data_start + table_bytes > buf.len() {
+            return None;
+        }
+        let next = data_start + table_bytes + heap_bytes;
+        let next_aligned = hdu_start + (next - hdu_start).div_ceil(2880) * 2880;
+        Some((
+            Self {
+                n_rows,
+                row_bytes,
+                heap_bytes,
+                columns,
+                data_start,
+            },
+            next_aligned,
+        ))
+    }
+
+    pub fn column(&self, name: &str) -> Option<&FitsColumn> {
+        self.columns.iter().find(|c| c.name == name)
+    }
+
+    fn cell_offset(&self, row: usize, col: &FitsColumn) -> Option<usize> {
+        if row >= self.n_rows {
+            return None;
+        }
+        let base = self.data_start + row * self.row_bytes + col.tbcol - 1;
+        if base + col.width > self.data_start + self.n_rows * self.row_bytes {
+            return None;
+        }
+        Some(base)
+    }
+
+    pub fn cell_f64(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<f64> {
+        let off = self.cell_offset(row, col)?;
+        let end = off + col.width;
+        let raw = buf.get(off..end)?;
+        let v = match col.code {
+            'D' => f64::from_be_bytes(raw.try_into().ok()?),
+            'E' => f32::from_be_bytes(raw[..4].try_into().ok()?) as f64,
+            'J' => i32::from_be_bytes(raw[..4].try_into().ok()?) as f64,
+            'I' => i16::from_be_bytes(raw[..2].try_into().ok()?) as f64,
+            'K' => i64::from_be_bytes(raw.try_into().ok()?) as f64,
+            'B' => raw[0] as f64,
+            _ => return None,
+        };
+        Some(v * col.tscal + col.tzero)
+    }
+
+    pub fn cell_str<'a>(&self, buf: &'a [u8], row: usize, col: &FitsColumn) -> Option<&'a str> {
+        let off = self.cell_offset(row, col)?;
+        let raw = buf.get(off..off + col.width)?;
+        Some(from_utf8(raw).ok()?.trim_end())
+    }
+
+    pub fn cell_i64(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<i64> {
+        let off = self.cell_offset(row, col)?;
+        let end = off + col.width;
+        let raw = buf.get(off..end)?;
+        match col.code {
+            'J' => Some(i32::from_be_bytes(raw[..4].try_into().ok()?) as i64),
+            'I' => Some(i16::from_be_bytes(raw[..2].try_into().ok()?) as i64),
+            'K' => Some(i64::from_be_bytes(raw.try_into().ok()?)),
+            'B' => Some(raw[0] as i64),
+            _ => None,
+        }
+    }
+
+    pub fn cell_array_f64(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<Vec<f64>> {
+        let off = self.cell_offset(row, col)?;
+        let elem = code_width(col.code)?;
+        let n = col.repeat;
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let start = off + i * elem;
+            let raw = buf.get(start..start + elem)?;
+            let v = match col.code {
+                'D' => f64::from_be_bytes(raw.try_into().ok()?),
+                'E' => f32::from_be_bytes(raw[..4].try_into().ok()?) as f64,
+                'J' => i32::from_be_bytes(raw[..4].try_into().ok()?) as f64,
+                'I' => i16::from_be_bytes(raw[..2].try_into().ok()?) as f64,
+                'K' => i64::from_be_bytes(raw.try_into().ok()?) as f64,
+                'B' => raw[0] as f64,
+                _ => return None,
+            };
+            out.push(v * col.tscal + col.tzero);
+        }
+        Some(out)
+    }
+
+    pub fn cell_array_i64(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<Vec<i64>> {
+        let off = self.cell_offset(row, col)?;
+        let elem = code_width(col.code)?;
+        let n = col.repeat;
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let start = off + i * elem;
+            let raw = buf.get(start..start + elem)?;
+            let v = match col.code {
+                'J' => i32::from_be_bytes(raw[..4].try_into().ok()?) as i64,
+                'I' => i16::from_be_bytes(raw[..2].try_into().ok()?) as i64,
+                'K' => i64::from_be_bytes(raw.try_into().ok()?),
+                'B' => raw[0] as i64,
+                _ => return None,
+            };
+            out.push(v);
+        }
+        Some(out)
+    }
+
+    pub fn heap_start(&self) -> usize {
+        self.data_start + self.n_rows * self.row_bytes
+    }
+
+    pub fn cell_varlen<'a>(&self, buf: &'a [u8], row: usize, col: &FitsColumn) -> Option<&'a [u8]> {
+        let off = self.cell_offset(row, col)?;
+        let raw = buf.get(off..off + col.width)?;
+        let (count, hoff): (usize, usize) = match col.code {
+            'P' => {
+                let n = u32::from_be_bytes(raw[..4].try_into().ok()?) as usize;
+                let o = u32::from_be_bytes(raw[4..8].try_into().ok()?) as usize;
+                (n, o)
+            }
+            'Q' => {
+                let n = i64::from_be_bytes(raw[..8].try_into().ok()?) as usize;
+                let o = i64::from_be_bytes(raw[8..16].try_into().ok()?) as usize;
+                (n, o)
+            }
+            _ => return None,
+        };
+        let start = self.heap_start() + hoff;
+        buf.get(start..start.checked_add(count)?)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FitsWcs {
+    ctype1: Option<String>,
+    ctype2: Option<String>,
+    crval1: f64,
+    crval2: f64,
+    crpix1: f64,
+    crpix2: f64,
+    cd: [[f64; 2]; 2],
+    ordering: Option<bool>,
+    nside: Option<i64>,
+    coordsys: Option<char>,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum WcsProjection {
+    Linear,
+    Tan,
+    Sin,
+    Hpx,
+}
+
+impl FitsWcs {
+    pub fn from_header(h: &FitsHeader, naxis1: usize, naxis2: usize) -> Option<Self> {
+        let ctype1 = h.str_unescaped("CTYPE1");
+        let ctype2 = h.str_unescaped("CTYPE2");
+        let crval1 = h.f64("CRVAL1")?;
+        let crval2 = h.f64("CRVAL2")?;
+        let crpix1 = h.f64("CRPIX1").unwrap_or((naxis1 + 1) as f64 / 2.0);
+        let crpix2 = h.f64("CRPIX2").unwrap_or((naxis2 + 1) as f64 / 2.0);
+        let cd = match (
+            h.f64("CD1_1"),
+            h.f64("CD1_2"),
+            h.f64("CD2_1"),
+            h.f64("CD2_2"),
+        ) {
+            (Some(a), Some(b), Some(c), Some(d)) => [[a, b], [c, d]],
+            _ => {
+                let cdelt1 = h.f64("CDELT1").unwrap_or(1.0);
+                let cdelt2 = h.f64("CDELT2").unwrap_or(1.0);
+                let mut pc = [[1.0, 0.0], [0.0, 1.0]];
+                let mut pc_found = false;
+                for i in 1..=2 {
+                    for j in 1..=2 {
+                        let standard = format!("PC{i}_{j}");
+                        let legacy = format!("PC{i:03}{j:03}");
+                        if let Some(v) = h.f64(&standard).or_else(|| h.f64(&legacy)) {
+                            pc[i - 1][j - 1] = v;
+                            pc_found = true;
+                        }
+                    }
+                }
+                if pc_found {
+                    [
+                        [pc[0][0] * cdelt1, pc[0][1] * cdelt2],
+                        [pc[1][0] * cdelt1, pc[1][1] * cdelt2],
+                    ]
+                } else {
+                    [[cdelt1, 0.0], [0.0, cdelt2]]
+                }
+            }
+        };
+        let ordering = match h.str_unescaped("ORDERING").as_deref().map(str::trim) {
+            Some("NESTED") => Some(true),
+            Some("RING") => Some(false),
+            _ => None,
+        };
+        let nside = match h.int("NSIDE") {
+            Some(n) if n > 0 && (n & (n - 1)) == 0 => Some(n),
+            _ => h.int("ORDER").and_then(|o| {
+                if (0..=29).contains(&o) {
+                    Some(1i64 << o)
+                } else {
+                    None
+                }
+            }),
+        };
+        let nside = match (nside, healpix::nside_from_npix(naxis1 as i64)) {
+            (Some(n), Some(derived)) if n != derived => None,
+            (n, _) => n,
+        };
+        let coordsys = h
+            .str_unescaped("COORDSYS")
+            .and_then(|s| s.trim().chars().next())
+            .map(|c| c.to_ascii_uppercase());
+        Some(Self {
+            ctype1,
+            ctype2,
+            crval1,
+            crval2,
+            crpix1,
+            crpix2,
+            cd,
+            ordering,
+            nside,
+            coordsys,
+        })
+    }
+
+    pub fn tan(crval1: f64, crval2: f64, crpix1: f64, crpix2: f64, cd: [[f64; 2]; 2]) -> Self {
+        Self {
+            ctype1: Some("RA---TAN".into()),
+            ctype2: Some("DEC--TAN".into()),
+            crval1,
+            crval2,
+            crpix1,
+            crpix2,
+            cd,
+            ordering: None,
+            nside: None,
+            coordsys: None,
+        }
+    }
+
+    pub fn sin(crval1: f64, crval2: f64, crpix1: f64, crpix2: f64, cd: [[f64; 2]; 2]) -> Self {
+        Self {
+            ctype1: Some("RA---SIN".into()),
+            ctype2: Some("DEC--SIN".into()),
+            crval1,
+            crval2,
+            crpix1,
+            crpix2,
+            cd,
+            ordering: None,
+            nside: None,
+            coordsys: None,
+        }
+    }
+
+    pub fn projection(&self) -> WcsProjection {
+        match (self.ctype1.as_deref(), self.ctype2.as_deref()) {
+            (Some(a), Some(b)) if a.contains("TAN") && b.contains("TAN") => WcsProjection::Tan,
+            (Some(a), Some(b)) if a.contains("SIN") && b.contains("SIN") => WcsProjection::Sin,
+            (Some(a), Some(b)) if a.contains("HPX") && b.contains("HPX") => WcsProjection::Hpx,
+            _ => WcsProjection::Linear,
+        }
+    }
+
+    pub fn is_tan(&self) -> bool {
+        self.projection() == WcsProjection::Tan
+    }
+
+    pub fn is_sin(&self) -> bool {
+        self.projection() == WcsProjection::Sin
+    }
+
+    pub fn is_hpx(&self) -> bool {
+        self.projection() == WcsProjection::Hpx
+    }
+
+    pub fn xi_eta_deg(&self, x: f64, y: f64) -> Option<(f64, f64)> {
+        let dx = x - self.crpix1;
+        let dy = y - self.crpix2;
+        let xi = self.cd[0][0] * dx + self.cd[0][1] * dy;
+        let eta = self.cd[1][0] * dx + self.cd[1][1] * dy;
+        Some((xi, eta))
+    }
+
+    pub fn tangent_pixel_sr(&self) -> Option<f64> {
+        let a = self.cd[0][0] * self.cd[1][1] - self.cd[0][1] * self.cd[1][0];
+        let deg2 = a.abs() * (std::f64::consts::PI / 180.0) * (std::f64::consts::PI / 180.0);
+        if deg2.is_finite() && deg2 > 0.0 {
+            Some(deg2)
+        } else {
+            None
+        }
+    }
+
+    pub fn world(&self, x: f64, y: f64) -> Option<(f64, f64)> {
+        let dx = x - self.crpix1;
+        let dy = y - self.crpix2;
+        let xi = self.cd[0][0] * dx + self.cd[0][1] * dy;
+        let eta = self.cd[1][0] * dx + self.cd[1][1] * dy;
+        match self.projection() {
+            WcsProjection::Linear => Some((self.crval1 + xi, self.crval2 + eta)),
+            WcsProjection::Hpx => {
+                let ordering = self.ordering?;
+                let nside = self.nside?;
+                let scale1 = self.cd[0][0];
+                if !scale1.is_finite() || scale1 == 0.0 {
+                    return None;
+                }
+                let index_f = xi / scale1 + self.crpix1 - 1.0;
+                if !index_f.is_finite() {
+                    return None;
+                }
+                let index = index_f.round() as i64;
+                let (theta, phi) = if ordering {
+                    healpix::pix2ang_nest(nside, index)?
+                } else {
+                    healpix::pix2ang_ring(nside, index)?
+                };
+                Some(match self.coordsys {
+                    Some('G') => healpix::galactic_to_icrs(theta, phi),
+                    _ => (
+                        phi.to_degrees().rem_euclid(360.0),
+                        90.0 - theta.to_degrees(),
+                    ),
+                })
+            }
+            WcsProjection::Tan | WcsProjection::Sin => {
+                let xi = xi.to_radians();
+                let eta = eta.to_radians();
+                let rho2 = xi * xi + eta * eta;
+                let ra0 = self.crval1.to_radians();
+                let dec0 = self.crval2.to_radians();
+                if rho2 == 0.0 {
+                    return Some((self.crval1, self.crval2));
+                }
+                let rho = rho2.sqrt();
+                let c = match self.projection() {
+                    WcsProjection::Tan => rho.atan(),
+                    WcsProjection::Sin => {
+                        if rho > 1.0 {
+                            return None;
+                        }
+                        rho.asin()
+                    }
+                    WcsProjection::Linear | WcsProjection::Hpx => return None,
+                };
+                let dec = (c.cos() * dec0.sin() + eta * c.sin() * dec0.cos() / rho).asin();
+                let ra = ra0
+                    + (xi * c.sin()).atan2(rho * dec0.cos() * c.cos() - eta * dec0.sin() * c.sin());
+                Some((ra.to_degrees(), dec.to_degrees()))
+            }
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct FitsImage {
+    pub bitpix: i32,
+    pub dims: [usize; 3],
+    pub data_start: usize,
+    bscale: f64,
+    bzero: f64,
+    wcs: Option<FitsWcs>,
+}
+
+impl FitsImage {
+    pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        let (header, header_end) = FitsHeader::parse(buf, hdu_start)?;
+        if header.value("ZIMAGE") == Some("T") {
+            return None;
+        }
+        let bitpix = header.int("BITPIX")? as i32;
+        let bytes_per = match bitpix {
+            8 => 1,
+            16 => 2,
+            32 => 4,
+            64 => 8,
+            -32 => 4,
+            -64 => 8,
+            _ => return None,
+        };
+        let naxis = header.int("NAXIS")? as usize;
+        if naxis > 3 {
+            return None;
+        }
+        if naxis == 0 {
+            return Some((
+                Self {
+                    bitpix,
+                    dims: [0, 0, 0],
+                    data_start: header_end,
+                    bscale: header.f64("BSCALE").unwrap_or(1.0),
+                    bzero: header.f64("BZERO").unwrap_or(FITS_ZERO_ABSENT),
+                    wcs: None,
+                },
+                header_end,
+            ));
+        }
+        let mut dims = [1usize; 3];
+        let mut data_bytes: usize = 1;
+        for i in 1..=naxis {
+            let d = header.int(&format!("NAXIS{}", i))?;
+            if d <= 0 {
+                return None;
+            }
+            dims[i - 1] = d as usize;
+            data_bytes = data_bytes.checked_mul(d as usize)?;
+        }
+        data_bytes = data_bytes.checked_mul(bytes_per)?;
+        let data_start = header_end;
+        if data_start + data_bytes > buf.len() {
+            return None;
+        }
+        let next = hdu_start + (data_start - hdu_start + data_bytes).div_ceil(2880) * 2880;
+        let bscale = header.f64("BSCALE").unwrap_or(1.0);
+        let bzero = header.f64("BZERO").unwrap_or(FITS_ZERO_ABSENT);
+        let wcs = FitsWcs::from_header(&header, dims[0], dims[1]);
+        Some((
+            Self {
+                bitpix,
+                dims,
+                data_start,
+                bscale,
+                bzero,
+                wcs,
+            },
+            next,
+        ))
+    }
+
+    pub fn pixel_value(&self, raw: i64) -> Option<f64> {
+        Some(raw as f64 * self.bscale + self.bzero)
+    }
+
+    pub fn value_f64(&self, buf: &[u8], idx: [usize; 3]) -> Option<f64> {
+        if idx[0] >= self.dims[0] || idx[1] >= self.dims[1] || idx[2] >= self.dims[2] {
+            return None;
+        }
+        let linear = (idx[2] * self.dims[1] + idx[1]) * self.dims[0] + idx[0];
+        let bytes_per = match self.bitpix {
+            8 => 1,
+            16 => 2,
+            32 => 4,
+            64 => 8,
+            -32 => 4,
+            _ => 8,
+        };
+        let off = self.data_start + linear * bytes_per;
+        let raw = buf.get(off..off + bytes_per)?;
+        let v = match self.bitpix {
+            8 => raw[0] as f64,
+            16 => i16::from_be_bytes(raw.try_into().ok()?) as f64,
+            32 => i32::from_be_bytes(raw.try_into().ok()?) as f64,
+            64 => i64::from_be_bytes(raw.try_into().ok()?) as f64,
+            -32 => f32::from_be_bytes(raw.try_into().ok()?) as f64,
+            _ => f64::from_be_bytes(raw.try_into().ok()?),
+        };
+        Some(v * self.bscale + self.bzero)
+    }
+
+    pub fn world(&self, x: f64, y: f64) -> Option<(f64, f64)> {
+        self.wcs.as_ref().and_then(|w| w.world(x, y))
+    }
+}
+
+struct RiceBits<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    acc: u64,
+    nbits: u32,
+}
+
+impl<'a> RiceBits<'a> {
+    fn new(buf: &'a [u8]) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            acc: 0,
+            nbits: 0,
+        }
+    }
+
+    fn ensure(&mut self, n: u32) -> Option<()> {
+        while self.nbits < n {
+            if self.nbits >= 56 {
+                return None;
+            }
+            let b = *self.buf.get(self.pos)? as u64;
+            self.pos += 1;
+            self.acc = (self.acc << 8) | b;
+            self.nbits += 8;
+        }
+        Some(())
+    }
+
+    fn read(&mut self, n: u32) -> Option<u64> {
+        self.ensure(n)?;
+        let v = (self.acc >> (self.nbits - n)) & ((1u64 << n) - 1);
+        self.nbits -= n;
+        self.acc &= (1u64 << self.nbits) - 1;
+        Some(v)
+    }
+
+    fn unary(&mut self) -> Option<u32> {
+        let mut nzero = 0u32;
+        loop {
+            self.ensure(1)?;
+            let top = (self.acc >> (self.nbits - 1)) & 1;
+            self.nbits -= 1;
+            self.acc &= (1u64 << self.nbits) - 1;
+            if top == 1 {
+                return Some(nzero);
+            }
+            nzero += 1;
+        }
+    }
+}
+
+pub fn rice_decompress(
+    data: &[u8],
+    n_pixels: usize,
+    bytepix: usize,
+    block: usize,
+) -> Option<Vec<u8>> {
+    let (fsbits, fsmax, bbits, first_bytes, mask): (u32, u64, u32, usize, u64) = match bytepix {
+        1 => (3, 6, 8, 1, 0xFF),
+        2 => (4, 14, 16, 2, 0xFFFF),
+        4 => (5, 25, 32, 4, 0xFFFF_FFFF),
+        _ => return None,
+    };
+    if block == 0 {
+        return None;
+    }
+    let mut r = RiceBits::new(data);
+    let first: u64 = r.read(first_bytes as u32 * 8)?;
+    let mut lastpix = first;
+    let mut out = Vec::with_capacity(n_pixels * bytepix);
+    let push = |v: u64, out: &mut Vec<u8>| match bytepix {
+        1 => out.push(v as u8),
+        2 => out.extend_from_slice(&(v as u16).to_be_bytes()),
+        _ => out.extend_from_slice(&(v as u32).to_be_bytes()),
+    };
+    let mut i = 0usize;
+    while i < n_pixels {
+        let thisblock = block.min(n_pixels - i);
+        let fs_val = r.read(fsbits)?;
+        let fs = fs_val as i64 - 1;
+        if fs < 0 {
+            for _ in 0..thisblock {
+                push(lastpix, &mut out);
+                i += 1;
+            }
+        } else if fs == fsmax as i64 {
+            for _ in 0..thisblock {
+                let diff = r.read(bbits)?;
+                let m = if diff & 1 == 0 {
+                    diff >> 1
+                } else {
+                    !(diff >> 1)
+                };
+                lastpix = lastpix.wrapping_add(m) & mask;
+                push(lastpix, &mut out);
+                i += 1;
+            }
+        } else {
+            let fs = fs as u32;
+            for _ in 0..thisblock {
+                let nzero = r.unary()?;
+                let rem = r.read(fs)?;
+                let diff = ((nzero as u64) << fs) | rem;
+                let m = if diff & 1 == 0 {
+                    diff >> 1
+                } else {
+                    !(diff >> 1)
+                };
+                lastpix = lastpix.wrapping_add(m) & mask;
+                push(lastpix, &mut out);
+                i += 1;
+            }
+        }
+    }
+    Some(out)
+}
+
+#[derive(Debug)]
+pub struct FitsCompressedImage {
+    pub zbitpix: i32,
+    pub dims: [usize; 3],
+    pub tile: [usize; 3],
+    pub cmptype: String,
+    pub zscale: f64,
+    pub zzero: f64,
+    pub blank: Option<i64>,
+    pub block: usize,
+    pub bytepix: usize,
+    pub crpix1: Option<f64>,
+    pub crpix2: Option<f64>,
+    pub r_sun: Option<f64>,
+    pub datamean: Option<f64>,
+    pub totvals: usize,
+    table: FitsTable,
+}
+
+impl FitsCompressedImage {
+    pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        let (header, _) = FitsHeader::parse(buf, hdu_start)?;
+        if header.value("ZIMAGE") != Some("T") {
+            return None;
+        }
+        let (table, next) = FitsTable::parse(buf, hdu_start)?;
+        let zbitpix = header.int("ZBITPIX")? as i32;
+        let znaxis = header.int("ZNAXIS")? as usize;
+        if znaxis == 0 || znaxis > 3 {
+            return None;
+        }
+        let mut dims = [1usize; 3];
+        let mut tile = [1usize; 3];
+        for i in 1..=znaxis {
+            let d = header.int(&format!("ZNAXIS{}", i))?;
+            if d <= 0 {
+                return None;
+            }
+            dims[i - 1] = d as usize;
+            tile[i - 1] = header.int(&format!("ZTILE{}", i)).unwrap_or(d) as usize;
+        }
+        let cmptype = header.str_unescaped("ZCMPTYPE").unwrap_or(String::new());
+        let mut block = 32usize;
+        let mut bytepix = 0usize;
+        for i in 1..=16 {
+            let Some(name) = header.str_unescaped(&format!("ZNAME{}", i)) else {
+                break;
+            };
+            let Some(zval) = header.f64(&format!("ZVAL{}", i)) else {
+                break;
+            };
+            match name.trim() {
+                "BLOCKSIZE" => block = zval as usize,
+                "BYTEPIX" => bytepix = zval as usize,
+                _ => {}
+            }
+        }
+        let zscale = header.f64("ZSCALE").unwrap_or(1.0);
+        let zzero = header.f64("ZZERO").unwrap_or(FITS_ZERO_ABSENT);
+        let blank = header.int("BLANK");
+        let crpix1 = header.f64("CRPIX1");
+        let crpix2 = header.f64("CRPIX2");
+        let r_sun = header.f64("R_SUN");
+        let datamean = header.f64("DATAMEAN");
+        let totvals = match header.int("TOTVALS") {
+            Some(v) => v as usize,
+            None => FITS_TOTVALS_ABSENT,
+        };
+        Some((
+            Self {
+                zbitpix,
+                dims,
+                tile,
+                cmptype,
+                zscale,
+                zzero,
+                blank,
+                block,
+                bytepix,
+                crpix1,
+                crpix2,
+                r_sun,
+                datamean,
+                totvals,
+                table,
+            },
+            next,
+        ))
+    }
+
+    pub fn tiles_per_axis(&self, axis: usize) -> usize {
+        self.dims[axis].div_ceil(std::cmp::max(self.tile[axis], 1))
+    }
+
+    pub fn tile_origin(&self, t: [usize; 3]) -> [usize; 3] {
+        [
+            t[0] * std::cmp::max(self.tile[0], 1),
+            t[1] * std::cmp::max(self.tile[1], 1),
+            t[2] * std::cmp::max(self.tile[2], 1),
+        ]
+    }
+
+    fn gzip_bytepix(&self) -> Option<usize> {
+        if self.bytepix > 0 {
+            return Some(self.bytepix);
+        }
+        match self.zbitpix {
+            8 => Some(1),
+            16 => Some(2),
+            32 => Some(4),
+            64 => Some(8),
+            _ => None,
+        }
+    }
+
+    pub fn tile_pixels(&self, buf: &[u8], t: [usize; 3]) -> Option<Vec<i64>> {
+        for (a, &tv) in t.iter().enumerate() {
+            if tv >= self.tiles_per_axis(a) {
+                return None;
+            }
+        }
+        let n1 = self.tiles_per_axis(0);
+        let n2 = self.tiles_per_axis(1);
+        let row = t[0] + n1 * (t[1] + n2 * t[2]);
+        let col = self.table.column("COMPRESSED_DATA")?;
+        let raw = self.table.cell_varlen(buf, row, col)?;
+        let nvals = self.tile[0] * self.tile[1] * self.tile[2];
+        match self.cmptype.trim() {
+            "RICE_1" => {
+                let bytes = rice_decompress(raw, nvals, self.bytepix, self.block)?;
+                if bytes.len() != nvals * self.bytepix {
+                    return None;
+                }
+                decode_int_bytes(&bytes, self.bytepix, nvals)
+            }
+            "GZIP_1" => {
+                let bytepix = self.gzip_bytepix()?;
+                let bytes = crate::archivar::inflate::gunzip(raw)?;
+                if bytes.len() != nvals * bytepix {
+                    return None;
+                }
+                decode_int_bytes(&bytes, bytepix, nvals)
+            }
+            _ => None,
+        }
+    }
+
+    pub fn pixel_value(&self, raw: i64) -> Option<f64> {
+        if let Some(b) = self.blank
+            && raw == b
+        {
+            return None;
+        }
+        Some(raw as f64 * self.zscale + self.zzero)
+    }
+}
+
+fn decode_int_bytes(bytes: &[u8], bytepix: usize, nvals: usize) -> Option<Vec<i64>> {
+    let mut out = Vec::with_capacity(nvals);
+    match bytepix {
+        1 => {
+            for &b in bytes.iter().take(nvals) {
+                out.push(b as i64);
+            }
+        }
+        2 => {
+            for i in 0..nvals {
+                out.push(i16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]]) as i64);
+            }
+        }
+        4 => {
+            for i in 0..nvals {
+                out.push(i32::from_be_bytes(bytes[i * 4..i * 4 + 4].try_into().ok()?) as i64);
+            }
+        }
+        8 => {
+            for i in 0..nvals {
+                out.push(i64::from_be_bytes(bytes[i * 8..i * 8 + 8].try_into().ok()?));
+            }
+        }
+        _ => return None,
+    }
+    Some(out)
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum FitsValue {
+    Int(i64),
+    Float(f64),
+    Str(String),
+    Bool(bool),
+    Ints(Vec<i64>),
+    Floats(Vec<f64>),
+    VarBytes(Vec<u8>),
+    Unhandled(String),
+}
+
+impl FitsTable {
+    pub fn cell_value(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<FitsValue> {
+        let off = self.cell_offset(row, col)?;
+        match col.code {
+            'A' => {
+                let raw = buf.get(off..off + col.width)?;
+                let s = from_utf8(raw)
+                    .ok()?
+                    .trim_end_matches([' ', '\0'])
+                    .to_string();
+                Some(FitsValue::Str(s))
+            }
+            'L' => {
+                let raw = buf.get(off..off + col.width)?;
+                if col.repeat != 1 {
+                    return Some(FitsValue::Unhandled("logical array".to_string()));
+                }
+                match raw[0] {
+                    b'T' | b't' | b'1' => Some(FitsValue::Bool(true)),
+                    b'F' | b'f' | b'0' => Some(FitsValue::Bool(false)),
+                    _ => None,
+                }
+            }
+            'P' | 'Q' => Some(FitsValue::VarBytes(
+                self.cell_varlen(buf, row, col)?.to_vec(),
+            )),
+            'I' | 'J' | 'K' | 'B' => {
+                if col.repeat == 1 {
+                    if col.tscal == 1.0 && col.tzero == 0.0 {
+                        Some(FitsValue::Int(self.cell_i64(buf, row, col)?))
+                    } else {
+                        Some(FitsValue::Float(self.cell_f64(buf, row, col)?))
+                    }
+                } else if col.tscal == 1.0 && col.tzero == 0.0 {
+                    Some(FitsValue::Ints(self.cell_array_i64(buf, row, col)?))
+                } else {
+                    Some(FitsValue::Floats(self.cell_array_f64(buf, row, col)?))
+                }
+            }
+            'E' | 'D' => {
+                if col.repeat == 1 {
+                    Some(FitsValue::Float(self.cell_f64(buf, row, col)?))
+                } else {
+                    Some(FitsValue::Floats(self.cell_array_f64(buf, row, col)?))
+                }
+            }
+            _ => Some(FitsValue::Unhandled(format!("format code '{}'", col.code))),
+        }
+    }
+
+    pub fn row(&self, buf: &[u8], i: usize) -> Option<Vec<FitsValue>> {
+        if i >= self.n_rows {
+            return None;
+        }
+        self.columns
+            .iter()
+            .map(|c| self.cell_value(buf, i, c))
+            .collect()
+    }
+}
+
+const LPF_TEST_MASS_KG: f64 = 1.928;
+const LPF_UTC_EPOCH_UNIX: f64 = 946684800.0;
+
+pub fn drs_series(buf: &[u8]) -> Option<Vec<(f64, [f64; 3])>> {
+    let mut off = 0usize;
+    loop {
+        let (header, _) = FitsHeader::parse(buf, off)?;
+        let next = if header.value("XTENSION") == Some("'BINTABLE'") {
+            if header.str_unescaped("EXTNAME").as_deref() == Some("SCI_SCIENCE_1Hz") {
+                let (table, _) = FitsTable::parse(buf, off)?;
+                return drs_rows_from_table(buf, &table);
+            }
+            FitsTable::parse(buf, off)?.1
+        } else {
+            FitsImage::parse(buf, off)?.1
+        };
+        if next <= off || next >= buf.len() {
+            return None;
+        }
+        off = next;
+    }
+}
+
+fn drs_rows_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<(f64, [f64; 3])>> {
+    let sec = table.column("ESA00001")?;
+    let us = table.column("ESA00002")?;
+    let f1 = [
+        table.column("DST11077")?,
+        table.column("DST11078")?,
+        table.column("DST11079")?,
+    ];
+    let f2 = [
+        table.column("DST11083")?,
+        table.column("DST11084")?,
+        table.column("DST11085")?,
+    ];
+    (0..table.n_rows)
+        .map(|r| {
+            let secs = table.cell_f64(buf, r, sec)?;
+            let micros = table.cell_f64(buf, r, us)?;
+            Some((
+                secs + micros * 1e-6 + LPF_UTC_EPOCH_UNIX,
+                [
+                    (table.cell_f64(buf, r, f2[0])? - table.cell_f64(buf, r, f1[0])?)
+                        / LPF_TEST_MASS_KG,
+                    (table.cell_f64(buf, r, f2[1])? - table.cell_f64(buf, r, f1[1])?)
+                        / LPF_TEST_MASS_KG,
+                    (table.cell_f64(buf, r, f2[2])? - table.cell_f64(buf, r, f1[2])?)
+                        / LPF_TEST_MASS_KG,
+                ],
+            ))
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection, drs_series};
+    use crate::mathematikerin::healpix;
+
+    fn pad_card(kw: &str, value: &str) -> [u8; 80] {
+        let mut card = [b' '; 80];
+        let k = kw.as_bytes();
+        card[..k.len().min(8)].copy_from_slice(&k[..k.len().min(8)]);
+        card[8] = b'=';
+        let v = value.as_bytes();
+        card[10..10 + v.len().min(20)].copy_from_slice(&v[..v.len().min(20)]);
+        card
+    }
+
+    fn synth() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "12"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "3"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "2"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'FLUX'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "E"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE2", "'TIME'"));
+        ext.extend_from_slice(&pad_card("TFORM2", "D"));
+        ext.extend_from_slice(&pad_card("TBCOL2", "5"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        let rows: [[u8; 12]; 3] = [
+            [4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0],
+            [8, 7, 6, 5, 64, 0, 0, 0, 0, 0, 0, 0],
+            [12, 11, 10, 9, 64, 8, 0, 0, 0, 0, 0, 0],
+        ];
+        for row in rows {
+            buf.extend_from_slice(&row);
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn header_roundtrip_and_alignment() {
+        let buf = synth();
+        let (h, data) = FitsHeader::parse(&buf, 0).unwrap();
+        assert_eq!(h.value("SIMPLE"), Some("T"));
+        assert_eq!(data, 2880);
+    }
+
+    fn synth_implicit() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "12"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "2"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "2"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'FLUX'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "E"));
+        ext.extend_from_slice(&pad_card("TTYPE2", "'TIME'"));
+        ext.extend_from_slice(&pad_card("TFORM2", "D"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        let rows: [[u8; 12]; 2] = [
+            [4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0],
+            [8, 7, 6, 5, 64, 0, 0, 0, 0, 0, 0, 0],
+        ];
+        for row in rows {
+            buf.extend_from_slice(&row);
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn bintable_reads_columns_by_tbcol() {
+        let buf = synth();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 3);
+        assert_eq!(t.row_bytes, 12);
+        let flux = t.column("FLUX").unwrap();
+        let time = t.column("TIME").unwrap();
+        assert_eq!(flux.tbcol, 1);
+        assert_eq!(time.tbcol, 5);
+        let f0 = t.cell_f64(&buf, 0, flux).unwrap();
+        assert_eq!(f0, f32::from_le_bytes([1, 2, 3, 4]) as f64);
+        let t0 = t.cell_f64(&buf, 0, time).unwrap();
+        assert_eq!(t0, f64::from_le_bytes([0, 0, 0, 0, 0, 0, 240, 63]));
+        assert_eq!(t.cell_f64(&buf, 2, time).unwrap(), 3.0);
+    }
+
+    #[test]
+    fn bintable_implicit_packing_without_tbcol() {
+        let buf = synth_implicit();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 2);
+        let flux = t.column("FLUX").unwrap();
+        let time = t.column("TIME").unwrap();
+        assert_eq!(flux.tbcol, 1);
+        assert_eq!(time.tbcol, 5);
+        assert_eq!(
+            t.cell_f64(&buf, 0, flux).unwrap(),
+            f32::from_le_bytes([1, 2, 3, 4]) as f64
+        );
+        assert_eq!(t.cell_f64(&buf, 1, time).unwrap(), 2.0);
+    }
+
+    #[test]
+    fn bintable_rejects_wrong_extension() {
+        let buf = synth();
+        assert!(FitsTable::parse(&buf, 0).is_none());
+    }
+
+    fn synth_array_cols() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "24"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "2"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "2"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'SPEC'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "2D"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE2", "'DQ'"));
+        ext.extend_from_slice(&pad_card("TFORM2", "2J"));
+        ext.extend_from_slice(&pad_card("TBCOL2", "17"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        let rows: [[u8; 24]; 2] = [
+            [
+                63, 248, 0, 0, 0, 0, 0, 0, 64, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2,
+            ],
+            [
+                64, 12, 0, 0, 0, 0, 0, 0, 64, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 4,
+            ],
+        ];
+        for row in rows {
+            buf.extend_from_slice(&row);
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn bintable_reads_fixed_array_cells() {
+        let buf = synth_array_cols();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 2);
+        assert_eq!(t.row_bytes, 24);
+        let spec = t.column("SPEC").unwrap();
+        let dq = t.column("DQ").unwrap();
+        assert_eq!(spec.repeat, 2);
+        assert_eq!(t.cell_array_f64(&buf, 0, spec).unwrap(), vec![1.5, 2.5]);
+        assert_eq!(t.cell_array_f64(&buf, 1, spec).unwrap(), vec![3.5, 4.5]);
+        assert_eq!(t.cell_array_i64(&buf, 0, dq).unwrap(), vec![1, 2]);
+        assert_eq!(t.cell_array_i64(&buf, 1, dq).unwrap(), vec![3, 4]);
+        assert!(t.cell_array_f64(&buf, 2, spec).is_none());
+    }
+
+    #[test]
+    fn bintable_bounds_check() {
+        let buf = synth();
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        let flux = t.column("FLUX").unwrap();
+        assert!(t.cell_f64(&buf, 3, flux).is_none());
+    }
+
+    #[test]
+    fn image_reads_f32_cube() {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "-32"));
+        header.extend_from_slice(&pad_card("NAXIS", "3"));
+        header.extend_from_slice(&pad_card("NAXIS1", "4"));
+        header.extend_from_slice(&pad_card("NAXIS2", "2"));
+        header.extend_from_slice(&pad_card("NAXIS3", "2"));
+        header.extend_from_slice(&pad_card("GHISTSEQ", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        let vals: Vec<f32> = (0..16).map(|i| i as f32 + 0.5).collect();
+        for v in vals {
+            buf.extend_from_slice(&v.to_be_bytes());
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        let (img, next) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.dims, [4, 2, 2]);
+        assert_eq!(next, buf.len());
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 0.5);
+        assert_eq!(img.value_f64(&buf, [3, 1, 1]).unwrap(), 15.5);
+        assert!(img.value_f64(&buf, [4, 0, 0]).is_none());
+    }
+
+    #[test]
+    fn image_reads_past_multiblock_header() {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "-32"));
+        header.extend_from_slice(&pad_card("NAXIS", "2"));
+        header.extend_from_slice(&pad_card("NAXIS1", "2"));
+        header.extend_from_slice(&pad_card("NAXIS2", "1"));
+        for i in 0..40 {
+            header.extend_from_slice(&pad_card(&format!("GHIST{:03}", i), "x"));
+        }
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        for v in [1.0f32, 2.0f32] {
+            buf.extend_from_slice(&v.to_be_bytes());
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 1.0);
+        assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 2.0);
+    }
+
+    fn img_with(cards: &[(&str, &str)], raw: &[u8]) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        for (k, v) in cards {
+            header.extend_from_slice(&pad_card(k, v));
+        }
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(raw);
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn image_bscale_bzero_int16() {
+        let mut raw = Vec::new();
+        for v in [0i16, 2i16] {
+            raw.extend_from_slice(&v.to_be_bytes());
+        }
+        let buf = img_with(
+            &[
+                ("BITPIX", "16"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "2"),
+                ("NAXIS2", "1"),
+                ("BSCALE", "0.5"),
+                ("BZERO", "100"),
+            ],
+            &raw,
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.bitpix, 16);
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 100.0);
+        assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 101.0);
+    }
+
+    #[test]
+    fn image_bitpix8_unsigned() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "2"),
+                ("NAXIS2", "1"),
+            ],
+            &[7, 255],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 7.0);
+        assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 255.0);
+    }
+
+    #[test]
+    fn wcs_tan_center_and_offsets() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "100"),
+                ("NAXIS2", "100"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "200.0"),
+                ("CRVAL2", "45.0"),
+                ("CRPIX1", "50.5"),
+                ("CRPIX2", "50.5"),
+                ("CDELT1", "0.001"),
+                ("CDELT2", "0.001"),
+            ],
+            &[0u8; 40000],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(50.5, 50.5).unwrap();
+        assert!((ra - 200.0).abs() < 1e-9);
+        assert!((dec - 45.0).abs() < 1e-9);
+        let (ra, dec) = img.world(51.5, 50.5).unwrap();
+        assert!((ra - 200.001414213).abs() < 1e-6);
+        assert!((dec - 45.0).abs() < 1e-5);
+        let (ra, dec) = img.world(50.5, 51.5).unwrap();
+        assert!((ra - 200.0).abs() < 1e-9);
+        assert!((dec - 45.001).abs() < 1e-6);
+    }
+
+    #[test]
+    fn wcs_sin_orthographic_center_and_offsets() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "4"),
+                ("NAXIS2", "4"),
+                ("CTYPE1", "'RA---SIN'"),
+                ("CTYPE2", "'DEC--SIN'"),
+                ("CRVAL1", "10.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.0"),
+                ("CRPIX2", "0.0"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+            ],
+            &[0u8; 64],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert!(img.world(0.0, 0.0).is_some());
+        let (ra0, dec0) = img.world(0.0, 0.0).unwrap();
+        assert!((ra0 - 10.0).abs() < 1e-12);
+        assert!(dec0.abs() < 1e-12);
+        let offset_deg = 0.3f64.to_degrees();
+        let c_deg = 0.3f64.asin().to_degrees();
+        let (ra_n, dec_n) = img.world(0.0, offset_deg).unwrap();
+        assert!((ra_n - 10.0).abs() < 1e-12);
+        assert!((dec_n - c_deg).abs() < 1e-9);
+        let (ra_e, dec_e) = img.world(offset_deg, 0.0).unwrap();
+        assert!((ra_e - (10.0 + c_deg)).abs() < 1e-9);
+        assert!(dec_e.abs() < 1e-12);
+    }
+
+    #[test]
+    fn wcs_sin_stays_within_the_orthographic_disk() {
+        let wcs = FitsWcs::sin(10.0, 0.0, 0.0, 0.0, [[1.0, 0.0], [0.0, 1.0]]);
+        assert!(wcs.world(0.0, 60.0).is_none());
+        assert!(wcs.world(0.0, -60.0).is_none());
+        assert!(wcs.world(0.0, 0.9).is_some());
+    }
+
+    #[test]
+    fn wcs_projection_names_tan_sin_and_linear() {
+        let tan = FitsWcs::tan(1.0, 2.0, 3.0, 4.0, [[0.01, 0.0], [0.0, 0.01]]);
+        let sin = FitsWcs::sin(1.0, 2.0, 3.0, 4.0, [[0.01, 0.0], [0.0, 0.01]]);
+        assert!(tan.is_tan());
+        assert!(!tan.is_sin());
+        assert_eq!(tan.projection(), WcsProjection::Tan);
+        assert!(sin.is_sin());
+        assert!(!sin.is_tan());
+        assert_eq!(sin.projection(), WcsProjection::Sin);
+    }
+
+    #[test]
+    fn wcs_hpx_nested_nside1_pixel0() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "1"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 12],
+        );
+        let (h, _) = FitsHeader::parse(&buf, 0).unwrap();
+        let wcs = FitsWcs::from_header(&h, 12, 1).unwrap();
+        assert!(wcs.is_hpx());
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(1.0, 0.0).unwrap();
+        assert!((ra - 45.0).abs() < 1e-9, "ra {ra}");
+        let expected_dec = 90.0 - (2.0f64 / 3.0).acos().to_degrees();
+        assert!((dec - expected_dec).abs() < 1e-9, "dec {dec}");
+    }
+
+    #[test]
+    fn wcs_hpx_ring_nside2_pixel0() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "48"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'RING'"),
+                ("NSIDE", "2"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 48],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (theta, phi) = healpix::pix2ang_ring(2, 0).unwrap();
+        let (ra, dec) = img.world(1.0, 0.0).unwrap();
+        assert!((ra - phi.to_degrees()).abs() < 1e-9, "ra {ra}");
+        assert!(
+            (dec - (90.0 - theta.to_degrees())).abs() < 1e-9,
+            "dec {dec}"
+        );
+    }
+
+    #[test]
+    fn wcs_hpx_nested_nside2_roundtrip() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "48"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "2"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 48],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        for p in [0i64, 5, 23, 47] {
+            let (ra, dec) = img.world((p + 1) as f64, 0.0).unwrap();
+            let theta = (90.0 - dec).to_radians();
+            let phi = ra.rem_euclid(360.0).to_radians();
+            assert_eq!(
+                healpix::ang2pix_nest(2, theta, phi),
+                Some(p),
+                "pixel {p} does not round-trip"
+            );
+        }
+    }
+
+    #[test]
+    fn wcs_hpx_order_key_resolves_nside() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "48"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("ORDER", "1"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 48],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, _) = img.world(1.0, 0.0).unwrap();
+        assert!(
+            (ra - 45.0).abs() < 1e-9,
+            "ORDER = 1 means NSIDE = 2, ra {ra}"
+        );
+    }
+
+    #[test]
+    fn wcs_hpx_absent_nside_returns_none() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 12],
+        );
+        let (h, _) = FitsHeader::parse(&buf, 0).unwrap();
+        let wcs = FitsWcs::from_header(&h, 12, 1).unwrap();
+        assert!(wcs.is_hpx());
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert!(img.world(1.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn wcs_hpx_nside_naxis_mismatch_refuses() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "2"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 12],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert!(img.world(1.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn wcs_hpx_galactic_coordsys_transforms() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'GLON-HPX'"),
+                ("CTYPE2", "'GLAT-HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "1"),
+                ("COORDSYS", "'G'"),
+            ],
+            &[0u8; 12],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(1.0, 0.0).unwrap();
+        let (theta, phi) = healpix::pix2ang_nest(1, 0).unwrap();
+        let (expected_ra, expected_dec) = healpix::galactic_to_icrs(theta, phi);
+        assert!((ra - expected_ra).abs() < 1e-9, "ra {ra}");
+        assert!((dec - expected_dec).abs() < 1e-9, "dec {dec}");
+    }
+
+    #[test]
+    fn wcs_pc_matrix_reflects_axes() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "100"),
+                ("NAXIS2", "100"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "152.0"),
+                ("CRVAL2", "2.0"),
+                ("CRPIX1", "-22800.0"),
+                ("CRPIX2", "242.0"),
+                ("CDELT1", "6.94444461259988E-05"),
+                ("CDELT2", "6.94444461259988E-05"),
+                ("PC001001", "-1.0"),
+                ("PC001002", "0.0"),
+                ("PC002001", "0.0"),
+                ("PC002002", "1.0"),
+            ],
+            &[0u8; 40000],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(150.5, 242.0).unwrap();
+        assert!(
+            (150.3..150.6).contains(&ra),
+            "ra {ra} sits west of the reference (the PC matrix reflects the axis)"
+        );
+        assert!(
+            (dec - 2.0).abs() < 0.02,
+            "dec {dec} stays near the reference"
+        );
+        let (ra0, dec0) = img.world(-22800.0, 242.0).unwrap();
+        assert!((ra0 - 152.0).abs() < 1e-9);
+        assert!((dec0 - 2.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn wcs_standard_pc_keys_are_read() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "100"),
+                ("NAXIS2", "100"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "152.0"),
+                ("CRVAL2", "2.0"),
+                ("CRPIX1", "-22800.0"),
+                ("CRPIX2", "242.0"),
+                ("CDELT1", "6.94444461259988E-05"),
+                ("CDELT2", "6.94444461259988E-05"),
+                ("PC1_1", "-1.0"),
+                ("PC1_2", "0.0"),
+                ("PC2_1", "0.0"),
+                ("PC2_2", "1.0"),
+            ],
+            &[0u8; 40000],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(150.5, 242.0).unwrap();
+        assert!(
+            (150.3..150.6).contains(&ra),
+            "ra {ra} reflects the standard PC axis"
+        );
+        assert!(
+            (dec - 2.0).abs() < 0.02,
+            "dec {dec} stays near the reference"
+        );
+    }
+
+    #[test]
+    fn wcs_without_ctype_stays_linear() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "8"),
+                ("NAXIS2", "8"),
+                ("CRVAL1", "100.0"),
+                ("CRVAL2", "2000.0"),
+                ("CRPIX1", "1.0"),
+                ("CRPIX2", "1.0"),
+                ("CDELT1", "2.0"),
+                ("CDELT2", "-0.5"),
+            ],
+            &[0u8; 256],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.world(3.0, 1.0).unwrap(), (104.0, 2000.0));
+    }
+
+    #[test]
+    fn wcs_linear_axes() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "8"),
+                ("NAXIS2", "8"),
+                ("CTYPE1", "'FREQ'"),
+                ("CTYPE2", "'TIME'"),
+                ("CRVAL1", "100.0"),
+                ("CRVAL2", "2000.0"),
+                ("CRPIX1", "1.0"),
+                ("CRPIX2", "1.0"),
+                ("CDELT1", "2.0"),
+                ("CDELT2", "-0.5"),
+            ],
+            &[0u8; 256],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.world(1.0, 1.0).unwrap(), (100.0, 2000.0));
+        assert_eq!(img.world(3.0, 1.0).unwrap(), (104.0, 2000.0));
+        assert_eq!(img.world(1.0, 3.0).unwrap(), (100.0, 1999.0));
+    }
+
+    #[test]
+    fn wcs_cd_matrix_overrides_cdelt() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "4"),
+                ("NAXIS2", "4"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "10.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "2.0"),
+                ("CRPIX2", "2.0"),
+                ("CDELT1", "9.9"),
+                ("CDELT2", "9.9"),
+                ("CD1_1", "0.001"),
+                ("CD1_2", "0.0"),
+                ("CD2_1", "0.0"),
+                ("CD2_2", "0.001"),
+            ],
+            &[0u8; 64],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(3.0, 2.0).unwrap();
+        assert!((ra - 10.001).abs() < 1e-6);
+        assert!(dec.abs() < 1e-6);
+    }
+
+    fn table_with(cards: &[(&str, &str)], rows: &[[u8; 4]]) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "4"));
+        ext.extend_from_slice(&pad_card("NAXIS2", &rows.len().to_string()));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'FLUX'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "J"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        for (k, v) in cards {
+            ext.extend_from_slice(&pad_card(k, v));
+        }
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+        for row in rows {
+            buf.extend_from_slice(row);
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn table_tscal_tzero_scales_integer() {
+        let buf = table_with(&[("TSCAL1", "2.0"), ("TZERO1", "10.0")], &[[0, 0, 0, 5]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        let flux = t.column("FLUX").unwrap();
+        assert_eq!(t.cell_i64(&buf, 0, flux).unwrap(), 5);
+        assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 20.0);
+    }
+
+    #[test]
+    fn table_unscaled_defaults_are_identity() {
+        let buf = table_with(&[], &[[0, 0, 0, 5]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        let flux = t.column("FLUX").unwrap();
+        assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 5.0);
+    }
+
+    fn synth_varlen_p() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "2"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "5"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'DATA'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "'1PB'"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&3u32.to_be_bytes());
+        buf.extend_from_slice(&0u32.to_be_bytes());
+        buf.extend_from_slice(&2u32.to_be_bytes());
+        buf.extend_from_slice(&3u32.to_be_bytes());
+        buf.extend_from_slice(&[1, 2, 3, 4, 5]);
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    fn synth_varlen_q() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "16"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "2"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "4"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'DATA'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "'1QB'"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&4i64.to_be_bytes());
+        buf.extend_from_slice(&0i64.to_be_bytes());
+        buf.extend_from_slice(&1i64.to_be_bytes());
+        buf.extend_from_slice(&3i64.to_be_bytes());
+        buf.extend_from_slice(&[9, 8, 7, 6]);
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn bintable_reads_variable_length_p_column() {
+        let buf = synth_varlen_p();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 2);
+        assert_eq!(t.row_bytes, 8);
+        assert_eq!(t.heap_bytes, 5);
+        let data = t.column("DATA").unwrap();
+        assert_eq!(data.code, 'P');
+        assert_eq!(data.width, 8);
+        assert_eq!(t.cell_varlen(&buf, 0, data).unwrap(), &[1, 2, 3]);
+        assert_eq!(t.cell_varlen(&buf, 1, data).unwrap(), &[4, 5]);
+        assert_eq!(
+            t.row(&buf, 0).unwrap(),
+            vec![FitsValue::VarBytes(vec![1, 2, 3])]
+        );
+        assert_eq!(
+            t.row(&buf, 1).unwrap(),
+            vec![FitsValue::VarBytes(vec![4, 5])]
+        );
+    }
+
+    #[test]
+    fn bintable_reads_variable_length_q_column() {
+        let buf = synth_varlen_q();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 2);
+        assert_eq!(t.row_bytes, 16);
+        assert_eq!(t.heap_bytes, 4);
+        let data = t.column("DATA").unwrap();
+        assert_eq!(data.code, 'Q');
+        assert_eq!(data.width, 16);
+        assert_eq!(t.cell_varlen(&buf, 0, data).unwrap(), &[9, 8, 7, 6]);
+        assert_eq!(t.cell_varlen(&buf, 1, data).unwrap(), &[6]);
+        assert_eq!(
+            t.row(&buf, 0).unwrap(),
+            vec![FitsValue::VarBytes(vec![9, 8, 7, 6])]
+        );
+        assert_eq!(t.row(&buf, 1).unwrap(), vec![FitsValue::VarBytes(vec![6])]);
+    }
+
+    #[test]
+    #[ignore = "reads the FITS named by OMEGAFLOW_FITS_SAMPLE"]
+    fn real_fits_data_section_decodes() {
+        let path = std::env::var("OMEGAFLOW_FITS_SAMPLE")
+            .expect("OMEGAFLOW_FITS_SAMPLE names a FITS file on disk");
+        let buf = std::fs::read(&path).expect("read the FITS sample");
+        let (_, first_end) = FitsHeader::parse(&buf, 0).expect("primary header");
+        match FitsTable::parse(&buf, first_end) {
+            Some((table, _)) => {
+                assert!(table.n_rows > 0, "the table carries rows");
+                assert!(!table.columns.is_empty(), "the table carries columns");
+                let row = table.row(&buf, 0).expect("the first row decodes");
+                assert_eq!(row.len(), table.columns.len());
+                for (col, value) in table.columns.iter().zip(&row) {
+                    assert!(
+                        !matches!(value, super::FitsValue::Unhandled(_)),
+                        "column '{}' (TFORM {}{}) decodes",
+                        col.name,
+                        col.repeat,
+                        col.code
+                    );
+                }
+            }
+            None => {
+                let (image, _) = FitsImage::parse(&buf, 0).expect("primary array");
+                let value = image.value_f64(&buf, [0, 0, 0]).expect("first pixel");
+                assert!(value.is_finite(), "the first pixel is a real value");
+            }
+        }
+    }
+
+    fn synth_units(tunit1: &str, tunit2: &str) -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "12"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "1"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "2"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'FLUX'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "E"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("TUNIT1", tunit1));
+        ext.extend_from_slice(&pad_card("TTYPE2", "'TIME'"));
+        ext.extend_from_slice(&pad_card("TFORM2", "D"));
+        ext.extend_from_slice(&pad_card("TBCOL2", "5"));
+        ext.extend_from_slice(&pad_card("TUNIT2", tunit2));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&[4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0]);
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    fn drs_chain(cols: &[&str]) -> Vec<u8> {
+        let row_bytes = cols.len() * 8;
+        let n_rows = 2usize;
+        let mut buf = Vec::new();
+        let mut header = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("EXTEND", "T"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", &row_bytes.to_string()));
+        ext.extend_from_slice(&pad_card("NAXIS2", &n_rows.to_string()));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("EXTNAME", "'SCI_SCIENCE_1Hz'"));
+        ext.extend_from_slice(&pad_card("TFIELDS", &cols.len().to_string()));
+        for (i, name) in cols.iter().enumerate() {
+            let idx = i + 1;
+            ext.extend_from_slice(&pad_card(&format!("TTYPE{idx}"), &format!("'{name}'")));
+            ext.extend_from_slice(&pad_card(&format!("TFORM{idx}"), "D"));
+            ext.extend_from_slice(&pad_card(&format!("TBCOL{idx}"), &(i * 8 + 1).to_string()));
+        }
+        ext.extend_from_slice(&pad_card("END", ""));
+        while !ext.len().is_multiple_of(2880) {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        for r in 0..n_rows {
+            for i in 0..cols.len() {
+                let v = ((r + 1) * (i + 1)) as f64;
+                buf.extend_from_slice(&v.to_be_bytes());
+            }
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn drs_primary_naxis0_parses_as_header_only() {
+        let buf = synth();
+        let (img, next) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.dims, [0, 0, 0]);
+        assert_eq!(next, 2880);
+        assert!(img.value_f64(&buf, [0, 0, 0]).is_none());
+    }
+
+    #[test]
+    fn measured_tunit_card_reads_unit() {
+        let buf = table_with(&[("TUNIT1", "'m s-2'")], &[[0, 0, 0, 1]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit.as_deref(), Some("m s-2"));
+    }
+
+    #[test]
+    fn bintable_reads_tunit_per_column() {
+        let buf = synth_units("'m s-2'", "'s'");
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit.as_deref(), Some("m s-2"));
+        assert_eq!(t.column("TIME").unwrap().unit.as_deref(), Some("s"));
+    }
+
+    #[test]
+    fn bintable_column_without_tunit_is_none() {
+        let buf = table_with(&[], &[[0, 0, 0, 1]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit, None);
+    }
+
+    #[test]
+    fn bintable_empty_tunit_is_none() {
+        let buf = table_with(&[("TUNIT1", "''")], &[[0, 0, 0, 1]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit, None);
+    }
+
+    #[test]
+    fn drs_series_reads_utc_time_and_differential_acceleration() {
+        let buf = drs_chain(&[
+            "ESA00001", "ESA00002", "DST11077", "DST11078", "DST11079", "DST11083", "DST11084",
+            "DST11085",
+        ]);
+        let rows = drs_series(&buf).unwrap();
+        assert_eq!(rows.len(), 2);
+        let m = 1.928;
+        assert_eq!(rows[0].0, 1.0 + 2.0e-6 + 946684800.0);
+        assert_eq!(rows[0].1, [3.0 / m, 3.0 / m, 3.0 / m]);
+        assert_eq!(rows[1].0, 2.0 + 4.0e-6 + 946684800.0);
+        assert_eq!(rows[1].1, [6.0 / m, 6.0 / m, 6.0 / m]);
+    }
+
+    #[test]
+    fn drs_series_missing_force_column_is_none() {
+        let buf = drs_chain(&[
+            "ESA00001", "ESA00002", "DST11077", "DST11078", "DST11079", "DST11084", "DST11085",
+        ]);
+        assert!(drs_series(&buf).is_none());
+    }
+
+    #[test]
+    fn drs_series_missing_time_column_is_none() {
+        let buf = drs_chain(&[
+            "DST11077", "DST11078", "DST11079", "DST11083", "DST11084", "DST11085",
+        ]);
+        assert!(drs_series(&buf).is_none());
+    }
+
+    #[test]
+    fn a_tform_width_and_precision_do_not_hide_the_code() {
+        assert_eq!(super::parse_tform("3600D8.3"), Some(('D', 3600, None)));
+        assert_eq!(super::parse_tform("200D8.3"), Some(('D', 200, None)));
+        assert_eq!(super::parse_tform("1E"), Some(('E', 1, None)));
+        assert_eq!(super::parse_tform("8A"), Some(('A', 8, None)));
+        assert_eq!(super::parse_tform("1PB(100)"), Some(('P', 1, Some('B'))));
+    }
+
+    #[test]
+    fn a_file_written_by_a_foreign_encoder_is_read() {
+        let path =
+            std::env::temp_dir().join(format!("omegaflow_fitrs_{}.fits", std::process::id()));
+        let shape = [3usize, 4usize];
+        let data: Vec<i32> = (0..12).collect();
+        let mut hdu = fitrs::Hdu::new(&shape, data.clone());
+        hdu.insert("BUNIT", "counts");
+        fitrs::Fits::create(&path, hdu).expect("the foreign encoder writes the file");
+        let bytes = std::fs::read(&path).expect("the file reads back");
+        let _ = std::fs::remove_file(&path);
+        let (image, _) = FitsImage::parse(&bytes, 0).expect("our reader takes the foreign file");
+        assert_eq!(image.dims, [3, 4, 1]);
+        assert_eq!(image.bitpix, 32);
+        let value = |index: usize| -> i32 {
+            let o = image.data_start + index * 4;
+            i32::from_be_bytes([bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]])
+        };
+        for index in 0..12 {
+            assert_eq!(value(index), index as i32, "element {index}");
+        }
+    }
+
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn arbitrary_bytes_never_panic_the_reader(bytes in proptest::collection::vec(any::<u8>(), 0..2048)) {
+            let _ = FitsHeader::parse(&bytes, 0);
+            let _ = FitsImage::parse(&bytes, 0);
+            let _ = FitsTable::parse(&bytes, 0);
+        }
+    }
+}

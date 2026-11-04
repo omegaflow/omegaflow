@@ -1,0 +1,43 @@
+name: dcom5-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  dcom5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile DASTCOM5 comet apparition catalog and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 7200 -o kernels/dcom5_le.dat \
+            https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
+          cargo run -p omegaflow-harvest --release --bin dcom5_compiler -- \
+            --input kernels/dcom5_le.dat \
+            --out dcom5_comets.json \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: dcom5_comets returned void" \
+                 "dcom5_comets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Compile DASTCOM5 comet elements catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin dcom5_compiler -- \
+            --input kernels/dcom5_le.dat \
+            --catalog dcom5_comets.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: dcom5_comets.bin returned void" \
+                 "dcom5_comets.bin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

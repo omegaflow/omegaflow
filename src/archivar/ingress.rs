@@ -1,0 +1,128 @@
+use super::*;
+
+pub fn serial_ports() -> Vec<String> {
+    serial_ports_with(std::env::var("OMEGAFLOW_SERIAL_IN").ok())
+}
+
+pub fn serial_ports_with(env_in: Option<String>) -> Vec<String> {
+    let mut out = Vec::new();
+    if let Ok(entries) = std::fs::read_dir("/dev") {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with("ttyACM") || name.starts_with("ttyUSB") {
+                out.push(format!("/dev/{}", name));
+            }
+        }
+    }
+    if let Some(path) = env_in
+        && !out.iter().any(|p| p == &path)
+    {
+        out.push(path);
+    }
+    out
+}
+
+pub fn parse_serial_sample(line: &str) -> Option<(String, f64)> {
+    let (k, v) = line.split_once('=')?;
+    let val = v.trim().parse::<f64>().ok()?;
+    Some((k.trim().to_string(), val))
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn serial_ingress<R: std::io::BufRead + Send>(
+    mut reader: R,
+    tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>,
+) {
+    let mut line = String::new();
+    loop {
+        line.clear();
+        match reader.read_line(&mut line) {
+            Ok(0) => thread::sleep(std::time::Duration::from_secs(1)),
+            Ok(_) => {
+                if let Some((k, v)) = parse_serial_sample(line.trim_end()) {
+                    let _ = tx.send(vec![(k, v, None)]);
+                }
+            }
+            Err(_) => thread::sleep(std::time::Duration::from_secs(5)),
+        }
+    }
+}
+
+pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
+    loop {
+        let mut batch: Vec<(String, f64, Option<f64>)> = Vec::new();
+        if let Ok(entries) = std::fs::read_dir("/sys/class/power_supply") {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let read_num = |name: &str| -> Option<f64> {
+                    std::fs::read_to_string(path.join(name))
+                        .ok()
+                        .and_then(|s| s.trim().parse::<f64>().ok())
+                };
+                let capacity = read_num("capacity");
+                let voltage = read_num("voltage_now").map(|v| v / 1e6);
+                let current = read_num("current_now").map(|a| a / 1e6);
+                let status = std::fs::read_to_string(path.join("status")).ok();
+                if let Some(c) = capacity {
+                    batch.push(("battery.level".to_string(), c, None));
+                }
+                if let Some(v) = voltage {
+                    batch.push(("battery.voltage".to_string(), v, None));
+                }
+                if let Some(a) = current {
+                    batch.push(("battery.current".to_string(), a, None));
+                }
+                if status.as_deref().map(str::trim) == Some("Charging") {
+                    batch.push(("battery.charging".to_string(), 1.0, None));
+                }
+            }
+        }
+        if !batch.is_empty() {
+            let _ = tx.send(batch);
+        }
+        thread::sleep(std::time::Duration::from_secs(5));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_serial_line_parses_key_and_value() {
+        assert_eq!(
+            parse_serial_sample("temperature=23.5"),
+            Some(("temperature".to_string(), 23.5))
+        );
+    }
+
+    #[test]
+    fn the_serial_line_without_separator_is_absent() {
+        assert_eq!(parse_serial_sample("noise"), None);
+    }
+
+    #[test]
+    fn the_serial_line_without_number_is_absent() {
+        assert_eq!(parse_serial_sample("pressure=abc"), None);
+    }
+
+    #[test]
+    fn the_serial_line_trims_key_and_value() {
+        assert_eq!(
+            parse_serial_sample("  wind.speed = 4.2 \n"),
+            Some(("wind.speed".to_string(), 4.2))
+        );
+    }
+
+    #[test]
+    fn the_env_in_path_is_appended() {
+        let ports = serial_ports_with(Some("/tmp/omegaflow-pulse".to_string()));
+        assert!(ports.iter().any(|p| p == "/tmp/omegaflow-pulse"));
+    }
+
+    #[test]
+    fn the_env_in_path_is_absent_without_env() {
+        let ports = serial_ports_with(None);
+        assert!(!ports.iter().any(|p| p == "/tmp/omegaflow-pulse"));
+    }
+}

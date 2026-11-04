@@ -1,0 +1,130 @@
+name: gosat-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: 'GOSAT-GW product code (e.g. GWT3F_L1B or GWT3W_L1B)'
+        required: false
+        type: string
+        default: 'GWT3F_L1B'
+      start_year:
+        description: 'first harvest year of the per-month shard series'
+        required: false
+        type: string
+        default: "2025"
+      end_year:
+        description: 'last harvest year (blank = the current UTC year)'
+        required: false
+        type: string
+        default: ""
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  GOSAT_GW_MAIL: ${{ secrets.GOSAT_GW_MAIL }}
+  GOSAT_GW_PASS: ${{ secrets.GOSAT_GW_PASS }}
+  RUSTFLAGS: -D warnings
+jobs:
+  raster:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.gen.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compute the missing per-month shards
+        id: gen
+        run: |
+          set -euo pipefail
+          START="${{ inputs.start_year }}"
+          END="${{ inputs.end_year }}"
+          if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
+          RELEASE="product.gosat-gw.nies.go.jp"
+          REPO="omegaflow/sources"
+          present="$(gh release view "$RELEASE" --repo "$REPO" \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          NOW_YEAR="$(date -u +%Y)"
+          NOW_MONTH="$((10#$(date -u +%m)))"
+          shards=""
+          for year in $(seq "$START" "$END"); do
+            last_month=12
+            if [ "$year" -eq "$NOW_YEAR" ]; then
+              last_month=$((NOW_MONTH - 1))
+            elif [ "$year" -gt "$NOW_YEAR" ]; then
+              last_month=0
+            fi
+            for month in $(seq -w 1 "$last_month"); do
+              asset="gosat_tanso3_${year}-${month}.bin"
+              if printf '%s\n' "$present" | grep -qx "$asset"; then
+                echo "$asset already manifested — skipped"
+                continue
+              fi
+              shards="${shards:+$shards,}\"${year}-${month}\""
+            done
+          done
+          echo "shards=[${shards}]" >> "$GITHUB_OUTPUT"
+  release:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure the product.gosat-gw.nies.go.jp release exists on the CDN
+        run: |
+          if ! gh release view product.gosat-gw.nies.go.jp --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create product.gosat-gw.nies.go.jp --repo omegaflow/sources \
+              --title "product.gosat-gw.nies.go.jp" \
+              --notes "GOSAT-GW TANSO-3 L1B radiance (GWT3F/GWT3W bands) packaged to omegaflow binary assets, one asset per month (series gosat_tanso3_<year>-<month>.bin, one manifest over the month shards)."
+          fi
+  compile:
+    needs: [raster, release]
+    if: needs.raster.outputs.shards != '[]'
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.shard }}
+      cancel-in-progress: false
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: ${{ fromJSON(needs.raster.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the ${{ matrix.shard }} GOSAT-GW TANSO-3 radiance shard to the CDN
+        run: |
+          SHARD="${{ matrix.shard }}"
+          START="${SHARD}-01"
+          END="$(date -u -d "$START +1 month -1 day" +%F)"
+          cargo run --release -p omegaflow-harvest --bin gosat_tanso3_compiler -- \
+            --search --product "${{ inputs.product }}" \
+            --start "$START" --end "$END" \
+            --out "gosat_tanso3_${SHARD}.bin" --ci-mode
+  series-manifest:
+    needs: [raster, compile]
+    if: always() && needs.raster.result == 'success'
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fold every month shard on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          TAG="product.gosat-gw.nies.go.jp"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh release view "$TAG" --repo "$REPO" \
+            --json assets --jq '.assets[] | "\(.name) \(.digest)"' > "$tmp/assets"
+          sed -n "s/^\(gosat_tanso3_[0-9]*-[0-9]*\.bin\) sha256:\([0-9a-f]\{64\}\)$/\1 \2/p" \
+            "$tmp/assets" | sort > "$tmp/gosat_tanso3.manifest"
+          if [ ! -s "$tmp/gosat_tanso3.manifest" ]; then
+            echo "no gosat_tanso3 month shards on the CDN — the series manifest stays unwritten (0 honored)"
+            exit 0
+          fi
+          echo "gosat_tanso3.manifest lists $(wc -l < "$tmp/gosat_tanso3.manifest") shards"
+          bin/cdn-put "$TAG" "$tmp/gosat_tanso3.manifest"

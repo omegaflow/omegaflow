@@ -1,0 +1,18 @@
+name: wqp-cdn
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  wqp:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"wqp_result_compiler","netloc":"waterqualitydata.us","asset":"wqp_result.csv.zip"}
+        ]

@@ -1,0 +1,61 @@
+# harvest: format=fingrid_datasets asset=present arm=fingrid_compiler pattern=^fingrid_datasets\.bin$ idempotent=true timeout=120 tag=data.fingrid.fi
+
+name: fingrid-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/fingrid_compiler.rs'
+      - '.github/workflows/fingrid-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  fingrid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view data.fingrid.fi --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "fingrid_datasets.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset fingrid_datasets.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset fingrid_datasets.bin missing — compiling and manifesting"
+          fi
+      - name: Materialize the Fingrid API key (read_secret reads .secrets.local)
+        if: steps.idempotence.outputs.present == 'false'
+        env:
+          FINGRID_API_KEY: ${{ secrets.FINGRID_API_KEY }}
+        run: |
+          printf 'FINGRID_API_KEY=%s\n' "$FINGRID_API_KEY" > .secrets.local
+      - name: Ensure the data.fingrid.fi release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view data.fingrid.fi --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.fingrid.fi --repo omegaflow/sources \
+              --title "data.fingrid.fi" \
+              --notes "Fingrid open data datasets API (x-api-key) catalog compiled to a typed bin asset (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the Fingrid datasets catalog to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin fingrid_compiler -- \
+            --out data/data.fingrid.fi/fingrid_datasets.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "fingrid-cdn: fingrid_datasets.bin returned void" \
+                 "fingrid_compiler returned void for the data.fingrid.fi datasets source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

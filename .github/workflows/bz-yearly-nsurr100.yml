@@ -1,0 +1,41 @@
+name: bz-yearly-nsurr100
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  yearly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: abk-2024
+            args: --hourly --yearly-round --station ABK
+          - point: abk-2025
+            args: --hourly --yearly-round --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31
+          - point: sod-2024
+            args: --hourly --yearly-round --station SOD
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the yearly round at n_surr=100 (six pairs, lag 0/1 h, per-lag rows, 4 threads)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin bz_retro_probe -- ${{ matrix.args }} --threads 4
+          } > "bz-yearly-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-yearly-${{ matrix.point }}
+          path: bz-yearly-${{ matrix.point }}.txt

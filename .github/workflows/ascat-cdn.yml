@@ -1,0 +1,44 @@
+name: ascat-cdn
+
+# Der UHR-ASCAT-B-Windfeld-Compiler (`ascat_compiler`) als CDN-Manifestator.
+# Ohne diesen Workflow bleibt der `url`-Zeiger
+# `…/manati.star.nesdis.noaa.gov-ascat/ascat_uhr_ascat_b.bin` unmanifestiert.
+# Quelle ist das jüngste manati-UHR-ASCAT-B-Granulat (netCDF-4/HDF5), gelesen über
+# den Archivar-HDF5-Arm; der Release-Tag folgt dem Quellen-Host.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  ascat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Das jüngste UHR-ASCAT-B-Granulat wählen
+        id: source
+        run: |
+          base="https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB"
+          year="$(curl -sSfL "$base/" | grep -oE 'href="[0-9]{4}/"' | sed 's/href="//;s/"//' | sort | tail -1)"
+          latest="$(curl -sSfL "$base/$year" | grep -oE 'href="[^"]+\.nc"' | sed 's/href="//;s/"//' \
+            | awk -F_ '{print $2" "$0}' | sort | tail -1 | cut -d' ' -f2-)"
+          echo "url=$base/$year$latest" >> "$GITHUB_OUTPUT"
+          echo "jüngstes Granulat: $year$latest"
+      - name: Das Windfeld kompilieren und auf das CDN manifestieren
+        run: |
+          cargo run --release -p omegaflow-harvest --bin ascat_compiler -- \
+            "${{ steps.source.outputs.url }}" \
+            --label uhr_ascat_b \
+            --ci-mode

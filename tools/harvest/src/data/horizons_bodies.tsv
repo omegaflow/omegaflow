@@ -1,0 +1,10 @@
+# Horizons target ids for the ephemeris check — the body names are the register's,
+# the ids are the Horizons catalogue's; the code carries neither.
+mercury	199
+venus	299
+earth	399
+mars	499
+jupiter	599
+saturn	699
+uranus	799
+neptune	899

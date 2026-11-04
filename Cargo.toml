@@ -1,0 +1,40 @@
+[package]
+name = "omegaflow"
+version = "1.0.0"
+authors = ["omegaflow"]
+edition = "2024"
+license-file = "LICENSE"
+description = "φ(x,y,z,t)"
+repository = "https://github.com/omegaflow/omegaflow"
+homepage = "https://omegaflow.space"
+
+[workspace]
+members = [
+    "tools/app",
+    "tools/harvest",
+    "tools/measure",
+    "tools/membrane",
+    "tools/register",
+    "tools/science",
+    "tools/service",
+    "tools/utils",
+]
+default-members = ["."]
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[features]
+commit_gate = []
+default = []
+browser_relay = []
+
+[dev-dependencies]
+cdshealpix = "0.10"
+proj4rs = "0.1.5"
+time = { version = "0.3", features = ["parsing"] }
+tungstenite = "0.30"
+fitrs = "0.5"
+proptest = "1"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]

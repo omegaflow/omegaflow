@@ -1,0 +1,47 @@
+name: qbo-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  qbo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view cpc.ncep.noaa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "qbo_30hpa.csv"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset qbo_30hpa.csv already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset qbo_30hpa.csv missing — compiling and manifesting"
+          fi
+      - name: Ensure the cpc.ncep.noaa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view cpc.ncep.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cpc.ncep.noaa.gov --repo omegaflow/sources \
+              --title "cpc.ncep.noaa.gov" \
+              --notes "CPC QBO 30 hPa zonal wind index series compiled to CSV assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the QBO 30 hPa index to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin qbo_compiler -- --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "qbo-cdn: qbo_30hpa compile returned void" \
+                 "qbo compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

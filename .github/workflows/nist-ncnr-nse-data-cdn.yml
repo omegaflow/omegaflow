@@ -1,0 +1,76 @@
+# harvest: format=nist_ncnr_nse_nexus arm=nist_ncnr_nse_nexus_compiler pattern=^.*\.nxs\.nse\.bin$ idempotent=true timeout=120 tag=ncnr.nist.gov
+
+name: nist-ncnr-nse-data-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'max .nxs.nse data files to compile (blank = the bounded default 25; the catalog itself defaults to all monthly sets)'
+        required: false
+        type: string
+        default: '25'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/nist_ncnr_nse_nexus_compiler.rs'
+      - '.github/workflows/nist-ncnr-nse-data-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  nist-ncnr-nse-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ncnr.nist.gov release exists on the CDN
+        run: |
+          if ! gh release view ncnr.nist.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ncnr.nist.gov --repo omegaflow/sources \
+              --title "ncnr.nist.gov" \
+              --notes "NIST Center for Neutron Research (NCNR) public data — neutron spin echo (NSE) data sets compiled from the JSON-LD catalog (CDN tag = netloc)"
+          fi
+      - name: Walk the NSE JSON-LD catalog for .nxs.nse data URLs
+        run: |
+          set -u
+          LIMIT="${{ inputs.limit }}"
+          { [ -z "$LIMIT" ] || [ "$LIMIT" = "0" ]; } && LIMIT=25
+          cargo run --release -p omegaflow-harvest --bin nist_ncnr_nse_nexus_compiler -- \
+            --catalog --limit "$LIMIT" > data_urls.txt
+          echo "$(wc -l < data_urls.txt) .nxs.nse data URLs listed (limit ${LIMIT})"
+      - name: Compile and upload each NSE data set to the CDN
+        run: |
+          set -u
+          gh release view ncnr.nist.gov --repo omegaflow/sources --json assets \
+            --jq '.assets[]?.name' > assets.txt 2>/dev/null || true
+          done=0; skipped=0; void=0
+          while read -r kind url; do
+            [ "$kind" = "data" ] || continue
+            [ -z "$url" ] && continue
+            name="$(basename "$url").bin"
+            if grep -qxF "$name" assets.txt; then
+              echo "asset $name already present — skipped"
+              skipped=$((skipped+1))
+              continue
+            fi
+            if cargo run --release -p omegaflow-harvest --bin nist_ncnr_nse_nexus_compiler -- \
+                 --url "$url" --ci-mode; then
+              echo "$name" >> assets.txt
+              done=$((done+1))
+            else
+              bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                "nist-ncnr-nse-data-cdn: $name returned void" \
+                "nist_ncnr_nse_nexus_compiler returned void for $url. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                health
+              void=$((void+1))
+            fi
+          done < data_urls.txt
+          echo "nse data: compiled ${done}, present ${skipped}, void ${void}"
+          [ "$void" -eq 0 ]

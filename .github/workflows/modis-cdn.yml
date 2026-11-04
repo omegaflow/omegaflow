@@ -1,0 +1,142 @@
+name: modis-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_year:
+        description: first harvest year of the per-granule shard matrix
+        required: false
+        type: string
+        default: "2000"
+      end_year:
+        description: last harvest year (blank = the current UTC year)
+        required: false
+        type: string
+        default: ""
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  raster:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.gen.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compute the missing product x year series
+        id: gen
+        run: |
+          set -euo pipefail
+          START="${{ inputs.start_year }}"
+          END="${{ inputs.end_year }}"
+          if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
+          FAMILY="$(grep -oE 'releases/download/[^/]+/modis_lst_cmg_8day\.manifest' phi/sources.φ | head -n1 | cut -d/ -f3)"
+          REPO="omegaflow/sources"
+          CMR="https://cmr.earthdata.nasa.gov/search/granules.umm_json"
+          shards=""
+          for product in 8day monthly; do
+            case "$product" in
+              8day)    cid=C2565788893-LPCLOUD ;;
+              monthly) cid=C2565788897-LPCLOUD ;;
+            esac
+            for year in $(seq "$START" "$END"); do
+              tag="${FAMILY}-${product}-${year}"
+              manifest="modis_lst_cmg_${product}_${year}.manifest"
+              present="$(gh release view "$tag" --repo "$REPO" \
+                --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+              if printf '%s\n' "$present" | grep -qx "$manifest"; then
+                echo "$manifest already manifested — skipped"
+                continue
+              fi
+              hits="$(curl -sSfL --retry 3 --retry-all-errors --max-time 90 \
+                "$CMR?concept_id=${cid}&temporal=${year}-01-01T00:00:00Z,${year}-12-31T23:59:59Z&page_size=1" \
+                | jq -r '.hits // 0')"
+              if [ "$hits" = "0" ]; then
+                echo "${product} ${year}: CMR carries no granule — skipped"
+                continue
+              fi
+              shards="${shards:+$shards,}{\"product\":\"${product}\",\"concept_id\":\"${cid}\",\"year\":\"${year}\",\"manifest\":\"${manifest}\",\"tag\":\"${tag}\"}"
+            done
+          done
+          echo "shards=[${shards}]" >> "$GITHUB_OUTPUT"
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Ensure the modis_lst_cmg family release exists on the CDN
+        run: |
+          FAMILY="$(grep -oE 'releases/download/[^/]+/modis_lst_cmg_8day\.manifest' phi/sources.φ | head -n1 | cut -d/ -f3)"
+          if ! gh release view "$FAMILY" --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create "$FAMILY" --repo omegaflow/sources \
+              --title "$FAMILY" \
+              --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records, one asset per granule (series modis_lst_cmg_<product>_<granuleUR>.bin, one manifest per product-year). Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night). The shards and per-year manifests live in the year tags data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-<product>-<year> (the 1000-asset cap splits the family); this family tag holds only the two year-less series manifests (modis_lst_cmg_8day.manifest, modis_lst_cmg_monthly.manifest)."
+          fi
+  compile:
+    needs: [raster, release]
+    if: needs.raster.outputs.shards != '[]'
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.product }}-${{ matrix.year }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        include: ${{ fromJSON(needs.raster.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the modis_lst_cmg compiler
+        run: cargo build -p omegaflow-harvest --release --bin modis_lst_cmg_compiler
+      - name: Compile the ${{ matrix.product }} ${{ matrix.year }} granule shards to the CDN
+        env:
+          MODIS_CDN_TAG: ${{ matrix.tag }}
+        run: |
+          ./target/release/modis_lst_cmg_compiler \
+            --cmr --concept-id ${{ matrix.concept_id }} \
+            --temporal ${{ matrix.year }}-01-01T00:00:00Z,${{ matrix.year }}-12-31T23:59:59Z \
+            --series modis_lst_cmg_${{ matrix.product }} \
+            --shard-dir shards \
+            --manifest ${{ matrix.manifest }} \
+            --ci-mode
+  series-manifest:
+    needs: [raster, compile]
+    if: always() && needs.raster.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fold every year-tag shard asset on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          FAMILY="$(grep -oE 'releases/download/[^/]+/modis_lst_cmg_8day\.manifest' phi/sources.φ | head -n1 | cut -d/ -f3)"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh api --paginate "repos/$REPO/releases?per_page=100" \
+            | jq -r '.[].tag_name' > "$tmp/tags"
+          for product in 8day monthly; do
+            : > "$tmp/modis_lst_cmg_${product}.manifest"
+            while IFS= read -r tag; do
+              case "$tag" in
+                "${FAMILY}-${product}-"*) ;;
+                *) continue ;;
+              esac
+              gh release view "$tag" --repo "$REPO" \
+                --json assets \
+                --jq '.assets[] | select(.name|endswith(".bin")) | "\(.name) \(.digest)"' \
+                >> "$tmp/modis_lst_cmg_${product}.manifest"
+            done < "$tmp/tags"
+            sort -u -o "$tmp/modis_lst_cmg_${product}.manifest" "$tmp/modis_lst_cmg_${product}.manifest"
+            if [ ! -s "$tmp/modis_lst_cmg_${product}.manifest" ]; then
+              echo "no ${product} shards on the CDN — the series manifest stays unwritten (0 honored)"
+              continue
+            fi
+            echo "modis_lst_cmg_${product}.manifest lists $(wc -l < "$tmp/modis_lst_cmg_${product}.manifest") shards"
+            bin/cdn-put "$FAMILY" "$tmp/modis_lst_cmg_${product}.manifest"           done

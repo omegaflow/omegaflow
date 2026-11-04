@@ -1,0 +1,315 @@
+name: hyperscanning-te
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      null_model:
+        description: null model — phase rotates each series alone; coherent-phase rotates a triad with one shared phase vector (the pair null for transfer beyond the linear cross-correlation)
+        type: choice
+        options:
+          - phase
+          - coherent-phase
+        default: phase
+      channel:
+        description: EEG channel label(s), comma-separated (a named electrode, not the common average)
+        type: string
+        default: Fz
+      max_points:
+        description: per-series sample cap (0 = full length, the physical truth)
+        type: string
+        default: "4096"
+      scales:
+        description: optional comma-separated n values for the n-scaling run (empty = off)
+        type: string
+        default: ""
+      percentile:
+        description: family-wise threshold percentile (screen 95, confirmation 99)
+        type: string
+        default: "95"
+      surrogates:
+        description: phase-randomized surrogate count (screen 200, confirmation 1000)
+        type: string
+        default: "200"
+      cohort:
+        description: hyperscanning cohort (ds007822 triads, ds007471 dyads)
+        type: choice
+        options:
+          - ds007822
+          - ds007471
+        default: ds007822
+      tasks:
+        description: task conditions screened as separate parallel jobs (comma-separated; ds007471 forces jointaction)
+        type: string
+        default: "pddecision,pdfeedback,pdrest"
+      shards:
+        description: shard count for the family screen (0 or 1 = off)
+        type: string
+        default: "0"
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      tasks: ${{ steps.matrix.outputs.tasks }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the family FN/FP gates (the family-max null calibration)
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate joint_channel_family_gate coherent_null_fp_gate self_null_discriminator fn_gate_sweep nominees_round_trip --nocapture
+      - name: Build the per-task matrix (one screen job per task condition)
+        id: matrix
+        shell: bash
+        run: |
+          if [ "${{ inputs.cohort }}" = "ds007471" ]; then
+            TASKS="jointaction"
+          else
+            TASKS="${{ inputs.tasks }}"
+          fi
+          t='['
+          first=1
+          IFS=',' read -ra TT <<< "$TASKS"
+          for x in "${TT[@]}"; do
+            x="${x// /}"
+            [ -z "$x" ] && continue
+            if [ "$first" -eq 0 ]; then t="$t,"; fi
+            t="$t\"$x\""
+            first=0
+          done
+          t="$t]"
+          SHARDS="${{ inputs.shards }}"
+          if [ -z "$SHARDS" ]; then SHARDS=0; fi
+          if [ "$SHARDS" -gt 1 ] 2>/dev/null; then
+            s='['
+            i=0
+            while [ "$i" -lt "$SHARDS" ]; do
+              [ "$i" -gt 0 ] && s="$s,"
+              s="$s$i"
+              i=$((i+1))
+            done
+            s="$s]"
+            m="{\"task\":$t,\"shard\":$s}"
+          else
+            m="{\"task\":$t}"
+          fi
+          echo "tasks=$t" >> "$GITHUB_OUTPUT"
+          echo "matrix=$m" >> "$GITHUB_OUTPUT"
+
+  screen:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the ds007822 EEG recordings and build the manifest
+        if: inputs.cohort == 'ds007822'
+        run: |
+          set -euo pipefail
+          H=$(curl -sS -X POST https://openneuro.org/crn/graphql \
+            -H 'Content-Type: application/json' \
+            -d "$(jq -nc --arg q '{ dataset(id:"ds007822"){ latestSnapshot { hexsha } } }' '{query:$q}')" \
+            | jq -r '.data.dataset.latestSnapshot.hexsha')
+          echo "snapshot $H"
+          curl -sS -X POST https://openneuro.org/crn/graphql \
+            -H 'Content-Type: application/json' \
+            -d "$(jq -nc --arg q "{ dataset(id:\"ds007822\"){ latestSnapshot { files(tree: \"$H\", recursive: true) { filename urls } } } }" '{query:$q}')" \
+            -o tree.json
+          mkdir -p data
+          : > manifest.txt
+          jq -r '.data.dataset.latestSnapshot.files[]? | select(.filename | endswith("_eeg.set")) | [.filename, .urls[0]] | @tsv' tree.json > files.tsv
+          grep "_task-${{ matrix.task }}_eeg.set" files.tsv > files_task.tsv || true
+          count=0
+          while IFS=$'\t' read -r fn url; do
+            sub=$(printf '%s' "$fn" | cut -d/ -f1)
+            base=$(basename "$fn")
+            task=$(printf '%s' "$base" | sed -E 's/.*_task-([^_]+)_eeg\.set/\1/')
+            triad=$(printf '%s' "$sub" | sed -E 's/^sub-G([0-9]+)S[0-9]+$/G\1/')
+            mkdir -p "data/$(dirname "$fn")"
+            curl -sSL --retry 2 -o "data/$fn" "$url"
+            printf '%s %s %s %s\n' "$task" "$triad" "$sub" "data/$fn" >> manifest.txt
+            count=$((count+1))
+          done < files_task.tsv
+          jq -r '.data.dataset.latestSnapshot.files[]? | select(.filename | endswith("_channels.tsv")) | [.filename, .urls[0]] | @tsv' tree.json > channels.tsv
+          nch=0
+          while IFS=$'\t' read -r fn url; do
+            mkdir -p "data/$(dirname "$fn")"
+            curl -sSL --retry 2 -o "data/$fn" "$url"
+            nch=$((nch+1))
+          done < channels.tsv
+          echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
+          sort -o manifest.txt manifest.txt
+          head -6 manifest.txt
+      - name: Fetch the ds007471 dyad EEG recordings and build the manifest
+        if: inputs.cohort == 'ds007471'
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-harvest --bin brainvision_compiler -- \
+            --dataset ds007471 --participant L
+          cargo run --release -p omegaflow-harvest --bin brainvision_compiler -- \
+            --dataset ds007471 --participant R
+          mkdir -p data
+          : > manifest.txt
+          for i in $(seq -w 1 32); do
+            sub="sub-$i"
+            base="data/openneuro.org/ds007471/$sub/eeg/${sub}_task-jointaction_eeg"
+            printf 'jointaction pair-%s L %s_L.bin\n' "$i" "$base" >> manifest.txt
+            printf 'jointaction pair-%s R %s_R.bin\n' "$i" "$base" >> manifest.txt
+          done
+          sort -o manifest.txt manifest.txt
+          head -6 manifest.txt
+      - name: Run the joint family-wise TE screen across the channel family and write the per-cell nominees (Takens tau, dim 3)
+        if: inputs.shards <= 1
+        # The joint family maximum pools every requested channel with every
+        # triad and ordered pair into ONE corrected line per task (channels x
+        # triads x pairs) — the FWER is the family maximum over the union.
+        run: |
+          set -o pipefail
+          mp_arg=""
+          if [ "${{ inputs.max_points }}" != "0" ] && [ -n "${{ inputs.max_points }}" ]; then mp_arg="--max-points ${{ inputs.max_points }}"; fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt --channel "${{ inputs.channel }}" $mp_arg --surrogates "${{ inputs.surrogates }}" \
+              --percentile "${{ inputs.percentile }}" \
+              --null "${{ inputs.null_model }}" \
+              --nominees-out nominees.tsv
+          } | tee report.txt
+      - name: Run the sharded joint family-wise TE screen (one surrogate shard per job)
+        if: inputs.shards > 1
+        run: |
+          set -o pipefail
+          mp_arg=""
+          if [ "${{ inputs.max_points }}" != "0" ] && [ -n "${{ inputs.max_points }}" ]; then mp_arg="--max-points ${{ inputs.max_points }}"; fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt --channel "${{ inputs.channel }}" $mp_arg --surrogates "${{ inputs.surrogates }}" \
+              --percentile "${{ inputs.percentile }}" \
+              --null "${{ inputs.null_model }}" \
+              --shard "${{ matrix.shard }}/${{ inputs.shards }}" \
+              --shard-out "shard-${{ matrix.shard }}.tsv"
+          } | tee report.txt
+      - name: Confirm the nominees against their own per-cell nulls (p99, 1000 surrogates, fresh seed)
+        if: always() && inputs.shards <= 1
+        run: |
+          set -o pipefail
+          mp_arg=""
+          if [ "${{ inputs.max_points }}" != "0" ] && [ -n "${{ inputs.max_points }}" ]; then mp_arg="--max-points ${{ inputs.max_points }}"; fi
+          if [ ! -f nominees.tsv ]; then
+            echo "no nominee list — the per-cell silence is the finding (0 honored)" | tee confirmation.txt
+            exit 0
+          fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt $mp_arg \
+              --nominees nominees.tsv \
+              --null "${{ inputs.null_model }}"
+          } | tee confirmation.txt
+      - name: n-scaling run (print-only, per n and channel)
+        if: inputs.scales != '' && inputs.shards <= 1
+        run: |
+          set -o pipefail
+          : > scaling.txt
+          IFS=',' read -ra NS <<< "${{ inputs.scales }}"
+          IFS=',' read -ra CHS <<< "${{ inputs.channel }}"
+          for n in "${NS[@]}"; do
+            n="${n// /}"
+            [ -z "$n" ] && continue
+            for ch in "${CHS[@]}"; do
+              ch="${ch// /}"
+              [ -z "$ch" ] && continue
+              echo "===== channel $ch n $n =====" | tee -a scaling.txt
+              {
+                echo "SHA $(git rev-parse HEAD)"
+                cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+                  --manifest manifest.txt --channel "$ch" --max-points "$n" \
+                  --surrogates "${{ inputs.surrogates }}" \
+                  --percentile "${{ inputs.percentile }}" \
+                  --null "${{ inputs.null_model }}"
+              } | tee "scaling_${ch}_n${n}.txt" | tee -a scaling.txt
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.shards <= 1
+        with:
+          name: hyperscanning-te-report-${{ matrix.task }}
+          path: |
+            report.txt
+            nominees*.tsv
+            confirmation.txt
+            scaling.txt
+            scaling_*.txt
+      - name: Upload the shard artifact
+        if: always() && inputs.shards > 1
+        uses: actions/upload-artifact@v4
+        with:
+          name: hyperscanning-te-shard-${{ matrix.task }}-${{ matrix.shard }}
+          path: shard-${{ matrix.shard }}.tsv
+
+  merge:
+    needs: [plan, screen]
+    if: inputs.shards > 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        task: ${{ fromJSON(needs.plan.outputs.tasks) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: hyperscanning-te-shard-${{ matrix.task }}-*
+          merge-multiple: true
+          path: shards
+      - name: Merge the shard artifacts and write the nominees
+        run: |
+          set -o pipefail
+          list=""
+          for i in $(seq 0 $(( ${{ inputs.shards }} - 1 ))); do
+            list="${list:+$list,}shards/shard-$i.tsv"
+          done
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --merge "$list" --nominees-out nominees.tsv
+          } | tee merge.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hyperscanning-te-report-${{ matrix.task }}
+          path: |
+            nominees.tsv
+            merge.txt
+
+  confirm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Confirm the stochastic pair and guard the deterministic Riss (p99/p1, 200 surrogates)
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- confirmation_stochastic_driver_pair_clears_its_own_null riss_guard_deterministic_pair_measures_below_its_own_null --nocapture
+      - name: Frozen-tau delay sweep for the stochastic confirmation pair (print-only diagnostic)
+        if: always()
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- frozen_tau_delay_sweep_stochastic_pair --ignored --nocapture
+      - name: Positive control — rich aperiodic driver through the same recursion (print-only diagnostic)
+        if: always()
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- positive_control_rich_aperiodic_driver_pair --ignored --nocapture
+      - name: Phase-null blind-band probe for the stochastic confirmation pair (print-only diagnostic)
+        if: always()
+        run: cargo test --release -p omegaflow-measure --test phase_null_blind_band -- phase_null_blind_band_stochastic_pair --ignored --nocapture

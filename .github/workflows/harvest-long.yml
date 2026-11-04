@@ -1,0 +1,145 @@
+# (lro_trk / imbrium.mit.edu producer removed 2026-10-13 — imbrium declined all-rights-reserved; the deleted lro-trk-cdn.yml was not the only producer)
+
+name: harvest-long
+
+concurrency:
+  group: harvest-long-${{ github.event.inputs.format }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      format:
+        description: format name — the harvest header key
+        required: true
+        type: string
+      force:
+        description: compile even when the idempotence gate sees the asset present
+        required: false
+        type: boolean
+        default: false
+      timeout:
+        description: explicit job timeout override — absent, the harvest header timeout field carries
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    env:
+      FORMAT: ${{ github.event.inputs.format }}
+    outputs:
+      tag: ${{ steps.block.outputs.tag }}
+      arm: ${{ steps.block.outputs.arm }}
+      pattern: ${{ steps.block.outputs.pattern }}
+      shard: ${{ steps.block.outputs.shard }}
+      idem: ${{ steps.block.outputs.idem }}
+      args: ${{ steps.block.outputs.args }}
+      timeout: ${{ steps.block.outputs.timeout }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Read the harvest header for ${{ github.event.inputs.format }}
+        id: block
+        run: |
+          line=$(grep -m1 "^# harvest: format=$FORMAT " .github/workflows/harvest-long.yml || true)
+          if [ -z "$line" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT has no measured harvest header in harvest-long.yml" \
+              "no '# harvest: format=$FORMAT' header in .github/workflows/harvest-long.yml — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          tag=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]tag=\([^ ]*\).*/\1/p')
+          arm=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]arm=\([^ ]*\).*/\1/p')
+          pattern=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]pattern=\([^ ]*\).*/\1/p')
+          shard=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]shard=\([^ ]*\).*/\1/p')
+          idem=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]idempotent=\([^ ]*\).*/\1/p')
+          args=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]args=//p')
+          timeout=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]timeout=\([^ ]*\).*/\1/p')
+          if [ -z "$tag" ] || [ -z "$arm" ] || [ -z "$pattern" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT carries incomplete fields in the harvest header" \
+              "the $FORMAT header is missing tag, arm or pattern — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          if [ "$idem" != "true" ] && [ "$idem" != "false" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT carries no idempotent verdict in the harvest header" \
+              "the $FORMAT header has no true|false idempotent field — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "arm=$arm" >> "$GITHUB_OUTPUT"
+          echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
+          echo "shard=$shard" >> "$GITHUB_OUTPUT"
+          echo "idem=$idem" >> "$GITHUB_OUTPUT"
+          echo "args=$args" >> "$GITHUB_OUTPUT"
+          echo "timeout=$timeout" >> "$GITHUB_OUTPUT"
+
+  harvest:
+    needs: register
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJSON(github.event.inputs.timeout || needs.register.outputs.timeout || '240') }}
+    env:
+      FORMAT: ${{ github.event.inputs.format }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence gate — the CDN is the second witness
+        id: gate
+        run: |
+          if [ "${{ needs.register.outputs.idem }}" = "true" ] && [ "${{ github.event.inputs.force }}" != "true" ]; then
+            if gh release view "${{ needs.register.outputs.tag }}" --repo omegaflow/sources \
+                 --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "${{ needs.register.outputs.pattern }}"; then
+              echo "present=true" >> "$GITHUB_OUTPUT"
+              echo "asset matching the pattern already present on the CDN — harvest skipped"
+              exit 0
+            fi
+          fi
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          echo "no asset matching the pattern on the CDN — compiling"
+      - name: Compile the harvest and manifest it to the CDN
+        id: compile
+        if: steps.gate.outputs.present == 'false'
+        run: |
+          read -r -a argv <<< "${{ needs.register.outputs.args }}"
+          set +e
+          cargo run --release -p omegaflow-harvest --bin "${{ needs.register.outputs.arm }}" -- "${argv[@]}" --ci-mode > compile.log 2>&1
+          rc=$?
+          set -e
+          cat compile.log
+          if [ "$rc" -ne 0 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT returned void" \
+              "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Second witness — the asset stands after the compile
+        if: needs.register.outputs.idem == 'true'
+        run: |
+          assets=$(gh release view "${{ needs.register.outputs.tag }}" --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Ec "${{ needs.register.outputs.pattern }}" || true)
+          shard="${{ needs.register.outputs.shard }}"
+          if [ "$assets" -eq 0 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT still has no asset on the CDN after the compile" \
+              "The $FORMAT compile completed but the idempotence pattern matched no asset on the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+          if [ -n "$shard" ] && [ "$assets" -ne "$shard" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT shard is incomplete on the CDN after the compile" \
+              "The $FORMAT compile completed but $assets asset(s) match the pattern, the register shard is $shard. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+          echo "asset present after the compile — the harvest stands"

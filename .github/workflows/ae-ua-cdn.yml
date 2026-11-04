@@ -1,0 +1,71 @@
+# harvest: format=ae_ua asset=present arm=ae_ua_compiler pattern=^ae_ua_.*\.bin$ idempotent=true timeout=240 tag=spdf.gsfc.nasa.gov
+
+name: ae-ua-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: 'file prefix to harvest, e.g. e75 or e7 or all'
+        required: false
+        type: string
+        default: 'all'
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ae:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the compiler
+        run: cargo build --release -p omegaflow-harvest --bin ae_ua_compiler
+      - name: Harvest the days
+        run: |
+          set -u
+          PREFIX="${{ inputs.prefix }}"
+          [ -n "$PREFIX" ] || PREFIX=all
+          mkdir -p out
+          TOTAL=0
+          FAILED=0
+          while IFS= read -r DAY; do
+            [ -n "$DAY" ] || continue
+            if [ "$PREFIX" != "all" ]; then
+              case "$DAY" in
+                ${PREFIX}*) ;;
+                *) continue ;;
+              esac
+            fi
+            NAME="ae_ua_${DAY}"
+            URL="https://spdf.gsfc.nasa.gov/pub/data/ae/ae_e/ae_e_unified_abstract/${DAY}"
+            if gh release view spdf.gsfc.nasa.gov --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${NAME}"; then
+              continue
+            fi
+            TOTAL=$((TOTAL + 1))
+            ./target/release/ae_ua_compiler --url "$URL" --out "out/${NAME}" --ci-mode
+            CODE=$?
+            if [ "$CODE" -eq 3 ]; then
+              echo "upload quota reached at ${DAY} — the next run continues from here"
+              break
+            elif [ "$CODE" -ne 0 ]; then
+              FAILED=$((FAILED + 1))
+              echo "day ${DAY} gave nothing — counted"
+            fi
+          done < tools/harvest/data/ae_e_days.txt
+          echo "harvest: ${TOTAL} days attempted, ${FAILED} without rows"
+          if [ "$FAILED" -gt 20 ]; then
+            echo "more than twenty days gave nothing — stopping"
+            exit 1
+          fi

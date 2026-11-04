@@ -1,0 +1,9 @@
+offen:
+pending
+fehlt
+bleibt
+ausstehend
+wartet
+offen bleibt
+nicht gebaut
+ungebaut

@@ -1,0 +1,11 @@
+body	naif	pck	model	orientation_kernel	frame_kernel	coverage	fallback
+mercury	1	199	iau-tpc	pck00011.tpc	-	-	absent
+venus	2	299	iau-tpc	pck00011.tpc	-	-	absent
+mars	4	499	iau-tpc	pck00011.tpc	-	-	absent
+jupiter	5	599	iau-tpc	pck00011.tpc	-	-	absent
+saturn	6	699	iau-tpc	pck00011.tpc	-	-	absent
+uranus	7	799	iau-tpc	pck00011.tpc	-	-	absent
+neptune	8	899	iau-tpc	pck00011.tpc	-	-	absent
+sun	10	10	iau-tpc	pck00011.tpc	-	-	absent
+moon	301	301	de440-pa	moon_pa_de440_200625.bpc	moon_de440_250416.tf	1549-12-31..2650-01-25	iau-tpc outside the bpc interval
+earth	399	399	iers-c04	kernels/eop.tsv	-	1962..today	absent, never a zero row

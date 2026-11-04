@@ -1,0 +1,60 @@
+name: ephemeris-house-gate
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      epoch_ymd:
+        description: "House-query epoch YYYY-MM-DD (default 2026-09-28, the JUICE flyby)"
+        required: false
+        default: "2026-09-28"
+      epoch_hms:
+        description: "House-query epoch HH:MM:SS (empty = the JUICE perigee default)"
+        required: false
+        default: ""
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the three Earth ephemeris lines (INPOP compiled locally, no CDN mirror)
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov-de data/ftp.imcce.fr data/ftp.iaaras.ru
+          gh release download ssd.jpl.nasa.gov-de --repo omegaflow/sources \
+            --pattern ephemeris_de441_earth.bin --clobber -D data/ssd.jpl.nasa.gov-de
+          gh release download ftp.iaaras.ru --repo omegaflow/sources \
+            --pattern ephemeris_epm_earth.bin --clobber -D data/ftp.iaaras.ru
+          curl -sfL -o inpop19a_spice.tar.gz https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "ephemeris-house-gate: the inpop19a spice tar returned void" \
+                 "curl on ftp.imcce.fr did not reach the tar. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          cargo run -p omegaflow-harvest --release --bin inpop_compiler -- inpop19a_spice.tar.gz
+      - name: Run the three-house Earth ephemeris gate at the chosen epoch (±2 d)
+        run: |
+          epoch="${{ inputs.epoch_ymd || '2026-09-28' }}"
+          args="--epoch-ymd $epoch --register data/flyby2/house-gate-$epoch.json"
+          if [ -n "${{ inputs.epoch_hms }}" ]; then
+            args="$args --epoch-hms ${{ inputs.epoch_hms }}"
+          fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin ephemeris_house_gate -- $args
+          } > ephemeris-house-gate.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ephemeris-house-gate
+          path: |
+            ephemeris-house-gate.txt
+            data/flyby2/house-gate-*.json

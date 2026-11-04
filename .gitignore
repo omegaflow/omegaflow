@@ -1,0 +1,113 @@
+# Kanonische Datenorte: Rohdaten und Compiler-Assets liegen in
+# $OMEGAFLOW_WORK/sources/<netloc>/ (compiled/ fuer kompilierte Assets).
+# data/, cache/ und tmp/ sind keine Repo-Orte und duerfen nie gestaged werden.
+/data/
+/cache/
+/tmp/
+
+debug/
+.env
+*.log
+!docs/state/cdn-changes.log
+!state/state/ledger/**/*.log
+omegaflow.wasm
+.opencode/*
+!.opencode/commands/
+
+# Agenten-Konfiguration — Maschinenlokal (Pfade auf das private Haus, Modellwahl,
+# Cage-Regeln). Gehoert nicht in einen oeffentlichen Baum.
+/opencode.json
+*.pdb
+phi/health.json
+phi/kernels/
+/kernels/
+*.py
+/reference/
+scripts/__pycache__/
+.secrets.local
+.continue/
+server.log
+/target
+/out/
+archeology/
+# Archivar-Test-Fixtures (ncei/twomass/goes/cosmic/wod/celestrak) — lokal gehalten; die Tests skippen bei Abwesenheit. 36 MB bleiben aus dem Repo.
+src/archivar/testdata/
+
+# Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
+rave_dr5.json
+
+# Compiler-Binaries (gehen zum CDN, nicht ins Repo)
+*.bin
+# Ernte-Cache (regenerierbar — bz_retro_probe schreibt ihn bei leerem Cache neu)
+abk_dbdt_daily.tsv
+abk_dbdt_1h_SOD_2024.tsv
+fam_state_SOD_2024.txt
+
+# A=A: der verbindliche Register-Kanon ist das 1 lebende Daten-Register, fest im
+# Gate-Code deklariert (`REGISTER_CLASSES`, src/gate/commit_gate.rs); eine neue
+# getrackte phi/*.φ-Datei ist ein Architektur-Akt (Operator/Council-Wort +
+# REGISTER_CLASSES-Eintrag im selben Commit). Alle Register liegen flach in phi/.
+phi/*
+!phi/sources.φ
+!phi/instruments.φ
+!phi/field_model.tsv
+!phi/field_model_definition.tsv
+!phi/field_model_derived.tsv
+!phi/field_model_default.tsv
+!phi/licences.tsv
+!phi/bands.φ
+!phi/digests.φ
+!phi/library.φ
+!phi/nrs_stations.φ
+!phi/dust-maske.φ
+!phi/ci_measurements.φ
+!phi/scan_coverage.φ
+!phi/asteroid_gm_inpop25c.φ
+!phi/asteroid_gm_sb441.φ
+# Asteroid-Diameter-Kataloge sind Compiler-Eingaben (dastcom_compiler/kernel-flatten) — groß und nicht auf dem CI-Runner; die gm-Kataloge sind getrackt, die Diameter bleiben lokal.
+tools/harvest/data/asteroid/asteroid_diameters_*.φ
+
+# Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
+.omegaflow-strand
+
+# Cloudflare-Worker-Werkzeuge (nicht ins Repo)
+cloudflare/node_modules/
+cloudflare/package.json
+cloudflare/package-lock.json
+cloudflare/.wrangler/
+# Lokale Tunnel-Config (absoluter Credential-Pfad — Deployment, kein Repo-Gegenstand)
+cloudflare/cloudflared-config.yml
+
+# `state/` ist getrackt nur als kuratierte Rat-Schicht (`state/rat`, ab 2026-10-15).
+# Roh-Antworten und Spills liegen ungetrackt in `$OMEGAFLOW_WORK/stimmen`; der Zeiger
+# auf den privaten Zustand ist `docs/state/external-state.md`.
+state/*
+!state/rat/
+# Verdikt-Register je Linie: die .φ-Verdikte sind kanonisch, nicht Roh-Zustand.
+!state/mountain/
+!state/river/
+# Login-/Konto-Prüflisten (persönlich — nie ins Repo)
+markiert.csv
+omegaflow-pruefdatei.csv
+
+# Lokales Anzeige-Mapping (enthält die private Operator-Adresse) — nie ins Repo
+.mailmap
+
+# Firmware (eigener Workspace, Build im CI) — lokale target/ und Lockfiles nicht ins Repo
+firmware/*/target/
+firmware/*/Cargo.lock
+
+# Playwright-MCP artefacts (snapshots/logs) — local only
+.playwright-mcp/
+
+# Exportierte paper-LaTeX (export_latex write step, paper-check.yml) — regenerierbar, kein Repo-Gegenstand
+docs/paper/export/
+
+# Werkzeug-Caches (nicht herunterladbar, lokal erzeugt)
+.playwright-mcp/
+
+# lokale Testfixtures (Symlink auf omegaflow-work/build/testdata)
+/src/archivar/testdata
+
+# flüchtiger TMPDIR des Shell-Wrappers (bin/shell) — lokal, nie Repo-Gegenstand
+/scratch/

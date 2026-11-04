@@ -1,0 +1,22 @@
+# harvest: format=hadisst_sst asset=present arm=hadisst_compiler pattern=^hadisst_sst\.bin$ idempotent=true timeout=600 tag=metoffice.gov.uk
+
+name: hadisst-cdn
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 6 1 * *'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  hadisst:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"hadisst_compiler","netloc":"metoffice.gov.uk","asset":"hadisst_sst.bin","refresh":true}
+        ]

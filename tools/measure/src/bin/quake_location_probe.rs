@@ -1,0 +1,574 @@
+use omegaflow::ak135::p_travel_depth;
+use omegaflow::archivar::{
+    BodyEphemeris, body_fixed_to_icrs, content_cache, embedded_lsk, fetch_raw_bytes,
+    parse_ephemeris_binary,
+};
+use omegaflow_measure::miniseed::decode_body;
+use omegaflow_measure::picker;
+use std::collections::HashMap;
+use std::env;
+use std::fs;
+use std::process::Command;
+
+const ORIGIN_UNIX: f64 = 1786744701.505;
+const START: &str = "2026-08-14T21:58:21";
+const END: &str = "2026-08-14T22:58:21";
+const ROUTE: &str = "https://service.earthscope.org/fdsnws/dataselect/1/query";
+const EARTH_EPH_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin";
+
+const R_EARTH_M: f64 = 6371000.0;
+const PI: f64 = std::f64::consts::PI;
+const DEPTHS: [f64; 19] = [
+    0.0, 10.0, 15.0, 20.0, 35.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 410.0, 450.0,
+    500.0, 550.0, 600.0, 660.0, 700.0,
+];
+
+const STATIONS: [(&str, &str, f64, f64); 19] = [
+    ("II", "KAPI", -5.0142, 119.7517),
+    ("II", "COCO", -12.1901, 96.8349),
+    ("IU", "PMG", -9.4047, 147.1597),
+    ("IU", "GUMO", 13.5893, 144.8684),
+    ("IU", "TATO", 24.9735, 121.4971),
+    ("IU", "CHTO", 18.8140, 98.9445),
+    ("II", "TAU", -42.9082, 147.3210),
+    ("II", "PALK", 7.2728, 80.7022),
+    ("IU", "MAJO", 36.5457, 138.2041),
+    ("II", "DGAR", -7.4121, 72.4525),
+    ("IU", "ULN", 47.8651, 107.0532),
+    ("II", "TLY", 51.6807, 103.6438),
+    ("II", "NIL", 33.6506, 73.2686),
+    ("IU", "MAKZ", 46.8080, 81.9770),
+    ("II", "UOSS", 24.9453, 56.2042),
+    ("II", "ABPO", -19.0180, 47.2290),
+    ("G", "ATD", 11.5307, 42.8466),
+    ("IU", "GNI", 40.1480, 44.7410),
+    ("II", "KIV", 43.9553, 42.6863),
+];
+
+fn curl_bytes(url: &str) -> (Option<u16>, Vec<u8>) {
+    let tmp = env::temp_dir().join(format!("quake_{}.mseed", std::process::id()));
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("-L")
+        .arg("-g")
+        .arg("-m")
+        .arg("120")
+        .arg("--connect-timeout")
+        .arg("20")
+        .arg("-o")
+        .arg(&tmp)
+        .arg("-w")
+        .arg("%{http_code}")
+        .arg(url)
+        .output();
+    let code = match out {
+        Ok(o) => {
+            let s = String::from_utf8_lossy(&o.stdout);
+            s.trim().parse::<u16>().ok().filter(|c| *c > 0)
+        }
+        Err(_) => None,
+    };
+    let body = match fs::read(&tmp) {
+        Ok(b) => b,
+        Err(e) => {
+            eprintln!("read: {e} — the body stays absent");
+            Vec::new()
+        }
+    };
+    let _ = fs::remove_file(&tmp);
+    (code, body)
+}
+
+fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
+    let path = content_cache(&format!("omegaflow_eph_{name}.bin"));
+    if let Ok(b) = std::fs::read(&path) {
+        return Some(b);
+    }
+    let b = fetch_raw_bytes(url)?;
+    if let Some(parent) = std::path::Path::new(&path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if std::fs::write(&path, &b).is_err() {
+        println!(
+            "quake location probe: the ephemeris cache was not written ({})",
+            path
+        );
+    }
+    Some(b)
+}
+
+fn chord(a: &[f64; 3], b: &[f64; 3]) -> f64 {
+    let dx = a[0] - b[0];
+    let dy = a[1] - b[1];
+    let dz = a[2] - b[2];
+    (dx * dx + dy * dy + dz * dz).sqrt()
+}
+
+fn median(xs: &mut [f64]) -> f64 {
+    xs.sort_by(|a, b| a.total_cmp(b));
+    xs[xs.len() / 2]
+}
+
+fn residual_at(
+    surface_point: &dyn Fn(f64, f64) -> Option<[f64; 3]>,
+    station_xyz: &[[f64; 3]],
+    arrival: &[f64],
+    depth_km: f64,
+    lat: f64,
+    lon: f64,
+) -> Option<f64> {
+    let cand = surface_point(lat, lon)?;
+    let n = station_xyz.len();
+    let mut travel = vec![0.0f64; n];
+    for i in 0..n {
+        travel[i] = p_travel_depth(arc_deg(&cand, &station_xyz[i]), depth_km)?;
+    }
+    let mut offsets: Vec<f64> = (0..n).map(|i| arrival[i] - travel[i]).collect();
+    let t0 = median(&mut offsets);
+    let mut s = 0.0;
+    for i in 0..n {
+        let r = arrival[i] - t0 - travel[i];
+        s += r * r;
+    }
+    Some(s)
+}
+
+fn best_in_box(
+    surface_point: &dyn Fn(f64, f64) -> Option<[f64; 3]>,
+    station_xyz: &[[f64; 3]],
+    arrival: &[f64],
+    depth_km: f64,
+    center_lat: f64,
+    center_lon: f64,
+    half_lat: f64,
+    half_lon: f64,
+    step: f64,
+) -> (f64, f64, f64) {
+    let mut best = (f64::INFINITY, center_lat, center_lon);
+    let mut lat = center_lat - half_lat;
+    while lat <= center_lat + half_lat + 1e-12 {
+        let mut lon = center_lon - half_lon;
+        while lon <= center_lon + half_lon + 1e-12 {
+            if let Some(r) = residual_at(surface_point, station_xyz, arrival, depth_km, lat, lon) {
+                if r < best.0 {
+                    best = (r, lat, lon);
+                }
+            }
+            lon += step;
+        }
+        lat += step;
+    }
+    best
+}
+
+fn locate(
+    surface_point: &dyn Fn(f64, f64) -> Option<[f64; 3]>,
+    station_xyz: &[[f64; 3]],
+    arrival: &[f64],
+    depth_km: f64,
+) -> Option<(f64, f64, f64)> {
+    let (mut r, mut lat, mut lon) = best_in_box(
+        surface_point,
+        station_xyz,
+        arrival,
+        depth_km,
+        0.0,
+        0.0,
+        90.0,
+        180.0,
+        2.0,
+    );
+    let (r1, lat1, lon1) = best_in_box(
+        surface_point,
+        station_xyz,
+        arrival,
+        depth_km,
+        lat,
+        lon,
+        2.0,
+        2.0,
+        0.2,
+    );
+    if r1 < r {
+        r = r1;
+        lat = lat1;
+        lon = lon1;
+    }
+    let (r2, lat2, lon2) = best_in_box(
+        surface_point,
+        station_xyz,
+        arrival,
+        depth_km,
+        lat,
+        lon,
+        0.2,
+        0.2,
+        0.02,
+    );
+    if r2 < r {
+        r = r2;
+        lat = lat2;
+        lon = lon2;
+    }
+    let (r3, lat3, lon3) = best_in_box(
+        surface_point,
+        station_xyz,
+        arrival,
+        depth_km,
+        lat,
+        lon,
+        0.02,
+        0.02,
+        0.002,
+    );
+    if r3 < r {
+        r = r3;
+        lat = lat3;
+        lon = lon3;
+    }
+    Some((lat, lon, r))
+}
+
+fn locate_depth(
+    surface_point: &dyn Fn(f64, f64) -> Option<[f64; 3]>,
+    station_xyz: &[[f64; 3]],
+    arrival: &[f64],
+) -> Option<(f64, f64, f64, f64)> {
+    let mut best = (f64::INFINITY, 0.0f64, 0.0f64, 0.0f64);
+    for &depth in DEPTHS.iter() {
+        if let Some((lat, lon, r)) = locate(surface_point, station_xyz, arrival, depth) {
+            if r < best.0 {
+                best = (r, lat, lon, depth);
+            }
+        }
+    }
+    Some((best.1, best.2, best.3, best.0))
+}
+
+fn arc_deg(a: &[f64; 3], b: &[f64; 3]) -> f64 {
+    let x = (chord(a, b) / (2.0 * R_EARTH_M)).clamp(-1.0, 1.0);
+    2.0 * x.asin() * (180.0 / PI)
+}
+
+fn origin_median(
+    surface_point: &dyn Fn(f64, f64) -> Option<[f64; 3]>,
+    station_xyz: &[[f64; 3]],
+    arrival: &[f64],
+    depth_km: f64,
+    lat: f64,
+    lon: f64,
+) -> Option<f64> {
+    let cand = surface_point(lat, lon)?;
+    let mut offsets: Vec<f64> = Vec::with_capacity(arrival.len());
+    for (xyz, a) in station_xyz.iter().zip(arrival.iter()) {
+        let Some(t) = p_travel_depth(arc_deg(&cand, xyz), depth_km) else {
+            return None;
+        };
+        offsets.push(a - t);
+    }
+    Some(median(&mut offsets))
+}
+
+fn arg_value(args: &[String], name: &str) -> Option<String> {
+    args.iter()
+        .position(|a| a == name)
+        .and_then(|i| args.get(i + 1))
+        .cloned()
+}
+
+fn main() {
+    let args: Vec<String> = env::args().skip(1).collect();
+    let origin_unix = match arg_value(&args, "--origin-unix").and_then(|s| s.parse::<f64>().ok()) {
+        Some(t) => t,
+        None => ORIGIN_UNIX,
+    };
+    let start = match arg_value(&args, "--start") {
+        Some(v) => v,
+        None => START.to_string(),
+    };
+    let end = match arg_value(&args, "--end") {
+        Some(v) => v,
+        None => END.to_string(),
+    };
+
+    let lsk = match embedded_lsk() {
+        Some(l) => l,
+        None => {
+            eprintln!("quake location probe: no leap-second table — abort");
+            return;
+        }
+    };
+    let Some(host) = omegaflow::odp::dsn_host() else {
+        eprintln!("quake location probe: host declaration void — abort");
+        return;
+    };
+    let earth_b = match ephemeris_cache_bytes(host, EARTH_EPH_CDN) {
+        Some(b) => b,
+        None => {
+            eprintln!("quake location probe: earth ephemeris unreadable — abort");
+            return;
+        }
+    };
+    let eph = match parse_ephemeris_binary(&earth_b) {
+        Some(e) => e,
+        None => {
+            eprintln!("quake location probe: earth ephemeris unparsed — abort");
+            return;
+        }
+    };
+    let t_ref = match lsk.unix_to_tdb(origin_unix) {
+        Some(t) => t,
+        None => {
+            eprintln!("quake location probe: origin time outside TDB range — abort");
+            return;
+        }
+    };
+    let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
+    map.insert(host.to_string(), eph);
+
+    println!(
+        "=== quake location — {} BHZ stations, P-wave difference inversion ===",
+        STATIONS.len()
+    );
+    println!("origin_unix = {:.3}  window {start} … {end}", origin_unix);
+    println!("travel time: ak135 P, depth-variable (kuratierte Klasse)");
+    println!(
+        "picker: bandpass 0.5–2 Hz + first break (5×noise floor), STA/LTA fallback {} s/{} s ratio {}",
+        picker::STA_WINDOW_S,
+        picker::LTA_WINDOW_S,
+        picker::STA_LTA_RATIO
+    );
+    println!("t_ref = {:.3} s (TDB since J2000)", t_ref);
+
+    let mut keys: Vec<String> = Vec::new();
+    let mut station_xyz: Vec<[f64; 3]> = Vec::new();
+    let mut arrival: Vec<f64> = Vec::new();
+    let mut skipped: Vec<String> = Vec::new();
+
+    for (net, sta, lat, lon) in STATIONS.iter() {
+        let key = format!("{}.{}", net, sta);
+        let url = format!(
+            "{}?network={}&station={}&channel=BHZ&starttime={}&endtime={}&format=miniseed",
+            ROUTE, net, sta, start, end
+        );
+        let (code, body) = curl_bytes(&url);
+        if code != Some(200) || body.is_empty() {
+            eprintln!("{} dataselect HTTP {:?} — skipped", key, code);
+            skipped.push(key);
+            continue;
+        }
+        let Some((samples, rate)) = decode_body(&body) else {
+            eprintln!("{} carries no decodable record — skipped", key);
+            skipped.push(key);
+            continue;
+        };
+        let Some(t) = picker::p_onset(&samples, rate) else {
+            eprintln!("{} carries no P pick — skipped", key);
+            skipped.push(key);
+            continue;
+        };
+        let Some(xyz) = body_fixed_to_icrs(host, *lat, *lon, 0.0, t_ref, &map) else {
+            eprintln!("{} worldline absent — skipped", key);
+            skipped.push(key);
+            continue;
+        };
+        keys.push(key);
+        station_xyz.push(xyz);
+        arrival.push(t);
+    }
+
+    println!(
+        "{} of {} stations carry a P pick",
+        arrival.len(),
+        STATIONS.len()
+    );
+    if arrival.len() < 4 {
+        eprintln!("fewer than four picks — abort");
+        return;
+    }
+
+    let surface_point = |lat: f64, lon: f64| body_fixed_to_icrs(host, lat, lon, 0.0, t_ref, &map);
+
+    let Some((lat_all, lon_all, depth_all, res_all)) =
+        locate_depth(&surface_point, &station_xyz, &arrival)
+    else {
+        eprintln!("no location found — abort");
+        return;
+    };
+    let rms_all = (res_all / arrival.len() as f64).sqrt();
+
+    let mut work_xyz: Vec<[f64; 3]> = station_xyz.clone();
+    let mut work_arr: Vec<f64> = arrival.clone();
+    let mut work_keys: Vec<String> = keys.clone();
+    let mut rejected: Vec<String> = Vec::new();
+    let mut robust = (lat_all, lon_all, depth_all, res_all);
+    for _ in 0..6 {
+        let (lat, lon, depth, res) = robust;
+        let rms = (res / work_arr.len() as f64).sqrt();
+        let Some(cand) = surface_point(lat, lon) else {
+            break;
+        };
+        let Some(t0) = origin_median(&surface_point, &work_xyz, &work_arr, depth, lat, lon) else {
+            break;
+        };
+        let mut drop: Vec<usize> = Vec::new();
+        for i in 0..work_xyz.len() {
+            let Some(t) = p_travel_depth(arc_deg(&cand, &work_xyz[i]), depth) else {
+                continue;
+            };
+            if (work_arr[i] - t0 - t).abs() > 3.0 * rms {
+                drop.push(i);
+            }
+        }
+        if drop.is_empty() {
+            break;
+        }
+        drop.sort();
+        drop.reverse();
+        for &i in &drop {
+            rejected.push(work_keys.remove(i));
+            work_xyz.remove(i);
+            work_arr.remove(i);
+        }
+        let Some(next) = locate_depth(&surface_point, &work_xyz, &work_arr) else {
+            break;
+        };
+        robust = next;
+    }
+    let (lat2, lon2, depth2, res2) = robust;
+    let rms2 = (res2 / work_arr.len() as f64).sqrt();
+
+    let cand2 = match surface_point(lat2, lon2) {
+        Some(p) => p,
+        None => {
+            eprintln!("located epicenter worldline absent — abort");
+            return;
+        }
+    };
+    let t0 = origin_median(&surface_point, &station_xyz, &arrival, depth2, lat2, lon2);
+
+    println!();
+    println!(
+        "located (all {} picks): lat = {:.4}  lon = {:.4}  depth = {:.1} km  rms = {:.3} s",
+        arrival.len(),
+        lat_all,
+        lon_all,
+        depth_all,
+        rms_all
+    );
+    println!(
+        "located ({} picks, {} rejected): lat = {:.4}  lon = {:.4}  depth = {:.1} km  rms = {:.3} s",
+        work_arr.len(),
+        rejected.len(),
+        lat2,
+        lon2,
+        depth2,
+        rms2
+    );
+    if !rejected.is_empty() {
+        println!("rejected (>3σ): {}", rejected.join(", "));
+    }
+    println!();
+    println!("station     arrival_unix     arc_deg  residual_s");
+    for (idx, key) in keys.iter().enumerate() {
+        let a = arc_deg(&cand2, &station_xyz[idx]);
+        let residual = match t0 {
+            Some(t) => p_travel_depth(a, depth2).map(|tt| arrival[idx] - t - tt),
+            None => None,
+        };
+        let mark = if rejected.contains(key) {
+            "  rejected"
+        } else {
+            ""
+        };
+        match residual {
+            Some(r) => println!(
+                "{:>12} {:>15.3} {:>8.2} {:>10.2}{}",
+                key, arrival[idx], a, r, mark
+            ),
+            None => println!(
+                "{:>12} {:>15.3} {:>8.2} {:>10}{}",
+                key, arrival[idx], a, "absent", mark
+            ),
+        }
+    }
+    for key in skipped.iter() {
+        println!("{:>12} skipped (no pick)", key);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn geodetic_to_ecef(lat_deg: f64, lon_deg: f64, alt_m: f64) -> [f64; 3] {
+        let a = 6378137.0;
+        let f = 1.0 / 298.257223563;
+        let e2 = f * (2.0 - f);
+        let lat = lat_deg.to_radians();
+        let lon = lon_deg.to_radians();
+        let n = a / (1.0 - e2 * lat.sin() * lat.sin()).sqrt();
+        let x = (n + alt_m) * lat.cos() * lon.cos();
+        let y = (n + alt_m) * lat.cos() * lon.sin();
+        let z = (n * (1.0 - e2) + alt_m) * lat.sin();
+        [x, y, z]
+    }
+
+    fn ecef_surface(lat: f64, lon: f64) -> Option<[f64; 3]> {
+        Some(geodetic_to_ecef(lat, lon, 0.0))
+    }
+
+    #[test]
+    fn the_real_station_geometry_recovers_the_synthetic_epicenter() {
+        let t0 = ORIGIN_UNIX;
+        let true_lat = -8.3514;
+        let true_lon = 121.3478;
+        let source = geodetic_to_ecef(true_lat, true_lon, 0.0);
+        let mut station_xyz: Vec<[f64; 3]> = Vec::new();
+        let mut arrival: Vec<f64> = Vec::new();
+        for (_, _, lat, lon) in STATIONS.iter() {
+            let s = geodetic_to_ecef(*lat, *lon, 0.0);
+            let a = arc_deg(&s, &source);
+            station_xyz.push(s);
+            arrival.push(t0 + p_travel_depth(a, 0.0).unwrap());
+        }
+        let (lat, lon, depth, _) = locate_depth(&ecef_surface, &station_xyz, &arrival).unwrap();
+        let d_deg = {
+            let a = geodetic_to_ecef(lat, lon, 0.0);
+            arc_deg(&a, &source)
+        };
+        assert!(
+            d_deg < 0.01,
+            "recovered ({:.4}, {:.4}) vs true ({}, {}) — {:.4} deg off",
+            lat,
+            lon,
+            true_lat,
+            true_lon,
+            d_deg
+        );
+        assert!(depth < 15.0, "surface source recovered depth {depth} km");
+    }
+
+    #[test]
+    fn a_deep_source_recovers_its_depth() {
+        let t0 = ORIGIN_UNIX;
+        let true_lat = -8.3514;
+        let true_lon = 121.3478;
+        let true_depth = 35.0;
+        let source = geodetic_to_ecef(true_lat, true_lon, 0.0);
+        let mut station_xyz: Vec<[f64; 3]> = Vec::new();
+        let mut arrival: Vec<f64> = Vec::new();
+        for (_, _, lat, lon) in STATIONS.iter() {
+            let s = geodetic_to_ecef(*lat, *lon, 0.0);
+            let a = arc_deg(&s, &source);
+            station_xyz.push(s);
+            arrival.push(t0 + p_travel_depth(a, true_depth).unwrap());
+        }
+        let (_, _, depth, _) = locate_depth(&ecef_surface, &station_xyz, &arrival).unwrap();
+        assert!(
+            (depth - true_depth).abs() < 15.0,
+            "recovered depth {depth} km vs true {true_depth} km"
+        );
+    }
+}

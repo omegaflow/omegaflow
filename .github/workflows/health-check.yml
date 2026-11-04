@@ -1,0 +1,103 @@
+name: health-check
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */3 * * *'
+permissions:
+  contents: write
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  PURPLEAIR_KEY: ${{ secrets.PURPLEAIR_KEY }}
+  FROST_BASIC_AUTH: ${{ secrets.FROST_BASIC_AUTH }}
+  TNS_UA: ${{ secrets.TNS_UA }}
+  OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+  NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
+  LASAIR_TOKEN: ${{ secrets.LASAIR_TOKEN }}
+  OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
+  NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+  FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+  OMEGAFLOW_STATE: data/state
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/cache@v4
+      with:
+        path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
+        key: archivar-cache-${{ matrix.shard }}.${{ github.run_id }}
+        restore-keys: |
+          archivar-cache-${{ matrix.shard }}.
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -- --verify phi --shard ${{ matrix.shard }}/16
+    - uses: actions/cache@v4
+      if: always()
+      with:
+        path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
+        key: archivar-cache-${{ matrix.shard }}.${{ github.run_id }}
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: verify returned void" \
+          "Verify job failed (shard ${{ matrix.shard }}/16). Last commit: ${{ github.sha }}" \
+          health
+
+  reverify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -- --reverify | tee reverify.txt
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: reverify
+        path: |
+          reverify.txt
+          phi/pipeline/stage/recheck_live.φ
+    - if: always()
+      run: |
+        if grep -qE " (drift-void|key-void|broken) " reverify.txt; then
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "health: recheck-live carries drift/broken findings" \
+            "The re-verification sweep reports drift-void/key-void/broken findings. Artifact: reverify (reverify.txt + recheck_live.φ)." \
+            health
+        fi
+
+  pages-verify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - run: |
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://omegaflow.space/ 2>/dev/null || echo "void")
+        if [ "$STATUS" != "200" ]; then
+          echo "pages returned $STATUS"
+          exit 1
+        fi
+        echo "pages ok: $STATUS"
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: pages returned void" \
+          "Pages health check failed. https://omegaflow.space/ may be down." \
+          health
+
+# probe-full is descoped (2026-09-25). Finding: phi/pipeline/stage/*_converted.φ
+# is gitignored (.gitignore:67) and carries no tracked file — `git ls-files
+# phi/pipeline/stage` is empty, so a CI checkout has no stage/ and the glob
+# matched 0 files, while upload-artifact found no probe-results/ and still
+# reported green. The stage/ corpus chain runs local-only since the 2026-09-17
+# relocation (the source port; the discovery chain is local,
+# the source port), so no CI path carries the probe input. Never built,
+# not needed — no silent job.

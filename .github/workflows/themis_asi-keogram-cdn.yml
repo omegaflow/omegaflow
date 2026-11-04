@@ -1,0 +1,120 @@
+# harvest: format=themis_asi_keogram asset=present arm=themis_asi_keogram_compiler pattern=^[0-9]{8}__.+_full-keogram\.pgm\.jpg$ idempotent=true timeout=120 tag=data.phys.ucalgary.ca
+
+# auto-dispatch: manual — station and date are required per-act inputs (the station coordinate table is pending); auto-dispatch cannot supply them
+name: themis_asi-keogram-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: 'THEMIS ASI station label (e.g. atha_themis02) or bare code (e.g. atha)'
+        required: true
+        type: string
+      date:
+        description: 'night YYYYMMDD; empty = use start/stop'
+        required: false
+        type: string
+        default: ''
+      start:
+        description: 'window start YYYYMMDD; used when date is empty'
+        required: false
+        type: string
+        default: ''
+      stop:
+        description: 'window stop YYYYMMDD; used when date is empty'
+        required: false
+        type: string
+        default: ''
+      force:
+        description: Re-manifest even when the night is already present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  themis-asi-keogram:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if every requested night is already manifested
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          DATE="${{ inputs.date }}"
+          START="${{ inputs.start }}"
+          STOP="${{ inputs.stop }}"
+          dates=""
+          if [ -n "$DATE" ]; then
+            dates="$DATE"
+          elif [ -n "$START" ] && [ -n "$STOP" ]; then
+            cur="$(date -u -d "${START:0:4}-${START:4:2}-${START:6:2}" +%Y%m%d)"
+            stop="$(date -u -d "${STOP:0:4}-${STOP:4:2}-${STOP:6:2}" +%Y%m%d)"
+            while [ "$cur" -le "$stop" ]; do
+              dates="$dates $cur"
+              cur="$(date -u -d "$(date -u -d "${cur:0:4}-${cur:4:2}-${cur:6:2}" +%F) +1 day" +%Y%m%d)"
+            done
+          fi
+          if [ -z "$dates" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "no date or start/stop given — the compiler decides (0 honored)"
+            exit 0
+          fi
+          assets="$(gh release view data.phys.ucalgary.ca --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          missing=0
+          for d in $dates; do
+            if printf '%s\n' "$assets" | grep -qE "^${d}__.+_full-keogram\.pgm\.jpg$"; then
+              echo "night ${d} already manifested"
+            else
+              echo "night ${d} missing — compiling and manifesting"
+              missing=1
+            fi
+          done
+          if [ "$missing" = "0" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "every requested night already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Compile the THEMIS ASI keograms and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          mkdir -p data/data.phys.ucalgary.ca
+          DATE="${{ inputs.date }}"
+          if [ -n "$DATE" ]; then
+            cargo run --release -p omegaflow-harvest --bin themis_asi_keogram_compiler -- \
+              --station "${{ inputs.station }}" \
+              --date "$DATE" \
+              --out data/data.phys.ucalgary.ca \
+              --ci-mode \
+              || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                   "themis_asi-keogram-cdn: keogram compile returned void" \
+                   "themis_asi_keogram_compiler returned void for ${{ inputs.station }} ${DATE}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                   health; exit 1; }
+          else
+            cargo run --release -p omegaflow-harvest --bin themis_asi_keogram_compiler -- \
+              --station "${{ inputs.station }}" \
+              --start "${{ inputs.start }}" \
+              --stop "${{ inputs.stop }}" \
+              --out data/data.phys.ucalgary.ca \
+              --ci-mode \
+              || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                   "themis_asi-keogram-cdn: keogram compile returned void" \
+                   "themis_asi_keogram_compiler returned void for ${{ inputs.station }} ${{ inputs.start }}..${{ inputs.stop }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                   health; exit 1; }
+          fi

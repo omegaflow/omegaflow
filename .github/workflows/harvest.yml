@@ -1,0 +1,161 @@
+# harvest: format=bc_mpo_mag asset=present arm=bc_mpo_mag_compiler pattern=^bc_mpo_mag\.bin$ idempotent=true timeout=60 tag=psa.esa.int
+# harvest: format=catalog_gaia_sso asset=present arm=gaia_sso_compiler pattern=^gaia_sso_tno\.bin$ idempotent=true tag=gea.esac.esa.int
+# harvest: format=ephemeris_epm asset=present arm=epm_compiler pattern=^ephemeris_epm_[a-z]+\.bin$ idempotent=true tag=ftp.iaaras.ru
+# harvest: format=gedi_l2a asset=present arm=gedi_l2a_compiler pattern=^gedi_l2a\.bin$ idempotent=true timeout=180 tag=data.lpdaac.earthdatacloud.nasa.gov args=--cmr --day 2025.07.09 --version 002
+# harvest: format=goes16_abi asset=present arm=goes16_abi_compiler pattern=^goes16_abi\.bin$ idempotent=true tag=noaa-goes16.s3.amazonaws.com
+# harvest: format=hips_png asset=present arm=hips_png_compiler pattern=^hips_png_[0-9]+_[0-9]+\.bin$ idempotent=true timeout=120 tag=alasky.cds.unistra.fr args=--properties https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/properties --tile https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/Norder7/Dir0/Npix0.png
+# harvest: format=icesat2_atl03 asset=present arm=icesat2_atl03_compiler pattern=^icesat2_atl03\.bin$ idempotent=true timeout=360 tag=data.nsidc.earthdatacloud.nasa.gov args=--cmr --day 2026.06.30 --version 007 --limit 1 --skip 10
+# harvest: format=maven_tnf asset=present arm=maven_tnf_compiler pattern=^maven_tnf_t[0-9]+_[0-9]+(_[0-9]+)?\.bin$ idempotent=true tag=pds-ppi.igpp.ucla.edu shard=3
+# harvest: format=odyssey_odf asset=present arm=odyssey_odf_compiler pattern=^odyssey_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$ idempotent=true tag=pds-geosciences.wustl.edu shard=4
+# harvest: format=openneuro_brainvision asset=present arm=brainvision_compiler pattern=^sub-[0-9]+_task-jointaction_eeg\.bin$ idempotent=true timeout=350 tag=openneuro.org shard=32 args=--dataset ds007471
+# harvest: format=openneuro_eeg asset=present arm=openneuro_compiler pattern=^sub-[0-9]+_ses-[a-z]+_task-[a-z]+_eeg\.bin$ idempotent=true tag=openneuro.org
+# harvest: format=openneuro_pd_eeg asset=present arm=openneuro_compiler pattern=^sub-G[0-9]+S[0-9]+_task-pd(decision|feedback|rest)_eeg\.bin$ idempotent=true timeout=240 tag=openneuro.org args=--dataset ds007822
+# harvest: format=openneuro_snirf asset=present arm=snirf_compiler pattern=^sub-101_ses-02_.*_nirs\.bin$ idempotent=true timeout=240 tag=openneuro.org args=--dataset ds008192 --subject sub-101 --session 02
+# harvest: format=rosetta_odf asset=present arm=rosetta_odf_compiler pattern=^rosetta_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$ idempotent=true timeout=350 tag=archives.esac.esa.int
+# harvest: format=swot_l2_lr_ssh asset=present arm=swot_l2_lr_ssh_compiler pattern=^swot_l2_lr_ssh\.bin$ idempotent=true timeout=120 tag=archive.podaac.earthdata.nasa.gov args=--cmr --day 2026.09.14 --short-name SWOT_L2_LR_SSH_UNSMOOTHED_D
+# harvest: format=ulysses_atdf asset=present arm=ulysses_atdf_compiler pattern=^ulysses_atdf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$ idempotent=true tag=pds-ppi.igpp.ucla.edu shard=1
+# harvest: format=ulysses_atdf_x asset=present arm=ulysses_atdf_compiler pattern=^ulysses_atdf_x(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$ idempotent=true tag=pds-ppi.igpp.ucla.edu shard=1
+
+name: harvest
+
+concurrency:
+  group: harvest-${{ github.event.inputs.format }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      format:
+        description: format name — the harvest header key
+        required: true
+        type: string
+      force:
+        description: compile even when the idempotence gate sees the asset present
+        required: false
+        type: boolean
+        default: false
+      timeout:
+        description: explicit job timeout override — absent, the harvest header timeout field carries
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    env:
+      FORMAT: ${{ github.event.inputs.format }}
+    outputs:
+      tag: ${{ steps.block.outputs.tag }}
+      arm: ${{ steps.block.outputs.arm }}
+      pattern: ${{ steps.block.outputs.pattern }}
+      shard: ${{ steps.block.outputs.shard }}
+      idem: ${{ steps.block.outputs.idem }}
+      args: ${{ steps.block.outputs.args }}
+      timeout: ${{ steps.block.outputs.timeout }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Read the harvest header for ${{ github.event.inputs.format }}
+        id: block
+        run: |
+          line=$(grep -m1 "^# harvest: format=$FORMAT " .github/workflows/harvest.yml || true)
+          if [ -z "$line" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT has no measured harvest header in harvest.yml" \
+              "no '# harvest: format=$FORMAT' header in .github/workflows/harvest.yml — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          tag=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]tag=\([^ ]*\).*/\1/p')
+          arm=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]arm=\([^ ]*\).*/\1/p')
+          pattern=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]pattern=\([^ ]*\).*/\1/p')
+          shard=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]shard=\([^ ]*\).*/\1/p')
+          idem=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]idempotent=\([^ ]*\).*/\1/p')
+          args=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]args=//p')
+          timeout=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]timeout=\([^ ]*\).*/\1/p')
+          if [ -z "$tag" ] || [ -z "$arm" ] || [ -z "$pattern" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT carries incomplete fields in the harvest header" \
+              "the $FORMAT header is missing tag, arm or pattern — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          if [ "$idem" != "true" ] && [ "$idem" != "false" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT carries no idempotent verdict in the harvest header" \
+              "the $FORMAT header has no true|false idempotent field — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "arm=$arm" >> "$GITHUB_OUTPUT"
+          echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
+          echo "shard=$shard" >> "$GITHUB_OUTPUT"
+          echo "idem=$idem" >> "$GITHUB_OUTPUT"
+          echo "args=$args" >> "$GITHUB_OUTPUT"
+          echo "timeout=$timeout" >> "$GITHUB_OUTPUT"
+
+  harvest:
+    needs: register
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJSON(github.event.inputs.timeout || needs.register.outputs.timeout || '240') }}
+    env:
+      FORMAT: ${{ github.event.inputs.format }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence gate — the CDN is the second witness
+        id: gate
+        run: |
+          if [ "${{ needs.register.outputs.idem }}" = "true" ] && [ "${{ github.event.inputs.force }}" != "true" ]; then
+            if gh release view "${{ needs.register.outputs.tag }}" --repo omegaflow/sources \
+                 --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "${{ needs.register.outputs.pattern }}"; then
+              echo "present=true" >> "$GITHUB_OUTPUT"
+              echo "asset matching the pattern already present on the CDN — harvest skipped"
+              exit 0
+            fi
+          fi
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          echo "no asset matching the pattern on the CDN — compiling"
+      - name: Compile the harvest and manifest it to the CDN
+        id: compile
+        if: steps.gate.outputs.present == 'false'
+        run: |
+          read -r -a argv <<< "${{ needs.register.outputs.args }}"
+          set +e
+          cargo run --release -p omegaflow-harvest --bin "${{ needs.register.outputs.arm }}" -- "${argv[@]}" --ci-mode > compile.log 2>&1
+          rc=$?
+          set -e
+          cat compile.log
+          if [ "$rc" -ne 0 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT returned void" \
+              "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Second witness — the asset stands after the compile
+        if: needs.register.outputs.idem == 'true'
+        run: |
+          assets=$(gh release view "${{ needs.register.outputs.tag }}" --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Ec "${{ needs.register.outputs.pattern }}" || true)
+          shard="${{ needs.register.outputs.shard }}"
+          if [ "$assets" -eq 0 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT still has no asset on the CDN after the compile" \
+              "The $FORMAT compile completed but the idempotence pattern matched no asset on the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+          if [ -n "$shard" ] && [ "$assets" -ne "$shard" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT shard is incomplete on the CDN after the compile" \
+              "The $FORMAT compile completed but $assets asset(s) match the pattern, the register shard is $shard. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+          echo "asset present after the compile — the harvest stands"

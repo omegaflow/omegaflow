@@ -1,0 +1,55 @@
+# harvest: format=iris asset=present arm=iris_compiler pattern=^iris\.bin$ idempotent=true timeout=120 tag=vso.stanford.edu
+
+name: iris-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the bin is already present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  iris:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the bin is already manifested
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view vso.stanford.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^iris\.bin$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset iris.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset iris.bin missing — compiling and manifesting"
+          fi
+      - name: Fetch the IRIS level-2 observation, compile the raw pixels and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          mkdir -p kernels data/vso.stanford.edu
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/iris.tar.gz \
+            https://www.lmsal.com/solarsoft/irisa/data/level2_compressed/2014/07/08/20140708_114109_3824262996/iris_l2_20140708_114109_3824262996_raster.tar.gz
+          tar -xzf kernels/iris.tar.gz -C kernels
+          cargo run --release -p omegaflow-harvest --bin iris_compiler -- \
+            --input "kernels/iris_l2_20140708_114109_3824262996_raster.fits" \
+            --out data/vso.stanford.edu/iris.bin --ci-mode

@@ -1,0 +1,50 @@
+name: pioneer-link-correction
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pioneer-link-correction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the Pioneer-10 link corpus from the CDN
+        run: |
+          mkdir -p data/spdf.gsfc.nasa.gov data/ssd.jpl.nasa.gov cache
+          for attempt in 1 2 3; do
+            gh release download spdf.gsfc.nasa.gov --repo omegaflow/sources \
+              --pattern 'pioneer10_skyfreq.bin' --clobber --dir data/spdf.gsfc.nasa.gov \
+              && gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --pattern 'ephemeris_earth.bin' --pattern 'ephemeris_pioneer10_daily.bin' \
+              --clobber --dir data/ssd.jpl.nasa.gov \
+              && gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --pattern 'omni2_serie.bin' --clobber --dir cache \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
+          test -s data/ssd.jpl.nasa.gov/ephemeris_earth.bin
+          test -s data/ssd.jpl.nasa.gov/ephemeris_pioneer10_daily.bin
+          test -s cache/omni2_serie.bin
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > pioneer-link-correction.txt
+      - name: Run the Pioneer-10 link-correction probe
+        run: |
+          cargo run --release -p omegaflow-measure --bin pioneer_link_correction_probe \
+            >> pioneer-link-correction.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pioneer-link-correction
+          path: pioneer-link-correction.txt

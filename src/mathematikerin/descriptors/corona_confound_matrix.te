@@ -1,0 +1,22 @@
+# corona_confound_matrix.te — TE-Probes-Wanderung: the corona_confound_matrix_probe as a
+# conditional TE matrix over the registered solar EUV/X-ray fields.
+# channels: the 7 AIA bands (aia_94_dn .. aia_335_dn, phi/sources.φ:1830-1836) + the two
+#   GOES XRS channels (goes_xrs_xrsa/goes_xrs_xrsb, phi/sources.φ:901-902) — the probe's
+#   nine actors (corona_confound_matrix_probe.rs:13-31: LADDER = 7 AIA, CHANNELS = 304/131,
+#   CONFOUNDERS = 171/193/211/335/94/goes).
+# cond rest: every ordered pair (d,t) is conditioned on the pool minus {d,t} — the probe's
+#   per-confounder conditional TE (conditional_te_stats / transfer_entropy_conditional_h),
+#   the confounder never a fixed arm.
+# cadence: 24-s cells (corona_confound_matrix_probe.rs:5 DT 24.0); lags 0,4,8 (:10 LAGS);
+#   phase-randomized surrogates (surrogate_stats_phase).
+matrix corona-confound full
+register sources
+channels aia_94_dn,aia_131_dn,aia_171_dn,aia_193_dn,aia_211_dn,aia_304_dn,aia_335_dn,goes_xrs_xrsa,goes_xrs_xrsb
+cond rest
+fdr bh 0.05 over matrix
+expect cells 72
+lags 0,4,8
+surrogate 10
+cadence live
+bin 24
+seasonal none

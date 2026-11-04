@@ -1,0 +1,3 @@
+# frame origin — the body whose ephemeris anchors the barycentric frame.
+# The code carries no origin of its own; this declaration is the register.
+sun

@@ -1,0 +1,22 @@
+name: polarbase-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  polarbase:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"polarbase.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"B/polarbase/polarbase\" --columns 'ra:RA_ICRS;dec:DE_ICRS;teff:Teff;logg:logg;mag:Vmag' --skip-null teff --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' --out polarbase.json"}
+        ]

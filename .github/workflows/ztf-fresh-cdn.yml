@@ -1,0 +1,23 @@
+name: ztf-fresh-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  id-token: write
+
+jobs:
+  ztf-fresh:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"ztf_lightcurves_compiler","netloc":"irsa.ipac.caltech.edu","asset":"ztf_lightcurves_fresh.bin","args":"--cone 210 30 --radius 0.02 --out ztf_lightcurves_fresh.bin"}
+        ]

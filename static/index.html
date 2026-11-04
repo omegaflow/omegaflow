@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>omegaflow</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system-ui, monospace; overflow: hidden; }
+#surface { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#status {
+  position: fixed; left: 12px; bottom: 10px; font-size: 12px; letter-spacing: 0.05em;
+  color: #6b6256; pointer-events: none; user-select: none;
+}
+#consent-gate {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: rgba(10, 9, 8, 0.94); border: 1px solid rgba(168, 152, 120, 0.25);
+  border-radius: 6px; padding: 14px 18px; max-width: 640px; z-index: 10;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); opacity: 0; display: none;
+}
+#consent-gate.show { animation: gateIn 0.25s ease forwards; }
+#consent-gate .question { font-size: 13px; line-height: 1.5; color: #c4b9a8; }
+#consent-gate .actions { display: flex; gap: 12px; margin-top: 12px; justify-content: flex-end; }
+#consent-gate button {
+  padding: 8px 22px; font: inherit; font-size: 13px; border-radius: 3px; cursor: pointer;
+  background: transparent; color: #a89878; border: 1px solid rgba(168, 152, 120, 0.3);
+  transition: all 0.2s ease;
+}
+#consent-gate button:hover { background: rgba(168, 152, 120, 0.12); }
+#consent-gate #consent-yes { background: rgba(168, 152, 120, 0.12); color: #e8ddc8; }
+#consent-state {
+  position: fixed; right: 12px; top: 10px; font-size: 12px; color: #6b6256;
+  cursor: pointer; user-select: none; z-index: 9;
+}
+#consent-state:hover { color: #c4b9a8; }
+#verdicts {
+  position: fixed; left: 12px; top: 10px; font-size: 12px; color: #a89878;
+  max-width: 60vw; pointer-events: none; user-select: none; z-index: 9;
+}
+@keyframes gateIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+</style>
+</head>
+<body>
+<canvas id="surface"></canvas>
+<div id="status"></div>
+<div id="consent-state" title="change consent"></div>
+<div id="verdicts"></div>
+<div id="consent-gate">
+  <p class="question">Do you consent to this page accessing your device's sensors, processing the data locally, and generating sound, light, vibration, and signals?</p>
+  <div class="actions">
+    <button id="consent-no">No</button>
+    <button id="consent-yes">Yes</button>
+  </div>
+</div>
+<script type="module">
+import { syncFrame, parseRecords, parseKinetic, parseVerdicts, parseColorLut, parseManifest, PROTOCOL_VERSION, KINETIC_TAG, VERDICT_TAG, MANIFEST_TAG } from "./constants.js";
+
+const canvas = document.getElementById("surface");
+const statusEl = document.getElementById("status");
+const consentEl = document.getElementById("consent-gate");
+const consentStateEl = document.getElementById("consent-state");
+const verdictsEl = document.getElementById("verdicts");
+const CONSENT_KEY = "omegaflow.consent.stationFlow";
+
+const GRID_INIT = 2147483648.0;
+
+const state = {
+  px: 0, py: 0, pz: 0,
+  vx: 0, vy: 0, vz: 0,
+  scale: GRID_INIT,
+  range: 1280.0 * GRID_INIT * 2.0,
+  lvlOffset: 0,
+  lvl: 1.0,
+  t: 0,
+  t0: 0,
+  tStart: performance.now(),
+  id: 0,
+  consented: false,
+  colorMode: "field",
+  manifest: null,
+};
+
+const held = new Set();
+
+function thrust() {
+  return state.scale;
+}
+
+function status(text) {
+  statusEl.textContent = text;
+}
+
+async function fetchText(path) {
+  const r = await fetch(path);
+  if (!r.ok) {
+    return null;
+  }
+  return r.text();
+}
+
+async function fetchColorLut() {
+  try {
+    const r = await fetch("/color_lut");
+    if (!r.ok) {
+      return null;
+    }
+    return parseColorLut(new Uint8Array(await r.arrayBuffer()));
+  } catch {
+    return null;
+  }
+}
+
+function colorLabel() {
+  return "color: " + (colorLut ? state.colorMode : "field");
+}
+
+let sensors = null;
+let radiator = null;
+
+function showGate() {
+  consentEl.style.display = "block";
+  consentEl.classList.remove("show");
+  void consentEl.offsetWidth;
+  consentEl.classList.add("show");
+}
+
+function hideGate() {
+  consentEl.style.display = "none";
+}
+
+function noteConsent() {
+  const n = sensors ? sensors.size() : 0;
+  const peers = radiator ? radiator.peers().length : 0;
+  consentStateEl.textContent = "consent: " + (state.consented ? "record · " + n + " sensors · " + peers + " radiators" : "silent") + " · change";
+}
+
+async function setConsent(on) {
+  state.consented = on;
+  try { localStorage.setItem(CONSENT_KEY, on ? "yes" : "no"); } catch {}
+  try { await fetchText("/consent?" + (on ? "ja" : "nein")); } catch {}
+  if (on) {
+    if (radiator) { radiator.start(); }
+    if (sensors) { sensors.start(); }
+  } else {
+    if (sensors) { sensors.stop(); }
+    if (radiator) { radiator.stop(); }
+  }
+  hideGate();
+  noteConsent();
+}
+
+document.getElementById("consent-yes").addEventListener("click", () => setConsent(true));
+document.getElementById("consent-no").addEventListener("click", () => setConsent(false));
+consentStateEl.addEventListener("click", showGate);
+
+let verdictLines = [];
+
+function applyVerdicts(lines) {
+  verdictLines = lines;
+  if (!lines.length) {
+    verdictsEl.textContent = "";
+    return;
+  }
+  const riss = lines.filter((l) => l.word === "riss");
+  if (riss.length) {
+    verdictsEl.textContent = riss
+      .map((l) => "riss " + l.name + " (" + l.knot.filter(Boolean).join(" × ") + ")")
+      .join(" · ");
+    return;
+  }
+  const placed = lines.filter((l) => l.word === "placed").length;
+  verdictsEl.textContent = "woven: " + placed + "/" + lines.length + " body lines placed";
+}
+
+async function readConsent() {
+  let stored = null;
+  try { stored = localStorage.getItem(CONSENT_KEY); } catch {}
+  if (stored === "yes") {
+    await setConsent(true);
+    return;
+  }
+  if (stored === "no") {
+    await setConsent(false);
+    return;
+  }
+  showGate();
+  noteConsent();
+}
+
+const fieldShader = `
+// vp.expose = (lvl, color_mode, lut_lo, lut_hi): color_mode >= 0.5 selects the
+// measured color LUT; lvl is the exposure level in both modes.
+struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
+@group(0) @binding(0) var<storage, read> field: array<vec4f>;
+@group(0) @binding(1) var<storage, read> props: array<vec4f>;
+@group(0) @binding(2) var<uniform> vp: VP;
+@group(0) @binding(3) var<storage, read> lut: array<vec4f>;
+struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @location(1) color: vec4f };
+@vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
+    let count = u32(vp.surface.z);
+    var out: VOut;
+    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
+    out.local_uv = vec2f(0.0);
+    out.color = vec4f(0.0);
+    if (count == 0u) { return out; }
+    let id = i / 6u;
+    if (id >= count) { return out; }
+    let vid = i % 6u;
+    var quad = array<vec2f, 6>(
+        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
+        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
+    );
+    let m = field[id * 3];
+    let d = m.xyz;
+    let val = m.w;
+    let extent = props[id * 4].x;
+    let w = vp.surface.x;
+    let h = vp.surface.y;
+    let scale = vp.surface.w;
+    let x = dot(d, vp.right.xyz);
+    let y = dot(d, vp.up.xyz);
+    var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
+    let point_size_px = clamp(extent / scale, 2.0, 128.0);
+    clip.x += (quad[vid].x * point_size_px) / w * 2.0;
+    clip.y += (quad[vid].y * point_size_px) / h * 2.0;
+    out.pos = vec4f(clip, 0.0, 1.0);
+    out.local_uv = quad[vid];
+    let lvl = vp.expose.x;
+    if (lvl <= 0.0) { return out; }
+    let aw = abs(val);
+    let t2 = clamp((log2(aw / lvl) + 8.0) / 24.0, 0.0, 1.0);
+    if (vp.expose.y >= 0.5) {
+        let ci = props[id * 4 + 2].z;
+        var rgb = vec3f(1.0, 1.0, 1.0);
+        if (ci != 0.0) {
+            let lo = vp.expose.z;
+            let hi = vp.expose.w;
+            let idx = u32(clamp(floor((ci - lo) / (hi - lo) * 256.0), 0.0, 255.0));
+            rgb = lut[idx].rgb;
+        }
+        out.color = vec4f(rgb * t2, 1.0);
+        return out;
+    }
+    let t2s = t2 * t2 * (3.0 - 2.0 * t2);
+    let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.15, 0.4), clamp(t2s * 4.0, 0.0, 1.0));
+    let c2 = mix(c1, vec3f(0.1, 0.5, 0.9), clamp((t2s - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(0.8, 0.6, 0.2), clamp((t2s - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 0.95, 0.9), clamp((t2s - 0.75) * 4.0, 0.0, 1.0));
+    out.color = vec4f(c4, 1.0);
+    return out;
+}
+@fragment fn fs(in: VOut) -> @location(0) vec4f {
+    let dist = length(in.local_uv);
+    if (dist > 1.0) {
+        discard;
+    }
+    let intensity = exp(-dist * dist * 4.0);
+    return vec4f(in.color.rgb * intensity * in.color.a, intensity * in.color.a);
+}
+`;
+
+let device = null;
+let context = null;
+let fieldBuf = null;
+let propsBuf = null;
+let vpBuf = null;
+let lutBuf = null;
+let colorLut = null;
+let fieldCap = 0;
+let pipeline = null;
+let bindGroup = null;
+const vpData = new Float32Array(16);
+
+async function initGPU() {
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) {
+    status("no adapter");
+    return false;
+  }
+  device = await adapter.requestDevice();
+  context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format, alphaMode: "premultiplied" });
+
+  const module = device.createShaderModule({ code: fieldShader });
+  const layout = device.createBindGroupLayout({ entries: [
+    { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
+    { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
+    { binding: 2, visibility: GPUShaderStage.VERTEX, buffer: { type: "uniform" } },
+    { binding: 3, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
+  ] });
+
+  ensureBuffers(4096);
+  vpBuf = device.createBuffer({ size: 64, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+  lutBuf = device.createBuffer({ size: 256 * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+  if (colorLut) {
+    device.queue.writeBuffer(lutBuf, 0, colorLut.lut);
+  }
+
+  pipeline = device.createRenderPipeline({
+    layout: device.createPipelineLayout({ bindGroupLayouts: [layout] }),
+    vertex: { module, entryPoint: "vs" },
+    fragment: {
+      module, entryPoint: "fs",
+      targets: [{
+        format,
+        blend: {
+          color: { srcFactor: "one", dstFactor: "one", operation: "add" },
+          alpha: { srcFactor: "one", dstFactor: "one", operation: "add" },
+        },
+      }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+
+  bindGroup = device.createBindGroup({
+    layout,
+    entries: [
+      { binding: 0, resource: { buffer: fieldBuf } },
+      { binding: 1, resource: { buffer: propsBuf } },
+      { binding: 2, resource: { buffer: vpBuf } },
+      { binding: 3, resource: { buffer: lutBuf } },
+    ],
+  });
+  return true;
+}
+
+function ensureBuffers(count) {
+  if (count <= fieldCap) {
+    return;
+  }
+  fieldCap = count * 2;
+  const f = device.createBuffer({ size: fieldCap * 12 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+  const p = device.createBuffer({ size: fieldCap * 16 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+  fieldBuf = f;
+  propsBuf = p;
+  if (bindGroup) {
+    bindGroup = device.createBindGroup({
+      layout: bindGroup.layout,
+      entries: [
+        { binding: 0, resource: { buffer: fieldBuf } },
+        { binding: 1, resource: { buffer: propsBuf } },
+        { binding: 2, resource: { buffer: vpBuf } },
+        { binding: 3, resource: { buffer: lutBuf } },
+      ],
+    });
+  }
+}
+
+function render(record) {
+  if (!device) {
+    return;
+  }
+  ensureBuffers(record.count);
+  const field = record.field;
+  for (let j = 0; j < record.count; j++) {
+    field[j * 12] -= state.px;
+    field[j * 12 + 1] -= state.py;
+    field[j * 12 + 2] -= state.pz;
+  }
+  device.queue.writeBuffer(fieldBuf, 0, field, 0, record.count * 12);
+  device.queue.writeBuffer(propsBuf, 0, record.meta, 0, record.count * 16);
+
+  const w = canvas.width;
+  const h = canvas.height;
+  vpData[0] = w;
+  vpData[1] = h;
+  vpData[2] = record.count;
+  vpData[3] = state.scale;
+  vpData[4] = 1; vpData[5] = 0; vpData[6] = 0; vpData[7] = 0;
+  vpData[8] = 0; vpData[9] = 1; vpData[10] = 0; vpData[11] = 0;
+  vpData[12] = state.lvl * Math.pow(2, state.lvlOffset);
+  vpData[13] = state.colorMode === "measured" && colorLut ? 1 : 0;
+  vpData[14] = colorLut ? colorLut.lo : 0;
+  vpData[15] = colorLut ? colorLut.hi : 1;
+  device.queue.writeBuffer(vpBuf, 0, vpData);
+
+  const pass = device.createCommandEncoder();
+  const rp = pass.beginRenderPass({
+    colorAttachments: [{
+      view: context.getCurrentTexture().createView(),
+      loadOp: "clear",
+      storeOp: "store",
+      clearValue: { r: 0, g: 0, b: 0, a: 0 },
+    }],
+  });
+  rp.setPipeline(pipeline);
+  rp.setBindGroup(0, bindGroup);
+  rp.draw(record.count * 6);
+  rp.end();
+  device.queue.submit([pass.finish()]);
+}
+
+function updateLvl(record) {
+  let maxAbs = 0;
+  for (let j = 0; j < record.count; j++) {
+    const a = Math.abs(record.field[j * 12 + 3]);
+    if (a > maxAbs) {
+      maxAbs = a;
+    }
+  }
+  if (maxAbs > 0) {
+    const alpha = 1 - Math.exp(-1 / 8);
+    state.lvl = state.lvl + (maxAbs - state.lvl) * alpha;
+  }
+}
+
+function queries() {
+  const w = canvas.width;
+  const h = canvas.height;
+  const hw = w * state.scale * 0.5;
+  const hh = h * state.scale * 0.5;
+  const t = state.t;
+  return [
+    [t, state.px, state.py, state.pz],
+    [t, state.px - hw, state.py - hh, state.pz],
+    [t, state.px + hw, state.py - hh, state.pz],
+    [t, state.px - hw, state.py + hh, state.pz],
+    [t, state.px + hw, state.py + hh, state.pz],
+  ];
+}
+
+let ws = null;
+let pendingInputs = [];
+
+function connect() {
+  ws = new WebSocket("ws://" + location.host);
+  ws.binaryType = "arraybuffer";
+  ws.onmessage = (ev) => {
+    const bytes = new Uint8Array(ev.data);
+    if (bytes.byteLength < 3) {
+      return;
+    }
+    const tag = bytes[2];
+    if (tag === KINETIC_TAG) {
+      const k = parseKinetic(bytes);
+      if (radiator) {
+        radiator.onFrame(k.omega, k.aperture, k.pan, k.tilt);
+      }
+      return;
+    }
+    if (tag === VERDICT_TAG) {
+      applyVerdicts(parseVerdicts(bytes));
+      return;
+    }
+    if (tag === MANIFEST_TAG) {
+      state.manifest = parseManifest(bytes);
+      return;
+    }
+    if (tag !== PROTOCOL_VERSION) {
+      return;
+    }
+    const record = parseRecords(bytes);
+    updateLvl(record);
+    render(record);
+  };
+  ws.onclose = () => {
+    status("relay closed");
+    setTimeout(connect, 1000);
+  };
+  ws.onerror = () => {
+    status("relay unreachable");
+  };
+}
+
+function sendFrame() {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    return;
+  }
+  const inputs = pendingInputs;
+  pendingInputs = [];
+  state.id += 1;
+  const presence = {
+    x: state.px, y: state.py, z: state.pz,
+    t: state.t,
+    range: state.range,
+    cacheInterval: 0,
+    vx: state.vx, vy: state.vy, vz: state.vz,
+    thrustT: 0,
+    gridStep: state.scale,
+  };
+  const buf = syncFrame(state.id, inputs, queries(), presence);
+  ws.send(buf);
+}
+
+function recordSample(name, value, tau) {
+  if (!state.consented) {
+    return;
+  }
+  pendingInputs.push({ name, value, tau });
+}
+
+function jumpTo(x, y, z) {
+  state.px = x;
+  state.py = y;
+  state.pz = z;
+}
+
+async function jumpBody(body) {
+  const text = await fetchText("/jump/" + encodeURIComponent(body));
+  if (text === null) {
+    status("body " + body + " absent");
+    return;
+  }
+  const parts = text.trim().split(/\s+/).map(Number);
+  if (parts.length >= 3 && parts.every(Number.isFinite)) {
+    jumpTo(parts[0], parts[1], parts[2]);
+    status("presence at " + body);
+  }
+}
+
+window.omegaflow = { recordSample, jumpTo, jumpBody, consent: () => state.consented, verdicts: () => verdictLines };
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
+  canvas.height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+}
+window.addEventListener("resize", resize);
+
+window.addEventListener("keydown", (e) => {
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
+    return;
+  }
+  if (e.key === "s" || e.key === "S") {
+    held.clear();
+    state.vx = 0; state.vy = 0; state.vz = 0;
+    return;
+  }
+  if (e.key === "e") {
+    state.lvlOffset += 1;
+    return;
+  }
+  if (e.key === "E") {
+    state.lvlOffset -= 1;
+    return;
+  }
+  if (e.key === "c" || e.key === "C") {
+    if (!colorLut) {
+      status("color: measured absent (color_lut)");
+      return;
+    }
+    state.colorMode = state.colorMode === "field" ? "measured" : "field";
+    status("arrows thrust · s halt · e/E light · -/= zoom · " + colorLabel());
+    return;
+  }
+  if (e.key === "=" || e.key === "+") {
+    state.scale *= 0.5;
+    return;
+  }
+  if (e.key === "-" || e.key === "_") {
+    state.scale *= 2.0;
+    return;
+  }
+  held.add(e.key);
+});
+
+window.addEventListener("keyup", (e) => {
+  held.delete(e.key);
+});
+
+window.addEventListener("wheel", (e) => {
+  state.scale *= Math.pow(2, e.deltaY * 0.001);
+});
+
+function integrate(dt) {
+  let vx = 0, vy = 0, vz = 0;
+  const t = thrust();
+  if (held.has("ArrowLeft")) { vx -= t; }
+  if (held.has("ArrowRight")) { vx += t; }
+  if (held.has("ArrowUp")) { vy += t; }
+  if (held.has("ArrowDown")) { vy -= t; }
+  if (held.has(".")) { vz += t; }
+  if (held.has(",")) { vz -= t; }
+  state.vx = vx;
+  state.vy = vy;
+  state.vz = vz;
+  state.px += vx * dt;
+  state.py += vy * dt;
+  state.pz += vz * dt;
+}
+
+async function boot() {
+  resize();
+  readConsent();
+  const timeText = await fetchText("/time");
+  if (timeText === null) {
+    status("time absent");
+    return;
+  }
+  state.t0 = Number(timeText.trim());
+  if (!Number.isFinite(state.t0)) {
+    status("time absent");
+    return;
+  }
+  state.t = state.t0;
+  const lut = await fetchColorLut();
+  if (lut) {
+    colorLut = lut;
+  }
+  const ok = await initGPU();
+  if (!ok) {
+    return;
+  }
+  connect();
+  status("arrows thrust · s halt · e/E light · -/= zoom · " + colorLabel());
+}
+
+let last = performance.now();
+function loop(now) {
+  const dt = (now - last) / 1000;
+  last = now;
+  state.t = state.t0 + (now - state.tStart) / 1000;
+  integrate(dt);
+  sendFrame();
+  requestAnimationFrame(loop);
+}
+
+let serial = null;
+let sensoriumModule = null;
+let radiatorModule = null;
+try {
+  await import("./palette.js");
+} catch {}
+try {
+  serial = await import("./webserial.js");
+} catch {}
+try {
+  sensoriumModule = await import("./sensorium.js");
+} catch {}
+try {
+  radiatorModule = await import("./radiator.js");
+} catch {}
+
+if (sensoriumModule) {
+  sensors = sensoriumModule.createSensorium({
+    record: recordSample,
+    consent: () => state.consented,
+    onState: noteConsent,
+  });
+}
+if (radiatorModule) {
+  radiator = radiatorModule.createRadiator({
+    consent: () => state.consented,
+    serial,
+    onState: noteConsent,
+  });
+}
+
+boot();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+name: pangaea-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  pangaea:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"pangaea_harvester","netloc":"doi.pangaea.de","asset":"pangaea_758961.json","args":"--id PANGAEA.758961 --out pangaea_758961.json"}
+        ]

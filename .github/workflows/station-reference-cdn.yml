@@ -1,0 +1,66 @@
+# harvest: format=text asset=stations_itrf93_2005.tsv arm=station_reference_compiler pattern=^stations_itrf93_2005\.tsv$ idempotent=true timeout=120 tag=ssd.jpl.nasa.gov-stations
+
+name: station-reference-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the asset is present
+        type: boolean
+        default: false
+  schedule:
+    - cron: "23 6 1 * *"
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  station-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view ssd.jpl.nasa.gov-stations --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^stations_itrf93_2005.tsv$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset stations_itrf93_2005.tsv already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset stations_itrf93_2005.tsv missing — compiling and manifesting"
+          fi
+      - name: Fetch the ITRF93 station kernel and the NN11 row
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          gh release download ssd.jpl.nasa.gov-stations --repo omegaflow/sources \
+            --pattern earthstns_itrf93_260814.bsp --dir /tmp --clobber
+          mv /tmp/earthstns_itrf93_260814.bsp /tmp/earthstns.bsp
+          echo "007eb0aad5dd022c6d61bdbfb2395680bd1eb31c49a8637d0b0a1cfbea737c6b  /tmp/earthstns.bsp" | sha256sum -c -
+          gh release download ssd.jpl.nasa.gov-stations --repo omegaflow/sources \
+            --pattern nn11_station.tsv --dir /tmp --clobber
+          echo "38f137e3eb7b3ad9723c8eb4a7f089198cd8466b0f817a6f4a47c0557f4a0dd9  /tmp/nn11_station.tsv" | sha256sum -c -
+      - name: Compile and manifest the DSN station table to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin station_reference_compiler -- \
+            --bsp /tmp/earthstns.bsp \
+            --extra /tmp/nn11_station.tsv \
+            --body earth \
+            --out sources/ssd.jpl.nasa.gov/stations_itrf93_2005.tsv \
+            --expect-sha256 eac212138165ea644648e2993a22eb9f6f3823e1f65f6eb2d993e7c00250ca51 \
+            --ci-mode

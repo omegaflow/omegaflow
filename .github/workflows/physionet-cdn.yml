@@ -1,0 +1,237 @@
+name: physionet-cdn
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: re-harvest every chunk, present or not (schema change)
+        required: false
+        type: boolean
+        default: false
+
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  mitdb:
+    concurrency:
+      group: physionet-cdn-mitdb
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile MIT-BIH Arrhythmia (electric) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern mitdb_arrhythmia.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin mitdb_compiler -- \
+              --out mitdb_arrhythmia.bin --ci-mode --jobs 8
+
+  mitdb-rr:
+    concurrency:
+      group: physionet-cdn-mitdb-rr
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile MIT-BIH RR intervals (annotation channel) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern mitdb_rr.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin mitdb_rr_compiler -- \
+              --out mitdb_rr.bin --ci-mode --jobs 8
+
+  circor:
+    concurrency:
+      group: physionet-cdn-circor
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile CirCor DigiScope PCG (acoustic) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern circor_pcg.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin phonocardiogram_compiler -- \
+              --out circor_pcg.bin --ci-mode --jobs 8
+
+  raster-bidsleep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      chunks: ${{ steps.gen.outputs.chunks }}
+      merge: ${{ steps.gen.outputs.merge }}
+    steps:
+      - id: gen
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.force }}" = "true" ]; then
+            chunks=""
+            for c in $(seq 0 7); do
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 36))}"
+            done
+            echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          names="$(gh release view physionet.org --repo omegaflow/sources \
+            --json assets --jq '.assets[].name')"
+          present="$(printf '%s\n' "$names" \
+            | sed -n 's/^bidsleep_mehrnacht_r\([0-9]\+\)\.bin$/\1/p')"
+          chunks=""
+          for c in $(seq 0 7); do
+            if ! printf '%s\n' "$present" | grep -qx "$c"; then
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 36))}"
+            fi
+          done
+          echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+          if printf '%s\n' "$names" | grep -qx 'bidsleep_mehrnacht.bin'; then
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  bidsleep:
+    needs: raster-bidsleep
+    concurrency:
+      group: physionet-cdn-bidsleep-${{ matrix.chunk }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.raster-bidsleep.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile BIDS Mehrnacht chunk (electric + advective) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "bidsleep_mehrnacht_r${{ matrix.chunk }}.bin" --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin bidsleep_compiler -- \
+            --out "bidsleep_mehrnacht_r${{ matrix.chunk }}.bin" --ci-mode --jobs 8 \
+            --offset ${{ matrix.offset }} --limit 36
+
+  bidsleep-merge:
+    concurrency:
+      group: physionet-cdn-bidsleep-merge
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [raster-bidsleep, bidsleep]
+    if: ${{ !cancelled() && needs.raster-bidsleep.outputs.merge == 'true' && (needs.bidsleep.result == 'success' || needs.bidsleep.result == 'skipped') }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Merge the eight BIDS Mehrnacht chunks into bidsleep_mehrnacht.bin and upload
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "bidsleep_mehrnacht_r[0-7].bin" --clobber 2>/dev/null || true
+          cargo run -p omegaflow-harvest --release --bin bidsleep_compiler -- \
+            --out bidsleep_mehrnacht.bin --ci-mode \
+            --merge bidsleep_mehrnacht_r0.bin bidsleep_mehrnacht_r1.bin \
+              bidsleep_mehrnacht_r2.bin bidsleep_mehrnacht_r3.bin \
+              bidsleep_mehrnacht_r4.bin bidsleep_mehrnacht_r5.bin \
+              bidsleep_mehrnacht_r6.bin bidsleep_mehrnacht_r7.bin
+
+  raster-ltmm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      chunks: ${{ steps.gen.outputs.chunks }}
+      merge: ${{ steps.gen.outputs.merge }}
+    steps:
+      - id: gen
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.force }}" = "true" ]; then
+            chunks=""
+            for c in $(seq 0 11); do
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 12))}"
+            done
+            echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          names="$(gh release view physionet.org --repo omegaflow/sources \
+            --json assets --jq '.assets[].name')"
+          present="$(printf '%s\n' "$names" \
+            | sed -n 's/^ltmm_movement_m\([0-9]\+\)\.bin$/\1/p')"
+          chunks=""
+          for c in $(seq 0 11); do
+            if ! printf '%s\n' "$present" | grep -qx "$c"; then
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 12))}"
+            fi
+          done
+          echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+          if printf '%s\n' "$names" | grep -qx 'ltmm_movement.bin'; then
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  ltmm:
+    needs: raster-ltmm
+    concurrency:
+      group: physionet-cdn-ltmm-${{ matrix.chunk }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.raster-ltmm.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile LTMM movement sub-chunk (advective) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "ltmm_movement_m${{ matrix.chunk }}.bin" --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
+            --out "ltmm_movement_m${{ matrix.chunk }}.bin" --ci-mode --jobs 8 \
+            --offset ${{ matrix.offset }} --limit 12
+
+  ltmm-merge:
+    concurrency:
+      group: physionet-cdn-ltmm-merge
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [raster-ltmm, ltmm]
+    if: ${{ !cancelled() && needs.raster-ltmm.outputs.merge == 'true' && (needs.ltmm.result == 'success' || needs.ltmm.result == 'skipped') }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Merge the twelve LTMM sub-chunks into ltmm_movement.bin and upload
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "ltmm_movement_m[0-9]*.bin" --clobber 2>/dev/null || true
+          cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
+            --out ltmm_movement.bin --ci-mode \
+            --merge ltmm_movement_m0.bin ltmm_movement_m1.bin \
+              ltmm_movement_m2.bin ltmm_movement_m3.bin \
+              ltmm_movement_m4.bin ltmm_movement_m5.bin \
+              ltmm_movement_m6.bin ltmm_movement_m7.bin \
+              ltmm_movement_m8.bin ltmm_movement_m9.bin \
+              ltmm_movement_m10.bin ltmm_movement_m11.bin

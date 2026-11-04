@@ -1,0 +1,484 @@
+use super::*;
+use crate::weberin::{BodyLine, StationLine, WitnessLine};
+
+pub const VERDICT_TAG: u8 = 11;
+pub const VERDICT_STALE_S: u64 = 604800;
+const MAGIC: [u8; 2] = [0xCF, 0x86];
+const NO_LINE: u8 = 0xFF;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum VerdictWord {
+    Placed,
+    Absent,
+    DirectionOnly,
+    Riss,
+}
+
+impl VerdictWord {
+    pub fn word(self) -> &'static str {
+        match self {
+            VerdictWord::Placed => "placed",
+            VerdictWord::Absent => "absent",
+            VerdictWord::DirectionOnly => "direction-only",
+            VerdictWord::Riss => "riss",
+        }
+    }
+
+    pub fn code(self) -> u8 {
+        match self {
+            VerdictWord::Placed => 0,
+            VerdictWord::Absent => 1,
+            VerdictWord::DirectionOnly => 2,
+            VerdictWord::Riss => 3,
+        }
+    }
+
+    pub fn from_code(code: u8) -> Option<Self> {
+        match code {
+            0 => Some(VerdictWord::Placed),
+            1 => Some(VerdictWord::Absent),
+            2 => Some(VerdictWord::DirectionOnly),
+            3 => Some(VerdictWord::Riss),
+            _ => None,
+        }
+    }
+}
+
+pub fn line_code(line: BodyLine) -> u8 {
+    match line {
+        BodyLine::Spk => 0,
+        BodyLine::Dastcom => 1,
+        BodyLine::Mpc => 2,
+        BodyLine::Inpop => 3,
+        BodyLine::Epm => 4,
+    }
+}
+
+pub fn line_from_code(code: u8) -> Option<BodyLine> {
+    match code {
+        0 => Some(BodyLine::Spk),
+        1 => Some(BodyLine::Dastcom),
+        2 => Some(BodyLine::Mpc),
+        3 => Some(BodyLine::Inpop),
+        4 => Some(BodyLine::Epm),
+        _ => None,
+    }
+}
+
+pub const INTERMAGNET_GROUND_CODE: u8 = 6;
+pub const SWARM_OVERFLIGHT_CODE: u8 = 7;
+
+pub fn witness_code(line: WitnessLine) -> u8 {
+    match line {
+        WitnessLine::Body(body) => line_code(body),
+        WitnessLine::Station(StationLine::IntermagnetGround) => INTERMAGNET_GROUND_CODE,
+        WitnessLine::Station(StationLine::SwarmOverflight) => SWARM_OVERFLIGHT_CODE,
+    }
+}
+
+pub fn witness_from_code(code: u8) -> Option<WitnessLine> {
+    match code {
+        INTERMAGNET_GROUND_CODE => Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+        SWARM_OVERFLIGHT_CODE => Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+        _ => line_from_code(code).map(WitnessLine::Body),
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct VerdictLine {
+    pub name: String,
+    pub word: VerdictWord,
+    pub knot: [Option<WitnessLine>; 2],
+    pub sep: Option<f64>,
+    pub weave_epoch: f64,
+}
+
+pub fn parse_weberin_verdicts(bytes: &[u8]) -> Vec<VerdictLine> {
+    if bytes.len() < 7 || bytes[0] != MAGIC[0] || bytes[1] != MAGIC[1] || bytes[2] != VERDICT_TAG {
+        return Vec::new();
+    }
+    let mut off = 3;
+    let Some(count) = take_u32(bytes, &mut off) else {
+        return Vec::new();
+    };
+    let mut lines = Vec::new();
+    for _ in 0..count {
+        let Some(name_len) = bytes.get(off).copied() else {
+            break;
+        };
+        off += 1;
+        let end = off + name_len as usize;
+        let Some(name_bytes) = bytes.get(off..end) else {
+            break;
+        };
+        let name = String::from_utf8_lossy(name_bytes).to_string();
+        off = end;
+        let Some(&word_code) = bytes.get(off) else {
+            break;
+        };
+        off += 1;
+        let Some(word) = VerdictWord::from_code(word_code) else {
+            break;
+        };
+        let (Some(&ka), Some(&kb)) = (bytes.get(off), bytes.get(off + 1)) else {
+            break;
+        };
+        off += 2;
+        let knot = [witness_from_code(ka), witness_from_code(kb)];
+        let Some(&sep_flag) = bytes.get(off) else {
+            break;
+        };
+        off += 1;
+        let sep = if sep_flag == 1 {
+            match take_f64(bytes, &mut off) {
+                Some(v) => Some(v),
+                None => break,
+            }
+        } else {
+            None
+        };
+        let Some(weave_epoch) = take_f64(bytes, &mut off) else {
+            break;
+        };
+        lines.push(VerdictLine {
+            name,
+            word,
+            knot,
+            sep,
+            weave_epoch,
+        });
+    }
+    lines
+}
+
+pub fn encode_weberin_verdicts(lines: &[VerdictLine]) -> Vec<u8> {
+    let mut out = Vec::new();
+    out.extend_from_slice(&MAGIC);
+    out.push(VERDICT_TAG);
+    out.extend_from_slice(&(lines.len() as u32).to_le_bytes());
+    for line in lines {
+        let name = line.name.as_bytes();
+        out.push(name.len().min(255) as u8);
+        out.extend_from_slice(&name[..name.len().min(255)]);
+        out.push(line.word.code());
+        out.push(line.knot[0].map(witness_code).unwrap_or(NO_LINE));
+        out.push(line.knot[1].map(witness_code).unwrap_or(NO_LINE));
+        match line.sep {
+            Some(sep) if sep.is_finite() => {
+                out.push(1);
+                out.extend_from_slice(&sep.to_le_bytes());
+            }
+            _ => out.push(0),
+        }
+        out.extend_from_slice(&line.weave_epoch.to_le_bytes());
+    }
+    out
+}
+
+pub fn load_weberin_verdicts(path: &str) -> Vec<VerdictLine> {
+    match std::fs::read(path) {
+        Ok(bytes) => parse_weberin_verdicts(&bytes),
+        Err(_) => Vec::new(),
+    }
+}
+
+pub const WEBERIN_RELEASE_TAG: &str = "ssd.jpl.nasa.gov-weberin";
+
+pub fn load_weberin_verdicts_or_cdn(path: &str) -> Vec<VerdictLine> {
+    if let Ok(bytes) = std::fs::read(path) {
+        return parse_weberin_verdicts(&bytes);
+    }
+    if !path.starts_with("data/") {
+        return Vec::new();
+    }
+    let Some(basename) = std::path::Path::new(path)
+        .file_name()
+        .and_then(|n| n.to_str())
+    else {
+        return Vec::new();
+    };
+    let url = format!(
+        "{}/{}/{}",
+        crate::archivar::cdn::cdn_base(),
+        WEBERIN_RELEASE_TAG,
+        basename
+    );
+    let Some(bytes) = fetch_raw_bytes(&url) else {
+        return Vec::new();
+    };
+    if let Some(parent) = std::path::Path::new(path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    let _ = std::fs::write(path, &bytes);
+    parse_weberin_verdicts(&bytes)
+}
+
+pub fn merge_verdict_lines(body: &[VerdictLine], station: &[VerdictLine]) -> Vec<VerdictLine> {
+    let mut merged = body.to_vec();
+    for line in station {
+        match merged.iter_mut().find(|l| l.name == line.name) {
+            Some(slot) => *slot = line.clone(),
+            None => merged.push(line.clone()),
+        }
+    }
+    merged
+}
+
+pub fn riss_bodies(lines: &[VerdictLine]) -> Vec<&VerdictLine> {
+    lines
+        .iter()
+        .filter(|l| l.word == VerdictWord::Riss)
+        .collect()
+}
+
+pub fn is_stale(line: &VerdictLine, now_tdb: Option<f64>) -> bool {
+    match now_tdb {
+        Some(now) => now - line.weave_epoch >= VERDICT_STALE_S as f64,
+        None => false,
+    }
+}
+
+pub fn live_verdicts(lines: &[VerdictLine], now_tdb: Option<f64>) -> Vec<VerdictLine> {
+    lines
+        .iter()
+        .filter(|line| !is_stale(line, now_tdb))
+        .cloned()
+        .collect()
+}
+
+static VERDICTS_SHARED: OnceLock<Arc<std::sync::RwLock<Vec<VerdictLine>>>> = OnceLock::new();
+
+pub fn register_verdicts_shared(shared: Arc<std::sync::RwLock<Vec<VerdictLine>>>) {
+    let _ = VERDICTS_SHARED.set(shared);
+}
+
+pub fn riss_names(lines: &[VerdictLine], now_tdb: Option<f64>) -> HashSet<String> {
+    riss_bodies(&live_verdicts(lines, now_tdb))
+        .into_iter()
+        .map(|line| line.name.clone())
+        .collect()
+}
+
+pub fn current_riss_names(now_tdb: Option<f64>) -> HashSet<String> {
+    let Some(shared) = VERDICTS_SHARED.get() else {
+        return HashSet::new();
+    };
+    let lines = match shared.read() {
+        Ok(lines) => lines,
+        Err(poisoned) => poisoned.into_inner(),
+    };
+    riss_names(&lines, now_tdb)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample() -> Vec<VerdictLine> {
+        vec![
+            VerdictLine {
+                name: "ceres".into(),
+                word: VerdictWord::Placed,
+                knot: [None, None],
+                sep: Some(2.5e4),
+                weave_epoch: 8.0e8,
+            },
+            VerdictLine {
+                name: "apophis".into(),
+                word: VerdictWord::Riss,
+                knot: [
+                    Some(WitnessLine::Body(BodyLine::Spk)),
+                    Some(WitnessLine::Body(BodyLine::Inpop)),
+                ],
+                sep: Some(2.3e9),
+                weave_epoch: 8.0e8,
+            },
+            VerdictLine {
+                name: "vesta".into(),
+                word: VerdictWord::Absent,
+                knot: [Some(WitnessLine::Body(BodyLine::Mpc)), None],
+                sep: None,
+                weave_epoch: 8.0e8,
+            },
+        ]
+    }
+
+    #[test]
+    fn the_wire_round_trips_every_word() {
+        let lines = sample();
+        let bytes = encode_weberin_verdicts(&lines);
+        assert_eq!(bytes[0], 0xCF);
+        assert_eq!(bytes[1], 0x86);
+        assert_eq!(bytes[2], VERDICT_TAG);
+        assert_eq!(parse_weberin_verdicts(&bytes), lines);
+    }
+
+    #[test]
+    fn a_riss_keeps_its_name_and_both_witness_lines() {
+        let bytes = encode_weberin_verdicts(&sample());
+        let back = parse_weberin_verdicts(&bytes);
+        let apophis = back.iter().find(|l| l.name == "apophis").expect("apophis");
+        assert_eq!(apophis.word, VerdictWord::Riss);
+        assert_eq!(
+            apophis.knot,
+            [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Inpop))
+            ]
+        );
+        assert_eq!(apophis.sep, Some(2.3e9));
+    }
+
+    #[test]
+    fn a_station_riss_round_trips_both_witness_codes() {
+        let line = VerdictLine {
+            name: "station-ABK".into(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+            ],
+            sep: Some(9.19e3),
+            weave_epoch: 8.0e8,
+        };
+        let bytes = encode_weberin_verdicts(std::slice::from_ref(&line));
+        let knot_off = 3 + 4 + 1 + line.name.len() + 1;
+        assert_eq!(bytes[knot_off], INTERMAGNET_GROUND_CODE);
+        assert_eq!(bytes[knot_off + 1], SWARM_OVERFLIGHT_CODE);
+        assert_eq!(parse_weberin_verdicts(&bytes), vec![line]);
+    }
+
+    #[test]
+    fn an_unknown_witness_code_reads_absent_without_a_version_machine() {
+        let mut bytes = encode_weberin_verdicts(&[VerdictLine {
+            name: "station-X".into(),
+            word: VerdictWord::Absent,
+            knot: [None, None],
+            sep: None,
+            weave_epoch: 0.0,
+        }]);
+        let knot_off = 3 + 4 + 1 + "station-X".len() + 1;
+        bytes[knot_off] = 5;
+        let back = parse_weberin_verdicts(&bytes);
+        assert_eq!(back.len(), 1);
+        assert_eq!(back[0].knot[0], None);
+    }
+
+    #[test]
+    fn an_absent_sep_is_not_a_fabricated_zero() {
+        let lines = sample();
+        let back = parse_weberin_verdicts(&encode_weberin_verdicts(&lines));
+        let vesta = back.iter().find(|l| l.name == "vesta").expect("vesta");
+        assert_eq!(vesta.sep, None);
+        assert_eq!(vesta.word, VerdictWord::Absent);
+    }
+
+    #[test]
+    fn a_void_or_foreign_blob_reads_no_verdict() {
+        assert!(parse_weberin_verdicts(&[]).is_empty());
+        assert!(parse_weberin_verdicts(&[0xCF, 0x86, 9, 0, 0, 0, 0]).is_empty());
+        assert!(parse_weberin_verdicts(b"not a verdict bin").is_empty());
+    }
+
+    #[test]
+    fn the_riss_bodies_are_the_named_contradictions() {
+        let lines = sample();
+        let riss = riss_bodies(&lines);
+        assert_eq!(riss.len(), 1);
+        assert_eq!(riss[0].name, "apophis");
+    }
+
+    #[test]
+    fn a_verdict_ages_into_stale_at_the_window() {
+        let line = &sample()[0];
+        let weave = line.weave_epoch;
+        assert!(!is_stale(line, Some(weave + 100.0)));
+        assert!(!is_stale(line, Some(weave + VERDICT_STALE_S as f64 - 1.0)));
+        assert!(is_stale(line, Some(weave + VERDICT_STALE_S as f64)));
+        assert!(is_stale(line, Some(weave + VERDICT_STALE_S as f64 + 1.0)));
+    }
+
+    #[test]
+    fn an_absent_now_is_not_a_fabricated_stale() {
+        assert!(!is_stale(&sample()[0], None));
+    }
+
+    #[test]
+    fn a_future_weave_is_not_stale() {
+        let line = &sample()[0];
+        assert!(!is_stale(line, Some(line.weave_epoch - 100.0)));
+    }
+
+    #[test]
+    fn live_verdicts_drops_only_the_expired_lines() {
+        let mut lines = sample();
+        let now = 8.0e8 + VERDICT_STALE_S as f64;
+        lines[0].weave_epoch = now;
+        lines[2].weave_epoch = now;
+        let live = live_verdicts(&lines, Some(now));
+        assert_eq!(live.len(), 2);
+        assert!(live.iter().all(|l| l.name != "apophis"));
+        assert_eq!(live_verdicts(&lines, None).len(), 3);
+    }
+
+    #[test]
+    fn merge_replaces_a_same_named_body_line_with_the_station_line() {
+        let body = vec![
+            VerdictLine {
+                name: "station-ABK".into(),
+                word: VerdictWord::Absent,
+                knot: [None, None],
+                sep: None,
+                weave_epoch: 1.0,
+            },
+            VerdictLine {
+                name: "ceres".into(),
+                word: VerdictWord::Placed,
+                knot: [None, None],
+                sep: Some(2.5e4),
+                weave_epoch: 1.0,
+            },
+        ];
+        let station = vec![VerdictLine {
+            name: "station-ABK".into(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+            ],
+            sep: Some(9.19e3),
+            weave_epoch: 2.0,
+        }];
+        let merged = merge_verdict_lines(&body, &station);
+        assert_eq!(merged.len(), 2);
+        let abk = merged
+            .iter()
+            .find(|l| l.name == "station-ABK")
+            .expect("station line");
+        assert_eq!(abk.word, VerdictWord::Riss);
+        assert_eq!(abk.weave_epoch, 2.0);
+        assert!(merged.iter().any(|l| l.name == "ceres"));
+    }
+
+    #[test]
+    fn merge_unions_distinct_names() {
+        let body = vec![VerdictLine {
+            name: "ceres".into(),
+            word: VerdictWord::Placed,
+            knot: [None, None],
+            sep: Some(2.5e4),
+            weave_epoch: 1.0,
+        }];
+        let station = vec![VerdictLine {
+            name: "station-ABK".into(),
+            word: VerdictWord::Absent,
+            knot: [None, None],
+            sep: None,
+            weave_epoch: 2.0,
+        }];
+        let merged = merge_verdict_lines(&body, &station);
+        assert_eq!(merged.len(), 2);
+        assert!(merged.iter().any(|l| l.name == "ceres"));
+        assert!(merged.iter().any(|l| l.name == "station-ABK"));
+    }
+}

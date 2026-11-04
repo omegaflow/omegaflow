@@ -1,0 +1,2307 @@
+use std::collections::BTreeMap;
+use std::env;
+use std::process::exit;
+
+use omegaflow::te::{
+    coherent_phase_surrogates, find_cross_mi_lag, find_mi_lag, phase_randomized_surrogate,
+    topological_te_estimate, topological_te_estimate_frozen,
+};
+use omegaflow_measure::eeglab::{
+    channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat, resolve_channel,
+};
+
+const DIM: usize = 3;
+const DEFAULT_SURROGATES: usize = 200;
+const DEFAULT_PERCENTILE: f64 = 95.0;
+const CONFIRM_SURROGATES: usize = 1000;
+const CONFIRM_PERCENTILE: f64 = 99.0;
+const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const CONFIRM_SEED: u64 = 0x2545_F491_4F6C_DD1D;
+const MIN_N: usize = 32;
+
+fn arg_value(args: &[String], name: &str) -> Option<String> {
+    args.iter()
+        .position(|a| a == name)
+        .and_then(|i| args.get(i + 1))
+        .cloned()
+}
+
+fn usage() {
+    eprintln!(
+        "hyperscanning_group_te — the two-level TE screen over a hyperscanning cohort:\n\
+         per task, one transfer-entropy family is tested (every triad x every ordered pair).\n\
+         The one estimator is the Takens estimate (dim 3; per series the mutual-information\n\
+         lag tau replaces the lag grid) — the observed path and the surrogate path run the\n\
+         same estimator function. The null is the empirical distribution over phase-randomized\n\
+         surrogates, read at two levels: the family maximum (the max-statistic carries the whole\n\
+         family, FWER = 1 - percentile, the stricter line) and the per-cell distribution (each\n\
+         ordered pair against its own surrogate series, naming the weaker transfer the family\n\
+         maximum masks):\n\
+         \x20 hyperscanning_group_te --manifest <file> [--channel <label>[,<label>...]]\n\
+         \x20     [--surrogates <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
+         \x20     [--null phase|coherent-phase] [--shard <idx>/<count>] [--shard-out <file>] [--nominees-out <file>] [--nominees <file>]\n\
+         \x20 --shard <idx>/<count> computes only that surrogate slice of the family null.\n\
+         \x20 --shard-out <file> writes the per-shard observed cell and surrogate slice as a TSV artifact.\n\
+         \x20 --merge <f0,f1,...> merges shard artifacts into the one screen output (no --manifest).\n\
+         \x20 --nominees-out <file> writes the per-cell survivors of the screen (the nominees:\n\
+         \x20 task, triad, driver, target, slot, TE, own per-cell threshold) as a TSV artifact.\n\
+         \x20 --nominees <file> is the confirmation run: it reads that artifact and tests each\n\
+         \x20 nominated cell against its own per-cell null with a fresh seed — p99 and 1000\n\
+         \x20 surrogates by default — printing the confirmed nomination list. The family-maximum\n\
+         \x20 path stays the FWER carrier; the confirmation replaces only the family re-test.\n\
+         \x20 --null phase (default) rotates each series alone; coherent-phase rotates every series\n\
+         \x20 of a triad with one shared phase vector, preserving the linear cross-structure — the\n\
+         \x20 pair null for transfer beyond the linear cross-correlation.\n\
+         manifest lines: <task> <triad> <slot> <path> (blank and # lines skipped).\n\
+         each path reads as a text .set, a MAT-v5 EEG struct, or an EEGB .bin; one series per\n\
+         participant is taken (--channel, default Fz; comma-separated labels pool every channel\n\
+         into ONE joint family maximum over channels x triads x ordered pairs, so the FWER is\n\
+         corrected across the whole channel set) — a named electrode, not the common average.\n\
+         without --max-points each series is read in full (the physical truth); n and srate print.\n\
+         an absent recording drops its triad from the family, never a fabricated 0 (0 honored)."
+    );
+}
+
+fn parse_manifest(text: &str) -> Vec<(String, String, String, String)> {
+    let mut out = Vec::new();
+    for raw in text.lines() {
+        let line = raw.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut it = line.split_whitespace();
+        let (Some(task), Some(triad), Some(slot), Some(path)) =
+            (it.next(), it.next(), it.next(), it.next())
+        else {
+            continue;
+        };
+        out.push((
+            task.to_string(),
+            triad.to_string(),
+            slot.to_string(),
+            path.to_string(),
+        ));
+    }
+    out
+}
+
+struct Nominee {
+    task: String,
+    triad: String,
+    driver: String,
+    target: String,
+    slot: usize,
+    te: f64,
+    threshold: f64,
+    channel: String,
+}
+
+fn parse_nominees(text: &str) -> Vec<Nominee> {
+    let mut out = Vec::new();
+    for raw in text.lines() {
+        let line = raw.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut it = line.split('\t');
+        let (
+            Some(task),
+            Some(triad),
+            Some(driver),
+            Some(target),
+            Some(slot),
+            Some(te),
+            Some(threshold),
+            Some(channel),
+        ) = (
+            it.next(),
+            it.next(),
+            it.next(),
+            it.next(),
+            it.next(),
+            it.next(),
+            it.next(),
+            it.next(),
+        )
+        else {
+            continue;
+        };
+        let (Ok(slot), Ok(te), Ok(threshold)) = (
+            slot.parse::<usize>(),
+            te.parse::<f64>(),
+            threshold.parse::<f64>(),
+        ) else {
+            continue;
+        };
+        out.push(Nominee {
+            task: task.to_string(),
+            triad: triad.to_string(),
+            driver: driver.to_string(),
+            target: target.to_string(),
+            slot,
+            te,
+            threshold,
+            channel: channel.to_string(),
+        });
+    }
+    out
+}
+
+fn write_nominees(path: &str, nominees: &[Nominee]) -> bool {
+    let mut text = String::from("# task\ttriad\tdriver\ttarget\tslot\tte\tthreshold\tchannel\n");
+    for n in nominees {
+        text.push_str(&format!(
+            "{}\t{}\t{}\t{}\t{}\t{:.17e}\t{:.17e}\t{}\n",
+            n.task, n.triad, n.driver, n.target, n.slot, n.te, n.threshold, n.channel
+        ));
+    }
+    match std::fs::write(path, text) {
+        Ok(()) => true,
+        Err(_) => {
+            eprintln!("hyperscanning_group_te: the nominee list at {path} is not writable");
+            false
+        }
+    }
+}
+
+fn write_shard(path: &str, lines: &[String]) -> bool {
+    match std::fs::write(path, lines.join("\n")) {
+        Ok(()) => true,
+        Err(_) => {
+            eprintln!("hyperscanning_group_te: the shard artifact at {path} is not writable");
+            false
+        }
+    }
+}
+
+fn run_merge(paths: &[String], pct: f64, nominees_out: Option<&str>) {
+    let mut obs: BTreeMap<String, (Option<f64>, usize, usize)> = BTreeMap::new();
+    let mut surr: BTreeMap<String, Vec<f64>> = BTreeMap::new();
+    let mut cells: BTreeMap<(String, String, String, String), (usize, usize, f64, Vec<f64>)> =
+        BTreeMap::new();
+    for path in paths {
+        let text = match std::fs::read_to_string(path) {
+            Ok(t) => t,
+            Err(_) => {
+                eprintln!("hyperscanning_group_te: the shard artifact at {path} is not readable");
+                exit(2);
+            }
+        };
+        for raw in text.lines() {
+            let line = raw.trim();
+            if line.is_empty() {
+                continue;
+            }
+            let fields: Vec<&str> = line.split('\t').collect();
+            match fields.first() {
+                Some(&"OBS") if fields.len() >= 5 => {
+                    let observed = match fields[2] {
+                        "absent" => None,
+                        v => v.parse::<f64>().ok(),
+                    };
+                    let (Ok(n_triads), Ok(n_cells)) =
+                        (fields[3].parse::<usize>(), fields[4].parse::<usize>())
+                    else {
+                        continue;
+                    };
+                    obs.insert(fields[1].to_string(), (observed, n_triads, n_cells));
+                }
+                Some(&"SURR") if fields.len() >= 3 => {
+                    if let Ok(v) = fields[2].parse::<f64>() {
+                        surr.entry(fields[1].to_string()).or_default().push(v);
+                    }
+                }
+                Some(&"CELL") if fields.len() >= 9 => {
+                    let (Ok(tau_x), Ok(tau_y), Ok(te)) = (
+                        fields[5].parse::<usize>(),
+                        fields[6].parse::<usize>(),
+                        fields[7].parse::<f64>(),
+                    ) else {
+                        continue;
+                    };
+                    let nulls: Vec<f64> = fields[8]
+                        .split(',')
+                        .filter_map(|s| s.trim().parse::<f64>().ok())
+                        .collect();
+                    let key = (
+                        fields[1].to_string(),
+                        fields[2].to_string(),
+                        fields[3].to_string(),
+                        fields[4].to_string(),
+                    );
+                    match cells.get_mut(&key) {
+                        Some(entry) => entry.3.extend(nulls.iter().copied()),
+                        None => {
+                            cells.insert(key, (tau_x, tau_y, te, nulls));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    let mut nominees: Vec<Nominee> = Vec::new();
+    for (task, (observed, n_triads, n_cells)) in &obs {
+        let mut maxima = match surr.get(task) {
+            Some(m) => m.clone(),
+            None => Vec::new(),
+        };
+        maxima.sort_by(f64::total_cmp);
+        let Some(threshold) = percentile(&maxima, pct) else {
+            println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
+            continue;
+        };
+        let observed_max = match observed {
+            Some(v) => format!("{v:.4e}"),
+            None => "absent".to_string(),
+        };
+        let task_cells: Vec<(
+            &(String, String, String, String),
+            &(usize, usize, f64, Vec<f64>),
+        )> = cells.iter().filter(|(k, _)| &k.0 == task).collect();
+        let family_survivors: Vec<(
+            &(String, String, String, String),
+            &(usize, usize, f64, Vec<f64>),
+        )> = task_cells
+            .iter()
+            .filter(|(_, v)| v.2 > threshold)
+            .cloned()
+            .collect();
+        let cell_survivors: Vec<(&(String, String, String, String), usize, usize, f64, f64)> =
+            task_cells
+                .iter()
+                .filter_map(|(k, v)| {
+                    let mut sorted = v.3.clone();
+                    sorted.sort_by(f64::total_cmp);
+                    percentile(&sorted, pct).and_then(|t| {
+                        if v.2 > t {
+                            Some((*k, v.0, v.1, v.2, t))
+                        } else {
+                            None
+                        }
+                    })
+                })
+                .collect();
+        println!(
+            "=== {task}: {} triad(s) | {} cell(s) | fam-max p{pct} = {threshold:.4e} | observed max = {observed_max} | family-max survivors = {} | per-cell survivors = {}",
+            n_triads,
+            n_cells,
+            family_survivors.len(),
+            cell_survivors.len()
+        );
+        for (k, v) in &family_survivors {
+            println!(
+                "    FAMILY-MAX SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                k.1, k.2, k.3, v.0, v.1, v.2
+            );
+        }
+        for (k, tau_x, tau_y, te, t) in &cell_survivors {
+            let masked = !family_survivors
+                .iter()
+                .any(|(fk, _)| fk.1 == k.1 && fk.2 == k.2 && fk.3 == k.3);
+            if masked {
+                println!(
+                    "    PER-CELL SURVIVOR (masked by the family maximum) {} {}→{} tau {}/{} TE {:.4e}",
+                    k.1, k.2, k.3, tau_x, tau_y, te
+                );
+            } else {
+                println!(
+                    "    PER-CELL SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                    k.1, k.2, k.3, tau_x, tau_y, te
+                );
+            }
+            nominees.push(Nominee {
+                task: task.clone(),
+                triad: k.1.clone(),
+                driver: k.2.clone(),
+                target: k.3.clone(),
+                slot: 0,
+                te: *te,
+                threshold: *t,
+                channel: String::new(),
+            });
+        }
+        if family_survivors.is_empty() {
+            println!(
+                "    no cell breaks the family maximum — the family-max silence is the finding"
+            );
+        }
+        if cell_survivors.is_empty() {
+            println!(
+                "    no cell breaks its own surrogate distribution — the cell-level silence is the finding"
+            );
+        }
+    }
+
+    if let Some(path) = nominees_out
+        && !write_nominees(path, &nominees)
+    {
+        exit(2);
+    }
+}
+
+fn load_series(
+    path: &str,
+    channel: &str,
+    max_points: Option<usize>,
+) -> Option<(Vec<f32>, Option<f64>)> {
+    let (mut set, samples) = open_set(path)
+        .or_else(|| open_set_mat(path))
+        .or_else(|| open_set_bin(path))?;
+    if set.labels.is_empty()
+        && let Some(labels) = labels_from_channels_tsv(path)
+    {
+        set.labels = labels;
+    }
+    let ch = resolve_channel(&set, channel)?;
+    let mut series = channel_series(&samples, &set, ch)?;
+    if let Some(cap) = max_points
+        && series.len() > cap
+    {
+        series.truncate(cap);
+    }
+    if series.len() < MIN_N {
+        return None;
+    }
+    Some((series, set.srate))
+}
+
+fn percentile(sorted: &[f64], p: f64) -> Option<f64> {
+    if sorted.is_empty() {
+        return None;
+    }
+    let rank = (p / 100.0) * (sorted.len() as f64 - 1.0);
+    let lo = rank.floor() as usize;
+    let hi = rank.ceil() as usize;
+    if lo == hi {
+        return Some(sorted[lo]);
+    }
+    let frac = rank - lo as f64;
+    Some(sorted[lo] * (1.0 - frac) + sorted[hi] * frac)
+}
+
+#[cfg(test)]
+fn family_max(series: &[Vec<f32>], dim: usize) -> Option<f64> {
+    let mut best: Option<f64> = None;
+    for i in 0..series.len() {
+        for j in 0..series.len() {
+            if i == j {
+                continue;
+            }
+            if let Some(est) = topological_te_estimate(&series[j], &series[i], dim)
+                && best.is_none_or(|b| est.te > b)
+            {
+                best = Some(est.te);
+            }
+        }
+    }
+    best
+}
+
+struct Cell {
+    triad: String,
+    channel: String,
+    driver: String,
+    target: String,
+    tau_x: usize,
+    tau_y: usize,
+    te: f64,
+    slot: usize,
+}
+
+fn cell_slot(offset: usize, members: usize, i: usize, j: usize) -> usize {
+    offset + i * (members - 1) + if j < i { j } else { j - 1 }
+}
+
+fn observed_cells(
+    triads: &[(String, Vec<(String, Vec<f32>)>)],
+    channels: &[String],
+    dim: usize,
+) -> Vec<Cell> {
+    let mut out = Vec::new();
+    let mut offset = 0usize;
+    for (t, (triad, series)) in triads.iter().enumerate() {
+        let members = series.len();
+        let channel = &channels[t];
+        for i in 0..members {
+            for j in 0..members {
+                if i == j {
+                    continue;
+                }
+                if let Some(est) = topological_te_estimate(&series[j].1, &series[i].1, dim) {
+                    out.push(Cell {
+                        triad: triad.clone(),
+                        channel: channel.clone(),
+                        driver: series[i].0.clone(),
+                        target: series[j].0.clone(),
+                        tau_x: est.tau_x,
+                        tau_y: est.tau_y,
+                        te: est.te,
+                        slot: cell_slot(offset, members, i, j),
+                    });
+                }
+            }
+        }
+        offset += members * members.saturating_sub(1);
+    }
+    out
+}
+
+struct SurrogateFamily {
+    maxima: Vec<f64>,
+    cell_distributions: Vec<Vec<f64>>,
+}
+
+fn randomized_triad(
+    series: &[(String, Vec<f32>)],
+    seed: u64,
+    s: usize,
+    t: usize,
+    coherent: bool,
+) -> Vec<Vec<f32>> {
+    if coherent {
+        let mut rng = seed
+            ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
+            ^ ((t as u64) << 20)
+            ^ 0xA5A5_5A5A;
+        let refs: Vec<&[f32]> = series.iter().map(|(_, v)| v.as_slice()).collect();
+        coherent_phase_surrogates(&refs, &mut rng)
+    } else {
+        let mut randomized = Vec::with_capacity(series.len());
+        for (k, (_, v)) in series.iter().enumerate() {
+            let mut rng = seed
+                ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
+                ^ ((t as u64) << 20)
+                ^ ((k as u64) << 8)
+                ^ 0xA5A5_5A5A;
+            randomized.push(phase_randomized_surrogate(v, &mut rng));
+        }
+        randomized
+    }
+}
+
+fn member_taus(series: &[(String, Vec<f32>)]) -> Vec<Option<usize>> {
+    series
+        .iter()
+        .map(|(_, v)| {
+            let vf: Vec<f64> = v.iter().map(|&x| x as f64).collect();
+            find_mi_lag(&vf)
+        })
+        .collect()
+}
+
+fn frozen_estimate(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    tau_x: Option<usize>,
+    tau_y: Option<usize>,
+) -> Option<f64> {
+    match (tau_x, tau_y) {
+        (Some(tx), Some(ty)) => {
+            let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+            let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+            let tc = find_cross_mi_lag(&xf, &yf, ty)?;
+            topological_te_estimate_frozen(x, y, dim, tx, tc, ty).map(|e| e.te)
+        }
+        _ => None,
+    }
+}
+
+fn surrogate_family_maxima(
+    triads: &[(String, Vec<(String, Vec<f32>)>)],
+    dim: usize,
+    n_surr: usize,
+    seed: u64,
+    coherent: bool,
+) -> SurrogateFamily {
+    surrogate_family_maxima_range(triads, dim, n_surr, seed, coherent, 0, n_surr)
+}
+
+fn surrogate_family_maxima_range(
+    triads: &[(String, Vec<(String, Vec<f32>)>)],
+    dim: usize,
+    n_surr: usize,
+    seed: u64,
+    coherent: bool,
+    s_start: usize,
+    s_end: usize,
+) -> SurrogateFamily {
+    let s_end = s_end.min(n_surr);
+    let mut offsets = Vec::with_capacity(triads.len());
+    let mut total_cells = 0usize;
+    for (_, series) in triads {
+        offsets.push(total_cells);
+        total_cells += series.len() * series.len().saturating_sub(1);
+    }
+    let frozen: Vec<Vec<Option<usize>>> = triads.iter().map(|(_, s)| member_taus(s)).collect();
+    let mut cell_distributions: Vec<Vec<f64>> = vec![Vec::new(); total_cells];
+    let mut out = Vec::with_capacity(s_end.saturating_sub(s_start));
+    for s in s_start..s_end {
+        let mut family: Option<f64> = None;
+        for (t, (_, series)) in triads.iter().enumerate() {
+            let members = series.len();
+            let randomized = randomized_triad(series, seed, s, t, coherent);
+            for i in 0..members {
+                for j in 0..members {
+                    if i == j {
+                        continue;
+                    }
+                    if let Some(te) = frozen_estimate(
+                        &randomized[j],
+                        &randomized[i],
+                        dim,
+                        frozen[t][j],
+                        frozen[t][i],
+                    ) {
+                        if family.is_none_or(|f| te > f) {
+                            family = Some(te);
+                        }
+                        let slot = cell_slot(offsets[t], members, i, j);
+                        cell_distributions[slot].push(te);
+                    }
+                }
+            }
+        }
+        if let Some(f) = family {
+            out.push(f);
+        }
+    }
+    out.sort_by(f64::total_cmp);
+    for d in cell_distributions.iter_mut() {
+        d.sort_by(f64::total_cmp);
+    }
+    SurrogateFamily {
+        maxima: out,
+        cell_distributions,
+    }
+}
+
+fn per_cell_survivors<'a>(cells: &'a [Cell], family: &SurrogateFamily, pct: f64) -> Vec<&'a Cell> {
+    cells
+        .iter()
+        .filter(|c| percentile(&family.cell_distributions[c.slot], pct).is_some_and(|t| c.te > t))
+        .collect()
+}
+
+fn confirmation_cell_nulls(
+    triads: &[(String, Vec<(String, Vec<f32>)>)],
+    plan: &[(usize, usize, usize, &Nominee)],
+    dim: usize,
+    n_surr: usize,
+    seed: u64,
+    coherent: bool,
+) -> Vec<Vec<f64>> {
+    let mut dists: Vec<Vec<f64>> = vec![Vec::new(); plan.len()];
+    let mut by_triad: Vec<Vec<usize>> = vec![Vec::new(); triads.len()];
+    for (idx, p) in plan.iter().enumerate() {
+        by_triad[p.0].push(idx);
+    }
+    let frozen: Vec<Vec<Option<usize>>> = triads.iter().map(|(_, s)| member_taus(s)).collect();
+    for s in 0..n_surr {
+        for (ti, members) in triads.iter().enumerate() {
+            if by_triad[ti].is_empty() {
+                continue;
+            }
+            let randomized = randomized_triad(&members.1, seed, s, ti, coherent);
+            for &idx in &by_triad[ti] {
+                let (_, i, j, _) = plan[idx];
+                if let Some(te) = frozen_estimate(
+                    &randomized[j],
+                    &randomized[i],
+                    dim,
+                    frozen[ti][j],
+                    frozen[ti][i],
+                ) {
+                    dists[idx].push(te);
+                }
+            }
+        }
+    }
+    for d in dists.iter_mut() {
+        d.sort_by(f64::total_cmp);
+    }
+    dists
+}
+
+fn fmt_value(v: Option<f64>) -> String {
+    match v {
+        Some(x) => format!("{x:.6e}"),
+        None => "absent".to_string(),
+    }
+}
+
+fn print_verdict(verdict: &str, n: &Nominee, te: Option<f64>, threshold: Option<f64>) {
+    println!(
+        "    {verdict}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.6e}\t{:.6e}",
+        n.task,
+        n.triad,
+        n.driver,
+        n.target,
+        n.slot,
+        fmt_value(te),
+        fmt_value(threshold),
+        n.te,
+        n.threshold
+    );
+}
+
+fn run_confirmation(
+    entries: &[(String, String, String, String)],
+    nominees: &[Nominee],
+    max_points: Option<usize>,
+    n_surr: usize,
+    pct: f64,
+    seed: u64,
+    coherent: bool,
+) {
+    let mut tasks: Vec<String> = nominees.iter().map(|n| n.task.clone()).collect();
+    tasks.sort();
+    tasks.dedup();
+    let mut channels: Vec<String> = nominees.iter().map(|n| n.channel.clone()).collect();
+    channels.sort();
+    channels.dedup();
+    println!(
+        "hyperscanning group TE confirmation | channels [{}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {} | fresh seed",
+        channels.join(", "),
+        if coherent { "coherent-phase" } else { "phase" }
+    );
+    let mut confirmed_total = 0usize;
+    let mut pending_total = 0usize;
+    for task in &tasks {
+        let task_nominees: Vec<&Nominee> = nominees.iter().filter(|n| &n.task == task).collect();
+        let mut triad_keys: Vec<(String, String)> = task_nominees
+            .iter()
+            .map(|n| (n.channel.clone(), n.triad.clone()))
+            .collect();
+        triad_keys.sort();
+        triad_keys.dedup();
+        let mut triads: Vec<(String, Vec<(String, Vec<f32>)>)> = Vec::new();
+        for (channel, triad) in &triad_keys {
+            let mut members: Vec<(String, Vec<f32>)> = Vec::new();
+            for entry in entries
+                .iter()
+                .filter(|e| &e.0 == task && format!("{}@{}", e.1, channel) == triad.as_str())
+            {
+                if let Some((series, _srate)) = load_series(&entry.3, channel, max_points) {
+                    members.push((entry.2.clone(), series));
+                }
+            }
+            if members.len() >= 2 {
+                triads.push((triad.clone(), members));
+            }
+        }
+        let mut plan: Vec<(usize, usize, usize, &Nominee)> = Vec::new();
+        for n in &task_nominees {
+            let Some(ti) = triads.iter().position(|(id, _)| id == &n.triad) else {
+                print_verdict("PENDING", n, None, None);
+                pending_total += 1;
+                continue;
+            };
+            let members = &triads[ti].1;
+            let Some(i) = members.iter().position(|(s, _)| s == &n.driver) else {
+                print_verdict("PENDING", n, None, None);
+                pending_total += 1;
+                continue;
+            };
+            let Some(j) = members.iter().position(|(s, _)| s == &n.target) else {
+                print_verdict("PENDING", n, None, None);
+                pending_total += 1;
+                continue;
+            };
+            plan.push((ti, i, j, n));
+        }
+        let dists = confirmation_cell_nulls(&triads, &plan, DIM, n_surr, seed, coherent);
+        let mut confirmed_here = 0usize;
+        for (idx, (ti, i, j, n)) in plan.iter().enumerate() {
+            let members = &triads[*ti].1;
+            let observed = topological_te_estimate(&members[*j].1, &members[*i].1, DIM);
+            let threshold = percentile(&dists[idx], pct);
+            match (observed, threshold) {
+                (Some(obs), Some(thr)) => {
+                    if obs.te > thr {
+                        confirmed_here += 1;
+                        confirmed_total += 1;
+                        print_verdict("CONFIRMED", n, Some(obs.te), Some(thr));
+                    } else {
+                        print_verdict("NOT-CONFIRMED", n, Some(obs.te), Some(thr));
+                    }
+                }
+                (obs, thr) => {
+                    pending_total += 1;
+                    print_verdict("PENDING", n, obs.map(|o| o.te), thr);
+                }
+            }
+        }
+        println!(
+            "=== confirmation {task}: {} nominee(s) | {confirmed_here} confirmed",
+            task_nominees.len()
+        );
+    }
+    println!(
+        "=== confirmation total: {} nominee(s) | {confirmed_total} confirmed | {pending_total} pending",
+        nominees.len()
+    );
+}
+
+fn screen_carries_a_measurement(triads_per_task: &[usize]) -> bool {
+    triads_per_task.iter().any(|&n| n >= 1)
+}
+
+fn main() {
+    let args: Vec<String> = env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--help" || a == "-h") {
+        usage();
+        return;
+    }
+    if let Some(merge) = arg_value(&args, "--merge") {
+        let paths: Vec<String> = merge
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect();
+        let pct = match arg_value(&args, "--percentile").and_then(|v| v.parse().ok()) {
+            Some(v) => v,
+            None => DEFAULT_PERCENTILE,
+        };
+        let nominees_out = arg_value(&args, "--nominees-out");
+        run_merge(&paths, pct, nominees_out.as_deref());
+        return;
+    }
+    let Some(manifest_path) = arg_value(&args, "--manifest") else {
+        eprintln!("hyperscanning_group_te: --manifest <file> required");
+        exit(2);
+    };
+    let channels: Vec<String> = match arg_value(&args, "--channel") {
+        Some(v) => v
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        None => vec!["Fz".to_string()],
+    };
+    if channels.is_empty() {
+        eprintln!("hyperscanning_group_te: --channel carries no label");
+        exit(2);
+    }
+    let channel_list = channels.join(", ");
+    let confirm_path = arg_value(&args, "--nominees");
+    let nominees_out = arg_value(&args, "--nominees-out");
+    let confirming = confirm_path.is_some();
+    let n_surr: usize = match arg_value(&args, "--surrogates").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => {
+            if confirming {
+                CONFIRM_SURROGATES
+            } else {
+                DEFAULT_SURROGATES
+            }
+        }
+    };
+    let seed: u64 = match arg_value(&args, "--seed").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => {
+            if confirming {
+                CONFIRM_SEED
+            } else {
+                SEED
+            }
+        }
+    };
+    let max_points: Option<usize> = arg_value(&args, "--max-points").and_then(|v| v.parse().ok());
+    let shard: Option<(usize, usize)> = match arg_value(&args, "--shard") {
+        Some(v) => {
+            let parsed = match v.split('/').collect::<Vec<&str>>().as_slice() {
+                [i, c] => i.parse::<usize>().ok().zip(c.parse::<usize>().ok()),
+                _ => None,
+            };
+            match parsed {
+                Some((idx, count)) if count > 0 && idx < count => Some((idx, count)),
+                _ => {
+                    eprintln!(
+                        "hyperscanning_group_te: --shard {v} is not <idx>/<count> with 0 <= idx < count"
+                    );
+                    exit(2);
+                }
+            }
+        }
+        None => None,
+    };
+    let (s_start, s_end) = match shard {
+        Some((idx, count)) => (idx * n_surr / count, (idx + 1) * n_surr / count),
+        None => (0, n_surr),
+    };
+    let shard_out = arg_value(&args, "--shard-out");
+    if shard_out.is_some() && shard.is_none() {
+        eprintln!("hyperscanning_group_te: --shard-out requires --shard <idx>/<count>");
+        exit(2);
+    }
+    let pct: f64 = match arg_value(&args, "--percentile").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => {
+            if confirming {
+                CONFIRM_PERCENTILE
+            } else {
+                DEFAULT_PERCENTILE
+            }
+        }
+    };
+    let coherent = match arg_value(&args, "--null").as_deref() {
+        Some("coherent-phase") => true,
+        Some("phase") | None => false,
+        Some(other) => {
+            eprintln!(
+                "hyperscanning_group_te: --null {other} is not a null model (phase|coherent-phase)"
+            );
+            exit(2);
+        }
+    };
+
+    let text = match std::fs::read_to_string(&manifest_path) {
+        Ok(t) => t,
+        Err(_) => {
+            eprintln!("hyperscanning_group_te: the manifest at {manifest_path} is not readable");
+            exit(2);
+        }
+    };
+    let entries = parse_manifest(&text);
+    if entries.is_empty() {
+        eprintln!("hyperscanning_group_te: the manifest carries no entry");
+        exit(2);
+    }
+
+    if let Some(path) = &confirm_path {
+        let nominee_text = match std::fs::read_to_string(path) {
+            Ok(t) => t,
+            Err(_) => {
+                eprintln!("hyperscanning_group_te: the nominee list at {path} is not readable");
+                exit(2);
+            }
+        };
+        let nominees = parse_nominees(&nominee_text);
+        if nominees.is_empty() {
+            println!(
+                "hyperscanning group TE confirmation: the nominee list at {path} carries no nomination — the per-cell silence is the finding (0 honored)"
+            );
+            return;
+        }
+        run_confirmation(&entries, &nominees, max_points, n_surr, pct, seed, coherent);
+        return;
+    }
+
+    let mut tasks: Vec<String> = entries.iter().map(|e| e.0.clone()).collect();
+    tasks.sort();
+    tasks.dedup();
+    let mut triads_per_task: Vec<usize> = Vec::new();
+    let mut nominees: Vec<Nominee> = Vec::new();
+    let mut shard_lines: Vec<String> = Vec::new();
+
+    println!(
+        "hyperscanning group TE screen | channels [{channel_list}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {}",
+        if coherent { "coherent-phase" } else { "phase" }
+    );
+
+    for task in &tasks {
+        let mut triads: Vec<(String, Vec<(String, Vec<f32>)>)> = Vec::new();
+        let mut triad_channels: Vec<String> = Vec::new();
+        let mut triad_ids: Vec<String> = entries
+            .iter()
+            .filter(|e| &e.0 == task)
+            .map(|e| e.1.clone())
+            .collect();
+        triad_ids.sort();
+        triad_ids.dedup();
+        for ch in &channels {
+            for triad in &triad_ids {
+                let mut members: Vec<(String, Vec<f32>)> = Vec::new();
+                for entry in entries.iter().filter(|e| &e.0 == task && &e.1 == triad) {
+                    match load_series(&entry.3, ch, max_points) {
+                        Some((series, srate)) => {
+                            println!(
+                                "  [{task}/{triad}@{ch}/{slot}] n = {} srate = {}",
+                                series.len(),
+                                match srate {
+                                    Some(s) => format!("{s}"),
+                                    None => "absent".to_string(),
+                                },
+                                slot = entry.2
+                            );
+                            members.push((entry.2.clone(), series));
+                        }
+                        None => println!(
+                            "  [{task}/{triad}@{ch}/{slot}] absent — no readable [{ch}] series (0 honored)",
+                            slot = entry.2
+                        ),
+                    }
+                }
+                if members.len() >= 2 {
+                    triads.push((format!("{triad}@{ch}"), members));
+                    triad_channels.push(ch.clone());
+                }
+            }
+        }
+
+        triads_per_task.push(triads.len());
+        if triads.is_empty() {
+            println!("=== {task}: no complete triad carries a series — pending (0 honored)");
+            continue;
+        }
+
+        let cells = observed_cells(&triads, &triad_channels, DIM);
+        let family = match shard {
+            Some((_, _)) => {
+                surrogate_family_maxima_range(&triads, DIM, n_surr, seed, coherent, s_start, s_end)
+            }
+            None => surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent),
+        };
+        if shard.is_some() {
+            if shard_out.as_ref().is_some() {
+                let observed_max = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
+                let obs = if cells.is_empty() {
+                    "absent".to_string()
+                } else {
+                    format!("{observed_max:.9e}")
+                };
+                shard_lines.push(format!(
+                    "OBS\t{task}\t{obs}\t{}\t{}",
+                    triads.len(),
+                    cells.len()
+                ));
+                for v in &family.maxima {
+                    shard_lines.push(format!("SURR\t{task}\t{v:.9e}"));
+                }
+                for c in &cells {
+                    let nulls: Vec<String> = family.cell_distributions[c.slot]
+                        .iter()
+                        .map(|v| format!("{v:.9e}"))
+                        .collect();
+                    shard_lines.push(format!(
+                        "CELL\t{task}\t{}\t{}\t{}\t{}\t{}\t{:.9e}\t{}",
+                        c.triad,
+                        c.driver,
+                        c.target,
+                        c.tau_x,
+                        c.tau_y,
+                        c.te,
+                        nulls.join(",")
+                    ));
+                }
+            }
+            continue;
+        }
+        let Some(threshold) = percentile(&family.maxima, pct) else {
+            println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
+            continue;
+        };
+        let observed_max = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
+        let family_survivors: Vec<&Cell> = cells.iter().filter(|c| c.te > threshold).collect();
+        let cell_survivors = per_cell_survivors(&cells, &family, pct);
+        for c in &cell_survivors {
+            if let Some(t) = percentile(&family.cell_distributions[c.slot], pct) {
+                nominees.push(Nominee {
+                    task: task.clone(),
+                    triad: c.triad.clone(),
+                    driver: c.driver.clone(),
+                    target: c.target.clone(),
+                    slot: c.slot,
+                    te: c.te,
+                    threshold: t,
+                    channel: c.channel.clone(),
+                });
+            }
+        }
+
+        println!(
+            "=== {task}: {} triad(s) | {} cell(s) | fam-max p{pct} = {threshold:.4e} | observed max = {observed_max:.4e} | family-max survivors = {} | per-cell survivors = {}",
+            triads.len(),
+            cells.len(),
+            family_survivors.len(),
+            cell_survivors.len()
+        );
+        for c in &family_survivors {
+            println!(
+                "    FAMILY-MAX SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
+            );
+        }
+        for c in &cell_survivors {
+            if family_survivors.iter().any(|f| f.slot == c.slot) {
+                println!(
+                    "    PER-CELL SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                    c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
+                );
+            } else {
+                println!(
+                    "    PER-CELL SURVIVOR (masked by the family maximum) {} {}→{} tau {}/{} TE {:.4e}",
+                    c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
+                );
+            }
+        }
+        if family_survivors.is_empty() {
+            println!(
+                "    no cell breaks the family maximum — the family-max silence is the finding"
+            );
+        }
+        if cell_survivors.is_empty() {
+            println!(
+                "    no cell breaks its own surrogate distribution — the cell-level silence is the finding"
+            );
+        }
+    }
+
+    if !screen_carries_a_measurement(&triads_per_task) {
+        eprintln!(
+            "hyperscanning_group_te: no task carried a complete triad — the screen ran on no readable series; the run carries no measurement"
+        );
+        exit(2);
+    }
+    if let Some(path) = &shard_out {
+        if !write_shard(path, &shard_lines) {
+            exit(2);
+        }
+        println!(
+            "hyperscanning group TE screen: {} shard line(s) written to {path}",
+            shard_lines.len()
+        );
+    }
+    if let Some(path) = &nominees_out {
+        if !write_nominees(path, &nominees) {
+            exit(2);
+        }
+        println!(
+            "hyperscanning group TE screen: {} nominee(s) written to {path}",
+            nominees.len()
+        );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use omegaflow::te::{embed_series, transfer_entropy_embedded_kde};
+
+    fn next_rng(rng: &mut u64) -> f64 {
+        *rng = rng
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
+    }
+
+    #[test]
+    fn manifest_reads_four_columns_and_skips_noise() {
+        let text = "# comment\n\npddecision G01 S01 a.set\npddecision G01 S02 b.set\n";
+        let e = parse_manifest(text);
+        assert_eq!(e.len(), 2);
+        assert_eq!(
+            e[0],
+            (
+                "pddecision".into(),
+                "G01".into(),
+                "S01".into(),
+                "a.set".into()
+            )
+        );
+    }
+
+    #[test]
+    fn a_screen_on_no_readable_series_carries_no_measurement() {
+        assert!(!screen_carries_a_measurement(&[]));
+        assert!(!screen_carries_a_measurement(&[0, 0, 0]));
+        assert!(screen_carries_a_measurement(&[0, 1, 0]));
+    }
+
+    #[test]
+    fn percentile_interpolates() {
+        let v = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+        assert_eq!(percentile(&v, 0.0), Some(1.0));
+        assert_eq!(percentile(&v, 100.0), Some(5.0));
+        assert_eq!(percentile(&v, 50.0), Some(3.0));
+        assert!(percentile(&[], 95.0).is_none());
+    }
+
+    fn white(n: usize, rng: &mut u64) -> Vec<f32> {
+        (0..n).map(|_| (next_rng(rng) * 2.0 - 1.0) as f32).collect()
+    }
+
+    fn ar1_sine(
+        n: usize,
+        phi: f64,
+        period: f64,
+        phase: f64,
+        noise: f64,
+        rng: &mut u64,
+    ) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = phi * x
+                + (2.0 * std::f64::consts::PI * t as f64 / period + phase).sin()
+                + noise * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
+    fn ar1_noise(n: usize, phi: f64, scale: f64, rng: &mut u64) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for _ in 0..n {
+            x = phi * x + scale * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
+    fn rich_series(n: usize, rng: &mut u64) -> Vec<f32> {
+        let periods = [7.3f64, 13.1, 23.7, 41.9, 67.3];
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for t in 0..n {
+            let s: f64 = periods
+                .iter()
+                .enumerate()
+                .map(|(k, &p)| {
+                    let amp = k as f64 + 1.0;
+                    let angle = 2.0 * std::f64::consts::PI * t as f64 / p + k as f64 * 0.9;
+                    amp * angle.sin()
+                })
+                .sum();
+            x = 0.6 * x + s + 0.3 * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
+    #[test]
+    fn a_structured_driver_breaks_the_family_maximum() {
+        let mut rng = SEED ^ 0xDEAD_BEEF;
+        let n = 400usize;
+        let delay = 8usize;
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, &mut rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.8 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(&mut rng) * 0.04 - 0.02);
+            b[t] = x as f32;
+        }
+        let triads = vec![(
+            "G01".to_string(),
+            vec![("S01".to_string(), a), ("S02".to_string(), b)],
+        )];
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+        assert!(!cells.is_empty(), "the structured pair carries no cell");
+        let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED, false).maxima;
+        let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
+        let observed = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
+        assert!(
+            observed > threshold,
+            "the driven direction breaks the family maximum: {observed} vs {threshold}"
+        );
+        let top = cells.iter().max_by(|x, y| x.te.total_cmp(&y.te)).unwrap();
+        assert_eq!(top.driver, "S01");
+        assert_eq!(top.target, "S02");
+    }
+
+    #[test]
+    fn independent_structured_series_stay_under_the_family_maximum() {
+        let mut rng = SEED ^ 0x1234_5678;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let phase_a = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_b = next_rng(&mut rng) * std::f64::consts::TAU;
+            let a = ar1_sine(400, 0.6, 37.0, phase_a, 0.05, &mut rng);
+            let b = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
+            let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
+            let triads = vec![("G01".to_string(), members)];
+            let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false).maxima;
+            let Some(threshold) = percentile(&maxima, 95.0) else {
+                continue;
+            };
+            meas += 1;
+            if cells.iter().any(|c| c.te > threshold) {
+                fp += 1;
+            }
+        }
+        println!("structured-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "structured-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 4,
+            "structured-FP gate: {fp} of {meas} above the family maximum — the null does not hold"
+        );
+    }
+
+    #[test]
+    fn white_noise_pair_carries_no_cell() {
+        let mut rng = SEED ^ 0x0F0F_0F0F;
+        let a = white(13, &mut rng);
+        let b = white(13, &mut rng);
+        let triads = vec![(
+            "G01".to_string(),
+            vec![
+                ("S01".to_string(), a.clone()),
+                ("S02".to_string(), b.clone()),
+            ],
+        )];
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+        assert!(cells.is_empty(), "a white pair carries no cell");
+        assert!(
+            family_max(&[a, b], DIM).is_none(),
+            "a white pair carries no family maximum — the screen reports pending, never a green idle"
+        );
+    }
+
+    #[test]
+    fn family_max_equals_observed_max() {
+        let mut rng = SEED ^ 0x5A5A_5A5A;
+        let s1 = ar1_sine(400, 0.6, 37.0, 0.1, 0.05, &mut rng);
+        let s2 = ar1_sine(400, 0.6, 43.0, 1.2, 0.05, &mut rng);
+        let s3 = ar1_sine(400, 0.6, 51.0, 2.3, 0.05, &mut rng);
+        let series = vec![s1.clone(), s2.clone(), s3.clone()];
+        let members = vec![
+            ("S01".to_string(), s1),
+            ("S02".to_string(), s2),
+            ("S03".to_string(), s3),
+        ];
+        let triads = vec![("G01".to_string(), members)];
+        let fm = family_max(&series, DIM).expect("the family carries a maximum");
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+        let om = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
+        assert_eq!(
+            fm, om,
+            "family_max and the observed cell maximum run the one estimator on the same pairs"
+        );
+    }
+
+    fn fn_gate_fixture(rng: &mut u64) -> (Vec<f32>, Vec<f32>, Vec<f32>, Vec<f32>) {
+        let n = 600usize;
+        let delay = 8usize;
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.8 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.04 - 0.02);
+            b[t] = x as f32;
+        }
+        let (c, d) = fn_fixture_quad(n, 0.35, 2, rng);
+        (a, b, c, d)
+    }
+
+    fn fn_fixture_quad(n: usize, s: f64, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let c = ar1_sine(n, 0.6, 29.0, 1.1, 0.02, rng);
+        let d = quad_target(&c, s, delay, rng);
+        (c, d)
+    }
+
+    fn quad_target(driver: &[f32], s: f64, delay: usize, rng: &mut u64) -> Vec<f32> {
+        let n = driver.len();
+        let mut d = vec![0.0f32; n];
+        let mut y = 0.0f64;
+        for t in 0..n {
+            y = 0.5 * y
+                + if t >= delay {
+                    s * (driver[t - delay] as f64) * (driver[t - delay] as f64)
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.04 - 0.02);
+            d[t] = y as f32;
+        }
+        d
+    }
+
+    #[test]
+    fn family_fn_gate() {
+        let mut rng = SEED ^ 0xFACE_FEED;
+        let (a, b, c, d) = fn_gate_fixture(&mut rng);
+        let triads = vec![(
+            "G01".to_string(),
+            vec![
+                ("A".to_string(), a),
+                ("B".to_string(), b),
+                ("C".to_string(), c),
+                ("D".to_string(), d),
+            ],
+        )];
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+        let family = surrogate_family_maxima(&triads, DIM, 100, SEED, true);
+        let family_threshold =
+            percentile(&family.maxima, 95.0).expect("the family maximum is measurable");
+        let family_survivors: Vec<&Cell> =
+            cells.iter().filter(|c| c.te > family_threshold).collect();
+        let cell_survivors = per_cell_survivors(&cells, &family, 95.0);
+
+        let linear = cells
+            .iter()
+            .find(|c| c.driver == "A" && c.target == "B")
+            .expect("the linear cell is estimated");
+        let nonlinear = cells
+            .iter()
+            .find(|c| c.driver == "C" && c.target == "D")
+            .expect("the nonlinear cell is estimated");
+
+        let null_floor = &family.cell_distributions[nonlinear.slot];
+        let null_mean = null_floor.iter().sum::<f64>() / null_floor.len() as f64;
+        let null_sd = (null_floor
+            .iter()
+            .map(|v| (v - null_mean) * (v - null_mean))
+            .sum::<f64>()
+            / null_floor.len() as f64)
+            .sqrt();
+        let null_p95 = percentile(null_floor, 95.0).expect("the per-cell null is measurable");
+        let floor_excess = nonlinear.te - null_mean;
+
+        assert!(
+            !cell_survivors.iter().any(|c| c.slot == nonlinear.slot),
+            "the sheet fixture carries no conditional transfer entropy beyond its coherent null: TE {:.4e} | null mean {:.4e} sd {:.4e} p95 {:.4e} | excess {:.4e} ({:.2} sd) | fam-max {:.4e}",
+            nonlinear.te,
+            null_mean,
+            null_sd,
+            null_p95,
+            floor_excess,
+            floor_excess / null_sd,
+            family_threshold
+        );
+        assert!(
+            null_mean > 0.0,
+            "the per-cell null carries only the KSG estimator bias, never a degenerate zero: null mean {:.4e}",
+            null_mean
+        );
+        assert!(
+            !family_survivors.iter().any(|c| c.slot == nonlinear.slot),
+            "the family maximum stays silent on the sheet nonlinear cell: TE {:.4e} vs fam-max {:.4e}",
+            nonlinear.te,
+            family_threshold
+        );
+        assert!(
+            !cell_survivors.iter().any(|c| c.slot == linear.slot),
+            "the strong linear pair is not reported as transfer beyond its coherent null: TE {:.4e}",
+            linear.te
+        );
+    }
+
+    const SELF_NULL_SEEDS: usize = 100;
+
+    fn white_like(v: &[f32], rng: &mut u64) -> Vec<f32> {
+        let n = v.len() as f64;
+        let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
+        let sd = (v
+            .iter()
+            .map(|&x| {
+                let e = x as f64 - mean;
+                e * e
+            })
+            .sum::<f64>()
+            / n)
+            .sqrt();
+        (0..v.len())
+            .map(|_| (mean + (next_rng(rng) - 0.5) * 12.0f64.sqrt() * sd) as f32)
+            .collect()
+    }
+
+    fn ksg_te_frozen(target: &[f32], driver: &[f32], tau_t: usize, tau_d: usize) -> Option<f64> {
+        let tf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+        let df: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
+        let tc = find_cross_mi_lag(&tf, &df, tau_d)?;
+        topological_te_estimate_frozen(target, driver, DIM, tau_t, tc, tau_d).map(|e| e.te)
+    }
+
+    fn kde_te_frozen(target: &[f32], driver: &[f32], tau_t: usize, tau_d: usize) -> Option<f64> {
+        let xf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+        let df: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&xf, tau_t, DIM);
+        let emb_d = embed_series(&df, tau_d, DIM);
+        if emb_x.is_empty() || emb_d.is_empty() {
+            return None;
+        }
+        transfer_entropy_embedded_kde(&xf, &emb_x, &emb_d, tau_t, tau_d)
+    }
+
+    fn white_arm(
+        target: &[f32],
+        driver: &[f32],
+        white_target: bool,
+        white_driver: bool,
+        tau_t: usize,
+        tau_d: usize,
+        seed_base: u64,
+        est: fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+    ) -> Vec<f64> {
+        let mut out = Vec::with_capacity(SELF_NULL_SEEDS);
+        for s in 0..SELF_NULL_SEEDS {
+            let mut rng = seed_base ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let t: Vec<f32> = if white_target {
+                white_like(target, &mut rng)
+            } else {
+                target.to_vec()
+            };
+            let d: Vec<f32> = if white_driver {
+                white_like(driver, &mut rng)
+            } else {
+                driver.to_vec()
+            };
+            if let Some(te) = est(&t, &d, tau_t, tau_d) {
+                out.push(te);
+            }
+        }
+        out
+    }
+
+    struct ArmStats {
+        mu: f64,
+        sd: f64,
+        p95: f64,
+    }
+
+    fn arm_stats(vals: &[f64]) -> Option<ArmStats> {
+        if vals.len() < 2 {
+            return None;
+        }
+        let n = vals.len() as f64;
+        let mu = vals.iter().sum::<f64>() / n;
+        let sd = (vals.iter().map(|v| (v - mu) * (v - mu)).sum::<f64>() / n).sqrt();
+        let mut sorted = vals.to_vec();
+        sorted.sort_by(f64::total_cmp);
+        Some(ArmStats {
+            mu,
+            sd,
+            p95: percentile(&sorted, 95.0)?,
+        })
+    }
+
+    #[test]
+    fn self_null_discriminator() {
+        let mut rng = SEED ^ 0xFACE_FEED;
+        let (_, _, c, d) = fn_gate_fixture(&mut rng);
+        let members = vec![("C".to_string(), c.clone()), ("D".to_string(), d.clone())];
+        let taus = member_taus(&members);
+        let tau_c = taus[0].expect("self_null_discriminator: the driver c carries no MI lag");
+        let tau_d = taus[1].expect("self_null_discriminator: the target d carries no MI lag");
+        println!(
+            "self_null_discriminator: tau_driver={tau_c} tau_target={tau_d} n=600 dim=3 seeds={SELF_NULL_SEEDS}"
+        );
+
+        let w1 = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11B,
+            ksg_te_frozen,
+        );
+        let w2 = white_arm(
+            &d,
+            &c,
+            true,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11C,
+            ksg_te_frozen,
+        );
+        let w3 = white_arm(
+            &d,
+            &c,
+            true,
+            false,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11D,
+            ksg_te_frozen,
+        );
+        let k1 = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12B,
+            kde_te_frozen,
+        );
+        let k2 = white_arm(
+            &d,
+            &c,
+            true,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12C,
+            kde_te_frozen,
+        );
+        let k3 = white_arm(
+            &d,
+            &c,
+            true,
+            false,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12D,
+            kde_te_frozen,
+        );
+
+        for (name, vals) in [
+            ("KSG W1 driver-white", &w1),
+            ("KSG W2 both-white", &w2),
+            ("KSG W3 target-white", &w3),
+            ("KDE K1 driver-white", &k1),
+            ("KDE K2 both-white", &k2),
+            ("KDE K3 target-white", &k3),
+        ] {
+            assert_eq!(
+                vals.len(),
+                SELF_NULL_SEEDS,
+                "self_null_discriminator {name}: {} of {SELF_NULL_SEEDS} seeds measurable",
+                vals.len()
+            );
+            let s = arm_stats(vals).expect("self_null_discriminator: the arm is degenerate");
+            println!(
+                "self_null_discriminator {name}: n={} mu={:.6e} sd={:.6e} p95={:.6e}",
+                vals.len(),
+                s.mu,
+                s.sd,
+                s.p95
+            );
+        }
+
+        for &tau_driver in &[1usize, 2, 4, 8, tau_c] {
+            let vals = white_arm(
+                &d,
+                &c,
+                false,
+                true,
+                tau_d,
+                tau_driver,
+                SEED ^ 0x51A7_E13B ^ ((tau_driver as u64) << 16),
+                ksg_te_frozen,
+            );
+            assert_eq!(
+                vals.len(),
+                SELF_NULL_SEEDS,
+                "self_null_discriminator sweep tau_driver={tau_driver}: {} of {SELF_NULL_SEEDS} seeds measurable",
+                vals.len()
+            );
+            let s = arm_stats(&vals).expect("self_null_discriminator: the sweep arm is degenerate");
+            println!(
+                "self_null_discriminator sweep W1 tau_driver={tau_driver}: n={} mu={:.6e} sd={:.6e} p95={:.6e}",
+                vals.len(),
+                s.mu,
+                s.sd,
+                s.p95
+            );
+        }
+
+        let w1_again = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11B,
+            ksg_te_frozen,
+        );
+        let k1_again = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12B,
+            kde_te_frozen,
+        );
+        assert_eq!(
+            w1, w1_again,
+            "self_null_discriminator: the W1 arm is not seed-deterministic"
+        );
+        assert_eq!(
+            k1, k1_again,
+            "self_null_discriminator: the K1 arm is not seed-deterministic"
+        );
+    }
+
+    #[derive(Clone, Copy)]
+    enum TauMode {
+        Mi,
+        Fixed1,
+        Fixed2,
+    }
+
+    const SWEEP_SURROGATES: usize = 100;
+    const SWEEP_SURROGATES_LARGE_N: usize = 50;
+    const SWEEP_LARGE_N: usize = 2400;
+    const SWEEP_DELAY: usize = 2;
+    const SWEEP_NULL_SEED: u64 = 0x7A5A_9E3C_1B2D_4F5E;
+
+    fn sweep_surrogate_count(n: usize) -> usize {
+        if n >= SWEEP_LARGE_N {
+            SWEEP_SURROGATES_LARGE_N
+        } else {
+            SWEEP_SURROGATES
+        }
+    }
+
+    fn sweep_fixture_seed(n: usize, s: f64) -> u64 {
+        SEED ^ (n as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ s.to_bits()
+    }
+
+    fn sweep_estimators() -> [(
+        &'static str,
+        fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+    ); 2] {
+        [("KSG", ksg_te_frozen), ("KDE", kde_te_frozen)]
+    }
+
+    fn tau_name(tau: TauMode) -> &'static str {
+        match tau {
+            TauMode::Mi => "mi",
+            TauMode::Fixed1 => "1",
+            TauMode::Fixed2 => "2",
+        }
+    }
+
+    fn resolve_tau(driver: &[f32], target: &[f32], mode: TauMode) -> Option<(usize, usize)> {
+        match mode {
+            TauMode::Fixed1 => Some((1, 1)),
+            TauMode::Fixed2 => Some((2, 2)),
+            TauMode::Mi => {
+                let df: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
+                let tf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+                match (find_mi_lag(&df), find_mi_lag(&tf)) {
+                    (Some(td), Some(tt)) => Some((td, tt)),
+                    _ => None,
+                }
+            }
+        }
+    }
+
+    fn coherent_null(
+        driver: &[f32],
+        target: &[f32],
+        tau_d: usize,
+        tau_t: usize,
+        n_surr: usize,
+        est: fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+    ) -> Vec<f64> {
+        let mut out = Vec::with_capacity(n_surr);
+        for s in 0..n_surr {
+            let mut rng =
+                SWEEP_NULL_SEED ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ 0xA5A5_5A5A;
+            let refs = vec![driver, target];
+            let randomized = coherent_phase_surrogates(&refs, &mut rng);
+            if let Some(te) = est(&randomized[1], &randomized[0], tau_t, tau_d) {
+                out.push(te);
+            }
+        }
+        out.sort_by(f64::total_cmp);
+        out
+    }
+
+    fn sweep_cell_row(
+        arm: &str,
+        n: usize,
+        s: f64,
+        est_name: &str,
+        est: fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+        tau_d: usize,
+        tau_t: usize,
+        tau_label: &str,
+        n_surr: usize,
+        driver: &[f32],
+        target: &[f32],
+    ) {
+        let te = est(target, driver, tau_t, tau_d)
+            .expect("fn_gate_sweep: the observed cell is estimated");
+        let null = coherent_null(driver, target, tau_d, tau_t, n_surr, est);
+        assert_eq!(
+            null.len(),
+            n_surr,
+            "fn_gate_sweep {arm} n={n} s={s} {est_name} tau={tau_label}: {} of {n_surr} surrogates measurable",
+            null.len()
+        );
+        let stats = arm_stats(&null).expect("fn_gate_sweep: the null is degenerate");
+        let excess_sd = (te - stats.mu) / stats.sd;
+        let pass = if te > stats.p95 { 1u8 } else { 0u8 };
+        println!(
+            "{arm} | {n} | {s} | {est_name} | {tau_label} | {te:.6e} | {:.6e} | {:.6e} | {:.6e} | {excess_sd:.6e} | {pass}",
+            stats.mu, stats.sd, stats.p95
+        );
+    }
+
+    fn sweep_quad_arm(arm: &str, n: usize, s: f64, delay: usize) {
+        let n_surr = sweep_surrogate_count(n);
+        let mut rng = sweep_fixture_seed(n, s);
+        let (driver, target) = fn_fixture_quad(n, s, delay, &mut rng);
+        let taus: [(TauMode, Option<(usize, usize)>); 3] = [
+            (TauMode::Mi, resolve_tau(&driver, &target, TauMode::Mi)),
+            (TauMode::Fixed2, Some((2, 2))),
+            (TauMode::Fixed1, Some((1, 1))),
+        ];
+        for (est_name, est) in sweep_estimators() {
+            for (tau_mode, tau) in taus {
+                let Some((tau_d, tau_t)) = tau else {
+                    println!(
+                        "{arm} | {n} | {s} | {est_name} | {} | tau-absent",
+                        tau_name(tau_mode)
+                    );
+                    continue;
+                };
+                sweep_cell_row(
+                    arm,
+                    n,
+                    s,
+                    est_name,
+                    est,
+                    tau_d,
+                    tau_t,
+                    tau_name(tau_mode),
+                    n_surr,
+                    &driver,
+                    &target,
+                );
+            }
+        }
+    }
+
+    fn sweep_stochastic_arm(arm: &str, n: usize, s: f64, delay: usize) {
+        let n_surr = sweep_surrogate_count(n);
+        let mut rng = sweep_fixture_seed(n, s) ^ 0x57A7_CFC0;
+        let driver = ar1_noise(n, 0.6, 1.0, &mut rng);
+        let target = quad_target(&driver, s, delay, &mut rng);
+        for (est_name, est) in sweep_estimators() {
+            sweep_cell_row(
+                arm, n, s, est_name, est, 2, 2, "2", n_surr, &driver, &target,
+            );
+        }
+    }
+
+    #[test]
+    fn fn_gate_sweep() {
+        println!(
+            "fn_gate_sweep: coherent per-cell null | dim {DIM} | surrogates {} (n <= 1200), {} (n = {})",
+            SWEEP_SURROGATES, SWEEP_SURROGATES_LARGE_N, SWEEP_LARGE_N
+        );
+        println!(
+            "fn_gate_sweep: arm | n | s | est | tau | te | null_mu | null_sd | null_p95 | excess_sd | pass_p95"
+        );
+        for &n in &[600usize, 1200, 2400] {
+            sweep_quad_arm("n-sweep", n, 0.35, SWEEP_DELAY);
+        }
+        for &s in &[0.05f64, 0.1, 0.2, 0.35, 0.5] {
+            sweep_quad_arm("s-sweep", 1200, s, SWEEP_DELAY);
+        }
+        sweep_stochastic_arm("stochastic-driver", 600, 0.35, SWEEP_DELAY);
+
+        let mut rng_a = sweep_fixture_seed(600, 0.35);
+        let (ca, da) = fn_fixture_quad(600, 0.35, SWEEP_DELAY, &mut rng_a);
+        let mut rng_b = sweep_fixture_seed(600, 0.35);
+        let (cb, db) = fn_fixture_quad(600, 0.35, SWEEP_DELAY, &mut rng_b);
+        assert_eq!(
+            ca, cb,
+            "fn_gate_sweep: the fixture is not seed-deterministic"
+        );
+        assert_eq!(
+            da, db,
+            "fn_gate_sweep: the fixture is not seed-deterministic"
+        );
+        let na = coherent_null(&ca, &da, 2, 2, SWEEP_SURROGATES, ksg_te_frozen);
+        let nb = coherent_null(&cb, &db, 2, 2, SWEEP_SURROGATES, ksg_te_frozen);
+        assert_eq!(
+            na, nb,
+            "fn_gate_sweep: the KSG coherent null is not seed-deterministic"
+        );
+        let ka = coherent_null(&ca, &da, 2, 2, SWEEP_SURROGATES, kde_te_frozen);
+        let kb = coherent_null(&cb, &db, 2, 2, SWEEP_SURROGATES, kde_te_frozen);
+        assert_eq!(
+            ka, kb,
+            "fn_gate_sweep: the KDE coherent null is not seed-deterministic"
+        );
+    }
+
+    #[test]
+    fn family_fp_gate() {
+        let mut rng = SEED ^ 0xC0FF_EE00;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let phase_a = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_b = next_rng(&mut rng) * std::f64::consts::TAU;
+            let a = ar1_sine(400, 0.6, 37.0, phase_a, 0.05, &mut rng);
+            let b = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
+            let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
+            let triads = vec![("G01".to_string(), members)];
+            let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let family = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false);
+            meas += 1;
+            if !per_cell_survivors(&cells, &family, 95.0).is_empty() {
+                fp += 1;
+            }
+        }
+        println!("per-cell-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "per-cell-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 6,
+            "per-cell-FP gate: {fp} of {meas} above their own null — the per-cell rule exceeds chance"
+        );
+    }
+
+    #[test]
+    fn coherent_null_fp_gate() {
+        let mut rng = SEED ^ 0xC0FF_1E11;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let a = rich_series(400, &mut rng);
+            let b = rich_series(400, &mut rng);
+            let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
+            let triads = vec![("G01".to_string(), members)];
+            let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let family = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), true);
+            meas += 1;
+            if !per_cell_survivors(&cells, &family, 95.0).is_empty() {
+                fp += 1;
+            }
+        }
+        println!("coherent-per-cell-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "coherent-per-cell-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 6,
+            "coherent-per-cell-FP gate: {fp} of {meas} above their own coherent null — the per-cell rule exceeds chance"
+        );
+    }
+
+    #[test]
+    fn joint_channel_family_gate() {
+        let mut rng = SEED ^ 0x70A1_7C0F;
+        let (a, b, c, d) = fn_gate_fixture(&mut rng);
+        let fz = vec![(
+            "G01@Fz".to_string(),
+            vec![("A".to_string(), a), ("B".to_string(), b)],
+        )];
+        let cz = vec![(
+            "G01@Cz".to_string(),
+            vec![("C".to_string(), c), ("D".to_string(), d)],
+        )];
+        let mut joint = fz.clone();
+        joint.extend(cz.clone());
+        let channels_joint = vec!["Fz".to_string(), "Cz".to_string()];
+        let cells_fz = observed_cells(&fz, &["Fz".to_string()], DIM);
+        let cells_cz = observed_cells(&cz, &["Cz".to_string()], DIM);
+        let cells_joint = observed_cells(&joint, &channels_joint, DIM);
+        assert!(
+            !cells_joint.is_empty(),
+            "the joint two-channel family carries cells"
+        );
+        assert!(
+            cells_joint.iter().any(|x| x.channel == "Fz")
+                && cells_joint.iter().any(|x| x.channel == "Cz"),
+            "the joint family tags each cell with its own channel"
+        );
+        let max_fz = cells_fz
+            .iter()
+            .map(|x| x.te)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let max_cz = cells_cz
+            .iter()
+            .map(|x| x.te)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let max_joint = cells_joint
+            .iter()
+            .map(|x| x.te)
+            .fold(f64::NEG_INFINITY, f64::max);
+        assert_eq!(
+            max_joint,
+            max_fz.max(max_cz),
+            "the joint family maximum pools both channels: joint {max_joint:.4e} vs Fz {max_fz:.4e} / Cz {max_cz:.4e}"
+        );
+
+        let mut rng = SEED ^ 0xC0FF_2211;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let phase_a = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_b = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_c = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_d = next_rng(&mut rng) * std::f64::consts::TAU;
+            let s0 = ar1_sine(400, 0.6, 37.0, phase_a, 0.05, &mut rng);
+            let s1 = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
+            let s2 = ar1_sine(400, 0.6, 47.0, phase_c, 0.05, &mut rng);
+            let s3 = ar1_sine(400, 0.6, 53.0, phase_d, 0.05, &mut rng);
+            let joint = vec![
+                (
+                    "G01@Fz".to_string(),
+                    vec![("S01".to_string(), s0), ("S02".to_string(), s1)],
+                ),
+                (
+                    "G01@Cz".to_string(),
+                    vec![("S03".to_string(), s2), ("S04".to_string(), s3)],
+                ),
+            ];
+            let channels = vec!["Fz".to_string(), "Cz".to_string()];
+            let cells = observed_cells(&joint, &channels, DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let family = surrogate_family_maxima(&joint, DIM, 50, SEED ^ (t as u64), false);
+            meas += 1;
+            if !per_cell_survivors(&cells, &family, 95.0).is_empty() {
+                fp += 1;
+            }
+        }
+        println!("joint per-cell-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "joint per-cell-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 8,
+            "joint per-cell-FP gate: {fp} of {meas} above their own null — the joint family exceeds chance"
+        );
+    }
+
+    #[test]
+    fn nominees_round_trip() {
+        let text = "# task\ttriad\tdriver\ttarget\tslot\tte\tthreshold\tchannel\npddecision\tG01@Cz\tA\tB\t0\t1.5e0\t2.5e-1\tCz\n";
+        let n = parse_nominees(text);
+        assert_eq!(n.len(), 1);
+        assert_eq!(n[0].task, "pddecision");
+        assert_eq!(n[0].triad, "G01@Cz");
+        assert_eq!(n[0].driver, "A");
+        assert_eq!(n[0].target, "B");
+        assert_eq!(n[0].slot, 0);
+        assert_eq!(n[0].te, 1.5);
+        assert_eq!(n[0].threshold, 0.25);
+        assert_eq!(n[0].channel, "Cz");
+        let round_path =
+            std::env::temp_dir().join("omegaflow_hyperscanning_nominees_round_trip.tsv");
+        let round_path = round_path.to_str().expect("the temp path is UTF-8");
+        let round = write_nominees(round_path, &n);
+        assert!(round, "the nominee list is writable");
+        let back = parse_nominees(
+            &std::fs::read_to_string(round_path).expect("the written nominee list is readable"),
+        );
+        assert_eq!(back.len(), 1);
+        assert_eq!(back[0].triad, "G01@Cz");
+        assert_eq!(back[0].channel, "Cz");
+    }
+
+    fn deterministic_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.9 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.02 - 0.01);
+            b[t] = x as f32;
+        }
+        (a, b)
+    }
+
+    fn stochastic_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let a = ar1_noise(n, 0.8, 1.0, rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.9 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.02 - 0.01);
+            b[t] = x as f32;
+        }
+        (a, b)
+    }
+
+    fn aperiodic_driver(n: usize, phi: f64, scale: f64, rng: &mut u64) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for _ in 0..n {
+            x = phi * x + scale * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
+    fn rich_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let a = aperiodic_driver(n, 0.9, 1.5, rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.9 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.02 - 0.01);
+            b[t] = x as f32;
+        }
+        (a, b)
+    }
+
+    fn confirmation_pair_cell(a: Vec<f32>, b: Vec<f32>) -> (Vec<f64>, f64) {
+        let triads = vec![(
+            "G01".to_string(),
+            vec![("A".to_string(), a), ("B".to_string(), b)],
+        )];
+        let nominee = Nominee {
+            task: "pddecision".to_string(),
+            triad: "G01".to_string(),
+            driver: "A".to_string(),
+            target: "B".to_string(),
+            slot: 0,
+            te: 0.0,
+            threshold: 0.0,
+            channel: "Fz".to_string(),
+        };
+        let plan = vec![(0usize, 0usize, 1usize, &nominee)];
+        let dists = confirmation_cell_nulls(&triads, &plan, DIM, 200, CONFIRM_SEED, false);
+        let observed = topological_te_estimate(&triads[0].1[1].1, &triads[0].1[0].1, DIM)
+            .expect("the observed cell is estimated");
+        (
+            dists.into_iter().next().expect("the plan carries one cell"),
+            observed.te,
+        )
+    }
+
+    #[test]
+    fn confirmation_stochastic_driver_pair_clears_its_own_null() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = stochastic_pair_fixture(800, 8, &mut rng);
+        let (dists, observed) = confirmation_pair_cell(a, b);
+        let threshold = percentile(&dists, 99.0).expect("the per-cell null is measurable");
+        assert!(
+            observed > threshold,
+            "the stochastic driver pair clears its own per-cell null: TE {:.4e} vs p99 {:.4e}",
+            observed,
+            threshold
+        );
+    }
+
+    #[test]
+    fn riss_guard_deterministic_pair_measures_below_its_own_null() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = deterministic_pair_fixture(800, 8, &mut rng);
+        let (dists, observed) = confirmation_pair_cell(a, b);
+        let floor = percentile(&dists, 1.0).expect("the per-cell null is measurable");
+        let p99 = percentile(&dists, 99.0).expect("the per-cell null is measurable");
+        assert!(
+            observed < floor,
+            "the deterministic strong pair measures below its own per-cell null floor: TE {:.4e} vs p1 {:.4e} (p99 {:.4e})",
+            observed,
+            floor,
+            p99
+        );
+    }
+
+    #[ignore = "print-only frozen-tau delay sweep for the stochastic confirmation pair — runs in hyperscanning-te.yml"]
+    #[test]
+    fn frozen_tau_delay_sweep_stochastic_pair() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = stochastic_pair_fixture(800, 8, &mut rng);
+        let (mi_dists, mi_te) = confirmation_pair_cell(a.clone(), b.clone());
+        let mi_p99 = percentile(&mi_dists, 99.0);
+        let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        println!(
+            "frozen-tau sweep: mi-path tau_a={} tau_b={} te={} p99={} clears={}",
+            fmt_value(find_mi_lag(&af).map(|t| t as f64)),
+            fmt_value(find_mi_lag(&bf).map(|t| t as f64)),
+            fmt_value(Some(mi_te)),
+            fmt_value(mi_p99),
+            mi_p99.map_or("pending", |thr| if mi_te > thr { "yes" } else { "no" })
+        );
+        let members = vec![("A".to_string(), a), ("B".to_string(), b)];
+        for tau in 1..=12usize {
+            let observed = find_cross_mi_lag(&bf, &af, tau)
+                .and_then(|tc| {
+                    topological_te_estimate_frozen(&members[1].1, &members[0].1, DIM, tau, tc, tau)
+                })
+                .map(|e| e.te);
+            let mut dists: Vec<f64> = Vec::new();
+            for s in 0..200usize {
+                let randomized = randomized_triad(&members, CONFIRM_SEED, s, 0, false);
+                if let Some(te) =
+                    frozen_estimate(&randomized[1], &randomized[0], DIM, Some(tau), Some(tau))
+                {
+                    dists.push(te);
+                }
+            }
+            dists.sort_by(f64::total_cmp);
+            match (observed, percentile(&dists, 99.0)) {
+                (Some(te), Some(thr)) => println!(
+                    "frozen-tau sweep: tau={tau} te={te:.4e} p99={thr:.4e} clears={}",
+                    if te > thr { "yes" } else { "no" }
+                ),
+                (te, thr) => println!(
+                    "frozen-tau sweep: tau={tau} te={} p99={} clears=pending",
+                    fmt_value(te),
+                    fmt_value(thr)
+                ),
+            }
+        }
+    }
+
+    #[ignore = "print-only positive control: rich aperiodic driver through the same 0.9/delay-8 recursion — runs in hyperscanning-te.yml"]
+    #[test]
+    fn positive_control_rich_aperiodic_driver_pair() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = rich_pair_fixture(800, 8, &mut rng);
+        let (dists, observed) = confirmation_pair_cell(a, b);
+        let p99 = percentile(&dists, 99.0);
+        println!(
+            "positive control: te={} p99={} clears={}",
+            fmt_value(Some(observed)),
+            fmt_value(p99),
+            p99.map_or("pending", |thr| if observed > thr { "yes" } else { "no" })
+        );
+    }
+
+    #[test]
+    fn shard_merge_equals_monolithic() {
+        let mut rng = SEED ^ 0x5A17_6E12;
+        let n = 400usize;
+        let (ga, gb) = deterministic_pair_fixture(n, 8, &mut rng);
+        let (fa, fb, fc, fd) = fn_gate_fixture(&mut rng);
+        let ra = rich_series(n, &mut rng);
+        let rb = rich_series(n, &mut rng);
+        let rc = ar1_sine(n, 0.6, 51.0, 2.3, 0.05, &mut rng);
+        let rd = ar1_sine(n, 0.6, 36.0, 0.0, 0.02, &mut rng);
+        let triads = vec![
+            (
+                "G01".to_string(),
+                vec![
+                    ("S01".to_string(), rd),
+                    ("S02".to_string(), ga),
+                    ("S03".to_string(), gb),
+                ],
+            ),
+            (
+                "G02".to_string(),
+                vec![
+                    ("A".to_string(), fa),
+                    ("B".to_string(), fb),
+                    ("C".to_string(), fc),
+                    ("D".to_string(), fd),
+                ],
+            ),
+            (
+                "G03".to_string(),
+                vec![
+                    ("P".to_string(), ra),
+                    ("Q".to_string(), rb),
+                    ("R".to_string(), rc),
+                ],
+            ),
+        ];
+        let channels = vec!["Fz".to_string(), "Cz".to_string(), "Pz".to_string()];
+        let n_surr = 40usize;
+
+        let monolithic = surrogate_family_maxima(&triads, DIM, n_surr, SEED, false);
+        let cells = observed_cells(&triads, &channels, DIM);
+
+        let count = 3usize;
+        let mut sharded_maxima: Vec<f64> = Vec::new();
+        let mut sharded_cell_dists: Vec<Vec<f64>> =
+            vec![Vec::new(); monolithic.cell_distributions.len()];
+        for idx in 0..count {
+            let s_start = idx * n_surr / count;
+            let s_end = (idx + 1) * n_surr / count;
+            let part =
+                surrogate_family_maxima_range(&triads, DIM, n_surr, SEED, false, s_start, s_end);
+            sharded_maxima.extend(part.maxima.iter().copied());
+            for (slot, d) in part.cell_distributions.iter().enumerate() {
+                sharded_cell_dists[slot].extend(d.iter().copied());
+            }
+        }
+
+        let mut a = monolithic.maxima.clone();
+        let mut b = sharded_maxima.clone();
+        a.sort_by(f64::total_cmp);
+        b.sort_by(f64::total_cmp);
+        assert_eq!(
+            a, b,
+            "the sharded family-maximum vector equals the monolithic one"
+        );
+        for slot in 0..monolithic.cell_distributions.len() {
+            let mut m = monolithic.cell_distributions[slot].clone();
+            let mut s = sharded_cell_dists[slot].clone();
+            m.sort_by(f64::total_cmp);
+            s.sort_by(f64::total_cmp);
+            assert_eq!(
+                m, s,
+                "cell slot {slot} null distribution equals the monolithic one"
+            );
+        }
+        let fam = SurrogateFamily {
+            maxima: b,
+            cell_distributions: sharded_cell_dists,
+        };
+        let mono_family = SurrogateFamily {
+            maxima: a,
+            cell_distributions: monolithic.cell_distributions,
+        };
+        let survivors_mono: Vec<usize> = per_cell_survivors(&cells, &mono_family, 95.0)
+            .iter()
+            .map(|c| c.slot)
+            .collect();
+        let survivors_shard: Vec<usize> = per_cell_survivors(&cells, &fam, 95.0)
+            .iter()
+            .map(|c| c.slot)
+            .collect();
+        assert_eq!(
+            survivors_mono, survivors_shard,
+            "the per-cell survivor set is identical"
+        );
+    }
+}

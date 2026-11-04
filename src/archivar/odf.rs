@@ -1,0 +1,3549 @@
+pub const ORBIT_KEY: u32 = 1031;
+pub const PK_FILE_LABEL: u32 = 101;
+pub const PK_IDENTIFIER: u32 = 107;
+pub const PK_ORBIT_HEADER: u32 = 109;
+pub const PK_RAMP: u32 = 2030;
+pub const PK_CLOCK: u32 = 2040;
+pub const PK_SUMMARY: u32 = u32::MAX;
+
+pub const RECORD_BYTES: usize = 36;
+pub const RECORDS_PER_BLOCK: usize = 224;
+pub const PHYSICAL_RECORD: usize = 8064;
+
+pub const ODF_TDB_OFFSET: f64 = -1577664000.0;
+
+pub const COMP_OBSERVABLE: u32 = 1;
+pub const TNF_COMP_UL_PHASE: u32 = 1;
+
+pub const PODF_COL_TDB: usize = 0;
+pub const PODF_COL_OBSERVABLE: usize = 1;
+
+#[derive(Clone, Copy, Debug)]
+pub struct OdOrbit {
+    pub t_since_1950: f64,
+    pub observable_hz: f64,
+    pub dss_rx: i64,
+    pub dss_tx: i64,
+    pub data_type: i64,
+    pub downlink_band: i64,
+    pub uplink_band: i64,
+    pub valid: bool,
+    pub scid: i64,
+    pub ref_hz: f64,
+    pub compression_s: f64,
+}
+
+pub fn bits(words: &[u32; 9], first: usize, last: usize) -> i64 {
+    let mut v: i64 = 0;
+    for b in first..=last {
+        let word = (b - 1) / 32;
+        let wbit = (b - 1) % 32;
+        let bit = (words[word] >> (31 - wbit)) & 1;
+        v = (v << 1) | bit as i64;
+    }
+    v
+}
+
+pub fn twos(v: i64, width: usize) -> i64 {
+    let sign = 1i64 << (width - 1);
+    if v & sign != 0 {
+        v - (1i64 << width)
+    } else {
+        v
+    }
+}
+
+pub fn orbit_record(words: &[u32; 9]) -> Option<OdOrbit> {
+    if words[0] < 0x400000 {
+        return None;
+    }
+    let fmt = bits(words, 129, 131);
+    let t_int = words[0] as i64;
+    let observable = twos(words[2] as i64, 32) as f64 + twos(words[3] as i64, 32) as f64 / 1.0e9;
+    let dss_rx = bits(words, 132, 138);
+    let dss_tx = bits(words, 139, 145);
+    let (t_frac, t_div, data_type, downlink_band, uplink_band, valid, scid, ref_hz, compression) =
+        if fmt == 1 {
+            (
+                bits(words, 33, 64),
+                1.0e9,
+                bits(words, 150, 155),
+                bits(words, 148, 149),
+                bits(words, 187, 188),
+                bits(words, 200, 200) == 0,
+                bits(words, 161, 167),
+                bits(words, 225, 256) as f64 * 10.0 + bits(words, 257, 264) as f64 * 0.1,
+                bits(words, 201, 224) as f64 / 100.0,
+            )
+        } else {
+            (
+                bits(words, 33, 42),
+                1.0e10,
+                bits(words, 148, 153),
+                bits(words, 154, 155),
+                bits(words, 156, 157),
+                bits(words, 160, 160) == 0,
+                bits(words, 168, 177),
+                bits(words, 179, 224) as f64 / 1000.0,
+                bits(words, 245, 266) as f64 / 100.0,
+            )
+        };
+    Some(OdOrbit {
+        t_since_1950: t_int as f64 + t_frac as f64 / t_div,
+        observable_hz: observable,
+        dss_rx,
+        dss_tx,
+        data_type,
+        downlink_band,
+        uplink_band,
+        valid,
+        scid,
+        ref_hz,
+        compression_s: compression,
+    })
+}
+
+pub fn write_podf_bin(records: &[[f64; 9]]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(8 + records.len() * 72);
+    out.extend_from_slice(b"PODF");
+    out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in records {
+        for v in r {
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    out
+}
+
+pub const PODF_SHARD_BUDGET: usize = 1 << 30;
+pub const PODF_SHARD_LIMIT: usize = 1 << 31;
+
+pub fn podf_shard_ranges(count: usize, budget: usize) -> Vec<(usize, usize)> {
+    if count == 0 {
+        return Vec::new();
+    }
+    let mut ranges = Vec::new();
+    let mut lo = 0usize;
+    while lo < count {
+        let mut hi = lo + 1;
+        while hi < count && 8 + (hi + 1 - lo) * 72 <= budget {
+            hi += 1;
+        }
+        ranges.push((lo, hi));
+        lo = hi;
+    }
+    ranges
+}
+
+pub fn podf_shard_name(prefix: &str, t_lo: f64, t_hi: f64) -> String {
+    format!("{prefix}_t{}_{}.bin", t_lo as i64, t_hi as i64)
+}
+
+pub fn podf_shard_name_ord(prefix: &str, t_lo: f64, t_hi: f64, ord: usize) -> String {
+    format!("{prefix}_t{}_{}_{}.bin", t_lo as i64, t_hi as i64, ord)
+}
+
+pub fn parse_podf_shard_name(filename: &str) -> Option<(&str, f64, f64)> {
+    let stem = filename.strip_suffix(".bin")?;
+    let (name, range) = stem.rsplit_once("_t")?;
+    let mut it = range.split('_');
+    let lo: f64 = it.next()?.parse().ok()?;
+    let hi: f64 = it.next()?.parse().ok()?;
+    Some((name, lo, hi))
+}
+
+pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
+    if data.len() < 8 || &data[0..4] != b"PODF" {
+        return None;
+    }
+    let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    let records_end = 8 + count * 72;
+    if data.len() != records_end && !band_trailer_valid(data, records_end, count) {
+        return None;
+    }
+    let mut out = Vec::with_capacity(count);
+    for i in 0..count {
+        let base = 8 + i * 72;
+        let mut r = [0.0f64; 9];
+        for k in 0..9 {
+            let mut buf = [0u8; 8];
+            buf.copy_from_slice(&data[base + k * 8..base + k * 8 + 8]);
+            r[k] = f64::from_le_bytes(buf);
+        }
+        out.push(r);
+    }
+    Some(out)
+}
+
+pub const PODF_BANDS_MAGIC: [u8; 4] = *b"BND1";
+pub const ODF_BAND_NONE: i64 = 0;
+
+pub type PodfBands = (Vec<[f64; 9]>, Vec<Option<i64>>);
+
+fn band_trailer_valid(data: &[u8], records_end: usize, count: usize) -> bool {
+    data.len() == records_end + 8 + count * 8
+        && data[records_end..records_end + 4] == PODF_BANDS_MAGIC
+        && u32::from_le_bytes(
+            data[records_end + 4..records_end + 8]
+                .try_into()
+                .unwrap_or([0; 4]),
+        ) as usize
+            == count
+}
+
+pub const ODF_TURN_RATIO_CONVENTION: &str = "the coherent turnaround ratio follows the (uplink, downlink) band pair per JPL 810-005 module 201 Rev F Table 1: S/S 240/221, S/X 880/221, X/S 240/749, X/X 880/749; the Ka/K rows are negotiated per project, so they stay absent";
+
+pub fn odf_turn_ratio(uplink_band: i64, downlink_band: i64) -> Option<f64> {
+    match (uplink_band, downlink_band) {
+        (1, 1) => Some(240.0 / 221.0),
+        (1, 2) => Some(880.0 / 221.0),
+        (2, 1) => Some(240.0 / 749.0),
+        (2, 2) => Some(880.0 / 749.0),
+        _ => None,
+    }
+}
+
+pub fn write_podf_bin_bands(records: &[[f64; 9]], uplink_bands: &[Option<i64>]) -> Vec<u8> {
+    let mut out = write_podf_bin(records);
+    if uplink_bands.len() != records.len() || uplink_bands.iter().all(Option::is_none) {
+        return out;
+    }
+    out.extend_from_slice(&PODF_BANDS_MAGIC);
+    out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for b in uplink_bands {
+        out.extend_from_slice(&(b.unwrap_or(ODF_BAND_NONE) as f64).to_le_bytes());
+    }
+    out
+}
+
+pub fn parse_podf_bin_bands(data: &[u8]) -> Option<PodfBands> {
+    let rows = parse_podf_bin(data)?;
+    let n = rows.len();
+    let mut bands = vec![None; n];
+    let records_end = 8 + n * 72;
+    if band_trailer_valid(data, records_end, n) {
+        for (i, slot) in bands.iter_mut().enumerate() {
+            let off = records_end + 8 + i * 8;
+            let mut buf = [0u8; 8];
+            buf.copy_from_slice(&data[off..off + 8]);
+            let v = f64::from_le_bytes(buf).round() as i64;
+            if v != ODF_BAND_NONE {
+                *slot = Some(v);
+            }
+        }
+    }
+    Some((rows, bands))
+}
+
+fn observable_series_of(rows: &[[f64; 9]]) -> Vec<(f64, f64, u32)> {
+    let mut out = Vec::with_capacity(rows.len());
+    for r in rows {
+        let t = r[PODF_COL_TDB];
+        let v = r[PODF_COL_OBSERVABLE];
+        if !t.is_finite() || !v.is_finite() {
+            continue;
+        }
+        out.push((t, v, COMP_OBSERVABLE));
+    }
+    out
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_podf_bin(bytes)?;
+    Some(observable_series_of(&rows))
+}
+
+pub const MAGIC_ODF_SERIES: [u8; 4] = *b"ODFS";
+
+pub fn write_odf_series(shards: &[&[[f64; 9]]]) -> Vec<u8> {
+    let count: usize = shards.iter().map(|s| s.len()).sum();
+    let mut out = Vec::with_capacity(8 + count * 72);
+    out.extend_from_slice(&MAGIC_ODF_SERIES);
+    out.extend_from_slice(&(count as u32).to_le_bytes());
+    for shard in shards {
+        for r in *shard {
+            for v in r {
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+    }
+    out
+}
+
+pub fn parse_odf_series(data: &[u8]) -> Option<Vec<[f64; 9]>> {
+    if data.len() < 8 || data[0..4] != MAGIC_ODF_SERIES {
+        return None;
+    }
+    let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    if data.len() != 8 + count * 72 {
+        return None;
+    }
+    let mut out = Vec::with_capacity(count);
+    for i in 0..count {
+        let base = 8 + i * 72;
+        let mut r = [0.0f64; 9];
+        for k in 0..9 {
+            let mut buf = [0u8; 8];
+            buf.copy_from_slice(&data[base + k * 8..base + k * 8 + 8]);
+            r[k] = f64::from_le_bytes(buf);
+        }
+        out.push(r);
+    }
+    Some(out)
+}
+
+pub fn odf_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_odf_series(bytes)?;
+    Some(observable_series_of(&rows))
+}
+
+pub fn write_p11r_bin(records: &[[f64; 9]]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(8 + records.len() * 72);
+    out.extend_from_slice(b"P11R");
+    out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in records {
+        for v in r {
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    out
+}
+
+pub fn parse_p11r_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
+    if data.len() < 8 || &data[0..4] != b"P11R" {
+        return None;
+    }
+    let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    if data.len() != 8 + count * 72 {
+        return None;
+    }
+    let mut out = Vec::with_capacity(count);
+    for i in 0..count {
+        let base = 8 + i * 72;
+        let mut r = [0.0f64; 9];
+        for k in 0..9 {
+            let mut buf = [0u8; 8];
+            buf.copy_from_slice(&data[base + k * 8..base + k * 8 + 8]);
+            r[k] = f64::from_le_bytes(buf);
+        }
+        out.push(r);
+    }
+    Some(out)
+}
+
+pub fn parse_odf(bytes: &[u8]) -> Option<Vec<OdOrbit>> {
+    let full_blocks = bytes.len() / PHYSICAL_RECORD;
+    if full_blocks == 0 {
+        return None;
+    }
+    let bytes = &bytes[..full_blocks * PHYSICAL_RECORD];
+    let label = PK_FILE_LABEL.to_be_bytes();
+    let Some(origin) = (0..8).find(|&i| bytes.get(i..i + 4).is_some_and(|slice| slice == label))
+    else {
+        return None;
+    };
+    let mut out = Vec::new();
+    let mut in_orbit = false;
+    let n = (bytes.len() - origin) / RECORD_BYTES;
+    for i in 0..n {
+        let at = origin + i * RECORD_BYTES;
+        let mut words = [0u32; 9];
+        for k in 0..9 {
+            words[k] = u32::from_be_bytes(bytes[at + k * 4..at + k * 4 + 4].try_into().ok()?);
+        }
+        match words[0] {
+            PK_FILE_LABEL | PK_IDENTIFIER | PK_ORBIT_HEADER | PK_RAMP | PK_CLOCK | PK_SUMMARY => {
+                in_orbit = words[0] == PK_ORBIT_HEADER;
+            }
+            _ => {
+                if in_orbit && let Some(r) = orbit_record(&words) {
+                    out.push(r);
+                }
+            }
+        }
+    }
+    Some(out)
+}
+
+pub const TNF_LABEL_LEN: usize = 20;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RampRecord {
+    pub start_s: f64,
+    pub start_freq_hz: f64,
+    pub rate_hz_per_s: f64,
+    pub end_s: f64,
+}
+
+pub fn ramp_record(words: &[u32; 9]) -> Option<RampRecord> {
+    if words[0] == 0 && words[1] == 0 && words[5] == 0 && words[7] == 0 {
+        return None;
+    }
+    let start_s = words[0] as f64 + words[1] as f64 * 1.0e-9;
+    let rate_hz_per_s =
+        twos(words[2] as i64, 32) as f64 + twos(words[3] as i64, 32) as f64 * 1.0e-9;
+    let start_freq_hz =
+        bits(words, 129, 150) as f64 * 1.0e9 + words[5] as f64 + words[6] as f64 * 1.0e-9;
+    let end_s = words[7] as f64 + words[8] as f64 * 1.0e-9;
+    if !start_s.is_finite()
+        || !start_freq_hz.is_finite()
+        || !rate_hz_per_s.is_finite()
+        || !end_s.is_finite()
+    {
+        return None;
+    }
+    Some(RampRecord {
+        start_s,
+        start_freq_hz,
+        rate_hz_per_s,
+        end_s,
+    })
+}
+
+pub fn parse_odf_ramps(bytes: &[u8]) -> Option<Vec<RampRecord>> {
+    let full_blocks = bytes.len() / PHYSICAL_RECORD;
+    if full_blocks == 0 {
+        return None;
+    }
+    let bytes = &bytes[..full_blocks * PHYSICAL_RECORD];
+    let label = PK_FILE_LABEL.to_be_bytes();
+    let Some(origin) = (0..8).find(|&i| bytes.get(i..i + 4).is_some_and(|slice| slice == label))
+    else {
+        return None;
+    };
+    let mut out = Vec::new();
+    let mut in_ramp = false;
+    let n = (bytes.len() - origin) / RECORD_BYTES;
+    for i in 0..n {
+        let at = origin + i * RECORD_BYTES;
+        let mut words = [0u32; 9];
+        for k in 0..9 {
+            words[k] = u32::from_be_bytes(bytes[at + k * 4..at + k * 4 + 4].try_into().ok()?);
+        }
+        if words[0] == PK_RAMP {
+            in_ramp = true;
+            continue;
+        }
+        if matches!(
+            words[0],
+            PK_FILE_LABEL | PK_IDENTIFIER | PK_ORBIT_HEADER | PK_CLOCK | PK_SUMMARY
+        ) {
+            in_ramp = false;
+            continue;
+        }
+        if in_ramp && let Some(record) = ramp_record(&words) {
+            out.push(record);
+        }
+    }
+    Some(out)
+}
+pub const TNF_FORMAT_UL_CARRIER_PHASE: u8 = 0;
+pub const TNF_FORMAT_DL_CARRIER_PHASE: u8 = 1;
+pub const TNF_FORMAT_UL_SEQ_RANGING_PHASE: u8 = 2;
+pub const TNF_FORMAT_DL_SEQ_RANGING_PHASE: u8 = 3;
+pub const TNF_FORMAT_UL_PN_RANGING_PHASE: u8 = 4;
+pub const TNF_FORMAT_DL_PN_RANGING_PHASE: u8 = 5;
+
+pub fn ranging_component_code(n: u8) -> Option<&'static [u8]> {
+    match n {
+        1 => Some(&[1, 0]),
+        2 => Some(&[1, 1, 1, 0, 0, 1, 0]),
+        3 => Some(&[1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0]),
+        4 => Some(&[1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0]),
+        5 => Some(&[1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0]),
+        6 => Some(&[
+            1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+        ]),
+        _ => None,
+    }
+}
+
+pub fn ranging_component_length(n: u8) -> Option<u64> {
+    ranging_component_code(n).map(|c| c.len() as u64)
+}
+
+pub fn ranging_composite_period(first: u8, last: u8) -> Option<u64> {
+    if first < 1 || last > 6 || first > last {
+        return None;
+    }
+    let mut l = 1u64;
+    for n in first..=last {
+        l = l.checked_mul(ranging_component_length(n)?)?;
+    }
+    Some(l)
+}
+
+pub fn ranging_ambiguity_resolution_m(first: u8, last: u8, range_clock_hz: f64) -> Option<f64> {
+    if !range_clock_hz.is_finite() || range_clock_hz <= 0.0 {
+        return None;
+    }
+    let l = ranging_composite_period(first, last)? as f64;
+    let v = 299_792_458.0 * l / (4.0 * range_clock_hz);
+    v.is_finite().then_some(v)
+}
+
+pub fn ranging_resolution_from_cycle_time_m(first: u8, last: u8, cycle_time_s: f64) -> Option<f64> {
+    if !cycle_time_s.is_finite() || cycle_time_s <= 0.0 {
+        return None;
+    }
+    let l = ranging_composite_period(first, last)? as f64;
+    ranging_ambiguity_resolution_m(first, last, l / cycle_time_s)
+}
+
+pub const SEQ_RANGING_FIRST_COMPONENT: u8 = 4;
+pub const SEQ_RANGING_LAST_COMPONENT: u8 = 24;
+
+pub fn seq_ranging_component_frequency_hz(n: u8, f_exc_hz: f64) -> Option<f64> {
+    if !f_exc_hz.is_finite() || f_exc_hz <= 0.0 {
+        return None;
+    }
+    if !(SEQ_RANGING_FIRST_COMPONENT..=SEQ_RANGING_LAST_COMPONENT).contains(&n) {
+        return None;
+    }
+    let f = f_exc_hz * 2f64.powi(-(i32::from(n) + 2));
+    (f.is_finite() && f > 0.0).then_some(f)
+}
+
+pub fn seq_ranging_ambiguity_resolution_m(first: u8, last: u8, f_exc_hz: f64) -> Option<f64> {
+    if first > last {
+        return None;
+    }
+    let f_first = seq_ranging_component_frequency_hz(first, f_exc_hz)?;
+    let v = 299_792_458.0 / (2.0 * f_first);
+    v.is_finite().then_some(v)
+}
+
+fn tnf_seq_ranging_exc_scalars(frame: &TnfSfdu, bytes: &[u8]) -> Option<(u32, u32)> {
+    match frame.format_code {
+        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt2(frame, bytes)?;
+            Some((d.exc_scalar_num, d.exc_scalar_den))
+        }
+        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt3(frame, bytes)?;
+            Some((d.exc_scalar_num, d.exc_scalar_den))
+        }
+        _ => None,
+    }
+}
+
+fn tnf_seq_ranging_components(frame: &TnfSfdu, bytes: &[u8]) -> Option<(u8, u8)> {
+    match frame.format_code {
+        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt2(frame, bytes)?;
+            Some((d.first_comp_num, d.last_comp_num))
+        }
+        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt3(frame, bytes)?;
+            Some((d.first_comp_num, d.last_comp_num))
+        }
+        _ => None,
+    }
+}
+
+fn tnf_seq_ranging_f_exc_hz(frame: &TnfSfdu, bytes: &[u8], frq_up_hz: f64) -> Option<f64> {
+    if !frq_up_hz.is_finite() || frq_up_hz <= 0.0 {
+        return None;
+    }
+    let (num, den) = tnf_seq_ranging_exc_scalars(frame, bytes)?;
+    if den == 0 {
+        return None;
+    }
+    let f = frq_up_hz * (num as f64) / (den as f64);
+    (f.is_finite() && f > 0.0).then_some(f)
+}
+
+pub fn tnf_ranging_resolution_with_frq_up(
+    frame: &TnfSfdu,
+    bytes: &[u8],
+    frq_up_hz: f64,
+) -> Option<f64> {
+    let (first, last) = tnf_seq_ranging_components(frame, bytes)?;
+    let f_exc = tnf_seq_ranging_f_exc_hz(frame, bytes, frq_up_hz)?;
+    seq_ranging_ambiguity_resolution_m(first, last, f_exc)
+}
+
+pub fn tnf_ranging_resolution(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+    let _ = tnf_seq_ranging_components(frame, bytes)?;
+    None
+}
+
+pub const TNF_PAIR_TIME_WINDOW_S: f64 = 60.0;
+
+fn tnf_time_tag_seconds(frame: &TnfSfdu) -> Option<f64> {
+    let day0 = crate::archivar::lsk::days_from_civil(frame.year as i64, 1, 1)?;
+    Some((day0 + frame.doy as i64 - 1) as f64 * 86_400.0 + frame.sec)
+}
+
+fn tnf_ul_freq_candidate(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+    let end = frame.offset.checked_add(frame.total_len)?;
+    let slice = bytes.get(frame.offset..end)?;
+    let v = match frame.format_code {
+        TNF_FORMAT_DOPPLER_COUNT => tnf_dt6(frame, slice)?.ul_freq,
+        TNF_FORMAT_SEQUENTIAL_RANGE => tnf_dt7(frame, slice)?.ul_freq,
+        _ => return None,
+    };
+    (v.is_finite() && v > 0.0).then_some(v)
+}
+
+pub fn tnf_pair_ul_freq(frames: &[TnfSfdu], bytes: &[u8], ranging_frame: &TnfSfdu) -> Option<f64> {
+    let t = tnf_time_tag_seconds(ranging_frame)?;
+    let mut best_dist = f64::INFINITY;
+    let mut best_freq: Option<f64> = None;
+    let mut tied = false;
+    for f in frames {
+        if f.scft_id != ranging_frame.scft_id || f.mission_id != ranging_frame.mission_id {
+            continue;
+        }
+        let Some(freq) = tnf_ul_freq_candidate(f, bytes) else {
+            continue;
+        };
+        let Some(tf) = tnf_time_tag_seconds(f) else {
+            continue;
+        };
+        let d = (tf - t).abs();
+        if d > TNF_PAIR_TIME_WINDOW_S {
+            continue;
+        }
+        if d < best_dist {
+            best_dist = d;
+            best_freq = Some(freq);
+            tied = false;
+        } else if d == best_dist && best_freq != Some(freq) {
+            tied = true;
+        }
+    }
+    if tied { None } else { best_freq }
+}
+
+pub const TNF_FORMAT_DOPPLER_COUNT: u8 = 6;
+pub const TNF_FORMAT_SEQUENTIAL_RANGE: u8 = 7;
+pub const TNF_FORMAT_ANGLE: u8 = 8;
+pub const TNF_FORMAT_RAMP: u8 = 9;
+pub const TNF_FORMAT_VLBI: u8 = 10;
+pub const TNF_FORMAT_DRVID: u8 = 11;
+pub const TNF_FORMAT_SMOOTHED_NOISE: u8 = 12;
+pub const TNF_FORMAT_ALLAN_DEVIATION: u8 = 13;
+pub const TNF_FORMAT_PN_RANGE: u8 = 14;
+pub const TNF_FORMAT_TONE_RANGE: u8 = 15;
+pub const TNF_FORMAT_CARRIER_OBSERVABLE: u8 = 16;
+pub const TNF_FORMAT_TOTAL_PHASE_OBSERVABLE: u8 = 17;
+
+const TNF_CHDO_UPLINK: u16 = 132;
+const TNF_CHDO_DOWNLINK: u16 = 133;
+
+fn tnf_time_tag_offset(secondary_chdo_type: u16) -> usize {
+    match secondary_chdo_type {
+        TNF_CHDO_UPLINK | TNF_CHDO_DOWNLINK => 48,
+        _ => 44,
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfSfdu {
+    pub offset: usize,
+    pub total_len: usize,
+    pub data_description_id: [u8; 4],
+    pub sfdu_length: u64,
+    pub aggr_chdo_type: u16,
+    pub aggr_chdo_length: u16,
+    pub primary_chdo_type: u16,
+    pub primary_chdo_length: u16,
+    pub mjr_data_class: u8,
+    pub mnr_data_class: u8,
+    pub mission_id: u8,
+    pub format_code: u8,
+    pub secondary_chdo_type: u16,
+    pub secondary_chdo_length: u16,
+    pub scft_id: u8,
+    pub rec_seq_num: u32,
+    pub year: u16,
+    pub doy: u16,
+    pub sec: f64,
+}
+
+fn be16(b: &[u8]) -> u16 {
+    u16::from_be_bytes([b[0], b[1]])
+}
+
+fn be32(b: &[u8]) -> u32 {
+    u32::from_be_bytes([b[0], b[1], b[2], b[3]])
+}
+
+fn be64(b: &[u8]) -> u64 {
+    u64::from_be_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]])
+}
+
+fn read_tnf_sfdu(bytes: &[u8], offset: usize) -> Option<TnfSfdu> {
+    if bytes.len() < 60 || &bytes[0..4] != b"NJPL" {
+        return None;
+    }
+    let sfdu_length = be64(&bytes[12..20]);
+    let total_len = TNF_LABEL_LEN + sfdu_length as usize;
+    if bytes.len() < total_len {
+        return None;
+    }
+    let mut data_description_id = [0u8; 4];
+    data_description_id.copy_from_slice(&bytes[8..12]);
+    let secondary_chdo_type = be16(&bytes[32..34]);
+    let time_off = tnf_time_tag_offset(secondary_chdo_type);
+    let rsn_off = time_off - 4;
+    Some(TnfSfdu {
+        offset,
+        total_len,
+        data_description_id,
+        sfdu_length,
+        aggr_chdo_type: be16(&bytes[20..22]),
+        aggr_chdo_length: be16(&bytes[22..24]),
+        primary_chdo_type: be16(&bytes[24..26]),
+        primary_chdo_length: be16(&bytes[26..28]),
+        mjr_data_class: bytes[28],
+        mnr_data_class: bytes[29],
+        mission_id: bytes[30],
+        format_code: bytes[31],
+        secondary_chdo_type,
+        secondary_chdo_length: be16(&bytes[34..36]),
+        scft_id: bytes[39],
+        rec_seq_num: be32(&bytes[rsn_off..rsn_off + 4]),
+        year: be16(&bytes[time_off..time_off + 2]),
+        doy: be16(&bytes[time_off + 2..time_off + 4]),
+        sec: f64::from_be_bytes(bytes[time_off + 4..time_off + 12].try_into().ok()?),
+    })
+}
+
+pub fn scan_tnf_sfdus(bytes: &[u8]) -> Option<Vec<TnfSfdu>> {
+    let mut out = Vec::new();
+    let mut off = 0usize;
+    while off < bytes.len() {
+        let frame = read_tnf_sfdu(&bytes[off..], off)?;
+        off += frame.total_len;
+        out.push(frame);
+    }
+    Some(out)
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt0 {
+    pub orig_id: u8,
+    pub last_modifier_id: u8,
+    pub upl_rec_seq_num: u32,
+    pub rct_day: u16,
+    pub rct_msec: u32,
+    pub ul_dss_id: u8,
+    pub ul_band: u8,
+    pub ul_assembly_num: u8,
+    pub transmit_num: u8,
+    pub transmit_stat: u8,
+    pub transmit_mode: u8,
+    pub cmd_modul_stat: u8,
+    pub rng_modul_stat: u8,
+    pub fts_vld_flag: u8,
+    pub transmit_time_tag_delay: f64,
+    pub ul_zheight_corr: f32,
+    pub mod_day: u16,
+    pub mod_msec: u32,
+    pub version_num: u8,
+    pub sub_version_num: u8,
+    pub sub_sub_version_num: u8,
+    pub data_chdo_type: u16,
+    pub data_chdo_length: u16,
+    pub ul_hi_phs_cycles: u32,
+    pub ul_lo_phs_cycles: u32,
+    pub ul_frac_phs_cycles: u32,
+    pub ramp_freq: f64,
+    pub ramp_rate: f64,
+    pub transmit_switch_stat: u8,
+    pub ramp_type: u8,
+    pub transmit_op_pwr: f32,
+    pub sup_data_id: [u8; 8],
+    pub sup_data_rev: [u8; 8],
+    pub prdx_time_offset: f64,
+    pub prdx_freq_offset: f64,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub fabricated_sfdu_flag: u8,
+}
+
+pub fn tnf_dt0(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt0> {
+    if frame.format_code != TNF_FORMAT_UL_CARRIER_PHASE || bytes.len() < 182 {
+        return None;
+    }
+    let mut sup_data_id = [0u8; 8];
+    sup_data_id.copy_from_slice(&bytes[140..148]);
+    let mut sup_data_rev = [0u8; 8];
+    sup_data_rev.copy_from_slice(&bytes[148..156]);
+    Some(TnfDt0 {
+        orig_id: bytes[36],
+        last_modifier_id: bytes[37],
+        upl_rec_seq_num: be32(&bytes[40..44]),
+        rct_day: be16(&bytes[60..62]),
+        rct_msec: be32(&bytes[62..66]),
+        ul_dss_id: bytes[66],
+        ul_band: bytes[67],
+        ul_assembly_num: bytes[68],
+        transmit_num: bytes[69],
+        transmit_stat: bytes[70],
+        transmit_mode: bytes[71],
+        cmd_modul_stat: bytes[72],
+        rng_modul_stat: bytes[73],
+        fts_vld_flag: bytes[74],
+        transmit_time_tag_delay: f64::from_be_bytes(bytes[76..84].try_into().ok()?),
+        ul_zheight_corr: f32::from_be_bytes(bytes[84..88].try_into().ok()?),
+        mod_day: be16(&bytes[88..90]),
+        mod_msec: be32(&bytes[90..94]),
+        version_num: bytes[94],
+        sub_version_num: bytes[95],
+        sub_sub_version_num: bytes[96],
+        data_chdo_type: be16(&bytes[102..104]),
+        data_chdo_length: be16(&bytes[104..106]),
+        ul_hi_phs_cycles: be32(&bytes[106..110]),
+        ul_lo_phs_cycles: be32(&bytes[110..114]),
+        ul_frac_phs_cycles: be32(&bytes[114..118]),
+        ramp_freq: f64::from_be_bytes(bytes[118..126].try_into().ok()?),
+        ramp_rate: f64::from_be_bytes(bytes[126..134].try_into().ok()?),
+        transmit_switch_stat: bytes[134],
+        ramp_type: bytes[135],
+        transmit_op_pwr: f32::from_be_bytes(bytes[136..140].try_into().ok()?),
+        sup_data_id,
+        sup_data_rev,
+        prdx_time_offset: f64::from_be_bytes(bytes[156..164].try_into().ok()?),
+        prdx_freq_offset: f64::from_be_bytes(bytes[164..172].try_into().ok()?),
+        time_tag_corr_flag: bytes[172],
+        type_time_corr_flag: bytes[173],
+        fabricated_sfdu_flag: bytes[174],
+    })
+}
+
+pub fn tnf_phase_cycles(hi: u32, lo: u32, frac: u32) -> f64 {
+    hi as f64 * 4_294_967_296.0 + lo as f64 + frac as f64 / 4_294_967_296.0
+}
+
+pub fn tnf_ul_phase_cycles(d: &TnfDt0) -> f64 {
+    tnf_phase_cycles(d.ul_hi_phs_cycles, d.ul_lo_phs_cycles, d.ul_frac_phs_cycles)
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt1 {
+    pub dl_dss_id: u8,
+    pub dl_band: u8,
+    pub carr_loop_bw: f32,
+    pub pcn0: f32,
+    pub pcn0_resid: f32,
+    pub pdn0: f32,
+    pub pdn0_resid: f32,
+    pub system_noise_temp: f32,
+    pub phases: [[u32; 3]; 10],
+    pub phase_avg: [u32; 3],
+    pub dl_freq: f64,
+    pub dop_resid: f32,
+    pub dop_noise: f32,
+    pub slipped_cycles: i32,
+    pub carr_loop_type: u8,
+    pub snt_flag: u8,
+    pub carr_resid_wt: f32,
+    pub sup_data_id: [u8; 8],
+    pub sup_data_rev: [u8; 8],
+    pub prdx_time_offset: f64,
+    pub prdx_freq_offset: f64,
+    pub carr_resid_tol_flag: u8,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub dop_mode_corr_flag: u8,
+    pub ul_stn_corr_flag: u8,
+}
+
+pub fn tnf_dt1(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt1> {
+    if frame.format_code != TNF_FORMAT_DL_CARRIER_PHASE || bytes.len() < 378 {
+        return None;
+    }
+    let mut phases = [[0u32; 3]; 10];
+    for (i, p) in phases.iter_mut().enumerate() {
+        let base = 174 + i * 12;
+        *p = [
+            be32(&bytes[base..base + 4]),
+            be32(&bytes[base + 4..base + 8]),
+            be32(&bytes[base + 8..base + 12]),
+        ];
+    }
+    let mut sup_data_id = [0u8; 8];
+    sup_data_id.copy_from_slice(&bytes[332..340]);
+    let mut sup_data_rev = [0u8; 8];
+    sup_data_rev.copy_from_slice(&bytes[340..348]);
+    Some(TnfDt1 {
+        dl_dss_id: bytes[66],
+        dl_band: bytes[67],
+        carr_loop_bw: f32::from_be_bytes(bytes[150..154].try_into().ok()?),
+        pcn0: f32::from_be_bytes(bytes[154..158].try_into().ok()?),
+        pcn0_resid: f32::from_be_bytes(bytes[158..162].try_into().ok()?),
+        pdn0: f32::from_be_bytes(bytes[162..166].try_into().ok()?),
+        pdn0_resid: f32::from_be_bytes(bytes[166..170].try_into().ok()?),
+        system_noise_temp: f32::from_be_bytes(bytes[170..174].try_into().ok()?),
+        phases,
+        phase_avg: [
+            be32(&bytes[294..298]),
+            be32(&bytes[298..302]),
+            be32(&bytes[302..306]),
+        ],
+        dl_freq: f64::from_be_bytes(bytes[306..314].try_into().ok()?),
+        dop_resid: f32::from_be_bytes(bytes[314..318].try_into().ok()?),
+        dop_noise: f32::from_be_bytes(bytes[318..322].try_into().ok()?),
+        slipped_cycles: i32::from_be_bytes(bytes[322..326].try_into().ok()?),
+        carr_loop_type: bytes[326],
+        snt_flag: bytes[327],
+        carr_resid_wt: f32::from_be_bytes(bytes[328..332].try_into().ok()?),
+        sup_data_id,
+        sup_data_rev,
+        prdx_time_offset: f64::from_be_bytes(bytes[348..356].try_into().ok()?),
+        prdx_freq_offset: f64::from_be_bytes(bytes[356..364].try_into().ok()?),
+        carr_resid_tol_flag: bytes[364],
+        time_tag_corr_flag: bytes[365],
+        type_time_corr_flag: bytes[366],
+        dop_mode_corr_flag: bytes[367],
+        ul_stn_corr_flag: bytes[368],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt2 {
+    pub ul_dss_id: u8,
+    pub ul_band: u8,
+    pub stn_cal: f64,
+    pub ul_stn_cal: f64,
+    pub ul_cal_freq: f64,
+    pub cal_std_dev: f32,
+    pub cal_pts: u16,
+    pub ul_rng_phs: f64,
+    pub transmit_switch_stat: u8,
+    pub invert: u8,
+    pub transmit_op_pwr: f32,
+    pub template_id: [u8; 8],
+    pub t1: u16,
+    pub t2: u16,
+    pub t3: u16,
+    pub first_comp_num: u8,
+    pub last_comp_num: u8,
+    pub chop_comp_num: u8,
+    pub num_drvid: u8,
+    pub tx_inphs_year: u16,
+    pub tx_inphs_doy: u16,
+    pub tx_inphs_sec: f64,
+    pub carr_sup_rng_modul: f32,
+    pub rng_modul_amp: u16,
+    pub exc_scalar_num: u32,
+    pub exc_scalar_den: u32,
+    pub rng_cycle_time: f64,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub clock_waveform: u8,
+    pub chop_start_num: u8,
+    pub rng_meas_type: u8,
+    pub fabricated_sfdu_flag: u8,
+}
+
+pub fn tnf_dt2(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt2> {
+    if frame.format_code != TNF_FORMAT_UL_SEQ_RANGING_PHASE || bytes.len() < 214 {
+        return None;
+    }
+    let mut template_id = [0u8; 8];
+    template_id.copy_from_slice(&bytes[150..158]);
+    Some(TnfDt2 {
+        ul_dss_id: bytes[66],
+        ul_band: bytes[67],
+        stn_cal: f64::from_be_bytes(bytes[106..114].try_into().ok()?),
+        ul_stn_cal: f64::from_be_bytes(bytes[114..122].try_into().ok()?),
+        ul_cal_freq: f64::from_be_bytes(bytes[122..130].try_into().ok()?),
+        cal_std_dev: f32::from_be_bytes(bytes[130..134].try_into().ok()?),
+        cal_pts: be16(&bytes[134..136]),
+        ul_rng_phs: f64::from_be_bytes(bytes[136..144].try_into().ok()?),
+        transmit_switch_stat: bytes[144],
+        invert: bytes[145],
+        transmit_op_pwr: f32::from_be_bytes(bytes[146..150].try_into().ok()?),
+        template_id,
+        t1: be16(&bytes[158..160]),
+        t2: be16(&bytes[160..162]),
+        t3: be16(&bytes[162..164]),
+        first_comp_num: bytes[164],
+        last_comp_num: bytes[165],
+        chop_comp_num: bytes[166],
+        num_drvid: bytes[167],
+        tx_inphs_year: be16(&bytes[168..170]),
+        tx_inphs_doy: be16(&bytes[170..172]),
+        tx_inphs_sec: f64::from_be_bytes(bytes[172..180].try_into().ok()?),
+        carr_sup_rng_modul: f32::from_be_bytes(bytes[180..184].try_into().ok()?),
+        rng_modul_amp: be16(&bytes[184..186]),
+        exc_scalar_num: be32(&bytes[186..190]),
+        exc_scalar_den: be32(&bytes[190..194]),
+        rng_cycle_time: f64::from_be_bytes(bytes[194..202].try_into().ok()?),
+        time_tag_corr_flag: bytes[202],
+        type_time_corr_flag: bytes[203],
+        clock_waveform: bytes[204],
+        chop_start_num: bytes[205],
+        rng_meas_type: bytes[206],
+        fabricated_sfdu_flag: bytes[207],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt3 {
+    pub dl_dss_id: u8,
+    pub dl_band: u8,
+    pub stn_cal: f64,
+    pub dl_stn_cal: f64,
+    pub dl_cal_freq: f64,
+    pub cal_std_dev: f32,
+    pub cal_pts: u16,
+    pub dl_rng_phs: f64,
+    pub figure_merit: f32,
+    pub rng_resid: f64,
+    pub drvid: f64,
+    pub rtlt: f32,
+    pub pcn0: f32,
+    pub pcn0_resid: f32,
+    pub pdn0: f32,
+    pub pdn0_resid: f32,
+    pub prn0: f32,
+    pub prn0_resid: f32,
+    pub system_noise_temp: f32,
+    pub carr_loop_type: u8,
+    pub snt_flag: u8,
+    pub carr_resid_wt: f32,
+    pub template_id: [u8; 8],
+    pub invert: u8,
+    pub correl_type: u8,
+    pub t1: u16,
+    pub t2: u16,
+    pub t3: u16,
+    pub first_comp_num: u8,
+    pub last_comp_num: u8,
+    pub chop_comp_num: u8,
+    pub num_drvid: u8,
+    pub rcv_inphs_year: u16,
+    pub rcv_inphs_doy: u16,
+    pub rcv_inphs_sec: f64,
+    pub exc_scalar_num: u32,
+    pub exc_scalar_den: u32,
+    pub rng_cycle_time: f64,
+    pub inphs_correl: f32,
+    pub quad_phs_correl: f32,
+    pub metrics_vld_flag: u8,
+    pub correl_vld_flag: u8,
+    pub rng_resid_tol_flag: u8,
+    pub drvid_tol_flag: u8,
+    pub prn0_resid_tol_flag: u8,
+    pub rng_sigma_tol_flag: u8,
+    pub rng_vld_flag: u8,
+    pub rng_config_flag: u8,
+    pub rng_hw_flag: u8,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub dop_mode_corr_flag: u8,
+    pub ul_stn_corr_flag: u8,
+    pub chop_start_num: u8,
+    pub rng_meas_type: u8,
+    pub stn_cal_corr_flag: u8,
+}
+
+pub fn tnf_dt3(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt3> {
+    if frame.format_code != TNF_FORMAT_DL_SEQ_RANGING_PHASE || bytes.len() < 324 {
+        return None;
+    }
+    let mut template_id = [0u8; 8];
+    template_id.copy_from_slice(&bytes[246..254]);
+    Some(TnfDt3 {
+        dl_dss_id: bytes[66],
+        dl_band: bytes[67],
+        stn_cal: f64::from_be_bytes(bytes[150..158].try_into().ok()?),
+        dl_stn_cal: f64::from_be_bytes(bytes[158..166].try_into().ok()?),
+        dl_cal_freq: f64::from_be_bytes(bytes[166..174].try_into().ok()?),
+        cal_std_dev: f32::from_be_bytes(bytes[174..178].try_into().ok()?),
+        cal_pts: be16(&bytes[178..180]),
+        dl_rng_phs: f64::from_be_bytes(bytes[180..188].try_into().ok()?),
+        figure_merit: f32::from_be_bytes(bytes[188..192].try_into().ok()?),
+        rng_resid: f64::from_be_bytes(bytes[192..200].try_into().ok()?),
+        drvid: f64::from_be_bytes(bytes[200..208].try_into().ok()?),
+        rtlt: f32::from_be_bytes(bytes[208..212].try_into().ok()?),
+        pcn0: f32::from_be_bytes(bytes[212..216].try_into().ok()?),
+        pcn0_resid: f32::from_be_bytes(bytes[216..220].try_into().ok()?),
+        pdn0: f32::from_be_bytes(bytes[220..224].try_into().ok()?),
+        pdn0_resid: f32::from_be_bytes(bytes[224..228].try_into().ok()?),
+        prn0: f32::from_be_bytes(bytes[228..232].try_into().ok()?),
+        prn0_resid: f32::from_be_bytes(bytes[232..236].try_into().ok()?),
+        system_noise_temp: f32::from_be_bytes(bytes[236..240].try_into().ok()?),
+        carr_loop_type: bytes[240],
+        snt_flag: bytes[241],
+        carr_resid_wt: f32::from_be_bytes(bytes[242..246].try_into().ok()?),
+        template_id,
+        invert: bytes[254],
+        correl_type: bytes[255],
+        t1: be16(&bytes[256..258]),
+        t2: be16(&bytes[258..260]),
+        t3: be16(&bytes[260..262]),
+        first_comp_num: bytes[262],
+        last_comp_num: bytes[263],
+        chop_comp_num: bytes[264],
+        num_drvid: bytes[265],
+        rcv_inphs_year: be16(&bytes[266..268]),
+        rcv_inphs_doy: be16(&bytes[268..270]),
+        rcv_inphs_sec: f64::from_be_bytes(bytes[270..278].try_into().ok()?),
+        exc_scalar_num: be32(&bytes[278..282]),
+        exc_scalar_den: be32(&bytes[282..286]),
+        rng_cycle_time: f64::from_be_bytes(bytes[286..294].try_into().ok()?),
+        inphs_correl: f32::from_be_bytes(bytes[294..298].try_into().ok()?),
+        quad_phs_correl: f32::from_be_bytes(bytes[298..302].try_into().ok()?),
+        metrics_vld_flag: bytes[302],
+        correl_vld_flag: bytes[303],
+        rng_resid_tol_flag: bytes[304],
+        drvid_tol_flag: bytes[305],
+        prn0_resid_tol_flag: bytes[306],
+        rng_sigma_tol_flag: bytes[307],
+        rng_vld_flag: bytes[308],
+        rng_config_flag: bytes[309],
+        rng_hw_flag: bytes[310],
+        time_tag_corr_flag: bytes[311],
+        type_time_corr_flag: bytes[312],
+        dop_mode_corr_flag: bytes[313],
+        ul_stn_corr_flag: bytes[314],
+        chop_start_num: bytes[315],
+        rng_meas_type: bytes[316],
+        stn_cal_corr_flag: bytes[317],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt4 {
+    pub ul_dss_id: u8,
+    pub ul_band: u8,
+    pub stn_cal: f64,
+    pub ul_stn_cal: f64,
+    pub ul_cal_freq: f64,
+    pub cal_std_dev: f32,
+    pub cal_pts: u16,
+    pub ul_rng_phs: f64,
+    pub state_subcodes: [u8; 6],
+    pub pn_clk_phs: f64,
+    pub transmit_switch_stat: u8,
+    pub invert: u8,
+    pub transmit_op_pwr: f32,
+    pub template_id: [u8; 22],
+    pub clk_divider: u8,
+    pub len_subcodes: [u8; 6],
+    pub op_subcodes: [u8; 5],
+    pub def_subcodes: [u64; 6],
+    pub pn_code_length: u32,
+    pub tx_inphs_year: u16,
+    pub tx_inphs_doy: u16,
+    pub tx_inphs_sec: f64,
+    pub carr_sup_rng_modul: f32,
+    pub rng_modul_amp: u16,
+    pub exc_scalar_num: u32,
+    pub exc_scalar_den: u32,
+    pub rng_cycle_time: f64,
+    pub clock_waveform: u8,
+    pub rng_meas_type: u8,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub fabricated_sfdu_flag: u8,
+    pub op_subcode6: u8,
+    pub ccsds_k: u8,
+    pub ccsds_l: u8,
+    pub ul_rng_modulo: u32,
+}
+
+pub fn tnf_dt4(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt4> {
+    if frame.format_code != TNF_FORMAT_UL_PN_RANGING_PHASE || bytes.len() < 296 {
+        return None;
+    }
+    let mut template_id = [0u8; 22];
+    template_id.copy_from_slice(&bytes[164..186]);
+    let mut def_subcodes = [0u64; 6];
+    for (i, sc) in def_subcodes.iter_mut().enumerate() {
+        let base = 198 + i * 8;
+        *sc = be64(&bytes[base..base + 8]);
+    }
+    Some(TnfDt4 {
+        ul_dss_id: bytes[66],
+        ul_band: bytes[67],
+        stn_cal: f64::from_be_bytes(bytes[106..114].try_into().ok()?),
+        ul_stn_cal: f64::from_be_bytes(bytes[114..122].try_into().ok()?),
+        ul_cal_freq: f64::from_be_bytes(bytes[122..130].try_into().ok()?),
+        cal_std_dev: f32::from_be_bytes(bytes[130..134].try_into().ok()?),
+        cal_pts: be16(&bytes[134..136]),
+        ul_rng_phs: f64::from_be_bytes(bytes[136..144].try_into().ok()?),
+        state_subcodes: bytes[144..150].try_into().ok()?,
+        pn_clk_phs: f64::from_be_bytes(bytes[150..158].try_into().ok()?),
+        transmit_switch_stat: bytes[158],
+        invert: bytes[159],
+        transmit_op_pwr: f32::from_be_bytes(bytes[160..164].try_into().ok()?),
+        template_id,
+        clk_divider: bytes[186],
+        len_subcodes: bytes[187..193].try_into().ok()?,
+        op_subcodes: bytes[193..198].try_into().ok()?,
+        def_subcodes,
+        pn_code_length: be32(&bytes[246..250]),
+        tx_inphs_year: be16(&bytes[250..252]),
+        tx_inphs_doy: be16(&bytes[252..254]),
+        tx_inphs_sec: f64::from_be_bytes(bytes[254..262].try_into().ok()?),
+        carr_sup_rng_modul: f32::from_be_bytes(bytes[262..266].try_into().ok()?),
+        rng_modul_amp: be16(&bytes[266..268]),
+        exc_scalar_num: be32(&bytes[268..272]),
+        exc_scalar_den: be32(&bytes[272..276]),
+        rng_cycle_time: f64::from_be_bytes(bytes[276..284].try_into().ok()?),
+        clock_waveform: bytes[284],
+        rng_meas_type: bytes[285],
+        time_tag_corr_flag: bytes[286],
+        type_time_corr_flag: bytes[287],
+        fabricated_sfdu_flag: bytes[288],
+        op_subcode6: bytes[289],
+        ccsds_k: bytes[290],
+        ccsds_l: bytes[291],
+        ul_rng_modulo: be32(&bytes[292..296]),
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt5 {
+    pub dl_dss_id: u8,
+    pub dl_band: u8,
+    pub stn_cal: f64,
+    pub dl_stn_cal: f64,
+    pub dl_cal_freq: f64,
+    pub cal_std_dev: f32,
+    pub cal_pts: u16,
+    pub dl_rng_phs: f64,
+    pub figure_merit: f32,
+    pub rng_resid: f64,
+    pub drvid: f64,
+    pub rtlt: f32,
+    pub pcn0: f32,
+    pub pcn0_resid: f32,
+    pub pdn0: f32,
+    pub pdn0_resid: f32,
+    pub prn0: f32,
+    pub prn0_resid: f32,
+    pub system_noise_temp: f32,
+    pub state_subcodes: [u8; 6],
+    pub pn_clk_phs: f64,
+    pub carr_loop_type: u8,
+    pub snt_flag: u8,
+    pub carr_resid_wt: f32,
+    pub template_id: [u8; 20],
+    pub invert: u8,
+    pub correl_type: u8,
+    pub int_time: u32,
+    pub clk_divider: u8,
+    pub len_subcodes: [u8; 6],
+    pub op_subcodes: [u8; 5],
+    pub def_subcodes: [u64; 6],
+    pub pn_code_length: u32,
+    pub rcv_inphs_year: u16,
+    pub rcv_inphs_doy: u16,
+    pub rcv_inphs_sec: f64,
+    pub exc_scalar_num: u32,
+    pub exc_scalar_den: u32,
+    pub rng_cycle_time: f64,
+    pub inphs_correl: f32,
+    pub quad_phs_correl: f32,
+    pub metrics_vld_flag: u8,
+    pub correl_vld_flag: u8,
+    pub rng_resid_tol_flag: u8,
+    pub drvid_tol_flag: u8,
+    pub prn0_resid_tol_flag: u8,
+    pub rng_sigma_tol_flag: u8,
+    pub rng_vld_flag: u8,
+    pub rng_config_flag: u8,
+    pub rng_hw_flag: u8,
+    pub rng_meas_type: u8,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub dop_mode_corr_flag: u8,
+    pub ul_stn_corr_flag: u8,
+    pub stn_cal_corr_flag: u8,
+    pub op_subcode6: u8,
+    pub ccsds_k: u8,
+    pub ccsds_l: u8,
+    pub dl_rng_modulo: u32,
+}
+
+pub fn tnf_dt5(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt5> {
+    if frame.format_code != TNF_FORMAT_DL_PN_RANGING_PHASE || bytes.len() < 408 {
+        return None;
+    }
+    let mut template_id = [0u8; 20];
+    template_id.copy_from_slice(&bytes[260..280]);
+    let mut def_subcodes = [0u64; 6];
+    for (i, sc) in def_subcodes.iter_mut().enumerate() {
+        let base = 298 + i * 8;
+        *sc = be64(&bytes[base..base + 8]);
+    }
+    Some(TnfDt5 {
+        dl_dss_id: bytes[66],
+        dl_band: bytes[67],
+        stn_cal: f64::from_be_bytes(bytes[150..158].try_into().ok()?),
+        dl_stn_cal: f64::from_be_bytes(bytes[158..166].try_into().ok()?),
+        dl_cal_freq: f64::from_be_bytes(bytes[166..174].try_into().ok()?),
+        cal_std_dev: f32::from_be_bytes(bytes[174..178].try_into().ok()?),
+        cal_pts: be16(&bytes[178..180]),
+        dl_rng_phs: f64::from_be_bytes(bytes[180..188].try_into().ok()?),
+        figure_merit: f32::from_be_bytes(bytes[188..192].try_into().ok()?),
+        rng_resid: f64::from_be_bytes(bytes[192..200].try_into().ok()?),
+        drvid: f64::from_be_bytes(bytes[200..208].try_into().ok()?),
+        rtlt: f32::from_be_bytes(bytes[208..212].try_into().ok()?),
+        pcn0: f32::from_be_bytes(bytes[212..216].try_into().ok()?),
+        pcn0_resid: f32::from_be_bytes(bytes[216..220].try_into().ok()?),
+        pdn0: f32::from_be_bytes(bytes[220..224].try_into().ok()?),
+        pdn0_resid: f32::from_be_bytes(bytes[224..228].try_into().ok()?),
+        prn0: f32::from_be_bytes(bytes[228..232].try_into().ok()?),
+        prn0_resid: f32::from_be_bytes(bytes[232..236].try_into().ok()?),
+        system_noise_temp: f32::from_be_bytes(bytes[236..240].try_into().ok()?),
+        state_subcodes: bytes[240..246].try_into().ok()?,
+        pn_clk_phs: f64::from_be_bytes(bytes[246..254].try_into().ok()?),
+        carr_loop_type: bytes[254],
+        snt_flag: bytes[255],
+        carr_resid_wt: f32::from_be_bytes(bytes[256..260].try_into().ok()?),
+        template_id,
+        invert: bytes[280],
+        correl_type: bytes[281],
+        int_time: be32(&bytes[282..286]),
+        clk_divider: bytes[286],
+        len_subcodes: bytes[287..293].try_into().ok()?,
+        op_subcodes: bytes[293..298].try_into().ok()?,
+        def_subcodes,
+        pn_code_length: be32(&bytes[346..350]),
+        rcv_inphs_year: be16(&bytes[350..352]),
+        rcv_inphs_doy: be16(&bytes[352..354]),
+        rcv_inphs_sec: f64::from_be_bytes(bytes[354..362].try_into().ok()?),
+        exc_scalar_num: be32(&bytes[362..366]),
+        exc_scalar_den: be32(&bytes[366..370]),
+        rng_cycle_time: f64::from_be_bytes(bytes[370..378].try_into().ok()?),
+        inphs_correl: f32::from_be_bytes(bytes[378..382].try_into().ok()?),
+        quad_phs_correl: f32::from_be_bytes(bytes[382..386].try_into().ok()?),
+        metrics_vld_flag: bytes[386],
+        correl_vld_flag: bytes[387],
+        rng_resid_tol_flag: bytes[388],
+        drvid_tol_flag: bytes[389],
+        prn0_resid_tol_flag: bytes[390],
+        rng_sigma_tol_flag: bytes[391],
+        rng_vld_flag: bytes[392],
+        rng_config_flag: bytes[393],
+        rng_hw_flag: bytes[394],
+        rng_meas_type: bytes[395],
+        time_tag_corr_flag: bytes[396],
+        type_time_corr_flag: bytes[397],
+        dop_mode_corr_flag: bytes[398],
+        ul_stn_corr_flag: bytes[399],
+        stn_cal_corr_flag: bytes[400],
+        op_subcode6: bytes[401],
+        ccsds_k: bytes[402],
+        ccsds_l: bytes[403],
+        dl_rng_modulo: be32(&bytes[404..408]),
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt6 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub ref_rcv_type: u8,
+    pub sampl_interval: f32,
+    pub rcv_sig_lvl: f32,
+    pub ul_freq: f64,
+    pub dop_cnt_bias_freq: f64,
+    pub dop_cnt: f64,
+    pub dop_pseudo_resid: f64,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub dop_mode_corr_flag: u8,
+    pub ul_stn_corr_flag: u8,
+    pub dl_band_corr_flag: u8,
+    pub dop_vld_flag: u8,
+}
+
+pub fn tnf_dt6(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt6> {
+    if frame.format_code != TNF_FORMAT_DOPPLER_COUNT || bytes.len() < 220 {
+        return None;
+    }
+    Some(TnfDt6 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        ref_rcv_type: bytes[164],
+        sampl_interval: f32::from_be_bytes(bytes[166..170].try_into().ok()?),
+        rcv_sig_lvl: f32::from_be_bytes(bytes[170..174].try_into().ok()?),
+        ul_freq: f64::from_be_bytes(bytes[174..182].try_into().ok()?),
+        dop_cnt_bias_freq: f64::from_be_bytes(bytes[182..190].try_into().ok()?),
+        dop_cnt: f64::from_be_bytes(bytes[190..198].try_into().ok()?),
+        dop_pseudo_resid: f64::from_be_bytes(bytes[198..206].try_into().ok()?),
+        time_tag_corr_flag: bytes[206],
+        type_time_corr_flag: bytes[207],
+        dop_mode_corr_flag: bytes[208],
+        ul_stn_corr_flag: bytes[209],
+        dl_band_corr_flag: bytes[210],
+        dop_vld_flag: bytes[211],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt7 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub ul_stn_cal: f64,
+    pub dl_stn_cal: f64,
+    pub meas_rng: f64,
+    pub rng_obs: f64,
+    pub rng_obs_dl: f64,
+    pub clock_waveform: u8,
+    pub chop_start_num: u8,
+    pub figure_merit: f32,
+    pub drvid: f64,
+    pub rtlt: f32,
+    pub prn0: f32,
+    pub transmit_pwr: f32,
+    pub invert: u8,
+    pub correl_type: u8,
+    pub t1: u16,
+    pub t2: u16,
+    pub t3: u16,
+    pub first_comp_num: u8,
+    pub last_comp_num: u8,
+    pub chop_comp_num: u8,
+    pub num_drvid: u8,
+    pub tx_inphs_time: f32,
+    pub rcv_inphs_time: f32,
+    pub carr_sup_rng_modul: f32,
+    pub exc_scalar_num: u32,
+    pub exc_scalar_den: u32,
+    pub rng_cycle_time: f64,
+    pub rng_modulo: u32,
+    pub inphs_correl: f32,
+    pub quad_phs_correl: f32,
+    pub ul_freq: f64,
+    pub rng_type: u8,
+    pub fabricated_ul_flag: u8,
+    pub rng_noise: f32,
+    pub rng_prefit_resid: f64,
+    pub rng_dl_prefit_resid: f64,
+    pub rng_prefit_resid_vld_flag: u8,
+    pub rng_dl_prefit_resid_vld_flag: u8,
+    pub rng_resid_tol_value: f32,
+    pub drvid_tol_value: f32,
+    pub prn0_resid_tol_value: f32,
+    pub rng_sigma_tol_value: f32,
+    pub fom_tol_value: f32,
+    pub rng_resid_tol_flag: u8,
+    pub drvid_tol_flag: u8,
+    pub prn0_resid_tol_flag: u8,
+    pub rng_sigma_tol_flag: u8,
+    pub rng_vld_flag: u8,
+    pub rng_config_flag: u8,
+    pub stn_cal_corr_flag: u8,
+    pub rng_chan_num: u8,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+}
+
+pub fn tnf_dt7(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt7> {
+    if frame.format_code != TNF_FORMAT_SEQUENTIAL_RANGE || bytes.len() < 350 {
+        return None;
+    }
+    Some(TnfDt7 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        ul_stn_cal: f64::from_be_bytes(bytes[164..172].try_into().ok()?),
+        dl_stn_cal: f64::from_be_bytes(bytes[172..180].try_into().ok()?),
+        meas_rng: f64::from_be_bytes(bytes[180..188].try_into().ok()?),
+        rng_obs: f64::from_be_bytes(bytes[188..196].try_into().ok()?),
+        rng_obs_dl: f64::from_be_bytes(bytes[196..204].try_into().ok()?),
+        clock_waveform: bytes[204],
+        chop_start_num: bytes[205],
+        figure_merit: f32::from_be_bytes(bytes[206..210].try_into().ok()?),
+        drvid: f64::from_be_bytes(bytes[210..218].try_into().ok()?),
+        rtlt: f32::from_be_bytes(bytes[218..222].try_into().ok()?),
+        prn0: f32::from_be_bytes(bytes[222..226].try_into().ok()?),
+        transmit_pwr: f32::from_be_bytes(bytes[226..230].try_into().ok()?),
+        invert: bytes[230],
+        correl_type: bytes[231],
+        t1: be16(&bytes[232..234]),
+        t2: be16(&bytes[234..236]),
+        t3: be16(&bytes[236..238]),
+        first_comp_num: bytes[238],
+        last_comp_num: bytes[239],
+        chop_comp_num: bytes[240],
+        num_drvid: bytes[241],
+        tx_inphs_time: f32::from_be_bytes(bytes[242..246].try_into().ok()?),
+        rcv_inphs_time: f32::from_be_bytes(bytes[246..250].try_into().ok()?),
+        carr_sup_rng_modul: f32::from_be_bytes(bytes[250..254].try_into().ok()?),
+        exc_scalar_num: be32(&bytes[254..258]),
+        exc_scalar_den: be32(&bytes[258..262]),
+        rng_cycle_time: f64::from_be_bytes(bytes[262..270].try_into().ok()?),
+        rng_modulo: be32(&bytes[270..274]),
+        inphs_correl: f32::from_be_bytes(bytes[274..278].try_into().ok()?),
+        quad_phs_correl: f32::from_be_bytes(bytes[278..282].try_into().ok()?),
+        ul_freq: f64::from_be_bytes(bytes[282..290].try_into().ok()?),
+        rng_type: bytes[290],
+        fabricated_ul_flag: bytes[291],
+        rng_noise: f32::from_be_bytes(bytes[292..296].try_into().ok()?),
+        rng_prefit_resid: f64::from_be_bytes(bytes[296..304].try_into().ok()?),
+        rng_dl_prefit_resid: f64::from_be_bytes(bytes[304..312].try_into().ok()?),
+        rng_prefit_resid_vld_flag: bytes[312],
+        rng_dl_prefit_resid_vld_flag: bytes[313],
+        rng_resid_tol_value: f32::from_be_bytes(bytes[314..318].try_into().ok()?),
+        drvid_tol_value: f32::from_be_bytes(bytes[318..322].try_into().ok()?),
+        prn0_resid_tol_value: f32::from_be_bytes(bytes[322..326].try_into().ok()?),
+        rng_sigma_tol_value: f32::from_be_bytes(bytes[326..330].try_into().ok()?),
+        fom_tol_value: f32::from_be_bytes(bytes[330..334].try_into().ok()?),
+        rng_resid_tol_flag: bytes[334],
+        drvid_tol_flag: bytes[335],
+        prn0_resid_tol_flag: bytes[336],
+        rng_sigma_tol_flag: bytes[337],
+        rng_vld_flag: bytes[338],
+        rng_config_flag: bytes[339],
+        stn_cal_corr_flag: bytes[340],
+        rng_chan_num: bytes[341],
+        time_tag_corr_flag: bytes[342],
+        type_time_corr_flag: bytes[343],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt8 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub source_type: u8,
+    pub ang_type: u8,
+    pub ang_vld_flag: u8,
+    pub ang_mode: u8,
+    pub conscan_mode: u8,
+    pub acq_aid_mode: u8,
+    pub ang1: f32,
+    pub ang2: f32,
+    pub ang1_pseudo_resid: f32,
+    pub ang2_pseudo_resid: f32,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+}
+
+pub fn tnf_dt8(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt8> {
+    if frame.format_code != TNF_FORMAT_ANGLE || bytes.len() < 198 {
+        return None;
+    }
+    Some(TnfDt8 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        source_type: bytes[164],
+        ang_type: bytes[165],
+        ang_vld_flag: bytes[166],
+        ang_mode: bytes[167],
+        conscan_mode: bytes[168],
+        acq_aid_mode: bytes[169],
+        ang1: f32::from_be_bytes(bytes[170..174].try_into().ok()?),
+        ang2: f32::from_be_bytes(bytes[174..178].try_into().ok()?),
+        ang1_pseudo_resid: f32::from_be_bytes(bytes[178..182].try_into().ok()?),
+        ang2_pseudo_resid: f32::from_be_bytes(bytes[182..186].try_into().ok()?),
+        time_tag_corr_flag: bytes[186],
+        type_time_corr_flag: bytes[187],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt9 {
+    pub ul_dss_id: u8,
+    pub ul_band: u8,
+    pub ul_hi_phs_cycles: u32,
+    pub ul_lo_phs_cycles: u32,
+    pub ul_frac_phs_cycles: u32,
+    pub ramp_freq: f64,
+    pub ramp_rate: f64,
+    pub ramp_type: u8,
+    pub fabricated_sfdu_flag: u8,
+}
+
+pub fn tnf_dt9(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt9> {
+    if frame.format_code != TNF_FORMAT_RAMP || bytes.len() < 144 {
+        return None;
+    }
+    Some(TnfDt9 {
+        ul_dss_id: bytes[66],
+        ul_band: bytes[67],
+        ul_hi_phs_cycles: be32(&bytes[106..110]),
+        ul_lo_phs_cycles: be32(&bytes[110..114]),
+        ul_frac_phs_cycles: be32(&bytes[114..118]),
+        ramp_freq: f64::from_be_bytes(bytes[118..126].try_into().ok()?),
+        ramp_rate: f64::from_be_bytes(bytes[126..134].try_into().ok()?),
+        ramp_type: bytes[134],
+        fabricated_sfdu_flag: bytes[135],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt10 {
+    pub ul_dss_id: u8,
+    pub dl_dss_id: u8,
+    pub dl_dss_id_2: u8,
+    pub dl_band: u8,
+    pub clk_off_epoch_year: u16,
+    pub clk_off_epoch_doy: u16,
+    pub clk_off_epoch_sec: f64,
+    pub clk_off_1: f32,
+    pub clk_off_2: f32,
+    pub phs_cal_flag: u8,
+    pub chan_sampl_flag: u8,
+    pub quasar_id: [u8; 12],
+    pub quasar_id_num: u16,
+    pub data_qual_flag: u8,
+    pub freq_chan_num: u8,
+    pub mode_id: u8,
+    pub modulo_flag: u8,
+    pub ref_freq: f64,
+    pub modulus: f64,
+    pub dod_cnt_time: f32,
+    pub dod_obs: f64,
+    pub dor_obs: f64,
+}
+
+pub fn tnf_dt10(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt10> {
+    if frame.format_code != TNF_FORMAT_VLBI || bytes.len() < 224 {
+        return None;
+    }
+    let mut quasar_id = [0u8; 12];
+    quasar_id.copy_from_slice(&bytes[150..162]);
+    Some(TnfDt10 {
+        ul_dss_id: bytes[62],
+        dl_dss_id: bytes[63],
+        dl_dss_id_2: bytes[64],
+        dl_band: bytes[65],
+        clk_off_epoch_year: be16(&bytes[128..130]),
+        clk_off_epoch_doy: be16(&bytes[130..132]),
+        clk_off_epoch_sec: f64::from_be_bytes(bytes[132..140].try_into().ok()?),
+        clk_off_1: f32::from_be_bytes(bytes[140..144].try_into().ok()?),
+        clk_off_2: f32::from_be_bytes(bytes[144..148].try_into().ok()?),
+        phs_cal_flag: bytes[148],
+        chan_sampl_flag: bytes[149],
+        quasar_id,
+        quasar_id_num: be16(&bytes[162..164]),
+        data_qual_flag: bytes[164],
+        freq_chan_num: bytes[165],
+        mode_id: bytes[166],
+        modulo_flag: bytes[167],
+        ref_freq: f64::from_be_bytes(bytes[168..176].try_into().ok()?),
+        modulus: f64::from_be_bytes(bytes[176..184].try_into().ok()?),
+        dod_cnt_time: f32::from_be_bytes(bytes[184..188].try_into().ok()?),
+        dod_obs: f64::from_be_bytes(bytes[188..196].try_into().ok()?),
+        dor_obs: f64::from_be_bytes(bytes[196..204].try_into().ok()?),
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt11 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub drvid_type: u8,
+    pub drvid_pts: u8,
+    pub drvid: f64,
+    pub prn0: f32,
+    pub drvid_noise: f32,
+    pub drvid_tol_value: f32,
+    pub prn0_resid_tol_value: f32,
+    pub drvid_tol_flag: u8,
+    pub prn0_resid_tol_flag: u8,
+    pub drvid_noise_pts: u8,
+}
+
+pub fn tnf_dt11(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt11> {
+    if frame.format_code != TNF_FORMAT_DRVID || bytes.len() < 202 {
+        return None;
+    }
+    Some(TnfDt11 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        drvid_type: bytes[164],
+        drvid_pts: bytes[165],
+        drvid: f64::from_be_bytes(bytes[166..174].try_into().ok()?),
+        prn0: f32::from_be_bytes(bytes[174..178].try_into().ok()?),
+        drvid_noise: f32::from_be_bytes(bytes[178..182].try_into().ok()?),
+        drvid_tol_value: f32::from_be_bytes(bytes[182..186].try_into().ok()?),
+        prn0_resid_tol_value: f32::from_be_bytes(bytes[186..190].try_into().ok()?),
+        drvid_tol_flag: bytes[191],
+        prn0_resid_tol_flag: bytes[192],
+        drvid_noise_pts: bytes[193],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt12 {
+    pub dl_dss_id: u8,
+    pub dl_band: u8,
+    pub noise_01sec: f32,
+    pub noise_1sec: f32,
+    pub noise_10sec: f32,
+    pub noise_100sec: f32,
+    pub noise_200sec: f32,
+    pub noise_600sec: f32,
+    pub int_time: u32,
+    pub percent_data_used: f32,
+    pub new_01sec: u8,
+    pub new_1sec: u8,
+    pub new_10sec: u8,
+    pub new_100sec: u8,
+    pub new_200sec: u8,
+    pub new_600sec: u8,
+}
+
+pub fn tnf_dt12(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt12> {
+    if frame.format_code != TNF_FORMAT_SMOOTHED_NOISE || bytes.len() < 184 {
+        return None;
+    }
+    Some(TnfDt12 {
+        dl_dss_id: bytes[62],
+        dl_band: bytes[63],
+        noise_01sec: f32::from_be_bytes(bytes[138..142].try_into().ok()?),
+        noise_1sec: f32::from_be_bytes(bytes[142..146].try_into().ok()?),
+        noise_10sec: f32::from_be_bytes(bytes[146..150].try_into().ok()?),
+        noise_100sec: f32::from_be_bytes(bytes[150..154].try_into().ok()?),
+        noise_200sec: f32::from_be_bytes(bytes[154..158].try_into().ok()?),
+        noise_600sec: f32::from_be_bytes(bytes[158..162].try_into().ok()?),
+        int_time: be32(&bytes[162..166]),
+        percent_data_used: f32::from_be_bytes(bytes[166..170].try_into().ok()?),
+        new_01sec: bytes[170],
+        new_1sec: bytes[171],
+        new_10sec: bytes[172],
+        new_100sec: bytes[173],
+        new_200sec: bytes[174],
+        new_600sec: bytes[175],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt13 {
+    pub dl_dss_id: u8,
+    pub dl_band: u8,
+    pub allan_01sec: f32,
+    pub allan_1sec: f32,
+    pub allan_10sec: f32,
+    pub allan_100sec: f32,
+    pub allan_1000sec: f32,
+    pub int_time: u32,
+    pub percent_data_used: f32,
+    pub rpt_cause: u8,
+    pub new_01sec: u8,
+    pub new_1sec: u8,
+    pub new_10sec: u8,
+    pub new_100sec: u8,
+    pub new_1000sec: u8,
+}
+
+pub fn tnf_dt13(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt13> {
+    if frame.format_code != TNF_FORMAT_ALLAN_DEVIATION || bytes.len() < 180 {
+        return None;
+    }
+    Some(TnfDt13 {
+        dl_dss_id: bytes[62],
+        dl_band: bytes[63],
+        allan_01sec: f32::from_be_bytes(bytes[138..142].try_into().ok()?),
+        allan_1sec: f32::from_be_bytes(bytes[142..146].try_into().ok()?),
+        allan_10sec: f32::from_be_bytes(bytes[146..150].try_into().ok()?),
+        allan_100sec: f32::from_be_bytes(bytes[150..154].try_into().ok()?),
+        allan_1000sec: f32::from_be_bytes(bytes[154..158].try_into().ok()?),
+        int_time: be32(&bytes[158..162]),
+        percent_data_used: f32::from_be_bytes(bytes[162..166].try_into().ok()?),
+        rpt_cause: bytes[166],
+        new_01sec: bytes[167],
+        new_1sec: bytes[168],
+        new_10sec: bytes[169],
+        new_100sec: bytes[170],
+        new_1000sec: bytes[171],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt14 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub ul_stn_cal: f64,
+    pub dl_stn_cal: f64,
+    pub meas_rng: f64,
+    pub rng_obs_dl: f64,
+    pub figure_merit: f32,
+    pub drvid: f64,
+    pub rtlt: f32,
+    pub prn0: f32,
+    pub transmit_pwr: f32,
+    pub invert: u8,
+    pub correl_type: u8,
+    pub clk_divider: u8,
+    pub len_subcodes: [u8; 6],
+    pub op_subcodes: [u8; 5],
+    pub def_subcodes: [u64; 6],
+    pub pn_code_length: u32,
+    pub tx_inphs_time: f32,
+    pub rcv_inphs_time: f32,
+    pub carr_sup_rng_modul: f32,
+    pub exc_scalar_num: u32,
+    pub exc_scalar_den: u32,
+    pub rng_cycle_time: f64,
+    pub rng_modulo: u32,
+    pub rng_type: u8,
+    pub fabricated_ul_flag: u8,
+    pub rng_noise: f32,
+    pub rng_obs: f64,
+    pub rng_dl_prefit_resid_vld_flag: u8,
+    pub clock_waveform: u8,
+    pub rng_resid_tol_value: f32,
+    pub drvid_tol_value: f32,
+    pub prn0_resid_tol_value: f32,
+    pub rng_sigma_tol_value: f32,
+    pub fom_tol_value: f32,
+    pub rng_resid_tol_flag: u8,
+    pub drvid_tol_flag: u8,
+    pub prn0_resid_tol_flag: u8,
+    pub rng_sigma_tol_flag: u8,
+    pub rng_vld_flag: u8,
+    pub rng_config_flag: u8,
+    pub stn_cal_corr_flag: u8,
+    pub op_subcode6: u8,
+    pub ccsds_k: u8,
+    pub ccsds_l: u8,
+    pub rng_dl_prefit_resid: f64,
+}
+
+pub fn tnf_dt14(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt14> {
+    if frame.format_code != TNF_FORMAT_PN_RANGE || bytes.len() < 372 {
+        return None;
+    }
+    let mut def_subcodes = [0u64; 6];
+    for (i, sc) in def_subcodes.iter_mut().enumerate() {
+        let base = 234 + i * 8;
+        *sc = be64(&bytes[base..base + 8]);
+    }
+    Some(TnfDt14 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        ul_stn_cal: f64::from_be_bytes(bytes[164..172].try_into().ok()?),
+        dl_stn_cal: f64::from_be_bytes(bytes[172..180].try_into().ok()?),
+        meas_rng: f64::from_be_bytes(bytes[180..188].try_into().ok()?),
+        rng_obs_dl: f64::from_be_bytes(bytes[188..196].try_into().ok()?),
+        figure_merit: f32::from_be_bytes(bytes[196..200].try_into().ok()?),
+        drvid: f64::from_be_bytes(bytes[200..208].try_into().ok()?),
+        rtlt: f32::from_be_bytes(bytes[208..212].try_into().ok()?),
+        prn0: f32::from_be_bytes(bytes[212..216].try_into().ok()?),
+        transmit_pwr: f32::from_be_bytes(bytes[216..220].try_into().ok()?),
+        invert: bytes[220],
+        correl_type: bytes[221],
+        clk_divider: bytes[222],
+        len_subcodes: bytes[223..229].try_into().ok()?,
+        op_subcodes: bytes[229..234].try_into().ok()?,
+        def_subcodes,
+        pn_code_length: be32(&bytes[282..286]),
+        tx_inphs_time: f32::from_be_bytes(bytes[286..290].try_into().ok()?),
+        rcv_inphs_time: f32::from_be_bytes(bytes[290..294].try_into().ok()?),
+        carr_sup_rng_modul: f32::from_be_bytes(bytes[294..298].try_into().ok()?),
+        exc_scalar_num: be32(&bytes[298..302]),
+        exc_scalar_den: be32(&bytes[302..306]),
+        rng_cycle_time: f64::from_be_bytes(bytes[306..314].try_into().ok()?),
+        rng_modulo: be32(&bytes[314..318]),
+        rng_type: bytes[318],
+        fabricated_ul_flag: bytes[319],
+        rng_noise: f32::from_be_bytes(bytes[320..324].try_into().ok()?),
+        rng_obs: f64::from_be_bytes(bytes[324..332].try_into().ok()?),
+        rng_dl_prefit_resid_vld_flag: bytes[332],
+        clock_waveform: bytes[333],
+        rng_resid_tol_value: f32::from_be_bytes(bytes[334..338].try_into().ok()?),
+        drvid_tol_value: f32::from_be_bytes(bytes[338..342].try_into().ok()?),
+        prn0_resid_tol_value: f32::from_be_bytes(bytes[342..346].try_into().ok()?),
+        rng_sigma_tol_value: f32::from_be_bytes(bytes[346..350].try_into().ok()?),
+        fom_tol_value: f32::from_be_bytes(bytes[350..354].try_into().ok()?),
+        rng_resid_tol_flag: bytes[354],
+        drvid_tol_flag: bytes[355],
+        prn0_resid_tol_flag: bytes[356],
+        rng_sigma_tol_flag: bytes[357],
+        rng_vld_flag: bytes[358],
+        rng_config_flag: bytes[359],
+        stn_cal_corr_flag: bytes[360],
+        op_subcode6: bytes[361],
+        ccsds_k: bytes[362],
+        ccsds_l: bytes[363],
+        rng_dl_prefit_resid: f64::from_be_bytes(bytes[364..372].try_into().ok()?),
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt15 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub source_type: u8,
+    pub mjr_tone_freq: u8,
+    pub mnr_tone_freq: u8,
+    pub rng_prefit_resid_vld_flag: u8,
+    pub meas_rng: f64,
+    pub rng_obs: f64,
+    pub stn_cal: f64,
+    pub carr_pwr: f32,
+    pub rng_prefit_resid: f64,
+    pub ul_freq: f64,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+}
+
+pub fn tnf_dt15(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt15> {
+    if frame.format_code != TNF_FORMAT_TONE_RANGE || bytes.len() < 214 {
+        return None;
+    }
+    Some(TnfDt15 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        source_type: bytes[164],
+        mjr_tone_freq: bytes[165],
+        mnr_tone_freq: bytes[166],
+        rng_prefit_resid_vld_flag: bytes[167],
+        meas_rng: f64::from_be_bytes(bytes[168..176].try_into().ok()?),
+        rng_obs: f64::from_be_bytes(bytes[176..184].try_into().ok()?),
+        stn_cal: f64::from_be_bytes(bytes[184..192].try_into().ok()?),
+        carr_pwr: f32::from_be_bytes(bytes[192..196].try_into().ok()?),
+        rng_prefit_resid: f64::from_be_bytes(bytes[196..204].try_into().ok()?),
+        ul_freq: f64::from_be_bytes(bytes[204..212].try_into().ok()?),
+        time_tag_corr_flag: bytes[212],
+        type_time_corr_flag: bytes[213],
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt16 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub ref_rcv_type: u8,
+    pub fabricated_ul_flag: u8,
+    pub carr_prefit_resid_tol_value: f32,
+    pub dop_noise: f32,
+    pub delta_ff: f64,
+    pub rcv_sig_lvl: f32,
+    pub num_obs: u16,
+    pub obs_cnt_time: f32,
+    pub rcv_carr_obs: f64,
+    pub carr_prefit_resid: f32,
+    pub carr_prefit_resid_vld_flag: u8,
+    pub carr_prefit_resid_tol_flag: u8,
+    pub carr_resid_wt: f32,
+}
+
+pub fn tnf_dt16(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt16> {
+    if frame.format_code != TNF_FORMAT_CARRIER_OBSERVABLE || bytes.len() < 220 {
+        return None;
+    }
+    Some(TnfDt16 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        ref_rcv_type: bytes[164],
+        fabricated_ul_flag: bytes[165],
+        carr_prefit_resid_tol_value: f32::from_be_bytes(bytes[166..170].try_into().ok()?),
+        dop_noise: f32::from_be_bytes(bytes[172..176].try_into().ok()?),
+        delta_ff: f64::from_be_bytes(bytes[176..184].try_into().ok()?),
+        rcv_sig_lvl: f32::from_be_bytes(bytes[184..188].try_into().ok()?),
+        num_obs: be16(&bytes[188..190]),
+        obs_cnt_time: f32::from_be_bytes(bytes[190..194].try_into().ok()?),
+        rcv_carr_obs: f64::from_be_bytes(bytes[194..202].try_into().ok()?),
+        carr_prefit_resid: f32::from_be_bytes(bytes[202..206].try_into().ok()?),
+        carr_prefit_resid_vld_flag: bytes[206],
+        carr_prefit_resid_tol_flag: bytes[207],
+        carr_resid_wt: f32::from_be_bytes(bytes[208..212].try_into().ok()?),
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt17 {
+    pub dl_dss_id: u8,
+    pub ul_band: u8,
+    pub ref_rcv_type: u8,
+    pub fabricated_ul_flag: u8,
+    pub total_cnt_phs_prefit_resid_tol_value: f32,
+    pub dop_noise: f32,
+    pub delta_ff: f64,
+    pub rcv_sig_lvl: f32,
+    pub num_obs: u16,
+    pub obs_cnt_time: f32,
+    pub st_year: u16,
+    pub st_doy: u16,
+    pub st_sec: f64,
+    pub obs_hi: u32,
+    pub obs_lo: u32,
+    pub obs_frac: u32,
+    pub prefit_resid: f32,
+    pub prefit_resid_vld_flag: u8,
+    pub prefit_resid_tol_flag: u8,
+    pub carr_resid_wt: f32,
+}
+
+pub fn tnf_dt17(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt17> {
+    if frame.format_code != TNF_FORMAT_TOTAL_PHASE_OBSERVABLE || bytes.len() < 236 {
+        return None;
+    }
+    Some(TnfDt17 {
+        dl_dss_id: bytes[82],
+        ul_band: bytes[63],
+        ref_rcv_type: bytes[164],
+        fabricated_ul_flag: bytes[165],
+        total_cnt_phs_prefit_resid_tol_value: f32::from_be_bytes(bytes[166..170].try_into().ok()?),
+        dop_noise: f32::from_be_bytes(bytes[172..176].try_into().ok()?),
+        delta_ff: f64::from_be_bytes(bytes[176..184].try_into().ok()?),
+        rcv_sig_lvl: f32::from_be_bytes(bytes[184..188].try_into().ok()?),
+        num_obs: be16(&bytes[188..190]),
+        obs_cnt_time: f32::from_be_bytes(bytes[190..194].try_into().ok()?),
+        st_year: be16(&bytes[194..196]),
+        st_doy: be16(&bytes[196..198]),
+        st_sec: f64::from_be_bytes(bytes[198..206].try_into().ok()?),
+        obs_hi: be32(&bytes[206..210]),
+        obs_lo: be32(&bytes[210..214]),
+        obs_frac: be32(&bytes[214..218]),
+        prefit_resid: f32::from_be_bytes(bytes[218..222].try_into().ok()?),
+        prefit_resid_vld_flag: bytes[222],
+        prefit_resid_tol_flag: bytes[223],
+        carr_resid_wt: f32::from_be_bytes(bytes[224..228].try_into().ok()?),
+    })
+}
+
+pub const TNF_ROW_TDB: usize = 0;
+pub const TNF_ROW_OBSERVABLE: usize = 1;
+pub const TNF_ROW_SUPPORT: usize = 2;
+pub const TNF_ROW_DSS: usize = 3;
+pub const TNF_ROW_SCFT: usize = 4;
+pub const TNF_ROW_FORMAT: usize = 5;
+pub const TNF_ROW_BAND: usize = 6;
+pub const TNF_ROW_SEQ: usize = 7;
+pub const TNF_ROW_TERTIARY: usize = 8;
+
+fn tnf_row(frame: &TnfSfdu, bytes: &[u8], tdb: f64) -> Option<[f64; 9]> {
+    let fcode = frame.format_code as f64;
+    let scft = frame.scft_id as f64;
+    let seq = frame.rec_seq_num as f64;
+    match frame.format_code {
+        TNF_FORMAT_UL_CARRIER_PHASE => {
+            let d = tnf_dt0(frame, bytes)?;
+            Some([
+                tdb,
+                tnf_ul_phase_cycles(&d),
+                d.ramp_freq,
+                d.ul_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.prdx_time_offset,
+            ])
+        }
+        TNF_FORMAT_DL_CARRIER_PHASE => {
+            let d = tnf_dt1(frame, bytes)?;
+            Some([
+                tdb,
+                tnf_phase_cycles(d.phase_avg[0], d.phase_avg[1], d.phase_avg[2]),
+                d.dl_freq,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.dl_band as f64,
+                seq,
+                d.prdx_time_offset,
+            ])
+        }
+        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt2(frame, bytes)?;
+            Some([
+                tdb,
+                d.ul_rng_phs,
+                d.ul_cal_freq,
+                d.ul_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.cal_std_dev as f64,
+            ])
+        }
+        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt3(frame, bytes)?;
+            Some([
+                tdb,
+                d.dl_rng_phs,
+                d.dl_cal_freq,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.dl_band as f64,
+                seq,
+                d.rng_resid,
+            ])
+        }
+        TNF_FORMAT_UL_PN_RANGING_PHASE => {
+            let d = tnf_dt4(frame, bytes)?;
+            Some([
+                tdb,
+                d.ul_rng_phs,
+                d.pn_clk_phs,
+                d.ul_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.transmit_op_pwr as f64,
+            ])
+        }
+        TNF_FORMAT_DL_PN_RANGING_PHASE => {
+            let d = tnf_dt5(frame, bytes)?;
+            Some([
+                tdb,
+                d.dl_rng_phs,
+                d.pn_clk_phs,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.dl_band as f64,
+                seq,
+                d.rng_resid,
+            ])
+        }
+        TNF_FORMAT_DOPPLER_COUNT => {
+            let d = tnf_dt6(frame, bytes)?;
+            Some([
+                tdb,
+                d.dop_cnt,
+                d.ul_freq,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.dop_pseudo_resid,
+            ])
+        }
+        TNF_FORMAT_SEQUENTIAL_RANGE => {
+            let d = tnf_dt7(frame, bytes)?;
+            Some([
+                tdb,
+                d.meas_rng,
+                d.drvid,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.rng_prefit_resid,
+            ])
+        }
+        TNF_FORMAT_ANGLE => {
+            let d = tnf_dt8(frame, bytes)?;
+            Some([
+                tdb,
+                d.ang1 as f64,
+                d.ang2 as f64,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.ang1_pseudo_resid as f64,
+            ])
+        }
+        TNF_FORMAT_RAMP => {
+            let d = tnf_dt9(frame, bytes)?;
+            Some([
+                tdb,
+                tnf_phase_cycles(d.ul_hi_phs_cycles, d.ul_lo_phs_cycles, d.ul_frac_phs_cycles),
+                d.ramp_freq,
+                d.ul_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.ramp_rate,
+            ])
+        }
+        TNF_FORMAT_VLBI => {
+            let d = tnf_dt10(frame, bytes)?;
+            Some([
+                tdb,
+                d.dod_obs,
+                d.dor_obs,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.dl_band as f64,
+                seq,
+                d.ref_freq,
+            ])
+        }
+        TNF_FORMAT_DRVID => {
+            let d = tnf_dt11(frame, bytes)?;
+            Some([
+                tdb,
+                d.drvid,
+                d.prn0 as f64,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.drvid_noise as f64,
+            ])
+        }
+        TNF_FORMAT_SMOOTHED_NOISE => {
+            let d = tnf_dt12(frame, bytes)?;
+            Some([
+                tdb,
+                d.noise_01sec as f64,
+                d.noise_1sec as f64,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.dl_band as f64,
+                seq,
+                d.int_time as f64,
+            ])
+        }
+        TNF_FORMAT_ALLAN_DEVIATION => {
+            let d = tnf_dt13(frame, bytes)?;
+            Some([
+                tdb,
+                d.allan_01sec as f64,
+                d.allan_1sec as f64,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.dl_band as f64,
+                seq,
+                d.int_time as f64,
+            ])
+        }
+        TNF_FORMAT_PN_RANGE => {
+            let d = tnf_dt14(frame, bytes)?;
+            Some([
+                tdb,
+                d.meas_rng,
+                d.drvid,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.rng_dl_prefit_resid,
+            ])
+        }
+        TNF_FORMAT_TONE_RANGE => {
+            let d = tnf_dt15(frame, bytes)?;
+            Some([
+                tdb,
+                d.meas_rng,
+                d.rng_obs,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.rng_prefit_resid,
+            ])
+        }
+        TNF_FORMAT_CARRIER_OBSERVABLE => {
+            let d = tnf_dt16(frame, bytes)?;
+            Some([
+                tdb,
+                d.rcv_carr_obs,
+                d.delta_ff,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.obs_cnt_time as f64,
+            ])
+        }
+        TNF_FORMAT_TOTAL_PHASE_OBSERVABLE => {
+            let d = tnf_dt17(frame, bytes)?;
+            if d.num_obs < 1 {
+                return None;
+            }
+            Some([
+                tdb,
+                tnf_phase_cycles(d.obs_hi, d.obs_lo, d.obs_frac),
+                d.delta_ff,
+                d.dl_dss_id as f64,
+                scft,
+                fcode,
+                d.ul_band as f64,
+                seq,
+                d.obs_cnt_time as f64,
+            ])
+        }
+        _ => None,
+    }
+}
+
+pub fn tnf_rows(bytes: &[u8], lsk: &crate::archivar::lsk::LeapSeconds) -> Option<Vec<[f64; 9]>> {
+    tnf_rows_bands(bytes, lsk).map(|(rows, _)| rows)
+}
+
+fn tnf_row_uplink_band(format_code: u8, band: f64) -> Option<i64> {
+    let carries_uplink = matches!(
+        format_code,
+        TNF_FORMAT_UL_CARRIER_PHASE
+            | TNF_FORMAT_UL_SEQ_RANGING_PHASE
+            | TNF_FORMAT_UL_PN_RANGING_PHASE
+            | TNF_FORMAT_DOPPLER_COUNT
+            | TNF_FORMAT_SEQUENTIAL_RANGE
+            | TNF_FORMAT_ANGLE
+            | TNF_FORMAT_RAMP
+            | TNF_FORMAT_DRVID
+            | TNF_FORMAT_PN_RANGE
+            | TNF_FORMAT_TONE_RANGE
+            | TNF_FORMAT_CARRIER_OBSERVABLE
+            | TNF_FORMAT_TOTAL_PHASE_OBSERVABLE
+    );
+    if carries_uplink && band > 0.0 {
+        Some(band as i64)
+    } else {
+        None
+    }
+}
+
+pub fn tnf_rows_bands(bytes: &[u8], lsk: &crate::archivar::lsk::LeapSeconds) -> Option<PodfBands> {
+    let frames = scan_tnf_sfdus(bytes)?;
+    let mut out = Vec::with_capacity(frames.len());
+    let mut bands = Vec::with_capacity(frames.len());
+    for f in &frames {
+        let Some(day0) = crate::archivar::lsk::days_from_civil(f.year as i64, 1, 1) else {
+            continue;
+        };
+        let unix = day0 as f64 * 86400.0 + (f.doy as f64 - 1.0) * 86400.0 + f.sec;
+        let Some(tdb) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        let sfdu = &bytes[f.offset..f.offset + f.total_len];
+        let Some(row) = tnf_row(f, sfdu, tdb) else {
+            continue;
+        };
+        bands.push(tnf_row_uplink_band(f.format_code, row[TNF_ROW_BAND]));
+        out.push(row);
+    }
+    Some((out, bands))
+}
+
+pub fn tnf_parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_podf_bin(bytes)?;
+    let mut out = Vec::with_capacity(rows.len());
+    for r in &rows {
+        if r[TNF_ROW_FORMAT] != 0.0 {
+            continue;
+        }
+        let t = r[PODF_COL_TDB];
+        let v = r[PODF_COL_OBSERVABLE];
+        if !t.is_finite() || !v.is_finite() {
+            continue;
+        }
+        out.push((t, v, TNF_COMP_UL_PHASE));
+    }
+    Some(out)
+}
+
+pub fn carrier_phase_rad(cycles: f64) -> Option<f64> {
+    if cycles.is_finite() {
+        Some((cycles - cycles.floor()) * 2.0 * std::f64::consts::PI)
+    } else {
+        None
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfPhaseRow {
+    pub t: f64,
+    pub value: f64,
+    pub phase: Option<f64>,
+    pub freq: f64,
+    pub bin_width: f64,
+    pub comp: u32,
+}
+
+pub fn tnf_phase_series(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
+    let rows = parse_podf_bin(bytes)?;
+    let mut out = Vec::with_capacity(rows.len());
+    for r in &rows {
+        if r[TNF_ROW_FORMAT] != 0.0 {
+            continue;
+        }
+        let t = r[PODF_COL_TDB];
+        if !t.is_finite() {
+            continue;
+        }
+        let v = r[PODF_COL_OBSERVABLE];
+        let ramp = r[TNF_ROW_SUPPORT];
+        let freq = if ramp.is_finite() && ramp > 0.0 {
+            ramp
+        } else {
+            0.0
+        };
+        out.push(TnfPhaseRow {
+            t,
+            value: v,
+            phase: carrier_phase_rad(v),
+            freq,
+            bin_width: 0.0,
+            comp: TNF_COMP_UL_PHASE,
+        });
+    }
+    Some(out)
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ReferenceStage {
+    Beacon,
+    UplinkCarrier,
+    Tsf,
+}
+
+pub const TSF_TO_CARRIER_RATIO: f64 = 96.0;
+
+pub fn reference_stage(data_type: i32, ref_hz: f64) -> ReferenceStage {
+    if data_type == 11 {
+        ReferenceStage::Beacon
+    } else if ref_hz >= 1.0e9 {
+        ReferenceStage::UplinkCarrier
+    } else {
+        ReferenceStage::Tsf
+    }
+}
+
+pub fn ref_uplink_hz(data_type: i32, ref_hz: f64) -> f64 {
+    match reference_stage(data_type, ref_hz) {
+        ReferenceStage::Tsf => ref_hz * TSF_TO_CARRIER_RATIO,
+        _ => ref_hz,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ranging_component_lengths_are_the_prime_set() {
+        let lens: Vec<u64> = (1..=6).filter_map(ranging_component_length).collect();
+        assert_eq!(lens, vec![2, 7, 11, 15, 19, 23]);
+        assert_eq!(ranging_component_length(0), None);
+        assert_eq!(ranging_component_length(7), None);
+    }
+
+    #[test]
+    fn ranging_composite_period_matches_the_spec() {
+        assert_eq!(ranging_composite_period(1, 6), Some(1_009_470));
+        assert_eq!(ranging_composite_period(0, 6), None);
+        assert_eq!(ranging_composite_period(1, 7), None);
+        assert_eq!(ranging_composite_period(3, 2), None);
+    }
+
+    #[test]
+    fn ranging_ambiguity_resolution_at_one_mhz_is_seventy_five_thousand_km() {
+        let r = ranging_ambiguity_resolution_m(1, 6, 1.0e6).expect("resolves");
+        assert!((r - 75_660_000.0).abs() < 100_000.0, "got {r}");
+        assert_eq!(ranging_ambiguity_resolution_m(1, 6, 0.0), None);
+        assert_eq!(ranging_ambiguity_resolution_m(1, 6, f64::NAN), None);
+    }
+
+    #[test]
+    fn ranging_resolution_from_cycle_time_matches_the_table() {
+        let cycle = 1_009_470.0 / 1.0e6;
+        let r = ranging_resolution_from_cycle_time_m(1, 6, cycle).expect("resolves");
+        assert!((r - 75_660_000.0).abs() < 100_000.0, "got {r}");
+        assert_eq!(ranging_resolution_from_cycle_time_m(1, 6, 0.0), None);
+        assert_eq!(ranging_resolution_from_cycle_time_m(0, 6, cycle), None);
+        assert_eq!(ranging_resolution_from_cycle_time_m(1, 7, cycle), None);
+    }
+
+    #[test]
+    fn seq_ranging_frequencies_follow_module_203_table_1() {
+        let f4 = 1_032_556.981_f64;
+        let f_exc = f4 * 2f64.powi(6);
+        let got = seq_ranging_component_frequency_hz(4, f_exc).expect("resolves");
+        assert!((got - f4).abs() < 1e-6, "got {got}");
+        for n in SEQ_RANGING_FIRST_COMPONENT..SEQ_RANGING_LAST_COMPONENT {
+            let a = seq_ranging_component_frequency_hz(n, f_exc).unwrap();
+            let b = seq_ranging_component_frequency_hz(n + 1, f_exc).unwrap();
+            assert!((a / b - 2.0).abs() < 1e-12, "n={n} {a} {b}");
+        }
+        assert_eq!(seq_ranging_component_frequency_hz(3, f_exc), None);
+        assert_eq!(seq_ranging_component_frequency_hz(25, f_exc), None);
+        assert_eq!(seq_ranging_component_frequency_hz(4, 0.0), None);
+        assert_eq!(seq_ranging_component_frequency_hz(4, f64::NAN), None);
+
+        let r = seq_ranging_ambiguity_resolution_m(4, 24, f_exc).expect("resolves");
+        let want = 299_792_458.0 / (2.0 * f4);
+        assert!((r - want).abs() < 1e-6, "got {r} want {want}");
+        assert_eq!(seq_ranging_ambiguity_resolution_m(3, 24, f_exc), None);
+        assert_eq!(seq_ranging_ambiguity_resolution_m(24, 4, f_exc), None);
+        assert_eq!(seq_ranging_ambiguity_resolution_m(4, 24, 0.0), None);
+        assert_eq!(seq_ranging_ambiguity_resolution_m(4, 24, f64::NAN), None);
+    }
+
+    #[test]
+    fn seq_ranging_resolution_uses_frq_up_supplied_from_dt6_dt7() {
+        let f_exc = 66_083_646.784_f64;
+        let frq_up = f_exc * 2.0;
+        let f4 = seq_ranging_component_frequency_hz(4, f_exc).unwrap();
+        let want = 299_792_458.0 / (2.0 * f4);
+
+        let mut dt2 = vec![0u8; 214];
+        sfdu_label(
+            &mut dt2,
+            TNF_FORMAT_UL_SEQ_RANGING_PHASE,
+            2015,
+            100,
+            12345.0,
+        );
+        dt2[164] = 4;
+        dt2[165] = 24;
+        put_u32(&mut dt2, 186, 1);
+        put_u32(&mut dt2, 190, 2);
+        let ul = scan_tnf_sfdus(&dt2).unwrap();
+        assert_eq!(tnf_ranging_resolution(&ul[0], &dt2), None);
+        let r = tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, frq_up).expect("resolves");
+        assert!((r - want).abs() < 1e-6, "UL got {r} want {want}");
+        assert_eq!(tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, 0.0), None);
+        assert_eq!(
+            tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, f64::NAN),
+            None
+        );
+        put_u32(&mut dt2, 190, 0);
+        assert_eq!(
+            tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, frq_up),
+            None
+        );
+
+        let mut dt3 = vec![0u8; 324];
+        sfdu_label(
+            &mut dt3,
+            TNF_FORMAT_DL_SEQ_RANGING_PHASE,
+            2015,
+            100,
+            12345.0,
+        );
+        dt3[262] = 4;
+        dt3[263] = 24;
+        put_u32(&mut dt3, 278, 1);
+        put_u32(&mut dt3, 282, 2);
+        let dl = scan_tnf_sfdus(&dt3).unwrap();
+        let r = tnf_ranging_resolution_with_frq_up(&dl[0], &dt3, frq_up).expect("resolves");
+        assert!((r - want).abs() < 1e-6, "DL got {r} want {want}");
+    }
+
+    fn tnf_frame(
+        format_code: u8,
+        scft_id: u8,
+        year: u16,
+        doy: u16,
+        sec: f64,
+        len: usize,
+    ) -> Vec<u8> {
+        let mut b = vec![0u8; len];
+        sfdu_label(&mut b, format_code, year, doy, sec);
+        b[39] = scft_id;
+        b
+    }
+
+    fn tnf_ranging_index(frames: &[TnfSfdu]) -> usize {
+        frames
+            .iter()
+            .position(|f| f.format_code == TNF_FORMAT_UL_SEQ_RANGING_PHASE)
+            .unwrap()
+    }
+
+    #[test]
+    fn tnf_pair_ul_freq_pairs_by_chain_and_time_tag() {
+        let mut dt6 = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12345.0, 220);
+        put_f64(&mut dt6, 174, 7.169e9);
+        let mut dt2 = tnf_frame(TNF_FORMAT_UL_SEQ_RANGING_PHASE, 7, 2015, 100, 12345.0, 214);
+        dt2[164] = 4;
+        dt2[165] = 24;
+
+        let mut buf = dt6.clone();
+        buf.extend_from_slice(&dt2);
+        let frames = scan_tnf_sfdus(&buf).unwrap();
+        let r = tnf_ranging_index(&frames);
+        assert_eq!(tnf_pair_ul_freq(&frames, &buf, &frames[r]), Some(7.169e9));
+
+        let mut dt6_far = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12300.0, 220);
+        put_f64(&mut dt6_far, 174, 1.0e9);
+        let mut buf2 = dt6_far.clone();
+        buf2.extend_from_slice(&dt6);
+        buf2.extend_from_slice(&dt2);
+        let frames2 = scan_tnf_sfdus(&buf2).unwrap();
+        let r2 = tnf_ranging_index(&frames2);
+        assert_eq!(
+            tnf_pair_ul_freq(&frames2, &buf2, &frames2[r2]),
+            Some(7.169e9)
+        );
+
+        let mut dt6_other = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 9, 2015, 100, 12345.0, 220);
+        put_f64(&mut dt6_other, 174, 8.4e9);
+        let mut buf3 = dt6_other.clone();
+        buf3.extend_from_slice(&dt2);
+        let frames3 = scan_tnf_sfdus(&buf3).unwrap();
+        let r3 = tnf_ranging_index(&frames3);
+        assert_eq!(tnf_pair_ul_freq(&frames3, &buf3, &frames3[r3]), None);
+
+        let mut dt6_late = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 13900.0, 220);
+        put_f64(&mut dt6_late, 174, 7.169e9);
+        let mut buf4 = dt6_late.clone();
+        buf4.extend_from_slice(&dt2);
+        let frames4 = scan_tnf_sfdus(&buf4).unwrap();
+        let r4 = tnf_ranging_index(&frames4);
+        assert_eq!(tnf_pair_ul_freq(&frames4, &buf4, &frames4[r4]), None);
+
+        let mut dt6_a = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12315.0, 220);
+        put_f64(&mut dt6_a, 174, 1.0e9);
+        let mut dt6_b = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12375.0, 220);
+        put_f64(&mut dt6_b, 174, 2.0e9);
+        let mut buf5 = dt6_a.clone();
+        buf5.extend_from_slice(&dt6_b);
+        buf5.extend_from_slice(&dt2);
+        let frames5 = scan_tnf_sfdus(&buf5).unwrap();
+        let r5 = tnf_ranging_index(&frames5);
+        assert_eq!(tnf_pair_ul_freq(&frames5, &buf5, &frames5[r5]), None);
+    }
+
+    fn example_words() -> [u32; 9] {
+        [
+            0x6C028048, 0x00000000, 0xFFFA28EE, 0xD86F2B24, 0x4FC005C4, 0x02764217, 0x77808DE8,
+            0x00000005, 0xDC000000,
+        ]
+    }
+
+    fn galileo_delta_dor_words() -> [u32; 9] {
+        [
+            0x578AF474, 0x00000000, 0x000010CD, 0x10877FE6, 0x23802830, 0x9A000FC0, 0x00015F90,
+            0x0DADE373, 0x1300000B,
+        ]
+    }
+
+    #[test]
+    fn golden_record_unpacks() {
+        let r = orbit_record(&example_words()).unwrap();
+        assert!((r.t_since_1950 - 1812103240.0).abs() < 1.0e-9);
+        assert!((r.observable_hz - (-382738.663803100)).abs() < 1.0e-6);
+        assert_eq!(r.dss_rx, 63);
+        assert_eq!(r.dss_tx, 0);
+        assert_eq!(r.data_type, 11);
+        assert_eq!(r.downlink_band, 2);
+        assert!(r.valid);
+        assert_eq!(r.scid, 236);
+        assert!((r.ref_hz - 2299812417.0).abs() < 1.0e-6);
+        assert!((r.compression_s - 60.0).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn golden_file_parses() {
+        let bytes = std::fs::read("src/archivar/kernels/odf07155.dat").unwrap();
+        let recs = parse_odf(&bytes).unwrap();
+        assert!(!recs.is_empty());
+        let first = recs[0];
+        assert!((first.t_since_1950 - 1812103240.0).abs() < 1.0e-9);
+        assert_eq!(first.data_type, 11);
+    }
+
+    #[test]
+    fn real_galileo_delta_dor_record_decodes() {
+        let r = orbit_record(&galileo_delta_dor_words()).unwrap();
+        assert!((r.t_since_1950 - 1468724340.0).abs() < 1.0e-9);
+        assert!((r.observable_hz - 4301.277315558).abs() < 1.0e-6);
+        assert_eq!(r.dss_rx, 14);
+        assert_eq!(r.dss_tx, 0);
+        assert_eq!(r.data_type, 1);
+        assert_eq!(r.downlink_band, 1);
+        assert_eq!(r.uplink_band, 0);
+        assert!(r.valid);
+        assert_eq!(r.scid, 77);
+        assert!((r.ref_hz - 2294997631.9).abs() < 1.0e-6);
+        assert!((r.compression_s - 900.0).abs() < 1.0e-9);
+    }
+
+    fn set_bits(words: &mut [u32; 9], first: usize, last: usize, value: i64) {
+        let width = last - first + 1;
+        for b in 0..width {
+            let bitpos = first + b;
+            let word = (bitpos - 1) / 32;
+            let wbit = (bitpos - 1) % 32;
+            let mask = 1u32 << (31 - wbit);
+            if (value >> (width - 1 - b)) & 1 == 1 {
+                words[word] |= mask;
+            } else {
+                words[word] &= !mask;
+            }
+        }
+    }
+
+    #[test]
+    fn format_1_record_decodes_from_the_1988_sis_layout() {
+        let mut w = [0u32; 9];
+        w[0] = 0x6C028048;
+        set_bits(&mut w, 129, 131, 1);
+        set_bits(&mut w, 150, 155, 12);
+        set_bits(&mut w, 148, 149, 1);
+        set_bits(&mut w, 187, 188, 1);
+        set_bits(&mut w, 200, 200, 0);
+        set_bits(&mut w, 161, 167, 77);
+        set_bits(&mut w, 225, 256, 229_981_241);
+        set_bits(&mut w, 257, 264, 7);
+        set_bits(&mut w, 201, 224, 6000);
+        let r = orbit_record(&w).unwrap();
+        assert_eq!(r.data_type, 12);
+        assert_eq!(r.downlink_band, 1);
+        assert_eq!(r.uplink_band, 1);
+        assert!(r.valid);
+        assert_eq!(r.scid, 77);
+        assert!((r.ref_hz - 2299812410.7).abs() < 1.0e-6);
+        assert!((r.compression_s - 60.0).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn rejects_foreign_bytes() {
+        assert!(parse_odf(b"X").is_none());
+    }
+
+    #[test]
+    fn podf_roundtrip() {
+        let recs = vec![[1.0, 2.0, 3.0, 14.0, 43.0, 12.0, 1.0, 24.0, 60.0]];
+        let bytes = write_podf_bin(&recs);
+        let parsed = parse_podf_bin(&bytes).unwrap();
+        assert_eq!(parsed, recs);
+        assert!(parse_podf_bin(b"X").is_none());
+    }
+
+    #[test]
+    fn odf_series_roundtrip_packs_shard_rows_into_one_series_bin() {
+        let shard_a = [
+            [
+                753_440_003.0,
+                -382_738.66,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                753_440_004.0,
+                -382_738.68,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+        ];
+        let shard_b = [[
+            753_440_005.0,
+            -382_738.70,
+            2.3e9,
+            43.0,
+            43.0,
+            11.0,
+            2.0,
+            77.0,
+            60.0,
+        ]];
+        let bin = write_odf_series(&[&shard_a, &shard_b]);
+        assert_eq!(&bin[0..4], &MAGIC_ODF_SERIES);
+        assert_eq!(u32::from_le_bytes(bin[4..8].try_into().unwrap()), 3);
+        assert_eq!(bin.len(), 8 + 3 * 72);
+        let mut expected = shard_a.to_vec();
+        expected.extend_from_slice(&shard_b);
+        assert_eq!(parse_odf_series(&bin), Some(expected));
+    }
+
+    #[test]
+    fn odf_series_reader_rejects_shard_magic_and_malformed_bins() {
+        let recs = [[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]];
+        let shard_bin = write_podf_bin(&recs);
+        assert!(parse_odf_series(&shard_bin).is_none());
+        assert!(parse_odf_series(b"X").is_none());
+        let mut truncated = write_odf_series(&[&recs]);
+        truncated.pop();
+        assert!(parse_odf_series(&truncated).is_none());
+    }
+
+    #[test]
+    fn odf_series_empty_shard_set_is_an_empty_series() {
+        let bin = write_odf_series(&[]);
+        assert_eq!(bin.len(), 8);
+        assert_eq!(parse_odf_series(&bin), Some(Vec::new()));
+    }
+
+    #[test]
+    fn odf_series_emits_only_finite_observables_with_the_shared_component() {
+        let rows = [
+            [
+                753_440_003.0,
+                -382_738.66,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                f64::NAN,
+                -382_738.68,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                753_440_005.0,
+                f64::INFINITY,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                753_440_006.0,
+                -382_738.72,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+        ];
+        let bin = write_odf_series(&[&rows]);
+        let series = odf_series(&bin).expect("series parses");
+        assert_eq!(series.len(), 2);
+        assert_eq!(series[0].0, 753_440_003.0);
+        assert_eq!(series[0].1, -382_738.66);
+        assert_eq!(series[0].2, COMP_OBSERVABLE);
+        assert_eq!(series[1].0, 753_440_006.0);
+        assert_eq!(series[1].1, -382_738.72);
+        assert_eq!(series[1].2, COMP_OBSERVABLE);
+    }
+
+    #[test]
+    fn shard_ranges_cover_and_respect_budget() {
+        let ranges = podf_shard_ranges(5, 160);
+        assert_eq!(ranges, vec![(0, 2), (2, 4), (4, 5)]);
+        for &(lo, hi) in &ranges {
+            assert!(lo < hi);
+            assert!(8 + (hi - lo) * 72 <= 160);
+        }
+        let mut covered: Vec<usize> = Vec::new();
+        for &(lo, hi) in &ranges {
+            covered.extend(lo..hi);
+        }
+        assert_eq!(covered, (0..5).collect::<Vec<usize>>());
+    }
+
+    #[test]
+    fn shard_ranges_empty_for_zero_records() {
+        assert!(podf_shard_ranges(0, 1 << 30).is_empty());
+    }
+
+    #[test]
+    fn shard_ranges_single_oversize_record_is_one_shard() {
+        assert_eq!(podf_shard_ranges(1, 10), vec![(0, 1)]);
+    }
+
+    #[test]
+    fn shard_names_unique_for_multi_shard_partition() {
+        let names = [
+            podf_shard_name("mro_odf", 700_000_000.0, 800_000_000.0),
+            podf_shard_name("mro_odf", 800_000_000.0, 900_000_000.0),
+            podf_shard_name("mro_odf", 900_000_000.0, 1_000_000_000.0),
+        ];
+        let mut set = std::collections::BTreeSet::new();
+        for n in names {
+            assert!(set.insert(n), "duplicate shard name");
+        }
+    }
+
+    #[test]
+    fn shard_name_ordinal_disambiguates_equal_tdb_seconds() {
+        assert_eq!(
+            podf_shard_name("mro_odf", 123_456_789.2, 123_456_789.2),
+            podf_shard_name("mro_odf", 123_456_789.8, 123_456_789.8)
+        );
+        assert_ne!(
+            podf_shard_name_ord("mro_odf", 123_456_789.2, 123_456_789.2, 0),
+            podf_shard_name_ord("mro_odf", 123_456_789.8, 123_456_789.8, 1)
+        );
+    }
+
+    #[test]
+    fn shard_name_roundtrips_through_the_parser() {
+        let name = podf_shard_name("mars_express_odf", 700_000_000.0, 800_000_000.0);
+        assert_eq!(
+            parse_podf_shard_name(&name),
+            Some(("mars_express_odf", 700_000_000.0, 800_000_000.0))
+        );
+        let ord = podf_shard_name_ord("mro_odf", 123_456_789.2, 123_456_789.8, 1);
+        assert_eq!(
+            parse_podf_shard_name(&ord),
+            Some(("mro_odf", 123_456_789.0, 123_456_789.0))
+        );
+        assert_eq!(parse_podf_shard_name("mro_odf.bin"), None);
+        assert_eq!(parse_podf_shard_name("mro_odf_t700.bin"), None);
+    }
+
+    #[test]
+    fn shard_roundtrip_reconstructs_record_order() {
+        let mut merged: Vec<[f64; 9]> = Vec::new();
+        for i in 0..10 {
+            let t = i as f64 * 100.0;
+            merged.push([t, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]);
+        }
+        let ranges = podf_shard_ranges(merged.len(), 500);
+        assert!(ranges.len() > 1);
+        let mut reconstructed: Vec<[f64; 9]> = Vec::new();
+        for &(lo, hi) in &ranges {
+            let bin = write_podf_bin(&merged[lo..hi]);
+            let parsed = parse_podf_bin(&bin).unwrap();
+            reconstructed.extend_from_slice(&parsed);
+        }
+        assert_eq!(reconstructed, merged);
+    }
+
+    #[test]
+    fn p11r_roundtrip() {
+        let recs = vec![[-8.0e8, 12.5, 2.3e9, 2.3e9, -1.7e4, 43.0, 43.0, 12.0, 60.0]];
+        let bytes = write_p11r_bin(&recs);
+        let parsed = parse_p11r_bin(&bytes).unwrap();
+        assert_eq!(parsed, recs);
+        assert!(parse_p11r_bin(b"X").is_none());
+    }
+
+    const NHREX_TNF_HEAD_2: &str = "4e4a504c324930304331323300000000000000a20001004e00020004060e18000084004230310062000000000000000007dc001540e77da000000000506304b6727a1a0201010000000001003f142f61ed5ae1ce344b7abd0000000000002200020000000000000a004c0042cd063881085a59b3cfd941faa3a0f766b3b600000000000000000000388c38480000000000000000000000000000000000000000000000000000000000000000000000000000000000004e4a504c324930304331323300000000000000a20001004e00020004060e18000084004230310062000000010000000107dc001540e77dc000000000506304b6727a1a0201010000000001003f142f61ed5ae1ce344b7abd0000000000002200020000000000000a004c0042cd07e2bb17d0c4ef343341faa3a0f766b3b600000000000000000003390b52d6000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+
+    fn unhex(s: &str) -> Vec<u8> {
+        let b = s.as_bytes();
+        let mut out = Vec::with_capacity(b.len() / 2);
+        let mut i = 0;
+        while i + 1 < b.len() {
+            let hi = (b[i] as char).to_digit(16).unwrap() as u8;
+            let lo = (b[i + 1] as char).to_digit(16).unwrap() as u8;
+            out.push((hi << 4) | lo);
+            i += 2;
+        }
+        out
+    }
+
+    #[test]
+    fn nhrex_tnf_sfdu_framing_decodes() {
+        let bytes = unhex(NHREX_TNF_HEAD_2);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        assert_eq!(frames.len(), 2);
+
+        let f = &frames[0];
+        assert_eq!(f.offset, 0);
+        assert_eq!(f.total_len, 182);
+        assert_eq!(&f.data_description_id, b"C123");
+        assert_eq!(f.sfdu_length, 162);
+        assert_eq!(f.aggr_chdo_type, 1);
+        assert_eq!(f.aggr_chdo_length, 78);
+        assert_eq!(f.primary_chdo_type, 2);
+        assert_eq!(f.primary_chdo_length, 4);
+        assert_eq!(f.mjr_data_class, 6);
+        assert_eq!(f.mnr_data_class, 14);
+        assert_eq!(f.mission_id, 24);
+        assert_eq!(f.format_code, 0);
+        assert_eq!(f.secondary_chdo_type, 132);
+        assert_eq!(f.secondary_chdo_length, 66);
+        assert_eq!(f.scft_id, 98);
+        assert_eq!(f.rec_seq_num, 0);
+        assert_eq!(f.year, 2012);
+        assert_eq!(f.doy, 21);
+        assert_eq!(f.sec, 48109.0);
+
+        let g = &frames[1];
+        assert_eq!(g.offset, 182);
+        assert_eq!(g.total_len, 182);
+        assert_eq!(&g.data_description_id, b"C123");
+        assert_eq!(g.format_code, 0);
+        assert_eq!(g.scft_id, 98);
+        assert_eq!(g.rec_seq_num, 1);
+        assert_eq!(g.year, 2012);
+        assert_eq!(g.doy, 21);
+        assert_eq!(g.sec, 48110.0);
+    }
+
+    #[test]
+    fn nhrex_tnf_dt0_uplink_carrier_phase_decodes() {
+        let bytes = unhex(NHREX_TNF_HEAD_2);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        let f = &frames[0];
+        let d = tnf_dt0(f, &bytes[f.offset..]).unwrap();
+
+        assert_eq!(d.orig_id, 0x30);
+        assert_eq!(d.last_modifier_id, 0x31);
+        assert_eq!(d.upl_rec_seq_num, 0);
+        assert_eq!(d.rct_day, 20579);
+        assert_eq!(d.rct_msec, 79065722);
+        assert_eq!(d.ul_dss_id, 26);
+        assert_eq!(d.ul_band, 2);
+        assert_eq!(d.ul_assembly_num, 1);
+        assert_eq!(d.transmit_num, 1);
+        assert_eq!(d.transmit_stat, 0);
+        assert_eq!(d.transmit_mode, 0);
+        assert_eq!(d.cmd_modul_stat, 0);
+        assert_eq!(d.rng_modul_stat, 0);
+        assert_eq!(d.fts_vld_flag, 1);
+        assert_eq!(d.transmit_time_tag_delay.to_bits(), 0x3f142f61ed5ae1ce);
+        assert_eq!(d.ul_zheight_corr.to_bits(), 0x344b7abd);
+        assert_eq!(d.mod_day, 0);
+        assert_eq!(d.mod_msec, 0);
+        assert_eq!(d.version_num, 34);
+        assert_eq!(d.sub_version_num, 0);
+        assert_eq!(d.sub_sub_version_num, 2);
+        assert_eq!(d.data_chdo_type, 10);
+        assert_eq!(d.data_chdo_length, 76);
+        assert_eq!(d.ul_hi_phs_cycles, 0x0042cd06);
+        assert_eq!(d.ul_lo_phs_cycles, 0x3881085a);
+        assert_eq!(d.ul_frac_phs_cycles, 0x59b3cfd9);
+        assert_eq!(d.ramp_freq.to_bits(), 0x41faa3a0f766b3b6);
+        assert_eq!(d.ramp_rate, 0.0);
+        assert_eq!(d.transmit_switch_stat, 0);
+        assert_eq!(d.ramp_type, 0);
+        assert_eq!(d.transmit_op_pwr.to_bits(), 0x388c3848);
+        assert_eq!(d.sup_data_id, [0u8; 8]);
+        assert_eq!(d.sup_data_rev, [0u8; 8]);
+        assert_eq!(d.prdx_time_offset, 0.0);
+        assert_eq!(d.prdx_freq_offset, 0.0);
+        assert_eq!(d.time_tag_corr_flag, 0);
+        assert_eq!(d.type_time_corr_flag, 0);
+        assert_eq!(d.fabricated_sfdu_flag, 0);
+    }
+
+    #[test]
+    fn tnf_rows_resolves_dt0_to_tdb_phase_rows() {
+        let lsk = crate::archivar::lsk::parse(
+            "DELTET/DELTA_T_A = 32.184\n\
+             DELTET/DELTA_AT = ( 10, @1972-JAN-1, 37, @2017-JAN-1 )",
+        )
+        .unwrap();
+        let bytes = unhex(NHREX_TNF_HEAD_2);
+        let rows = tnf_rows(&bytes, &lsk).unwrap();
+        assert_eq!(rows.len(), 2);
+        assert!(rows[0][0] < rows[1][0], "tdb rows follow the SFDU order");
+        let phase = 0x0042cd06u32 as f64 * 4_294_967_296.0
+            + 0x3881085au32 as f64
+            + 0x59b3cfd9u32 as f64 / 4_294_967_296.0;
+        assert_eq!(rows[0][1], phase);
+        assert_eq!(rows[0][3], 26.0, "ul_dss_id carries the DT0 field");
+        assert_eq!(rows[0][4], 98.0, "scft_id carries the SFDU field");
+        assert_eq!(rows[0][5], 0.0, "format_code 0 marks DT0");
+    }
+
+    fn podf_bin(rows: &[[f64; 9]]) -> Vec<u8> {
+        let mut out = Vec::with_capacity(8 + rows.len() * 72);
+        out.extend_from_slice(b"PODF");
+        out.extend_from_slice(&(rows.len() as u32).to_le_bytes());
+        for r in rows {
+            for v in r {
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn turn_ratio_follows_the_band_pair_not_the_downlink_band_alone() {
+        assert_eq!(odf_turn_ratio(1, 1), Some(240.0 / 221.0));
+        assert_eq!(odf_turn_ratio(1, 2), Some(880.0 / 221.0));
+        assert_eq!(odf_turn_ratio(2, 1), Some(240.0 / 749.0));
+        assert_eq!(odf_turn_ratio(2, 2), Some(880.0 / 749.0));
+        assert_eq!(
+            odf_turn_ratio(0, 2),
+            None,
+            "an absent uplink band carries no ratio (0 honored)"
+        );
+        assert_eq!(
+            odf_turn_ratio(1, 3),
+            None,
+            "a Ka-downlink is negotiated per project, never assumed"
+        );
+    }
+
+    #[test]
+    fn band_trailer_roundtrips_and_leaves_the_nine_field_record_untouched() {
+        let rows = [[1.0, 2.0, 3.0, 4.0, 5.0, 12.0, 2.0, 23.0, 1.0]];
+        let bands = [Some(1i64)];
+        let bytes = write_podf_bin_bands(&rows, &bands);
+        assert_eq!(
+            bytes.len(),
+            8 + 72 + 8 + 8,
+            "9-field records stay at 72 B; the BND1 section follows"
+        );
+        let plain = parse_podf_bin(&bytes).unwrap();
+        assert_eq!(
+            plain.len(),
+            1,
+            "a reader that ignores the bands still parses the records"
+        );
+        let (parsed, got) = parse_podf_bin_bands(&bytes).unwrap();
+        assert_eq!(parsed[0][6], 2.0);
+        assert_eq!(got, vec![Some(1)]);
+    }
+
+    #[test]
+    fn absent_uplink_band_omits_the_trailer() {
+        let rows = [[1.0, 2.0, 3.0, 4.0, 5.0, 12.0, 2.0, 23.0, 1.0]];
+        let bytes = write_podf_bin_bands(&rows, &[None]);
+        assert_eq!(bytes.len(), 8 + 72);
+        let (_, got) = parse_podf_bin_bands(&bytes).unwrap();
+        assert_eq!(got, vec![None]);
+    }
+
+    #[test]
+    fn tnf_phase_series_reads_phase_and_ramp_freq_from_the_same_podf_row() {
+        let ramp = 7.183_446_125e9;
+        let row = [1.0e9, 42.75, ramp, 26.0, 98.0, 0.0, 2.0, 7.0, 0.0];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        let s = &series[0];
+        assert_eq!(s.t, 1.0e9);
+        assert_eq!(s.value, 42.75, "the raw cycles ride beside the phase");
+        let phase = s.phase.expect("finite cycles carry a phase");
+        assert!((phase - 0.75 * 2.0 * std::f64::consts::PI).abs() < 1e-12);
+        assert_eq!(s.freq, ramp, "ramp_freq rides the row, never a constant");
+        assert_eq!(s.bin_width, 0.0, "a phase counter carries no band");
+        assert_eq!(s.comp, TNF_COMP_UL_PHASE);
+    }
+
+    #[test]
+    fn tnf_phase_series_writes_integer_cycles_as_zero_phase_not_absent() {
+        let row = [1.0e9, 5.0, 7.183_446_125e9, 26.0, 98.0, 0.0, 2.0, 7.0, 0.0];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        let phase = series[0].phase.expect("0 rad is a real angle");
+        assert_eq!(phase, 0.0);
+    }
+
+    #[test]
+    fn tnf_phase_series_absent_phase_is_none_never_a_pad() {
+        let row = [
+            1.0e9,
+            f64::NAN,
+            7.183_446_125e9,
+            26.0,
+            98.0,
+            0.0,
+            2.0,
+            7.0,
+            0.0,
+        ];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        assert!(series[0].phase.is_none());
+        assert!(
+            series[0].value.is_nan(),
+            "the raw value stays the row's own, the consumer gates it"
+        );
+    }
+
+    #[test]
+    fn tnf_phase_series_absent_ramp_freq_is_no_band() {
+        let row = [1.0e9, 42.75, 0.0, 26.0, 98.0, 0.0, 2.0, 7.0, 0.0];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert!(series[0].phase.is_some());
+        assert_eq!(series[0].freq, 0.0, "no band, not a fabricated carrier");
+    }
+
+    #[test]
+    fn tnf_phase_series_skips_non_ul_rows_and_non_finite_epochs() {
+        let ul = [
+            1.0e9,
+            42.75,
+            7.183_446_125e9,
+            26.0,
+            98.0,
+            0.0,
+            2.0,
+            7.0,
+            0.0,
+        ];
+        let dl = [2.0e9, 1.0, 7.1e9, 26.0, 98.0, 1.0, 2.0, 7.0, 0.0];
+        let bad = [
+            f64::NAN,
+            42.75,
+            7.183_446_125e9,
+            26.0,
+            98.0,
+            0.0,
+            2.0,
+            7.0,
+            0.0,
+        ];
+        let bytes = podf_bin(&[ul, dl, bad]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        assert_eq!(series[0].t, 1.0e9);
+    }
+
+    fn put_u16(b: &mut [u8], off: usize, v: u16) {
+        b[off..off + 2].copy_from_slice(&v.to_be_bytes());
+    }
+
+    fn put_u32(b: &mut [u8], off: usize, v: u32) {
+        b[off..off + 4].copy_from_slice(&v.to_be_bytes());
+    }
+
+    fn put_f32(b: &mut [u8], off: usize, v: f32) {
+        b[off..off + 4].copy_from_slice(&v.to_be_bytes());
+    }
+
+    fn put_f64(b: &mut [u8], off: usize, v: f64) {
+        b[off..off + 8].copy_from_slice(&v.to_be_bytes());
+    }
+
+    fn tnf_secondary_chdo_type(format_code: u8) -> u16 {
+        match format_code {
+            TNF_FORMAT_UL_CARRIER_PHASE
+            | TNF_FORMAT_UL_SEQ_RANGING_PHASE
+            | TNF_FORMAT_UL_PN_RANGING_PHASE
+            | TNF_FORMAT_RAMP => TNF_CHDO_UPLINK,
+            TNF_FORMAT_DL_CARRIER_PHASE
+            | TNF_FORMAT_DL_SEQ_RANGING_PHASE
+            | TNF_FORMAT_DL_PN_RANGING_PHASE => TNF_CHDO_DOWNLINK,
+            TNF_FORMAT_VLBI => 135,
+            TNF_FORMAT_SMOOTHED_NOISE | TNF_FORMAT_ALLAN_DEVIATION => 136,
+            _ => 134,
+        }
+    }
+
+    fn sfdu_label(b: &mut [u8], format_code: u8, year: u16, doy: u16, sec: f64) {
+        let sfdu_length = (b.len() - TNF_LABEL_LEN) as u64;
+        b[0..4].copy_from_slice(b"NJPL");
+        b[8..12].copy_from_slice(b"C125");
+        b[12..20].copy_from_slice(&sfdu_length.to_be_bytes());
+        b[31] = format_code;
+        let time_off = tnf_time_tag_offset(tnf_secondary_chdo_type(format_code));
+        put_u16(b, 32, tnf_secondary_chdo_type(format_code));
+        put_u16(b, time_off, year);
+        put_u16(b, time_off + 2, doy);
+        put_f64(b, time_off + 4, sec);
+    }
+
+    fn test_lsk() -> crate::archivar::lsk::LeapSeconds {
+        crate::archivar::lsk::parse(
+            "DELTET/DELTA_T_A = 32.184\n\
+             DELTET/DELTA_AT = ( 10, @1972-JAN-1, 37, @2017-JAN-1 )",
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn tnf_dt6_doppler_count_decodes_and_rows() {
+        let mut bytes = vec![0u8; 220];
+        sfdu_label(&mut bytes, 6, 2015, 100, 12345.0);
+        bytes[82] = 43;
+        bytes[63] = 2;
+        bytes[164] = 2;
+        put_f32(&mut bytes, 166, 0.1);
+        put_f64(&mut bytes, 174, 7.169e9);
+        put_f64(&mut bytes, 182, -12.5);
+        put_f64(&mut bytes, 190, 1234567.89);
+        put_f64(&mut bytes, 198, 0.004);
+        bytes[211] = 1;
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        let d = tnf_dt6(&frames[0], &bytes).unwrap();
+        assert_eq!(d.dl_dss_id, 43);
+        assert_eq!(d.ul_band, 2);
+        assert_eq!(d.ref_rcv_type, 2);
+        assert_eq!(d.sampl_interval, 0.1);
+        assert_eq!(d.ul_freq, 7.169e9);
+        assert_eq!(d.dop_cnt_bias_freq, -12.5);
+        assert_eq!(d.dop_cnt, 1234567.89);
+        assert_eq!(d.dop_pseudo_resid, 0.004);
+        assert_eq!(d.dop_vld_flag, 1);
+        let rows = tnf_rows(&bytes, &test_lsk()).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0][TNF_ROW_FORMAT], 6.0);
+        assert_eq!(rows[0][TNF_ROW_OBSERVABLE], 1234567.89);
+        assert_eq!(rows[0][TNF_ROW_DSS], 43.0);
+        assert_eq!(rows[0][TNF_ROW_BAND], 2.0);
+    }
+
+    #[test]
+    fn tnf_dt17_total_count_phase_decodes_and_rows() {
+        let mut bytes = vec![0u8; 236];
+        sfdu_label(&mut bytes, 17, 2015, 101, 12346.0);
+        bytes[82] = 63;
+        bytes[63] = 1;
+        bytes[164] = 2;
+        put_u16(&mut bytes, 188, 1);
+        put_f32(&mut bytes, 190, 0.1);
+        put_u16(&mut bytes, 194, 2015);
+        put_u16(&mut bytes, 196, 101);
+        put_f64(&mut bytes, 198, 12345.5);
+        put_u32(&mut bytes, 206, 0x0042cd06);
+        put_u32(&mut bytes, 210, 0x3881085a);
+        put_u32(&mut bytes, 214, 0x59b3cfd9);
+        put_f32(&mut bytes, 218, 1.25);
+        bytes[222] = 1;
+        bytes[223] = 1;
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        let d = tnf_dt17(&frames[0], &bytes).unwrap();
+        assert_eq!(d.num_obs, 1);
+        assert_eq!(d.st_year, 2015);
+        assert_eq!(d.st_doy, 101);
+        assert_eq!(d.obs_hi, 0x0042cd06);
+        assert_eq!(d.obs_lo, 0x3881085a);
+        assert_eq!(d.obs_frac, 0x59b3cfd9);
+        assert_eq!(d.prefit_resid, 1.25);
+        assert_eq!(d.prefit_resid_vld_flag, 1);
+        assert_eq!(d.prefit_resid_tol_flag, 1);
+        let rows = tnf_rows(&bytes, &test_lsk()).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0][TNF_ROW_FORMAT], 17.0);
+        let phase = tnf_phase_cycles(0x0042cd06, 0x3881085a, 0x59b3cfd9);
+        assert_eq!(rows[0][TNF_ROW_OBSERVABLE], phase);
+    }
+
+    const MAVEN_TNF_DT16_FRAME: &str = "4e4a504c324930304331323500000000000000c80001008800020004060e18100086007c313100ca0000000007e0003240f0c6b80000000054d204656e710102010101000100000000000000000034535ed1230005022302000000000000000001040001000000000000000033aa56a2000000020000000041ff7682fff00000000000000000000000000370000002ed00000000000000003f80000001000000000a00380100000000000000000000000000000000000000c2ffdaea00013f800000c1ff76fefc901abc000000000000000000000000000000000000";
+
+    #[test]
+    fn tnf_dt16_carrier_observable_time_tag_decodes_to_plausible_tdb() {
+        let lsk = test_lsk();
+        let bytes = unhex(MAVEN_TNF_DT16_FRAME);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        assert_eq!(frames.len(), 1);
+        let f = &frames[0];
+        assert_eq!(f.secondary_chdo_type, 134);
+        assert_eq!(f.format_code, 16);
+        assert_eq!(f.rec_seq_num, 0);
+        assert_eq!(f.year, 2016);
+        assert_eq!(f.doy, 50);
+        assert!((f.sec - 68715.5).abs() < 1e-6);
+        let rows = tnf_rows(&bytes, &lsk).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0][TNF_ROW_FORMAT], 16.0);
+        assert!(
+            (rows[0][TNF_ROW_TDB] - 509_180_757.685_216_6).abs() < 1e-6,
+            "DT16 tdb {} is not the SFDU time-tag tdb; the pin moved 19.6 us when the \
+             conversion took the full Fairhead-Bretagnon series, which is the size the \
+             two-term formula was off by at this epoch",
+            rows[0][TNF_ROW_TDB]
+        );
+    }
+
+    #[test]
+    fn tnf_dt6_truncated_sfdu_is_a_measured_skip() {
+        let mut bytes = vec![0u8; 220];
+        sfdu_label(&mut bytes, 6, 2015, 100, 12345.0);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        assert!(tnf_dt6(&frames[0], &bytes[..219]).is_none());
+    }
+
+    #[test]
+    fn tnf_dt1_downlink_carrier_phase_decodes_phase_arrays() {
+        let mut bytes = vec![0u8; 378];
+        sfdu_label(&mut bytes, 1, 2015, 100, 12345.0);
+        bytes[66] = 43;
+        bytes[67] = 2;
+        put_f32(&mut bytes, 150, 0.25);
+        put_u32(&mut bytes, 174, 1);
+        put_u32(&mut bytes, 178, 2);
+        put_u32(&mut bytes, 182, 3);
+        put_u32(&mut bytes, 294, 11);
+        put_u32(&mut bytes, 298, 22);
+        put_u32(&mut bytes, 302, 33);
+        put_f64(&mut bytes, 306, 8.4e9);
+        put_f64(&mut bytes, 348, 0.05);
+        put_f64(&mut bytes, 356, -1.0e-3);
+        bytes[326] = 2;
+        bytes[327] = 1;
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        let d = tnf_dt1(&frames[0], &bytes).unwrap();
+        assert_eq!(d.phases[0], [1, 2, 3]);
+        assert_eq!(d.phase_avg, [11, 22, 33]);
+        assert_eq!(d.dl_freq, 8.4e9);
+        assert_eq!(d.carr_loop_type, 2);
+        assert_eq!(d.snt_flag, 1);
+        assert_eq!(d.prdx_time_offset, 0.05);
+        assert_eq!(d.prdx_freq_offset, -1.0e-3);
+        let rows = tnf_rows(&bytes, &test_lsk()).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0][TNF_ROW_FORMAT], 1.0);
+        assert_eq!(rows[0][TNF_ROW_OBSERVABLE], tnf_phase_cycles(11, 22, 33));
+        assert_eq!(rows[0][TNF_ROW_DSS], 43.0);
+        assert_eq!(rows[0][TNF_ROW_BAND], 2.0);
+    }
+
+    #[test]
+    fn tnf_dt12_smoothed_noise_decodes_from_chdo136() {
+        let mut bytes = vec![0u8; 184];
+        sfdu_label(&mut bytes, 12, 2015, 100, 12345.0);
+        bytes[62] = 26;
+        bytes[63] = 2;
+        put_f32(&mut bytes, 138, 0.011);
+        put_f32(&mut bytes, 142, 0.012);
+        put_u32(&mut bytes, 162, 60);
+        put_f32(&mut bytes, 166, 98.5);
+        bytes[170] = 1;
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        let d = tnf_dt12(&frames[0], &bytes).unwrap();
+        assert_eq!(d.dl_dss_id, 26);
+        assert_eq!(d.dl_band, 2);
+        assert_eq!(d.noise_01sec, 0.011);
+        assert_eq!(d.noise_1sec, 0.012);
+        assert_eq!(d.int_time, 60);
+        assert_eq!(d.percent_data_used, 98.5);
+        assert_eq!(d.new_01sec, 1);
+    }
+
+    #[test]
+    fn reference_stage_separates_beacon_uplink_carrier_and_tsf() {
+        assert_eq!(reference_stage(11, 2_292_035_640.0), ReferenceStage::Beacon);
+        assert_eq!(ref_uplink_hz(11, 2_292_035_640.0), 2_292_035_640.0);
+
+        assert_eq!(reference_stage(12, 21_986_930.0), ReferenceStage::Tsf);
+        let up = ref_uplink_hz(12, 21_986_930.0);
+        assert!((up - 2.110745e9).abs() < 1.0e3, "got {up}");
+
+        assert_eq!(
+            reference_stage(12, 2_110_274_976.0),
+            ReferenceStage::UplinkCarrier
+        );
+        assert_eq!(ref_uplink_hz(12, 2_110_274_976.0), 2_110_274_976.0);
+    }
+
+    #[test]
+    fn the_block_arithmetic_is_the_specification() {
+        assert_eq!(RECORDS_PER_BLOCK * RECORD_BYTES, PHYSICAL_RECORD);
+        assert_eq!(PHYSICAL_RECORD, 8064);
+        assert_eq!(RECORD_BYTES, 36);
+        assert_eq!(RECORDS_PER_BLOCK, 224);
+    }
+
+    #[test]
+    fn a_file_without_a_whole_block_or_a_label_is_absent() {
+        let two_records = vec![0u8; 2 * RECORD_BYTES];
+        assert!(parse_odf(&two_records).is_none());
+        let one_block = vec![0u8; PHYSICAL_RECORD];
+        assert!(parse_odf(&one_block).is_none());
+    }
+
+    #[test]
+    fn a_trailing_byte_after_the_last_block_is_ignored() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_IDENTIFIER, 2);
+        put_header(&mut block, 4, PK_ORBIT_HEADER, 4);
+        put_words(&mut block, 5, example_words());
+        let mut eof = [0u32; 9];
+        eof[0] = PK_SUMMARY;
+        put_words(&mut block, 6, eof);
+        block.push(0x0a);
+        let rows = parse_odf(&block).expect("the trailing byte does not void the file");
+        assert_eq!(rows.len(), 1);
+    }
+
+    #[test]
+    fn a_two_byte_header_before_the_label_is_skipped() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_IDENTIFIER, 2);
+        put_header(&mut block, 4, PK_ORBIT_HEADER, 4);
+        put_words(&mut block, 5, example_words());
+        let mut eof = [0u32; 9];
+        eof[0] = PK_SUMMARY;
+        put_words(&mut block, 6, eof);
+        let mut framed = vec![0x63, 0x63];
+        framed.extend_from_slice(&block);
+        framed.push(0x0a);
+        let rows = parse_odf(&framed).expect("the two-byte header is skipped");
+        assert_eq!(rows.len(), 1);
+    }
+
+    #[test]
+    fn the_six_groups_are_read_in_the_order_the_specification_names() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_IDENTIFIER, 2);
+        put_header(&mut block, 4, PK_ORBIT_HEADER, 4);
+        put_header(&mut block, 6, PK_SUMMARY, 6);
+        let rows = parse_odf(&block).expect("a block with the six headers parses");
+        assert!(rows.is_empty(), "no orbit record was written");
+        assert_eq!(block.len(), 8064);
+    }
+
+    fn put_header(block: &mut [u8], record: usize, key: u32, group_start: u32) {
+        let at = record * RECORD_BYTES;
+        block[at..at + 4].copy_from_slice(&key.to_be_bytes());
+        block[at + 4..at + 8].copy_from_slice(&0u32.to_be_bytes());
+        block[at + 8..at + 12].copy_from_slice(&1u32.to_be_bytes());
+        block[at + 12..at + 16].copy_from_slice(&group_start.to_be_bytes());
+    }
+
+    fn put_words(block: &mut [u8], record: usize, words: [u32; 9]) {
+        let at = record * RECORD_BYTES;
+        for (index, word) in words.iter().enumerate() {
+            block[at + index * 4..at + index * 4 + 4].copy_from_slice(&word.to_be_bytes());
+        }
+    }
+
+    #[test]
+    fn the_end_of_file_header_ends_the_orbit_group() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_IDENTIFIER, 2);
+        put_header(&mut block, 4, PK_ORBIT_HEADER, 4);
+        put_words(&mut block, 5, example_words());
+        let mut eof = [0u32; 9];
+        eof[0] = PK_SUMMARY;
+        put_words(&mut block, 6, eof);
+        let rows = parse_odf(&block).expect("the block parses");
+        assert_eq!(rows.len(), 1, "only the orbit record is a row");
+        assert!((rows[0].t_since_1950 - 1812103240.0).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn a_ramp_record_carries_start_frequency_rate_and_end() {
+        let mut words = [0u32; 9];
+        words[0] = 100;
+        words[2] = 1;
+        words[3] = 500_000_000;
+        words[4] = 7 << 10;
+        words[5] = 167_991_440;
+        words[7] = 200;
+        let ramp = ramp_record(&words).expect("a ramp");
+        assert!((ramp.start_s - 100.0).abs() < 1.0e-9);
+        assert!((ramp.start_freq_hz - 7_167_991_440.0).abs() < 1.0e-6);
+        assert!((ramp.rate_hz_per_s - 1.5).abs() < 1.0e-12);
+        assert!((ramp.end_s - 200.0).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn the_ramp_group_is_read_from_its_header() {
+        let mut block = vec![0u8; PHYSICAL_RECORD];
+        put_header(&mut block, 0, PK_FILE_LABEL, 0);
+        put_header(&mut block, 2, PK_RAMP, 2);
+        let mut words = [0u32; 9];
+        words[0] = 100;
+        words[4] = 7 << 10;
+        words[5] = 167_991_440;
+        words[7] = 200;
+        put_words(&mut block, 3, words);
+        let mut eof = [0u32; 9];
+        eof[0] = PK_SUMMARY;
+        put_words(&mut block, 4, eof);
+        let ramps = parse_odf_ramps(&block).expect("the block parses");
+        assert_eq!(ramps.len(), 1);
+        assert!((ramps[0].start_freq_hz - 7_167_991_440.0).abs() < 1.0e-6);
+    }
+}

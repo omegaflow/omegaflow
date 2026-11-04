@@ -1,0 +1,22 @@
+name: chandra-csc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  chandra-csc:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"chandra_csc.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"IX/70/csc21mas\" --columns 'name:2CXO;ra:RAICRS;dec:DEICRS;z:z;flux:Fluxb' --skip-null flux --async 600 --limit 500000 --out chandra_csc.json"}
+        ]

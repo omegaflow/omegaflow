@@ -1,0 +1,3530 @@
+use crate::scalar_te_gpu::*;
+use omegaflow::archivar::PHI;
+use omegaflow::te::*;
+use std::sync::{Arc, Mutex, RwLock, mpsc};
+
+#[test]
+fn field_wgsl_validates_offline() {
+    let module = match wgpu::naga::front::wgsl::parse_str(FIELD_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(FIELD_WGSL)),
+    };
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(FIELD_WGSL));
+    }
+}
+
+fn browser_field_shader() -> String {
+    let html = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../static/index.html"
+    ))
+    .expect("static/index.html carries the browser fieldShader");
+    let marker = "const fieldShader = `";
+    let start = html.find(marker).expect("fieldShader marker absent") + marker.len();
+    let end = html[start..]
+        .find('`')
+        .expect("fieldShader closing backtick absent")
+        + start;
+    html[start..end].to_string()
+}
+
+#[test]
+fn browser_fieldshader_validates_and_carries_the_measured_branch() {
+    let wgsl = browser_field_shader();
+
+    let module = match wgpu::naga::front::wgsl::parse_str(&wgsl) {
+        Ok(m) => m,
+        Err(e) => panic!("browser fieldShader parse: {}", e.emit_to_string(&wgsl)),
+    };
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("browser fieldShader validate: {}", e.emit_to_string(&wgsl));
+    }
+
+    assert!(
+        wgsl.contains("@group(0) @binding(3) var<storage, read> lut: array<vec4f>;"),
+        "the browser fieldShader carries no lut binding"
+    );
+    assert!(
+        wgsl.contains("if (vp.expose.y >= 0.5)"),
+        "the measured-color branch (vp.expose.y >= 0.5) is absent"
+    );
+    assert!(
+        wgsl.contains("rgb = lut[idx].rgb;"),
+        "the measured LUT read (lut[idx].rgb) is absent"
+    );
+}
+
+#[test]
+fn te_wgsl_validates_offline() {
+    let module = match wgpu::naga::front::wgsl::parse_str(TE_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(TE_WGSL)),
+    };
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(TE_WGSL));
+    }
+}
+
+#[test]
+fn scalar_te_wgsl_validates_offline() {
+    let module = match wgpu::naga::front::wgsl::parse_str(SCALAR_TE_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(SCALAR_TE_WGSL)),
+    };
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(SCALAR_TE_WGSL));
+    }
+}
+
+#[test]
+fn s2_wgsl_validates_offline() {
+    let module = match wgpu::naga::front::wgsl::parse_str(S2_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(S2_WGSL)),
+    };
+    let mut validator = wgpu::naga::valid::Validator::new(
+        wgpu::naga::valid::ValidationFlags::all(),
+        wgpu::naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(S2_WGSL));
+    }
+}
+
+#[test]
+fn te_gpu_crosscheck_against_cpu_reference() {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — crosscheck skipped");
+            return;
+        }
+    };
+    let info = adapter.get_info();
+    eprintln!(
+        "adapter: {} | {:?} | {:?} | {}",
+        info.name, info.backend, info.device_type, info.driver_info
+    );
+    let (device, queue) =
+        match block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(TE_WGSL.into()),
+    });
+    let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 2;
+                e
+            },
+        ],
+    });
+    let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&te_layout],
+        push_constant_ranges: &[],
+    });
+    let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&te_pipe_layout),
+        module: &module,
+        entry_point: Some("te_compute"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: TE_SERIES_BYTES,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 16,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: te_verdict_bytes(TE_KSG_K_PROD),
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: te_verdict_bytes(TE_KSG_K_PROD),
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &te_layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: series_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: param_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: out_buf.as_entire_binding(),
+            },
+        ],
+    });
+    let n = 200usize;
+    let mut x = vec![0f32; n];
+    let mut y = vec![0f32; n];
+    for (t, slot) in y.iter_mut().enumerate() {
+        *slot = (t as f32 * 0.5).sin();
+    }
+    for t in 0..n - 1 {
+        x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+    }
+    let seed = 42u64;
+    let mut data = vec![0f32; omegaflow::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
+    data[0..n].copy_from_slice(&x);
+    data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + n].copy_from_slice(&y);
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    for s in 0..omegaflow::te::TE_SURR_FLOOR {
+        let surr = omegaflow::te::phase_randomized_surrogate(&y, &mut rng);
+        let off = (2 + s) * TE_SERIES_STRIDE;
+        data[off..off + n].copy_from_slice(&surr);
+    }
+    queue.write_buffer(&series_buf, 0, &le_bytes_f32(&data));
+    let max_lag = (n as f64 / PHI) as u32;
+    let param = [n as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K_PROD];
+    let mut pb = [0u8; 16];
+    for (i, p) in param.iter().enumerate() {
+        pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+    }
+    queue.write_buffer(&param_buf, 0, &pb);
+    let start = std::time::Instant::now();
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&te_pipe);
+        pass.set_bind_group(0, &te_bind, &[]);
+        pass.dispatch_workgroups((omegaflow::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+    }
+    enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
+    queue.submit(std::iter::once(enc.finish()));
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "te gpu readback returned void"
+    );
+    let elapsed = start.elapsed();
+    let mapped_data = slice.get_mapped_range();
+    let mut verdict = vec![0f32; (te_verdict_bytes(TE_KSG_K_PROD) / 4) as usize];
+    for k in 0..verdict.len() {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+        verdict[k] = f32::from_le_bytes(b);
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+    let gpu = omegaflow::te::topological_verdict_from_gpu(&verdict);
+    let cpu = omegaflow::te::topological_te_phase(&x, &y, 3, 3, seed);
+    eprintln!("te crosscheck elapsed {:?}", elapsed);
+    eprintln!(
+        "gpu: {:?}",
+        gpu.as_ref().map(|v| (
+            v.tau_c,
+            v.tau_y,
+            v.te,
+            v.threshold,
+            v.surrogates_used,
+            v.pe_x,
+            v.pe_y
+        ))
+    );
+    eprintln!(
+        "cpu: {:?}",
+        cpu.as_ref().map(|v| (
+            v.tau_c,
+            v.tau_y,
+            v.te,
+            v.threshold,
+            v.surrogates_used,
+            v.pe_x,
+            v.pe_y
+        ))
+    );
+    let (gpu_v, cpu_v) = match (gpu, cpu) {
+        (Some(g), Some(c)) => (g, c),
+        (None, None) => return,
+        (g, c) => {
+            panic!(
+                "te crosscheck verdict divergence: gpu valid = {}, cpu valid = {}",
+                g.is_some(),
+                c.is_some()
+            );
+        }
+    };
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    assert_eq!(gpu_v.tau_y, cpu_v.tau_y, "tau_y diverges");
+    assert_eq!(
+        gpu_v.tau_c, cpu_v.tau_c,
+        "the gpu cross horizon diverges from the cpu reference"
+    );
+    assert!(
+        gpu_v.surrogates_used >= 2 && cpu_v.surrogates_used >= 2,
+        "surrogates_used below two: gpu {} cpu {}",
+        gpu_v.surrogates_used,
+        cpu_v.surrogates_used
+    );
+    let emb_x = omegaflow::te::embed_series(&xf, gpu_v.tau_c, 3);
+    let emb_y = omegaflow::te::embed_series(&yf, gpu_v.tau_y, 3);
+    let kde_cpu =
+        omegaflow::te::transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, gpu_v.tau_c, gpu_v.tau_y)
+            .expect("the KDE reference carries a TE at the GPU lags");
+    let te_rel = ((gpu_v.te - kde_cpu) / kde_cpu.abs()).abs();
+    assert!(
+        te_rel < 0.1,
+        "te diverges from the KDE reference: gpu {} kde-cpu {} rel {}",
+        gpu_v.te,
+        kde_cpu,
+        te_rel
+    );
+    match (gpu_v.pe_x, cpu_v.pe_x) {
+        (Some(g), Some(c)) => {
+            assert!((g - c).abs() < 1e-3, "pe_x diverges: gpu {} cpu {}", g, c)
+        }
+        (None, None) => {}
+        (g, c) => panic!("pe_x presence diverges: gpu {:?} cpu {:?}", g, c),
+    }
+    match (gpu_v.pe_y, cpu_v.pe_y) {
+        (Some(g), Some(c)) => {
+            assert!((g - c).abs() < 1e-3, "pe_y diverges: gpu {} cpu {}", g, c)
+        }
+        (None, None) => {}
+        (g, c) => panic!("pe_y presence diverges: gpu {:?} cpu {:?}", g, c),
+    }
+    for h_scale in [0.5f32, 2.0f32] {
+        let param = [n as u32, max_lag, h_scale.to_bits(), TE_KSG_K_PROD];
+        let mut pb = [0u8; 16];
+        for (i, p) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+        }
+        queue.write_buffer(&param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(&te_pipe);
+            pass.set_bind_group(0, &te_bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        assert!(mapped.load(Ordering::SeqCst), "te scaled readback void");
+        let mapped_data = slice.get_mapped_range();
+        let mut verdict = vec![0f32; (te_verdict_bytes(TE_KSG_K_PROD) / 4) as usize];
+        for k in 0..verdict.len() {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+            verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(mapped_data);
+        read_buf.unmap();
+        let scaled = match omegaflow::te::topological_verdict_from_gpu(&verdict) {
+            Some(v) => v,
+            None => panic!("te verdict invalid at bandwidth scale {}", h_scale),
+        };
+        assert!(
+            (scaled.te - gpu_v.te).abs() > 1e-4,
+            "te unchanged at bandwidth scale {}: {}",
+            h_scale,
+            scaled.te
+        );
+    }
+}
+
+#[test]
+fn force_ref_medians_holds_reference_on_absence() {
+    let mut app = OmegaLoop {
+        force_ref: [7.0; 9],
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.packed_field = vec![0.0; 12];
+    app.packed_meta = vec![0.0; 12];
+    for _ in 0..64 {
+        app.relax_force_refs();
+    }
+    for ft in 0..9 {
+        assert_eq!(app.force_ref[ft], 7.0);
+    }
+}
+
+#[test]
+fn force_ref_snaps_on_first_sight() {
+    let mut app = OmegaLoop {
+        force_ref: [0.0; 9],
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.packed_field = vec![0.0; 12];
+    app.packed_field[3] = 8.0;
+    app.packed_meta = vec![0.0; 12];
+    app.relax_force_refs();
+    assert_eq!(app.force_ref[0], 8.0);
+}
+
+#[test]
+fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
+    let mut app = OmegaLoop {
+        field_permeability: [0.42; 9],
+        natural_latency_ticks: 7,
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    let frame = app.presence_frame();
+    assert_eq!(frame.aperture[..9], [0.42; 9]);
+    assert_eq!(frame.omega[..9], app.probe_omega[..]);
+    assert_eq!(frame.tau_ticks, 7);
+}
+
+#[test]
+fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
+    let tone_code = Arc::new(std::sync::atomic::AtomicU8::new(
+        omegaflow::archivar::hrv::TONE_STRESSED,
+    ));
+    let mut app = OmegaLoop {
+        field_permeability: [0.8; 9],
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: tone_code.clone(),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_tone_scale_state.bin".to_string();
+    app.natural_latency_ticks = 1;
+    app.tone_scale = 1.0;
+    app.probe_omega = [1.0; 9];
+    let alpha = 1.0f32 - (-1.0f32).exp();
+
+    app.tick();
+    let stressed = 1.0 + (TONE_FLOOR_SCALE - 1.0) * alpha;
+    assert!(
+        (app.tone_scale - stressed).abs() < 1e-6,
+        "stressed {stressed} got {}",
+        app.tone_scale
+    );
+    assert_eq!(
+        app.presence_frame().aperture[..9],
+        std::array::from_fn::<f32, 9, _>(|i| app.field_permeability[i] * app.tone_scale)
+    );
+
+    tone_code.store(
+        omegaflow::archivar::hrv::TONE_CALM,
+        std::sync::atomic::Ordering::SeqCst,
+    );
+    app.last_hud = None;
+    app.tick();
+    let calm = stressed + (1.0 - stressed) * alpha;
+    assert!(
+        (app.tone_scale - calm).abs() < 1e-6,
+        "calm {calm} got {}",
+        app.tone_scale
+    );
+    assert!(app.tone_scale > stressed, "calm relaxes back toward unity");
+}
+
+#[test]
+fn te_probe_keeps_the_cpu_topology_on_a_coupled_pair() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    let n = 512usize;
+    let mut x = vec![0f32; n];
+    let mut y = vec![0f32; n];
+    for (t, yt) in y.iter_mut().enumerate() {
+        *yt = (t as f32 * 0.5).sin();
+    }
+    for t in 0..n - 1 {
+        x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+    }
+    let _ = app.te_probe(&x, &y, n);
+    let (tau_x, tau_y, te, threshold) = app.te_cpu.expect("the coupled pair carries a cpu verdict");
+    assert!(tau_x >= 1 && tau_y >= 1, "tau {} {}", tau_x, tau_y);
+    let te_v = te.expect("the cpu verdict carries a te");
+    let thr_v = threshold.expect("the cpu verdict carries a threshold");
+    assert!(te_v.is_finite(), "te {}", te_v);
+    assert!(thr_v.is_finite(), "threshold {}", thr_v);
+}
+
+#[test]
+fn te_probe_keeps_the_cpu_topology_absent_on_a_short_series() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    let x = vec![0f32; 7];
+    let y = vec![0f32; 7];
+    let _ = app.te_probe(&x, &y, 7);
+    assert!(app.te_cpu.is_none());
+}
+
+#[test]
+fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_perm_tick_state.bin".to_string();
+
+    app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    app.tick();
+    let sum1: f32 = app.probe_omega.iter().sum();
+    let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
+    let expected1: [f32; 9] = std::array::from_fn(|i| {
+        let target = perm_target(app.probe_omega[i].abs(), app.probe_omega[i].abs());
+        (0.0f32 + (target - 0.0f32) * alpha1).clamp(PERM_GROUND, 1.0)
+    });
+    assert_eq!(app.field_permeability, expected1);
+    assert_eq!(app.prev_omega_sum, sum1);
+    assert_eq!(app.prev_probe_omega, app.probe_omega);
+    assert_eq!(app.natural_latency_ticks, 1);
+
+    app.last_hud = None;
+    app.probe_omega = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0];
+    app.tick();
+    let sum2: f32 = app.probe_omega.iter().sum();
+    let delta2 = sum2 - sum1;
+    assert_eq!(app.prev_omega_sum, sum2);
+    assert_eq!(app.prev_delta, delta2);
+
+    app.prev_omega_sum = 0.0;
+    app.prev_delta = 0.0;
+    app.prev_probe_omega = [0.0; 9];
+    app.natural_latency_ticks = 1;
+    app.probe_omega = [0.0; 9];
+    for _ in 0..20 {
+        app.last_hud = None;
+        app.tick();
+    }
+    assert_eq!(app.field_permeability, [PERM_GROUND; 9]);
+}
+
+#[test]
+fn the_no_te_tick_hears_each_oscillator_not_the_sum() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_perm_tick_state.bin".to_string();
+    app.natural_latency_ticks = 1;
+    app.probe_omega = [0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0];
+    app.prev_probe_omega = [0.0, 0.0, 0.25, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0];
+    let alpha = 1.0f32 - (-1.0f32 / 1.0f32).exp();
+    let expected: [f32; 9] = std::array::from_fn(|i| {
+        let d_i = app.probe_omega[i] - app.prev_probe_omega[i];
+        let target = perm_target(app.probe_omega[i].abs(), d_i.abs());
+        (0.0f32 + (target - 0.0f32) * alpha).clamp(PERM_GROUND, 1.0)
+    });
+    app.tick();
+    assert_eq!(app.field_permeability, expected);
+    assert!(
+        app.field_permeability[2] > 0.0 && app.field_permeability[5] > 0.0,
+        "each moving oscillator carries its own channel, not the sum"
+    );
+    assert_eq!(app.prev_probe_omega, app.probe_omega);
+}
+
+#[test]
+fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_perm_log_state.bin".to_string();
+
+    let path = "/tmp/omegaflow_perm_log_test.csv";
+    let _ = std::fs::remove_file(path);
+    app.perm_log = Some(
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(path)
+            .unwrap(),
+    );
+    app.perm_log_gen = 0;
+    app.ring_gen = 1;
+    app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    app.tick();
+
+    let sum1: f32 = app.probe_omega.iter().sum();
+    let g1 = sum1.abs();
+    let v_c1 = sum1.abs();
+    let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
+
+    app.perm_log = None;
+    let text = std::fs::read_to_string(path).unwrap();
+    let lines: Vec<&str> = text.lines().collect();
+    assert_eq!(lines.len(), 1);
+    let raw: Vec<&str> = lines[0].split(',').collect();
+    assert_eq!(raw.len(), 17);
+    let fields: Vec<f32> = raw[..16]
+        .iter()
+        .map(|s| s.parse::<f32>().unwrap())
+        .collect();
+    assert_eq!(fields.len(), 16);
+    assert_eq!(fields[0], 1.0);
+    assert_eq!(fields[1], sum1);
+    assert_eq!(fields[2], g1);
+    assert_eq!(fields[3], v_c1);
+    for i in 0..9 {
+        assert_eq!(fields[4 + i], app.field_permeability[i]);
+    }
+    assert_eq!(fields[13], alpha1);
+    assert_eq!(fields[14], omegaflow::archivar::hrv::TONE_ABSENT as f32);
+    assert_eq!(fields[15], app.tone_scale);
+    let aperture: [f32; 9] = std::array::from_fn(|i| app.field_permeability[i] * app.tone_scale);
+    let expected = match acoustic_amplitude(&app.probe_omega, &aperture, &aperture_state(&aperture))
+    {
+        Some(v) => v.to_string(),
+        None => "absent".to_string(),
+    };
+    assert_eq!(raw[16], expected);
+
+    app.last_hud = None;
+    app.tick();
+    let after_none = std::fs::read_to_string(path).unwrap();
+    assert_eq!(after_none.lines().count(), 1);
+
+    let path3 = "/tmp/omegaflow_perm_log_test_same_gen.csv";
+    let _ = std::fs::remove_file(path3);
+    app.perm_log = Some(
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(path3)
+            .unwrap(),
+    );
+    app.perm_log_gen = 0;
+    app.ring_gen = 5;
+    app.last_hud = None;
+    app.tick();
+    app.last_hud = None;
+    app.tick();
+    app.perm_log = None;
+    let text3 = std::fs::read_to_string(path3).unwrap();
+    assert_eq!(text3.lines().count(), 1);
+
+    let _ = std::fs::remove_file(path);
+    let _ = std::fs::remove_file(path3);
+}
+
+#[test]
+fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
+    use omegaflow::archivar::skydirection::{SkyBandSeries, SkyDirection, SkySample};
+    let dir = |name: &str, ra: f64, dec: f64| SkyDirection {
+        name: name.to_string(),
+        ra_deg: ra,
+        dec_deg: dec,
+        sigma_arcsec: None,
+        bands: vec![SkyBandSeries {
+            band: Some("g".to_string()),
+            samples: vec![SkySample {
+                tdb: 8.4e8,
+                mag: 18.0,
+            }],
+        }],
+        flux_bands: Vec::new(),
+        distance: None,
+        redshift: None,
+    };
+    let dirs = vec![
+        dir("a", 10.0, 20.0),
+        dir("b", 40.0, -15.0),
+        dir("c", 200.0, 55.0),
+    ];
+    let oscs = crate::s2::osc_window(&dirs, 8.4e8, crate::s2::S2_TAU_DEFAULT_S);
+    let expect = crate::s2::shell_field(&oscs, crate::s2::S2_LMAX);
+    let pack = crate::s2::pack_oscs(&oscs, crate::s2::S2_OSC_CAP);
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — s2 gpu crosscheck skipped");
+            return;
+        }
+    };
+    let (device, queue) =
+        match block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(S2_WGSL.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 2;
+                e
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 3;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        module: &module,
+        entry_point: Some("s2_field"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let cap = crate::s2::S2_OSC_CAP as usize;
+    let osc_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 32) as u64,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 16) as u64,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 16,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 4) as u64,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 4) as u64,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: osc_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: param_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: probe_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 3,
+                resource: out_buf.as_entire_binding(),
+            },
+        ],
+    });
+    queue.write_buffer(&osc_buf, 0, &le_bytes_f32(&pack.osc));
+    queue.write_buffer(&probe_buf, 0, &le_bytes_f32(&pack.probes));
+    let param = [pack.count, crate::s2::S2_LMAX, pack.probe_count, 0];
+    let mut pb = [0u8; 16];
+    for (i, p) in param.iter().enumerate() {
+        pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+    }
+    queue.write_buffer(&param_buf, 0, &pb);
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(1, 1, 1);
+    }
+    let copy_bytes = (pack.probe_count as usize * 4) as u64;
+    enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, copy_bytes);
+    queue.submit(std::iter::once(enc.finish()));
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..copy_bytes);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "s2 gpu readback returned void"
+    );
+    let data = slice.get_mapped_range();
+    let mut gpu = vec![0f32; pack.probe_count as usize];
+    for k in 0..pack.probe_count as usize {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+        gpu[k] = f32::from_le_bytes(b);
+    }
+    drop(data);
+    read_buf.unmap();
+    for k in 0..gpu.len() {
+        let e = expect[k];
+        let g = gpu[k] as f64;
+        let rel = if e.abs() > 0.0 {
+            ((g - e) / e).abs()
+        } else {
+            g.abs()
+        };
+        assert!(
+            rel < 2e-2,
+            "s2 field diverges at probe {k}: gpu {g} cpu {e} rel {rel}"
+        );
+    }
+    let n2 = 130usize;
+    let mut dirs2: Vec<SkyDirection> = Vec::with_capacity(n2);
+    for i in 0..n2 {
+        let z = 1.0 - 2.0 * (i as f64) / (n2 as f64 - 1.0);
+        let theta = (i as f64) * 2.399963229728653;
+        let ra = (theta.to_degrees() % 360.0 + 360.0) % 360.0;
+        let dec = (z.asin()).to_degrees();
+        dirs2.push(dir(&format!("s{i}"), ra, dec));
+    }
+    let oscs2 = crate::s2::osc_window(&dirs2, 8.4e8, crate::s2::S2_TAU_DEFAULT_S);
+    let expect2 = crate::s2::shell_field(&oscs2, crate::s2::S2_LMAX);
+    let pack2 = crate::s2::pack_oscs(&oscs2, crate::s2::S2_OSC_CAP);
+    assert_eq!(pack2.count, n2 as u32);
+    assert_eq!(pack2.probe_count, n2 as u32);
+    queue.write_buffer(&osc_buf, 0, &le_bytes_f32(&pack2.osc));
+    queue.write_buffer(&probe_buf, 0, &le_bytes_f32(&pack2.probes));
+    let param2 = [pack2.count, crate::s2::S2_LMAX, pack2.probe_count, 0];
+    let mut pb2 = [0u8; 16];
+    for (i, p) in param2.iter().enumerate() {
+        pb2[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+    }
+    queue.write_buffer(&param_buf, 0, &pb2);
+    let groups = pack2.probe_count.div_ceil(64);
+    assert!(groups >= 3, "a 130-probe window must span workgroups");
+    let mut enc2 = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc2.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(groups, 1, 1);
+    }
+    let copy_bytes2 = (pack2.probe_count as usize * 4) as u64;
+    enc2.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, copy_bytes2);
+    queue.submit(std::iter::once(enc2.finish()));
+    let mapped2 = Arc::new(AtomicBool::new(false));
+    let m22 = mapped2.clone();
+    let slice2 = read_buf.slice(..copy_bytes2);
+    slice2.map_async(wgpu::MapMode::Read, move |r| {
+        m22.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline2 = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped2.load(Ordering::SeqCst) && std::time::Instant::now() < deadline2 {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped2.load(Ordering::SeqCst),
+        "s2 gpu readback returned void for the wide window"
+    );
+    let data2 = slice2.get_mapped_range();
+    let mut gpu2 = vec![0f32; pack2.probe_count as usize];
+    for k in 0..gpu2.len() {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&data2[k * 4..k * 4 + 4]);
+        gpu2[k] = f32::from_le_bytes(b);
+    }
+    drop(data2);
+    read_buf.unmap();
+    for k in 0..gpu2.len() {
+        let e = expect2[k];
+        let g = gpu2[k] as f64;
+        let rel = if e.abs() > 0.0 {
+            ((g - e) / e).abs()
+        } else {
+            g.abs()
+        };
+        assert!(
+            rel < 2e-2,
+            "s2 field diverges at wide-window probe {k}: gpu {g} cpu {e} rel {rel}"
+        );
+    }
+}
+
+#[test]
+fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
+    use omegaflow::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
+    let evt = |ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>| S2EventRecord {
+        ra_deg: ra as f32,
+        dec_deg: dec as f32,
+        sigma_arcsec: None,
+        epoch_tdb: epoch,
+        energy,
+        signalness: None,
+        far: None,
+        particle_root: ROOT_NEUTRINO,
+    };
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.t_presence = 8.4e8;
+    app.sky.events = vec![
+        evt(30.0, 60.0, Some(8.4e8), Some(187.0)),
+        evt(40.0, 50.0, None, Some(9.0)),
+    ];
+    app.sky_reload();
+    app.sky.directions.clear();
+    app.sky_tick();
+    assert_eq!(app.sky.oscs.len(), 2);
+    let with_epoch = &app.sky.oscs[0];
+    assert!((with_epoch.weight - 187.0).abs() < 1e-6);
+    let expected = evt(30.0, 60.0, Some(8.4e8), Some(187.0));
+    let p = expected.unit_direction();
+    for (a, b) in with_epoch.p_hat.iter().zip(p.iter()) {
+        assert!((a - b).abs() < 1e-12);
+    }
+    let epochless = &app.sky.oscs[1];
+    assert_eq!(epochless.weight, 0.0);
+    assert_eq!(app.sky.report([0.0, 0.0, 1.0]).live_count, 1);
+    assert_eq!(app.sky.report([0.0, 0.0, 1.0]).osc_count, 2);
+}
+
+#[test]
+fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_riss() {
+    use omegaflow::archivar::astrometry_series::{AstroSample, AstroSeries};
+    use omegaflow::archivar::weberin_verdicts::{VerdictLine, VerdictWord};
+    let t = 8.3e8;
+    let sample = || AstroSample {
+        tdb: t,
+        ra_deg: 12.5,
+        dec_deg: -4.5,
+        e_ra_mas: 0.4,
+        e_dec_mas: 0.5,
+    };
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(vec![VerdictLine {
+                    name: "held".to_string(),
+                    word: VerdictWord::Riss,
+                    knot: [None, None],
+                    sep: Some(1.0),
+                    weave_epoch: t,
+                }])),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.sky.witnesses = vec![
+        AstroSeries {
+            name: "held".to_string(),
+            samples: vec![sample()],
+        },
+        AstroSeries {
+            name: "sosb_lucky_star".to_string(),
+            samples: vec![sample()],
+        },
+    ];
+    let held = app.verdict_direction_only();
+    assert_eq!(held, 1);
+    let verdicts = app.verdicts.read().unwrap();
+    assert_eq!(verdicts.len(), 2);
+    let riss = verdicts.iter().find(|l| l.name == "held").unwrap();
+    assert_eq!(riss.word, VerdictWord::Riss);
+    let direction = verdicts
+        .iter()
+        .find(|l| l.name == "sosb_lucky_star")
+        .unwrap();
+    assert_eq!(direction.word, VerdictWord::DirectionOnly);
+    assert_eq!(direction.knot, [None, None]);
+    assert_eq!(direction.sep, None);
+    assert_eq!(direction.weave_epoch, t);
+}
+
+#[test]
+fn sky_tick_folds_bodies_by_name_and_stations_last() {
+    use crate::machines::{MetaAnchor, NameMeta};
+    use omegaflow::archivar::{BodyEphemeris, BodyProperties, Buffer};
+    let t = 8.3e8;
+    let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t - 100.0, pos, [0.0, 0.0, 0.0]),
+            (t + 100.0, pos, [0.0, 0.0, 0.0]),
+        ]);
+        BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props,
+            medium: None,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    };
+    let earth_props = BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 0.0,
+        dw_dt_deg_per_day: 360.0,
+        radius_m: 6371000.0,
+        flattening: Some(0.0),
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let mut eph: std::collections::HashMap<String, BodyEphemeris> =
+        std::collections::HashMap::new();
+    eph.insert("alpha".to_string(), orbit_body([1.0e9, 0.0, 0.0], None));
+    eph.insert(
+        "earth".to_string(),
+        orbit_body([0.0, 0.0, 1.0e9], Some(earth_props)),
+    );
+    eph.insert("zeta".to_string(), orbit_body([0.0, 1.0e9, 0.0], None));
+    let buf = Buffer {
+        cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
+        eph: std::sync::Arc::new(eph),
+        curves: None,
+        spectral: Vec::new(),
+        volumes: Vec::new(),
+        bayestar: None,
+    };
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.latest_field = Some(Arc::new(buf));
+    for (key, lon) in [("z_station", 90.0), ("a_station", 0.0)] {
+        app.matrix.metas.insert(
+            key.to_string(),
+            NameMeta {
+                anchor: MetaAnchor::Surface {
+                    body_name: "earth".to_string(),
+                    lat: 0.0,
+                    lon,
+                    alt: 0.0,
+                },
+                channel_ref: 0,
+                kernel: 0,
+                tau: 0.0,
+                epoch: t,
+                advection: 0.0,
+                station_code: None,
+            },
+        );
+    }
+    app.sky_reload();
+    app.sky.directions.clear();
+    app.sky.events.clear();
+    app.sky_tick();
+
+    assert_eq!(app.sky.oscs.len(), 5, "three bodies then two stations");
+    let first = app.sky.oscs[0].p_hat;
+    assert!(
+        first[0] > 0.999 && first[1].abs() < 1e-6 && first[2].abs() < 1e-6,
+        "alpha folds first by name: {first:?}"
+    );
+    let second = app.sky.oscs[1].p_hat;
+    assert!(second[2] > 0.999, "earth folds second by name: {second:?}");
+    let third = app.sky.oscs[2].p_hat;
+    assert!(
+        third[1] > 0.999 && third[0].abs() < 1e-6,
+        "zeta folds third by name: {third:?}"
+    );
+    for o in &app.sky.oscs[3..] {
+        assert!(
+            o.p_hat[2] > 0.99,
+            "a station rests on the earth direction and folds last: {:?}",
+            o.p_hat
+        );
+    }
+    assert_ne!(
+        app.sky.oscs[3].p_hat, app.sky.oscs[4].p_hat,
+        "the two station keys fold in key order to distinct points"
+    );
+}
+
+#[test]
+fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
+    use crate::machines::{MetaAnchor, NameMeta};
+    use omegaflow::archivar::{BodyEphemeris, Buffer, VerdictLine, VerdictWord};
+    use omegaflow::weberin::{BodyLine, StationLine, WitnessLine};
+    let t = 8.3e8;
+    let orbit_body = |pos: [f64; 3]| -> BodyEphemeris {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t - 100.0, pos, [0.0, 0.0, 0.0]),
+            (t + 100.0, pos, [0.0, 0.0, 0.0]),
+        ]);
+        BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props: None,
+            medium: None,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    };
+    let mut eph: std::collections::HashMap<String, BodyEphemeris> =
+        std::collections::HashMap::new();
+    eph.insert("alpha".to_string(), orbit_body([1.0e9, 0.0, 0.0]));
+    eph.insert("earth".to_string(), orbit_body([0.0, 0.0, 1.0e9]));
+    let buf = Buffer {
+        cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
+        eph: std::sync::Arc::new(eph),
+        curves: None,
+        spectral: Vec::new(),
+        volumes: Vec::new(),
+        bayestar: None,
+    };
+    let verdicts = Arc::new(RwLock::new(vec![
+        VerdictLine {
+            name: "alpha".to_string(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Mpc)),
+            ],
+            sep: Some(2.3e9),
+            weave_epoch: t,
+        },
+        VerdictLine {
+            name: "station-ABK".to_string(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+            ],
+            sep: Some(9.19e3),
+            weave_epoch: t,
+        },
+    ]));
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: verdicts.clone(),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.latest_field = Some(Arc::new(buf));
+    app.matrix.metas.insert(
+        "intermagnet_dbdt".to_string(),
+        NameMeta {
+            anchor: MetaAnchor::Surface {
+                body_name: "earth".to_string(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            channel_ref: 0,
+            kernel: 0,
+            tau: 0.0,
+            epoch: t,
+            advection: 0.0,
+            station_code: Some("ABK".to_string()),
+        },
+    );
+    app.sky_reload();
+    app.sky.directions.clear();
+    app.sky.events.clear();
+    app.sky_tick();
+    assert_eq!(
+        app.sky.oscs.len(),
+        1,
+        "only the placed earth worldline is an oscillator; the two riss threads are not"
+    );
+    assert_eq!(
+        app.sky.riss,
+        vec!["alpha".to_string(), "station-ABK".to_string()],
+        "the body riss and the station faden stay named in the S² layer state"
+    );
+    assert_eq!(app.sky.report([0.0, 0.0, 1.0]).riss_count, 2);
+}
+
+#[test]
+fn volume_probe_parity_masked_corner_and_plain() {
+    use omegaflow::archivar::volume::{Axis, AxisKind, Volume};
+    use omegaflow::archivar::{BodyEphemeris, BodyProperties, Buffer};
+    let t = 8.3e8;
+    let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t - 100.0, pos, [0.0, 0.0, 0.0]),
+            (t + 100.0, pos, [0.0, 0.0, 0.0]),
+        ]);
+        BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props,
+            medium: None,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    };
+    let earth_props = BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 0.0,
+        dw_dt_deg_per_day: 360.0,
+        radius_m: 6371000.0,
+        flattening: Some(0.0),
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let earth_pos = [0.0, 0.0, 1.0e9];
+    let mut eph: std::collections::HashMap<String, BodyEphemeris> =
+        std::collections::HashMap::new();
+    eph.insert(
+        "earth".to_string(),
+        orbit_body(earth_pos, Some(earth_props)),
+    );
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.p = [
+        earth_pos[0] + 100_000.0,
+        earth_pos[1],
+        earth_pos[2] + 100_000.0,
+    ];
+    app.init_gpu();
+    if app.device.is_none() {
+        eprintln!("volume parity skipped: no adapter");
+        return;
+    }
+    let probe_pos = app.pos();
+    let Some((lat, lon, depth)) = omegaflow::archivar::icrs_to_body_geodetic(
+        probe_pos[0],
+        probe_pos[1],
+        probe_pos[2],
+        t,
+        "earth",
+        &eph,
+    ) else {
+        eprintln!("volume parity skipped: geodetic absent");
+        return;
+    };
+    let axes = [
+        Axis {
+            kind: AxisKind::Explicit,
+            values: vec![depth - 10.0, depth + 10.0],
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: vec![lat - 10.0, lat + 10.0],
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: vec![lon - 10.0, lon + 10.0],
+        },
+    ];
+    let plain_data: Vec<f32> = vec![2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    let volume_of = |masked: bool| {
+        let mut data = plain_data.clone();
+        let mut mask = vec![0u8; 1];
+        if masked {
+            mask[0] = 1;
+            data[0] = f32::NAN;
+        }
+        Volume {
+            dims: [2, 2, 2],
+            axes: axes.clone(),
+            data,
+            mask,
+            frame_body: Some("earth".to_string()),
+        }
+    };
+    let plain = volume_of(false);
+    let masked = volume_of(true);
+    let probe = [depth, lat, lon];
+    let cpu_plain = plain.sample_at(probe).unwrap();
+    assert_eq!(
+        masked.sample_at(probe),
+        None,
+        "the masked corner makes the whole probe absent on the cpu"
+    );
+    let buf_of = |v: Volume| Buffer {
+        cache: omegaflow::archivar::build_spatial_hash(vec![], 1.0),
+        eph: std::sync::Arc::new(eph.clone()),
+        curves: None,
+        spectral: Vec::new(),
+        volumes: vec![v],
+        bayestar: None,
+    };
+    app.latest_field = Some(Arc::new(buf_of(plain)));
+    app.upload_volumes();
+    app.probe();
+    app.probe_readback();
+    let gpu_plain = app.probe_omega[3] as f64;
+    let tol = 1e-3 * (cpu_plain.abs() + 1e-3);
+    assert!(
+        (gpu_plain - cpu_plain).abs() < tol,
+        "volume parity: gpu {gpu_plain} cpu {cpu_plain}"
+    );
+    app.latest_field = Some(Arc::new(buf_of(masked)));
+    app.upload_volumes();
+    app.probe();
+    app.probe_readback();
+    let gpu_masked = app.probe_omega[3] as f64;
+    assert!(
+        gpu_masked.abs() < 1e-6,
+        "the masked corner makes the whole probe absent on the gpu: {gpu_masked}"
+    );
+}
+
+#[test]
+fn em_aperture_flux_bit_scales_and_kernel_proxy_does_not() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    omegaflow::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.init_gpu();
+    if app.device.is_none() {
+        eprintln!("em aperture parity skipped: no adapter");
+        return;
+    }
+    let t = 8.3e8;
+    app.t_presence = t;
+
+    let record = |z_flux: f64, presence: f64| -> Record {
+        (
+            0.0, 0.0, 0.0, 1.0, t, 1.0e9, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, z_flux, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, presence,
+        )
+    };
+
+    let probe_em = |app: &mut OmegaLoop, z_flux: f64, presence: f64| -> f32 {
+        let packed = pack_window(&[record(z_flux, presence)], [0.0, 0.0, 0.0]);
+        app.packed_field = packed.field;
+        app.packed_meta = packed.meta;
+        app.packed_count = packed.count;
+        app.packed_gen += 1;
+        app.probe();
+        app.probe_readback();
+        app.probe_omega[0]
+    };
+
+    let flux_bit = omegaflow::archivar::PRESENCE_FLAG_FLUX;
+    let scaled = probe_em(&mut app, 1.0, flux_bit);
+    let proxy_riss = probe_em(&mut app, 1.0, 0.0);
+    let plain = probe_em(&mut app, 0.0, 0.0);
+
+    assert!(
+        scaled > 0.0 && proxy_riss > 0.0,
+        "the em aperture probe returned void: {scaled} / {proxy_riss}"
+    );
+    let ratio = (scaled / proxy_riss) as f64;
+    assert!(
+        (ratio - 0.25).abs() < 0.02,
+        "flux bit + z=1 must scale the em value by 1/(1+z)^2 = 0.25, measured {ratio}"
+    );
+    let drift = ((proxy_riss - plain) as f64).abs() / (plain as f64).abs().max(1e-6);
+    assert!(
+        drift < 1e-4,
+        "kernel_id=1 without the flux bit must stay unscaled (Riss regression), drift {drift}"
+    );
+}
+
+const SCALAR_PARITY_TOL: f64 = 1e-3;
+
+fn sg_gate_rng(rng: &mut u64) -> f64 {
+    *rng = rng
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
+}
+
+fn sg_gate_ar1(n: usize, phi: f64, rng: &mut u64) -> Vec<f32> {
+    let mut v = Vec::with_capacity(n);
+    let mut x = 0.0f64;
+    for _ in 0..n {
+        x = phi * x + sg_gate_rng(rng) * 2.0 - 1.0;
+        v.push(x as f32);
+    }
+    v
+}
+
+fn sg_fr(gpu: &mut ScalarTeGpu, x: &[f32], y: &[f32], lag: usize) -> Option<(f64, f64)> {
+    let grid = gpu.run(x, y, &[]);
+    if grid.is_empty() {
+        return None;
+    }
+    let fv = grid[lag * 2 + 1];
+    let rv = grid[(11 * 13 + lag) * 2 + 1];
+    if fv == 0.0 || rv == 0.0 {
+        return None;
+    }
+    Some((grid[lag * 2] as f64, grid[(11 * 13 + lag) * 2] as f64))
+}
+
+fn sg_parity_agree(
+    gpu: &mut ScalarTeGpu,
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    seed: u64,
+) -> Option<(bool, bool, f64, f64)> {
+    let cpu_te = omegaflow::te::transfer_entropy_lag(x, y, lag)?;
+    let (_, _, thr) = omegaflow::te::surrogate_stats_phase(x, y, lag, seed)?;
+    let (gf, _) = sg_fr(gpu, x, y, lag)?;
+    Some((cpu_te > thr, gf > thr, cpu_te, gf))
+}
+
+#[test]
+#[ignore]
+fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
+    let wgsl = browser_field_shader();
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — offscreen pipeline skipped");
+            return;
+        }
+    };
+    let (device, queue) =
+        match block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(wgsl.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX);
+                e.binding = 0;
+                e
+            },
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX);
+                e.binding = 1;
+                e
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 2,
+                visibility: wgpu::ShaderStages::VERTEX,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX);
+                e.binding = 3;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let blend = wgpu::BlendState {
+        color: wgpu::BlendComponent {
+            src_factor: wgpu::BlendFactor::One,
+            dst_factor: wgpu::BlendFactor::One,
+            operation: wgpu::BlendOperation::Add,
+        },
+        alpha: wgpu::BlendComponent {
+            src_factor: wgpu::BlendFactor::One,
+            dst_factor: wgpu::BlendFactor::One,
+            operation: wgpu::BlendOperation::Add,
+        },
+    };
+    let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        vertex: wgpu::VertexState {
+            module: &module,
+            entry_point: Some("vs"),
+            compilation_options: Default::default(),
+            buffers: &[],
+        },
+        fragment: Some(wgpu::FragmentState {
+            module: &module,
+            entry_point: Some("fs"),
+            compilation_options: Default::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: wgpu::TextureFormat::Rgba8Unorm,
+                blend: Some(blend),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            ..Default::default()
+        },
+        depth_stencil: None,
+        multisample: wgpu::MultisampleState::default(),
+        multiview: None,
+        cache: None,
+    });
+
+    let field_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 16,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let props_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 48,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 64,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let lut_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 256 * 16,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let lut_rgb = [0.5f32, 0.25f32, 0.125f32];
+    let mut lut = vec![0f32; 256 * 4];
+    for entry in lut.as_chunks_mut::<4>().0 {
+        entry[0] = lut_rgb[0];
+        entry[1] = lut_rgb[1];
+        entry[2] = lut_rgb[2];
+        entry[3] = 1.0;
+    }
+    queue.write_buffer(&lut_buf, 0, &le_bytes_f32(&lut));
+    queue.write_buffer(&field_buf, 0, &le_bytes_f32(&[0.0, 0.0, 0.0, 1.0]));
+    let extent = 32.0f32;
+    let color_index = 1.0f32;
+    let mut props = vec![0.0f32; 12];
+    props[0] = extent;
+    props[2 * 4 + 2] = color_index;
+    queue.write_buffer(&props_buf, 0, &le_bytes_f32(&props));
+    let surface = [64.0f32, 64.0, 1.0, 1.0];
+    let right = [1.0f32, 0.0, 0.0, 0.0];
+    let up = [0.0f32, 1.0, 0.0, 0.0];
+    let expose = [2.0f32.powi(-16), 1.0, 0.0, 1.0];
+    let mut vp = Vec::with_capacity(16);
+    vp.extend_from_slice(&surface);
+    vp.extend_from_slice(&right);
+    vp.extend_from_slice(&up);
+    vp.extend_from_slice(&expose);
+    queue.write_buffer(&vp_buf, 0, &le_bytes_f32(&vp));
+    let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: field_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: props_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: vp_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 3,
+                resource: lut_buf.as_entire_binding(),
+            },
+        ],
+    });
+
+    const SIZE: u32 = 64;
+    let target = device.create_texture(&wgpu::TextureDescriptor {
+        label: None,
+        size: wgpu::Extent3d {
+            width: SIZE,
+            height: SIZE,
+            depth_or_array_layers: 1,
+        },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format: wgpu::TextureFormat::Rgba8Unorm,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+        view_formats: &[],
+    });
+    let view = target.create_view(&wgpu::TextureViewDescriptor::default());
+    let row_bytes = SIZE * 4;
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (row_bytes * SIZE) as u64,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: None,
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &view,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            depth_stencil_attachment: None,
+            timestamp_writes: None,
+            occlusion_query_set: None,
+        });
+        pass.set_pipeline(&pipeline);
+        pass.set_bind_group(0, &bind_group, &[]);
+        pass.draw(0..6, 0..1);
+    }
+    enc.copy_texture_to_buffer(
+        wgpu::TexelCopyTextureInfo {
+            texture: &target,
+            mip_level: 0,
+            origin: wgpu::Origin3d::ZERO,
+            aspect: wgpu::TextureAspect::All,
+        },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &read_buf,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(row_bytes),
+                rows_per_image: None,
+            },
+        },
+        wgpu::Extent3d {
+            width: SIZE,
+            height: SIZE,
+            depth_or_array_layers: 1,
+        },
+    );
+    queue.submit(std::iter::once(enc.finish()));
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "offscreen fieldShader readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    let mut max_alpha = 0.0f32;
+    let mut best_rgb = [0.0f32; 3];
+    for px in mapped_data.as_chunks::<4>().0 {
+        let a = px[3] as f32 / 255.0;
+        if a > max_alpha {
+            max_alpha = a;
+            best_rgb = [
+                px[0] as f32 / 255.0,
+                px[1] as f32 / 255.0,
+                px[2] as f32 / 255.0,
+            ];
+        }
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+    assert!(
+        max_alpha > 0.9,
+        "offscreen fieldShader center pixel absent (max alpha {})",
+        max_alpha
+    );
+    for (got, want) in best_rgb.iter().zip(lut_rgb.iter()) {
+        assert!(
+            (got - want).abs() < 0.05,
+            "measured LUT branch: got {} want {} — the lut[idx].rgb read did not land",
+            got,
+            want
+        );
+    }
+}
+
+const F32_EPS_REF: f64 = 1.19e-7;
+
+fn erfc_approx(x: f64) -> f64 {
+    let xa = x.abs();
+    let t = 1.0 / (1.0 + 0.3275911 * xa);
+    let poly = t
+        * (0.254829592
+            + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+    let y = poly * (-xa * xa).exp();
+    if x < 0.0 { 2.0 - y } else { y }
+}
+
+fn kernel_omega(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorption: f64) -> f64 {
+    let e2 = (extent * extent).max(1e-30);
+    let s2 = (global_scale * global_scale).max(1e-30);
+    let cut2 = e2 + s2;
+    let cut = cut2.sqrt();
+    let d2 = d * d;
+    match kernel_id {
+        0 => 1.0 / (d2 + cut2),
+        1 => (-d2 / (2.0 * cut2)).exp() / (d2 + cut2),
+        3 => erfc_approx(d / (cut * std::f64::consts::SQRT_2)),
+        4 => (-d / cut).exp(),
+        5 => {
+            let alpha = absorption.clamp(0.0, 1.0);
+            let beta = 1.6;
+            let core = (-d2 / (2.0 * cut2)).exp();
+            let tail = cut2.powf(beta * 0.5) / (d2 + s2).max(s2).powf(beta * 0.5);
+            (1.0 - alpha) * core + alpha * tail
+        }
+        6 => 1.0 / (d + cut),
+        _ => (-d2 / (2.0 * cut2)).exp() / (d2 + s2).max(s2),
+    }
+}
+
+fn kernel_omega_grad(
+    kernel_id: u8,
+    d: f64,
+    extent: f64,
+    global_scale: f64,
+    absorption: f64,
+) -> f64 {
+    if d > 1e13 {
+        return 0.0;
+    }
+    let e2 = (extent * extent).max(1e-30);
+    let s2 = (global_scale * global_scale).max(1e-30);
+    let cut2 = e2 + s2;
+    let cut = cut2.sqrt();
+    let d2 = d * d;
+    match kernel_id {
+        0 => {
+            let denom = d2 + cut2;
+            -2.0 * d / (denom * denom)
+        }
+        1 => {
+            let denom = d2 + cut2;
+            -(-d2 / (2.0 * cut2)).exp() * d * (denom / cut2 + 2.0) / (denom * denom)
+        }
+        3 => {
+            let scale = cut * std::f64::consts::SQRT_2;
+            -2.0 / std::f64::consts::PI.sqrt() * (-d2 / (scale * scale)).exp() / scale
+        }
+        4 => -(-d / cut).exp() / cut,
+        5 => {
+            let alpha = absorption.clamp(0.0, 1.0);
+            let beta = 1.6;
+            let e = cut2;
+            let core_grad = -d / e * (-d2 / (2.0 * e)).exp();
+            let denom = (d2 + s2).max(s2);
+            let tail_grad = -beta * d * e.powf(beta * 0.5) / denom.powf(beta * 0.5 + 1.0);
+            (1.0 - alpha) * core_grad + alpha * tail_grad
+        }
+        6 => {
+            let denom = d + cut;
+            -1.0 / (denom * denom)
+        }
+        _ => {
+            let e = cut2;
+            let denom = (d2 + s2).max(s2);
+            -(-d2 / (2.0 * e)).exp() * (d / e * denom + 2.0 * d) / (denom * denom)
+        }
+    }
+}
+
+fn r_struct(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorption: f64) -> Option<f64> {
+    let omega = kernel_omega(kernel_id, d, extent, global_scale, absorption);
+    let grad = kernel_omega_grad(kernel_id, d, extent, global_scale, absorption);
+    if grad == 0.0 {
+        return None;
+    }
+    Some(F32_EPS_REF * omega.abs() / grad.abs())
+}
+
+#[test]
+fn field_spatial_fold_wgsl_cpu_parity() {
+    const FOLD_WGSL: &str = r#"
+fn erfc(x: f32) -> f32 {
+    let xa = abs(x);
+    let t = 1.0 / (1.0 + 0.3275911 * xa);
+    let poly = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+    let y = poly * exp(-xa * xa);
+    return select(y, 2.0 - y, x < 0.0);
+}
+
+fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    let e2 = max(extent * extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
+
+    if (kernel_id == 0u) {
+        return 1.0 / (d2 + cut2);
+    } else if (kernel_id == 1u) {
+        return exp(-d2 / (2.0 * cut2)) / (d2 + cut2);
+    } else if (kernel_id == 2u) {
+        if (d2 <= e2) {
+            return 1.0;
+        } else {
+            return 0.0;
+        }
+    } else if (kernel_id == 3u) {
+        return erfc(d_mag / (cut * sqrt(2.0)));
+    } else if (kernel_id == 4u) {
+        return exp(-d_mag / cut);
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let core = exp(-d2 / (2.0 * cut2));
+        let tail = pow(cut2, beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
+        return (1.0 - alpha) * core + alpha * tail;
+    } else if (kernel_id == 6u) {
+        return 1.0 / (d_mag + cut);
+    } else {
+        return exp(-d2 / (2.0 * cut2)) / max(d2 + s2, s2);
+    }
+}
+
+fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    if (d_mag > 1e13) {
+        return 0.0;
+    }
+    let e2 = max(extent * extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
+    let d = max(d_mag, 1e-9);
+
+    if (kernel_id == 0u) {
+        let denom = d2 + cut2;
+        return -2.0 * d / (denom * denom);
+    } else if (kernel_id == 1u) {
+        let denom = d2 + cut2;
+        return -exp(-d2 / (2.0 * cut2)) * d * (denom / cut2 + 2.0) / (denom * denom);
+    } else if (kernel_id == 2u) {
+        return 0.0;
+    } else if (kernel_id == 3u) {
+        let scale = cut * sqrt(2.0);
+        return -2.0 / sqrt(3.141592653589793) * exp(-d2 / (scale * scale)) / scale;
+    } else if (kernel_id == 4u) {
+        return -exp(-d / cut) / cut;
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let e = cut2;
+        let core_grad = -d / e * exp(-d2 / (2.0 * e));
+        let denom = max(d2 + s2, s2);
+        let tail_grad = -beta * d * pow(e, beta * 0.5) / pow(denom, beta * 0.5 + 1.0);
+        return (1.0 - alpha) * core_grad + alpha * tail_grad;
+    } else if (kernel_id == 6u) {
+        let denom = d_mag + cut;
+        return -1.0 / (denom * denom);
+    } else {
+        let e = cut2;
+        let denom = max(d2 + s2, s2);
+        return -exp(-d2 / (2.0 * e)) * (d / e * denom + 2.0 * d) / (denom * denom);
+    }
+}
+
+@group(0) @binding(0) var<storage, read> rows: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+
+@compute @workgroup_size(64)
+fn fold_crosscheck(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let n = arrayLength(&rows) / 6u;
+    let i = gid.x;
+    if (i >= n) {
+        return;
+    }
+    let base = i * 6u;
+    let kernel_id = u32(rows[base + 0u]);
+    let d = rows[base + 1u];
+    let d2 = rows[base + 2u];
+    let extent = rows[base + 3u];
+    let global_scale = rows[base + 4u];
+    let absorption = rows[base + 5u];
+    out[i * 2u + 0u] = field_spatial(d2, d, extent, kernel_id, global_scale, absorption);
+    out[i * 2u + 1u] = field_spatial_grad(d2, d, extent, kernel_id, global_scale, absorption);
+}
+"#;
+
+    let hard_ball = |d2: f64, extent: f64| -> f64 { if d2 <= extent * extent { 1.0 } else { 0.0 } };
+    assert_eq!(hard_ball(0.0, 0.5), 1.0, "hard-ball centre");
+    assert_eq!(
+        hard_ball(0.25, 0.5),
+        1.0,
+        "hard-ball support boundary is inclusive"
+    );
+    assert_eq!(hard_ball(0.2500001, 0.5), 0.0, "just outside the support");
+    assert_eq!(hard_ball(9.0, 0.5), 0.0, "far outside the support");
+
+    let kernels = [0u32, 1, 3, 4, 5, 6, 7];
+    let ds = [0.05f64, 0.3, 1.0, 3.0, 10.0, 50.0];
+    let extents = [0.5f64, 2.0];
+    let scales = [0.2f64, 1.5, 4.0];
+    let alphas = [0.0f64, 0.5, 1.0];
+
+    let mut params: Vec<f32> = Vec::new();
+    let mut meta: Vec<[f64; 6]> = Vec::new();
+    let mut expected: Vec<(f64, f64)> = Vec::new();
+    for &k in &kernels {
+        let abs_list: &[f64] = if k == 5 { &alphas } else { &[0.0] };
+        for &abs in abs_list {
+            for &d in &ds {
+                for &extent in &extents {
+                    for &scale in &scales {
+                        let d2 = d * d;
+                        params.extend_from_slice(&[
+                            k as f32,
+                            d as f32,
+                            d2 as f32,
+                            extent as f32,
+                            scale as f32,
+                            abs as f32,
+                        ]);
+                        meta.push([k as f64, d, extent, scale, abs, d2]);
+                        expected.push((
+                            kernel_omega(k as u8, d, extent, scale, abs),
+                            kernel_omega_grad(k as u8, d, extent, scale, abs),
+                        ));
+                    }
+                }
+            }
+        }
+    }
+    let rows = expected.len();
+
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — field_spatial fold crosscheck skipped");
+            return;
+        }
+    };
+    let (device, queue) =
+        match block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(FOLD_WGSL.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 1;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        module: &module,
+        entry_point: Some("fold_crosscheck"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+
+    let in_bytes = (params.len() * 4) as u64;
+    let out_bytes = (rows * 2 * 4) as u64;
+    let in_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: in_bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: out_bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: out_bytes,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: in_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: out_buf.as_entire_binding(),
+            },
+        ],
+    });
+    queue.write_buffer(&in_buf, 0, &le_bytes_f32(&params));
+
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups((rows as u32).div_ceil(64), 1, 1);
+    }
+    enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, out_bytes);
+    queue.submit(std::iter::once(enc.finish()));
+
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "field_spatial fold readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    let mut got = vec![0f32; rows * 2];
+    for k in 0..rows * 2 {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+        got[k] = f32::from_le_bytes(b);
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+
+    let mut violations = 0usize;
+    let mut skipped = 0usize;
+    for i in 0..rows {
+        let (cpu_f, cpu_g) = expected[i];
+        if !cpu_f.is_finite() || !cpu_g.is_finite() {
+            skipped += 1;
+            continue;
+        }
+        let gpu_f = got[i * 2] as f64;
+        let gpu_g = got[i * 2 + 1] as f64;
+        let tol_f = 1e-5 + 1e-3 * cpu_f.abs();
+        let tol_g = 1e-5 + 1e-3 * cpu_g.abs();
+        if (gpu_f - cpu_f).abs() > tol_f || (gpu_g - cpu_g).abs() > tol_g {
+            violations += 1;
+            if violations <= 8 {
+                let m = meta[i];
+                eprintln!(
+                    "fold row {} kernel {} d {} extent {} scale {} abs {}: field gpu {} cpu {} | grad gpu {} cpu {}",
+                    i, m[0], m[1], m[2], m[3], m[4], gpu_f, cpu_f, gpu_g, cpu_g
+                );
+            }
+        }
+    }
+    assert_eq!(
+        violations, 0,
+        "field_spatial fold wgsl/cpu parity: {} of {} rows diverge",
+        violations, rows
+    );
+    eprintln!(
+        "field_spatial fold crosscheck: {} rows, {} non-finite skipped, {} violations",
+        rows, skipped, violations
+    );
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+fn coupling_wgsl_from_field_shader() -> String {
+    let src = FIELD_WGSL;
+    let start = src
+        .find("fn apply_couplings(")
+        .expect("the coupling injection stands in FIELD_WGSL");
+    let rest = &src[start..];
+    let end = rest
+        .find("\n}\n")
+        .expect("the coupling injection closes with a brace")
+        + 3;
+    let func = &rest[..end];
+    format!(
+        "const CHANNEL_CAP: u32 = 16u;\n\
+         @group(0) @binding(0) var<storage, read> coupling_at: array<vec4f>;\n\
+         @group(0) @binding(1) var<storage, read_write> omegas_out: array<f32>;\n\
+         {func}\n\
+         @compute @workgroup_size(1)\n\
+         fn coupling_crosscheck() {{\n\
+             var omegas = array<f32, CHANNEL_CAP>();\n\
+             for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {{ omegas[i] = omegas_out[i]; }}\n\
+             apply_couplings(&omegas);\n\
+             for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {{ omegas_out[i] = omegas[i]; }}\n\
+         }}\n"
+    )
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+#[test]
+fn coupling_injection_wgsl_matches_the_cpu_exchange() {
+    use super::channel::{
+        Boundary, ChannelDescriptor, ChannelRegistry, Conserved, ConstraintRegistry, Coupling,
+        CouplingKind, CouplingRegistry, DensityKind, DensityRef, Domain, FluxKind, Medium, PdeType,
+        Quantity, QuantityRole, TransportOp,
+    };
+    use omegaflow::archivar::parse::ChannelCouplingLayer;
+
+    let mk = |medium: Medium, unit: &'static str| {
+        ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            medium,
+            Domain::Unspecified,
+            Boundary::None,
+            unit,
+        )
+    };
+    let d_ion = mk(Medium::Plasma, "1 / m3");
+    let d_n = mk(Medium::Fluid, "1 / m3");
+    let d_a = mk(Medium::Vacuum, "1 / m3");
+    let d_b = mk(Medium::ElasticSolid, "1 / m3");
+    let (h_ion, h_n, h_a, h_b) = (d_ion.hash(), d_n.hash(), d_a.hash(), d_b.hash());
+    let mut channels = ChannelRegistry::with_capacity(4);
+    channels.register(d_ion);
+    channels.register(d_n);
+    channels.register(d_a);
+    channels.register(d_b);
+
+    let (m_ion, m_n) = (30.0f64, 16.0f64);
+    let mut pairs = CouplingRegistry::with_capacity(2);
+    pairs.register(Coupling {
+        kind: CouplingKind::IonNeutralFriction,
+        from: h_ion,
+        to: h_n,
+        coefficient: Some(0.5),
+        unit: "m3 / s",
+        region: None,
+        density_from: Some(DensityRef {
+            channel_ref: h_ion,
+            kind: DensityKind::Number,
+            species_mass: Some(m_ion),
+        }),
+        density_to: Some(DensityRef {
+            channel_ref: h_n,
+            kind: DensityKind::Number,
+            species_mass: Some(m_n),
+        }),
+        quasi_neutral: None,
+    });
+    pairs.register(Coupling {
+        kind: CouplingKind::Thermoelectric,
+        from: h_a,
+        to: h_b,
+        coefficient: Some(0.25),
+        unit: "m3 / s",
+        region: None,
+        density_from: Some(DensityRef {
+            channel_ref: h_a,
+            kind: DensityKind::Mass,
+            species_mass: Some(1.0),
+        }),
+        density_to: Some(DensityRef {
+            channel_ref: h_b,
+            kind: DensityKind::Mass,
+            species_mass: Some(1.0),
+        }),
+        quasi_neutral: None,
+    });
+
+    let layer = ChannelCouplingLayer {
+        channels,
+        constraints: ConstraintRegistry::from_constraints(&[]),
+        couplings: pairs,
+    };
+
+    let mut phi = [0.0f32; 16];
+    phi[0] = 2.0;
+    phi[1] = 5.0;
+    phi[2] = 3.0;
+    phi[3] = 7.0;
+
+    let mut deltas = [0.0f32; 16];
+    for c in layer.couplings.pairs() {
+        if let Some((i, fd, j, td)) = layer.couplings.exchange_resolved(c, &phi, &layer.channels) {
+            deltas[i] += fd;
+            deltas[j] += td;
+        }
+    }
+    let mut cpu = phi;
+    for k in 0..16 {
+        cpu[k] += deltas[k];
+    }
+
+    let rho_ion = m_ion as f32 * phi[0];
+    let rho_n = m_n as f32 * phi[1];
+    let net = rho_ion * deltas[0] + rho_n * deltas[1];
+    assert!(
+        net.abs() < 1e-3,
+        "rho-weighted exchange sums to zero, got {net}"
+    );
+
+    let rows = coupling_descriptor_rows(Some(&layer));
+    assert_eq!(rows.len(), 16, "two pairs encode as sixteen floats");
+
+    let wgsl = coupling_wgsl_from_field_shader();
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — coupling wgsl/cpu parity skipped");
+            return;
+        }
+    };
+    let (device, queue) =
+        match block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {} — coupling parity skipped", e);
+                return;
+            }
+        };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(wgsl.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 1;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        module: &module,
+        entry_point: Some("coupling_crosscheck"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let couple_bytes = (rows.len() * 4) as u64;
+    let omega_bytes = (16 * 4) as u64;
+    let couple_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: couple_bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let omega_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: omega_bytes,
+        usage: wgpu::BufferUsages::STORAGE
+            | wgpu::BufferUsages::COPY_DST
+            | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: omega_bytes,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: couple_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: omega_buf.as_entire_binding(),
+            },
+        ],
+    });
+    queue.write_buffer(&couple_buf, 0, &le_bytes_f32(&rows));
+    queue.write_buffer(&omega_buf, 0, &le_bytes_f32(&phi));
+
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(1, 1, 1);
+    }
+    enc.copy_buffer_to_buffer(&omega_buf, 0, &read_buf, 0, omega_bytes);
+    queue.submit(std::iter::once(enc.finish()));
+
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "coupling parity readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    let mut got = [0f32; 16];
+    for k in 0..16 {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+        got[k] = f32::from_le_bytes(b);
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+
+    let mut violations = 0usize;
+    for k in 0..16 {
+        let tol = 1e-5 + 1e-3 * cpu[k].abs();
+        if (got[k] - cpu[k]).abs() > tol {
+            violations += 1;
+            if violations <= 8 {
+                eprintln!("coupling channel {k}: gpu {} cpu {}", got[k], cpu[k]);
+            }
+        }
+    }
+    assert_eq!(
+        violations, 0,
+        "coupling wgsl/cpu parity: {} of 16 channels diverge",
+        violations
+    );
+    eprintln!("coupling injection parity: 16 channels agree, rho-weighted friction net {net}");
+}
+#[test]
+fn gate_wgsl_horizon_and_ksg_parity_against_cpu_reference() {
+    use crate::omega::block_on;
+    use std::sync::Arc;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter_options = wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    };
+    let adapter = match block_on(instance.request_adapter(&adapter_options)) {
+        Some(a) => a,
+        None => {
+            eprintln!("compute-only device request returned void — wgsl ksg parity skipped");
+            return;
+        }
+    };
+    let (device, queue) =
+        match block_on(adapter.request_device(&wgpu::DeviceDescriptor::default(), None)) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(omegaflow::mathematikerin::TE_WGSL.into()),
+    });
+    let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = crate::omega::storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            {
+                let mut e = crate::omega::storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 2;
+                e
+            },
+        ],
+    });
+    let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&te_layout],
+        push_constant_ranges: &[],
+    });
+    let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&te_pipe_layout),
+        module: &module,
+        entry_point: Some("te_compute"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: crate::machines::TE_SERIES_BYTES,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 16,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &te_layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: series_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: param_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: out_buf.as_entire_binding(),
+            },
+        ],
+    });
+    let n = 200usize;
+    let mut x = vec![0f32; n];
+    let mut y = vec![0f32; n];
+    for (t, slot) in y.iter_mut().enumerate() {
+        *slot = (t as f32 * 0.5).sin();
+    }
+    for t in 0..n - 1 {
+        x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+    }
+    let seed = 42u64;
+    let mut data = vec![0f32; TE_SERIES_COUNT * crate::machines::TE_SERIES_STRIDE];
+    data[0..n].copy_from_slice(&x);
+    data[crate::machines::TE_SERIES_STRIDE..crate::machines::TE_SERIES_STRIDE + n]
+        .copy_from_slice(&y);
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    let mut surrogates: Vec<Vec<f32>> = Vec::with_capacity(TE_SURR_FLOOR);
+    for s in 0..TE_SURR_FLOOR {
+        let surr = phase_randomized_surrogate(&y, &mut rng);
+        let off = (2 + s) * crate::machines::TE_SERIES_STRIDE;
+        data[off..off + n].copy_from_slice(&surr);
+        surrogates.push(surr);
+    }
+    queue.write_buffer(&series_buf, 0, &crate::machines::le_bytes_f32(&data));
+    let max_lag = (n as f64 / PHI) as u32;
+    let param = [n as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K as u32];
+    let mut pb = [0u8; 16];
+    for (i, p) in param.iter().enumerate() {
+        pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+    }
+    queue.write_buffer(&param_buf, 0, &pb);
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&te_pipe);
+        pass.set_bind_group(0, &te_bind, &[]);
+        pass.dispatch_workgroups((TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+    }
+    enc.copy_buffer_to_buffer(
+        &out_buf,
+        0,
+        &read_buf,
+        0,
+        crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+    );
+    queue.submit(std::iter::once(enc.finish()));
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "wgsl ksg parity readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    assert!(
+        crate::machines::te_verdict_bytes(TE_KSG_K as u32) > crate::machines::te_verdict_bytes(0),
+        "the K>0 verdict readback must carry the KSG columns"
+    );
+    assert_eq!(
+        mapped_data.len(),
+        crate::machines::te_verdict_bytes(TE_KSG_K as u32) as usize,
+        "the readback size must follow te_verdict_bytes"
+    );
+    let mut verdict = [0f32; crate::machines::te_verdict_bytes(TE_KSG_K as u32) as usize / 4];
+    for k in 0..verdict.len() {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+        verdict[k] = f32::from_le_bytes(b);
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+    assert_eq!(
+        verdict[10], 1.0,
+        "the kde real-pair slot must stay valid alongside the ksg mirror"
+    );
+    assert_eq!(
+        verdict[TE_SERIES_COUNT * 6 + 3],
+        1.0,
+        "the wgsl ksg real-pair slot is absent at k={}",
+        TE_KSG_K
+    );
+    let tau_c = verdict[0] as usize;
+    let tau_y = verdict[6] as usize;
+    let gpu_te = verdict[TE_SERIES_COUNT * 6 + 2];
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    let cpu_tau_y = find_mi_lag(&yf).expect("the cpu driver carries an MI lag");
+    assert_eq!(
+        tau_y, cpu_tau_y,
+        "the gpu driver lag diverges from the cpu reference"
+    );
+    let cpu_tau_c =
+        find_cross_mi_lag(&xf, &yf, cpu_tau_y).expect("the cpu carries a cross horizon");
+    assert_eq!(
+        tau_c, cpu_tau_c,
+        "the gpu cross horizon diverges from the cpu reference"
+    );
+    let emb_x = embed_series(&xf, tau_c, 3);
+    let emb_y = embed_series(&yf, tau_y, 3);
+    let cpu_opt = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, TE_KSG_K);
+    let cpu_te = cpu_opt.expect("the KSG reference carries a TE at the GPU lags");
+    let gap = (gpu_te as f64 - cpu_te).abs();
+    assert!(
+        gap < 0.05 + 0.05 * cpu_te.abs(),
+        "wgsl ksg parity: gpu {} cpu {} gap {}",
+        gpu_te,
+        cpu_te,
+        gap
+    );
+    let mut ksg_surrogates = 0usize;
+    for s in 2..TE_SERIES_COUNT {
+        if verdict[TE_SERIES_COUNT * 6 + 2 * s + 1] != 1.0 {
+            continue;
+        }
+        let tau_s = verdict[s * 6] as usize;
+        let gpu_s = verdict[TE_SERIES_COUNT * 6 + 2 * s];
+        let ysf: Vec<f64> = surrogates[s - 2].iter().map(|&v| v as f64).collect();
+        let tau_c_s =
+            find_cross_mi_lag(&xf, &ysf, tau_s).expect("the cpu carries a surrogate cross horizon");
+        let emb_x_s = embed_series(&xf, tau_c_s, 3);
+        let emb_s = embed_series(&ysf, tau_s, 3);
+        let cpu_s_opt =
+            transfer_entropy_embedded_ksg(&xf, &emb_x_s, &emb_s, tau_c_s, tau_s, TE_KSG_K);
+        let cpu_s = cpu_s_opt.expect("the KSG reference carries a surrogate TE at GPU lags");
+        let gap_s = (gpu_s as f64 - cpu_s).abs();
+        assert!(
+            gap_s < 0.05 + 0.05 * cpu_s.abs(),
+            "wgsl ksg surrogate {s} parity: gpu {} cpu {} gap {}",
+            gpu_s,
+            cpu_s,
+            gap_s
+        );
+        ksg_surrogates += 1;
+    }
+    assert!(
+        ksg_surrogates >= 2,
+        "wgsl ksg surrogate parity holds on {ksg_surrogates} series — the null mirror needs at least two"
+    );
+
+    let mut flat_data = vec![0f32; TE_SERIES_COUNT * crate::machines::TE_SERIES_STRIDE];
+    flat_data[0..n].copy_from_slice(&x);
+    queue.write_buffer(&series_buf, 0, &crate::machines::le_bytes_f32(&flat_data));
+    let mut enc2 = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc2.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&te_pipe);
+        pass.set_bind_group(0, &te_bind, &[]);
+        pass.dispatch_workgroups((TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
+    }
+    enc2.copy_buffer_to_buffer(
+        &out_buf,
+        0,
+        &read_buf,
+        0,
+        crate::machines::te_verdict_bytes(TE_KSG_K as u32),
+    );
+    queue.submit(std::iter::once(enc2.finish()));
+    let mapped2 = Arc::new(AtomicBool::new(false));
+    let m3 = mapped2.clone();
+    let slice2 = read_buf.slice(..);
+    slice2.map_async(wgpu::MapMode::Read, move |r| {
+        m3.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline2 = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped2.load(Ordering::SeqCst) && std::time::Instant::now() < deadline2 {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped2.load(Ordering::SeqCst),
+        "wgsl horizon no-tau readback returned void"
+    );
+    let flat_mapped = slice2.get_mapped_range();
+    let mut flat_verdict = [0f32; crate::machines::te_verdict_bytes(TE_KSG_K as u32) as usize / 4];
+    for k in 0..flat_verdict.len() {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&flat_mapped[k * 4..k * 4 + 4]);
+        flat_verdict[k] = f32::from_le_bytes(b);
+    }
+    drop(flat_mapped);
+    read_buf.unmap();
+    assert_eq!(
+        flat_verdict[0], 0.0,
+        "no tau: the horizon slot stays absent for a flat driver"
+    );
+    assert_eq!(flat_verdict[10], 0.0, "no tau: the real pair carries no TE");
+    assert_eq!(
+        flat_verdict[7], 0.0,
+        "no tau: the real-pair TE slot stays absent"
+    );
+    assert_eq!(
+        flat_verdict[TE_SERIES_COUNT * 6 + 3],
+        0.0,
+        "no tau: the ksg mirror stays absent too"
+    );
+}
+
+use super::*;
+
+#[test]
+fn golden_pack_slots_against_wgsl_access() {
+    let presence = [1.0e3, 2.0e3, 3.0e3];
+    let r: Record = (
+        7001.0, 7002.0, 7003.0, 7004.0, 7005.0, 7006.0, 7007.0, 7008.0, 7009.0, 7010.0, 7011.0,
+        7012.0, 7013.0, 7014.0, 7015.0, 7016.0, 7017.0, 7018.0, 7019.0, 7020.0, 7021.0, 7022.0,
+        7023.0, 7024.0, 7025.0, 7026.0,
+    );
+    let packed = pack_window(&[r], presence);
+    assert_eq!(packed.count, 1);
+    let f = &packed.field;
+    assert_eq!(f[0], 6001.0);
+    assert_eq!(f[1], 5002.0);
+    assert_eq!(f[2], 4003.0);
+    assert_eq!(f[3], 7004.0);
+    assert_eq!(f[4], 7005.0);
+    assert_eq!(f[5], 7006.0);
+    assert_eq!(f[6], 7010.0);
+    assert_eq!(f[7], 7011.0);
+    assert_eq!(f[8], 7012.0);
+    assert_eq!(f[9], 7013.0);
+    assert_eq!(f[10], 7014.0);
+    assert_eq!(f[11], 7015.0);
+    let m = &packed.meta;
+    assert_eq!(m[0], 7008.0);
+    assert_eq!(m[1], 7007.0);
+    assert_eq!(m[2], 7009.0);
+    assert_eq!(m[3], 0.0);
+    assert_eq!(m[4], 7016.0);
+    assert_eq!(m[5], 7017.0);
+    assert_eq!(m[6], 7018.0);
+    assert_eq!(m[7], 7019.0);
+    assert_eq!(m[8], 7020.0);
+    assert_eq!(m[9], 7021.0);
+    assert_eq!(m[10], 7022.0);
+    assert_eq!(m[11], 7023.0);
+    assert_eq!(m[12], 7024.0);
+    assert_eq!(m[13], 7025.0);
+    assert_eq!(m[14], 7026.0);
+    assert_eq!(m[15], 0.0);
+}
+
+#[test]
+fn force_ref_medians_routes_forces_and_honors_zero() {
+    let mut field = vec![0.0f32; 48];
+    field[3] = 4.0;
+    field[15] = 4.0;
+    field[27] = -2.0;
+    field[30] = 2.0;
+    field[39] = 0.0;
+    field[42] = 8.0;
+    let meds = force_ref_medians(&field, &[0.0; 48]);
+    assert_eq!(meds[0].unwrap(), 4.0);
+    assert_eq!(meds[1], None);
+    assert_eq!(meds[2].unwrap(), 2.0);
+    for m in &meds[3..9] {
+        assert!(m.is_none());
+    }
+}
+
+#[test]
+fn force_ref_medians_skips_length_annotations() {
+    let mut field = vec![0.0f32; 24];
+    let mut meta = vec![0.0f32; 32];
+    field[3] = 2.0f32.powi(20);
+    field[6] = 1.0;
+    meta[0] = 2.0f32.powi(20);
+    field[15] = 2.0f32.powi(45);
+    field[18] = 1.0;
+    let meds = force_ref_medians(&field, &meta);
+    assert_eq!(meds[1].unwrap(), 2.0f32.powi(45));
+}
+
+#[test]
+fn the_aim_law_maps_thrust_to_pan_tilt_pulse_widths() {
+    assert_eq!(aim_pulse_ms([0.0, 0.0, 0.0]), (None, None));
+    let (pan, tilt) = aim_pulse_ms([1.0, 0.0, 0.0]);
+    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
+    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
+    let (pan, tilt) = aim_pulse_ms([0.0, 1.0, 0.0]);
+    assert!((pan.unwrap() - 2.0).abs() < 1e-6);
+    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
+    let (pan, tilt) = aim_pulse_ms([0.0, 0.0, 1.0]);
+    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
+    assert!((tilt.unwrap() - 2.0).abs() < 1e-6);
+    assert_eq!(aim_pulse_ms([THRUST_AIM_MIN * 0.5, 0.0, 0.0]), (None, None));
+}
+
+#[test]
+fn aberration_shifts_toward_apex_and_stays_unit() {
+    fn aberr(u: [f64; 3], beta: [f64; 3]) -> [f64; 3] {
+        let b2 = beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2];
+        let gamma = 1.0 / (1.0 - b2).sqrt();
+        let ud = u[0] * beta[0] + u[1] * beta[1] + u[2] * beta[2];
+        let inv = 1.0 / (1.0 + ud);
+        let k = gamma / (gamma + 1.0) * ud;
+        [
+            (u[0] / gamma + beta[0] + k * beta[0]) * inv,
+            (u[1] / gamma + beta[1] + k * beta[1]) * inv,
+            (u[2] / gamma + beta[2] + k * beta[2]) * inv,
+        ]
+    }
+    let beta = [0.5, 0.0, 0.0];
+    let ahead = aberr([1.0, 0.0, 0.0], beta);
+    assert!((ahead[0] - 1.0).abs() < 1e-9);
+    assert!(ahead[1].abs() < 1e-9 && ahead[2].abs() < 1e-9);
+    let side = aberr([0.0, 1.0, 0.0], beta);
+    assert!(side[0] > 0.0, "transverse star shifts toward the apex");
+    let n = (side[0] * side[0] + side[1] * side[1] + side[2] * side[2]).sqrt();
+    assert!((n - 1.0).abs() < 1e-9);
+    let rest = aberr([0.3, 0.4, 0.916515139], [0.0, 0.0, 0.0]);
+    assert!((rest[0] - 0.3).abs() < 1e-9);
+    assert!((rest[1] - 0.4).abs() < 1e-9);
+}
+
+#[test]
+fn scalar_gpu_parity_fp_decision() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu fp gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+    let mut gpu_fp = 0usize;
+    let mut gpu_meas = 0usize;
+    let mut agree = 0usize;
+    let mut agree_tot = 0usize;
+    let mut floor_viol = 0usize;
+    for t in 0..30 {
+        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let x = sg_gate_ar1(300, 0.7, &mut rng);
+        let y = sg_gate_ar1(300, 0.7, &mut rng);
+        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &x, &y, 0, seed)
+        else {
+            continue;
+        };
+        gpu_meas += 1;
+        if gpu_ab {
+            gpu_fp += 1;
+        }
+        agree_tot += 1;
+        if cpu_ab == gpu_ab {
+            agree += 1;
+        }
+        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
+            floor_viol += 1;
+        }
+    }
+    assert!(
+        gpu_meas >= 20,
+        "scalar gpu FP gate: {} of 30 measurable — the machine stays silent too often",
+        gpu_meas
+    );
+    assert!(
+        gpu_fp <= 8,
+        "scalar gpu FP gate: {} of {} above the threshold — the null does not hold on the GPU",
+        gpu_fp,
+        gpu_meas
+    );
+    assert!(
+        agree * 100 >= agree_tot * 95,
+        "scalar gpu FP gate: CPU/GPU classification agrees in {}/{}",
+        agree,
+        agree_tot
+    );
+    assert_eq!(
+        floor_viol, 0,
+        "scalar gpu FP gate: {} numeric-floor violations",
+        floor_viol
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_fn_decision() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu fn gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x517C_C1B7_2722_0A95u64;
+    let mut found = 0usize;
+    let mut meas = 0usize;
+    let mut agree = 0usize;
+    let mut floor_viol = 0usize;
+    for t in 0..20 {
+        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+        let a: Vec<f32> = (0..300)
+            .map(|_| (sg_gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+            .collect();
+        let b: Vec<f32> = (0..a.len())
+            .map(|i| {
+                if i == 0 {
+                    sg_gate_rng(&mut rng) as f32
+                } else {
+                    (0.9 * a[i - 1] as f64 + (sg_gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                }
+            })
+            .collect();
+        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &b, &a, 0, seed)
+        else {
+            continue;
+        };
+        meas += 1;
+        if cpu_ab && gpu_ab {
+            found += 1;
+        }
+        if cpu_ab == gpu_ab {
+            agree += 1;
+        }
+        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
+            floor_viol += 1;
+        }
+    }
+    if meas == 0 {
+        panic!("scalar gpu FN gate: no coupling measurement succeeded in 20 trials");
+    }
+    assert!(
+        found as f64 / meas as f64 > 0.5,
+        "scalar gpu FN gate: {} of {} true couplings found on the GPU",
+        found,
+        meas
+    );
+    assert!(
+        agree * 100 >= meas * 95,
+        "scalar gpu FN gate: CPU/GPU classification agrees in {}/{}",
+        agree,
+        meas
+    );
+    assert_eq!(
+        floor_viol, 0,
+        "scalar gpu FN gate: {} numeric-floor violations",
+        floor_viol
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_symmetry() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu symmetry gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x2722_0A95_517C_C1B7u64;
+    let a = sg_gate_ar1(300, 0.7, &mut rng);
+    let Some((f, r)) = sg_fr(&mut gpu, &a, &a, 0) else {
+        return;
+    };
+    assert!(
+        (f - r).abs() < 1e-3,
+        "scalar gpu symmetry: a=a measures unequal, {} vs {}",
+        f,
+        r
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_n_floor() {
+    let Some(mut gpu) = ScalarTeGpu::new(13) else {
+        eprintln!("scalar gpu n-floor gate skipped: no adapter");
+        return;
+    };
+    let x = sg_gate_ar1(300, 0.7, &mut 0x9E37_79B9_7F4A_7C15u64);
+    let constant = vec![1.0f32; 300];
+    let gpu_te = crate::te::transfer_entropy_lag(&x, &constant, 0);
+    assert!(
+        gpu_te.is_none(),
+        "scalar CPU constant series must stay absent"
+    );
+    let grid = gpu.run(&x, &constant, &[]);
+    if !grid.is_empty() {
+        let valid = grid[1];
+        assert_eq!(valid, 0.0, "scalar GPU constant series must stay absent");
+    }
+}
+
+#[test]
+fn scalar_gpu_parity_surrogate_slots_match_cpu() {
+    let Some(mut gpu) = ScalarTeGpu::new(13) else {
+        eprintln!("scalar gpu surrogate-slot gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x0FEB_11D1_B2D1_9C93u64;
+    let x = sg_gate_ar1(300, 0.7, &mut rng);
+    let y = sg_gate_ar1(300, 0.7, &mut rng);
+    let mut surrs: Vec<Vec<f32>> = Vec::new();
+    for _ in 0..10 {
+        surrs.push(crate::te::phase_randomized_surrogate(&y, &mut rng));
+    }
+    let grid = gpu.run(&x, &y, &surrs);
+    if grid.is_empty() {
+        return;
+    }
+    let series_at = |k: usize| -> &[f32] { if k == 0 { &y } else { &surrs[k - 1] } };
+    let mut viol = 0usize;
+    let mut meas = 0usize;
+    for dir in 0..2 {
+        for k in 0..11 {
+            for lag in 0..13 {
+                let idx = ((dir * 11 + k) * 13 + lag) * 2;
+                let gpu_te = grid[idx];
+                let gpu_valid = grid[idx + 1];
+                let cpu_te = if dir == 0 {
+                    crate::te::transfer_entropy_lag(&x, series_at(k), lag)
+                } else {
+                    crate::te::transfer_entropy_lag(series_at(k), &x, lag)
+                };
+                match (gpu_valid > 0.0, cpu_te) {
+                    (true, Some(c)) => {
+                        meas += 1;
+                        if (gpu_te as f64 - c).abs() > SCALAR_PARITY_TOL * (c.abs() + 1e-3) {
+                            viol += 1;
+                            eprintln!(
+                                "surrogate slot: dir {} k {} lag {} gpu {} cpu {}",
+                                dir, k, lag, gpu_te, c
+                            );
+                        }
+                    }
+                    (false, None) => {}
+                    (true, None) => {
+                        viol += 1;
+                        eprintln!(
+                            "surrogate slot: dir {} k {} lag {} gpu valid, cpu absent",
+                            dir, k, lag
+                        );
+                    }
+                    (false, Some(c)) => {
+                        viol += 1;
+                        eprintln!(
+                            "surrogate slot: dir {} k {} lag {} gpu absent, cpu {}",
+                            dir, k, lag, c
+                        );
+                    }
+                }
+            }
+        }
+    }
+    assert!(
+        meas >= 200,
+        "scalar gpu surrogate-slot gate: only {} of 286 grid slots measurable",
+        meas
+    );
+    assert_eq!(
+        viol, 0,
+        "scalar gpu surrogate-slot gate: {} grid mismatches",
+        viol
+    );
+}
+
+#[test]
+fn r_struct_is_finite_and_positive_for_every_kernel_form() {
+    let extent = 1.0;
+    let global_scale = 1e-2;
+    let absorption = 0.5;
+    for kernel_id in [0u8, 1, 3, 4, 5, 6] {
+        for d in [2.0_f64, 4.0, 8.0] {
+            let r = r_struct(kernel_id, d, extent, global_scale, absorption)
+                .expect("R_struct is defined for d > 0");
+            assert!(
+                r.is_finite() && r > 0.0,
+                "kernel {} R_struct({}) = {} is not finite-positive",
+                kernel_id,
+                d,
+                r
+            );
+        }
+    }
+}
+
+#[test]
+fn r_struct_inverse_square_grows_linearly_in_the_tail() {
+    let extent = 1.0;
+    let global_scale = 1e-2;
+    let mut prev = 0.0;
+    for d in [8.0_f64, 16.0, 32.0, 64.0] {
+        let r = r_struct(0, d, extent, global_scale, 0.0).expect("defined for d > 0");
+        assert!(
+            r > prev,
+            "inverse-square R_struct did not grow with d: {} then {}",
+            prev,
+            r
+        );
+        let analytic = F32_EPS_REF * d / 2.0;
+        let rel = (r - analytic).abs() / analytic;
+        assert!(
+            rel < 0.02,
+            "inverse-square R_struct({}) = {} diverges from F32_EPS·d/2 = {}",
+            d,
+            r,
+            analytic
+        );
+        prev = r;
+    }
+}
+
+#[test]
+fn multipole_error_cluster_vs_barycenter() {
+    let r = 1.0;
+    let val = 1.0;
+    let point = |d: f64| val / (d * d);
+    let cluster = |d: f64| 0.5 * point(d - r) + 0.5 * point(d + r);
+    let barycenter = |d: f64| kernel_omega(0, d, r, 0.0, 0.0);
+
+    let d_far = 2e4;
+    let err_far = (cluster(d_far) - barycenter(d_far)).abs() / cluster(d_far).abs();
+    assert!(
+        err_far < F32_EPS_REF,
+        "far-field multipole error {} is above F32_EPS",
+        err_far
+    );
+
+    let d_near = 2.0 * r;
+    let err_near = (cluster(d_near) - barycenter(d_near)).abs() / cluster(d_near).abs();
+    assert!(
+        err_near > F32_EPS_REF,
+        "near-field multipole error {} is below F32_EPS (cluster collapsed to a monopole)",
+        err_near
+    );
+}

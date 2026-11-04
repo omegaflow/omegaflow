@@ -1,0 +1,34 @@
+name: flyby-odf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 4 * * 1'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  odf-persist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Persist the odf07155 ODF fixture to the spdf CDN namespace
+        run: |
+          bin/cdn-put spdf.gsfc.nasa.gov \
+            src/archivar/kernels/odf07155.dat
+      - name: Record the odf07155 measured census verdict as a CDN asset
+        run: |
+          cargo run -p omegaflow-measure --release --bin odf_census_probe -- \
+            src/archivar/kernels/odf07155.dat > odf07155_census.txt
+          test -s odf07155_census.txt || {
+            echo "odf-census: the census file is empty — nothing to upload"; exit 1; }
+          bin/cdn-put spdf.gsfc.nasa.gov \
+            odf07155_census.txt

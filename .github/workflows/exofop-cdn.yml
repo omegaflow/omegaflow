@@ -1,0 +1,24 @@
+# harvest: format=exofop_toi asset=present arm=exofop_compiler pattern=^exofop_toi\.bin$ idempotent=true timeout=120 tag=exofop.ipac.caltech.edu
+
+name: exofop-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  exofop:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"exofop_compiler","netloc":"exofop.ipac.caltech.edu","asset":"exofop_toi.bin","args":"--out exofop_toi.bin"}
+        ]

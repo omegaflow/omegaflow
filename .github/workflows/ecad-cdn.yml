@@ -1,0 +1,101 @@
+# auto-dispatch: manual — element and station coordinates are required per-act inputs; auto-dispatch cannot supply them
+name: ecad-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      element:
+        description: ECA&D element (tx|tn|tg|rr)
+        required: true
+        type: string
+        default: "tx"
+      station:
+        description: ECA&D station id (six digits, e.g. 000001)
+        required: true
+        type: string
+      lat:
+        description: station latitude (decimal degrees)
+        required: true
+        type: string
+      lon:
+        description: station longitude (decimal degrees)
+        required: true
+        type: string
+      alt:
+        description: station altitude (metres)
+        required: true
+        type: string
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ecad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ecad.eu release exists on the CDN
+        run: |
+          if ! gh release view ecad.eu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ecad.eu --repo omegaflow/sources \
+              --title "ecad.eu" \
+              --notes "ECA&D blended daily station series compiled to ICRS records; magic ECAD, 8-byte header then n x 26 f64 (temperature K, precipitation kg/m2), daily cadence."
+          fi
+      - name: Fetch the ECA&D blend archive
+        run: |
+          curl -sSfL --retry 3 --max-time 600 -o ecad.zip \
+            "https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_${{ inputs.element }}.zip"
+      - name: Compile the ECA&D station series and upload to CDN
+        run: |
+          element="${{ inputs.element }}"
+          member="${element^^}_STAID${{ inputs.station }}.txt"
+          cargo run -p omegaflow-harvest --release --bin ecad_compiler -- \
+            --body earth \
+            --lat "${{ inputs.lat }}" \
+            --lon "${{ inputs.lon }}" \
+            --alt "${{ inputs.alt }}" \
+            --out out \
+            --zip ecad.zip \
+            --member "$member" \
+            --ci-mode
+  series-manifest:
+    needs: [ecad]
+    if: always() && needs.ecad.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fold every ecad shard on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          FAMILY="ecad.eu"
+          PREFIX="ecad_"
+          MANIFEST="ecad.manifest"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh api --paginate "repos/$REPO/releases?per_page=100" \
+            | jq -r '.[].tag_name' > "$tmp/tags"
+          : > "$tmp/$MANIFEST"
+          while IFS= read -r tag; do
+            case "$tag" in
+              "$FAMILY"|"$FAMILY"-*) ;;
+              *) continue ;;
+            esac
+            gh release view "$tag" --repo "$REPO" \
+              --json assets \
+              --jq ".assets[] | select(.name|startswith(\"$PREFIX\")) | select(.name|endswith(\".bin\")) | \"\(.name) \(.digest)\"" \
+              >> "$tmp/$MANIFEST"
+          done < "$tmp/tags"
+          sort -u -o "$tmp/$MANIFEST" "$tmp/$MANIFEST"
+          if [ ! -s "$tmp/$MANIFEST" ]; then
+            echo "no ecad shards on the CDN — the series manifest stays unwritten (0 honored)"
+            exit 0
+          fi
+          echo "$MANIFEST lists $(wc -l < "$tmp/$MANIFEST") shards"
+          bin/cdn-put "$FAMILY" "$tmp/$MANIFEST"

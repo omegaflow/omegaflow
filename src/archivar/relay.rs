@@ -1,0 +1,1333 @@
+use crate::archivar::SampleRecord;
+use crate::archivar::*;
+use crate::archivar::{DiodeState, PresenceFrame};
+use crate::mathematikerin::channel::TriState;
+use std::io::{Cursor, Read, Write};
+use std::net::{TcpListener, TcpStream};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex, RwLock, mpsc};
+use std::thread;
+pub const PORT_CONST: u16 = 1618;
+pub const RELAY_BIND_ENV: &str = "OMEGAFLOW_RELAY_BIND";
+pub const RELAY_BIND_DEFAULT: &str = "127.0.0.1";
+const KINETIC_TAG: u8 = 10;
+const MANIFEST_TAG: u8 = 12;
+
+fn bind_from(raw: Option<String>) -> String {
+    match raw {
+        Some(v) if !v.trim().is_empty() => v.trim().to_string(),
+        _ => RELAY_BIND_DEFAULT.to_string(),
+    }
+}
+
+pub fn relay_bind_addr() -> String {
+    bind_from(std::env::var(RELAY_BIND_ENV).ok())
+}
+
+fn relay_tau(wire: f64, line: Option<f64>) -> Option<f64> {
+    if wire > 0.0 {
+        return Some(wire);
+    }
+    match line {
+        Some(t) if t > 0.0 => Some(t),
+        _ => None,
+    }
+}
+
+struct WsConfig {
+    bodies: Arc<Vec<String>>,
+    index_html: Vec<u8>,
+    constants_js: Vec<u8>,
+    field_rx: mpsc::Receiver<Arc<Buffer>>,
+    kinetic_rx: mpsc::Receiver<PresenceFrame>,
+    sample_tx: mpsc::Sender<Vec<Sample>>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    time: Arc<Mutex<Option<LeapSeconds>>>,
+    consent: Arc<AtomicBool>,
+    diode: Arc<RwLock<DiodeState>>,
+    sources: Arc<Vec<SourceConfig>>,
+    verdicts: Arc<Vec<VerdictLine>>,
+}
+pub struct TcpRadiator {
+    shutdown: Arc<AtomicBool>,
+    field_tx: mpsc::SyncSender<Arc<Buffer>>,
+    _thread: Option<thread::JoinHandle<()>>,
+}
+
+impl TcpRadiator {
+    pub fn new(
+        port: u16,
+        bodies: Arc<Vec<String>>,
+        initial_field: Arc<Buffer>,
+        index_html: Vec<u8>,
+        constants_js: Vec<u8>,
+        sample_tx: mpsc::Sender<Vec<Sample>>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+        kinetic_rx: mpsc::Receiver<PresenceFrame>,
+        time: Arc<Mutex<Option<LeapSeconds>>>,
+        consent: Arc<AtomicBool>,
+        diode: Arc<RwLock<DiodeState>>,
+        sources: Arc<Vec<SourceConfig>>,
+        verdicts: Arc<Vec<VerdictLine>>,
+    ) -> Self {
+        let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
+        let bind_addr = relay_bind_addr();
+        let listener = match TcpListener::bind(format!("{}:{}", bind_addr, port)) {
+            Ok(l) => {
+                eprintln!("serving on http://{}:{}", bind_addr, port);
+                l
+            }
+            Err(e) => {
+                eprintln!("TCP bind to {}:{} returned {:?}", bind_addr, port, e.kind());
+                std::process::exit(1);
+            }
+        };
+        match listener.set_nonblocking(true) {
+            Ok(_) => {}
+            Err(e) => {
+                eprintln!("TCP set_nonblocking returned {:?}", e.kind());
+                std::process::exit(1);
+            }
+        }
+        let shutdown = Arc::new(AtomicBool::new(false));
+        let shutdown_clone = shutdown.clone();
+        let handle = thread::spawn(move || {
+            let mut field_txs: Vec<mpsc::SyncSender<Arc<Buffer>>> = Vec::new();
+            let mut kinetic_txs: Vec<mpsc::SyncSender<PresenceFrame>> = Vec::new();
+            let mut latest: Arc<Buffer> = initial_field;
+            let mut kinetic_open = true;
+            loop {
+                if shutdown_clone.load(Ordering::Relaxed) {
+                    break;
+                }
+                while let Ok((stream, _)) = listener.accept() {
+                    let (ftx, frx) = mpsc::sync_channel::<Arc<Buffer>>(2);
+                    if ftx.try_send(latest.clone()).is_err() {
+                        eprintln!(
+                            "relay: a new browser connection missed the initial field (queue full)"
+                        );
+                    }
+                    field_txs.push(ftx);
+                    let (ktx, krx) = mpsc::sync_channel::<PresenceFrame>(2);
+                    kinetic_txs.push(ktx);
+                    let cfg = WsConfig {
+                        bodies: bodies.clone(),
+                        index_html: index_html.clone(),
+                        constants_js: constants_js.clone(),
+                        field_rx: frx,
+                        kinetic_rx: krx,
+                        sample_tx: sample_tx.clone(),
+                        presence_tx: presence_tx.clone(),
+                        time: time.clone(),
+                        consent: consent.clone(),
+                        diode: diode.clone(),
+                        sources: sources.clone(),
+                        verdicts: verdicts.clone(),
+                    };
+                    thread::spawn(move || handle_ingress(stream, cfg));
+                }
+                match field_rx.recv_timeout(std::time::Duration::from_secs_f64(2f64.powi(-8))) {
+                    Ok(field) => {
+                        latest = field;
+                        field_txs.retain(|tx| match tx.try_send(latest.clone()) {
+                            Ok(_) => true,
+                            Err(mpsc::TrySendError::Full(_)) => true,
+                            Err(mpsc::TrySendError::Disconnected(_)) => false,
+                        });
+                    }
+                    Err(mpsc::RecvTimeoutError::Timeout) => {}
+                    Err(mpsc::RecvTimeoutError::Disconnected) => break,
+                }
+                if kinetic_open {
+                    match kinetic_rx.recv_timeout(std::time::Duration::from_secs_f64(2f64.powi(-8)))
+                    {
+                        Ok(frame) => {
+                            kinetic_txs.retain(|tx| match tx.try_send(frame) {
+                                Ok(_) => true,
+                                Err(mpsc::TrySendError::Full(_)) => true,
+                                Err(mpsc::TrySendError::Disconnected(_)) => false,
+                            });
+                        }
+                        Err(mpsc::RecvTimeoutError::Timeout) => {}
+                        Err(mpsc::RecvTimeoutError::Disconnected) => kinetic_open = false,
+                    }
+                }
+            }
+        });
+        Self {
+            shutdown,
+            field_tx,
+            _thread: Some(handle),
+        }
+    }
+}
+
+impl Radiator for TcpRadiator {
+    fn accept(&mut self, field: Arc<Buffer>) {
+        if self.field_tx.send(field).is_err() {
+            eprintln!("relay: the field channel is closed — the browser window is gone");
+        }
+    }
+}
+
+impl Drop for TcpRadiator {
+    fn drop(&mut self) {
+        self.shutdown.store(true, Ordering::SeqCst);
+    }
+}
+struct WsFrame {
+    opcode: u8,
+    payload: Vec<u8>,
+}
+fn base64_encode(data: &[u8]) -> String {
+    const T: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut r = String::new();
+    for c in data.chunks(3) {
+        r.push(T[(c[0] >> 2) as usize] as char);
+        if c.len() == 1 {
+            r.push(T[((c[0] & 0x03) << 4) as usize] as char);
+            r.push('=');
+            r.push('=');
+        } else {
+            r.push(T[(((c[0] & 0x03) << 4) | (c[1] >> 4)) as usize] as char);
+            if c.len() == 2 {
+                r.push(T[((c[1] & 0x0f) << 2) as usize] as char);
+                r.push('=');
+            } else {
+                r.push(T[(((c[1] & 0x0f) << 2) | (c[2] >> 6)) as usize] as char);
+                r.push(T[(c[2] & 0x3f) as usize] as char);
+            }
+        }
+    }
+    r
+}
+fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) {
+    if s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nExpires: 0\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes()).is_err()
+            || s.write_all(b).is_err()
+        {
+            eprintln!("http emit: the browser connection ended mid-response");
+        }
+}
+fn emit_void(s: &mut TcpStream) {
+    if s.write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+        .is_err()
+    {
+        eprintln!("http emit: the browser connection ended mid-response");
+    }
+}
+fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
+    let mut s = stream;
+    s.set_nodelay(true).ok();
+    let signal = match read_signal(&mut s) {
+        Some(r) => r,
+        None => return,
+    };
+    if signal.to_lowercase().contains("upgrade: websocket") {
+        resonance(s, &signal, cfg);
+    } else {
+        let mut last_field: Option<Arc<Buffer>> = None;
+        let mut cur = signal;
+        loop {
+            let path = parse_path(&cur);
+            match path.as_str() {
+                "/" => {
+                    let page = match std::fs::read(resolve_asset("static/index.html")) {
+                        Ok(v) => v,
+                        Err(_) => cfg.index_html.clone(),
+                    };
+                    emit(&mut s, "200 OK", "text/html", &page);
+                }
+                "/time" => match system_now(&cfg.time) {
+                    Some(tdb) => {
+                        emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
+                    }
+                    None => {
+                        emit_void(&mut s);
+                        break;
+                    }
+                },
+                "/station" => {
+                    let now = match system_now(&cfg.time) {
+                        Some(t) => t,
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    };
+                    let result = {
+                        if let Ok(f) = cfg.field_rx.try_recv() {
+                            last_field = Some(f);
+                        }
+                        let Some(buf) = last_field.clone() else {
+                            emit_void(&mut s);
+                            break;
+                        };
+                        let eph_map = buf.eph.clone();
+                        let mut station_sample: Option<Arc<Sample>> = None;
+                        for v in buf
+                            .cache
+                            .cells
+                            .values()
+                            .chain(buf.cache.star_cells.values())
+                        {
+                            for sample in v {
+                                if matches!(sample.source, SampleSource::Sensor) {
+                                    let newer = match &station_sample {
+                                        Some(cur) => sample.epoch > cur.epoch,
+                                        None => true,
+                                    };
+                                    if newer {
+                                        station_sample = Some(sample.clone());
+                                    }
+                                }
+                            }
+                        }
+                        station_sample.and_then(|sample| {
+                            let p0 = sample.motion.at(now, sample.epoch, &eph_map)?;
+                            let p1 = sample.motion.at(now + 1.0, sample.epoch, &eph_map)?;
+                            Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))
+                        })
+                    };
+                    match result {
+                        Some((p, v)) => emit(
+                            &mut s,
+                            "200 OK",
+                            "text/plain",
+                            format!("{} {} {} {} {} {}", p[0], p[1], p[2], v[0], v[1], v[2])
+                                .as_bytes(),
+                        ),
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    }
+                }
+                _ if path.starts_with("/jump/") => {
+                    let body: &str = &path[6..];
+                    if let Ok(f) = cfg.field_rx.try_recv() {
+                        last_field = Some(f);
+                    }
+                    let Some(eph) = last_field.as_ref().map(|b| b.eph.clone()) else {
+                        emit_void(&mut s);
+                        break;
+                    };
+                    let now = match system_now(&cfg.time) {
+                        Some(t) => t,
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    };
+                    match body_barycenter_position(body, now, &eph) {
+                        Some([x, y, z]) => emit(
+                            &mut s,
+                            "200 OK",
+                            "text/plain",
+                            format!("{} {} {}", x, y, z).as_bytes(),
+                        ),
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    }
+                }
+                "/field" => {
+                    if let Ok(f) = cfg.field_rx.try_recv() {
+                        last_field = Some(f);
+                    }
+                    let Some(buf) = last_field.clone() else {
+                        emit_void(&mut s);
+                        break;
+                    };
+                    let mut report = String::new();
+                    for (fname, hash) in [("cache", &buf.cache)] {
+                        let mut n = 0usize;
+                        let mut field_names: std::collections::HashSet<&str> =
+                            std::collections::HashSet::new();
+                        let mut src_ids: std::collections::HashSet<u32> =
+                            std::collections::HashSet::new();
+                        for v in hash.cells.values().chain(hash.star_cells.values()) {
+                            for sample in v {
+                                n += 1;
+                                field_names.insert(sample.name.as_str());
+                                match sample.source {
+                                    SampleSource::Source(id) => {
+                                        src_ids.insert(id);
+                                    }
+                                    _ => {}
+                                };
+                            }
+                        }
+                        report.push_str(&format!(
+                            "{} samples={} cells={} star_cells={} anchor_vmax={:.3e} epoch_min={:.1} origins={}\n",
+                            fname,
+                            n,
+                            hash.cells.len(),
+                            hash.star_cells.len(),
+                            hash.anchor_vmax,
+                            hash.epoch_min,
+                            src_ids.len()
+                        ));
+                        let mut names: Vec<&str> = field_names.into_iter().collect();
+                        names.sort();
+                        report.push_str(&format!("{} fields: {}\n", fname, names.len()));
+                        for nm in names {
+                            report.push_str(&format!("  {}\n", nm));
+                        }
+                    }
+                    report.push_str(&format!("ephemerides={}\n", buf.eph.len()));
+                    emit(&mut s, "200 OK", "text/plain", report.as_bytes());
+                }
+                "/constants.js" => {
+                    let mut page = match std::fs::read(resolve_asset("static/constants.js")) {
+                        Ok(v) => v,
+                        Err(_) => cfg.constants_js.clone(),
+                    };
+                    let mut extra = String::from("\nexport const BODY_REGISTRY = {");
+                    for (i, name) in cfg.bodies.iter().enumerate() {
+                        extra.push_str(&format!("{}:\"{}\",", i + 1, name));
+                    }
+                    extra.push_str("};\n");
+                    page.extend_from_slice(extra.as_bytes());
+                    emit(&mut s, "200 OK", "application/javascript", &page);
+                }
+                "/crash" => {
+                    emit(&mut s, "200 OK", "text/plain", &[]);
+                    break;
+                }
+                _ if path == "/consent" || path.starts_with("/consent?") => {
+                    let word = path.strip_prefix("/consent?").unwrap_or("");
+                    match word {
+                        "ja" => cfg.consent.store(true, Ordering::SeqCst),
+                        "nein" => cfg.consent.store(false, Ordering::SeqCst),
+                        _ => {}
+                    }
+                    let state = if cfg.consent.load(Ordering::SeqCst) {
+                        "1\n"
+                    } else {
+                        "0\n"
+                    };
+                    emit(&mut s, "200 OK", "text/plain", state.as_bytes());
+                }
+                "/sources" => {
+                    let mut json = String::from("[");
+                    let mut first = true;
+                    for src in cfg.sources.iter() {
+                        let Some(body) = &src.body else {
+                            continue;
+                        };
+                        let name = source_name_from_url(&src.url);
+                        if !first {
+                            json.push(',');
+                        }
+                        first = false;
+                        json.push_str(&format!(
+                            "{{\"name\":\"{}\",\"body\":\"{}\"}}",
+                            name.replace('\\', "\\\\").replace('"', "\\\""),
+                            body.replace('\\', "\\\\").replace('"', "\\\"")
+                        ));
+                    }
+                    json.push(']');
+                    emit(&mut s, "200 OK", "application/json", json.as_bytes());
+                }
+                "/color_lut" => {
+                    let wire = spectral::color_lut_wire();
+                    emit(&mut s, "200 OK", "application/octet-stream", &wire);
+                }
+                _ if path.ends_with(".js") && !path.trim_start_matches('/').contains('/') => {
+                    let asset = format!("static{}", path);
+                    match std::fs::read(resolve_asset(&asset)) {
+                        Ok(v) => emit(&mut s, "200 OK", "application/javascript", &v),
+                        Err(_) => emit_void(&mut s),
+                    }
+                }
+                _ => {
+                    emit_void(&mut s);
+                    break;
+                }
+            }
+            match read_signal(&mut s) {
+                Some(r) => cur = r,
+                None => break,
+            }
+        }
+    }
+}
+fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
+    let key = match extract_header(signal, "Sec-WebSocket-Key") {
+        Some(k) => k,
+        None => return,
+    };
+    let encoded = base64_encode(&sha1(
+        &format!("{}{}", key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").into_bytes(),
+    ));
+    if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
+    let mut last_field_r: Option<Arc<Buffer>> = None;
+    let mut last_kinetic: Option<PresenceFrame> = None;
+    let mut sent_verdicts = false;
+    let mut sent_manifest = false;
+    let _ = stream.set_nodelay(true);
+    while let Some(frame) = read_ws_frame_raw(&mut stream) {
+        if frame.opcode == 0x8 {
+            break;
+        }
+        if frame.opcode == 0x9 {
+            let mut h = [0u8; 2];
+            h[0] = 0x8A;
+            h[1] = frame.payload.len() as u8;
+            if stream.write_all(&h).is_err() {
+                break;
+            }
+            if stream.write_all(&frame.payload).is_err() {
+                break;
+            }
+            continue;
+        }
+        if frame.opcode == 0x2 {
+            if frame.payload.len() < 12 {
+                continue;
+            }
+
+            let mut cursor = Cursor::new(&frame.payload);
+            let mut buf4 = [0u8; 4];
+
+            if cursor.read_exact(&mut buf4).is_err() {
+                continue;
+            }
+            let id = u32::from_le_bytes(buf4);
+            if cursor.read_exact(&mut buf4).is_err() {
+                continue;
+            }
+            let sample_count = u32::from_le_bytes(buf4) as usize;
+
+            let mut browser: Vec<(String, f64, f64)> = Vec::with_capacity(sample_count);
+            {
+                for _ in 0..sample_count {
+                    let mut val_buf = [0u8; 8];
+                    if cursor.read_exact(&mut val_buf).is_err() {
+                        break;
+                    }
+                    let value = f64::from_le_bytes(val_buf);
+
+                    let mut name_len_buf = [0u8; 1];
+                    if cursor.read_exact(&mut name_len_buf).is_err() {
+                        break;
+                    }
+                    let name_len = name_len_buf[0] as usize;
+                    let mut name_bytes = vec![0u8; name_len];
+                    if cursor.read_exact(&mut name_bytes).is_err() {
+                        break;
+                    }
+                    let name = String::from_utf8_lossy(&name_bytes).to_string();
+                    let mut tau_buf = [0u8; 8];
+                    if cursor.read_exact(&mut tau_buf).is_err() {
+                        break;
+                    }
+                    let tau = f64::from_le_bytes(tau_buf);
+
+                    browser.push((name, value, tau));
+                }
+            }
+
+            if cursor.read_exact(&mut buf4).is_err() {
+                continue;
+            }
+            let query_count = u32::from_le_bytes(buf4) as usize;
+            let mut queries: Vec<(f64, f64, f64, f64)> = Vec::with_capacity(query_count);
+            for _ in 0..query_count {
+                let mut t_buf = [0u8; 8];
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qt = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qx = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qy = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qz = f64::from_le_bytes(t_buf);
+                queries.push((qt, qx, qy, qz));
+            }
+            let mut delta_t_cache = 0.0f64;
+            let mut browser_grid_step = 0.0f64;
+            {
+                let mut pb8 = [0u8; 8];
+                if cursor.read_exact(&mut pb8).is_ok() {
+                    let px = f64::from_le_bytes(pb8);
+                    if cursor.read_exact(&mut pb8).is_ok() {
+                        let py = f64::from_le_bytes(pb8);
+                        if cursor.read_exact(&mut pb8).is_ok() {
+                            let pz = f64::from_le_bytes(pb8);
+                            if cursor.read_exact(&mut pb8).is_ok() {
+                                let pt = f64::from_le_bytes(pb8);
+                                if cursor.read_exact(&mut pb8).is_ok() {
+                                    let pr = f64::from_le_bytes(pb8);
+                                    if cursor.read_exact(&mut pb8).is_ok() {
+                                        delta_t_cache = f64::from_le_bytes(pb8);
+                                    }
+                                    let mut read_opt = || {
+                                        let mut b = [0u8; 8];
+                                        if cursor.read_exact(&mut b).is_ok() {
+                                            Some(f64::from_le_bytes(b))
+                                        } else {
+                                            None
+                                        }
+                                    };
+                                    let vx = read_opt();
+                                    let vy = read_opt();
+                                    let vz = read_opt();
+                                    let tt = read_opt();
+                                    let gs = read_opt();
+                                    if let (Some(vx), Some(vy), Some(vz), Some(tt), Some(gs)) =
+                                        (vx, vy, vz, tt, gs)
+                                    {
+                                        if gs.is_finite() && gs > 0.0 {
+                                            browser_grid_step = gs;
+                                        }
+                                        let _ = cfg.presence_tx.send((
+                                            "browser".to_string(),
+                                            pt,
+                                            px,
+                                            py,
+                                            pz,
+                                            pr,
+                                            vx,
+                                            vy,
+                                            vz,
+                                            tt,
+                                            gs,
+                                        ));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if let Ok(f) = cfg.field_rx.try_recv() {
+                last_field_r = Some(f);
+            }
+            while let Ok(f) = cfg.kinetic_rx.try_recv() {
+                last_kinetic = Some(f);
+            }
+            let Some(field) = last_field_r.clone() else {
+                continue;
+            };
+            let eph_map = field.eph.clone();
+            let now = match system_now(&cfg.time) {
+                Some(t) => t,
+                None => continue,
+            };
+            let (mut st_lat, mut st_lon, mut st_alt, mut st_body) = (None, None, None, None::<u32>);
+            let mut field_values: Vec<(String, f64, f64)> = Vec::new();
+            for (name, value, tau) in &browser {
+                let tau = *tau;
+                match name.as_str() {
+                    "lat" => st_lat = Some(*value),
+                    "lon" => st_lon = Some(*value),
+                    "alt" => st_alt = Some(*value),
+                    "body" => {
+                        st_body = if *value > 0.0 && *value <= u32::MAX as f64 {
+                            Some(*value as u32)
+                        } else {
+                            None
+                        }
+                    }
+                    _ => {
+                        field_values.push((name.clone(), *value, tau));
+                    }
+                }
+            }
+            if let (Some(lat), Some(lon), Some(alt)) = (st_lat, st_lon, st_alt) {
+                let body_name = match st_body.and_then(|id| body_id_to_name(&cfg.bodies, id)) {
+                    Some(n) => n,
+                    None => String::new(),
+                };
+                if eph_map
+                    .get(&body_name)
+                    .and_then(|e| e.props.as_ref())
+                    .is_some()
+                {
+                    let pos = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    let mut channels: Vec<(Channel, FieldConfig, f64)> = Vec::new();
+                    for (name, value, tau) in &field_values {
+                        if let Some(bs) = sensor_config(name) {
+                            let sensor_ttl = bs.ttl;
+                            let Some(effective_tau) = relay_tau(*tau, bs.tau) else {
+                                continue;
+                            };
+                            let fc = FieldConfig {
+                                key: bs.key.clone(),
+                                name: bs.key.clone(),
+                                band_id: None,
+                                kernel: bs.kernel,
+                                channel_ref: Some(bs.channel_ref),
+                                tau: effective_tau,
+                                tau_src: crate::archivar::types::TauSource::Measured,
+                                absorption: 0.0,
+                                advection: 0.0,
+                                unit: bs.unit.clone(),
+                                freq: crate::spectral::SPECTRAL_NO_BAND,
+                                bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                                fold: None,
+                                aperture: Aperture::None,
+                            };
+                            if value.is_finite() {
+                                channels.push((
+                                    Channel {
+                                        z: 0.0,
+                                        freq: crate::spectral::SPECTRAL_NO_BAND,
+                                        bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                                        epoch: now,
+                                        station_code: None,
+                                        position: pos.clone(),
+                                        name: fc.name.clone(),
+                                        value: *value,
+                                    },
+                                    fc,
+                                    sensor_ttl,
+                                ));
+                            }
+                        }
+                    }
+                    let mut samples = Vec::new();
+                    for (channel, sensor, sensor_ttl) in channels {
+                        if let Some(sample) =
+                            anchor(&channel, &sensor, sensor_ttl, None, None, None, &eph_map)
+                        {
+                            samples.push(sample);
+                        }
+                    }
+                    if !samples.is_empty() && cfg.consent.load(Ordering::SeqCst) {
+                        let _ = cfg.sample_tx.send(samples);
+                    }
+                }
+            } else if let Some(body_id) = st_body {
+                let body_name = match body_id_to_name(&cfg.bodies, body_id) {
+                    Some(n) => n,
+                    None => String::new(),
+                };
+                let frame = Frame::Barycenter {
+                    body_name: body_name.clone(),
+                    scale: 1.0,
+                };
+                let pos = Position::Source;
+                let mut channels: Vec<(Channel, FieldConfig, f64)> = Vec::new();
+                for (name, value, tau) in &field_values {
+                    if let Some(bs) = sensor_config(name) {
+                        let sensor_ttl = bs.ttl;
+                        let Some(effective_tau) = relay_tau(*tau, bs.tau) else {
+                            continue;
+                        };
+                        let fc = FieldConfig {
+                            key: bs.key.clone(),
+                            name: bs.key.clone(),
+                            band_id: None,
+                            kernel: bs.kernel,
+                            channel_ref: Some(bs.channel_ref),
+                            tau: effective_tau,
+                            tau_src: crate::archivar::types::TauSource::Measured,
+                            absorption: 0.0,
+                            advection: 0.0,
+                            unit: bs.unit.clone(),
+                            freq: crate::spectral::SPECTRAL_NO_BAND,
+                            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                            fold: None,
+                            aperture: Aperture::None,
+                        };
+                        if value.is_finite() {
+                            channels.push((
+                                Channel {
+                                    z: 0.0,
+                                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                                    epoch: now,
+                                    station_code: None,
+                                    position: pos.clone(),
+                                    name: fc.name.clone(),
+                                    value: *value,
+                                },
+                                fc,
+                                sensor_ttl,
+                            ));
+                        }
+                    }
+                }
+                let mut samples = Vec::new();
+                for (channel, sensor, sensor_ttl) in channels {
+                    if let Some(sample) = anchor(
+                        &channel,
+                        &sensor,
+                        sensor_ttl,
+                        None,
+                        Some(&frame),
+                        None,
+                        &eph_map,
+                    ) {
+                        samples.push(sample);
+                    }
+                }
+                if !samples.is_empty() {
+                    let _ = cfg.sample_tx.send(samples);
+                }
+            }
+            let mut records: Vec<SampleRecord> = Vec::new();
+            let response_epoch;
+            if !queries.is_empty() {
+                let (t0, x0, y0, z0) = queries[0];
+                let mut extent = 0.0f64;
+                for &(_, qx, qy, qz) in &queries[1..] {
+                    let d = ((qx - x0).powi(2) + (qy - y0).powi(2) + (qz - z0).powi(2)).sqrt();
+                    if d > extent {
+                        extent = d;
+                    }
+                }
+                let center = [x0, y0, z0];
+                let (diode_ref, diode_off, diode_gs) = {
+                    let d = match cfg.diode.read() {
+                        Ok(d) => d,
+                        Err(p) => p.into_inner(),
+                    };
+                    (d.force_ref, d.expose_offset, browser_grid_step)
+                };
+                let softening = if diode_gs > 0.0 { diode_gs } else { 0.0 };
+                let scale2 = softening * softening;
+                let mut floor = [0.0f64; 9];
+                for ft in 0..9 {
+                    let r = diode_ref[ft] as f64;
+                    if r.is_finite() && r > 0.0 && scale2 > 0.0 {
+                        floor[ft] = r * (0.5f64).powi(diode_off as i32) / scale2;
+                    }
+                }
+                sense_membrane(
+                    &field,
+                    MembraneCtx {
+                        center,
+                        t2: t0,
+                        pad: extent,
+                        delta_t_cache,
+                        floor: &floor,
+                        softening,
+                        forward: [0.0, 0.0, 0.0],
+                        eph: &eph_map,
+                    },
+                    &mut records,
+                );
+                if let Some(cset) = &field.curves {
+                    crate::archivar::emit_curves(cset, center, t0, extent, &mut records);
+                }
+                response_epoch = t0;
+            } else {
+                response_epoch = now;
+            }
+
+            let mut out = Vec::with_capacity(19 + records.len() * 208);
+            out.extend_from_slice(&[0xCF, 0x86]);
+            out.push(9u8);
+            out.extend_from_slice(&response_epoch.to_le_bytes());
+            out.extend_from_slice(&id.to_le_bytes());
+            out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+            for &(
+                x,
+                y,
+                z,
+                val,
+                epoch,
+                ttl,
+                tau,
+                extent,
+                kernel_id,
+                channel_ref,
+                absorption,
+                advection,
+                vx,
+                vy,
+                vz,
+                pole_x,
+                pole_y,
+                pole_z,
+                j2,
+                j4,
+                r_eq,
+                color_index,
+                freq,
+                bin_width,
+                phase,
+                presence,
+            ) in &records
+            {
+                out.extend_from_slice(&x.to_le_bytes());
+                out.extend_from_slice(&y.to_le_bytes());
+                out.extend_from_slice(&z.to_le_bytes());
+                out.extend_from_slice(&val.to_le_bytes());
+                out.extend_from_slice(&epoch.to_le_bytes());
+                out.extend_from_slice(&ttl.to_le_bytes());
+                out.extend_from_slice(&tau.to_le_bytes());
+                out.extend_from_slice(&extent.to_le_bytes());
+                out.extend_from_slice(&kernel_id.to_le_bytes());
+                out.extend_from_slice(&channel_ref.to_le_bytes());
+                out.extend_from_slice(&absorption.to_le_bytes());
+                out.extend_from_slice(&advection.to_le_bytes());
+                out.extend_from_slice(&vx.to_le_bytes());
+                out.extend_from_slice(&vy.to_le_bytes());
+                out.extend_from_slice(&vz.to_le_bytes());
+                out.extend_from_slice(&pole_x.to_le_bytes());
+                out.extend_from_slice(&pole_y.to_le_bytes());
+                out.extend_from_slice(&pole_z.to_le_bytes());
+                out.extend_from_slice(&j2.to_le_bytes());
+                out.extend_from_slice(&j4.to_le_bytes());
+                out.extend_from_slice(&r_eq.to_le_bytes());
+                out.extend_from_slice(&color_index.to_le_bytes());
+                out.extend_from_slice(&freq.to_le_bytes());
+                out.extend_from_slice(&bin_width.to_le_bytes());
+                out.extend_from_slice(&phase.to_le_bytes());
+                out.extend_from_slice(&presence.to_le_bytes());
+            }
+            if !sent_manifest {
+                sent_manifest = true;
+                let registry =
+                    crate::mathematikerin::channel::channel_registry_from_sources(&cfg.sources);
+                if let Err(e) = write_ws_binary(&mut stream, &manifest_bytes(&registry)) {
+                    eprintln!(
+                        "ws manifest write returned {:?} — the browser connection ended",
+                        e.kind()
+                    );
+                    return;
+                }
+            }
+            if let Err(e) = write_ws_binary(&mut stream, &out) {
+                eprintln!(
+                    "ws frame write returned {:?} — the browser connection ended",
+                    e.kind()
+                );
+                return;
+            }
+            if let Some(frame) = last_kinetic {
+                if let Err(e) = write_ws_binary(&mut stream, &kinetic_frame_bytes(&frame)) {
+                    eprintln!(
+                        "ws kinetic write returned {:?} — the browser connection ended",
+                        e.kind()
+                    );
+                    return;
+                }
+            }
+            if !sent_verdicts && !cfg.verdicts.is_empty() {
+                sent_verdicts = true;
+                let live = live_verdicts(&cfg.verdicts, system_now(&cfg.time));
+                if !live.is_empty() {
+                    if let Err(e) = write_ws_binary(&mut stream, &encode_weberin_verdicts(&live)) {
+                        eprintln!(
+                            "ws verdict write returned {:?} — the browser connection ended",
+                            e.kind()
+                        );
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+fn read_signal(s: &mut TcpStream) -> Option<String> {
+    let mut buf = [0u8; 8192];
+    let mut acc = Vec::new();
+    loop {
+        match s.read(&mut buf) {
+            Ok(0) => return None,
+            Ok(n) => {
+                acc.extend_from_slice(&buf[..n]);
+                if acc.windows(4).any(|w| w == b"\r\n\r\n") {
+                    return Some(String::from_utf8_lossy(&acc).to_string());
+                }
+                if acc.len() > 65536 {
+                    return None;
+                }
+            }
+            Err(_) => return None,
+        }
+    }
+}
+fn read_ws_frame_part(stream: &mut TcpStream) -> Option<(u8, bool, Vec<u8>)> {
+    let mut header = [0u8; 2];
+    stream.read_exact(&mut header).ok()?;
+    let fin = (header[0] & 0x80) != 0;
+    let opcode = header[0] & 0x0f;
+    let masked = (header[1] & 0x80) != 0;
+    let mut plen = (header[1] & 0x7f) as usize;
+    if plen == 126 {
+        let mut e = [0u8; 2];
+        stream.read_exact(&mut e).ok()?;
+        plen = u16::from_be_bytes(e) as usize;
+    } else if plen == 127 {
+        let mut e = [0u8; 8];
+        stream.read_exact(&mut e).ok()?;
+        plen = u64::from_be_bytes(e) as usize;
+    }
+    if plen > 1 << 24 {
+        return None;
+    }
+    let mut mk = [0u8; 4];
+    if masked {
+        stream.read_exact(&mut mk).ok()?;
+    }
+    let mut payload = vec![0u8; plen];
+    stream.read_exact(&mut payload).ok()?;
+    if masked {
+        for i in 0..payload.len() {
+            payload[i] ^= mk[i % 4];
+        }
+    }
+    Some((opcode, fin, payload))
+}
+fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
+    let (opcode, mut fin, mut payload) = read_ws_frame_part(stream)?;
+    while !fin {
+        let (next_op, next_fin, mut next_payload) = read_ws_frame_part(stream)?;
+        match next_op {
+            0x0 => {
+                if payload.len() + next_payload.len() > 1 << 24 {
+                    return None;
+                }
+                payload.append(&mut next_payload);
+                fin = next_fin;
+            }
+            0x8 => {
+                return Some(WsFrame {
+                    opcode: 0x8,
+                    payload: next_payload,
+                });
+            }
+            _ => {}
+        }
+    }
+    Some(WsFrame { opcode, payload })
+}
+fn sha1(data: &[u8]) -> [u8; 20] {
+    let mut h: [u32; 5] = [0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0];
+    let bl = (data.len() as u64) * 8;
+    let mut m = data.to_vec();
+    m.push(0x80);
+    while m.len() % 64 != 56 {
+        m.push(0);
+    }
+    m.extend_from_slice(&bl.to_be_bytes());
+    for chunk in m.chunks(64) {
+        let mut w = [0u32; 80];
+        for i in 0..16 {
+            w[i] = u32::from_be_bytes([
+                chunk[i * 4],
+                chunk[i * 4 + 1],
+                chunk[i * 4 + 2],
+                chunk[i * 4 + 3],
+            ]);
+        }
+        for i in 16..80 {
+            w[i] = (w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16]).rotate_left(1);
+        }
+        let (mut a, mut b, mut c, mut d, mut e) = (h[0], h[1], h[2], h[3], h[4]);
+        for i in 0..80 {
+            let (f, k) = match i {
+                0..=19 => ((b & c) | ((!b) & d), 0x5A827999),
+                20..=39 => (b ^ c ^ d, 0x6ED9EBA1),
+                40..=59 => ((b & c) | (b & d) | (c & d), 0x8F1BBCDC),
+                _ => (b ^ c ^ d, 0xCA62C1D6),
+            };
+            let temp = a
+                .rotate_left(5)
+                .wrapping_add(f)
+                .wrapping_add(e)
+                .wrapping_add(k)
+                .wrapping_add(w[i]);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = temp;
+        }
+        h[0] = h[0].wrapping_add(a);
+        h[1] = h[1].wrapping_add(b);
+        h[2] = h[2].wrapping_add(c);
+        h[3] = h[3].wrapping_add(d);
+        h[4] = h[4].wrapping_add(e);
+    }
+    let mut r = [0u8; 20];
+    for i in 0..5 {
+        r[i * 4..i * 4 + 4].copy_from_slice(&h[i].to_be_bytes());
+    }
+    r
+}
+fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
+    let pan = frame.pan_ms.filter(|v| v.is_finite());
+    let tilt = frame.tilt_ms.filter(|v| v.is_finite());
+    let mut flags = 0u8;
+    if pan.is_some() {
+        flags |= 0x01;
+    }
+    if tilt.is_some() {
+        flags |= 0x02;
+    }
+    let n = frame.n as usize;
+    let state_bytes = n.div_ceil(4).div_ceil(4) * 4;
+    let mut out = Vec::with_capacity(
+        12 + (n + 1) * 4
+            + 2 * n * 4
+            + state_bytes
+            + (pan.is_some() as usize) * 4
+            + (tilt.is_some() as usize) * 4,
+    );
+    out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG, flags]);
+    out.extend_from_slice(&frame.n.to_le_bytes());
+    out.extend_from_slice(&frame.schema_hash.to_le_bytes());
+    out.extend_from_slice(&[0u8, 0u8]);
+    for k in 0..=n {
+        out.extend_from_slice(&((2 * k) as u32).to_le_bytes());
+    }
+    for k in 0..n {
+        out.extend_from_slice(&frame.omega[k].to_le_bytes());
+        out.extend_from_slice(&frame.aperture[k].to_le_bytes());
+    }
+    let mut state = vec![0u8; state_bytes];
+    for k in 0..n {
+        let v = match frame.state[k] {
+            TriState::Absent => 0u8,
+            TriState::Pending => 1u8,
+            TriState::Present => 2u8,
+        };
+        state[k / 4] |= v << ((k % 4) * 2);
+    }
+    out.extend_from_slice(&state);
+    if let Some(p) = pan {
+        out.extend_from_slice(&p.to_le_bytes());
+    }
+    if let Some(t) = tilt {
+        out.extend_from_slice(&t.to_le_bytes());
+    }
+    out
+}
+
+fn manifest_bytes(registry: &crate::mathematikerin::channel::ChannelRegistry) -> Vec<u8> {
+    let mut out = Vec::with_capacity(10);
+    out.extend_from_slice(&[0xCF, 0x86, MANIFEST_TAG, 0x00]);
+    out.extend_from_slice(&(registry.len() as u16).to_le_bytes());
+    out.extend_from_slice(&registry.schema_hash().to_le_bytes());
+    for d in registry.descriptors() {
+        let spec = d.spec_token();
+        let sb = spec.as_bytes();
+        out.extend_from_slice(&(sb.len() as u16).to_le_bytes());
+        out.extend_from_slice(sb);
+        let ub = d.unit.as_bytes();
+        out.extend_from_slice(&[ub.len() as u8]);
+        out.extend_from_slice(ub);
+    }
+    out
+}
+
+fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) -> std::io::Result<()> {
+    let mut h = [0u8; 10];
+    h[0] = 0x82;
+    if data.len() <= 125 {
+        h[1] = data.len() as u8;
+        stream.write_all(&h[..2])?;
+    } else if data.len() <= 65535 {
+        h[1] = 126;
+        let e = (data.len() as u16).to_be_bytes();
+        h[2] = e[0];
+        h[3] = e[1];
+        stream.write_all(&h[..4])?;
+    } else {
+        h[1] = 127;
+        let e = (data.len() as u64).to_be_bytes();
+        h[2..10].copy_from_slice(&e);
+        stream.write_all(&h)?;
+    }
+    stream.write_all(data)?;
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn our_frame_reader_accepts_a_frame_written_by_tungstenite() {
+        use std::net::{TcpListener, TcpStream};
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind");
+        let addr = listener.local_addr().expect("addr");
+        let client = TcpStream::connect(addr).expect("connect");
+        let (mut server, _) = listener.accept().expect("accept");
+        let payload = b"{\"t\":1}".to_vec();
+        let mut ws = tungstenite::WebSocket::from_raw_socket(
+            client,
+            tungstenite::protocol::Role::Client,
+            None,
+        );
+        ws.send(tungstenite::Message::Binary(payload.clone().into()))
+            .expect("tungstenite writes the frame");
+        let read = read_ws_frame_raw(&mut server).expect("our reader takes the frame");
+        assert_eq!(read.opcode, 0x2, "binary opcode");
+        assert_eq!(read.payload, payload, "payload byte-identical");
+    }
+
+    #[test]
+    fn the_wire_tau_wins_when_positive() {
+        assert_eq!(relay_tau(30.0, Some(60.0)), Some(30.0));
+        assert_eq!(relay_tau(30.0, None), Some(30.0));
+    }
+
+    #[test]
+    fn the_absent_wire_tau_falls_back_to_the_line() {
+        assert_eq!(relay_tau(0.0, Some(60.0)), Some(60.0));
+        assert_eq!(relay_tau(-1.0, Some(60.0)), Some(60.0));
+        assert_eq!(relay_tau(f64::NAN, Some(60.0)), Some(60.0));
+    }
+
+    #[test]
+    fn the_line_without_tau_stays_absent() {
+        assert_eq!(relay_tau(0.0, None), None);
+        assert_eq!(relay_tau(0.0, Some(0.0)), None);
+        assert_eq!(relay_tau(0.0, Some(-1.0)), None);
+    }
+
+    #[test]
+    fn kinetic_frame_carries_csr_offsets_and_recovers_the_arrays() {
+        let mut frame = PresenceFrame {
+            n: 3,
+            schema_hash: 0xABCD,
+            omega: [0.0; 16],
+            aperture: [0.0; 16],
+            state: [TriState::Absent; 16],
+            partials_hz: [0.0; 16],
+            delay_rad: [0.0; 16],
+            pan_ms: Some(1.5),
+            tilt_ms: None,
+            tau_ticks: 0,
+        };
+        frame.omega[0] = 1.0;
+        frame.omega[1] = 2.0;
+        frame.omega[2] = 3.0;
+        frame.aperture[0] = 0.5;
+        frame.aperture[1] = 0.6;
+        frame.aperture[2] = 0.7;
+        frame.state[0] = TriState::Present;
+        let bytes = kinetic_frame_bytes(&frame);
+        assert_eq!(&bytes[0..4], &[0xCF, 0x86, KINETIC_TAG, 0x01]);
+        assert_eq!(u16::from_le_bytes([bytes[4], bytes[5]]), 3);
+        let mut o = 12;
+        let mut offsets = [0u32; 4];
+        for slot in offsets.iter_mut() {
+            *slot = u32::from_le_bytes([bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]]);
+            o += 4;
+        }
+        assert_eq!(offsets, [0, 2, 4, 6]);
+        let read = |i: usize| {
+            f32::from_le_bytes([
+                bytes[o + i * 4],
+                bytes[o + i * 4 + 1],
+                bytes[o + i * 4 + 2],
+                bytes[o + i * 4 + 3],
+            ])
+        };
+        assert_eq!(read(0), 1.0);
+        assert_eq!(read(1), 0.5);
+        assert_eq!(read(4), 3.0);
+        assert_eq!(read(5), 0.7);
+    }
+
+    #[test]
+    fn the_bind_reaches_the_ether_when_unset() {
+        assert_eq!(bind_from(None), "127.0.0.1");
+        assert_eq!(bind_from(Some("   ".to_string())), "127.0.0.1");
+    }
+
+    #[test]
+    fn the_bind_honours_the_operator_address() {
+        assert_eq!(bind_from(Some("127.0.0.1".to_string())), "127.0.0.1");
+        assert_eq!(bind_from(Some(" 0.0.0.0 ".to_string())), "0.0.0.0");
+    }
+
+    #[cfg(feature = "browser_relay")]
+    fn relay_ws_config() -> WsConfig {
+        let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
+        drop(field_tx);
+        let (kinetic_tx, kinetic_rx) = mpsc::channel::<PresenceFrame>();
+        drop(kinetic_tx);
+        let (sample_tx, sample_rx) = mpsc::channel::<Vec<Sample>>();
+        drop(sample_rx);
+        let (presence_tx, presence_rx) =
+            mpsc::channel::<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>();
+        drop(presence_rx);
+        WsConfig {
+            bodies: Arc::new(Vec::new()),
+            index_html: Vec::new(),
+            constants_js: Vec::new(),
+            field_rx,
+            kinetic_rx,
+            sample_tx,
+            presence_tx,
+            time: Arc::new(Mutex::new(None::<LeapSeconds>)),
+            consent: Arc::new(AtomicBool::new(false)),
+            diode: Arc::new(RwLock::new(DiodeState {
+                force_ref: [0.0; 9],
+                expose_offset: crate::archivar::EXPOSE_OFFSET_BASE,
+                em_color: [0.0; 4],
+            })),
+            sources: Arc::new(Vec::new()),
+            verdicts: Arc::new(Vec::new()),
+        }
+    }
+
+    #[cfg(feature = "browser_relay")]
+    fn ingress_status_line(path: &str) -> String {
+        use std::io::BufRead;
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind a loopback port");
+        let addr = listener.local_addr().expect("read the loopback address");
+        let server = thread::spawn(move || {
+            let (stream, _) = listener.accept().expect("accept the client");
+            handle_ingress(stream, relay_ws_config());
+        });
+        let mut client = TcpStream::connect(addr).expect("connect to the relay");
+        client
+            .write_all(format!("GET {} HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n", path).as_bytes())
+            .expect("write the request");
+        let mut reader = std::io::BufReader::new(&mut client);
+        let mut status = String::new();
+        reader.read_line(&mut status).expect("read the status line");
+        drop(reader);
+        drop(client);
+        server.join().expect("the relay thread ends");
+        status
+    }
+
+    #[cfg(feature = "browser_relay")]
+    #[test]
+    fn top_level_static_js_routes_reach_the_asset() {
+        std::env::set_current_dir(env!("CARGO_MANIFEST_DIR"))
+            .expect("the manifest root is the working directory");
+        for module in ["palette.js", "webserial.js", "sensorium.js", "radiator.js"] {
+            let status = ingress_status_line(&format!("/{}", module));
+            assert!(
+                status.starts_with("HTTP/1.1 200 OK"),
+                "GET /{} returned {}",
+                module,
+                status.trim_end()
+            );
+        }
+        let absent = ingress_status_line("/does-not-exist.js");
+        assert!(
+            absent.starts_with("HTTP/1.1 404 Not Found"),
+            "GET /does-not-exist.js returned {}",
+            absent.trim_end()
+        );
+    }
+}

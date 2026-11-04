@@ -1,0 +1,611 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+
+use omegaflow::archivar::{
+    BodyEphemeris, ExtractResult, J2000_EPOCH, LeapSeconds, SourceConfig, body_barycenter_position,
+    embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
+};
+use omegaflow::cdn::CDN_BASE;
+use omegaflow::cometels::parse_catalog;
+use omegaflow::dastcom::{
+    AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
+};
+use omegaflow::weberin::{
+    Agreement, BODY_COMET, BodyOutcome, CometelsLine, CometelsOutcome, PLANET_WEBERIN_TOL_M,
+    ThreeWayVerdict, TriadFold, WEBERIN_TOL_M, Weberin, WeberinFeed, body_number_table, classify,
+    frame_origin_name, separation_m, three_way_fold, woven_major_bodies,
+};
+
+const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
+const DCOM5_TAG: &str = "ssd.jpl.nasa.gov-dcom5";
+const COMETELS_TAG: &str = "minorplanetcenter.net";
+
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
+    if let Ok(bytes) = std::fs::read(path) {
+        return Some(bytes);
+    }
+    if !path.starts_with("data/") {
+        return None;
+    }
+    let url = format!("{}/{}/{}", CDN_BASE, netloc, asset);
+    let bytes = fetch_raw_bytes(&url)?;
+    if let Some(parent) = std::path::Path::new(path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if std::fs::write(path, &bytes).is_err() {
+        return None;
+    }
+    Some(bytes)
+}
+
+fn arg_value(args: &[String], name: &str) -> Option<String> {
+    args.iter()
+        .position(|a| a == name)
+        .and_then(|i| args.get(i + 1))
+        .cloned()
+}
+
+fn usage() {
+    println!(
+        "usage: weberin_body_verdict [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--dcom5 <dcom5_comets.bin>] [--cometels <cometels.bin>] [--epoch <jd>] [--tol <m>]"
+    );
+}
+
+fn cdn_parts(url: &str) -> Option<(String, String)> {
+    let rest = url.strip_prefix(CDN_BASE)?.strip_prefix('/')?;
+    let (netloc, asset) = rest.split_once('/')?;
+    Some((netloc.to_string(), asset.to_string()))
+}
+
+fn verdict_line(name: &str, outcome: &BodyOutcome) -> String {
+    match outcome {
+        BodyOutcome::Placed { sep } => format!("weberin {name} state placed sep {sep:e}"),
+        BodyOutcome::Absent { line } => {
+            format!(
+                "weberin {name} state absent sep absent missing {}",
+                line.word()
+            )
+        }
+        BodyOutcome::Riss { sep, knot } => format!(
+            "weberin {name} state riss sep {sep:e} knot {}+{}",
+            knot[0].map(|w| w.word()).unwrap_or("absent"),
+            knot[1].map(|w| w.word()).unwrap_or("absent")
+        ),
+    }
+}
+
+fn cometels_line(name: &str, outcome: &CometelsOutcome) -> String {
+    match outcome {
+        CometelsOutcome::Placed { sep } => {
+            format!("weberin-cometels {name} state placed sep {sep:e}")
+        }
+        CometelsOutcome::Absent { line } => format!(
+            "weberin-cometels {name} state absent sep absent missing {}",
+            match line {
+                CometelsLine::Spk => "spk-ephemeris",
+                CometelsLine::Cometels => "cometels-keplerian",
+            }
+        ),
+        CometelsOutcome::Riss { sep, knot } => format!(
+            "weberin-cometels {name} state riss sep {sep:e} knot {}+{}",
+            match knot[0] {
+                CometelsLine::Spk => "spk-ephemeris",
+                CometelsLine::Cometels => "cometels-keplerian",
+            },
+            match knot[1] {
+                CometelsLine::Spk => "spk-ephemeris",
+                CometelsLine::Cometels => "cometels-keplerian",
+            }
+        ),
+    }
+}
+
+fn agreement_word(a: &Agreement) -> &'static str {
+    match a {
+        Agreement::Placed { .. } => "placed",
+        Agreement::Riss { .. } => "riss",
+    }
+}
+
+fn agreement_sep(a: &Agreement) -> f64 {
+    match a {
+        Agreement::Placed { sep } => *sep,
+        Agreement::Riss { sep } => *sep,
+    }
+}
+
+fn fold_word(f: &TriadFold) -> String {
+    match f {
+        TriadFold::United => "united all-three".to_string(),
+        TriadFold::Shared { line } => format!("shared consensus {}", line.word()),
+        TriadFold::Outlier { line, knot } => format!(
+            "outlier {} against {}+{}",
+            line.word(),
+            knot[0].word(),
+            knot[1].word()
+        ),
+        TriadFold::Severed => "severed no-pair-converges".to_string(),
+    }
+}
+
+fn triad_line(t: &ThreeWayVerdict) -> String {
+    format!(
+        "weberin-3way {} spk-inpop {} {:.3e} | spk-epm {} {:.3e} | inpop-epm {} {:.3e} | fold {}",
+        t.name,
+        agreement_word(&t.spk_inpop),
+        agreement_sep(&t.spk_inpop),
+        agreement_word(&t.spk_epm),
+        agreement_sep(&t.spk_epm),
+        agreement_word(&t.inpop_epm),
+        agreement_sep(&t.inpop_epm),
+        fold_word(&t.fold)
+    )
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--help" || a == "-h") {
+        usage();
+        return;
+    }
+    let eph_dir = match arg_value(&args, "--eph-dir") {
+        Some(d) => d,
+        None => "data".to_string(),
+    };
+    let dastcom_path = match arg_value(&args, "--dastcom") {
+        Some(d) => d,
+        None => "sources/ssd.jpl.nasa.gov/dastcom_asteroids.bin".to_string(),
+    };
+    let dcom5_path = match arg_value(&args, "--dcom5") {
+        Some(d) => d,
+        None => "sources/ssd.jpl.nasa.gov/dcom5_comets.bin".to_string(),
+    };
+    let cometels_path = match arg_value(&args, "--cometels") {
+        Some(d) => d,
+        None => "data/www.minorplanetcenter.net/cometels.bin".to_string(),
+    };
+    let tol_m = match arg_value(&args, "--tol").and_then(|w| w.parse::<f64>().ok()) {
+        Some(t) if t.is_finite() && t > 0.0 => t,
+        Some(_) => {
+            eprintln!("weberin: --tol not a finite positive value — the weave stays closed");
+            return;
+        }
+        None => WEBERIN_TOL_M,
+    };
+    let jd = match arg_value(&args, "--epoch").and_then(|w| w.parse::<f64>().ok()) {
+        Some(j) if j.is_finite() && j > 0.0 => j,
+        Some(_) => {
+            eprintln!("weberin: --epoch not a finite JD — the weave stays closed");
+            return;
+        }
+        None => {
+            let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(embedded_lsk()));
+            match system_now(&time) {
+                Some(tdb) => tdb / 86400.0 + J2000_EPOCH,
+                None => {
+                    eprintln!(
+                        "weberin: the system TDB epoch reads void (naif0012 leap table) — give --epoch <jd>"
+                    );
+                    return;
+                }
+            }
+        }
+    };
+    let tdb = (jd - J2000_EPOCH) * 86400.0;
+
+    let dastcom_bytes = match ensure_bin(&dastcom_path, DASTCOM_TAG, "dastcom_asteroids.bin") {
+        Some(b) => b,
+        None => {
+            eprintln!(
+                "weberin: {dastcom_path} bin void — absent on disk and the CDN fetch returned non-200 — the second body line stays unread"
+            );
+            return;
+        }
+    };
+    let recs: Vec<AsteroidRec> = dastcom_bytes
+        .chunks_exact(RECORD_STRIDE)
+        .filter_map(parse_record)
+        .collect();
+    if recs.is_empty() {
+        eprintln!(
+            "weberin: {dastcom_path} carries no {}-byte asteroid record",
+            RECORD_STRIDE
+        );
+        return;
+    }
+
+    let comets: Vec<CometRec> = match ensure_bin(&dcom5_path, DCOM5_TAG, "dcom5_comets.bin") {
+        Some(b) => b
+            .chunks_exact(COMET_RECORD_BYTES)
+            .filter_map(parse_comet_record)
+            .collect(),
+        None => {
+            println!(
+                "weberin: {dcom5_path} bin void — absent on disk and the CDN fetch returned non-200 — the comet second line stays unread"
+            );
+            Vec::new()
+        }
+    };
+    if comets.is_empty() {
+        println!(
+            "weberin: {dcom5_path} carries no {}-byte comet record",
+            COMET_RECORD_BYTES
+        );
+    }
+
+    let cometels: Vec<omegaflow::cometels::CometelsRec> = match ensure_bin(
+        &cometels_path,
+        COMETELS_TAG,
+        "cometels.bin",
+    ) {
+        Some(b) => parse_catalog(&b),
+        None => {
+            println!(
+                "weberin: {cometels_path} bin void — absent on disk and the CDN fetch returned non-200 — the cometels second line stays unread"
+            );
+            Vec::new()
+        }
+    };
+    if cometels.is_empty() {
+        println!("weberin: {cometels_path} carries no cometels element record (magic CTL1)");
+    }
+
+    println!(
+        "=== weberin — the second body line (dastcom/MPC Keplerian elements, INPOP + EPM SPK planets/moon) against the JPL SPK ephemeris points ==="
+    );
+
+    let sources = load_sources();
+    let mut bodies: Vec<(String, SourceConfig)> = sources
+        .into_iter()
+        .filter(|s| s.format == "ephemeris_binary" || s.format == "orbit_bin")
+        .filter_map(|s| s.body.clone().map(|b| (b, s)))
+        .collect();
+    bodies.sort_by(|a, b| a.0.cmp(&b.0));
+    if bodies.is_empty() {
+        println!(
+            "weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void"
+        );
+        return;
+    }
+    println!(
+        "dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop/de-vs-epm/inpop-vs-epm lines) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map",
+        recs.len(),
+        comets.len(),
+        bodies.len(),
+        body_number_table().len(),
+        BODY_COMET.len()
+    );
+
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "weberin: the embedded leap-second table reads void — the body line cannot be judged"
+        );
+        return;
+    };
+    let Some(origin) = frame_origin_name() else {
+        println!("weberin: the frame origin is absent from the body table — no sun line");
+        return;
+    };
+    let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut opened = 0usize;
+    for (name, src) in &bodies {
+        let Some((netloc, asset)) = cdn_parts(&src.url) else {
+            println!(
+                "weberin {name}: register url {} is not a CDN release path — the body line is not read",
+                src.url
+            );
+            continue;
+        };
+        let path = format!("{eph_dir}/{netloc}/{asset}");
+        if ensure_bin(&path, &netloc, &asset).is_none() {
+            println!(
+                "weberin {name} bin void {path} — absent on disk and the CDN fetch returned non-200"
+            );
+            continue;
+        }
+        match extract(src, &path, tdb, &lsk) {
+            ExtractResult::WithEphemeris(_, body_eph) => {
+                if name.as_str() == origin.as_str() {
+                    sun_map.insert(name.clone(), (*body_eph).clone());
+                }
+                eph.insert(name.clone(), *body_eph);
+                opened += 1;
+            }
+            _ => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
+        }
+    }
+    if sun_map.is_empty() {
+        println!(
+            "weberin: the sun reference is void — the heliocentric dastcom line cannot fold to the barycentric frame"
+        );
+        return;
+    }
+
+    const INPOP_NETLOC: &str = "ftp.imcce.fr";
+    let mut inpop_map: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut opened_inpop = 0usize;
+    for name in woven_major_bodies() {
+        let asset = format!("ephemeris_inpop_{}.bin", name);
+        let path = format!("{eph_dir}/{INPOP_NETLOC}/{asset}");
+        let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset) else {
+            println!(
+                "weberin {name} inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP line stays unread"
+            );
+            continue;
+        };
+        match parse_ephemeris_binary(&bytes) {
+            Some(e) => {
+                inpop_map.insert(name.clone(), e);
+                opened_inpop += 1;
+            }
+            None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
+        }
+    }
+
+    const EPM_NETLOC: &str = "ftp.iaaras.ru";
+    let mut epm_map: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut opened_epm = 0usize;
+    for name in woven_major_bodies() {
+        let asset = format!("ephemeris_epm_{}.bin", name);
+        let path = format!("{eph_dir}/{EPM_NETLOC}/{asset}");
+        let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset) else {
+            println!(
+                "weberin {name} epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM line stays unread"
+            );
+            continue;
+        };
+        match parse_ephemeris_binary(&bytes) {
+            Some(e) => {
+                epm_map.insert(name.clone(), e);
+                opened_epm += 1;
+            }
+            None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
+        }
+    }
+
+    let mut sun_inpop: HashMap<String, BodyEphemeris> = HashMap::new();
+    {
+        const SUN_ASSET: &str = "ephemeris_inpop_sun.bin";
+        let path = format!("{eph_dir}/{INPOP_NETLOC}/{SUN_ASSET}");
+        match ensure_bin(&path, INPOP_NETLOC, SUN_ASSET) {
+            Some(bytes) => match parse_ephemeris_binary(&bytes) {
+                Some(e) => {
+                    sun_inpop.insert(origin.clone(), e);
+                }
+                None => println!("weberin sun: {path} reads but does not parse to a BodyEphemeris"),
+            },
+            None => println!(
+                "weberin sun inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP sun line stays unread"
+            ),
+        }
+    }
+    let mut sun_epm: HashMap<String, BodyEphemeris> = HashMap::new();
+    {
+        const SUN_ASSET: &str = "ephemeris_epm_sun.bin";
+        let path = format!("{eph_dir}/{EPM_NETLOC}/{SUN_ASSET}");
+        match ensure_bin(&path, EPM_NETLOC, SUN_ASSET) {
+            Some(bytes) => match parse_ephemeris_binary(&bytes) {
+                Some(e) => {
+                    sun_epm.insert(origin.clone(), e);
+                }
+                None => println!("weberin sun: {path} reads but does not parse to a BodyEphemeris"),
+            },
+            None => println!(
+                "weberin sun epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM sun line stays unread"
+            ),
+        }
+    }
+
+    let de_sun = sun_map
+        .get(origin.as_str())
+        .and_then(|_| body_barycenter_position(origin.as_str(), tdb, &eph));
+    let inpop_sun = body_barycenter_position(origin.as_str(), tdb, &sun_inpop);
+    let epm_sun = body_barycenter_position(origin.as_str(), tdb, &sun_epm);
+    match (de_sun, inpop_sun, epm_sun) {
+        (Some(de), Some(inp), Some(epm)) => {
+            let spk_inpop = classify(separation_m(de, inp), PLANET_WEBERIN_TOL_M);
+            let spk_epm = classify(separation_m(de, epm), PLANET_WEBERIN_TOL_M);
+            let inpop_epm = classify(separation_m(inp, epm), PLANET_WEBERIN_TOL_M);
+            let fold = three_way_fold(&spk_inpop, &spk_epm, &inpop_epm);
+            println!(
+                "{}",
+                triad_line(&ThreeWayVerdict {
+                    name: origin.clone(),
+                    spk_inpop,
+                    spk_epm,
+                    inpop_epm,
+                    fold,
+                })
+            );
+        }
+        _ => println!(
+            "weberin-3way sun absent — DE441 sun read {} of 1, INPOP sun read {} of 1, EPM sun read {} of 1",
+            if de_sun.is_some() { 1 } else { 0 },
+            if inpop_sun.is_some() { 1 } else { 0 },
+            if epm_sun.is_some() { 1 } else { 0 }
+        ),
+    }
+
+    let mut w = Weberin::new();
+    w.feed(WeberinFeed {
+        eph: Arc::new(eph),
+        sun: Arc::new(sun_map),
+        eph_inpop: Arc::new(inpop_map),
+        eph_epm: Arc::new(epm_map),
+        recs,
+        comets,
+        mpc_recs: Vec::new(),
+        frame_origin: frame_origin_name(),
+        major_bodies: woven_major_bodies(),
+    });
+    w.weave(tdb, tol_m);
+    if !w.woven {
+        eprintln!("weberin: the weave did not run — no body line is judged");
+        return;
+    }
+
+    let mut placed = 0usize;
+    let mut absent = 0usize;
+    let mut riss = 0usize;
+    for v in &w.verdicts {
+        match &v.outcome {
+            BodyOutcome::Placed { .. } => placed += 1,
+            BodyOutcome::Absent { .. } => absent += 1,
+            BodyOutcome::Riss { .. } => riss += 1,
+        }
+        println!("{}", verdict_line(&v.name, &v.outcome));
+    }
+    for t in &w.triads {
+        println!("{}", triad_line(t));
+    }
+    let cometels_verdicts = w.weave_cometels(&cometels, tdb, tol_m);
+    let mut cometels_placed = 0usize;
+    let mut cometels_absent = 0usize;
+    let mut cometels_riss = 0usize;
+    for v in &cometels_verdicts {
+        match &v.outcome {
+            CometelsOutcome::Placed { .. } => cometels_placed += 1,
+            CometelsOutcome::Absent { .. } => cometels_absent += 1,
+            CometelsOutcome::Riss { .. } => cometels_riss += 1,
+        }
+        println!("{}", cometels_line(&v.name, &v.outcome));
+    }
+    println!(
+        "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {opened_epm}/{} EPM body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss} | cometels {cometels_placed} placed {cometels_absent} absent {cometels_riss} riss of {} line(s)",
+        bodies.len(),
+        woven_major_bodies().len(),
+        woven_major_bodies().len(),
+        w.verdicts.len(),
+        cometels_verdicts.len(),
+    );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use omegaflow::weberin::{BodyLine, WitnessLine};
+
+    #[test]
+    fn placed_line_carries_the_measured_separation() {
+        let o = BodyOutcome::Placed { sep: 1.5e4 };
+        assert_eq!(
+            verdict_line("ceres", &o),
+            "weberin ceres state placed sep 1.5e4"
+        );
+    }
+
+    #[test]
+    fn absent_line_names_the_missing_line() {
+        let o = BodyOutcome::Absent {
+            line: BodyLine::Dastcom,
+        };
+        assert_eq!(
+            verdict_line("vesta", &o),
+            "weberin vesta state absent sep absent missing dastcom-keplerian"
+        );
+        let o = BodyOutcome::Absent {
+            line: BodyLine::Spk,
+        };
+        assert_eq!(
+            verdict_line("pluto", &o),
+            "weberin pluto state absent sep absent missing spk-ephemeris"
+        );
+    }
+
+    #[test]
+    fn riss_line_names_both_refusing_threads() {
+        let o = BodyOutcome::Riss {
+            sep: 2.3e9,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Dastcom)),
+            ],
+        };
+        assert_eq!(
+            verdict_line("apophis", &o),
+            "weberin apophis state riss sep 2.3e9 knot spk-ephemeris+dastcom-keplerian"
+        );
+    }
+
+    #[test]
+    fn absent_inpop_line_names_the_inpop_ephemeris() {
+        let o = BodyOutcome::Absent {
+            line: BodyLine::Inpop,
+        };
+        assert_eq!(
+            verdict_line("uranus", &o),
+            "weberin uranus state absent sep absent missing inpop-ephemeris"
+        );
+    }
+
+    #[test]
+    fn riss_line_names_the_inpop_knot() {
+        let o = BodyOutcome::Riss {
+            sep: 1.6e6,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Inpop)),
+            ],
+        };
+        assert_eq!(
+            verdict_line("neptune", &o),
+            "weberin neptune state riss sep 1.6e6 knot spk-ephemeris+inpop-ephemeris"
+        );
+    }
+
+    #[test]
+    fn triad_line_names_all_three_pair_classifications_and_the_fold() {
+        let t = ThreeWayVerdict {
+            name: "uranus".to_string(),
+            spk_inpop: Agreement::Riss { sep: 1.6e6 },
+            spk_epm: Agreement::Riss { sep: 1.3e6 },
+            inpop_epm: Agreement::Placed { sep: 2.0e4 },
+            fold: TriadFold::Outlier {
+                line: BodyLine::Spk,
+                knot: [BodyLine::Inpop, BodyLine::Epm],
+            },
+        };
+        let line = triad_line(&t);
+        assert!(
+            line.starts_with("weberin-3way uranus spk-inpop riss 1.600e6 | spk-epm riss 1.300e6 | inpop-epm placed 2.000e4 | fold outlier spk-ephemeris against inpop-ephemeris+epm-ephemeris"),
+            "{line}"
+        );
+    }
+
+    #[test]
+    fn triad_line_reads_united_when_all_three_converge() {
+        let t = ThreeWayVerdict {
+            name: "mars".to_string(),
+            spk_inpop: Agreement::Placed { sep: 2.0e4 },
+            spk_epm: Agreement::Placed { sep: 2.1e4 },
+            inpop_epm: Agreement::Placed { sep: 3.0e3 },
+            fold: TriadFold::United,
+        };
+        assert!(triad_line(&t).ends_with("| fold united all-three"));
+    }
+
+    #[test]
+    fn cometels_line_names_each_cometels_outcome() {
+        let placed = CometelsOutcome::Placed { sep: 2.5e4 };
+        assert_eq!(
+            cometels_line("encke", &placed),
+            "weberin-cometels encke state placed sep 2.5e4"
+        );
+        let absent = CometelsOutcome::Absent {
+            line: CometelsLine::Cometels,
+        };
+        assert_eq!(
+            cometels_line("encke", &absent),
+            "weberin-cometels encke state absent sep absent missing cometels-keplerian"
+        );
+        let riss = CometelsOutcome::Riss {
+            sep: 3.1e6,
+            knot: [CometelsLine::Spk, CometelsLine::Cometels],
+        };
+        assert_eq!(
+            cometels_line("encke", &riss),
+            "weberin-cometels encke state riss sep 3.1e6 knot spk-ephemeris+cometels-keplerian"
+        );
+    }
+}

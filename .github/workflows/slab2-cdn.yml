@@ -1,0 +1,39 @@
+name: slab2-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  slab2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip only if the asset carries the current arm's size
+        id: idempotence
+        run: |
+          # the .grd netCDF-4 arm yields 1_021_034 records * 24 B + 8 B header
+          expected_size=24504824
+          size=$(gh release view sciencebase.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?|select(.name=="slab2_depth.bin")|.size' 2>/dev/null)
+          if [ "$size" = "$expected_size" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset slab2_depth.bin present at $size B — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset slab2_depth.bin absent or stale (${size:-none} B != $expected_size B) — compiling and manifesting"
+          fi
+      - name: Compile the USGS Slab2 depth witnesses and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin slab2_compiler -- \
+            --out slab2_depth.bin --ci-mode

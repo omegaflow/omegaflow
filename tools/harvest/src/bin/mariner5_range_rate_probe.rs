@@ -1,0 +1,1005 @@
+use std::collections::HashMap;
+use std::env;
+use std::fs;
+
+use omegaflow::archivar::BodyEphemeris;
+use omegaflow::archivar::BodyProperties;
+use omegaflow::archivar::cdn::{body_ephemeris, body_props};
+use omegaflow::archivar::motion::{
+    body_barycenter_position, body_barycenter_velocity, orientation_angles_at,
+};
+
+const AU_KM: f64 = 1.495_978_707e8;
+const MU_VENUS_KM3_S2: f64 = 324_858.6;
+const C_KM_S: f64 = 299_792.458;
+const DOPPLER_HZ: f64 = 2_295e6;
+const J2000_JD: f64 = 2_451_545.0;
+const UNIX_JD: f64 = 2_440_587.5;
+const DEG: f64 = std::f64::consts::PI / 180.0;
+const TAU: f64 = std::f64::consts::TAU;
+const LIGHT_RANGE_AU: f64 = 0.5332;
+const METRES_PER_KM: f64 = 1_000.0;
+const ECLIPTIC_OBLIQUITY_DEG: f64 = 23.439_291_1;
+
+#[derive(Clone, Copy)]
+struct Elements {
+    a: f64,
+    e: f64,
+    incl: f64,
+    mean_long: f64,
+    peri_long: f64,
+    node: f64,
+}
+
+const SOLAR_THIRD_ELEMENTS: Elements = Elements {
+    a: 1.00000261,
+    e: 0.01671123,
+    incl: -0.00001531,
+    mean_long: 100.46457166,
+    peri_long: 102.93768193,
+    node: 0.0,
+};
+
+const SOLAR_THIRD_RATES: Elements = Elements {
+    a: 0.00000562,
+    e: -0.00004392,
+    incl: -0.01294668,
+    mean_long: 35999.37244981,
+    peri_long: 0.32327364,
+    node: 0.0,
+};
+
+const INNER_ELEMENTS: Elements = Elements {
+    a: 0.72333566,
+    e: 0.00677672,
+    incl: 3.39467605,
+    mean_long: 181.97909950,
+    peri_long: 131.60246718,
+    node: 76.67984255,
+};
+
+const INNER_RATES: Elements = Elements {
+    a: 0.00000390,
+    e: -0.00004107,
+    incl: -0.00078890,
+    mean_long: 58517.81538729,
+    peri_long: 0.00268329,
+    node: -0.27769418,
+};
+
+#[derive(Clone, Copy)]
+struct Hyperbola {
+    a: f64,
+    e: f64,
+    incl_deg: f64,
+    node_deg: f64,
+    peri_deg: f64,
+    t_peri_unix: f64,
+}
+
+#[derive(Clone, Copy)]
+struct Station {
+    lat_deg: f64,
+    lon_deg: f64,
+}
+
+#[derive(Clone, Copy)]
+struct BodySpin {
+    radius_m: f64,
+    flattening: f64,
+    rotation_rad_s: f64,
+    pole: [f64; 3],
+    node: [f64; 3],
+    cross: [f64; 3],
+    w0_deg: f64,
+    dw_dt_deg_per_day: f64,
+}
+
+#[derive(Clone, Copy)]
+struct Stats {
+    n: usize,
+    mean: f64,
+    scatter: f64,
+}
+
+fn unix_from_civil(year: i64, month: i64, day: i64, hour: i64, minute: i64, second: f64) -> f64 {
+    let a = (14 - month) / 12;
+    let y = year + 4800 - a;
+    let m = month + 12 * a - 3;
+    let jdn = day + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32045;
+    (jdn as f64 - 2_440_588.0) * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + second
+}
+
+fn mariner5_encounter() -> Hyperbola {
+    Hyperbola {
+        a: -34_824.285,
+        e: 1.2914715,
+        incl_deg: 32.001963,
+        node_deg: 341.30976,
+        peri_deg: 152.82175,
+        t_peri_unix: unix_from_civil(1967, 10, 19, 17, 34, 55.841),
+    }
+}
+
+fn ecliptic_to_equatorial(v: [f64; 3]) -> [f64; 3] {
+    rot_x(ECLIPTIC_OBLIQUITY_DEG * DEG, v)
+}
+
+fn rot_z(angle: f64, v: [f64; 3]) -> [f64; 3] {
+    let (s, c) = angle.sin_cos();
+    [c * v[0] - s * v[1], s * v[0] + c * v[1], v[2]]
+}
+
+fn rot_x(angle: f64, v: [f64; 3]) -> [f64; 3] {
+    let (s, c) = angle.sin_cos();
+    [v[0], c * v[1] - s * v[2], s * v[1] + c * v[2]]
+}
+
+fn rotate(v: [f64; 3], incl_deg: f64, node_deg: f64, peri_deg: f64) -> [f64; 3] {
+    rot_z(
+        node_deg * DEG,
+        rot_x(incl_deg * DEG, rot_z(peri_deg * DEG, v)),
+    )
+}
+
+fn planet_position(el: Elements, rate: Elements, jd: f64) -> [f64; 3] {
+    let t = (jd - J2000_JD) / 36525.0;
+    let a = el.a + rate.a * t;
+    let e = el.e + rate.e * t;
+    let incl = (el.incl + rate.incl * t) * DEG;
+    let mean_long = (el.mean_long + rate.mean_long * t) * DEG;
+    let peri_long = (el.peri_long + rate.peri_long * t) * DEG;
+    let node = (el.node + rate.node * t) * DEG;
+    let m = (mean_long - peri_long + std::f64::consts::PI).rem_euclid(TAU) - std::f64::consts::PI;
+    let mut ecc = m + e * m.sin();
+    for _ in 0..12 {
+        ecc -= (ecc - e * ecc.sin() - m) / (1.0 - e * ecc.cos());
+    }
+    let xp = a * (ecc.cos() - e);
+    let yp = a * (1.0 - e * e).sqrt() * ecc.sin();
+    let arg = peri_long - node;
+    let (so, co) = node.sin_cos();
+    let (si, ci) = incl.sin_cos();
+    let (sa, ca) = arg.sin_cos();
+    let x = (ca * co - sa * so * ci) * xp + (-sa * co - ca * so * ci) * yp;
+    let y = (ca * so + sa * co * ci) * xp + (-sa * so + ca * co * ci) * yp;
+    let z = (sa * si) * xp + (ca * si) * yp;
+    ecliptic_to_equatorial([x * AU_KM, y * AU_KM, z * AU_KM])
+}
+
+fn planet_velocity(el: Elements, rate: Elements, jd: f64) -> [f64; 3] {
+    let step = 0.5;
+    let before = planet_position(el, rate, jd - step);
+    let after = planet_position(el, rate, jd + step);
+    let span = 2.0 * step * 86400.0;
+    [
+        (after[0] - before[0]) / span,
+        (after[1] - before[1]) / span,
+        (after[2] - before[2]) / span,
+    ]
+}
+
+fn hyperbolic_state(orbit: Hyperbola, t_unix: f64) -> ([f64; 3], [f64; 3]) {
+    let p = orbit.a * (1.0 - orbit.e * orbit.e);
+    let n = (MU_VENUS_KM3_S2 / orbit.a.abs().powi(3)).sqrt();
+    let mean_anomaly = n * (t_unix - orbit.t_peri_unix);
+    let mut h = (mean_anomaly / orbit.e).asinh();
+    for _ in 0..120 {
+        h -= (orbit.e * h.sinh() - h - mean_anomaly) / (orbit.e * h.cosh() - 1.0);
+    }
+    let nu = 2.0 * (((orbit.e + 1.0) / (orbit.e - 1.0)).sqrt() * (h / 2.0).tanh()).atan();
+    let r = p / (1.0 + orbit.e * nu.cos());
+    let k = (MU_VENUS_KM3_S2 / p).sqrt();
+    let pos = rotate(
+        [r * nu.cos(), r * nu.sin(), 0.0],
+        orbit.incl_deg,
+        orbit.node_deg,
+        orbit.peri_deg,
+    );
+    let vel = rotate(
+        [-k * nu.sin(), k * (orbit.e + nu.cos()), 0.0],
+        orbit.incl_deg,
+        orbit.node_deg,
+        orbit.peri_deg,
+    );
+    (ecliptic_to_equatorial(pos), ecliptic_to_equatorial(vel))
+}
+
+fn body_spin(props: &BodyProperties) -> Result<BodySpin, String> {
+    let flattening = props
+        .flattening
+        .ok_or_else(|| "the body record carries no flattening".to_string())?;
+    let (alpha0, delta0, w0) = orientation_angles_at(props, J2000_JD)
+        .ok_or_else(|| "the body record carries no orientation at J2000".to_string())?;
+    let (_, _, w1) = orientation_angles_at(props, J2000_JD + 1.0)
+        .ok_or_else(|| "the body record carries no orientation one day on".to_string())?;
+    let dw_dt_deg_per_day = w1 - w0;
+    let (sa, ca) = (alpha0 * DEG).sin_cos();
+    let (sd, cd) = (delta0 * DEG).sin_cos();
+    Ok(BodySpin {
+        radius_m: props.radius_m,
+        flattening,
+        rotation_rad_s: dw_dt_deg_per_day * DEG / 86400.0,
+        pole: [cd * ca, cd * sa, sd],
+        node: [-sa, ca, 0.0],
+        cross: [-sd * ca, -sd * sa, cd],
+        w0_deg: w0,
+        dw_dt_deg_per_day,
+    })
+}
+
+fn station_state(jd: f64, station: Station, spin: BodySpin) -> ([f64; 3], [f64; 3]) {
+    let w = (spin.w0_deg + spin.dw_dt_deg_per_day * (jd - J2000_JD)) * DEG;
+    let (sw, cw) = w.sin_cos();
+    let mut prime = [0.0; 3];
+    let mut side = [0.0; 3];
+    for i in 0..3 {
+        prime[i] = cw * spin.node[i] + sw * spin.cross[i];
+        side[i] = -sw * spin.node[i] + cw * spin.cross[i];
+    }
+    let e2 = 2.0 * spin.flattening - spin.flattening * spin.flattening;
+    let (lat_s, lat_c) = (station.lat_deg * DEG).sin_cos();
+    let (lon_s, lon_c) = (station.lon_deg * DEG).sin_cos();
+    let vertical = spin.radius_m / 1_000.0 / (1.0 - e2 * lat_s * lat_s).sqrt();
+    let mut r = [0.0; 3];
+    for i in 0..3 {
+        r[i] = vertical * lat_c * (lon_c * prime[i] + lon_s * side[i])
+            + vertical * (1.0 - e2) * lat_s * spin.pole[i];
+    }
+    let omega = spin.rotation_rad_s;
+    let v = [
+        omega * (spin.pole[1] * r[2] - spin.pole[2] * r[1]),
+        omega * (spin.pole[2] * r[0] - spin.pole[0] * r[2]),
+        omega * (spin.pole[0] * r[1] - spin.pole[1] * r[0]),
+    ];
+    (r, v)
+}
+
+fn doppler_scale_cps_per_km_s() -> f64 {
+    2.0 * DOPPLER_HZ / C_KM_S
+}
+
+struct Paths {
+    chebyshev: Option<(String, String, HashMap<String, BodyEphemeris>)>,
+}
+
+impl Paths {
+    fn analytic() -> Paths {
+        Paths { chebyshev: None }
+    }
+
+    fn carrier_position(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd)),
+            Some((carrier, _, eph)) => {
+                body_barycenter_position(carrier, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| {
+                        [
+                            v[0] / METRES_PER_KM,
+                            v[1] / METRES_PER_KM,
+                            v[2] / METRES_PER_KM,
+                        ]
+                    })
+                    .ok_or_else(|| format!("{carrier} carries no position at jd {jd:.6}"))
+            }
+        }
+    }
+
+    fn carrier_velocity(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd)),
+            Some((carrier, _, eph)) => {
+                body_barycenter_velocity(carrier, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| {
+                        [
+                            v[0] / METRES_PER_KM,
+                            v[1] / METRES_PER_KM,
+                            v[2] / METRES_PER_KM,
+                        ]
+                    })
+                    .ok_or_else(|| format!("{carrier} carries no velocity at jd {jd:.6}"))
+            }
+        }
+    }
+
+    fn target_position(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_position(INNER_ELEMENTS, INNER_RATES, jd)),
+            Some((_, target, eph)) => {
+                body_barycenter_position(target, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| {
+                        [
+                            v[0] / METRES_PER_KM,
+                            v[1] / METRES_PER_KM,
+                            v[2] / METRES_PER_KM,
+                        ]
+                    })
+                    .ok_or_else(|| format!("{target} carries no position at jd {jd:.6}"))
+            }
+        }
+    }
+
+    fn target_velocity(&self, jd: f64) -> Result<[f64; 3], String> {
+        match &self.chebyshev {
+            None => Ok(planet_velocity(INNER_ELEMENTS, INNER_RATES, jd)),
+            Some((_, target, eph)) => {
+                body_barycenter_velocity(target, (jd - J2000_JD) * 86400.0, eph)
+                    .map(|v| {
+                        [
+                            v[0] / METRES_PER_KM,
+                            v[1] / METRES_PER_KM,
+                            v[2] / METRES_PER_KM,
+                        ]
+                    })
+                    .ok_or_else(|| format!("{target} carries no velocity at jd {jd:.6}"))
+            }
+        }
+    }
+}
+
+struct Geometry {
+    station: [f64; 3],
+    target: [f64; 3],
+    rel_velocity: [f64; 3],
+    unit: [f64; 3],
+}
+
+fn geometry(
+    t_unix: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+    bend: Option<Bend>,
+) -> Result<Geometry, String> {
+    let jd = t_unix / 86400.0 + UNIX_JD;
+    let carrier_pos = paths.carrier_position(jd)?;
+    let carrier_vel = paths.carrier_velocity(jd)?;
+    let (st_pos, st_vel) = station_state(jd, station, spin);
+    let mut light_time = LIGHT_RANGE_AU * AU_KM / C_KM_S;
+    let mut out = Geometry {
+        station: [
+            carrier_pos[0] + st_pos[0],
+            carrier_pos[1] + st_pos[1],
+            carrier_pos[2] + st_pos[2],
+        ],
+        target: [0.0; 3],
+        rel_velocity: [0.0; 3],
+        unit: [0.0; 3],
+    };
+    for _ in 0..3 {
+        let jd_craft = jd - light_time / 86400.0;
+        let target_pos = paths.target_position(jd_craft)?;
+        let target_vel = paths.target_velocity(jd_craft)?;
+        let (mut craft_pos, mut craft_vel) = hyperbolic_state(orbit, t_unix - light_time);
+        if let Some(b) = bend {
+            craft_pos = rotate_about(craft_pos, b);
+            craft_vel = rotate_about(craft_vel, b);
+            for i in 0..3 {
+                craft_pos[i] += b.shift[i];
+            }
+        }
+        let mut line = [0.0; 3];
+        for i in 0..3 {
+            line[i] = target_pos[i] + craft_pos[i] - carrier_pos[i] - st_pos[i];
+            out.rel_velocity[i] = target_vel[i] + craft_vel[i] - carrier_vel[i] - st_vel[i];
+        }
+        let range = (line[0] * line[0] + line[1] * line[1] + line[2] * line[2]).sqrt();
+        light_time = range / C_KM_S;
+        out.target = target_pos;
+        out.unit = [line[0] / range, line[1] / range, line[2] / range];
+    }
+    Ok(out)
+}
+
+fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    ]
+}
+
+fn impact_parameter(target: [f64; 3], station: [f64; 3], unit: [f64; 3]) -> f64 {
+    let d = [
+        target[0] - station[0],
+        target[1] - station[1],
+        target[2] - station[2],
+    ];
+    let c = cross(d, unit);
+    (c[0] * c[0] + c[1] * c[1] + c[2] * c[2]).sqrt()
+}
+
+#[derive(Clone, Copy)]
+struct Bend {
+    axis: [f64; 3],
+    angle_rad: f64,
+    shift: [f64; 3],
+}
+
+fn rotate_about(v: [f64; 3], bend: Bend) -> [f64; 3] {
+    let (s, c) = bend.angle_rad.sin_cos();
+    let k = cross(bend.axis, v);
+    let d = bend.axis[0] * v[0] + bend.axis[1] * v[1] + bend.axis[2] * v[2];
+    [
+        v[0] * c + k[0] * s + bend.axis[0] * d * (1.0 - c),
+        v[1] * c + k[1] * s + bend.axis[1] * d * (1.0 - c),
+        v[2] * c + k[2] * s + bend.axis[2] * d * (1.0 - c),
+    ]
+}
+
+#[expect(dead_code)]
+fn unit_vector(v: [f64; 3]) -> [f64; 3] {
+    let n = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    [v[0] / n, v[1] / n, v[2] / n]
+}
+
+fn limb_gap_at(
+    t_unix: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+    radius: f64,
+    bend: Option<Bend>,
+) -> Result<f64, String> {
+    let g = geometry(t_unix, orbit, station, spin, paths, bend)?;
+    Ok(impact_parameter(g.target, g.station, g.unit) - radius)
+}
+
+fn crossing_between(
+    lo_t: f64,
+    hi_t: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+    radius: f64,
+    bend: Option<Bend>,
+) -> Result<f64, String> {
+    let mut lo = lo_t;
+    let mut hi = hi_t;
+    let lo_sign = limb_gap_at(lo, orbit, station, spin, paths, radius, bend)?.is_sign_positive();
+    for _ in 0..80 {
+        let mid = 0.5 * (lo + hi);
+        if limb_gap_at(mid, orbit, station, spin, paths, radius, bend)?.is_sign_positive()
+            == lo_sign
+        {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    Ok(0.5 * (lo + hi))
+}
+
+fn range_rate_cps(
+    t_unix: f64,
+    orbit: Hyperbola,
+    station: Station,
+    spin: BodySpin,
+    paths: &Paths,
+) -> Result<f64, String> {
+    let g = geometry(t_unix, orbit, station, spin, paths, None)?;
+    let rate = g.unit[0] * g.rel_velocity[0]
+        + g.unit[1] * g.rel_velocity[1]
+        + g.unit[2] * g.rel_velocity[2];
+    Ok(doppler_scale_cps_per_km_s() * rate)
+}
+
+struct Row {
+    iso: String,
+    t_unix: f64,
+    segment: String,
+    observed: f64,
+}
+
+fn parse_rows(text: &str) -> Vec<Row> {
+    let mut rows = Vec::new();
+    for line in text.lines().skip(1) {
+        let cols: Vec<&str> = line.split(',').collect();
+        if cols.len() < 6 {
+            continue;
+        }
+        let t_unix = cols[1].parse::<f64>();
+        let observed = cols[5].parse::<f64>();
+        if let (Ok(t_unix), Ok(observed)) = (t_unix, observed) {
+            rows.push(Row {
+                iso: cols[2].to_string(),
+                t_unix,
+                segment: cols[3].to_string(),
+                observed,
+            });
+        }
+    }
+    rows
+}
+
+fn stats(values: &[f64]) -> Stats {
+    if values.is_empty() {
+        return Stats {
+            n: 0,
+            mean: f64::NAN,
+            scatter: f64::NAN,
+        };
+    }
+    let n = values.len();
+    let mean = values.iter().sum::<f64>() / n as f64;
+    let scatter = (values.iter().map(|v| (v - mean) * (v - mean)).sum::<f64>() / n as f64).sqrt();
+    Stats { n, mean, scatter }
+}
+
+fn main() -> Result<(), String> {
+    let args: Vec<String> = env::args().skip(1).collect();
+    let usage = "usage: mariner5_range_rate_probe <wings.csv> <body> <lat> <lon> [<lat> <lon> ...] [--rows] [--ephemeris <carrier> <target>]";
+    let mut positional: Vec<String> = Vec::new();
+    let mut ephemeris: Option<(String, String)> = None;
+    let mut every_row = false;
+    let mut ephemeris_probe = false;
+    let mut limb: Option<(f64, f64, f64)> = None;
+    let mut bend_scan: Option<(f64, f64, f64)> = None;
+    let mut bend_axis_is_x = false;
+    let mut shift_scan: Option<(f64, f64, f64)> = None;
+    let mut scan = 0;
+    while scan < args.len() {
+        match args[scan].as_str() {
+            "--rows" => {
+                every_row = true;
+                scan += 1;
+            }
+            "--limb" => {
+                let start = args
+                    .get(scan + 1)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the limb start carries no number".to_string())?;
+                let end = args
+                    .get(scan + 2)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the limb end carries no number".to_string())?;
+                let step = args
+                    .get(scan + 3)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the limb step carries no number".to_string())?;
+                limb = Some((start, end, step));
+                scan += 4;
+            }
+            "--bend-scan" => {
+                let from = args
+                    .get(scan + 1)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the bend start carries no angle".to_string())?;
+                let to = args
+                    .get(scan + 2)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the bend end carries no angle".to_string())?;
+                let step = args
+                    .get(scan + 3)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the bend step carries no angle".to_string())?;
+                bend_scan = Some((from, to, step));
+                scan += 4;
+            }
+            "--shift-scan" => {
+                let from = args
+                    .get(scan + 1)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the shift start carries no number".to_string())?;
+                let to = args
+                    .get(scan + 2)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the shift end carries no number".to_string())?;
+                let step = args
+                    .get(scan + 3)
+                    .ok_or_else(|| usage.to_string())?
+                    .parse::<f64>()
+                    .map_err(|_| "the shift step carries no number".to_string())?;
+                shift_scan = Some((from, to, step));
+                scan += 4;
+            }
+            "--bend-axis-x" => {
+                bend_axis_is_x = true;
+                scan += 1;
+            }
+            "--ephemeris-probe" => {
+                ephemeris_probe = true;
+                scan += 1;
+            }
+            "--ephemeris" => {
+                let carrier = args.get(scan + 1).ok_or_else(|| usage.to_string())?;
+                let target = args.get(scan + 2).ok_or_else(|| usage.to_string())?;
+                ephemeris = Some((carrier.clone(), target.clone()));
+                scan += 3;
+            }
+            other => {
+                positional.push(other.to_string());
+                scan += 1;
+            }
+        }
+    }
+    let path = positional.first().ok_or_else(|| usage.to_string())?;
+    let body = positional.get(1).ok_or_else(|| usage.to_string())?;
+    let rest = positional.get(2..).ok_or_else(|| usage.to_string())?;
+    let mut stations = Vec::new();
+    let mut index = 0;
+    while index + 1 < rest.len() {
+        let lat_deg = rest[index]
+            .parse::<f64>()
+            .map_err(|_| format!("latitude {} carries no number", rest[index]))?;
+        let lon_deg = rest[index + 1]
+            .parse::<f64>()
+            .map_err(|_| format!("longitude {} carries no number", rest[index + 1]))?;
+        stations.push(Station { lat_deg, lon_deg });
+        index += 2;
+    }
+    if stations.is_empty() {
+        return Err(usage.to_string());
+    }
+    let text = fs::read_to_string(path).map_err(|e| format!("read {path} returned void: {e}"))?;
+    let rows = parse_rows(&text);
+    if rows.is_empty() {
+        return Err(format!("{path} carries no wing rows"));
+    }
+    let props = body_props(body)?;
+    let spin = body_spin(&props)?;
+    let paths = match ephemeris {
+        None => Paths::analytic(),
+        Some((carrier, target)) => {
+            let mut eph = HashMap::new();
+            eph.insert(carrier.clone(), body_ephemeris(&carrier)?);
+            eph.insert(target.clone(), body_ephemeris(&target)?);
+            println!(
+                "paths {carrier} and {target} from the ephemeris binaries, {} and {} granules",
+                eph[&carrier].granules.len(),
+                eph[&target].granules.len()
+            );
+            Paths {
+                chebyshev: Some((carrier, target, eph)),
+            }
+        }
+    };
+    let orbit = mariner5_encounter();
+    if let Some((from_km, to_km, step_km)) = shift_scan {
+        let (start, end, sample) =
+            limb.ok_or_else(|| "--shift-scan needs --limb <start> <end> <step>".to_string())?;
+        let (_, target, _) = paths.chebyshev.as_ref().ok_or_else(|| {
+            "--shift-scan needs --ephemeris so the target is declared".to_string()
+        })?;
+        let radius = body_props(target)?.radius_m / METRES_PER_KM;
+        let mut best = (f64::INFINITY, start);
+        let mut probe_t = start;
+        while probe_t <= end {
+            let g = geometry(probe_t, orbit, stations[0], spin, &paths, None)?;
+            let b = impact_parameter(g.target, g.station, g.unit);
+            if b < best.0 {
+                best = (b, probe_t);
+            }
+            probe_t += sample;
+        }
+        let g0 = geometry(best.1, orbit, stations[0], spin, &paths, None)?;
+        let mut rel0 = [
+            g0.target[0] - g0.station[0],
+            g0.target[1] - g0.station[1],
+            g0.target[2] - g0.station[2],
+        ];
+        let along = g0.unit[0] * rel0[0] + g0.unit[1] * rel0[1] + g0.unit[2] * rel0[2];
+        for i in 0..3 {
+            rel0[i] -= along * g0.unit[i];
+        }
+        let span = (rel0[0] * rel0[0] + rel0[1] * rel0[1] + rel0[2] * rel0[2]).sqrt();
+        let direction = if span > 0.0 {
+            [rel0[0] / span, rel0[1] / span, rel0[2] / span]
+        } else {
+            [0.0, 0.0, 1.0]
+        };
+        println!(
+            "shift direction {:?}, unbent closest {:.1} km, radius {radius:.1} km",
+            direction, best.0
+        );
+        println!("shift_km,closest_km,b_at_t0,scatter_pre,scatter_post");
+        let mut offset = from_km;
+        while offset <= to_km + 1e-9 {
+            let bend = Some(Bend {
+                axis: [0.0, 0.0, 1.0],
+                angle_rad: 0.0,
+                shift: [
+                    offset * direction[0],
+                    offset * direction[1],
+                    offset * direction[2],
+                ],
+            });
+            let mut bmin = f64::INFINITY;
+            let mut scan_t = start;
+            while scan_t <= end {
+                let g = geometry(scan_t, orbit, stations[0], spin, &paths, bend)?;
+                let b = impact_parameter(g.target, g.station, g.unit);
+                if b < bmin {
+                    bmin = b;
+                }
+                scan_t += sample;
+            }
+            let g_fix = geometry(best.1, orbit, stations[0], spin, &paths, bend)?;
+            let b_fix = impact_parameter(g_fix.target, g_fix.station, g_fix.unit);
+            let mut pre = Vec::new();
+            let mut post = Vec::new();
+            for row in &rows {
+                let g = geometry(row.t_unix, orbit, stations[0], spin, &paths, bend)?;
+                let rate = g.unit[0] * g.rel_velocity[0]
+                    + g.unit[1] * g.rel_velocity[1]
+                    + g.unit[2] * g.rel_velocity[2];
+                let residual = row.observed - doppler_scale_cps_per_km_s() * rate;
+                if row.segment == "pre" {
+                    pre.push(residual);
+                } else {
+                    post.push(residual);
+                }
+            }
+            let a = stats(&pre);
+            let b = stats(&post);
+            println!(
+                "{offset:.0},{bmin:.1},{b_fix:.1},{:.1},{:.1}",
+                a.scatter, b.scatter
+            );
+            offset += step_km;
+        }
+        return Ok(());
+    }
+    if let Some((from_deg, to_deg, step_deg)) = bend_scan {
+        let (start, end, sample) =
+            limb.ok_or_else(|| "--bend-scan needs --limb <start> <end> <step>".to_string())?;
+        let (_, target, _) = paths
+            .chebyshev
+            .as_ref()
+            .ok_or_else(|| "--bend-scan needs --ephemeris so the target is declared".to_string())?;
+        let radius = body_props(target)?.radius_m / METRES_PER_KM;
+        let mut best = (f64::INFINITY, start);
+        let mut probe_t = start;
+        while probe_t <= end {
+            let g = geometry(probe_t, orbit, stations[0], spin, &paths, None)?;
+            let b = impact_parameter(g.target, g.station, g.unit);
+            if b < best.0 {
+                best = (b, probe_t);
+            }
+            probe_t += sample;
+        }
+        let g0 = geometry(best.1, orbit, stations[0], spin, &paths, None)?;
+        let axis = if bend_axis_is_x {
+            [1.0, 0.0, 0.0]
+        } else {
+            g0.unit
+        };
+        println!(
+            "bend axis from the line of sight at {:.0}, unbent closest {:.1} km, radius {radius:.1} km",
+            best.1, best.0
+        );
+        println!("angle_deg,closest_km,scatter_pre,scatter_post");
+        let mut angle = from_deg;
+        while angle <= to_deg + 1e-9 {
+            let bend = Some(Bend {
+                axis,
+                angle_rad: angle * DEG,
+                shift: [0.0; 3],
+            });
+            let mut bmin = f64::INFINITY;
+            let mut scan_t = start;
+            while scan_t <= end {
+                let g = geometry(scan_t, orbit, stations[0], spin, &paths, bend)?;
+                let b = impact_parameter(g.target, g.station, g.unit);
+                if b < bmin {
+                    bmin = b;
+                }
+                scan_t += sample;
+            }
+            let mut pre = Vec::new();
+            let mut post = Vec::new();
+            for row in &rows {
+                let g = geometry(row.t_unix, orbit, stations[0], spin, &paths, bend)?;
+                let rate = g.unit[0] * g.rel_velocity[0]
+                    + g.unit[1] * g.rel_velocity[1]
+                    + g.unit[2] * g.rel_velocity[2];
+                let residual = row.observed - doppler_scale_cps_per_km_s() * rate;
+                if row.segment == "pre" {
+                    pre.push(residual);
+                } else {
+                    post.push(residual);
+                }
+            }
+            let a = stats(&pre);
+            let b = stats(&post);
+            println!("{angle:.2},{bmin:.1},{:.1},{:.1}", a.scatter, b.scatter);
+            angle += step_deg;
+        }
+        return Ok(());
+    }
+    if let Some((start, end, step)) = limb {
+        let (_, target, _) = paths
+            .chebyshev
+            .as_ref()
+            .ok_or_else(|| "--limb needs --ephemeris so the target is declared".to_string())?;
+        let radius = body_props(target)?.radius_m / METRES_PER_KM;
+        println!("limb against {target}, radius {radius:.1} km");
+        let mut lo_t = start;
+        let mut lo_gap = limb_gap_at(lo_t, orbit, stations[0], spin, &paths, radius, None)?;
+        let mut best = (f64::INFINITY, lo_t);
+        let mut t = start;
+        while t + step <= end + 1e-9 {
+            t += step;
+            let gap = limb_gap_at(t, orbit, stations[0], spin, &paths, radius, None)?;
+            println!(
+                "{t:.0},{:.2},{}",
+                gap + radius,
+                if gap < 0.0 { "in" } else { "out" }
+            );
+            if gap.is_sign_positive() != lo_gap.is_sign_positive() {
+                let crossing =
+                    crossing_between(lo_t, t, orbit, stations[0], spin, &paths, radius, None)?;
+                println!(
+                    "crossing {crossing:.2} {}",
+                    if gap < 0.0 { "in" } else { "out" }
+                );
+            }
+            if gap < best.0 {
+                best = (gap, t);
+            }
+            lo_t = t;
+            lo_gap = gap;
+        }
+        let g = geometry(best.1, orbit, stations[0], spin, &paths, None)?;
+        let along = g.unit[0] * g.rel_velocity[0]
+            + g.unit[1] * g.rel_velocity[1]
+            + g.unit[2] * g.rel_velocity[2];
+        let transverse = [
+            g.rel_velocity[0] - along * g.unit[0],
+            g.rel_velocity[1] - along * g.unit[1],
+            g.rel_velocity[2] - along * g.unit[2],
+        ];
+        println!(
+            "closest {:.0} {:.1} {:.4}",
+            best.1,
+            best.0 + radius,
+            (transverse[0] * transverse[0]
+                + transverse[1] * transverse[1]
+                + transverse[2] * transverse[2])
+                .sqrt()
+        );
+        return Ok(());
+    }
+    if ephemeris_probe {
+        let jd = rows[0].t_unix / 86400.0 + UNIX_JD;
+        let ep = planet_position(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
+        let ev = planet_velocity(SOLAR_THIRD_ELEMENTS, SOLAR_THIRD_RATES, jd);
+        let tp = planet_position(INNER_ELEMENTS, INNER_RATES, jd);
+        let tv0 = planet_velocity(INNER_ELEMENTS, INNER_RATES, jd);
+        let bp = paths.carrier_position(jd)?;
+        let bv = paths.carrier_velocity(jd)?;
+        let bt = paths.target_position(jd)?;
+        let btv = paths.target_velocity(jd)?;
+        let dot = |a: [f64; 3], b: [f64; 3]| a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        let norm = |a: [f64; 3]| (dot(a, a)).sqrt();
+        let ang = |a: [f64; 3], b: [f64; 3]| {
+            (dot(a, b) / (norm(a) * norm(b)))
+                .clamp(-1.0, 1.0)
+                .acos()
+                .to_degrees()
+        };
+        println!(
+            "carrier |r| analytic {:.4e} binary {:.4e}  angle {:.4} deg",
+            norm(ep),
+            norm(bp),
+            ang(ep, bp)
+        );
+        println!(
+            "carrier |v| analytic {:.4} binary {:.4}  angle {:.4} deg",
+            norm(ev),
+            norm(bv),
+            ang(ev, bv)
+        );
+        println!(
+            "target  |r| analytic {:.4e} binary {:.4e}  angle {:.4} deg",
+            norm(tp),
+            norm(bt),
+            ang(tp, bt)
+        );
+        println!(
+            "target  |v| analytic {:.4} binary {:.4}  angle {:.4} deg",
+            norm(tv0),
+            norm(btv),
+            ang(tv0, btv)
+        );
+        println!(
+            "delta carrier r {:?}",
+            [bp[0] - ep[0], bp[1] - ep[1], bp[2] - ep[2]]
+        );
+        println!(
+            "delta target  v {:?}",
+            [btv[0] - tv0[0], btv[1] - tv0[1], btv[2] - tv0[2]]
+        );
+    }
+    println!(
+        "rows {}  scale {:.1} cps per km/s  body {body}  radius {:.0} m  flattening {:.8}  rotation {:.6} deg/day",
+        rows.len(),
+        doppler_scale_cps_per_km_s(),
+        spin.radius_m,
+        spin.flattening,
+        spin.rotation_rad_s / DEG * 86400.0
+    );
+    println!(
+        "orbit a {:.3} km  e {:.7}  t_peri {:.3}",
+        orbit.a, orbit.e, orbit.t_peri_unix
+    );
+    for station in &stations {
+        let mut pre = Vec::new();
+        let mut post = Vec::new();
+        for row in &rows {
+            let residual =
+                row.observed - range_rate_cps(row.t_unix, orbit, *station, spin, &paths)?;
+            if row.segment == "pre" {
+                pre.push(residual);
+            } else {
+                post.push(residual);
+            }
+        }
+        let a = stats(&pre);
+        let b = stats(&post);
+        println!(
+            "station {:.2} {:.2}  pre n={} mean {:.0} scatter {:.0}  post n={} mean {:.0} scatter {:.0}  step {:.0} cps",
+            station.lat_deg,
+            station.lon_deg,
+            a.n,
+            a.mean,
+            a.scatter,
+            b.n,
+            b.mean,
+            b.scatter,
+            b.mean - a.mean
+        );
+    }
+    let station = stations[0];
+    if every_row {
+        println!("idx,iso,seg,observed,model,residual");
+        for (index, row) in rows.iter().enumerate() {
+            let model = range_rate_cps(row.t_unix, orbit, station, spin, &paths)?;
+            println!(
+                "{},{},{},{:.3},{:.3},{:.3}",
+                index,
+                row.iso,
+                row.segment,
+                row.observed,
+                model,
+                row.observed - model
+            );
+        }
+        return Ok(());
+    }
+    println!();
+    println!(
+        "samples for station {:.2} {:.2}:",
+        station.lat_deg, station.lon_deg
+    );
+    for (index, row) in rows.iter().enumerate() {
+        if index % 30 != 0 && index + 1 != rows.len() {
+            continue;
+        }
+        let model = range_rate_cps(row.t_unix, orbit, station, spin, &paths)?;
+        println!(
+            "  {} {} observed {:.0} model {:.0} residual {:.0}",
+            row.iso,
+            row.segment,
+            row.observed,
+            model,
+            row.observed - model
+        );
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+#[path = "mariner5_range_rate_probe/tests.rs"]
+mod tests;

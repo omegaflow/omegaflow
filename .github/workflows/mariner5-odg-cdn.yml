@@ -1,0 +1,68 @@
+name: mariner5-odg-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  TAG: nssdc.gsfc.nasa.gov
+jobs:
+  mariner5-odg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if both bins already exist on the CDN
+        id: idempotence
+        run: |
+          assets=$(gh release view "$TAG" --repo omegaflow/sources --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if printf '%s\n' "$assets" | grep -qx "mariner5_odg_pre.bin" \
+             && printf '%s\n' "$assets" | grep -qx "mariner5_odg_post.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "both bins present — nothing to compile"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "a bin is missing — compiling"
+          fi
+      - name: Fetch the two raw tapes from the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          for asset in pscm00001_f00001.phys pscm00001_f00002.phys; do
+            if ! gh release download "$TAG" --repo omegaflow/sources --pattern "$asset" --dir raw 2>/dev/null; then
+              echo "raw/$asset is absent on the CDN — the bin stays unwritten (0 honored)." >&2
+              echo "Upload it first: gh release upload $TAG raw/$asset --repo omegaflow/sources" >&2
+              exit 1
+            fi
+          done
+          ls -l raw
+      - name: Compile the pre-midcourse tape
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin mariner5_odg_compiler -- \
+            --in raw/pscm00001_f00001.phys --out-bin mariner5_odg_pre.bin --packing unpacked
+      - name: Compile the midcourse-to-end tape
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin mariner5_odg_compiler -- \
+            --in raw/pscm00001_f00002.phys --out-bin mariner5_odg_post.bin --packing unpacked
+      - name: Manifest both bins to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          for bin in mariner5_odg_pre.bin mariner5_odg_post.bin; do
+            test -s "$bin" || { echo "$bin is empty — nothing manifested" >&2; exit 1; }
+            if ! gh release view "$TAG" --repo omegaflow/sources >/dev/null 2>&1; then
+              gh release create "$TAG" --repo omegaflow/sources \
+                --title "$TAG" \
+                --notes "Mariner 5 celestial mechanics (ODG, DSC 0223) — two tapes D-02517 and D-02518 packaged to omegaflow binary assets (CDN tag = netloc)"
+            fi
+            gh release upload "$TAG" "$bin" --repo omegaflow/sources --clobber
+          done
+          gh release view "$TAG" --repo omegaflow/sources --json assets --jq '.assets[]?.name'

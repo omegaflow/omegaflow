@@ -1,0 +1,218 @@
+name: ned-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      sr_arcmin:
+        description: cone search radius in arcminutes
+        required: false
+        default: '30'
+      slice:
+        description: cone indices per release part
+        required: false
+        default: '48'
+      maxrec:
+        description: max records returned per cone query
+        required: false
+        default: '2000'
+  schedule:
+    - cron: '23 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: ned-cdn
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ned:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build cone compiler
+        run: cargo build -p omegaflow-harvest --release --bin ned_cone_compiler
+      - name: Ensure the ned.ipac.caltech.edu-ned release exists on the CDN
+        run: |
+          if ! gh release view ned.ipac.caltech.edu-ned --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ned.ipac.caltech.edu-ned --repo omegaflow/sources \
+              --title "ned.ipac.caltech.edu-ned" \
+              --notes "NASA/IPAC Extragalactic Database (NED) cone harvest packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Resumable cone harvest (grid of RA/DEC centers, cone shards persist across runs)
+        run: |
+          set -uo pipefail
+          SR="${NED_SR_AM:-30}"
+          SLICE="${NED_SLICE:-48}"
+          MAXREC="${NED_MAXREC:-2000}"
+          SPACING="${NED_SPACING:-5.0}"
+          RELEASE="ned.ipac.caltech.edu-ned"
+          REPO="omegaflow/sources"
+          BIN="$(pwd)/target/release/ned_cone_compiler"
+          if ! TOTAL="$("$BIN" --count --sr-arcmin "$SR" --spacing-deg "$SPACING")"; then
+            echo "cone grid count void — the run stays open"
+            exit 1
+          fi
+          NP=$(( (TOTAL + SLICE - 1) / SLICE ))
+          echo "grid total=${TOTAL} cones, slices=${NP}, slice=${SLICE} cones, sr=${SR}' spacing=${SPACING}deg maxrec=${MAXREC}"
+          deadline=$(( $(date +%s) + 2600 ))
+          mkdir -p raw
+
+          list_assets() {
+            gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '.assets[].name' 2>/tmp/gh_listing.err
+          }
+
+          # carried void cones from earlier runs (timed-out cones, recorded not fatal)
+          VOID_FILE="ned_void.json"
+          if gh release download "$RELEASE" --repo "$REPO" --pattern "$VOID_FILE" --dir . --clobber 2>/dev/null; then
+            VOIDS=$(jq -r '.[]?' "$VOID_FILE" 2>/dev/null | tr '\n' ' ')
+          else
+            VOIDS=""
+          fi
+          echo "void cones carried: ${VOIDS:-none}"
+
+          find_slice() {
+            local assets p
+            if ! assets=$(list_assets); then
+              printf 'LISTING_FAILED\n'
+              return 0
+            fi
+            p=0
+            while [ "$p" -lt "$NP" ]; do
+              fname=$(printf 'ned_part_%05d.json' "$p")
+              if ! printf '%s\n' "$assets" | grep -qx "$fname"; then
+                echo "$p"
+                return 0
+              fi
+              p=$((p + 1))
+            done
+            return 1
+          }
+
+          # harvest undone slices until the wall budget; every cone is persisted as its own
+          # shard, so a mid-slice interruption resumes at the first cone without a shard
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            if next=$(find_slice); then
+              if [ "$next" = "LISTING_FAILED" ]; then
+                echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+                exit 1
+              fi
+            else
+              echo "every slice present"
+              break
+            fi
+            start=$((next * SLICE))
+            end=$(( start + SLICE ))
+            [ "$end" -gt "$TOTAL" ] && end="$TOTAL"
+            echo "=== harvesting slice ${next} (cones ${start}..$((end - 1))) ==="
+
+            if ! assets=$(list_assets); then
+              echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+              exit 1
+            fi
+
+            complete=1
+            for i in $(seq "$start" $((end - 1))); do
+              cname=$(printf 'ned_cone_%05d.json' "$i")
+              if printf '%s\n' "$assets" | grep -qx "$cname"; then
+                continue
+              fi
+              if [ "$(date +%s)" -ge "$deadline" ]; then
+                echo "wall budget reached — slice ${next} resumes at cone ${i} next run"
+                complete=0
+                break
+              fi
+              if ! "$BIN" --index "$i" --sr-arcmin "$SR" --maxrec "$MAXREC" \
+                  --spacing-deg "$SPACING" --lattice 1024 --out "$cname"; then
+                echo "cone ${i} void — recorded, harvest continues"
+                echo '[]' > "$cname"
+                VOIDS=$(printf '%s %s' "$VOIDS" "$i" | tr ' ' '\n' | grep -v '^$' | sort -un | tr '\n' ' ')
+              fi
+              if ! bin/cdn-put "$RELEASE" "$cname"; then
+                echo "upload ${cname} void — the cone shard stays open for the next run"
+                complete=0
+                break
+              fi
+              assets="${assets}"$'\n'"${cname}"
+              echo "uploaded ${cname}"
+            done
+            [ "$complete" = 0 ] && break
+
+            # every cone shard of the slice stands — aggregate them into the slice part
+            part=$(printf 'ned_part_%05d.json' "$next")
+            rm -f raw/ned_cone_*.json
+            agg_ok=1
+            for i in $(seq "$start" $((end - 1))); do
+              cname=$(printf 'ned_cone_%05d.json' "$i")
+              if ! gh release download "$RELEASE" --repo "$REPO" --pattern "$cname" --dir raw --clobber 2>/tmp/gh_dl.err; then
+                echo "cone shard ${cname} missing at aggregation: $(cat /tmp/gh_dl.err 2>/dev/null) — slice ${next} stays open"
+                agg_ok=0
+                break
+              fi
+            done
+            if [ "$agg_ok" = 0 ]; then
+              break
+            fi
+            if ! jq -s 'add' raw/ned_cone_*.json > "$part"; then
+              echo "aggregate ${part} void — cone shards persist, slice ${next} retried next run"
+              rm -f raw/ned_cone_*.json
+              break
+            fi
+            rm -f raw/ned_cone_*.json
+            if ! bin/cdn-put "$RELEASE" "$part"; then
+              echo "upload ${part} void — cone shards persist, slice ${next} retried next run"
+              break
+            fi
+            echo "uploaded ${part}"
+          done
+
+          # persist the void-cone list so a later run can retry them
+          printf '%s\n' $VOIDS | grep -v '^$' | sort -un | jq -R 'tonumber' | jq -s . > "$VOID_FILE"
+          bin/cdn-put "$RELEASE" "$VOID_FILE"
+          echo "void cones recorded: $(jq -c . "$VOID_FILE")"
+
+          # combine when every slice part is present and ned.json is absent
+          if ! present=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '[.assets[].name | select(startswith("ned_part_"))] | length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          if ! has_ned=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '[.assets[].name | select(.=="ned.json")] | length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          echo "slices present: ${present}/${NP}, ned.json present: ${has_ned}"
+          if [ "${present:-0}" -eq "$NP" ] && [ "${has_ned:-0}" = 0 ]; then
+            echo "=== combining ==="
+            mkdir -p parts
+            gh release download "$RELEASE" --repo "$REPO" \
+              --pattern 'ned_part_*.json' --dir parts --clobber
+            {
+              echo '['
+              for f in parts/ned_part_*.json; do
+                jq -cr '.[] | "\(.cell)\t\(.rank)\t" + ((del(.cell,.rank))|tostring)' "$f"
+              done | sort -t"$(printf '\t')" -k1,1n -k2,2n \
+              | awk -F"$(printf '\t')" '
+                  BEGIN { first = 1 }
+                  {
+                    if ($1 != cur) { cur = $1; n = 0; delete seen }
+                    if (n >= 4) next
+                    if (seen[$3]++) next
+                    n++
+                    if (!first) printf ",\n"
+                    first = 0
+                    printf "%s", $3
+                  }
+                  END { if (!first) printf "\n" }'
+              echo ']'
+            } > ned.json
+            bin/cdn-put "$RELEASE" ned.json
+            echo "ned.json uploaded: $(jq 'length' ned.json) objects"
+          fi
+        env:
+          NED_SR_AM: ${{ inputs.sr_arcmin || '30' }}
+          NED_SLICE: ${{ inputs.slice || '48' }}
+          NED_MAXREC: ${{ inputs.maxrec || '2000' }}

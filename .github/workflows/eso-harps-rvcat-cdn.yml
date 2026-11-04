@@ -1,0 +1,22 @@
+name: eso-harps-rvcat-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  eso-harps-rvcat:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"harps_rvcat.json","args":"--root https://archive.eso.org/tap_cat/sync --votable --table safcat.HARPS_RVCAT_V1 --columns 'ra:ra_simbad;dec:dec_simbad;rv:drs_ccf_rvc;plx:plx_simbad' --skip-null rv --skip-null plx --limit 300000 --out harps_rvcat.json"}
+        ]

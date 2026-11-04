@@ -1,0 +1,22 @@
+name: exoplanets-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  exoplanets:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"exoplanets.json","args":"--root https://exoplanetarchive.ipac.caltech.edu/TAP/sync --table pscomppars --cols-unquoted --columns 'name:pl_name;ra:ra;dec:dec;dist:sy_dist;masse:pl_masse;rade:pl_rade;orbsmax:pl_orbsmax;orbeccen:pl_orbeccen;orbincl:pl_orbincl;orblper:pl_orblper;tranmid:pl_tranmid;orbper:pl_orbper;strad:st_rad' --skip-null dist --out exoplanets.json"}
+        ]

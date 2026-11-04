@@ -1,0 +1,1613 @@
+use super::*;
+use crate::archivar::fetch::PresenceSample;
+use crate::mathematikerin::channel::{TransportOp, descriptor_for_channel_ref};
+
+pub struct StationEntry {
+    pub id: String,
+    pub lat: f64,
+    pub lon: f64,
+}
+
+pub fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
+    let arr = match jpath_val(j, &src.stations_path) {
+        Some(JsonVal::Arr(a)) => a.iter().collect::<Vec<_>>(),
+        _ => return Vec::new(),
+    };
+    let mut stations: Vec<StationEntry> = Vec::new();
+    let mut push_entry = |id_ref: &JsonVal, lat: f64, lon: f64| {
+        let id = match id_ref {
+            JsonVal::Str(s) => s.clone(),
+            JsonVal::Num(n) => n.to_string(),
+            _ => return,
+        };
+        stations.push(StationEntry { id, lat, lon });
+    };
+    let filter_ok = |v: &JsonVal| -> bool {
+        match &src.stations_filter {
+            Some((k, want)) => match jpath_val(v, k) {
+                Some(JsonVal::Str(s)) => s == want,
+                _ => false,
+            },
+            None => true,
+        }
+    };
+    for v in arr {
+        let lat = match jpath(v, &src.stations_lat) {
+            Some(l) => l,
+            None => continue,
+        };
+        let lon = match jpath(v, &src.stations_lon) {
+            Some(l) => l,
+            None => continue,
+        };
+        if src.stations_flatten.is_empty() {
+            if filter_ok(v)
+                && let Some(id_ref) = jpath_val(v, &src.stations_id)
+            {
+                push_entry(id_ref, lat, lon)
+            }
+        } else if let Some(JsonVal::Arr(elems)) = jpath_val(v, &src.stations_flatten) {
+            for e in elems {
+                if !filter_ok(e) {
+                    continue;
+                }
+                match jpath_val(e, &src.stations_id) {
+                    Some(id_ref) => push_entry(id_ref, lat, lon),
+                    None => push_entry(v, lat, lon),
+                }
+            }
+        }
+    }
+    stations
+}
+
+pub fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
+    let mut out = Vec::new();
+    for obs in body.split("<Observatory>").skip(1) {
+        let tag = |name: &str| -> Option<&str> {
+            let open = format!("<{}>", name);
+            let start = obs.find(&open)? + open.len();
+            let end = obs[start..].find(&format!("</{}>", name))? + start;
+            Some(&obs[start..end])
+        };
+        let code = match tag("Code") {
+            Some(c) => c.trim().to_lowercase(),
+            None => continue,
+        };
+        let lat = match tag("Latitude").and_then(|s| s.trim().parse::<f64>().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        let lon = match tag("Longitude").and_then(|s| s.trim().parse::<f64>().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        out.push(StationEntry { id: code, lat, lon });
+    }
+    out
+}
+
+pub struct FanoutCtx<'a> {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub presence: Option<(f64, f64, f64)>,
+    pub now: f64,
+    pub r: f64,
+    pub eph: &'a HashMap<String, BodyEphemeris>,
+    pub env: &'a HashMap<String, String>,
+    pub lsk: &'a LeapSeconds,
+    pub refusal_ledger: &'a std::sync::Mutex<RefusalLedger>,
+}
+
+pub fn fanout_fetch(
+    src: &SourceConfig,
+    stations_url_tmpl: &str,
+    ctx: FanoutCtx<'_>,
+) -> Vec<(Channel, FieldConfig)> {
+    let FanoutCtx {
+        x,
+        y,
+        z,
+        presence,
+        now,
+        r,
+        eph,
+        env,
+        lsk,
+        refusal_ledger,
+    } = ctx;
+    let mut channels = Vec::new();
+    let body_name = frame_body_name(&src.frame());
+    let center_kind = match src.fanout_center {
+        Some(c) => c,
+        None => {
+            eprintln!(
+                "fanout {}: fanout_center absent — refused, retry in ttl/Φ",
+                src.url
+            );
+            if let Ok(mut ledger) = refusal_ledger.lock() {
+                ledger.register(&src.url, "fanout-no-receiver");
+            }
+            return channels;
+        }
+    };
+    let (ux, uy, uz) = match center_kind {
+        QueryCenter::Receiver => match presence {
+            Some(p) => p,
+            None => {
+                eprintln!(
+                    "fanout {}: receiver worldline absent — refused, retry in ttl/Φ",
+                    src.url
+                );
+                if let Ok(mut ledger) = refusal_ledger.lock() {
+                    ledger.register(&src.url, "fanout-no-receiver");
+                }
+                return channels;
+            }
+        },
+        QueryCenter::Anchor => (x, y, z),
+    };
+    let sort_center = match center_kind {
+        QueryCenter::Receiver => icrs_to_body_surface(ux, uy, uz, now, &body_name, eph),
+        QueryCenter::Anchor => match &src.frame() {
+            Frame::Surface { lat, lon, .. } => Some((*lat, *lon)),
+            _ => None,
+        },
+    };
+    let Some((clat, clon)) = sort_center else {
+        let arm = match center_kind {
+            QueryCenter::Receiver => "receiver",
+            QueryCenter::Anchor => "anchor",
+        };
+        eprintln!(
+            "fanout {}: fanout_center {} unresolved — refused, retry in ttl/Φ",
+            src.url, arm
+        );
+        if let Ok(mut ledger) = refusal_ledger.lock() {
+            ledger.register(&src.url, "fanout-no-anchor");
+        }
+        return channels;
+    };
+    let stations_url = match render_url(
+        stations_url_tmpl,
+        &body_name,
+        RenderCtx {
+            x: ux,
+            y: uy,
+            z: uz,
+            tdb: now,
+            r,
+            eph,
+            lsk,
+        },
+    ) {
+        Some(u) => resolve_secret(&u, env),
+        None => return channels,
+    };
+    let headers = render_headers(&src.headers, env);
+    let raw = match fetch_raw(&stations_url, None, &headers) {
+        Some(v) => v,
+        None => return channels,
+    };
+    let mut stations = match parse_json(&raw) {
+        Some(j) => parse_station_entries(&j, src),
+        None => parse_stations_xml(&raw),
+    };
+    stations.sort_by(|a, b| {
+        angular_distance_deg(a.lat, a.lon, clat, clon)
+            .partial_cmp(&angular_distance_deg(b.lat, b.lon, clat, clon))
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    let cap = src.fanout_cap as usize;
+    let base_url = match render_url(
+        &src.url,
+        &body_name,
+        RenderCtx {
+            x: ux,
+            y: uy,
+            z: uz,
+            tdb: now,
+            r,
+            eph,
+            lsk,
+        },
+    ) {
+        Some(u) => u,
+        None => return channels,
+    };
+    let body = render_source_body(
+        src,
+        RenderCtx {
+            x: ux,
+            y: uy,
+            z: uz,
+            tdb: now,
+            r,
+            eph,
+            lsk,
+        },
+    );
+    let window = 3usize;
+    let chunks: Vec<&StationEntry> = stations.iter().take(cap).collect();
+    for (wi, chunk) in chunks.chunks(window).enumerate() {
+        if wi > 0 && src.fanout_delay > 0 {
+            thread::sleep(std::time::Duration::from_secs(src.fanout_delay));
+        }
+        thread::scope(|s| {
+            let handles: Vec<_> = chunk
+                .iter()
+                .map(|st| {
+                    let base_url = base_url.clone();
+                    let body = body.clone();
+                    let headers = headers.clone();
+                    let body_name = body_name.clone();
+                    let st = *st;
+                    s.spawn(move || -> Vec<(Channel, FieldConfig)> {
+                        let url = resolve_secret(&base_url.replace("{station}", &st.id), env);
+                        let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
+                        let raw = match fetch_raw(&url, post.as_deref(), &headers) {
+                            Some(v) => v,
+                            None => {
+                                eprintln!("station {}: fetch void — retry in ttl/Φ", st.id);
+                                return Vec::new();
+                            }
+                        };
+                        let mut out = Vec::new();
+                        if let ExtractResult::Measurements(mut cs) = extract(src, &raw, now, lsk) {
+                            if cs.is_empty() {
+                                eprintln!("station {}: extract returned no measurements", st.id);
+                            }
+                            for (mut ch, fc) in cs.drain(..) {
+                                ch.position = Position::Surface {
+                                    body_name: body_name.clone(),
+                                    lat: st.lat,
+                                    lon: st.lon,
+                                    alt: 0.0,
+                                };
+                                out.push((ch, fc));
+                            }
+                        }
+                        out
+                    })
+                })
+                .collect();
+            for h in handles {
+                if let Ok(v) = h.join() {
+                    channels.extend(v);
+                }
+            }
+        });
+    }
+    channels
+}
+
+#[derive(Clone, Copy)]
+pub struct ChannelQuery<'a> {
+    pub lsk: &'a LeapSeconds,
+    pub now: f64,
+    pub presences: &'a [PresenceSample],
+    pub body_radius: Option<f64>,
+    pub eph: &'a HashMap<String, BodyEphemeris>,
+    pub receiver_aperture: &'a ReceiverAperture,
+}
+
+pub fn build_netcdf_channels(
+    src: &SourceConfig,
+    bytes: &[u8],
+    q: &ChannelQuery,
+) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
+    let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
+        match gunzip(bytes) {
+            Some(b) => b,
+            None => return Vec::new(),
+        }
+    } else {
+        bytes.to_vec()
+    };
+    const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
+    if bytes.starts_with(&HDF5_MAGIC) {
+        return build_netcdf4_channels(src, &bytes, q);
+    }
+    let nc = match NetcdfFile::parse(&bytes) {
+        Ok(f) => f,
+        Err(note) => {
+            eprintln!("netcdf {}: {:?}", src.url, note);
+            return Vec::new();
+        }
+    };
+    let body_name = frame_body_name(&src.frame());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
+    let mut channels = Vec::new();
+    for ext in &src.extracts {
+        let Extract::ProfileMap {
+            lat_key,
+            lon_key,
+            epoch_key,
+            pressure_var,
+            pressure_scale,
+            fields,
+            ..
+        } = ext
+        else {
+            continue;
+        };
+        let Some(lat_v) = nc.values_f64(&bytes, lat_key) else {
+            continue;
+        };
+        let Some(lon_v) = nc.values_f64(&bytes, lon_key) else {
+            continue;
+        };
+        let Some(juld_v) = nc.values_f64(&bytes, epoch_key) else {
+            continue;
+        };
+        let Some(pres_v) = nc.values_f32(&bytes, pressure_var) else {
+            continue;
+        };
+        let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+        let n_levels = match nc.var(pressure_var).and_then(|v| nc.var_shape(v).ok()) {
+            Some(shape) => match shape.get(1) {
+                Some(&n) => n as usize,
+                None => continue,
+            },
+            None => continue,
+        };
+        if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+            continue;
+        }
+        let pres_fill = nc
+            .var(pressure_var)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        let lat_fill = nc
+            .var(lat_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        let lon_fill = nc
+            .var(lon_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        let juld_fill = nc
+            .var(epoch_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        for p in 0..n_prof {
+            let lat = lat_v[p];
+            let lon = lon_v[p];
+            let juld = juld_v[p];
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !juld.is_finite()
+                || (lat_fill == Some(lat))
+                || (lon_fill == Some(lon))
+                || (juld_fill == Some(juld))
+            {
+                continue;
+            }
+            let unix = (juld - 7305.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            for fc in fields {
+                let Some(vals) = nc.values_f32(&bytes, &fc.key) else {
+                    continue;
+                };
+                if vals.len() < n_prof * n_levels {
+                    continue;
+                }
+                let fill = nc
+                    .var(&fc.key)
+                    .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                    .and_then(|a| nc.attr_num(a));
+                for k in 0..n_levels {
+                    let pres = pres_v[p * n_levels + k];
+                    let val = vals[p * n_levels + k];
+                    if !val.is_finite()
+                        || !pres.is_finite()
+                        || (fill == Some(val as f64))
+                        || (pres_fill == Some(pres as f64))
+                    {
+                        continue;
+                    }
+                    let alt = -(pres as f64) * pressure_scale;
+                    let motion = Motion::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    let mut keep = true;
+                    if let Some((anchor_vmax, anchor_amax, _)) =
+                        law_bounds(&motion, epoch, 0.0, eph)
+                    {
+                        keep = record_in_enclosure(
+                            presences,
+                            body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
+                            epoch,
+                            now,
+                            EnclosureField {
+                                config: fc,
+                                medium: body_medium,
+                                body_radius,
+                                receiver_aperture: receiver_aperture
+                                    .for_channel(fc.channel_ref, fc.aperture),
+                            },
+                            AnchorEnvelope {
+                                vmax: anchor_vmax,
+                                amax: anchor_amax,
+                                pad: 0.0,
+                                ttl: src.ttl as f64,
+                            },
+                        );
+                    }
+                    if !keep {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            epoch,
+                            position,
+                            station_code: src.station_code.clone(),
+                            name: fc.name.clone(),
+                            value: val as f64,
+                        },
+                        fc.clone(),
+                    ));
+                }
+            }
+        }
+    }
+    channels
+}
+
+pub fn build_netcdf4_channels(
+    src: &SourceConfig,
+    bytes: &[u8],
+    q: &ChannelQuery,
+) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
+    let file = match crate::archivar::hdf5::Hdf5File::parse(bytes) {
+        Ok(f) => f,
+        Err(note) => {
+            eprintln!("netcdf4 {}: {:?}", src.url, note);
+            return Vec::new();
+        }
+    };
+    let body_name = frame_body_name(&src.frame());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
+    let mut channels = Vec::new();
+    for ext in &src.extracts {
+        let Extract::ProfileMap {
+            lat_key,
+            lon_key,
+            epoch_key,
+            pressure_var,
+            pressure_scale,
+            fields,
+            ..
+        } = ext
+        else {
+            continue;
+        };
+        let Some(lat_v) = file.read_f64_dataset(lat_key).ok() else {
+            continue;
+        };
+        let Some(lon_v) = file.read_f64_dataset(lon_key).ok() else {
+            continue;
+        };
+        let Some(juld_v) = file.read_f64_dataset(epoch_key).ok() else {
+            continue;
+        };
+        let Some(pres_v) = file.read_f64_dataset(pressure_var).ok() else {
+            continue;
+        };
+        let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+        let n_levels = match file.dims(pressure_var) {
+            Some(shape) => match shape.get(1) {
+                Some(&n) => n as usize,
+                None => continue,
+            },
+            None => continue,
+        };
+        if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+            continue;
+        }
+        let pres_fill = file.attr_f64(pressure_var, "_FillValue");
+        let lat_fill = file.attr_f64(lat_key, "_FillValue");
+        let lon_fill = file.attr_f64(lon_key, "_FillValue");
+        let juld_fill = file.attr_f64(epoch_key, "_FillValue");
+        for p in 0..n_prof {
+            let lat = lat_v[p];
+            let lon = lon_v[p];
+            let juld = juld_v[p];
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !juld.is_finite()
+                || (lat_fill == Some(lat))
+                || (lon_fill == Some(lon))
+                || (juld_fill == Some(juld))
+            {
+                continue;
+            }
+            let unix = (juld - 7305.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            for fc in fields {
+                let Some(vals) = file.read_f64_dataset(&fc.key).ok() else {
+                    continue;
+                };
+                if vals.len() < n_prof * n_levels {
+                    continue;
+                }
+                let fill = file.attr_f64(&fc.key, "_FillValue");
+                for k in 0..n_levels {
+                    let pres = pres_v[p * n_levels + k];
+                    let val = vals[p * n_levels + k];
+                    if !val.is_finite()
+                        || !pres.is_finite()
+                        || (fill == Some(val))
+                        || (pres_fill == Some(pres))
+                    {
+                        continue;
+                    }
+                    let alt = -pres * pressure_scale;
+                    let motion = Motion::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    let mut keep = true;
+                    if let Some((anchor_vmax, anchor_amax, _)) =
+                        law_bounds(&motion, epoch, 0.0, eph)
+                    {
+                        keep = record_in_enclosure(
+                            presences,
+                            body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
+                            epoch,
+                            now,
+                            EnclosureField {
+                                config: fc,
+                                medium: body_medium,
+                                body_radius,
+                                receiver_aperture: receiver_aperture
+                                    .for_channel(fc.channel_ref, fc.aperture),
+                            },
+                            AnchorEnvelope {
+                                vmax: anchor_vmax,
+                                amax: anchor_amax,
+                                pad: 0.0,
+                                ttl: src.ttl as f64,
+                            },
+                        );
+                    }
+                    if !keep {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            epoch,
+                            position,
+                            station_code: src.station_code.clone(),
+                            name: fc.name.clone(),
+                            value: val,
+                        },
+                        fc.clone(),
+                    ));
+                }
+            }
+        }
+    }
+    channels
+}
+
+pub fn build_netcdf4_volume(
+    src: &SourceConfig,
+    bytes: &[u8],
+) -> Option<(String, crate::archivar::volume::Volume)> {
+    use crate::archivar::volume::{Axis, AxisKind, Volume};
+    let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
+        gunzip(bytes)?
+    } else {
+        bytes.to_vec()
+    };
+    let file = match crate::archivar::hdf5::Hdf5File::parse(&bytes) {
+        Ok(f) => f,
+        Err(note) => {
+            eprintln!("netcdf4 volume {}: {:?}", src.url, note);
+            return None;
+        }
+    };
+    let Some((value_key, lat_key, lon_key, depth_key, depth_scale, name, frame_body)) =
+        src.extracts.iter().find_map(|e| match e {
+            Extract::Volume {
+                value_key,
+                lat_key,
+                lon_key,
+                depth_key,
+                depth_scale,
+                name,
+                frame_body,
+            } => Some((
+                value_key.clone(),
+                lat_key.clone(),
+                lon_key.clone(),
+                depth_key.clone(),
+                *depth_scale,
+                name.clone(),
+                frame_body.clone(),
+            )),
+            _ => None,
+        })
+    else {
+        eprintln!("netcdf4 volume {}: no volume extract declared", src.url);
+        return None;
+    };
+    let (_, ds, dt) = match file.dataset(&value_key) {
+        Ok(t) => t,
+        Err(note) => {
+            eprintln!("netcdf4 volume {} {}: {:?}", src.url, value_key, note);
+            return None;
+        }
+    };
+    if ds.dims.len() == 4 {
+        eprintln!(
+            "netcdf4 volume {} {}: carries a time axis — the 4D series arm is pending",
+            src.url, value_key
+        );
+        return None;
+    }
+    if ds.dims.len() != 3 {
+        eprintln!(
+            "netcdf4 volume {} {}: {} dims — a static grid carries exactly three",
+            src.url,
+            value_key,
+            ds.dims.len()
+        );
+        return None;
+    }
+    let sd = [
+        ds.dims[0] as usize,
+        ds.dims[1] as usize,
+        ds.dims[2] as usize,
+    ];
+    if sd.contains(&0) {
+        eprintln!(
+            "netcdf4 volume {} {}: a dim carries zero cells",
+            src.url, value_key
+        );
+        return None;
+    }
+    let data_src: Vec<f32> = if dt.class == 1 && dt.size == 4 {
+        match file.read_f32_dataset(&value_key) {
+            Ok(v) => v,
+            Err(note) => {
+                eprintln!("netcdf4 volume {} {}: {:?}", src.url, value_key, note);
+                return None;
+            }
+        }
+    } else {
+        match file.read_f64_dataset(&value_key) {
+            Ok(v) => v.into_iter().map(|x| x as f32).collect(),
+            Err(note) => {
+                eprintln!("netcdf4 volume {} {}: {:?}", src.url, value_key, note);
+                return None;
+            }
+        }
+    };
+    if data_src.len() != sd[0] * sd[1] * sd[2] {
+        eprintln!(
+            "netcdf4 volume {} {}: {} cells declared, {} read",
+            src.url,
+            value_key,
+            sd[0] * sd[1] * sd[2],
+            data_src.len()
+        );
+        return None;
+    }
+    let read_axis = |key: &str, scale: f64| -> Option<(usize, Vec<f64>)> {
+        let dims = file.dims(key)?;
+        if dims.len() != 1 {
+            eprintln!(
+                "netcdf4 volume {} {}: the axis carries {} dims",
+                src.url,
+                key,
+                dims.len()
+            );
+            return None;
+        }
+        let len = dims[0] as usize;
+        let vals = match file.read_f64_dataset(key) {
+            Ok(v) => v,
+            Err(note) => {
+                eprintln!("netcdf4 volume {} {}: {:?}", src.url, key, note);
+                return None;
+            }
+        };
+        if vals.len() != len {
+            return None;
+        }
+        let scaled: Vec<f64> = vals.into_iter().map(|v| v * scale).collect();
+        if scaled.iter().any(|v| !v.is_finite()) {
+            eprintln!(
+                "netcdf4 volume {} {}: the axis carries a non-finite value",
+                src.url, key
+            );
+            return None;
+        }
+        Some((len, scaled))
+    };
+    let (depth_len, depth_vals) = read_axis(&depth_key, depth_scale)?;
+    let (lat_len, lat_vals) = read_axis(&lat_key, 1.0)?;
+    let (lon_len, lon_vals) = read_axis(&lon_key, 1.0)?;
+    let dim_of = |len: usize| -> Vec<usize> { (0..3).filter(|&i| sd[i] == len).collect() };
+    let (depth_cand, lat_cand, lon_cand) = (dim_of(depth_len), dim_of(lat_len), dim_of(lon_len));
+    if depth_cand.len() != 1 || lat_cand.len() != 1 || lon_cand.len() != 1 {
+        eprintln!(
+            "netcdf4 volume {}: axis lengths do not resolve one-to-one against the grid dims — refused",
+            src.url
+        );
+        return None;
+    }
+    let (depth_dim, lat_dim, lon_dim) = (depth_cand[0], lat_cand[0], lon_cand[0]);
+    if depth_dim == lat_dim || depth_dim == lon_dim || lat_dim == lon_dim {
+        eprintln!(
+            "netcdf4 volume {}: two named axes claim one grid dim — refused",
+            src.url
+        );
+        return None;
+    }
+    let axes = [
+        Axis {
+            kind: AxisKind::Explicit,
+            values: depth_vals,
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: lat_vals,
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: lon_vals,
+        },
+    ];
+    if !axes.iter().all(|a| a.is_strictly_monotonic()) {
+        eprintln!(
+            "netcdf4 volume {}: an axis is not strictly monotonic — refused",
+            src.url
+        );
+        return None;
+    }
+    let (nd, nla, nlo) = (sd[depth_dim], sd[lat_dim], sd[lon_dim]);
+    let cells = nd * nla * nlo;
+    let fill = file.attr_f64(&value_key, "_FillValue");
+    let mut data = Vec::with_capacity(cells);
+    let mut mask = vec![0u8; cells.div_ceil(8)];
+    let mut canon = [0usize; 3];
+    for dd in 0..nd {
+        canon[depth_dim] = dd;
+        for la in 0..nla {
+            canon[lat_dim] = la;
+            for lo in 0..nlo {
+                canon[lon_dim] = lo;
+                let si = (canon[0] * sd[1] + canon[1]) * sd[2] + canon[2];
+                let v = data_src[si];
+                let masked = !v.is_finite() || fill.is_some_and(|f| v == f as f32);
+                if masked {
+                    let ci = (dd * nla + la) * nlo + lo;
+                    mask[ci / 8] |= 1 << (ci % 8);
+                }
+                data.push(v);
+            }
+        }
+    }
+    Some((
+        name.clone(),
+        Volume {
+            dims: [nd as u32, nla as u32, nlo as u32],
+            axes,
+            data,
+            mask,
+            frame_body,
+        },
+    ))
+}
+
+pub fn build_opendap_channels(
+    src: &SourceConfig,
+    file: &crate::archivar::opendap::DapFile,
+    q: &ChannelQuery,
+) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
+    let body_name = frame_body_name(&src.frame());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
+    let mut channels = Vec::new();
+    for ext in &src.extracts {
+        let Extract::ProfileMap {
+            lat_key,
+            lon_key,
+            epoch_key,
+            pressure_var,
+            pressure_scale,
+            fields,
+            ..
+        } = ext
+        else {
+            continue;
+        };
+        let Some(lat_v) = file.values_numeric(lat_key) else {
+            continue;
+        };
+        let Some(lon_v) = file.values_numeric(lon_key) else {
+            continue;
+        };
+        let Some(juld_v) = file.values_numeric(epoch_key) else {
+            continue;
+        };
+        let Some(pres_v) = file.values_numeric(pressure_var) else {
+            continue;
+        };
+        let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+        let n_levels = match file.var(pressure_var) {
+            Some(v) => match file.var_shape(v).get(1) {
+                Some(&n) => n as usize,
+                None => continue,
+            },
+            None => continue,
+        };
+        if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+            continue;
+        }
+        let pres_fill = file
+            .var(pressure_var)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        let lat_fill = file
+            .var(lat_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        let lon_fill = file
+            .var(lon_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        let juld_fill = file
+            .var(epoch_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        for p in 0..n_prof {
+            let lat = lat_v[p];
+            let lon = lon_v[p];
+            let juld = juld_v[p];
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !juld.is_finite()
+                || (lat_fill == Some(lat))
+                || (lon_fill == Some(lon))
+                || (juld_fill == Some(juld))
+            {
+                continue;
+            }
+            let unix = (juld - 7305.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            for fc in fields {
+                let Some(vals) = file.values_numeric(&fc.key) else {
+                    continue;
+                };
+                if vals.len() < n_prof * n_levels {
+                    continue;
+                }
+                let fill = file
+                    .var(&fc.key)
+                    .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                    .and_then(|a| file.attr_num(a));
+                for k in 0..n_levels {
+                    let pres = pres_v[p * n_levels + k];
+                    let val = vals[p * n_levels + k];
+                    if !val.is_finite()
+                        || !pres.is_finite()
+                        || (fill == Some(val))
+                        || (pres_fill == Some(pres))
+                    {
+                        continue;
+                    }
+                    let alt = -pres * pressure_scale;
+                    let motion = Motion::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    let mut keep = true;
+                    if let Some((anchor_vmax, anchor_amax, _)) =
+                        law_bounds(&motion, epoch, 0.0, eph)
+                    {
+                        keep = record_in_enclosure(
+                            presences,
+                            body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
+                            epoch,
+                            now,
+                            EnclosureField {
+                                config: fc,
+                                medium: body_medium,
+                                body_radius,
+                                receiver_aperture: receiver_aperture
+                                    .for_channel(fc.channel_ref, fc.aperture),
+                            },
+                            AnchorEnvelope {
+                                vmax: anchor_vmax,
+                                amax: anchor_amax,
+                                pad: 0.0,
+                                ttl: src.ttl as f64,
+                            },
+                        );
+                    }
+                    if !keep {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    };
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            epoch,
+                            position,
+                            station_code: src.station_code.clone(),
+                            name: fc.name.clone(),
+                            value: val,
+                        },
+                        fc.clone(),
+                    ));
+                }
+            }
+        }
+    }
+    channels
+}
+
+const FINALS_BRIDGE_DAYS: f64 = 2.0;
+const FINALS_STALE_DAYS: f64 = 3.0;
+
+struct FinalsEntry {
+    mjd: f64,
+    ut1_utc: f64,
+    pmx: f64,
+    pmy: f64,
+    lod_s: Option<f64>,
+    measured: bool,
+}
+
+pub fn build_finals_channels(
+    src: &SourceConfig,
+    text: &str,
+    now: f64,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut fields: Vec<&FieldConfig> = Vec::new();
+    for ext in &src.extracts {
+        if let Extract::Field(fc) = ext {
+            fields.push(fc);
+        }
+    }
+    if fields.is_empty() {
+        return Vec::new();
+    }
+    let mut entries: Vec<FinalsEntry> = Vec::new();
+    for line in text.lines() {
+        if line.len() < 58 {
+            continue;
+        }
+        let flag = line.as_bytes().get(57).copied();
+        if flag != Some(b'I') && flag != Some(b'P') {
+            continue;
+        }
+        let col = |a: usize, b: usize| -> Option<f64> {
+            line.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
+        };
+        let Some(mjd) = col(7, 15) else {
+            continue;
+        };
+        let pmx = col(134, 144).or_else(|| col(18, 27));
+        let pmy = col(144, 154).or_else(|| col(37, 46));
+        let ut1 = col(154, 165).or_else(|| col(58, 68));
+        let (Some(pmx), Some(pmy), Some(ut1)) = (pmx, pmy, ut1) else {
+            continue;
+        };
+        entries.push(FinalsEntry {
+            mjd,
+            ut1_utc: ut1,
+            pmx,
+            pmy,
+            lod_s: col(79, 86).map(|ms| ms * 1e-3),
+            measured: flag == Some(b'I'),
+        });
+    }
+    if entries.is_empty() {
+        return Vec::new();
+    }
+    entries.sort_by(|a, b| a.mjd.total_cmp(&b.mjd));
+    let Some(now_unix) = lsk.tdb_to_unix(now) else {
+        return Vec::new();
+    };
+    let now_mjd = now_unix / 86400.0 + 40587.0;
+    let last_measured = entries
+        .iter()
+        .filter(|e| e.measured)
+        .map(|e| e.mjd)
+        .fold(f64::NEG_INFINITY, f64::max);
+    if now_mjd - last_measured > FINALS_STALE_DAYS {
+        eprintln!(
+            "finals: newest measured I-line is {:.2} d behind now — the now-value rests on prediction, refused (stale)",
+            now_mjd - last_measured
+        );
+        return Vec::new();
+    }
+    let lo = entries
+        .iter()
+        .filter(|e| e.mjd <= now_mjd)
+        .max_by(|a, b| a.mjd.total_cmp(&b.mjd));
+    let hi = entries
+        .iter()
+        .filter(|e| e.mjd >= now_mjd)
+        .min_by(|a, b| a.mjd.total_cmp(&b.mjd));
+    let (ut1_utc, pmx, pmy, lod_s) = match (lo, hi) {
+        (Some(lo), Some(hi)) if hi.mjd > lo.mjd => {
+            let f = (now_mjd - lo.mjd) / (hi.mjd - lo.mjd);
+            let lin = |a: f64, b: f64| a + f * (b - a);
+            (
+                lin(lo.ut1_utc, hi.ut1_utc),
+                lin(lo.pmx, hi.pmx),
+                lin(lo.pmy, hi.pmy),
+                lo.lod_s.or(hi.lod_s),
+            )
+        }
+        (Some(lo), _) => {
+            let dt = now_mjd - lo.mjd;
+            if dt > FINALS_BRIDGE_DAYS {
+                eprintln!(
+                    "finals: no bracketing day within the bridge ({dt:.2} d beyond the last row) — the now-value is refused"
+                );
+                return Vec::new();
+            }
+            let ut1_utc = lo
+                .lod_s
+                .map(|lod| lo.ut1_utc - lod * dt)
+                .unwrap_or(lo.ut1_utc);
+            (ut1_utc, lo.pmx, lo.pmy, lo.lod_s)
+        }
+        (None, Some(hi)) => (hi.ut1_utc, hi.pmx, hi.pmy, hi.lod_s),
+        (None, None) => return Vec::new(),
+    };
+    let mut channels = Vec::new();
+    for fc in &fields {
+        let value = match fc.key.as_str() {
+            "ut1_utc" => Some(ut1_utc),
+            "pmx" => Some(pmx),
+            "pmy" => Some(pmy),
+            "lod" => lod_s,
+            _ => continue,
+        };
+        let Some(value) = value else {
+            continue;
+        };
+        channels.push((
+            Channel {
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                epoch: now,
+                station_code: None,
+                position: Position::Source,
+                name: fc.name.clone(),
+                value,
+            },
+            (*fc).clone(),
+        ));
+    }
+    channels
+}
+
+type TecBest = Option<(f64, f64, Vec<(f64, f64, f64)>)>;
+
+pub fn build_ionex_channels(
+    src: &SourceConfig,
+    text: &str,
+    now: f64,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut channels = Vec::new();
+    let mut tec_field: Option<&FieldConfig> = None;
+    for ext in &src.extracts {
+        if let Extract::Field(fc) = ext
+            && fc.key == "tec"
+        {
+            tec_field = Some(fc);
+        }
+    }
+    let Some(fc) = tec_field else {
+        return channels;
+    };
+    let mut exponent: Option<f64> = None;
+    for line in text.lines() {
+        if line.ends_with("EXPONENT") {
+            exponent = line
+                .split_whitespace()
+                .next()
+                .and_then(|t| t.parse::<f64>().ok());
+            break;
+        }
+        if line.contains("START OF TEC MAP") {
+            break;
+        }
+    }
+    let Some(exp) = exponent else {
+        return channels;
+    };
+    let mut lines = text.lines().peekable();
+    let mut best: TecBest = None;
+    while let Some(l) = lines.next() {
+        if !l.trim_end().ends_with("START OF TEC MAP") {
+            continue;
+        }
+        let Some(ep_line) = lines.next() else { break };
+        let t: Vec<f64> = ep_line
+            .split_whitespace()
+            .filter_map(|t| t.parse::<f64>().ok())
+            .collect();
+        if t.len() < 6 {
+            continue;
+        }
+        let (y, mo, d) = (t[0] as i64, t[1] as u32, t[2] as u32);
+        let Some(days) = ymd_to_days(y, mo, d) else {
+            continue;
+        };
+        let unix = days as f64 * 86400.0 + t[3] * 3600.0 + t[4] * 60.0 + t[5];
+        let Some(epoch) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        if epoch > now {
+            continue;
+        }
+        let Some(hdr) = lines.next() else { break };
+        let getp = |a: usize, b: usize| -> Option<f64> {
+            hdr.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
+        };
+        let (Some(lon1), Some(lon2), Some(dlon), Some(h)) =
+            (getp(8, 14), getp(14, 20), getp(20, 26), getp(26, 32))
+        else {
+            continue;
+        };
+        if dlon == 0.0 {
+            continue;
+        }
+        let nlon = ((lon2 - lon1) / dlon).round() as i64 + 1;
+        let mut pts: Vec<(f64, f64, f64)> = Vec::new();
+        while let Some(cur) = lines.next() {
+            if cur.trim_end().ends_with("END OF TEC MAP") {
+                break;
+            }
+            let Some(lat) = cur.get(2..8).and_then(|s| s.trim().parse::<f64>().ok()) else {
+                break;
+            };
+            let mut remaining = nlon as usize;
+            let mut row: Option<&str> = Some(cur);
+            while let Some(r) = row {
+                let take = remaining.min(16);
+                for k in 0..take {
+                    let idx = nlon as usize - remaining + k;
+                    if let Some(v) = r
+                        .get(32 + 5 * k..32 + 5 * (k + 1))
+                        .and_then(|s| s.trim().parse::<f64>().ok())
+                    {
+                        let tec = v * 10f64.powf(exp);
+                        if tec >= 0.0 {
+                            pts.push((lat, lon1 + idx as f64 * dlon, tec));
+                        }
+                    }
+                }
+                remaining -= take;
+                if remaining == 0 {
+                    break;
+                }
+                row = lines.next();
+            }
+        }
+        if best.as_ref().is_none_or(|(be, _, _)| epoch > *be) {
+            best = Some((epoch, h * 1000.0, pts));
+        }
+    }
+    if let Some((epoch, alt, pts)) = best {
+        let body = frame_body_name(&src.frame());
+        for (lat, lon, tec) in pts {
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Surface {
+                        body_name: body.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    },
+                    name: fc.name.clone(),
+                    value: tec,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    channels
+}
+
+pub fn alerce_objects(json: &JsonVal) -> Vec<(String, f64, f64)> {
+    let mut out = Vec::new();
+    let JsonVal::Obj(root) = json else {
+        return out;
+    };
+    let Some(JsonVal::Arr(items)) = root.get("items") else {
+        return out;
+    };
+    for it in items {
+        let JsonVal::Obj(o) = it else { continue };
+        let (Some(JsonVal::Str(oid)), Some(ra), Some(dec)) = (
+            o.get("oid"),
+            o.get("meanra").and_then(scalar_of),
+            o.get("meandec").and_then(scalar_of),
+        ) else {
+            continue;
+        };
+        if ra.is_finite() && dec.is_finite() {
+            out.push((oid.clone(), ra, dec));
+        }
+    }
+    out
+}
+
+pub fn alerce_detection_rows(json: &JsonVal) -> Vec<(f64, f64, f64, f64, f64)> {
+    let mut out = Vec::new();
+    let JsonVal::Arr(rows) = json else {
+        return out;
+    };
+    for r in rows {
+        let JsonVal::Obj(o) = r else { continue };
+        let (Some(ra), Some(dec), Some(mjd), Some(magpsf), Some(magap)) = (
+            o.get("ra").and_then(scalar_of),
+            o.get("dec").and_then(scalar_of),
+            o.get("mjd").and_then(scalar_of),
+            o.get("magpsf").and_then(scalar_of),
+            o.get("magap").and_then(scalar_of),
+        ) else {
+            continue;
+        };
+        if ra.is_finite() && dec.is_finite() && mjd.is_finite() {
+            out.push((ra, dec, mjd, magpsf, magap));
+        }
+    }
+    out
+}
+
+pub fn build_alerce_channels(
+    src: &SourceConfig,
+    cap: usize,
+    delay: u64,
+) -> Vec<(Channel, FieldConfig)> {
+    let channels = Vec::new();
+    let Some(Extract::Alerce(detail)) = src
+        .extracts
+        .iter()
+        .find(|e| matches!(e, Extract::Alerce(_)))
+    else {
+        return channels;
+    };
+    let Some(list_bytes) = fetch_raw_bytes(&src.url) else {
+        return channels;
+    };
+    let Some(list_json) = parse_json(&String::from_utf8_lossy(&list_bytes)) else {
+        return channels;
+    };
+    let objects = alerce_objects(&list_json);
+    for (wi, (oid, _, _)) in objects.iter().take(cap).enumerate() {
+        if wi > 0 && delay > 0 {
+            thread::sleep(std::time::Duration::from_secs(delay));
+        }
+        let url = detail.replace("{oid}", oid);
+        let Some(det_bytes) = fetch_raw_bytes(&url) else {
+            continue;
+        };
+        let Some(det_json) = parse_json(&String::from_utf8_lossy(&det_bytes)) else {
+            continue;
+        };
+        let detections = alerce_detection_rows(&det_json);
+        if !detections.is_empty() {
+            eprintln!(
+                "alerce {}: {} detections without distance — dark until a distance channel exists (pending)",
+                oid,
+                detections.len()
+            );
+        }
+    }
+    channels
+}
+
+pub fn absorption_for_force(force: u8, declared: f64) -> f64 {
+    if declared == SLOT_ABSENT {
+        return SLOT_ABSENT;
+    }
+    if descriptor_for_channel_ref(force).is_some_and(|d| d.op == TransportOp::Poisson) {
+        return 0.0;
+    }
+    if declared.is_finite() && declared >= 0.0 {
+        return declared;
+    }
+    0.0
+}
+
+pub fn anchor(
+    channel: &Channel,
+    sensor: &FieldConfig,
+    source_ttl: f64,
+    source_idx: Option<u32>,
+    frame: Option<&Frame>,
+    mut origin_state: Option<&mut OriginState>,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<Sample> {
+    if sensor.tau <= 0.0 || sensor.tau_src == crate::archivar::types::TauSource::Pending {
+        return None;
+    }
+    let motion = match &channel.position {
+        Position::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
+        Position::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
+            Motion::Surface {
+                body_name: body_name.clone(),
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+            }
+        }
+        Position::SurfaceFlow {
+            body_name,
+            lat,
+            lon,
+            alt,
+            speed,
+            track,
+            vrate,
+        } => {
+            eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
+            let v = (*vrate)?;
+            surface_motion(SurfaceMotionParams {
+                body_name,
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+                speed: *speed,
+                track: *track,
+                vrate: v,
+                t: channel.epoch,
+                eph,
+            })?
+        }
+        Position::Barycenter { body_name, scale } => {
+            eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
+            Motion::Barycenter {
+                body_name: body_name.clone(),
+                scale: *scale,
+            }
+        }
+        Position::Source => frame_motion(frame?, None, None, channel.epoch, eph)?,
+        Position::Electrode { .. } => return None,
+    };
+    let abs = motion.at(channel.epoch, channel.epoch, eph)?;
+    if !abs[0].is_finite()
+        || !abs[1].is_finite()
+        || !abs[2].is_finite()
+        || !channel.epoch.is_finite()
+    {
+        return None;
+    }
+    let mut resid_ema = 0.0;
+    if let Some(ref mut st) = origin_state {
+        if st.has_prev {
+            let dt_raw = (channel.epoch - st.prev_epoch).abs();
+            if dt_raw > 0.0 && source_ttl > 0.0 {
+                let dt = dt_raw;
+                if let Some(pm) = &st.prev_motion
+                    && let Some(pred) = pm.at(channel.epoch, st.prev_epoch, eph)
+                {
+                    let resid = ((pred[0] - abs[0]).powi(2)
+                        + (pred[1] - abs[1]).powi(2)
+                        + (pred[2] - abs[2]).powi(2))
+                    .sqrt();
+                    let alpha = 1.0 - (-dt / source_ttl).exp();
+                    st.resid_ema += (resid / dt - st.resid_ema) * alpha;
+                }
+            }
+        }
+        resid_ema = st.resid_ema;
+        st.prev_epoch = channel.epoch;
+        st.prev_abs = abs;
+        st.prev_motion = Some(motion.clone());
+        st.has_prev = true;
+    }
+    let (anchor_vmax, anchor_amax, anchor_p0) = law_bounds(&motion, channel.epoch, resid_ema, eph)?;
+    if !anchor_p0[0].is_finite()
+        || !anchor_p0[1].is_finite()
+        || !anchor_p0[2].is_finite()
+        || !anchor_vmax.is_finite()
+        || !anchor_amax.is_finite()
+    {
+        return None;
+    }
+    let body_eph = motion.anchor_body().and_then(|name| eph.get(name));
+    let body_medium = body_eph.and_then(|e| e.medium.as_ref());
+    let channel_ref = sensor.channel_ref?;
+    let extent = medium_reach(channel_ref, sensor.tau, body_medium, sensor.advection)?;
+    if !extent.is_finite() {
+        return None;
+    }
+    Some(Sample {
+        source: match source_idx {
+            Some(idx) => SampleSource::Source(idx),
+            None => SampleSource::Sensor,
+        },
+        epoch: channel.epoch,
+        ttl: source_ttl,
+        extent,
+        tau: sensor.tau,
+        kernel_id: sensor.kernel as f64,
+        channel_ref: Some(channel_ref as f64),
+        absorption: absorption_for_force(channel_ref, sensor.absorption),
+        advection: sensor.advection,
+        anchor_vmax,
+        anchor_amax,
+        anchor_p0,
+        motion: motion.clone(),
+        val: match convert_to_si(channel.value, &sensor.unit) {
+            Some(v) => v,
+            None => {
+                register_unconverted_unit(&sensor.unit, &channel.name);
+                return None;
+            }
+        },
+        name: channel.name.clone(),
+        z_flux: if sensor.aperture == Aperture::Flux {
+            channel.z
+        } else {
+            SLOT_ABSENT
+        },
+        freq: channel.freq,
+        bin_width: channel.bin_width,
+        color_index: 0.0,
+        phase: sample_phase(channel, sensor),
+    })
+}
+
+pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, FieldConfig)> {
+    let mut out = Vec::new();
+    let Some(gravity) = force_id_of("gravity") else {
+        return out;
+    };
+    if let Some(gm) = props.gm {
+        out.push((
+            Channel {
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                name: format!("{}.mass", name),
+                value: gm,
+                station_code: None,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.mass", name),
+                name: format!("{}.mass", name),
+                band_id: None,
+                kernel: 0,
+                channel_ref: Some(gravity),
+                tau: f64::INFINITY,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: absorption_for_force(gravity, 0.0),
+                advection: 0.0,
+                unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+                aperture: Aperture::None,
+            },
+        ));
+    }
+    if let Some((omega_g, sigma)) = props.omega_g {
+        let tau = if omega_g > 0.0 {
+            1.0 / omega_g
+        } else {
+            f64::INFINITY
+        };
+        out.push((
+            Channel {
+                z: 0.0,
+                freq: omega_g,
+                bin_width: sigma,
+                name: format!("{}.omega_g", name),
+                value: omega_g,
+                station_code: None,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.omega_g", name),
+                name: format!("{}.omega_g", name),
+                band_id: None,
+                kernel: 0,
+                channel_ref: Some(gravity),
+                tau,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: absorption_for_force(gravity, 0.0),
+                advection: 0.0,
+                unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+                aperture: Aperture::None,
+            },
+        ));
+    }
+    out
+}

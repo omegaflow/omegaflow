@@ -1,0 +1,5 @@
+# receiver models — which body takes the analytic IAU path instead of the
+# ephemeris rotation matrices. The model travels as data; the code carries no
+# body name of its own.
+# body	model
+earth	iau2006-2000a

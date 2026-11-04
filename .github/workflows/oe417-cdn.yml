@@ -1,0 +1,51 @@
+# harvest: asset=oe417.bin arm=oe417_compiler idempotent=true timeout=120 tag=openenergyhub.ornl.gov
+
+name: oe417-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the asset is present
+        type: boolean
+        default: false
+  schedule:
+    # annual product — the DOE OE-417 annual summaries carry one release per year
+    - cron: "0 5 1 2 *"
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  oe417:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view openenergyhub.ornl.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^oe417.bin$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset oe417.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset oe417.bin missing — compiling and manifesting"
+          fi
+      - name: Manifest the DOE OE-417 electric-disturbance events to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin oe417_compiler -- --ci-mode

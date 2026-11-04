@@ -1,0 +1,22 @@
+name: cbdata-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  cbdata:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"cbdata.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"B/cb/cbdata\" --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;m1:M1;m2:M2' --skip-null mag1 --async 3600 --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' --out cbdata.json"}
+        ]

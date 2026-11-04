@@ -1,0 +1,621 @@
+use crate::archivar::{Channel, FieldConfig, Position};
+
+pub const MAGIC: [u8; 4] = *b"EEGB";
+pub const VERSION: u32 = 1;
+
+pub const EEG_CHANNEL_CAP: usize = 4096;
+
+pub const FLAG_DOUBLE: u32 = 1;
+pub const FLAG_EVENTS: u32 = 2;
+pub const FLAG_EVENTS_VERBATIM: u32 = 4;
+
+const HEADER_LEN: usize = 100;
+
+#[derive(Clone)]
+pub enum Samples {
+    Single(Vec<f32>),
+    Double(Vec<f64>),
+}
+
+#[derive(Clone)]
+pub struct EegEvent {
+    pub type_: Option<String>,
+    pub latency: Option<f64>,
+    pub duration: Option<f64>,
+    pub urevent: Option<f64>,
+}
+
+#[derive(Clone)]
+pub enum Events {
+    Verbatim(Vec<u8>),
+    Normalized(Vec<EegEvent>),
+}
+
+#[derive(Clone)]
+pub struct OpenNeuroEeg {
+    pub nbchan: u32,
+    pub pnts: u64,
+    pub trials: u32,
+    pub srate: Option<f64>,
+    pub sha256: [u8; 32],
+    pub snapshot_tag: String,
+    pub hexsha: String,
+    pub origin_url: String,
+    pub labels: Vec<String>,
+    pub events: Option<Events>,
+    pub samples: Samples,
+}
+
+fn write_events(events: &[EegEvent]) -> Vec<u8> {
+    let mut buf = Vec::new();
+    buf.extend_from_slice(&(events.len() as u32).to_le_bytes());
+    for ev in events {
+        buf.push(ev.type_.is_some() as u8);
+        if let Some(t) = &ev.type_ {
+            buf.extend_from_slice(&(t.len() as u16).to_le_bytes());
+            buf.extend_from_slice(t.as_bytes());
+        }
+        buf.push(ev.latency.is_some() as u8);
+        if let Some(v) = ev.latency {
+            buf.extend_from_slice(&v.to_le_bytes());
+        }
+        buf.push(ev.duration.is_some() as u8);
+        if let Some(v) = ev.duration {
+            buf.extend_from_slice(&v.to_le_bytes());
+        }
+        buf.push(ev.urevent.is_some() as u8);
+        if let Some(v) = ev.urevent {
+            buf.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    buf
+}
+
+fn parse_events(blob: &[u8]) -> Option<Vec<EegEvent>> {
+    let n = u32::from_le_bytes(blob.get(0..4)?.try_into().ok()?) as usize;
+    let mut off = 4usize;
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        let has_type = *blob.get(off)? != 0;
+        off += 1;
+        let type_ = if has_type {
+            let len = u16::from_le_bytes(blob.get(off..off + 2)?.try_into().ok()?) as usize;
+            off += 2;
+            let s = String::from_utf8(blob.get(off..off + len)?.to_vec()).ok()?;
+            off += len;
+            Some(s)
+        } else {
+            None
+        };
+        let has_latency = *blob.get(off)? != 0;
+        off += 1;
+        let latency = if has_latency {
+            let v = f64::from_le_bytes(blob.get(off..off + 8)?.try_into().ok()?);
+            off += 8;
+            Some(v)
+        } else {
+            None
+        };
+        let has_duration = *blob.get(off)? != 0;
+        off += 1;
+        let duration = if has_duration {
+            let v = f64::from_le_bytes(blob.get(off..off + 8)?.try_into().ok()?);
+            off += 8;
+            Some(v)
+        } else {
+            None
+        };
+        let has_urevent = *blob.get(off)? != 0;
+        off += 1;
+        let urevent = if has_urevent {
+            let v = f64::from_le_bytes(blob.get(off..off + 8)?.try_into().ok()?);
+            off += 8;
+            Some(v)
+        } else {
+            None
+        };
+        out.push(EegEvent {
+            type_,
+            latency,
+            duration,
+            urevent,
+        });
+    }
+    if off != blob.len() {
+        return None;
+    }
+    Some(out)
+}
+
+fn take_str(bytes: &[u8], off: &mut usize, len: usize) -> Option<String> {
+    let s = String::from_utf8(bytes.get(*off..*off + len)?.to_vec()).ok()?;
+    *off += len;
+    Some(s)
+}
+
+fn take_bytes(bytes: &[u8], off: &mut usize, len: usize) -> Option<Vec<u8>> {
+    let b = bytes.get(*off..*off + len)?.to_vec();
+    *off += len;
+    Some(b)
+}
+
+pub fn write_bin(eeg: &OpenNeuroEeg) -> Vec<u8> {
+    let mut buf = Vec::new();
+    buf.extend_from_slice(&MAGIC);
+    buf.extend_from_slice(&VERSION.to_le_bytes());
+    let mut flags = 0u32;
+    if matches!(eeg.samples, Samples::Double(_)) {
+        flags |= FLAG_DOUBLE;
+    }
+    let events_blob: Option<Vec<u8>> = match &eeg.events {
+        Some(Events::Verbatim(b)) => {
+            flags |= FLAG_EVENTS | FLAG_EVENTS_VERBATIM;
+            Some(b.clone())
+        }
+        Some(Events::Normalized(evs)) => {
+            flags |= FLAG_EVENTS;
+            Some(write_events(evs))
+        }
+        None => None,
+    };
+    buf.extend_from_slice(&flags.to_le_bytes());
+    buf.extend_from_slice(&eeg.nbchan.to_le_bytes());
+    buf.extend_from_slice(&eeg.pnts.to_le_bytes());
+    buf.extend_from_slice(&eeg.trials.to_le_bytes());
+    buf.push(eeg.srate.is_some() as u8);
+    buf.extend_from_slice(&[0u8; 3]);
+    match eeg.srate {
+        Some(s) => buf.extend_from_slice(&s.to_le_bytes()),
+        None => buf.extend_from_slice(&[0u8; 8]),
+    }
+    buf.extend_from_slice(&eeg.sha256);
+    buf.extend_from_slice(&(eeg.snapshot_tag.len() as u32).to_le_bytes());
+    buf.extend_from_slice(&(eeg.hexsha.len() as u32).to_le_bytes());
+    buf.extend_from_slice(&(eeg.origin_url.len() as u32).to_le_bytes());
+    buf.extend_from_slice(&(eeg.labels.len() as u32).to_le_bytes());
+    buf.extend_from_slice(&(events_blob.as_ref().map_or(0, |b| b.len() as u32)).to_le_bytes());
+    let samples_len = match &eeg.samples {
+        Samples::Single(s) => s.len() as u64 * 4,
+        Samples::Double(s) => s.len() as u64 * 8,
+    };
+    buf.extend_from_slice(&samples_len.to_le_bytes());
+    buf.extend_from_slice(eeg.snapshot_tag.as_bytes());
+    buf.extend_from_slice(eeg.hexsha.as_bytes());
+    buf.extend_from_slice(eeg.origin_url.as_bytes());
+    for label in &eeg.labels {
+        buf.extend_from_slice(&(label.len() as u16).to_le_bytes());
+        buf.extend_from_slice(label.as_bytes());
+    }
+    if let Some(blob) = &events_blob {
+        buf.extend_from_slice(blob);
+    }
+    match &eeg.samples {
+        Samples::Single(s) => {
+            for v in s {
+                buf.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+        Samples::Double(s) => {
+            for v in s {
+                buf.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+    }
+    buf
+}
+
+pub fn parse_bin(bytes: &[u8]) -> Option<OpenNeuroEeg> {
+    if bytes.len() < HEADER_LEN || bytes[0..4] != MAGIC {
+        return None;
+    }
+    if u32::from_le_bytes(bytes[4..8].try_into().ok()?) != VERSION {
+        return None;
+    }
+    let flags = u32::from_le_bytes(bytes[8..12].try_into().ok()?);
+    let nbchan = u32::from_le_bytes(bytes[12..16].try_into().ok()?);
+    let pnts = u64::from_le_bytes(bytes[16..24].try_into().ok()?);
+    let trials = u32::from_le_bytes(bytes[24..28].try_into().ok()?);
+    let srate_present = bytes[28] != 0;
+    let srate = f64::from_le_bytes(bytes[32..40].try_into().ok()?);
+    let sha256: [u8; 32] = bytes[40..72].try_into().ok()?;
+    let tag_len = u32::from_le_bytes(bytes[72..76].try_into().ok()?) as usize;
+    let hexsha_len = u32::from_le_bytes(bytes[76..80].try_into().ok()?) as usize;
+    let url_len = u32::from_le_bytes(bytes[80..84].try_into().ok()?) as usize;
+    let labels_n = u32::from_le_bytes(bytes[84..88].try_into().ok()?) as usize;
+    let events_len = u32::from_le_bytes(bytes[88..92].try_into().ok()?) as usize;
+    let samples_len = u64::from_le_bytes(bytes[92..100].try_into().ok()?) as usize;
+
+    if labels_n != nbchan as usize {
+        return None;
+    }
+    let double = flags & FLAG_DOUBLE != 0;
+    let elem = if double { 8usize } else { 4usize };
+    let total = (nbchan as u64)
+        .checked_mul(pnts)?
+        .checked_mul(trials as u64)?;
+    if !samples_len.is_multiple_of(elem) || (samples_len / elem) as u64 != total {
+        return None;
+    }
+
+    let mut off = HEADER_LEN;
+    let snapshot_tag = take_str(bytes, &mut off, tag_len)?;
+    let hexsha = take_str(bytes, &mut off, hexsha_len)?;
+    let origin_url = take_str(bytes, &mut off, url_len)?;
+    let mut labels = Vec::with_capacity(labels_n);
+    for _ in 0..labels_n {
+        let len = u16::from_le_bytes(bytes.get(off..off + 2)?.try_into().ok()?) as usize;
+        off += 2;
+        labels.push(take_str(bytes, &mut off, len)?);
+    }
+    let events = if flags & FLAG_EVENTS != 0 {
+        let blob = take_bytes(bytes, &mut off, events_len)?;
+        if flags & FLAG_EVENTS_VERBATIM != 0 {
+            Some(Events::Verbatim(blob))
+        } else {
+            Some(Events::Normalized(parse_events(&blob)?))
+        }
+    } else {
+        None
+    };
+    let sample_bytes = take_bytes(bytes, &mut off, samples_len)?;
+    if off != bytes.len() {
+        return None;
+    }
+    let samples = if double {
+        let mut v = Vec::with_capacity(total as usize);
+        for i in 0..total as usize {
+            v.push(f64::from_le_bytes(
+                sample_bytes[i * 8..i * 8 + 8].try_into().ok()?,
+            ));
+        }
+        Samples::Double(v)
+    } else {
+        let mut v = Vec::with_capacity(total as usize);
+        for i in 0..total as usize {
+            v.push(f32::from_le_bytes(
+                sample_bytes[i * 4..i * 4 + 4].try_into().ok()?,
+            ));
+        }
+        Samples::Single(v)
+    };
+    Some(OpenNeuroEeg {
+        nbchan,
+        pnts,
+        trials,
+        srate: if srate_present { Some(srate) } else { None },
+        sha256,
+        snapshot_tag,
+        hexsha,
+        origin_url,
+        labels,
+        events,
+        samples,
+    })
+}
+
+fn sample_at(samples: &Samples, index: usize) -> Option<f64> {
+    match samples {
+        Samples::Single(v) => v.get(index).map(|x| f64::from(*x)),
+        Samples::Double(v) => v.get(index).copied(),
+    }
+}
+
+pub fn channel_index(eeg: &OpenNeuroEeg, selector: &str) -> Option<usize> {
+    let nbchan = eeg.nbchan as usize;
+    if nbchan == 0 || eeg.labels.len() != nbchan {
+        return None;
+    }
+    match selector.parse::<usize>() {
+        Ok(n) if n >= 1 && n <= nbchan => Some(n - 1),
+        Ok(_) => None,
+        Err(_) => eeg.labels.iter().position(|label| label == selector),
+    }
+}
+
+pub fn channel_series(eeg: &OpenNeuroEeg, selector: &str) -> Option<Vec<f64>> {
+    let nbchan = eeg.nbchan as usize;
+    let channel = channel_index(eeg, selector)?;
+    let points = (eeg.pnts as usize).checked_mul(eeg.trials as usize)?;
+    if points == 0 || nbchan.checked_mul(points).is_none() {
+        return None;
+    }
+    let mut out = Vec::with_capacity(points);
+    for k in 0..points {
+        let value = sample_at(&eeg.samples, k.checked_mul(nbchan)?.checked_add(channel)?)?;
+        if !value.is_finite() {
+            return None;
+        }
+        out.push(value);
+    }
+    Some(out)
+}
+
+pub fn emit_channels(
+    eeg: &OpenNeuroEeg,
+    position: &Position,
+    epoch: f64,
+    tau: f64,
+    cap: usize,
+) -> Vec<(Channel, FieldConfig)> {
+    let (Some(channel_ref), Some(kernel)) = (
+        crate::force::force_id_of("electric"),
+        crate::archivar::kernel_id_of("gaussian-inverse-square"),
+    ) else {
+        return Vec::new();
+    };
+    let nbchan = eeg.nbchan as usize;
+    if cap == 0 || nbchan == 0 || eeg.labels.len() != nbchan {
+        return Vec::new();
+    }
+    let Some(points) = (eeg.pnts as usize).checked_mul(eeg.trials as usize) else {
+        return Vec::new();
+    };
+    if points == 0 {
+        return Vec::new();
+    }
+    let stride = points.div_ceil(cap);
+    let mut out = Vec::new();
+    for (idx, label) in eeg.labels.iter().enumerate() {
+        let name = if label.is_empty() {
+            format!("e{idx}")
+        } else {
+            label.clone()
+        };
+        let fc = FieldConfig {
+            key: name.clone(),
+            name,
+            band_id: None,
+            kernel,
+            channel_ref: Some(channel_ref),
+            tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "V".to_string(),
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+            aperture: crate::archivar::Aperture::None,
+        };
+        for k in (0..points).step_by(stride) {
+            let Some(value) = sample_at(&eeg.samples, k * nbchan + idx) else {
+                continue;
+            };
+            if !value.is_finite() {
+                continue;
+            }
+            out.push((
+                Channel {
+                    name: fc.name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    station_code: Some(label.clone()),
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn bin(samples: Samples, events: Option<Events>) -> OpenNeuroEeg {
+        OpenNeuroEeg {
+            nbchan: 2,
+            pnts: 3,
+            trials: 1,
+            srate: Some(100.0),
+            sha256: [0xAA; 32],
+            snapshot_tag: "1.0.1".to_string(),
+            hexsha: "470458bcff173ca37018a9cb7a55c3804ccc1759".to_string(),
+            origin_url: "https://s3.amazonaws.com/openneuro.org/ds005034/x.set".to_string(),
+            labels: vec!["Fp1".to_string(), "Fp2".to_string()],
+            events,
+            samples,
+        }
+    }
+
+    #[test]
+    fn single_samples_roundtrip_bit_identical() {
+        let eeg = bin(Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]), None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed.nbchan, 2);
+        assert_eq!(parsed.pnts, 3);
+        assert_eq!(parsed.trials, 1);
+        assert_eq!(parsed.srate, Some(100.0));
+        assert_eq!(parsed.sha256, [0xAA; 32]);
+        assert_eq!(parsed.snapshot_tag, "1.0.1");
+        assert_eq!(parsed.labels, vec!["Fp1".to_string(), "Fp2".to_string()]);
+        assert!(parsed.events.is_none());
+        match parsed.samples {
+            Samples::Single(v) => assert_eq!(v, vec![1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0]),
+            _ => panic!("not single"),
+        }
+    }
+
+    #[test]
+    fn double_samples_and_absent_srate_roundtrip() {
+        let mut eeg = bin(Samples::Double(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]), None);
+        eeg.srate = None;
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed.srate, None);
+        match parsed.samples {
+            Samples::Double(v) => assert_eq!(v, vec![1.0f64, 2.0, 3.0, 4.0, 5.0, 6.0]),
+            _ => panic!("not double"),
+        }
+    }
+
+    #[test]
+    fn normalized_events_roundtrip() {
+        let events = Events::Normalized(vec![
+            EegEvent {
+                type_: Some("boundary".to_string()),
+                latency: Some(1.5),
+                duration: None,
+                urevent: Some(7.0),
+            },
+            EegEvent {
+                type_: None,
+                latency: Some(2.5),
+                duration: Some(0.25),
+                urevent: None,
+            },
+        ]);
+        let eeg = bin(
+            Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]),
+            Some(events),
+        );
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).unwrap();
+        let Events::Normalized(evs) = parsed.events.unwrap() else {
+            panic!("not normalized events");
+        };
+        assert_eq!(evs.len(), 2);
+        assert_eq!(evs[0].type_.as_deref(), Some("boundary"));
+        assert_eq!(evs[0].latency, Some(1.5));
+        assert_eq!(evs[0].duration, None);
+        assert_eq!(evs[0].urevent, Some(7.0));
+        assert_eq!(evs[1].type_, None);
+        assert_eq!(evs[1].latency, Some(2.5));
+    }
+
+    #[test]
+    fn verbatim_events_carry_their_bytes() {
+        let blob = vec![14u8, 0, 0, 0, 8, 0, 0, 0];
+        let eeg = bin(
+            Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]),
+            Some(Events::Verbatim(blob.clone())),
+        );
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).unwrap();
+        let Events::Verbatim(b) = parsed.events.unwrap() else {
+            panic!("not verbatim events");
+        };
+        assert_eq!(b, blob);
+    }
+
+    #[test]
+    fn foreign_bytes_and_bad_lengths_read_absent() {
+        assert!(parse_bin(b"").is_none());
+        assert!(parse_bin(b"EEGB").is_none());
+        assert!(parse_bin(b"XXXX").is_none());
+        let eeg = bin(Samples::Single(vec![1.0]), None);
+        let mut bytes = write_bin(&eeg);
+        bytes.pop();
+        assert!(parse_bin(&bytes).is_none());
+    }
+
+    #[test]
+    fn electrodes_emit_at_the_anchor_with_electric_force() {
+        let samples = Samples::Single(vec![1.0, 10.0, 2.0, 20.0, f32::NAN, 30.0]);
+        let eeg = bin(samples, None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        let anchor = Position::Barycenter {
+            body_name: "earth".to_string(),
+            scale: 1.0,
+        };
+        let emitted = emit_channels(&parsed, &anchor, 1234.5, 86400.0, EEG_CHANNEL_CAP);
+        assert_eq!(emitted.len(), 5);
+        for (channel, fc) in &emitted {
+            assert!(channel.value.is_finite());
+            assert_eq!(channel.epoch, 1234.5);
+            assert!(matches!(
+                &channel.position,
+                Position::Barycenter { body_name, .. } if body_name == "earth"
+            ));
+            assert_eq!(fc.channel_ref, Some(6));
+            assert_eq!(fc.kernel, 1);
+            assert_eq!(fc.unit, "V");
+            assert_eq!(fc.key, channel.name);
+            assert!(channel.station_code.is_some());
+        }
+        let e0: Vec<_> = emitted
+            .iter()
+            .filter(|(c, _)| c.station_code.as_deref() == Some("Fp1"))
+            .collect();
+        let e1: Vec<_> = emitted
+            .iter()
+            .filter(|(c, _)| c.station_code.as_deref() == Some("Fp2"))
+            .collect();
+        assert_eq!(e0.len(), 2);
+        assert_eq!(e1.len(), 3);
+    }
+
+    #[test]
+    fn the_scan_cap_decimates_evenly_and_is_honored() {
+        let eeg = OpenNeuroEeg {
+            nbchan: 1,
+            pnts: 10,
+            trials: 1,
+            srate: Some(100.0),
+            sha256: [0; 32],
+            snapshot_tag: "1.0.1".to_string(),
+            hexsha: "470458bcff173ca37018a9cb7a55c3804ccc1759".to_string(),
+            origin_url: "https://s3.amazonaws.com/openneuro.org/ds005034/x.set".to_string(),
+            labels: vec!["Fp1".to_string()],
+            events: None,
+            samples: Samples::Single((0..10).map(|i| i as f32).collect()),
+        };
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        let anchor = Position::Surface {
+            body_name: "earth".to_string(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let emitted = emit_channels(&parsed, &anchor, 99.0, 86400.0, 3);
+        assert_eq!(emitted.len(), 3);
+        let values: Vec<f64> = emitted.iter().map(|(c, _)| c.value).collect();
+        assert_eq!(values, vec![0.0, 4.0, 8.0]);
+    }
+
+    #[test]
+    fn channel_series_reads_single_by_label_and_index() {
+        let eeg = bin(Samples::Single(vec![1.0, 10.0, 2.0, 20.0, 3.0, 30.0]), None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert_eq!(channel_series(&parsed, "Fp1"), Some(vec![1.0, 2.0, 3.0]));
+        assert_eq!(channel_series(&parsed, "Fp2"), Some(vec![10.0, 20.0, 30.0]));
+        assert_eq!(channel_series(&parsed, "2"), Some(vec![10.0, 20.0, 30.0]));
+        assert_eq!(channel_series(&parsed, "1"), Some(vec![1.0, 2.0, 3.0]));
+    }
+
+    #[test]
+    fn channel_series_reads_double_samples() {
+        let mut eeg = bin(Samples::Double(vec![1.5, 10.5, 2.5, 20.5]), None);
+        eeg.pnts = 2;
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert_eq!(channel_series(&parsed, "Fp1"), Some(vec![1.5, 2.5]));
+        assert_eq!(channel_series(&parsed, "Fp2"), Some(vec![10.5, 20.5]));
+    }
+
+    #[test]
+    fn channel_series_refuses_absent_selectors_and_nonfinite_samples() {
+        let eeg = bin(Samples::Single(vec![1.0, 10.0, 2.0, 20.0, 3.0, 30.0]), None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert!(channel_series(&parsed, "Fp9").is_none());
+        assert!(channel_series(&parsed, "0").is_none());
+        assert!(channel_series(&parsed, "99").is_none());
+
+        let nan = bin(
+            Samples::Single(vec![1.0, 10.0, 2.0, 20.0, f32::NAN, 30.0]),
+            None,
+        );
+        let bytes = write_bin(&nan);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert!(channel_series(&parsed, "Fp1").is_none());
+    }
+}

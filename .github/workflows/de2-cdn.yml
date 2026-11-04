@@ -1,0 +1,34 @@
+# harvest: format=de2 asset=fehlt arm=de2_compiler
+
+name: de2-cdn
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/harvest/src/bin/de2_compiler.rs'
+      - '.github/workflows/de2-cdn.yml'
+
+concurrency:
+  group: de2-cdn
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  de2-cdn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the DE-2 UA16S_ALL HAPI window by month onto the CDN
+        run: |
+          cargo build -p omegaflow-harvest --release --bin de2_compiler
+          ./target/release/de2_compiler --ci-mode

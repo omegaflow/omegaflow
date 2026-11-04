@@ -1,0 +1,200 @@
+name: kernel-flatten
+
+concurrency:
+  group: kernel-flatten
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 1 * *'
+
+permissions:
+  contents: write
+  issues: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Crawl kernel roots
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- --index \
+            --root https://ssd.jpl.nasa.gov/ftp/ \
+            --root https://naif.jpl.nasa.gov/pub/ \
+            --root https://spiftp.esac.esa.int/data/SPICE/JUICE/ \
+            --out kernel-index.φ \
+            --jobs 4 \
+            --delay-ms 50
+      - name: Summarize kernel index
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
+            --summarize kernel-index.φ docs/reference/KERNEL_INDEX.md
+      - name: Upload index artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sources-index
+          path: |
+            kernel-index.φ
+            docs/reference/KERNEL_INDEX.md
+          retention-days: 7
+  bodies:
+    needs: index
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/download-artifact@v4
+        with:
+          name: sources-index
+      - name: Flatten SPK bodies and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
+            --fetch-from kernel-index.φ \
+            --systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice \
+            --dest kernels \
+            --ci-mode \
+            --index kernel-index.φ
+      - name: Compile JUICE CoG attitude-referenced ephemeris and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
+            --fetch-from kernel-index.φ \
+            --juice-cog \
+            --dest kernels \
+            --ci-mode
+      - name: Flatten asteroid longbow and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
+            --fetch-from kernel-index.φ \
+            --systems asteroids \
+            --small-bodies \
+            --dest kernels \
+            --ci-mode \
+            --index kernel-index.φ
+      - name: Split sb441-n373 longbow and upload TNO bins to CDN
+        run: |
+          df -h .
+          curl -sSfL --retry 3 --max-time 5400 \
+            https://ssd.jpl.nasa.gov/ftp/eph/small_bodies/asteroids_de441/sb441-n373.bsp \
+            | cargo run -p omegaflow-utils --release --bin spk_split -- \
+              --bodies 2136199,2136108,2136472,2050000,2090482,2020000,2028978,2120347,2174567,2208996,2055565,2055637 \
+              --gm-catalog tools/harvest/data/asteroid/asteroid_gm_sb441.φ \
+              --carrier kernels/de441.bsp \
+              --dest kernels \
+              --ci-mode
+      - name: Compile Horizons bodies and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin horizons_compiler -- --ci-mode
+      - name: Compile Horizons long-window probe arcs and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin horizons_compiler -- --long --ci-mode
+      - name: Compile daily-raster probe arcs and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin horizons_compiler -- --daily --ci-mode
+      - name: Compile flyby arcs and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin horizons_compiler -- --flyby --ci-mode
+      - name: Compile DASTCOM asteroid catalog and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 7200 -o kernels/dast5_le.dat \
+            https://ssd.jpl.nasa.gov/ftp/xfr/dast5_le.dat
+          cargo run -p omegaflow-harvest --release --bin dastcom_compiler -- \
+            --input kernels/dast5_le.dat \
+            --out dastcom_asteroids.bin \
+            --gm tools/harvest/data/asteroid/asteroid_gm_inpop25c.φ \
+            --diameters tools/harvest/data/asteroid/asteroid_diameters_neowise.φ,tools/harvest/data/asteroid/asteroid_diameters_akari.φ \
+            --ci-mode
+      - name: Compile KBO elements and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin kbo_compiler -- \
+            --out kbo_elements.json \
+            --etno \
+            --ci-mode
+      - name: Compile MPC extended catalog and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 3600 -o kernels/mpcorb_extended.json.gz \
+            https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
+          cargo run -p omegaflow-harvest --release --bin mpcorb_compiler -- \
+            --input kernels/mpcorb_extended.json.gz \
+            --out mpcorb.bin \
+            --ci-mode
+          cargo run -p omegaflow-harvest --release --bin mpcorb_compiler -- \
+            --input kernels/mpcorb_extended.json.gz \
+            --out mpcorb_distant.bin \
+            --distant \
+            --ci-mode
+      - name: Report bodies void
+        if: failure()
+        run: |
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "flatten: bodies returned void" \
+            "Bodies job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            health
+
+  jwst-spectra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    concurrency:
+      group: jwst-harvest
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Restore harvest workdir
+        uses: actions/cache@v4
+        with:
+          path: phi/jwst_harvest
+          key: jwst-harvest-v1
+      - name: Compile JWST transmission spectra and upload to CDN
+        env:
+          MAST_TOKEN: ${{ secrets.MAST_TOKEN }}
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          cargo run -p omegaflow-harvest --release --bin jwst_spectra_compiler -- \
+            --out curated48_spectra.bin \
+            --lsk kernels/naif0012.tls \
+            --curated \
+            --workdir phi/jwst_harvest \
+            --budget 340 \
+            --ci-mode
+
+  eve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the EVE temperature ladder 2011 once and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern eve_lines_2011.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin eve_compiler -- \
+              --year 2011 --start-doy 40 --end-doy 130 \
+              --out eve_lines_2011.bin --ci-mode
+
+  aia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the AIA imaging ladder 2014 once and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern aia_lines.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin aia_compiler -- \
+              --harvest --start 2014.03.01 --end 2014.05.30 \
+              --out aia_lines.bin --ci-mode

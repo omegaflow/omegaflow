@@ -1,0 +1,22 @@
+name: weberin-verdicts-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  weberin-verdicts:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"weberin_verdicts_compiler","crate":"omegaflow-measure","netloc":"ssd.jpl.nasa.gov-weberin","asset":"weberin_verdicts.bin","args":"--out data/weberin_verdicts.bin"}
+        ]

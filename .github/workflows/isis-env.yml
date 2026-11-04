@@ -1,0 +1,46 @@
+# ISIS environment for the M10 control-network method (S&R2026: SPICE camera_angles
+# + MESSENGER-DEM -> ISIS autoseed/pointreg -> bundle adjustment).
+#
+# The USGS ISIS distribution lives in the `usgs-astrogeology` conda channel — NOT
+# conda-forge (`conda-forge/isis` is absent). The package file itself is ~23 MB
+# (isis-10.0.0-h1f94ec8_1.conda), the installed binaries ~2.5 GB; the heavy weight
+# is in deps. No data area is needed for the smoke check (`spiceinit -h`): the
+# official install test installs with --no-data and checks via spiceinit; ISISDATA
+# is fetched separately (downloadIsisData) only at processing time.
+#
+# workflow_dispatch only — the ISIS install is heavy and must not run on push.
+name: isis-env
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  isis:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    # conda activation needs a login shell
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          use-mamba: true
+          channels: usgs-astrogeology,conda-forge
+      - name: Install ISIS (USGS channel; no data area — the smoke check needs none)
+        run: mamba install -y -c usgs-astrogeology isis
+      - name: Smoke check — ISISROOT + spiceinit help
+        run: |
+          set -euo pipefail
+          export ISISROOT="$CONDA_PREFIX"
+          mamba list isis
+          spiceinit -h

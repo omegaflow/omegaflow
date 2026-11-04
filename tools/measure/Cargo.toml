@@ -1,0 +1,10 @@
+[package]
+name = "omegaflow-measure"
+version = "1.0.0"
+edition = "2024"
+license-file = "../../LICENSE"
+description = "measurement and probe binaries"
+
+[dependencies]
+omegaflow = { path = "../.." }
+zstd = "0.13"

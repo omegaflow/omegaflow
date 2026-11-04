@@ -1,0 +1,28 @@
+# harvest: format=pds3_fixed_width asset=present arm=pds3_fixed_width_compiler pattern=^pds3_fixed_width_.*\.bin$ idempotent=false timeout=240 tag=pds-smallbodies.astro.umd.edu
+
+name: halley-recompile
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  recompile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the compiler
+        run: cargo build --release -p omegaflow-harvest --bin pds3_fixed_width_compiler
+      - name: Pack every table of the four routes again
+        run: |
+          ./target/release/pds3_fixed_width_compiler --ci-mode

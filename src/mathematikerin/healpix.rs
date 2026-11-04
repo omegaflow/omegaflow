@@ -1,0 +1,503 @@
+use std::f64::consts::PI;
+
+const JRLL: [i64; 12] = [2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4];
+const JPLL: [i64; 12] = [1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7];
+
+const GAL2EQ: [[f64; 3]; 3] = [
+    [-0.0548755604162154, 0.4941094278755837, -0.8676661490190047],
+    [
+        -0.873_437_090_234_885,
+        -0.4448296299600112,
+        -0.1980763734312015,
+    ],
+    [
+        -0.4838350155487132,
+        0.746_982_244_497_219,
+        0.4559837761750669,
+    ],
+];
+
+pub fn nside_from_npix(npix: i64) -> Option<i64> {
+    if npix <= 0 || npix % 12 != 0 {
+        return None;
+    }
+    let n = npix / 12;
+    let s = isqrt(n);
+    if s * s == n && s > 0 && (s & (s - 1)) == 0 {
+        Some(s)
+    } else {
+        None
+    }
+}
+
+fn isqrt(x: i64) -> i64 {
+    let mut r = (x as f64).sqrt() as i64;
+    while (r + 1) * (r + 1) <= x {
+        r += 1;
+    }
+    while r * r > x {
+        r -= 1;
+    }
+    r
+}
+
+fn compress_bits(v: u64) -> u64 {
+    let mut r = 0u64;
+    for i in 0..32 {
+        r |= ((v >> (2 * i)) & 1) << i;
+    }
+    r
+}
+
+pub fn pix2ang_nest(nside: i64, pix: i64) -> Option<(f64, f64)> {
+    let npix = 12 * nside * nside;
+    if pix < 0 || pix >= npix {
+        return None;
+    }
+    let order = nside.trailing_zeros();
+    let npface = nside * nside;
+    let face = (pix >> (2 * order)) as usize;
+    let ipf = (pix & (npface - 1)) as u64;
+    let ix = compress_bits(ipf) as i64;
+    let iy = compress_bits(ipf >> 1) as i64;
+    let jr = (JRLL[face] << order) - ix - iy - 1;
+    let n = nside as f64;
+    let fact1 = 2.0 / (3.0 * n);
+    let fact2 = 1.0 / (3.0 * n * n);
+    let (nr, z) = if jr < nside {
+        let nr = jr;
+        (nr, 1.0 - (nr as f64) * (nr as f64) * fact2)
+    } else if jr > 3 * nside {
+        let nr = 4 * nside - jr;
+        (nr, (nr as f64) * (nr as f64) * fact2 - 1.0)
+    } else {
+        (nside, (2 * nside - jr) as f64 * fact1)
+    };
+    let mut tmp = JPLL[face] * nr + ix - iy;
+    if tmp < 0 {
+        tmp += 8 * nr;
+    }
+    let phi = if nr == nside {
+        (tmp as f64) * PI / (4.0 * n)
+    } else {
+        (tmp as f64) * PI / (4.0 * nr as f64)
+    };
+    let theta = z.clamp(-1.0, 1.0).acos();
+    Some((theta, phi))
+}
+
+pub fn pix2ang_ring(nside: i64, ipix: i64) -> Option<(f64, f64)> {
+    if nside <= 0 || (nside & (nside - 1)) != 0 {
+        return None;
+    }
+    let npix = 12 * nside * nside;
+    if ipix < 0 || ipix >= npix {
+        return None;
+    }
+    let ncap = 2 * nside * (nside - 1);
+    let n = nside as f64;
+    let fact2 = 4.0 / npix as f64;
+    let (z, phi) = if ipix < ncap {
+        let iring = (1 + isqrt(1 + 2 * ipix)) / 2;
+        let iphi = ipix + 1 - 2 * iring * (iring - 1);
+        let z = 1.0 - (iring * iring) as f64 * fact2;
+        let phi = (iphi as f64 - 0.5) * PI / (2.0 * iring as f64);
+        (z, phi)
+    } else if ipix < npix - ncap {
+        let fact1 = (2 * nside) as f64 * fact2;
+        let ip = ipix - ncap;
+        let iring = ip / (4 * nside) + nside;
+        let iphi = ip % (4 * nside) + 1;
+        let fodd = if (iring + nside) & 1 == 1 { 1.0 } else { 0.5 };
+        let z = (2 * nside - iring) as f64 * fact1;
+        let phi = (iphi as f64 - fodd) * PI / (2.0 * n);
+        (z, phi)
+    } else {
+        let ip = npix - ipix;
+        let iring = (1 + isqrt(2 * ip - 1)) / 2;
+        let iphi = 4 * iring + 1 - (ip - 2 * iring * (iring - 1));
+        let z = -1.0 + (iring * iring) as f64 * fact2;
+        let phi = (iphi as f64 - 0.5) * PI / (2.0 * iring as f64);
+        (z, phi)
+    };
+    let theta = z.clamp(-1.0, 1.0).acos();
+    Some((theta, phi))
+}
+
+pub fn galactic_to_icrs(theta: f64, phi: f64) -> (f64, f64) {
+    let (st, ct) = theta.sin_cos();
+    let (sp, cp) = phi.sin_cos();
+    let xg = [st * cp, st * sp, ct];
+    let xe = [
+        GAL2EQ[0][0] * xg[0] + GAL2EQ[0][1] * xg[1] + GAL2EQ[0][2] * xg[2],
+        GAL2EQ[1][0] * xg[0] + GAL2EQ[1][1] * xg[1] + GAL2EQ[1][2] * xg[2],
+        GAL2EQ[2][0] * xg[0] + GAL2EQ[2][1] * xg[1] + GAL2EQ[2][2] * xg[2],
+    ];
+    let ra = xe[1].atan2(xe[0]).rem_euclid(2.0 * PI);
+    let dec = xe[2].clamp(-1.0, 1.0).asin();
+    (ra.to_degrees(), dec.to_degrees())
+}
+
+pub fn icrs_to_galactic(ra_deg: f64, dec_deg: f64) -> (f64, f64) {
+    let (sd, cd) = dec_deg.to_radians().sin_cos();
+    let (sr, cr) = ra_deg.to_radians().sin_cos();
+    let xe = [cd * cr, cd * sr, sd];
+    let xg = [
+        GAL2EQ[0][0] * xe[0] + GAL2EQ[1][0] * xe[1] + GAL2EQ[2][0] * xe[2],
+        GAL2EQ[0][1] * xe[0] + GAL2EQ[1][1] * xe[1] + GAL2EQ[2][1] * xe[2],
+        GAL2EQ[0][2] * xe[0] + GAL2EQ[1][2] * xe[1] + GAL2EQ[2][2] * xe[2],
+    ];
+    let theta = xg[2].clamp(-1.0, 1.0).acos();
+    let phi = xg[1].atan2(xg[0]).rem_euclid(2.0 * PI);
+    (theta, phi)
+}
+
+fn spread_bits(v: i64, order: u32) -> i64 {
+    let mut r = 0i64;
+    for i in 0..order {
+        r |= ((v >> i) & 1) << (2 * i);
+    }
+    r
+}
+
+fn xyf2nest(ix: i64, iy: i64, face: i64, order: u32) -> i64 {
+    (face << (2 * order)) + spread_bits(ix, order) + (spread_bits(iy, order) << 1)
+}
+
+pub fn ang2pix_nest(nside: i64, theta: f64, phi: f64) -> Option<i64> {
+    let z = theta.cos();
+    let za = z.abs();
+    let order = nside.trailing_zeros();
+    let n = nside as f64;
+    let tt = (phi * (2.0 / PI)).rem_euclid(4.0);
+    let pix = if za <= 2.0 / 3.0 {
+        let temp1 = n * (0.5 + tt);
+        let temp2 = n * (z * 0.75);
+        let jp = (temp1 - temp2) as i64;
+        let jm = (temp1 + temp2) as i64;
+        let ifp = jp >> order;
+        let ifm = jm >> order;
+        let face = if ifp == ifm {
+            ifp | 4
+        } else if ifp < ifm {
+            ifp
+        } else {
+            ifm + 8
+        };
+        let ix = jm & (nside - 1);
+        let iy = nside - (jp & (nside - 1)) - 1;
+        xyf2nest(ix, iy, face, order)
+    } else {
+        let ntt = tt as i64;
+        let tp = tt - ntt as f64;
+        let tmp = n * (3.0 * (1.0 - za)).sqrt();
+        let jp = ((tp * tmp) as i64).min(nside - 1);
+        let jm = (((1.0 - tp) * tmp) as i64).min(nside - 1);
+        if z >= 0.0 {
+            xyf2nest(nside - jm - 1, nside - jp - 1, ntt, order)
+        } else {
+            xyf2nest(jp, jm, ntt + 8, order)
+        }
+    };
+    if pix < 0 || pix >= 12 * nside * nside {
+        None
+    } else {
+        Some(pix)
+    }
+}
+
+pub fn gaia_source_pixel(source_id: u64) -> u32 {
+    (source_id >> 35) as u32
+}
+
+pub fn ang2pix_nest_deg(order: u32, ra_deg: f64, dec_deg: f64) -> Option<u64> {
+    if order > 29
+        || !ra_deg.is_finite()
+        || !dec_deg.is_finite()
+        || !(-90.0..=90.0).contains(&dec_deg)
+    {
+        return None;
+    }
+    let nside = 1i64 << order;
+    let theta = (90.0 - dec_deg).to_radians();
+    let phi = ra_deg.rem_euclid(360.0).to_radians();
+    ang2pix_nest(nside, theta, phi).map(|p| p as u64)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const HEALPIX_C_CENTRES: &str = include_str!("healpix_chealpix.tsv");
+
+    fn near(a: f64, b: f64, tol: f64) -> bool {
+        (a - b).abs() < tol
+    }
+
+    fn ang_dist_deg(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
+        let (sd1, cd1) = dec1.to_radians().sin_cos();
+        let (sd2, cd2) = dec2.to_radians().sin_cos();
+        let d_ra = (ra1 - ra2).to_radians();
+        (sd1 * sd2 + cd1 * cd2 * d_ra.cos())
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees()
+    }
+
+    #[test]
+    fn nside_from_npix_roundtrip() {
+        assert_eq!(nside_from_npix(12), Some(1));
+        assert_eq!(nside_from_npix(48), Some(2));
+        assert_eq!(nside_from_npix(12 * 2048 * 2048), Some(2048));
+        assert_eq!(nside_from_npix(13), None);
+        assert_eq!(nside_from_npix(24), None);
+    }
+
+    #[test]
+    fn nested_nside1_faces() {
+        let n = 1;
+        let faces: Vec<(f64, f64)> = (0..12).map(|p| pix2ang_nest(n, p).unwrap()).collect();
+        assert!(near(faces[0].1, PI / 4.0, 1e-12));
+        assert!(near(faces[0].0, (2.0f64 / 3.0).acos(), 1e-12));
+        assert!(near(faces[4].1, 0.0, 1e-12));
+        assert!(near(faces[4].0, PI / 2.0, 1e-12));
+        assert!(near(faces[8].1, PI / 4.0, 1e-12));
+        assert!(near(faces[8].0, PI - (2.0f64 / 3.0).acos(), 1e-12));
+    }
+
+    #[test]
+    fn nested_nside64_pole_and_bounds() {
+        let n = 64;
+        let (theta, _) = pix2ang_nest(n, 0).unwrap();
+        assert!(
+            (theta - PI / 2.0).abs() < 0.03,
+            "pixel 0 sits at the face's equatorial corner"
+        );
+        let (theta, _) = pix2ang_nest(n, n * n - 1).unwrap();
+        assert!(theta < 0.02, "face 0 top corner sits at the north pole");
+        let (theta, _) = pix2ang_nest(n, 11 * n * n).unwrap();
+        assert!(
+            theta > PI - 0.02,
+            "face 11 bottom corner sits at the south pole"
+        );
+    }
+
+    #[test]
+    fn ring_nside1_matches_the_twelve_face_centers() {
+        for p in 0..12 {
+            let ring = pix2ang_ring(1, p).unwrap();
+            let nest = pix2ang_nest(1, p).unwrap();
+            assert!(near(ring.0, nest.0, 1e-12), "theta p={p}");
+            assert!(near(ring.1, nest.1, 1e-12), "phi p={p}");
+        }
+    }
+
+    #[test]
+    fn ring_nside2_known_pixels() {
+        let n = 2;
+        let (theta, phi) = pix2ang_ring(n, 0).unwrap();
+        assert!(near(theta, (11.0f64 / 12.0).acos(), 1e-12));
+        assert!(near(phi, PI / 4.0, 1e-12));
+        let (theta, phi) = pix2ang_ring(n, 4).unwrap();
+        assert!(near(theta, (2.0f64 / 3.0).acos(), 1e-12));
+        assert!(near(phi, PI / 8.0, 1e-12));
+        let (theta, phi) = pix2ang_ring(n, 47).unwrap();
+        assert!(near(theta, (-11.0f64 / 12.0).acos(), 1e-12));
+        assert!(near(phi, 7.0 * PI / 4.0, 1e-12));
+        assert!(pix2ang_ring(n, -1).is_none());
+        assert!(pix2ang_ring(n, 48).is_none());
+        assert!(pix2ang_ring(3, 0).is_none());
+    }
+
+    #[test]
+    fn galactic_center_and_pole() {
+        let (ra, dec) = galactic_to_icrs(PI / 2.0, 0.0);
+        assert!(near(ra, 266.4051, 1e-3));
+        assert!(near(dec, -28.9362, 1e-3));
+        let (ra, dec) = galactic_to_icrs(0.0, 0.0);
+        assert!(near(ra, 192.85948, 1e-3));
+        assert!(near(dec, 27.12825, 1e-3));
+    }
+
+    #[test]
+    fn galactic_icrs_roundtrip() {
+        let (theta, phi) = (0.7, 2.4);
+        let (ra, dec) = galactic_to_icrs(theta, phi);
+        let (t2, p2) = icrs_to_galactic(ra, dec);
+        assert!(near(t2, theta, 1e-9));
+        assert!(near(p2, phi, 1e-9));
+    }
+
+    #[test]
+    fn ring_centres_match_the_reference_implementation() {
+        for nside in [1u32, 2, 4] {
+            let npix = 12 * nside * nside;
+            for ipix in 0..npix {
+                let (lon, lat) = cdshealpix::ring::center(nside, ipix as u64);
+                let (theta, phi) = pix2ang_ring(nside as i64, ipix as i64)
+                    .expect("a valid ring pixel carries a centre");
+                let ref_theta = std::f64::consts::FRAC_PI_2 - lat;
+                assert!(
+                    (theta - ref_theta).abs() < 1e-12,
+                    "nside {nside} pix {ipix}: theta {theta} vs reference {ref_theta}"
+                );
+                let dphi = (phi - lon).rem_euclid(std::f64::consts::TAU);
+                let dphi = dphi.min(std::f64::consts::TAU - dphi);
+                assert!(
+                    dphi < 1e-12,
+                    "nside {nside} pix {ipix}: phi {phi} vs reference {lon}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn centres_match_the_healpix_c_library() {
+        let mut ring = 0usize;
+        let mut nest = 0usize;
+        for line in HEALPIX_C_CENTRES.lines() {
+            if line.starts_with('#') || line.trim().is_empty() {
+                continue;
+            }
+            let cols: Vec<&str> = line.split('\t').collect();
+            assert_eq!(cols.len(), 5, "a fixture line carries five columns: {line}");
+            let nside: i64 = cols[0].parse().expect("nside");
+            let pixel: i64 = cols[2].parse().expect("pixel");
+            let ref_theta: f64 = cols[3].parse().expect("theta");
+            let ref_phi: f64 = cols[4].parse().expect("phi");
+            let (theta, phi) = match cols[1] {
+                "ring" => {
+                    ring += 1;
+                    pix2ang_ring(nside, pixel).expect("a valid ring pixel")
+                }
+                "nest" => {
+                    nest += 1;
+                    pix2ang_nest(nside, pixel).expect("a valid nest pixel")
+                }
+                other => panic!("unknown scheme {other}"),
+            };
+            assert!(
+                (theta - ref_theta).abs() < 1e-12,
+                "nside {nside} pixel {pixel} {}: theta {theta} vs chealpix {ref_theta}",
+                cols[1]
+            );
+            let dphi = (phi - ref_phi).rem_euclid(std::f64::consts::TAU);
+            let dphi = dphi.min(std::f64::consts::TAU - dphi);
+            assert!(
+                dphi < 1e-12,
+                "nside {nside} pixel {pixel} {}: phi {phi} vs chealpix {ref_phi}",
+                cols[1]
+            );
+        }
+        assert_eq!(ring, 252, "three nsides of ring pixels");
+        assert_eq!(nest, 252, "three nsides of nest pixels");
+    }
+
+    #[test]
+    fn ang2pix_roundtrip_all_nside() {
+        for n in [1i64, 2, 4, 8] {
+            for p in 0..(12 * n * n) {
+                let (theta, phi) = pix2ang_nest(n, p).unwrap();
+                let back = ang2pix_nest(n, theta, phi).unwrap();
+                assert_eq!(back, p, "nside {n} pix {p}");
+            }
+        }
+    }
+
+    #[test]
+    fn ang2pix_roundtrip_sample_nside64() {
+        let n = 64;
+        let mut rng = 0x1234_5678_9abc_def0u64;
+        for _ in 0..2000 {
+            rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            let p = (rng % ((12 * n * n) as u64)) as i64;
+            let (theta, phi) = pix2ang_nest(n, p).unwrap();
+            let back = ang2pix_nest(n, theta, phi).unwrap();
+            assert_eq!(back, p);
+        }
+    }
+
+    #[test]
+    fn gaia_source_pixel_is_the_level12_shift() {
+        assert_eq!(gaia_source_pixel(3458764518117813632), 0x06000000);
+        assert_eq!(gaia_source_pixel(0), 0);
+        assert_eq!(gaia_source_pixel(u64::MAX), 0x1FFF_FFFF);
+    }
+
+    #[test]
+    fn ang2pix_nest_deg_matches_the_radians_form() {
+        let cases: [(u32, f64, f64); 5] = [
+            (12, 179.9981321957186, -41.805256049950145),
+            (12, 0.0, 90.0),
+            (12, 0.0, -90.0),
+            (12, 40.0, -30.0),
+            (12, 200.0, 85.0),
+        ];
+        for &(order, ra, dec) in &cases {
+            let nside = 1i64 << order;
+            let theta = (90.0 - dec).to_radians();
+            let phi = ra.rem_euclid(360.0).to_radians();
+            let from_deg = ang2pix_nest_deg(order, ra, dec).unwrap();
+            let from_rad = ang2pix_nest(nside, theta, phi).unwrap() as u64;
+            assert_eq!(from_deg, from_rad, "order {order} ra {ra} dec {dec}");
+        }
+        assert!(ang2pix_nest_deg(12, f64::NAN, 0.0).is_none());
+        assert!(ang2pix_nest_deg(12, 0.0, 91.0).is_none());
+        assert!(ang2pix_nest_deg(30, 0.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn gaia_source_pixel_agrees_with_position() {
+        let path = std::path::Path::new("sources/dc.g-vo.org/xp_pilot_p6144.bin");
+        let bytes = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => {
+                eprintln!("{} absent — position agreement skipped", path.display());
+                return;
+            }
+        };
+        let Some((_epoch, stars)) = crate::spectral::parse_xp_spectra_bin(&bytes) else {
+            eprintln!("{} parse void — position agreement skipped", path.display());
+            return;
+        };
+        let mut missing_pos = 0usize;
+        let mut disagree = 0usize;
+        for s in &stars {
+            let shift = gaia_source_pixel(s.source_id) as u64;
+            match ang2pix_nest_deg(12, s.ra, s.dec) {
+                Some(pos) if pos == shift => {}
+                Some(pos) => {
+                    disagree += 1;
+                    let (ts, ps) = pix2ang_nest(4096, shift as i64).unwrap();
+                    let (tp, pp) = pix2ang_nest(4096, pos as i64).unwrap();
+                    let d_shift =
+                        ang_dist_deg(s.ra, s.dec, ps.to_degrees(), 90.0 - ts.to_degrees());
+                    let d_pos = ang_dist_deg(s.ra, s.dec, pp.to_degrees(), 90.0 - tp.to_degrees());
+                    assert!(
+                        d_shift < 0.05 && d_pos < 0.05,
+                        "a disagreement beyond one-pixel adjacency: ra={} dec={}",
+                        s.ra,
+                        s.dec
+                    );
+                }
+                None => missing_pos += 1,
+            }
+        }
+        assert_eq!(
+            missing_pos,
+            0,
+            "{} stars: {} position-miss",
+            stars.len(),
+            missing_pos
+        );
+        assert!(
+            disagree * 200 <= stars.len(),
+            "{} of {} stars disagree ({:.4} %): the shift is the binding, the residual is boundary rounding",
+            disagree,
+            stars.len(),
+            disagree as f64 * 100.0 / stars.len() as f64
+        );
+    }
+}

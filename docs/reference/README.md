@@ -1,0 +1,34 @@
+<!--
+  title: Reference
+  class: ref
+  date: 2026-09-03
+  sha256: 403a6e4e315ab77d0db6e55875121cfa45ea36129f31c2478633ceb311b3235c
+  status: live
+-->
+# Reference
+
+Externes Referenzmaterial im nativen Format (kein Header). Interne
+omegaflow-Specs liegen unter `research/concepts/` (`binary-protocol.md`,
+`force-system.md`, `constants.md`, `time.md`, `url-templates.md`,
+`broken-null-control.md`, `te-literatur-matrix.md`,
+`gpu-watchdog-device-loss.md`); der generierte Kernel-Index unter
+`phi/KERNEL_INDEX.md`. Publizierte Literatur liegt unter `docs/paper/`;
+Seeds/Zensus unter `docs/surveys/`.
+
+| File | Content | Source |
+|------|---------|--------|
+| `NIST_SP330_tables.md` | SI base units, derived units, prefixes | NIST SP 330 (SI Brochure, 9th ed, 2019) |
+| `NIST_SP811_units.md` | Unit naming, API normalization, non-SI conversions | NIST SP 811 (SI Usage Guide, 2008) |
+| `ucum-essence.xml` | Complete UCUM v2.2 machine-readable unit registry | ucum-org/ucum |
+| `naif_body_ids.tsv` | NAIF body-ID ↔ name (eincompiliert in `src/ephemeris.rs`) | NAIF |
+| `extractPC.for`, `getascomPC.for` | FORTRAN-Referenz | DASTCOM/JPL |
+| `12_intro_to_kernels.pdf` | NAIF-Tutorial (PDF) | NAIF |
+| `NAIF_DAF_REQUIRED_READING.md`, `NAIF_PCK_REQUIRED_READING.md` | NAIF-Lesepflicht | NAIF |
+| `42-122-keihm-wvr-fullyear.pdf` (`.txt`) | Goldstone tropospheric delay fluctuations, full-year WVR (DSS 13, Oct 93–Sep 94) — wet-delay ASD vs Δt, seasonal/day-night | Keihm 1995, TDA Prog. Rep. 42-122, pp. 1–11 |
+| `42-158-keihm-media-cal.pdf` (`.txt`) | Tropospheric delay statistics + MCS calibration performance at DSS 25 (19-month archive) — wet/dry ASD, structure functions, spectra | Keihm/Tanner/Rosenberger 2004, IPN Prog. Rep. 42-158 |
+| `42-148-mcs-part3.pdf` (`.txt`) | Media Calibration System for Cassini Radio Science, Part III — tracking-ASD requirements (1.5×10⁻¹⁵ two-way), WVR-calibrated CEI residuals | Resch et al. 2002, IPN Prog. Rep. 42-148 |
+| `moyer.2000.pdf` | Moyer formulation for observed and computed values of DSN data types (time scales, light-time solution, media/antenna corrections, observables) | Moyer, JPL Pub 00-7, PDS radiosci.documentation |
+| `dsn_redr.2021-07-31.pdf` | REDR format SIS, Voyager Jupiter radio occultation (open-loop receiver records) | Simpson 2021, PDS radiosci.documentation |
+| `redr_unpack.pdf` | Interpretation and use of binary REDR data (worked Voyager 1 example) | PDS radiosci.documentation |
+| `810-005-202E-doppler.pdf` | DSN 810-005 module 202 Rev E, Doppler Tracking — one/two/three-way Doppler, measurement errors, solar phase scintillation | DSN/JPL deepspace.jpl.nasa.gov |
+| `810-005-214B-ranging.pdf` (`.txt`) | DSN 810-005 module 214 Rev B, Pseudo-Noise and Regenerative Ranging — sequential/PN component codes, DSN/JPL range code, ambiguity resolution, regenerative ranging | DSN/JPL deepspace.jpl.nasa.gov |

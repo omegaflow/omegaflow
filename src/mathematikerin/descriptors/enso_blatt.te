@@ -1,0 +1,22 @@
+# enso_blatt.te — TE-Probes-Wanderung: the enso_blatt_probe pair over registered fields.
+# driver: solar-wind IMF Bz, omni_hro_imf_bz_gsm_nt (phi/sources.φ:760, omni_hro_1min.bin,
+#   3600 s). enso_blatt_probe.rs:540-541 names channel 3 Bz as helios; :557 loads it via load_bz.
+# target: NINO3.4 SST anomaly, ersstv5_nino34_ssta (phi/sources.φ:11676, ersstv5_nino34.bin,
+#   2592000 s). enso_blatt_probe.rs:539 names SST the target; :561 loads it via load_sst.
+# The probe's headline pair is explicit: :644-668 pairs Bz with SST and sweeps
+#   TE(Bz->SST) / TE(SST->Bz) over 0..MAX_LAG_MONTHS; this descriptor names that pair. The
+#   six-channel board (Wnd, Quake, Bz, SST, QBO, D20) and its directed family matrix stay the
+#   probe's own sweep, never folded into one arm.
+# cond: none — the probe measures bivariate TE per channel pair, no conditioning arm.
+# cadence: monthly grid (enso_blatt_probe.rs:27 MONTH_S 2592000; :26 MAX_LAG_MONTHS 12;
+#   :25 N_SURR 100; the series are deseasonalized before the TE, :597-605 — the seasonal mode
+#   is the probe's own step, the register's field is the raw anomaly).
+pair enso-blatt
+register sources
+driver omni_hro_imf_bz_gsm_nt
+target ersstv5_nino34_ssta
+cadence live
+bin 2592000
+seasonal none
+lags 0,1,2,3,4,5,6,7,8,9,10,11,12
+surrogate 100

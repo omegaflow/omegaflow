@@ -1,0 +1,967 @@
+use omegaflow::archivar::bsp_reader::spk::SpkFile;
+use omegaflow::least_squares::solve_normal_equations;
+use std::process::Command;
+
+const CHEBYSHEV_DEGREE: usize = 17;
+const GRANULE_DAYS: f64 = 32.0;
+const N_SAMPLES: usize = 25;
+const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x02, 0x00];
+const FLYBY_FINE_RADIUS_D: f64 = 1.2;
+const FLYBY_FINE_GRANULE_DAYS: f64 = 0.03;
+const FLYBY_COARSE_GRANULE_DAYS: f64 = 0.25;
+
+const FLYBYS: &[(&str, &str, i64, i64, i64, f64)] = &[
+    ("-77", "galileo_e1", 1990, 12, 8, 19.0),
+    ("-77", "galileo_e2", 1992, 12, 8, 19.0),
+    ("-93", "near", 1998, 1, 23, 20.0),
+    ("-82", "cassini", 1999, 8, 18, 20.0),
+    ("-226", "rosetta", 2005, 3, 4, 20.0),
+    ("-236", "messenger", 2005, 8, 2, 20.0),
+    ("-61", "juno", 2013, 10, 9, 20.0),
+    ("-28", "juice", 2026, 9, 28, 21.0),
+    ("-159", "europa_clipper", 2026, 12, 3, 20.0),
+    ("-31", "voyager1_jupiter", 1979, 3, 5, 20.0),
+    ("-31", "voyager1_saturn", 1980, 11, 12, 20.0),
+    ("-32", "voyager2_jupiter", 1979, 7, 9, 20.0),
+    ("-32", "voyager2_saturn", 1981, 8, 26, 20.0),
+    ("-32", "voyager2_uranus", 1986, 1, 24, 20.0),
+    ("-32", "voyager2_neptune", 1989, 8, 25, 20.0),
+];
+
+fn julian_day_utc(y: i64, m: i64, d: i64) -> f64 {
+    let a = (14 - m) / 12;
+    let yy = y + 4800 - a;
+    let mm = m + 12 * a - 3;
+    let jdn = d + (153 * mm + 2) / 5 + 365 * yy + yy / 4 - yy / 100 + yy / 400 - 32045;
+    jdn as f64 - 0.5
+}
+
+fn chebyshev_nodes(n: usize) -> Vec<f64> {
+    let mut nodes = Vec::with_capacity(n);
+    for k in 0..n {
+        nodes.push(((std::f64::consts::PI * (n as f64 - k as f64 - 0.5)) / n as f64).cos());
+    }
+    nodes
+}
+
+fn chebyshev_polys(n: usize, x: f64) -> Vec<f64> {
+    let mut t = vec![1.0, x];
+    for k in 2..n {
+        let next = 2.0 * x * t[k - 1] - t[k - 2];
+        t.push(next);
+    }
+    t.truncate(n);
+    t
+}
+
+fn chebyshev_fit(
+    samples: &[(f64, f64, f64)],
+    degree: usize,
+) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
+    let m = samples.len();
+    if m < degree + 1 {
+        return None;
+    }
+    let nodes = chebyshev_nodes(m);
+    let mut a = vec![vec![0.0; degree + 1]; m];
+    for i in 0..m {
+        let polys = chebyshev_polys(degree + 1, nodes[i]);
+        for j in 0..=degree {
+            a[i][j] = polys[j];
+        }
+    }
+    let mut ata = vec![vec![0.0; degree + 1]; degree + 1];
+    for i in 0..m {
+        for j in 0..=degree {
+            for k in 0..=degree {
+                ata[j][k] += a[i][j] * a[i][k];
+            }
+        }
+    }
+    let mut atx = vec![0.0; degree + 1];
+    let mut aty = vec![0.0; degree + 1];
+    let mut atz = vec![0.0; degree + 1];
+    for i in 0..m {
+        for j in 0..=degree {
+            atx[j] += a[i][j] * samples[i].0;
+            aty[j] += a[i][j] * samples[i].1;
+            atz[j] += a[i][j] * samples[i].2;
+        }
+    }
+    let (cx, cy, cz) = solve_normal_equations(&ata, &atx, &aty, &atz)?;
+    Some((cx, cy, cz))
+}
+
+fn write_binary(
+    path: &str,
+    body_name: &str,
+    granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
+    rotations: &[(f64, [f64; 9])],
+    gm_m3_s2: Option<f64>,
+) {
+    let has_props = gm_m3_s2.is_some();
+    let mut n_sections: u32 = 2;
+    if has_props {
+        n_sections += 1;
+    }
+    if !rotations.is_empty() {
+        n_sections += 1;
+    }
+    let mut buf = Vec::new();
+    buf.extend_from_slice(&MAGIC_HEADER);
+    buf.extend_from_slice(&n_sections.to_le_bytes());
+    buf.extend_from_slice(&0u32.to_le_bytes());
+    buf.extend_from_slice(&(granules.len() as u32).to_le_bytes());
+    buf.extend_from_slice(&(CHEBYSHEV_DEGREE as u32).to_le_bytes());
+    buf.extend_from_slice(&0u32.to_le_bytes());
+    for (t0, dt, cx, cy, cz) in granules {
+        buf.extend_from_slice(&t0.to_le_bytes());
+        buf.extend_from_slice(&dt.to_le_bytes());
+        for &c in cx {
+            buf.extend_from_slice(&c.to_le_bytes());
+        }
+        for &c in cy {
+            buf.extend_from_slice(&c.to_le_bytes());
+        }
+        for &c in cz {
+            buf.extend_from_slice(&c.to_le_bytes());
+        }
+    }
+    if has_props {
+        let section_stype: u32 = 1;
+        buf.extend_from_slice(&section_stype.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        let slots: [Option<f64>; 12] = [
+            None, None, None, None, None, None, None, None, None, None, None, gm_m3_s2,
+        ];
+        let mut mask: u16 = 0;
+        for (i, v) in slots.iter().enumerate() {
+            match v {
+                Some(x) => {
+                    buf.extend_from_slice(&x.to_le_bytes());
+                    mask |= 1 << i;
+                }
+                None => buf.extend_from_slice(&0.0_f64.to_le_bytes()),
+            }
+        }
+        buf.extend_from_slice(&mask.to_le_bytes());
+        buf.extend_from_slice(&[0u8; 6]);
+    }
+    {
+        let section_stype: u32 = 2;
+        buf.extend_from_slice(&section_stype.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        let kernel_params =
+            omegaflow::media::medium_params_of(body_name).map_or([0.0; 5], |m| m.wire());
+        for &p in &kernel_params {
+            buf.extend_from_slice(&p.to_le_bytes());
+        }
+    }
+    if !rotations.is_empty() {
+        let section_stype: u32 = 3;
+        buf.extend_from_slice(&section_stype.to_le_bytes());
+        buf.extend_from_slice(&(rotations.len() as u32).to_le_bytes());
+        buf.extend_from_slice(&8u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for (t0, mat) in rotations {
+            buf.extend_from_slice(&t0.to_le_bytes());
+            for &v in mat {
+                buf.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+    }
+    if let Some(parent) = std::path::Path::new(path).parent() {
+        std::fs::create_dir_all(parent).ok();
+    }
+    if let Err(e) = std::fs::write(path, &buf) {
+        eprintln!("write {}: {}", path, e);
+    } else {
+        eprintln!(
+            "  {}: {} granules, {} B",
+            body_name,
+            granules.len(),
+            buf.len()
+        );
+    }
+}
+
+fn horizons_request(
+    command: &str,
+    t_start_jd: f64,
+    t_stop_jd: f64,
+    step_spec: &str,
+) -> Option<String> {
+    let cmd_safe = command.replace(';', "%3B");
+    let url = format!(
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
+         &COMMAND='{cmd}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
+         &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='{step_spec}'\
+         &QUANTITIES='1,2,4'&REF_PLANE='FRAME'",
+        cmd = cmd_safe,
+        t_start = t_start_jd,
+        t_stop = t_stop_jd,
+        step_spec = step_spec,
+    );
+    let output = Command::new("curl")
+        .args([
+            "-sS",
+            "-L",
+            "-k",
+            "--max-time",
+            "180",
+            "--retry",
+            "2",
+            "-H",
+            "User-Agent: omegaflow-ci/1.0",
+        ])
+        .arg(&url)
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!("  curl exit {}: {}", output.status, stderr.trim());
+        return None;
+    }
+    Some(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+fn extract_vectors(text: &str) -> (Vec<(f64, f64, f64, f64)>, Option<f64>) {
+    let mut vectors = Vec::new();
+    let mut in_block = false;
+    let mut current_jd: Option<f64> = None;
+    for line in text.lines() {
+        let line = line.trim();
+        if line.starts_with("$$SOE") {
+            in_block = true;
+            continue;
+        }
+        if line.starts_with("$$EOE") {
+            break;
+        }
+        if !in_block || line.is_empty() {
+            continue;
+        }
+        if line.starts_with("VX=") || line.starts_with("LT=") {
+            continue;
+        }
+        if let Some(eq_pos) = line.find('=') {
+            let before_eq = line[..eq_pos].trim();
+            if let Ok(jd) = before_eq.parse::<f64>() {
+                current_jd = Some(jd);
+            }
+        }
+        if let Some(jd) = current_jd {
+            if line.contains("X =") && line.contains("Y =") && line.contains("Z =") {
+                let mut x: Option<f64> = None;
+                let mut y: Option<f64> = None;
+                let mut z: Option<f64> = None;
+                let parts: Vec<&str> = line.split_whitespace().collect();
+                for (i, p) in parts.iter().enumerate() {
+                    let val = if *p == "X" || *p == "Y" || *p == "Z" {
+                        if i + 1 < parts.len() && parts[i + 1].starts_with('=') {
+                            let v = &parts[i + 1][1..];
+                            if v.is_empty() && i + 2 < parts.len() {
+                                parts[i + 2].parse().ok()
+                            } else {
+                                v.parse().ok()
+                            }
+                        } else if i + 2 < parts.len() && parts[i + 1] == "=" {
+                            parts[i + 2].parse().ok()
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    };
+                    match *p {
+                        "X" => x = val,
+                        "Y" => y = val,
+                        "Z" => z = val,
+                        _ => {}
+                    }
+                }
+                if let (Some(x), Some(y), Some(z)) = (x, y, z) {
+                    vectors.push((jd, x * 1000.0, y * 1000.0, z * 1000.0));
+                }
+            }
+        }
+    }
+    (vectors, extract_gm_km3_s2(text).map(|g| g * 1.0e9))
+}
+
+fn extract_gm_km3_s2(text: &str) -> Option<f64> {
+    for line in text.lines() {
+        let line = line.trim();
+        if let Some(pos) = line.find("GM=") {
+            let rest = &line[pos + 3..];
+            let first = rest.split_whitespace().next()?;
+            return first.parse().ok();
+        }
+    }
+    None
+}
+
+fn current_jd() -> f64 {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    const UNIX_AT_J2000: f64 = 946728000.0;
+    const J2000_JD: f64 = 2451545.0;
+    let since_epoch = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs_f64(),
+        Err(e) => -(e.duration().as_secs_f64()),
+    };
+    J2000_JD + (since_epoch - UNIX_AT_J2000) / 86400.0
+}
+
+fn fit_granule_from_samples(
+    samples: &[(f64, f64, f64, f64)],
+    t0_jd: f64,
+    half_jd: f64,
+) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
+    if samples.len() < 4 {
+        return None;
+    }
+    let sample_times: Vec<f64> = samples.iter().map(|s| s.0).collect();
+    let xs: Vec<f64> = samples.iter().map(|s| s.1).collect();
+    let ys: Vec<f64> = samples.iter().map(|s| s.2).collect();
+    let zs: Vec<f64> = samples.iter().map(|s| s.3).collect();
+    let cheb_nodes = chebyshev_nodes(N_SAMPLES);
+    let mut interp_x = vec![0.0; N_SAMPLES];
+    let mut interp_y = vec![0.0; N_SAMPLES];
+    let mut interp_z = vec![0.0; N_SAMPLES];
+    for k in 0..N_SAMPLES {
+        let t = t0_jd + cheb_nodes[k] * half_jd;
+        let idx = sample_times
+            .binary_search_by(|v| v.partial_cmp(&t).unwrap_or(std::cmp::Ordering::Less));
+        match idx {
+            Ok(i) => {
+                interp_x[k] = xs[i];
+                interp_y[k] = ys[i];
+                interp_z[k] = zs[i];
+            }
+            Err(i) => {
+                if i == 0 {
+                    interp_x[k] = xs[0];
+                    interp_y[k] = ys[0];
+                    interp_z[k] = zs[0];
+                } else if i >= sample_times.len() {
+                    let last = sample_times.len() - 1;
+                    interp_x[k] = xs[last];
+                    interp_y[k] = ys[last];
+                    interp_z[k] = zs[last];
+                } else {
+                    let frac = (t - sample_times[i - 1]) / (sample_times[i] - sample_times[i - 1]);
+                    interp_x[k] = xs[i - 1] + frac * (xs[i] - xs[i - 1]);
+                    interp_y[k] = ys[i - 1] + frac * (ys[i] - ys[i - 1]);
+                    interp_z[k] = zs[i - 1] + frac * (zs[i] - zs[i - 1]);
+                }
+            }
+        }
+    }
+    let combined: Vec<(f64, f64, f64)> = (0..N_SAMPLES)
+        .map(|k| (interp_x[k], interp_y[k], interp_z[k]))
+        .collect();
+    chebyshev_fit(&combined, CHEBYSHEV_DEGREE)
+}
+
+fn generate_from_horizons(
+    command: &str,
+    body_name: &str,
+    months: f64,
+    lookback: f64,
+) -> (Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>, Option<f64>) {
+    let jd_now = current_jd();
+    let t_start = jd_now - lookback;
+    let t_stop = jd_now + months * 30.44;
+    let text = match horizons_request(command, t_start, t_stop, "1d") {
+        Some(t) => t,
+        None => {
+            eprintln!(
+                "  {}: Horizons request returned void (curl or API issue)",
+                body_name
+            );
+            return (Vec::new(), None);
+        }
+    };
+    let (vectors, gm_m3_s2) = extract_vectors(&text);
+    if vectors.len() < 10 {
+        eprintln!(
+            "  SKIP {}: {} vectors (min 10), lead: {:?}",
+            body_name,
+            vectors.len(),
+            text.get(..200)
+        );
+        return (Vec::new(), gm_m3_s2);
+    }
+    let mut granules = Vec::new();
+    let n = ((t_stop - t_start) / GRANULE_DAYS).ceil() as usize;
+    for i in 0..n {
+        let mid_jd = t_start + (i as f64 + 0.5) * GRANULE_DAYS;
+        let half_jd = GRANULE_DAYS / 2.0;
+        if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors, mid_jd, half_jd) {
+            granules.push((mid_jd, half_jd, cx, cy, cz));
+        }
+    }
+    (granules, gm_m3_s2)
+}
+
+fn generate_long(
+    command: &str,
+    body_name: &str,
+    t_start: f64,
+    t_stop: f64,
+    step_spec: &str,
+    step_days: f64,
+) -> (Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>, Option<f64>) {
+    let text = match horizons_request(command, t_start, t_stop, step_spec) {
+        Some(t) => t,
+        None => {
+            eprintln!(
+                "  {}: Horizons request returned void (curl or API issue)",
+                body_name
+            );
+            return (Vec::new(), None);
+        }
+    };
+    let (vectors, gm_m3_s2) = extract_vectors(&text);
+    if vectors.len() < 10 {
+        eprintln!(
+            "  SKIP {}: {} vectors (min 10), lead: {:?}",
+            body_name,
+            vectors.len(),
+            text.get(..200)
+        );
+        return (Vec::new(), gm_m3_s2);
+    }
+    let gaps = vectors
+        .windows(2)
+        .filter(|w| w[1].0 - w[0].0 > 1.5 * step_days)
+        .count();
+    eprintln!(
+        "  {body_name}: {} vectors, {:.2}..{:.2} JD, {} gaps > {:.1} d",
+        vectors.len(),
+        vectors[0].0,
+        vectors[vectors.len() - 1].0,
+        gaps,
+        1.5 * step_days
+    );
+    let mut granules = Vec::new();
+    let n = ((t_stop - t_start) / GRANULE_DAYS).ceil() as usize;
+    for i in 0..n {
+        let mid_jd = t_start + (i as f64 + 0.5) * GRANULE_DAYS;
+        let half_jd = GRANULE_DAYS / 2.0;
+        if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors, mid_jd, half_jd) {
+            granules.push((mid_jd, half_jd, cx, cy, cz));
+        }
+    }
+    (granules, gm_m3_s2)
+}
+
+fn flyby_roundtrip_max(
+    granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
+    vectors: &[(f64, f64, f64, f64)],
+) -> (f64, f64, f64) {
+    let mut max_err = 0.0f64;
+    let mut worst_t0 = 0.0f64;
+    let mut worst_t = 0.0f64;
+    for (t0, half, cx, cy, cz) in granules {
+        let mut cxa = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+        let mut cya = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+        let mut cza = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+        for k in 0..cxa.len().min(cx.len()) {
+            cxa[k] = cx[k];
+            cya[k] = cy[k];
+            cza[k] = cz[k];
+        }
+        for (t, x, y, z) in vectors {
+            if *t < t0 - half || *t > t0 + half {
+                continue;
+            }
+            let tau = (t - t0) / half;
+            let ex = omegaflow::archivar::chebyshev_evaluate(&cxa, tau);
+            let ey = omegaflow::archivar::chebyshev_evaluate(&cya, tau);
+            let ez = omegaflow::archivar::chebyshev_evaluate(&cza, tau);
+            let dx = ex - x;
+            let dy = ey - y;
+            let dz = ez - z;
+            let e = (dx * dx + dy * dy + dz * dz).sqrt();
+            if e > max_err {
+                max_err = e;
+                worst_t0 = *t0;
+                worst_t = *t;
+            }
+        }
+    }
+    (max_err, worst_t0, worst_t)
+}
+
+fn tile_segment(
+    seg_lo: f64,
+    seg_hi: f64,
+    target_width: f64,
+    vectors: &[(f64, f64, f64, f64)],
+    granules: &mut Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
+) {
+    let len = seg_hi - seg_lo;
+    if len <= 0.0 {
+        return;
+    }
+    let rounded = (len / target_width).round() as usize;
+    let n = if rounded == 0 { 1 } else { rounded };
+    let width = len / n as f64;
+    for i in 0..n {
+        let mid_jd = seg_lo + (i as f64 + 0.5) * width;
+        let half_jd = width / 2.0;
+        if let Some((cx, cy, cz)) = fit_granule_from_samples(vectors, mid_jd, half_jd) {
+            granules.push((mid_jd, half_jd, cx, cy, cz));
+        }
+    }
+}
+
+fn generate_flyby_arc(command: &str, body_name: &str, jd0: f64, radius_d: f64) {
+    let t_start = jd0 - radius_d;
+    let t_stop = jd0 + radius_d;
+    let text = match horizons_request(command, t_start, t_stop, "5m") {
+        Some(t) => t,
+        None => {
+            eprintln!("  {body_name}: Horizons request returned void (curl or API issue)");
+            return;
+        }
+    };
+    let (vectors_a, _) = extract_vectors(&text);
+    if vectors_a.len() < 10 {
+        eprintln!(
+            "  SKIP {body_name}: {} vectors (min 10), lead: {:?}",
+            vectors_a.len(),
+            text.get(..200)
+        );
+        return;
+    }
+    let mut granules = Vec::new();
+    let f_lo = jd0 - FLYBY_FINE_RADIUS_D;
+    let f_hi = jd0 + FLYBY_FINE_RADIUS_D;
+    let b_margin = 0.05;
+    let text_b = match horizons_request(command, f_lo - b_margin, f_hi + b_margin, "1m") {
+        Some(t) => t,
+        None => {
+            eprintln!("  {body_name}: fine tier request returned void");
+            String::new()
+        }
+    };
+    let (vectors_b, _) = extract_vectors(&text_b);
+    if vectors_b.len() >= 10 {
+        tile_segment(
+            f_lo,
+            f_hi,
+            FLYBY_FINE_GRANULE_DAYS,
+            &vectors_b,
+            &mut granules,
+        );
+        tile_segment(
+            t_start,
+            f_lo,
+            FLYBY_COARSE_GRANULE_DAYS,
+            &vectors_a,
+            &mut granules,
+        );
+        tile_segment(
+            f_hi,
+            t_stop,
+            FLYBY_COARSE_GRANULE_DAYS,
+            &vectors_a,
+            &mut granules,
+        );
+        granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        let (max_err_a, wa0, wat) = flyby_roundtrip_max(&granules, &vectors_a);
+        let (max_err_b, wb0, wbt) = flyby_roundtrip_max(&granules, &vectors_b);
+        let (max_err, w0, wt) = if max_err_b > max_err_a {
+            (max_err_b, wb0, wbt)
+        } else {
+            (max_err_a, wa0, wat)
+        };
+        eprintln!(
+            "  {body_name}: flyby {jd0:.4}, {} vectors (5 min) + {} (1 min), {} granules, roundtrip max {:.2} m @ granule {w0:.4} / sample {wt:.4}",
+            vectors_a.len(),
+            vectors_b.len(),
+            granules.len(),
+            max_err
+        );
+    } else {
+        tile_segment(
+            t_start,
+            t_stop,
+            FLYBY_COARSE_GRANULE_DAYS,
+            &vectors_a,
+            &mut granules,
+        );
+        let (max_err_a, wa0, wat) = flyby_roundtrip_max(&granules, &vectors_a);
+        eprintln!(
+            "  {body_name}: fine tier void — coarse-only, {} granules, roundtrip max {:.2} m @ granule {wa0:.4} / sample {wat:.4}",
+            granules.len(),
+            max_err_a
+        );
+    }
+    if granules.is_empty() {
+        eprintln!("  {body_name}: no granules fit");
+        return;
+    }
+    let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
+    write_binary(&path, body_name, &granules, &[], None);
+    match std::fs::read(&path)
+        .ok()
+        .and_then(|d| omegaflow::archivar::parse_ephemeris_binary(&d))
+    {
+        Some(e) if e.granules.len() == granules.len() => {}
+        Some(e) => eprintln!(
+            "  {body_name}: roundtrip granule count {} vs written {}",
+            e.granules.len(),
+            granules.len()
+        ),
+        None => eprintln!("  {body_name}: written bin did not parse back"),
+    }
+}
+
+fn main() {
+    omegaflow::archivar::cdn::require_ci();
+    std::fs::create_dir_all("data").ok();
+    let bodies_stable: &[(&str, &str)] = &[
+        ("Apophis", "apophis"),
+        ("Bennu", "bennu"),
+        ("25143;", "itokawa"),
+        ("90000031", "encke"),
+        ("506", "himalia"),
+        ("610", "janus"),
+        ("611", "epimetheus"),
+        ("615", "atlas"),
+        ("616", "prometheus"),
+        ("617", "pandora"),
+    ];
+    let bodies_dynamic: &[(&str, &str, f64)] = &[
+        ("-125544", "iss", 0.9),
+        ("-31", "voyager1", 1.0),
+        ("-32", "voyager2", 1.0),
+        ("-98", "new_horizons", 1.0),
+        ("-96", "parker_solar_probe", 1.0),
+        ("-144", "solar_orbiter", 1.0),
+        ("-170", "jwst", 1.0),
+        ("-61", "juno", 1.0),
+        ("2020-047A", "atlas_3i", 1.0),
+        ("90000030;", "halley", 1.0),
+    ];
+    let bodies_retry: &[(&str, &str)] = &[];
+    let ci_mode = std::env::args().any(|a| a == "--ci-mode");
+    if std::env::args().any(|a| a == "--long") {
+        let end_jd = 2451545.0 + 31.0 * 365.25;
+        let bodies_long: &[(&str, &str, f64, f64, &str, f64)] = &[
+            ("-31", "voyager1_long", 2444606.5, end_jd, "32d", 32.0),
+            ("-32", "voyager2_long", 2447801.5, end_jd, "32d", 32.0),
+            ("-98", "new_horizons_long", 2457236.5, end_jd, "32d", 32.0),
+            ("90000030;", "halley_long", 2446460.5, 2446510.5, "1d", 1.0),
+        ];
+        for (cmd, name, start_jd, stop_jd, step_spec, step_days) in bodies_long {
+            eprintln!("  {name} (Horizons long window, {step_spec} raster)");
+            let (granules, gm_m3_s2) =
+                generate_long(cmd, name, *start_jd, *stop_jd, step_spec, *step_days);
+            if granules.is_empty() {
+                continue;
+            }
+            let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
+            write_binary(&path, name, &granules, &[], gm_m3_s2);
+            if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
+                eprintln!("upload: {} did not reach the CDN", path);
+                std::process::exit(1);
+            }
+        }
+        return;
+    }
+    if let Some(pos) = std::env::args().position(|a| a == "--uranus-c-spk") {
+        let spk_path = match std::env::args().nth(pos + 1) {
+            Some(p) => p,
+            None => {
+                eprintln!("--uranus-c-spk: kernel path absent");
+                std::process::exit(1);
+            }
+        };
+        let de_path = if std::path::Path::new("ephemeris_uranus.bin").exists() {
+            "ephemeris_uranus.bin".to_string()
+        } else {
+            "sources/ssd.jpl.nasa.gov/ephemeris_uranus.bin".to_string()
+        };
+        let de_bytes = match std::fs::read(&de_path) {
+            Ok(b) => b,
+            Err(e) => {
+                eprintln!("--uranus-c-spk: {de_path} reads void — {e}");
+                std::process::exit(1);
+            }
+        };
+        let Some(de_eph) = omegaflow::archivar::parse_ephemeris_binary(&de_bytes) else {
+            eprintln!("--uranus-c-spk: ephemeris_uranus.bin does not parse to a BodyEphemeris");
+            std::process::exit(1);
+        };
+        let Some(body) = omegaflow::ephemeris::body_table()
+            .get(&799)
+            .map(|b| b.name.clone())
+        else {
+            eprintln!("--uranus-c-spk: target 799 carries no body name in the body table");
+            std::process::exit(1);
+        };
+        let mut de_map = std::collections::HashMap::new();
+        de_map.insert(body.clone(), de_eph);
+        let spk = match SpkFile::open(&spk_path) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("--uranus-c-spk: {spk_path} opens void — {e:?}");
+                std::process::exit(1);
+            }
+        };
+        let start_jd = 2451545.0 - 30.0 * 365.25;
+        let stop_jd = 2451545.0 + 30.0 * 365.25;
+        let mut vectors: Vec<(f64, f64, f64, f64)> = Vec::new();
+        let mut jd = start_jd;
+        let mut days = 0usize;
+        while jd <= stop_jd && days < 1_000_000 {
+            let tdb = (jd - 2451545.0) * 86400.0;
+            let bary = match omegaflow::archivar::body_barycenter_position(&body, tdb, &de_map) {
+                Some(b) => b,
+                None => {
+                    eprintln!("--uranus-c-spk: no barycenter granule at jd {jd:.2}");
+                    break;
+                }
+            };
+            match spk.state(799, 7, tdb) {
+                Ok(rel) => {
+                    vectors.push((
+                        jd,
+                        bary[0] + rel[0] * 1000.0,
+                        bary[1] + rel[1] * 1000.0,
+                        bary[2] + rel[2] * 1000.0,
+                    ));
+                }
+                Err(e) => {
+                    eprintln!("--uranus-c-spk: spk.state(799, 7) void at jd {jd:.2} — {e:?}");
+                    break;
+                }
+            }
+            jd += 0.1;
+            days += 1;
+        }
+        eprintln!(
+            "  uranus_c (DE441 barycenter + ura111xl 799-7): {} vectors, {:.2}..{:.2} JD",
+            vectors.len(),
+            start_jd,
+            jd
+        );
+        if vectors.len() < 10 {
+            std::process::exit(1);
+        }
+        let mut granules = Vec::new();
+        let granule_days = 2.0;
+        let n = ((stop_jd - start_jd) / granule_days).ceil() as usize;
+        for i in 0..n {
+            let mid_jd = start_jd + (i as f64 + 0.5) * granule_days;
+            let half_jd = granule_days / 2.0;
+            if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors, mid_jd, half_jd) {
+                granules.push((mid_jd, half_jd, cx, cy, cz));
+            }
+        }
+        let path = "sources/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin";
+        write_binary(&path, "uranus_c", &granules, &[], None);
+        if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
+            eprintln!("upload: {} did not reach the CDN", path);
+            std::process::exit(1);
+        }
+        return;
+    }
+    if let Some(pos) = std::env::args().position(|a| a == "--neptune-c-spk") {
+        let spk_path = match std::env::args().nth(pos + 1) {
+            Some(p) => p,
+            None => {
+                eprintln!("--neptune-c-spk: kernel path absent");
+                std::process::exit(1);
+            }
+        };
+        let de_path = if std::path::Path::new("ephemeris_neptune.bin").exists() {
+            "ephemeris_neptune.bin".to_string()
+        } else {
+            "sources/ssd.jpl.nasa.gov/ephemeris_neptune.bin".to_string()
+        };
+        let de_bytes = match std::fs::read(&de_path) {
+            Ok(b) => b,
+            Err(e) => {
+                eprintln!("--neptune-c-spk: {de_path} reads void — {e}");
+                std::process::exit(1);
+            }
+        };
+        let Some(de_eph) = omegaflow::archivar::parse_ephemeris_binary(&de_bytes) else {
+            eprintln!("--neptune-c-spk: ephemeris_neptune.bin does not parse to a BodyEphemeris");
+            std::process::exit(1);
+        };
+        let Some(body) = omegaflow::ephemeris::body_table()
+            .get(&899)
+            .map(|b| b.name.clone())
+        else {
+            eprintln!("--neptune-c-spk: target 899 carries no body name in the body table");
+            std::process::exit(1);
+        };
+        let mut de_map = std::collections::HashMap::new();
+        de_map.insert(body.clone(), de_eph);
+        let spk = match SpkFile::open(&spk_path) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("--neptune-c-spk: {spk_path} opens void — {e:?}");
+                std::process::exit(1);
+            }
+        };
+        let start_jd = 2451545.0 - 180.0 * 365.25;
+        let stop_jd = 2451545.0 + 30.0 * 365.25;
+        let mut vectors: Vec<(f64, f64, f64, f64)> = Vec::new();
+        let mut jd = start_jd;
+        let mut days = 0usize;
+        while jd <= stop_jd && days < 1_000_000 {
+            let tdb = (jd - 2451545.0) * 86400.0;
+            let bary = match omegaflow::archivar::body_barycenter_position(&body, tdb, &de_map) {
+                Some(b) => b,
+                None => {
+                    eprintln!("--neptune-c-spk: no barycenter granule at jd {jd:.2}");
+                    break;
+                }
+            };
+            match spk.state(899, 8, tdb) {
+                Ok(rel) => {
+                    vectors.push((
+                        jd,
+                        bary[0] + rel[0] * 1000.0,
+                        bary[1] + rel[1] * 1000.0,
+                        bary[2] + rel[2] * 1000.0,
+                    ));
+                }
+                Err(e) => {
+                    eprintln!("--neptune-c-spk: spk.state(899, 8) void at jd {jd:.2} — {e:?}");
+                    break;
+                }
+            }
+            jd += 0.1;
+            days += 1;
+        }
+        eprintln!(
+            "  neptune_c (DE441 barycenter + nep097xl 899-8): {} vectors, {:.2}..{:.2} JD",
+            vectors.len(),
+            start_jd,
+            jd
+        );
+        if vectors.len() < 10 {
+            std::process::exit(1);
+        }
+        let mut granules = Vec::new();
+        let granule_days = 2.0;
+        let samples_per_granule = (granule_days / 0.1) as usize;
+        let n = ((stop_jd - start_jd) / granule_days).ceil() as usize;
+        for i in 0..n {
+            let mid_jd = start_jd + (i as f64 + 0.5) * granule_days;
+            let half_jd = granule_days / 2.0;
+            let lo = i * samples_per_granule;
+            let hi = ((i + 1) * samples_per_granule + 1).min(vectors.len());
+            if hi <= lo {
+                continue;
+            }
+            if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors[lo..hi], mid_jd, half_jd)
+            {
+                granules.push((mid_jd, half_jd, cx, cy, cz));
+            }
+        }
+        let path = "sources/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin";
+        write_binary(&path, "neptune_c", &granules, &[], None);
+        if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
+            eprintln!("upload: {} did not reach the CDN", path);
+            std::process::exit(1);
+        }
+        return;
+    }
+    if std::env::args().any(|a| a == "--daily") || std::env::args().any(|a| a == "--galileo") {
+        let end_jd = 2451545.0 + 31.0 * 365.25;
+        let galileo_only = std::env::args().any(|a| a == "--galileo");
+        let bodies_daily: &[(&str, &str, f64, f64)] = &[
+            ("-23", "pioneer10_daily", 2441380.5, end_jd),
+            ("-24", "pioneer11_daily", 2441779.5, end_jd),
+            ("-31", "voyager1_daily", 2443392.5, end_jd),
+            ("-32", "voyager2_daily", 2443376.5, end_jd),
+            ("-98", "new_horizons_daily", 2453755.5, end_jd),
+            ("-77", "galileo_daily", 2447892.5, 2450815.5),
+        ];
+        for (cmd, name, start_jd, stop_jd) in bodies_daily {
+            if galileo_only && *name != "galileo_daily" {
+                continue;
+            }
+            eprintln!("  {name} (Horizons daily window, 1-d raster, 32-d granules)");
+            let (granules, gm_m3_s2) = generate_long(cmd, name, *start_jd, *stop_jd, "1d", 1.0);
+            if granules.is_empty() {
+                continue;
+            }
+            let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
+            write_binary(&path, name, &granules, &[], gm_m3_s2);
+            match std::fs::read(&path)
+                .ok()
+                .and_then(|d| omegaflow::archivar::parse_ephemeris_binary(&d))
+            {
+                Some(e) if e.granules.len() == granules.len() => {}
+                Some(e) => eprintln!(
+                    "  {name}: roundtrip granule count {} vs written {}",
+                    e.granules.len(),
+                    granules.len()
+                ),
+                None => eprintln!("  {name}: written bin did not parse back"),
+            }
+            if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
+                eprintln!("upload: {} did not reach the CDN", path);
+                std::process::exit(1);
+            }
+        }
+        return;
+    }
+    if std::env::args().any(|a| a == "--flyby") {
+        eprintln!(
+            "  flyby arcs: 5 min outside, 1 min around the measured perigee (±{FLYBY_FINE_RADIUS_D} d); granules {FLYBY_FINE_GRANULE_DAYS} d (core) / {FLYBY_COARSE_GRANULE_DAYS} d, degree {CHEBYSHEV_DEGREE}"
+        );
+        for (cmd, name, y, m, d, radius) in FLYBYS {
+            let jd0 = julian_day_utc(*y, *m, *d);
+            eprintln!("  {name} (flyby {y}-{m}-{d}, window ±{radius:.0} d)");
+            generate_flyby_arc(cmd, name, jd0, *radius);
+            let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+            if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
+                eprintln!("upload: {path} did not reach the CDN");
+                std::process::exit(1);
+            }
+        }
+        return;
+    }
+    let run_body = |command: &str, body_name: &str, months: f64, lookback: f64| {
+        let (granules, gm_m3_s2) = generate_from_horizons(command, body_name, months, lookback);
+        if granules.is_empty() {
+            return;
+        }
+        if gm_m3_s2.is_none() {
+            eprintln!("  {}: granules only, no Horizons GM", body_name);
+        }
+        let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
+        write_binary(&path, body_name, &granules, &[], gm_m3_s2);
+        if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
+            eprintln!("upload: {} did not reach the CDN", path);
+            std::process::exit(1);
+        }
+    };
+    for (cmd, name) in bodies_stable {
+        eprintln!("  {} (Horizons stable)", name);
+        run_body(cmd, name, 12.0, 30.0);
+    }
+    for (cmd, name, months) in bodies_dynamic {
+        eprintln!("  {} (Horizons dynamic, {:.1}mo)", name, months);
+        run_body(cmd, name, *months, 5.0);
+    }
+    for (cmd, name) in bodies_retry {
+        eprintln!("  {} (Horizons retry)", name);
+        run_body(cmd, name, 1.0, 1.0);
+    }
+}

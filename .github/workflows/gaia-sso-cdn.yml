@@ -1,0 +1,22 @@
+name: gaia-sso-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  gaia_sso:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"gaia_sso_compiler","netloc":"gea.esac.esa.int","asset":"gaia_sso_tno.bin"}
+        ]

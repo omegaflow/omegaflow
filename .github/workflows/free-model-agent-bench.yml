@@ -1,0 +1,122 @@
+name: free-model-agent-bench
+
+concurrency:
+  group: free-model-agent-bench
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'Model id substring filter (empty = all free models in free_models.tsv)'
+        required: false
+        type: string
+        default: ''
+      task:
+        description: 'Task: t7 (default, T7 funding-obligation classification) or funding-research'
+        required: false
+        type: string
+        default: 't7'
+      timeout:
+        description: 'Per-model timeout in seconds'
+        required: false
+        type: string
+        default: '300'
+
+permissions:
+  contents: read
+
+env:
+  RUSTFLAGS: -D warnings
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install opencode
+        run: |
+          curl -fsSL https://opencode.ai/install | bash -s -- --version 1.18.32
+          echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
+      - name: Ensure archive_search (tools-latest release)
+        run: sh bin/.tools_ensure archive_search
+      - name: Install Chromium for archive_search --playwright
+        run: npx -y playwright install --with-deps chromium
+      - name: Build agent bench (release)
+        run: cargo build --release -p omegaflow-measure --bin free_model_agent_bench
+      - name: Write opencode provider config
+        env:
+          FREE_MODEL_KEYS: ${{ secrets.FREE_MODEL_KEYS }}
+          CLOUDFLARE_WORKERS_TOKEN: ${{ secrets.CLOUDFLARE_WORKERS_TOKEN }}
+        run: |
+          if [ -z "$FREE_MODEL_KEYS" ]; then
+            echo "FREE_MODEL_KEYS secret is not set — expected a JSON object mapping free_models.tsv env_var names to api keys" >&2
+            exit 1
+          fi
+          mkdir -p "$HOME/.config/opencode"
+          FREE_MODEL_KEYS="$FREE_MODEL_KEYS" ./target/release/free_model_agent_bench \
+            --emit-config "$HOME/.config/opencode/opencode.json"
+      - name: Run agent benchmark
+        env:
+          PATH: ${{ github.workspace }}/target/release:$PATH
+        run: |
+          extra=()
+          if [ -n "${{ inputs.model }}" ]; then extra+=(--model "${{ inputs.model }}"); fi
+          if [ -n "${{ inputs.task }}" ]; then extra+=(--task "${{ inputs.task }}"); fi
+          ./target/release/free_model_agent_bench \
+            --out "free-model-agent-bench-shard-${{ matrix.shard }}.tsv" \
+            --models-shard "${{ matrix.shard }}:16" \
+            --timeout "${{ inputs.timeout }}" \
+            "${extra[@]}"
+      - name: Upload bench artifacts
+        if: always() && hashFiles('free-model-agent-bench-shard-${{ matrix.shard }}.tsv') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: free-model-agent-bench-shard-${{ matrix.shard }}
+          path: |
+            free-model-agent-bench-shard-${{ matrix.shard }}.tsv
+            free-model-agent-bench-shard-${{ matrix.shard }}.tsv.answers
+          retention-days: 7
+
+  merge:
+    needs: bench
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: free-model-agent-bench-shard-*
+          path: shards
+          merge-multiple: true
+      - name: Merge shard result tables
+        run: |
+          shopt -s nullglob
+          files=(shards/free-model-agent-bench-shard-*.tsv)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no shard tables were produced" >&2
+            exit 1
+          fi
+          : > free-model-agent-bench.tsv
+          first=1
+          for f in "${files[@]}"; do
+            if [ "$first" -eq 1 ]; then
+              cat "$f" >> free-model-agent-bench.tsv
+              first=0
+            else
+              tail -n +2 "$f" >> free-model-agent-bench.tsv
+            fi
+          done
+      - name: Upload merged table
+        if: always() && hashFiles('free-model-agent-bench.tsv') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: free-model-agent-bench
+          path: free-model-agent-bench.tsv
+          retention-days: 7

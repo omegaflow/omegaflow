@@ -1,0 +1,22 @@
+name: first14-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  first14:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"ssd.jpl.nasa.gov","asset":"first14.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"VIII/92/first14\" --columns 'name:FIRST;ra:RAJ2000;dec:DEJ2000;fpeak:Fpeak;fint:Fint' --crossmatch-z 'V/154/sdss16:RA_ICRS:DE_ICRS:zsp' --skip-null fint --skip-null z --async 9000 --limit 1100000 --out first14.json"}
+        ]

@@ -1,0 +1,57 @@
+name: cuprate-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '11 4 * * 4'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  rxs-harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest cuprate RIXS spin (Zenodo 7286412) and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/spin728.zip \
+            "https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content"
+          unzip -q -o kernels/spin728.zip -d kernels/spin728
+          cargo run -p omegaflow-harvest --release --bin crystal_compiler -- \
+            --rixs kernels/spin728/exp_data/azimuthal_analysis \
+            --out kernels \
+            --ci-mode
+      - name: Emit the rIXS text series for the spectral epoch arm
+        run: |
+          cargo run -p omegaflow-harvest --release --bin rixs_series_compiler -- \
+            --zip kernels/spin728.zip \
+            --out kernels \
+            --ci-mode
+      - name: Harvest cuprate RIXS charge/plasmon (Zenodo 15179114) and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/charge151.zip \
+            "https://zenodo.org/api/records/15179114/files/data.zip/content"
+          unzip -q -o kernels/charge151.zip -d kernels/charge151
+          cargo run -p omegaflow-harvest --release --bin crystal_compiler -- \
+            --plasmon kernels/charge151/data \
+            --out kernels \
+            --ci-mode
+      - name: Harvest cuprate EELS phonons (Zenodo 21859473) and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/Fig4_eels_and_peakfitting.mat \
+            "https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content"
+          cargo run -p omegaflow-harvest --release --bin crystal_compiler -- \
+            --eels kernels/Fig4_eels_and_peakfitting.mat \
+            --out kernels \
+            --ci-mode

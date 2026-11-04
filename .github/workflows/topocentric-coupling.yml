@@ -1,0 +1,36 @@
+name: topocentric-coupling
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  topocentric-coupling:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > topocentric-coupling.txt
+      - name: Run the topocentric coupling probe — DSN Madrid and Canberra see the Moon
+        run: |
+          # TDB 863956800 s = JD 2461544.50000 (the riss-knoten grammar reference
+          # epoch, (jd - J2000) x 86400). Station 1 defaults to DSN 63 (Madrid),
+          # the declared station 2 to DSN 43 (Canberra), both on earth; the probe
+          # fetches the earth and moon ephemeris bins from the CDN itself.
+          cargo run --release -p omegaflow-measure --bin topocentric_coupling_probe -- \
+            --tdb 863956800 --station2 --target-body moon \
+            >> topocentric-coupling.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: topocentric-coupling
+          path: topocentric-coupling.txt

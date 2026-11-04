@@ -1,0 +1,10 @@
+# Bulletin A gegen IERS C04 — Polbewegung und UT1-UTC an vier Tagen.
+# Quelle Bulletin A: https://maia.usno.navy.mil/ser7/finals.all (2026-10-29),
+#   Werteblock nach dem zweiten I-Flag (final values, nicht die Rapid-Spalte).
+# Quelle C04: src/archivar/kernels/eop.tsv (IERS EOP 20 C04, ITRF2020).
+# Gemessene Uebereinstimmung: x und y <= 0,05 mas, UT1-UTC < 0,1 us.
+# mjd	pm_x_arcsec	pm_y_arcsec	ut1_utc_s
+61041	0.110518	0.331170	0.0740869
+61100	0.105015	0.389153	0.0672285
+61200	0.187379	0.406533	0.0147513
+61256	0.222615	0.362934	0.0112588

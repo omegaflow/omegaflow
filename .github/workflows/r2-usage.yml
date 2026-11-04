@@ -1,0 +1,43 @@
+# The R2 hot-tier alarm. R2 is not the archive (GitHub Releases holds the 1,76 TB);
+# it is a small hot tier for manifests/indices (admission rule: `r2_mirror` cap 16 MiB).
+# This workflow measures the bucket and fails when it nears the soft cap
+# (R2_HOT_TIER_MAX_BYTES, default 8 GiB), so a data block that slipped past the cap is
+# caught before the 10 GB free tier is spent. The alarm is a measurement, never a delete.
+name: r2-usage
+
+concurrency:
+  group: r2-usage
+  cancel-in-progress: false
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  R2_HOT_TIER_MAX_BYTES: "8589934592"
+
+jobs:
+  usage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Measure the R2 hot tier and alarm at the soft cap
+        run: cargo run --release -p omegaflow-utils --bin r2_probe -- --list
+      - name: Open one health issue when the hot tier nears the cap
+        if: failure()
+        run: |
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "r2-usage: hot tier nears the soft cap" \
+            "r2_probe --list crossed R2_HOT_TIER_MAX_BYTES. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            health

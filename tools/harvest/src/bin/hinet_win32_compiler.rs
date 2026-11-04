@@ -1,0 +1,956 @@
+use omegaflow::archivar::geo::{
+    COMP_HINET_E, COMP_HINET_N, COMP_HINET_U, GeoRec, MAGIC_HINET, parse_bin, write_bin,
+};
+use omegaflow::archivar::win32::{WinSensitivity, parse_win32, station_of, velocity_m_s};
+use omegaflow::cdn::upload_release;
+use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
+use std::collections::{HashMap, HashSet};
+use std::path::{Path, PathBuf};
+use std::process::Command;
+
+const HINET_BASE: &str = "https://hinetwww11.bosai.go.jp";
+const HINET_NETLOC: &str = "hinetwww11.bosai.go.jp";
+const HINET_USER: &str = "omegaflow";
+
+fn arg_value(args: &[String], name: &str) -> Option<String> {
+    args.iter()
+        .position(|a| a == name)
+        .and_then(|i| args.get(i + 1))
+        .cloned()
+}
+
+fn parse_secret(text: &str, key: &str) -> Option<String> {
+    let mut found = None;
+    for line in text.lines() {
+        if let Some((k, v)) = line.split_once('=') {
+            if k.trim() == key && !v.trim().is_empty() {
+                found = Some(v.trim().to_string());
+            }
+        }
+    }
+    found
+}
+
+fn secret(name: &str) -> Option<String> {
+    if let Ok(v) = std::env::var(name) {
+        if !v.is_empty() {
+            return Some(v);
+        }
+    }
+    let body = std::fs::read_to_string(".secrets.local").ok()?;
+    parse_secret(&body, name)
+}
+
+fn comp_of_letter(c: &str) -> Option<u32> {
+    match c {
+        "U" => Some(COMP_HINET_U),
+        "E" => Some(COMP_HINET_E),
+        "N" => Some(COMP_HINET_N),
+        _ => None,
+    }
+}
+
+struct ChannelAnchor {
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    comp: u32,
+    sensitivity: Option<WinSensitivity>,
+}
+
+fn parse_finite(s: &str) -> Option<f64> {
+    let t = s.trim();
+    if t.is_empty() {
+        return None;
+    }
+    let v = t.parse::<f64>().ok()?;
+    if v.is_finite() { Some(v) } else { None }
+}
+
+fn load_channels(path: &str) -> (HashMap<u16, ChannelAnchor>, usize, usize) {
+    let mut map = HashMap::new();
+    let mut rows = 0usize;
+    let mut rejected = 0usize;
+    let body = match std::fs::read_to_string(path) {
+        Ok(b) => b,
+        Err(_) => {
+            eprintln!("hinet: channel table {path} stayed unread");
+            return (map, 0, 0);
+        }
+    };
+    for line in body.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cols: Vec<&str> = t.split_whitespace().collect();
+        if cols.len() < 16 {
+            rejected += 1;
+            continue;
+        }
+        let Some(chan) = u16::from_str_radix(cols[0].trim(), 16).ok() else {
+            rejected += 1;
+            continue;
+        };
+        let (Some(lat), Some(lon), Some(alt), Some(comp)) = (
+            parse_finite(cols[13]),
+            parse_finite(cols[14]),
+            parse_finite(cols[15]),
+            comp_of_letter(cols[4].trim()),
+        ) else {
+            rejected += 1;
+            continue;
+        };
+        let sensitivity = if cols[8].trim() == "m/s" {
+            match (
+                parse_finite(cols[7]),
+                parse_finite(cols[11]),
+                parse_finite(cols[12]),
+            ) {
+                (Some(gain), Some(preamp), Some(lsb)) => WinSensitivity::new(gain, preamp, lsb),
+                _ => None,
+            }
+        } else {
+            None
+        };
+        rows += 1;
+        map.insert(
+            chan,
+            ChannelAnchor {
+                lat,
+                lon,
+                alt,
+                comp,
+                sensitivity,
+            },
+        );
+    }
+    (map, rows, rejected)
+}
+
+fn walk_local(dir: &Path, out: &mut Vec<PathBuf>) {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            walk_local(&path, out);
+        } else if path.extension().and_then(|e| e.to_str()) == Some("cnt") {
+            out.push(path);
+        }
+    }
+}
+
+fn curl_get(url: &str, jar: &Option<PathBuf>) -> Option<Vec<u8>> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS")
+        .arg("-L")
+        .arg("-m")
+        .arg("300")
+        .arg("--connect-timeout")
+        .arg("20");
+    if let Some(j) = jar {
+        cmd.arg("-b").arg(j).arg("-c").arg(j);
+    }
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
+    if out.status.success() {
+        Some(out.stdout)
+    } else {
+        eprintln!(
+            "hinet: {url} returned void: {}",
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        None
+    }
+}
+
+fn curl_form(url: &str, jar: &Path, form: &[(String, String)]) -> Option<Vec<u8>> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS")
+        .arg("-L")
+        .arg("-m")
+        .arg("120")
+        .arg("-b")
+        .arg(jar)
+        .arg("-c")
+        .arg(jar);
+    for (k, v) in form {
+        cmd.arg("--data-urlencode").arg(format!("{k}={v}"));
+    }
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
+    if out.status.success() {
+        Some(out.stdout)
+    } else {
+        eprintln!("hinet: {url} returned void");
+        None
+    }
+}
+
+fn auth(jar: &Path) -> bool {
+    let Some(pass) = secret("HINET_PASS") else {
+        eprintln!("hinet: HINET_PASS absent — no credential, the session stays closed");
+        return false;
+    };
+    let url = format!("{HINET_BASE}/auth/?LANG=en");
+    let _ = curl_get(&url, &Some(jar.to_path_buf()));
+    let form = vec![
+        ("auth_un".to_string(), HINET_USER.to_string()),
+        ("auth_pw".to_string(), pass),
+    ];
+    match curl_form(&url, jar, &form) {
+        Some(_) => {
+            eprintln!("hinet: auth session opened at {url}");
+            true
+        }
+        None => {
+            eprintln!("hinet: auth session stayed closed at {url}");
+            false
+        }
+    }
+}
+
+const CONT_BASE: &str = "https://hinetwww11.bosai.go.jp/auth/download/cont";
+
+struct Window {
+    year: i32,
+    month: u32,
+    day: u32,
+    hour: u32,
+    min: u32,
+}
+
+fn parse_window(s: &str) -> Option<Window> {
+    let t = s.trim();
+    let date = t.split('T').next()?;
+    let time = match t.split('T').nth(1) {
+        Some(x) => x,
+        None => "00:00",
+    };
+    let dp: Vec<&str> = date.split('-').collect();
+    let tp: Vec<&str> = time.split(':').collect();
+    if dp.len() < 3 || tp.len() < 2 {
+        return None;
+    }
+    let year: i32 = dp[0].parse().ok()?;
+    let month: u32 = dp[1].parse().ok()?;
+    let day: u32 = dp[2].parse().ok()?;
+    let hour: u32 = tp[0].parse().ok()?;
+    let min: u32 = tp[1].parse().ok()?;
+    if !(1..=12).contains(&month) || !(1..=31).contains(&day) || hour > 23 || min > 59 {
+        return None;
+    }
+    Some(Window {
+        year,
+        month,
+        day,
+        hour,
+        min,
+    })
+}
+
+fn window_date(w: &Window) -> (String, String, String, String) {
+    (
+        format!("{:02}", w.month),
+        format!("{:02}", w.day),
+        format!("{:02}", w.hour),
+        format!("{:02}", w.min),
+    )
+}
+
+fn cont_search(jar: &Path, w: &Window, span_min: u32) -> Option<String> {
+    let (month, day, hour, min) = window_date(w);
+    let url = format!("{CONT_BASE}/");
+    let form = vec![
+        ("org".to_string(), String::new()),
+        ("net".to_string(), String::new()),
+        ("volc".to_string(), String::new()),
+        ("year".to_string(), w.year.to_string()),
+        ("month".to_string(), month),
+        ("day".to_string(), day),
+        ("hour".to_string(), hour),
+        ("min".to_string(), min),
+        ("span".to_string(), span_min.to_string()),
+        ("LANG".to_string(), "en".to_string()),
+        ("search_btn".to_string(), "Search".to_string()),
+    ];
+    curl_form(&url, jar, &form).map(|b| String::from_utf8_lossy(&b).to_string())
+}
+
+fn parse_open_request(html: &str) -> Option<(String, String, String)> {
+    let idx = html.find("openRequest(")?;
+    let tail = &html[idx + "openRequest(".len()..];
+    let close = tail.find(')')?;
+    let args: Vec<String> = tail[..close]
+        .split(',')
+        .map(|s| s.trim().trim_matches('\'').to_string())
+        .collect();
+    if args.len() >= 9 {
+        Some((args[0].clone(), args[1].clone(), args[8].clone()))
+    } else {
+        None
+    }
+}
+
+fn submit_request(
+    jar: &Path,
+    org1: &str,
+    org2: &str,
+    size: &str,
+    w: &Window,
+    span_min: u32,
+) -> bool {
+    let rn = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+        Ok(d) => d.as_millis(),
+        Err(_) => return false,
+    };
+    let (month, day, hour, min) = window_date(w);
+    let url = format!(
+        "{CONT_BASE}/cont_request.php?org1={org1}&org2={org2}&year={}&month={month}&day={day}&hour={hour}&min={min}&span={span_min}&arc=ZIP&size={size}&LANG=en&volc=0&rn={rn}",
+        w.year
+    );
+    curl_get(&url, &Some(jar.to_path_buf())).is_some()
+}
+
+fn available_id(html: &str, w: &Window, before: &HashSet<String>) -> Option<String> {
+    let token = format!(
+        "{}/{:02}/{:02} {:02}:{:02}",
+        w.year, w.month, w.day, w.hour, w.min
+    );
+    for row in html.split("<tr") {
+        if !row.contains(&token) || !row.contains("Available") {
+            continue;
+        }
+        let Some(p) = row.find("openDownload('") else {
+            continue;
+        };
+        let start = p + "openDownload('".len();
+        let Some(end) = row[start..].find('\'') else {
+            continue;
+        };
+        let id = row[start..start + end].to_string();
+        if !before.contains(&id) {
+            return Some(id);
+        }
+    }
+    None
+}
+
+fn existing_ids(jar: &Path) -> HashSet<String> {
+    let url = format!("{CONT_BASE}/cont_status.php?LANG=en");
+    let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
+        return HashSet::new();
+    };
+    let html = String::from_utf8_lossy(&body);
+    let mut ids = HashSet::new();
+    let mut rest: &str = &html;
+    while let Some(p) = rest.find("openDownload('") {
+        let start = p + "openDownload('".len();
+        let tail = &rest[start..];
+        let Some(end) = tail.find('\'') else {
+            break;
+        };
+        ids.insert(tail[..end].to_string());
+        rest = &tail[end..];
+    }
+    ids
+}
+
+fn poll_server_id(
+    jar: &Path,
+    w: &Window,
+    before: &HashSet<String>,
+    wait_secs: u64,
+) -> Option<String> {
+    let url = format!("{CONT_BASE}/cont_status.php?LANG=en");
+    for _ in 0..(wait_secs / 5 + 1) {
+        let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            continue;
+        };
+        let html = String::from_utf8_lossy(&body);
+        if let Some(id) = available_id(&html, w, before) {
+            return Some(id);
+        }
+        std::thread::sleep(std::time::Duration::from_secs(5));
+    }
+    None
+}
+
+fn looks_like_zip(bytes: &[u8]) -> bool {
+    bytes.starts_with(b"PK\x03\x04") && bytes.windows(4).any(|w| w == b"PK\x05\x06")
+}
+
+fn download_wave(jar: &Path, id: &str, dest: &Path) -> Option<PathBuf> {
+    let url = format!("{CONT_BASE}/cont_download.php?id={id}&LANG=en");
+    for attempt in 0..6 {
+        let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
+            eprintln!("hinet: cont download attempt {attempt} fetch void — retrying");
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            continue;
+        };
+        if !looks_like_zip(&body) {
+            eprintln!(
+                "hinet: cont download attempt {attempt} carried {} B, not a ZIP — retrying",
+                body.len()
+            );
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            continue;
+        }
+        let zip_path = dest.join("wave.zip");
+        if std::fs::write(&zip_path, &body).is_ok() {
+            return Some(zip_path);
+        }
+    }
+    None
+}
+
+fn unzip_into(zip_path: &Path, dest: &Path) -> Option<Vec<PathBuf>> {
+    let out = Command::new("unzip")
+        .arg("-o")
+        .arg(zip_path)
+        .arg("-d")
+        .arg(dest)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        eprintln!(
+            "hinet: unzip returned void: {}",
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        return None;
+    }
+    let mut files = Vec::new();
+    walk_local(dest, &mut files);
+    files.sort();
+    Some(files)
+}
+
+fn station_codes(path: &str, count: usize) -> Vec<String> {
+    let Ok(body) = std::fs::read_to_string(path) else {
+        return Vec::new();
+    };
+    let mut codes: Vec<String> = Vec::new();
+    for line in body.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cols: Vec<&str> = t.split_whitespace().collect();
+        if cols.len() < 4 {
+            continue;
+        }
+        let code = cols[3].to_string();
+        if !codes.iter().any(|c| c == &code) {
+            codes.push(code);
+            if codes.len() >= count {
+                break;
+            }
+        }
+    }
+    codes
+}
+
+fn select_stations(jar: &Path, codes: &[String]) -> bool {
+    let url = format!("{CONT_BASE}/select_confirm.php?LANG=en");
+    let form = vec![
+        ("stcds".to_string(), codes.join(":")),
+        ("mode".to_string(), "1".to_string()),
+        ("net".to_string(), "0101".to_string()),
+        ("area".to_string(), String::new()),
+        ("LANG".to_string(), "en".to_string()),
+    ];
+    curl_form(&url, jar, &form).is_some()
+}
+
+fn compile_file(
+    path: &Path,
+    channels: &HashMap<u16, ChannelAnchor>,
+    lsk: &LeapSeconds,
+    tz_offset: f64,
+    records: &mut Vec<GeoRec>,
+) -> usize {
+    let bytes = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(_) => {
+            eprintln!("hinet: {} stayed unread", path.display());
+            return 0;
+        }
+    };
+    let Some(samples) = parse_win32(&bytes) else {
+        eprintln!(
+            "hinet: {} parses void — not a WIN32 .cnt block stream",
+            path.display()
+        );
+        return 0;
+    };
+    let mut n = 0usize;
+    for s in samples {
+        let Some(anchor) = channels.get(&s.chan) else {
+            continue;
+        };
+        let Some(sens) = &anchor.sensitivity else {
+            continue;
+        };
+        let Some(v) = velocity_m_s(s.val, sens) else {
+            continue;
+        };
+        let Some(t) = lsk.unix_to_tdb(s.t - tz_offset) else {
+            continue;
+        };
+        records.push(GeoRec {
+            t,
+            lat: anchor.lat,
+            lon: anchor.lon,
+            alt: anchor.alt,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: v,
+            comp: anchor.comp,
+            station: station_of(s.chan),
+        });
+        n += 1;
+    }
+    n
+}
+
+fn main() {
+    omegaflow::archivar::cdn::require_ci();
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let out_bin = arg_value(&args, "--out-bin");
+    let mut channels_path = arg_value(&args, "--channels");
+    let tz_offset: f64 = match arg_value(&args, "--tz-offset") {
+        Some(v) => match v.parse::<f64>() {
+            Ok(x) if x.is_finite() => x,
+            _ => {
+                eprintln!("hinet: --tz-offset {v} carries no measured shift");
+                std::process::exit(1);
+            }
+        },
+        None => {
+            eprintln!(
+                "hinet: --tz-offset <seconds> is required — the timestamp base is declared, never defaulted (win32 records carry JST, 32400)"
+            );
+            std::process::exit(2);
+        }
+    };
+
+    let mut sources: Vec<PathBuf> = Vec::new();
+    if let Some(dir) = arg_value(&args, "--in") {
+        walk_local(Path::new(&dir), &mut sources);
+        sources.sort();
+    } else {
+        let Some(_pass) = secret("HINET_PASS") else {
+            eprintln!("hinet: HINET_PASS absent — no credential, the .cnt tree stays unfetched");
+            std::process::exit(1);
+        };
+        let cache = match arg_value(&args, "--cache") {
+            Some(v) => v,
+            None => "data/hinetwww11.bosai.go.jp".to_string(),
+        };
+        let cache_path = PathBuf::from(&cache);
+        let _ = std::fs::create_dir_all(&cache_path);
+        let jar = cache_path.join("cookies.txt");
+        if !auth(&jar) {
+            std::process::exit(1);
+        }
+        if channels_path.is_none() {
+            let ch_url = format!("{HINET_BASE}/auth/channel/dlDialogue.php");
+            match curl_get(&ch_url, &Some(jar.to_path_buf())) {
+                Some(body) => {
+                    let ch_file = cache_path.join("channels.txt");
+                    if std::fs::write(&ch_file, &body).is_err() {
+                        eprintln!(
+                            "hinet: channel table write returned void — the join stays unread"
+                        );
+                        std::process::exit(1);
+                    }
+                    channels_path = Some(ch_file.to_string_lossy().into_owned());
+                }
+                None => {
+                    eprintln!("hinet: channel table fetch returned void — the join stays unread");
+                    std::process::exit(1);
+                }
+            }
+        }
+        let span_min: u32 = match arg_value(&args, "--span") {
+            Some(v) => match v.parse() {
+                Ok(x) => x,
+                Err(_) => {
+                    eprintln!("hinet: --span {v} carries no measured span");
+                    std::process::exit(1);
+                }
+            },
+            None => 60,
+        };
+        let station_count: Option<usize> = match arg_value(&args, "--station-count") {
+            Some(v) => match v.parse() {
+                Ok(x) => Some(x),
+                Err(_) => {
+                    eprintln!("hinet: --station-count {v} carries no measured count");
+                    std::process::exit(1);
+                }
+            },
+            None => None,
+        };
+        if let Some(station_count) = station_count {
+            let Some(ch_path) = channels_path.as_ref() else {
+                eprintln!("hinet: --station-count needs the channel table — the join stays unread");
+                std::process::exit(1);
+            };
+            let codes = station_codes(ch_path, station_count);
+            if codes.is_empty() {
+                eprintln!(
+                    "hinet: channel table carries no station codes — the selection stays unread"
+                );
+                std::process::exit(1);
+            }
+            if !select_stations(&jar, &codes) {
+                eprintln!("hinet: station selection stayed unread — the request stays unplaced");
+                std::process::exit(1);
+            }
+            eprintln!("hinet: {} stations selected for the window", codes.len());
+        }
+        let Some(w) = arg_value(&args, "--start").and_then(|s| parse_window(&s)) else {
+            eprintln!("hinet: --start YYYY-MM-DDTHH:MM names the request window");
+            std::process::exit(1);
+        };
+        let Some(results) = cont_search(&jar, &w, span_min) else {
+            eprintln!("hinet: cont search returned void — the request stays unplaced");
+            std::process::exit(1);
+        };
+        let Some((org1, org2, size)) = parse_open_request(&results) else {
+            eprintln!("hinet: cont search carried no openRequest — the request stays unplaced");
+            std::process::exit(1);
+        };
+        let before = existing_ids(&jar);
+        let mut id: Option<String> = None;
+        for attempt in 0..8 {
+            if !submit_request(&jar, &org1, &org2, &size, &w, span_min) {
+                eprintln!("hinet: cont request returned void — the request stays unplaced");
+                std::process::exit(1);
+            }
+            match poll_server_id(&jar, &w, &before, 240) {
+                Some(found) => {
+                    id = Some(found);
+                    break;
+                }
+                None => {
+                    eprintln!(
+                        "hinet: cont request attempt {attempt} stayed unready — re-requesting"
+                    );
+                }
+            }
+        }
+        let Some(id) = id else {
+            eprintln!("hinet: cont status never read Available — the request stays unfetched");
+            std::process::exit(1);
+        };
+        let Some(zip_path) = download_wave(&jar, &id, &cache_path) else {
+            eprintln!("hinet: cont download returned void — the .cnt tree stays unfetched");
+            std::process::exit(1);
+        };
+        let Some(files) = unzip_into(&zip_path, &cache_path) else {
+            eprintln!("hinet: cont archive unzips void — the .cnt tree stays unfetched");
+            std::process::exit(1);
+        };
+        if files.is_empty() {
+            eprintln!("hinet: cont archive carried no .cnt — the bin stays unwritten (0 honored)");
+            std::process::exit(1);
+        }
+        sources = files;
+        eprintln!(
+            "hinet: window {}-{:02}-{:02}T{:02}:{:02} span {span_min} min — {} .cnt files flow",
+            w.year,
+            w.month,
+            w.day,
+            w.hour,
+            w.min,
+            sources.len()
+        );
+    }
+
+    if sources.is_empty() {
+        eprintln!("hinet: no .cnt files flow — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+
+    let (Some(out_bin), Some(channels_path)) = (out_bin, channels_path) else {
+        eprintln!("hinet: --out-bin <path> and --channels <file> are the required compile pair");
+        std::process::exit(1);
+    };
+    let lsk_text = match arg_value(&args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok()) {
+        Some(t) => t,
+        None => {
+            eprintln!("hinet: --lsk absent — the TDB conversion stays void (no fabricated epoch)");
+            std::process::exit(1);
+        }
+    };
+    let lsk = match parse_lsk(&lsk_text) {
+        Some(l) => l,
+        None => {
+            eprintln!("hinet: --lsk parses void — the leap-second table stays unread");
+            std::process::exit(1);
+        }
+    };
+    let (channels, ch_rows, ch_rejected) = load_channels(&channels_path);
+    if channels.is_empty() {
+        eprintln!(
+            "hinet: channel table {channels_path} carries no anchors — the join stays unread"
+        );
+        std::process::exit(1);
+    }
+
+    let mut records: Vec<GeoRec> = Vec::new();
+    let mut total = 0usize;
+    for src in &sources {
+        let n = compile_file(src, &channels, &lsk, tz_offset, &mut records);
+        if n == 0 {
+            eprintln!(
+                "hinet: {} carries no matched channel samples — file skipped",
+                src.display()
+            );
+        }
+        total += n;
+    }
+
+    if records.is_empty() {
+        eprintln!("hinet: no matched channel samples — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+    records.sort_by(|a, b| a.t.total_cmp(&b.t).then(a.comp.cmp(&b.comp)));
+
+    let bytes = write_bin(MAGIC_HINET, &records);
+    if std::fs::write(&out_bin, &bytes).is_err() {
+        eprintln!("write {out_bin} returned void");
+        std::process::exit(1);
+    }
+    match parse_bin(MAGIC_HINET, &bytes) {
+        Some(parsed) => eprintln!(
+            "hinet: {}: {} geo records ({} samples, {} channel rows, {} rejected), {} B, roundtrip parses",
+            out_bin,
+            parsed.len(),
+            total,
+            ch_rows,
+            ch_rejected,
+            bytes.len()
+        ),
+        None => {
+            eprintln!("hinet: {out_bin} roundtrip parse void — the bin stays unverified");
+            std::process::exit(1);
+        }
+    }
+    if ci_mode && !upload_release(HINET_NETLOC, &out_bin) {
+        std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use omegaflow::archivar::win32::chan_of;
+
+    #[test]
+    fn channel_table_parses_hex_anchor_component_and_sensitivity() {
+        let dir = std::env::temp_dir().join(format!("hinet_chan_{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let p = dir.join("ch.txt");
+        let text = "# id recflag delay station comp reduction bits gain unit period damping preamp lsb lat lon height P S name\n\
+0101 1 0 N.AAAA U 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 35.0 139.0 800.0 0 0 StnA\n\
+0102 1 0 N.AAAA N 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 35.1 139.1 800.0 0 0 StnA\n\
+0103 1 0 N.AAAA E 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 35.2 139.2 800.0 0 0 StnA\n\
+zzzz 1 0 N.AAAA U 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 1 2 3 0 0 StnA\n";
+        std::fs::write(&p, text).unwrap();
+        let (map, rows, rejected) = load_channels(p.to_str().unwrap());
+        assert_eq!(rows, 3);
+        assert_eq!(rejected, 1);
+        assert_eq!(map[&0x0101u16].comp, COMP_HINET_U);
+        assert_eq!(map[&0x0102u16].comp, COMP_HINET_N);
+        assert_eq!(map[&0x0103u16].comp, COMP_HINET_E);
+        assert!(!map.contains_key(&0x0104u16));
+        let sens = map[&0x0101u16]
+            .sensitivity
+            .as_ref()
+            .expect("m/s channel carries sensitivity");
+        assert_eq!(sens.gain, 175.60);
+        assert_eq!(sens.preamp_db, 0.0);
+        assert_eq!(sens.lsb_value, 1.023e-07);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn non_velocity_channel_carries_no_sensitivity() {
+        let dir = std::env::temp_dir().join(format!("hinet_nonv_{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let p = dir.join("ch.txt");
+        let text =
+            "0101 1 0 N.AAAA U 6 27 175.60 m/s/s 1.00 0.70 0 1.023e-07 35.0 139.0 800.0 0 0 StnA\n";
+        std::fs::write(&p, text).unwrap();
+        let (map, rows, _) = load_channels(p.to_str().unwrap());
+        assert_eq!(rows, 1);
+        assert!(map[&0x0101u16].sensitivity.is_none());
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn comp_letters_map_to_hinet_components() {
+        assert_eq!(comp_of_letter("U"), Some(COMP_HINET_U));
+        assert_eq!(comp_of_letter("E"), Some(COMP_HINET_E));
+        assert_eq!(comp_of_letter("N"), Some(COMP_HINET_N));
+        assert_eq!(comp_of_letter("H"), None);
+        assert_eq!(comp_of_letter(""), None);
+    }
+
+    #[test]
+    fn window_parses_iso_fragment() {
+        let w = parse_window("2024-05-04T13:05").expect("window parses");
+        assert_eq!((w.year, w.month, w.day, w.hour, w.min), (2024, 5, 4, 13, 5));
+        assert!(parse_window("2024-13-04T13:05").is_none());
+        assert!(parse_window("2024-05-04T25:00").is_none());
+        assert!(parse_window("garbage").is_none());
+    }
+
+    #[test]
+    fn window_date_pads_single_digit_components() {
+        let w = parse_window("2025-01-15T00:00").expect("window parses");
+        assert_eq!(
+            window_date(&w),
+            (
+                "01".to_string(),
+                "15".to_string(),
+                "00".to_string(),
+                "00".to_string()
+            )
+        );
+        let w2 = parse_window("2025-12-03T05:07").expect("window parses");
+        assert_eq!(
+            window_date(&w2),
+            (
+                "12".to_string(),
+                "03".to_string(),
+                "05".to_string(),
+                "07".to_string()
+            )
+        );
+    }
+
+    #[test]
+    fn available_id_isolates_the_row_carrying_the_window_token() {
+        let html = "<table>\
+<tr><td>ID</td><td>Status</td></tr>\
+<tr class=\"bglist4\"><td>0001</td><td>2025/01/15 00:00 2025011500000101VM.cnt</td><td>Available</td><td><input onClick=\"openDownload('0001')\"></td></tr>\
+<tr class=\"bglist2\"><td>0002</td><td>2025/01/15 00:00 2025011500000101VM.cnt</td><td>Available</td><td><input onClick=\"openDownload('0002')\"></td></tr>\
+</table>";
+        let w = parse_window("2025-01-15T00:00").expect("window parses");
+        let before: HashSet<String> = ["0001".to_string()].into_iter().collect();
+        assert_eq!(available_id(html, &w, &before), Some("0002".to_string()));
+    }
+
+    #[test]
+    fn compile_maps_win32_samples_into_georecords() {
+        let dir = std::env::temp_dir().join(format!("hinet_cmp_{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let p = dir.join("f.cnt");
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let mut header = [0u8; 16];
+        header[0] = 0x20;
+        header[1] = 0x20;
+        header[2] = 0x01;
+        header[3] = 0x01;
+        header[4] = 0x00;
+        header[5] = 0x00;
+        header[6] = 0x00;
+        let packet = [
+            0x00u8, 0x01, 0x01, 0x01, 0x10, 0x05, 0x00, 0x00, 0x03, 0xE8, 0x01, 0xFE, 0x03, 0xFC,
+        ];
+        let sz = packet.len() as u32;
+        header[12] = (sz >> 24) as u8;
+        header[13] = (sz >> 16) as u8;
+        header[14] = (sz >> 8) as u8;
+        header[15] = sz as u8;
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(&packet);
+        std::fs::write(&p, &buf).unwrap();
+
+        let mut channels = HashMap::new();
+        channels.insert(
+            0x0101u16,
+            ChannelAnchor {
+                lat: 35.0,
+                lon: 139.0,
+                alt: 800.0,
+                comp: COMP_HINET_U,
+                sensitivity: WinSensitivity::new(175.6, 0.0, 1.023e-7),
+            },
+        );
+        let lsk_text = "KPL/LSK\n\
+[2]       DELTA_AT  =  TAI - UTC\n\
+\\begindata\n\n\
+DELTET/DELTA_T_A       =   32.184\n\
+DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
+        let lsk = parse_lsk(lsk_text).expect("lsk parses");
+        let mut records = Vec::new();
+        let n = compile_file(&p, &channels, &lsk, 0.0, &mut records);
+        assert_eq!(n, 5);
+        assert_eq!(records.len(), 5);
+        assert!((records[0].val - 1000.0 * 1.023e-7 / 175.6).abs() < 1e-30);
+        assert_eq!(records[0].comp, COMP_HINET_U);
+        assert_eq!(chan_of(records[0].station), 0x0101);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn compile_skips_channel_without_sensitivity() {
+        let dir = std::env::temp_dir().join(format!("hinet_nosens_{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let p = dir.join("f.cnt");
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let mut header = [0u8; 16];
+        header[0] = 0x20;
+        header[1] = 0x20;
+        header[2] = 0x01;
+        header[3] = 0x01;
+        header[4] = 0x00;
+        header[5] = 0x00;
+        header[6] = 0x00;
+        let packet = [
+            0x00u8, 0x01, 0x01, 0x01, 0x10, 0x05, 0x00, 0x00, 0x03, 0xE8, 0x01, 0xFE, 0x03, 0xFC,
+        ];
+        let sz = packet.len() as u32;
+        header[12] = (sz >> 24) as u8;
+        header[13] = (sz >> 16) as u8;
+        header[14] = (sz >> 8) as u8;
+        header[15] = sz as u8;
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(&packet);
+        std::fs::write(&p, &buf).unwrap();
+
+        let mut channels = HashMap::new();
+        channels.insert(
+            0x0101u16,
+            ChannelAnchor {
+                lat: 35.0,
+                lon: 139.0,
+                alt: 800.0,
+                comp: COMP_HINET_U,
+                sensitivity: None,
+            },
+        );
+        let lsk_text = "KPL/LSK\n\
+[2]       DELTA_AT  =  TAI - UTC\n\
+\\begindata\n\n\
+DELTET/DELTA_T_A       =   32.184\n\
+DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
+        let lsk = parse_lsk(lsk_text).expect("lsk parses");
+        let mut records = Vec::new();
+        let n = compile_file(&p, &channels, &lsk, 0.0, &mut records);
+        assert_eq!(n, 0);
+        assert!(records.is_empty());
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+}

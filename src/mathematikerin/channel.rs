@@ -1,0 +1,4753 @@
+use super::media::MediumParams;
+use std::collections::HashMap;
+
+pub const CHANNEL_CAP: usize = 16;
+pub const VACUUM_SPEED_M_S: f64 = 299_792_458.0;
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Conserved {
+    Mass = 0,
+    Momentum = 1,
+    Energy = 2,
+    Charge = 3,
+    Number = 4,
+}
+
+pub fn conserved_name(c: Conserved) -> &'static str {
+    match c {
+        Conserved::Mass => "mass",
+        Conserved::Momentum => "momentum",
+        Conserved::Energy => "energy",
+        Conserved::Charge => "charge",
+        Conserved::Number => "number",
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum QuantityRole {
+    Primary = 0,
+    Derived = 1,
+    Geometry = 2,
+    SourceParameter = 3,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Quantity {
+    pub conserved: Conserved,
+    pub role: QuantityRole,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum PdeType {
+    Elliptic = 0,
+    Parabolic = 1,
+    Hyperbolic = 2,
+    Advective = 3,
+    Mixed = 4,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum FluxKind {
+    Fick = 0,
+    Fourier = 1,
+    Ohm = 2,
+    NewtonViscous = 3,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum TransportOp {
+    Flux(FluxKind) = 0,
+    Advective = 1,
+    Wave = 2,
+    Poisson = 3,
+    Maxwell = 4,
+    Creep = 5,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Medium {
+    Vacuum = 0,
+    Fluid = 1,
+    ElasticSolid = 2,
+    Plasma = 3,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Boundary {
+    None = 0,
+    FreeSurface = 1,
+    Dirichlet = 2,
+    Neumann = 3,
+    Robin = 4,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ModeFamily {
+    Scalar = 0,
+    Spheroidal = 1,
+    Toroidal = 2,
+}
+
+impl ModeFamily {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "scalar" => Some(ModeFamily::Scalar),
+            "spheroidal" => Some(ModeFamily::Spheroidal),
+            "toroidal" => Some(ModeFamily::Toroidal),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum Domain {
+    Unspecified,
+    Line,
+    Rectangle { lx: f64, ly: f64 },
+    Circle,
+    Sphere { l: u32 },
+    Shell { r_in: f64, r_out: f64 },
+    Ellipsoid { a: f64, b: f64, c: f64 },
+}
+
+impl PartialEq for Domain {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Domain::Unspecified, Domain::Unspecified)
+            | (Domain::Line, Domain::Line)
+            | (Domain::Circle, Domain::Circle) => true,
+            (Domain::Sphere { l: a }, Domain::Sphere { l: b }) => a == b,
+            (Domain::Rectangle { lx: a, ly: b }, Domain::Rectangle { lx: c, ly: d }) => {
+                a.to_bits() == c.to_bits() && b.to_bits() == d.to_bits()
+            }
+            (Domain::Shell { r_in: a, r_out: b }, Domain::Shell { r_in: c, r_out: d }) => {
+                a.to_bits() == c.to_bits() && b.to_bits() == d.to_bits()
+            }
+            (
+                Domain::Ellipsoid {
+                    a: a1,
+                    b: b1,
+                    c: c1,
+                },
+                Domain::Ellipsoid {
+                    a: a2,
+                    b: b2,
+                    c: c2,
+                },
+            ) => {
+                a1.to_bits() == a2.to_bits()
+                    && b1.to_bits() == b2.to_bits()
+                    && c1.to_bits() == c2.to_bits()
+            }
+            _ => false,
+        }
+    }
+}
+
+impl Eq for Domain {}
+
+impl Conserved {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "mass" => Some(Conserved::Mass),
+            "momentum" => Some(Conserved::Momentum),
+            "energy" => Some(Conserved::Energy),
+            "charge" => Some(Conserved::Charge),
+            "number" => Some(Conserved::Number),
+            _ => None,
+        }
+    }
+}
+
+impl QuantityRole {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "primary" => Some(QuantityRole::Primary),
+            "derived" => Some(QuantityRole::Derived),
+            "geometry" => Some(QuantityRole::Geometry),
+            "source-parameter" => Some(QuantityRole::SourceParameter),
+            _ => None,
+        }
+    }
+}
+
+impl PdeType {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "elliptic" => Some(PdeType::Elliptic),
+            "parabolic" => Some(PdeType::Parabolic),
+            "hyperbolic" => Some(PdeType::Hyperbolic),
+            "advective" => Some(PdeType::Advective),
+            "mixed" => Some(PdeType::Mixed),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum PdeRegime {
+    QuasiStatic = 0,
+    Radiating = 1,
+    Diffusive = 2,
+    Advective = 3,
+    Constraint = 4,
+}
+
+impl PdeRegime {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "quasi-static" => Some(PdeRegime::QuasiStatic),
+            "radiating" => Some(PdeRegime::Radiating),
+            "diffusive" => Some(PdeRegime::Diffusive),
+            "advective" => Some(PdeRegime::Advective),
+            "constraint" => Some(PdeRegime::Constraint),
+            _ => None,
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            PdeRegime::QuasiStatic => "quasi-static",
+            PdeRegime::Radiating => "radiating",
+            PdeRegime::Diffusive => "diffusive",
+            PdeRegime::Advective => "advective",
+            PdeRegime::Constraint => "constraint",
+        }
+    }
+}
+
+fn regime_of(op: TransportOp, pde_type: PdeType) -> PdeRegime {
+    match op {
+        TransportOp::Maxwell if pde_type == PdeType::Elliptic => PdeRegime::QuasiStatic,
+        TransportOp::Maxwell | TransportOp::Wave => PdeRegime::Radiating,
+        TransportOp::Flux(_) => PdeRegime::Diffusive,
+        TransportOp::Advective => PdeRegime::Advective,
+        TransportOp::Poisson => PdeRegime::Constraint,
+        TransportOp::Creep => PdeRegime::QuasiStatic,
+    }
+}
+
+impl TransportOp {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "flux-fick" => Some(TransportOp::Flux(FluxKind::Fick)),
+            "flux-fourier" => Some(TransportOp::Flux(FluxKind::Fourier)),
+            "flux-ohm" => Some(TransportOp::Flux(FluxKind::Ohm)),
+            "flux-newton-viscous" => Some(TransportOp::Flux(FluxKind::NewtonViscous)),
+            "advective" => Some(TransportOp::Advective),
+            "creep" => Some(TransportOp::Creep),
+            "wave" => Some(TransportOp::Wave),
+            "poisson" => Some(TransportOp::Poisson),
+            "maxwell" => Some(TransportOp::Maxwell),
+            _ => None,
+        }
+    }
+}
+
+impl Medium {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "vacuum" => Some(Medium::Vacuum),
+            "fluid" => Some(Medium::Fluid),
+            "elastic-solid" => Some(Medium::ElasticSolid),
+            "plasma" => Some(Medium::Plasma),
+            _ => None,
+        }
+    }
+}
+
+impl Domain {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "unspecified" => Some(Domain::Unspecified),
+            "line" => Some(Domain::Line),
+            "circle" => Some(Domain::Circle),
+            "sphere" => Some(Domain::Sphere { l: 0 }),
+            _ => parse_compound_domain(token),
+        }
+    }
+
+    fn tag(&self) -> u8 {
+        match self {
+            Domain::Unspecified => 0,
+            Domain::Line => 1,
+            Domain::Rectangle { .. } => 2,
+            Domain::Circle => 3,
+            Domain::Sphere { .. } => 4,
+            Domain::Shell { .. } => 5,
+            Domain::Ellipsoid { .. } => 6,
+        }
+    }
+
+    fn hash_into(&self, h: u64) -> u64 {
+        let h = fnv1a(&[self.tag()], h);
+        match self {
+            Domain::Rectangle { lx, ly } => fnv1a(
+                &ly.to_bits().to_le_bytes(),
+                fnv1a(&lx.to_bits().to_le_bytes(), h),
+            ),
+            Domain::Shell { r_in, r_out } => fnv1a(
+                &r_out.to_bits().to_le_bytes(),
+                fnv1a(&r_in.to_bits().to_le_bytes(), h),
+            ),
+            Domain::Ellipsoid { a, b, c } => {
+                let h = fnv1a(&a.to_bits().to_le_bytes(), h);
+                let h = fnv1a(&b.to_bits().to_le_bytes(), h);
+                fnv1a(&c.to_bits().to_le_bytes(), h)
+            }
+            Domain::Sphere { l } => fnv1a(&l.to_le_bytes(), h),
+            _ => h,
+        }
+    }
+}
+
+fn parse_compound_domain(token: &str) -> Option<Domain> {
+    let open = token.find('(')?;
+    if !token.ends_with(')') {
+        return None;
+    }
+    let close = token.len() - 1;
+    if close <= open {
+        return None;
+    }
+    let kind = &token[..open];
+    if kind == "sphere" {
+        let l: u32 = token[open + 1..close].trim().parse().ok()?;
+        return Some(Domain::Sphere { l });
+    }
+    let mut args: Vec<f64> = Vec::new();
+    for raw in token[open + 1..close].split(',') {
+        let v: f64 = raw.trim().parse().ok()?;
+        if !v.is_finite() || v <= 0.0 {
+            return None;
+        }
+        args.push(v);
+    }
+    match (kind, args.len()) {
+        ("rectangle", 2) => Some(Domain::Rectangle {
+            lx: args[0],
+            ly: args[1],
+        }),
+        ("shell", 2) => {
+            if args[1] <= args[0] {
+                return None;
+            }
+            Some(Domain::Shell {
+                r_in: args[0],
+                r_out: args[1],
+            })
+        }
+        ("ellipsoid", 3) => Some(Domain::Ellipsoid {
+            a: args[0],
+            b: args[1],
+            c: args[2],
+        }),
+        _ => None,
+    }
+}
+
+impl Boundary {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "none" => Some(Boundary::None),
+            "free-surface" => Some(Boundary::FreeSurface),
+            "dirichlet" => Some(Boundary::Dirichlet),
+            "neumann" => Some(Boundary::Neumann),
+            "robin" => Some(Boundary::Robin),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct PlasmaParameters {
+    pub n_e: Option<f64>,
+    pub b0: Option<f64>,
+    pub nu: Option<f64>,
+}
+
+impl PlasmaParameters {
+    pub fn absent() -> Self {
+        Self {
+            n_e: None,
+            b0: None,
+            nu: None,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ChannelDescriptor {
+    pub conserved: Conserved,
+    pub role: QuantityRole,
+    pub op: TransportOp,
+    pub pde_type: PdeType,
+    pub medium: Medium,
+    pub domain: Domain,
+    pub boundary: Boundary,
+    pub regime: PdeRegime,
+    pub extent: Option<f64>,
+    pub family: ModeFamily,
+    pub body: Option<String>,
+    pub plasma: PlasmaParameters,
+    pub unit: &'static str,
+    pub alias: Option<String>,
+    pub charge: Option<f64>,
+    pub species: Option<String>,
+}
+
+impl PartialEq for ChannelDescriptor {
+    fn eq(&self, other: &Self) -> bool {
+        self.conserved == other.conserved
+            && self.role == other.role
+            && self.op == other.op
+            && self.pde_type == other.pde_type
+            && self.medium == other.medium
+            && self.domain == other.domain
+            && self.boundary == other.boundary
+            && self.regime == other.regime
+            && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
+            && self.family == other.family
+            && self.species == other.species
+    }
+}
+
+impl Eq for ChannelDescriptor {}
+
+impl ChannelDescriptor {
+    pub fn new(
+        quantity: Quantity,
+        op: TransportOp,
+        pde_type: PdeType,
+        medium: Medium,
+        domain: Domain,
+        boundary: Boundary,
+        unit: &'static str,
+    ) -> Self {
+        Self {
+            conserved: quantity.conserved,
+            role: quantity.role,
+            op,
+            pde_type,
+            medium,
+            domain,
+            boundary,
+            regime: regime_of(op, pde_type),
+            extent: None,
+            family: match medium {
+                Medium::ElasticSolid => ModeFamily::Spheroidal,
+                Medium::Vacuum | Medium::Fluid | Medium::Plasma => ModeFamily::Scalar,
+            },
+            body: None,
+            plasma: PlasmaParameters::absent(),
+            unit,
+            alias: None,
+            charge: None,
+            species: None,
+        }
+    }
+
+    pub fn with_extent(mut self, extent: Option<f64>) -> Self {
+        self.extent = extent;
+        self
+    }
+
+    pub fn with_body(mut self, body: Option<String>) -> Self {
+        self.body = body;
+        self
+    }
+
+    pub fn with_alias(mut self, alias: Option<String>) -> Self {
+        self.alias = alias;
+        self
+    }
+
+    pub fn with_charge(mut self, charge: Option<f64>) -> Self {
+        self.charge = charge;
+        self
+    }
+
+    pub fn with_species(mut self, species: Option<String>) -> Self {
+        self.species = species;
+        self
+    }
+
+    pub fn with_plasma(mut self, plasma: PlasmaParameters) -> Self {
+        self.plasma = plasma;
+        self
+    }
+
+    pub fn with_family(mut self, family: ModeFamily) -> Self {
+        self.family = family;
+        self
+    }
+
+    pub fn mode_wavenumbers(&self, count: usize) -> Option<Vec<f64>> {
+        eigen_wavenumbers(&self.domain, self.effective_boundary(), self.extent, count)
+    }
+
+    fn effective_boundary(&self) -> Boundary {
+        match (self.boundary, self.medium) {
+            (Boundary::FreeSurface, Medium::Fluid) => Boundary::Dirichlet,
+            (Boundary::FreeSurface, Medium::ElasticSolid) => Boundary::Neumann,
+            (boundary, _) => boundary,
+        }
+    }
+
+    pub fn mode_frequencies_hz(&self, speed: f64, count: usize) -> Option<Vec<f64>> {
+        self.mode_wavenumbers(count)?
+            .into_iter()
+            .map(|k| mode_frequency_hz(self.op, speed, k))
+            .collect()
+    }
+
+    pub fn carrier_wavenumber(&self) -> Option<f64> {
+        self.mode_wavenumbers(1)?.into_iter().next()
+    }
+
+    pub fn phase_velocity_m_s(&self) -> Option<f64> {
+        if !matches!(self.family, ModeFamily::Scalar) {
+            return None;
+        }
+        let k = self.carrier_wavenumber()?;
+        if !(k.is_finite() && k > 0.0) {
+            return None;
+        }
+        Some(std::f64::consts::TAU * self.fundamental_hz()? / k)
+    }
+
+    pub fn fundamental_hz(&self) -> Option<f64> {
+        match self.body.as_deref() {
+            Some(body) => self
+                .mode_frequencies_hz_for_body(body, 1)?
+                .into_iter()
+                .next(),
+            None => {
+                let speed = characteristic_speed(self.medium, None)?;
+                self.mode_frequencies_hz(speed, 1)?.into_iter().next()
+            }
+        }
+    }
+
+    pub fn mode_frequencies_hz_for_body(&self, body_name: &str, count: usize) -> Option<Vec<f64>> {
+        let params = super::media::medium_params_of(body_name);
+        match self.family {
+            ModeFamily::Scalar => {
+                let speed = characteristic_speed(self.medium, params.as_ref())?;
+                self.mode_frequencies_hz(speed, count)
+            }
+            ModeFamily::Toroidal => {
+                let l = match &self.domain {
+                    Domain::Sphere { l } => *l,
+                    _ => return None,
+                };
+                let r = self.extent.filter(|v| v.is_finite() && *v > 0.0)?;
+                let (_, cs) = elastic_speeds(params.as_ref()?)?;
+                elastic_toroidal_frequencies(l, cs, r, count)
+            }
+            ModeFamily::Spheroidal => {
+                let l = match &self.domain {
+                    Domain::Sphere { l } => *l,
+                    _ => return None,
+                };
+                let r = self.extent.filter(|v| v.is_finite() && *v > 0.0)?;
+                let (cp, cs) = elastic_speeds(params.as_ref()?)?;
+                elastic_spheroidal_frequencies(l, cp, cs, r, count)
+            }
+        }
+    }
+
+    pub fn mode_degeneracy(&self) -> Option<u32> {
+        match (&self.domain, self.effective_boundary()) {
+            (Domain::Sphere { l }, Boundary::Dirichlet) => Some(2 * *l + 1),
+            _ => None,
+        }
+    }
+
+    pub fn hash(&self) -> u64 {
+        let mut h: u64 = 0xcbf29ce484222325;
+        h = fnv1a(&[self.conserved as u8], h);
+        h = fnv1a(&[self.role as u8], h);
+        match self.op {
+            TransportOp::Flux(kind) => h = fnv1a(&[0u8, kind as u8], h),
+            TransportOp::Advective => h = fnv1a(&[1u8], h),
+            TransportOp::Wave => h = fnv1a(&[2u8], h),
+            TransportOp::Poisson => h = fnv1a(&[3u8], h),
+            TransportOp::Maxwell => h = fnv1a(&[4u8], h),
+            TransportOp::Creep => h = fnv1a(&[5u8], h),
+        }
+        h = fnv1a(&[self.pde_type as u8], h);
+        h = fnv1a(&[self.medium as u8], h);
+        h = fnv1a(&[self.family as u8], h);
+        h = self.domain.hash_into(h);
+        h = fnv1a(&[self.boundary as u8], h);
+        h = fnv1a(&[self.regime as u8], h);
+        h = match self.extent {
+            None => fnv1a(&[0u8], h),
+            Some(e) => fnv1a(&e.to_bits().to_le_bytes(), fnv1a(&[1u8], h)),
+        };
+        h = match self.species.as_deref() {
+            None => fnv1a(&[0u8], h),
+            Some(s) => fnv1a(s.as_bytes(), fnv1a(&[1u8], h)),
+        };
+        h
+    }
+
+    pub fn spec_token(&self) -> String {
+        let conserved = conserved_name(self.conserved);
+        let role = match self.role {
+            QuantityRole::Primary => "primary",
+            QuantityRole::Derived => "derived",
+            QuantityRole::Geometry => "geometry",
+            QuantityRole::SourceParameter => "source-parameter",
+        };
+        let op = match self.op {
+            TransportOp::Flux(FluxKind::Fick) => "flux-fick",
+            TransportOp::Flux(FluxKind::Fourier) => "flux-fourier",
+            TransportOp::Flux(FluxKind::Ohm) => "flux-ohm",
+            TransportOp::Flux(FluxKind::NewtonViscous) => "flux-newton-viscous",
+            TransportOp::Advective => "advective",
+            TransportOp::Wave => "wave",
+            TransportOp::Poisson => "poisson",
+            TransportOp::Maxwell => "maxwell",
+            TransportOp::Creep => "creep",
+        };
+        let pde = match self.pde_type {
+            PdeType::Elliptic => "elliptic",
+            PdeType::Parabolic => "parabolic",
+            PdeType::Hyperbolic => "hyperbolic",
+            PdeType::Advective => "advective",
+            PdeType::Mixed => "mixed",
+        };
+        let medium = match self.medium {
+            Medium::Vacuum => "vacuum",
+            Medium::Fluid => "fluid",
+            Medium::ElasticSolid => "elastic-solid",
+            Medium::Plasma => "plasma",
+        };
+        let domain = match &self.domain {
+            Domain::Unspecified => "unspecified".to_string(),
+            Domain::Line => "line".to_string(),
+            Domain::Circle => "circle".to_string(),
+            Domain::Sphere { l: 0 } => "sphere".to_string(),
+            Domain::Sphere { l } => format!("sphere({l})"),
+            Domain::Rectangle { lx, ly } => format!("rectangle({lx},{ly})"),
+            Domain::Shell { r_in, r_out } => format!("shell({r_in},{r_out})"),
+            Domain::Ellipsoid { a, b, c } => format!("ellipsoid({a},{b},{c})"),
+        };
+        let boundary = match self.boundary {
+            Boundary::None => "none",
+            Boundary::FreeSurface => "free-surface",
+            Boundary::Dirichlet => "dirichlet",
+            Boundary::Neumann => "neumann",
+            Boundary::Robin => "robin",
+        };
+        let mut out = format!("{conserved}:{role}:{op}:{pde}:{medium}:{domain}:{boundary}");
+        if let Some(e) = self.extent {
+            out.push_str(&format!(":{e}"));
+        }
+        if let Some(s) = &self.species {
+            out.push_str(&format!("~species={s}"));
+        }
+        out
+    }
+
+    pub fn parse_spec(spec: &str, unit: &'static str) -> Result<Self, String> {
+        let (axes, species) = match spec.split_once('~') {
+            Some((a, s)) => match s.strip_prefix("species=") {
+                Some(v) if !v.is_empty() => (a, Some(v.to_string())),
+                _ => return Err(format!("unknown channel suffix \"~{s}\"")),
+            },
+            None => (spec, None),
+        };
+        let t: Vec<&str> = axes.split(':').collect();
+        if t.len() != 7 && t.len() != 8 {
+            return Err(format!(
+                "channel spec needs 7 axes conserved:role:op:pde_type:medium:domain:boundary (or 8 with :extent), got {}",
+                t.len()
+            ));
+        }
+        let conserved =
+            Conserved::parse(t[0]).ok_or_else(|| format!("unknown conserved \"{}\"", t[0]))?;
+        let role = QuantityRole::parse(t[1]).ok_or_else(|| format!("unknown role \"{}\"", t[1]))?;
+        let op = TransportOp::parse(t[2]).ok_or_else(|| format!("unknown op \"{}\"", t[2]))?;
+        let pde_type =
+            PdeType::parse(t[3]).ok_or_else(|| format!("unknown pde_type \"{}\"", t[3]))?;
+        let medium = Medium::parse(t[4]).ok_or_else(|| format!("unknown medium \"{}\"", t[4]))?;
+        let domain = Domain::parse(t[5]).ok_or_else(|| format!("unknown domain \"{}\"", t[5]))?;
+        let boundary =
+            Boundary::parse(t[6]).ok_or_else(|| format!("unknown boundary \"{}\"", t[6]))?;
+        let extent = if t.len() == 8 {
+            parse_extent(t[7])?
+        } else {
+            None
+        };
+        if !is_admissible(conserved, op, medium) {
+            return Err(format!(
+                "inadmissible channel {}/{}/{} is not in the admissibility relation",
+                t[0], t[2], t[4]
+            ));
+        }
+        Ok(ChannelDescriptor::new(
+            Quantity { conserved, role },
+            op,
+            pde_type,
+            medium,
+            domain,
+            boundary,
+            unit,
+        )
+        .with_extent(extent)
+        .with_species(species))
+    }
+}
+
+fn parse_extent(token: &str) -> Result<Option<f64>, String> {
+    match token {
+        "unspecified" | "absent" | "-" => Ok(None),
+        _ => {
+            let v: f64 = token
+                .parse()
+                .map_err(|_| format!("unknown extent \"{}\"", token))?;
+            if !v.is_finite() || v <= 0.0 {
+                return Err(format!(
+                    "extent must be a positive finite length, got \"{}\"",
+                    token
+                ));
+            }
+            Ok(Some(v))
+        }
+    }
+}
+
+const FNV_PRIME: u64 = 0x100000001b3;
+
+fn fnv1a(bytes: &[u8], mut h: u64) -> u64 {
+    for &b in bytes {
+        h ^= b as u64;
+        h = h.wrapping_mul(FNV_PRIME);
+    }
+    h
+}
+
+pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> bool {
+    match op {
+        TransportOp::Flux(FluxKind::Fick) => {
+            (conserved == Conserved::Mass && medium != Medium::Vacuum)
+                || (conserved == Conserved::Number
+                    && matches!(medium, Medium::Fluid | Medium::Plasma))
+        }
+        TransportOp::Flux(FluxKind::Fourier) => {
+            conserved == Conserved::Energy && medium != Medium::Vacuum
+        }
+        TransportOp::Flux(FluxKind::Ohm) => {
+            conserved == Conserved::Charge && matches!(medium, Medium::Fluid | Medium::Plasma)
+        }
+        TransportOp::Flux(FluxKind::NewtonViscous) => {
+            conserved == Conserved::Momentum && medium == Medium::Fluid
+        }
+        TransportOp::Advective => matches!(medium, Medium::Fluid | Medium::Plasma),
+        TransportOp::Wave => matches!(
+            (conserved, medium),
+            (
+                Conserved::Momentum | Conserved::Energy,
+                Medium::Fluid | Medium::ElasticSolid | Medium::Plasma
+            )
+        ),
+        TransportOp::Maxwell => conserved == Conserved::Energy || conserved == Conserved::Momentum,
+        TransportOp::Poisson => matches!(conserved, Conserved::Mass | Conserved::Charge),
+        TransportOp::Creep => conserved == Conserved::Momentum && medium == Medium::ElasticSolid,
+    }
+}
+
+pub fn conserved_for_quantity(quantity: &str) -> Option<Conserved> {
+    match quantity {
+        "number_density" | "electron_density" | "column_density" => Some(Conserved::Number),
+        "density" | "mass_density" | "humidity" | "water_vapor" | "concentration" => {
+            Some(Conserved::Mass)
+        }
+        "temperature"
+        | "brightness_temperature"
+        | "energy"
+        | "energy_density"
+        | "radiance"
+        | "irradiance"
+        | "field_intensity"
+        | "flux_density"
+        | "bx"
+        | "by"
+        | "bz"
+        | "b" => Some(Conserved::Energy),
+        "pressure" | "momentum" | "momentum_density" | "stress" | "speed" | "velocity"
+        | "wind_speed" => Some(Conserved::Momentum),
+        "charge" | "charge_density" | "current" | "current_density" => Some(Conserved::Charge),
+        _ => None,
+    }
+}
+
+pub fn descriptor_from_axes(
+    role: &str,
+    conserved: &str,
+    operator: &str,
+    pde_type: &str,
+    medium: &str,
+    boundary: &str,
+    unit: &'static str,
+) -> Result<ChannelDescriptor, String> {
+    let role = QuantityRole::parse(role).ok_or_else(|| format!("unknown role \"{role}\""))?;
+    let conserved =
+        Conserved::parse(conserved).ok_or_else(|| format!("unknown conserved \"{conserved}\""))?;
+    let op =
+        TransportOp::parse(operator).ok_or_else(|| format!("unknown operator \"{operator}\""))?;
+    let pde_type =
+        PdeType::parse(pde_type).ok_or_else(|| format!("unknown pde_type \"{pde_type}\""))?;
+    let medium_token = medium;
+    let medium =
+        Medium::parse(medium_token).ok_or_else(|| format!("unknown medium \"{medium_token}\""))?;
+    let boundary =
+        Boundary::parse(boundary).ok_or_else(|| format!("unknown boundary \"{boundary}\""))?;
+    if !is_admissible(conserved, op, medium) {
+        return Err(format!(
+            "inadmissible operator/medium pair \"{operator}/{medium_token}\" is not in the admissibility relation"
+        ));
+    }
+    Ok(ChannelDescriptor::new(
+        Quantity { conserved, role },
+        op,
+        pde_type,
+        medium,
+        Domain::Unspecified,
+        boundary,
+        unit,
+    ))
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum Interaction {
+    Gravity = 0,
+    Em = 1,
+}
+
+impl Interaction {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "gravity" => Some(Interaction::Gravity),
+            "em" => Some(Interaction::Em),
+            _ => None,
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            Interaction::Gravity => "gravity",
+            Interaction::Em => "em",
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Mechanism {
+    pub tag: &'static str,
+    pub operator: TransportOp,
+    pub pde_type: PdeType,
+    pub boundary: Boundary,
+    pub interaction: Option<Interaction>,
+}
+
+pub const MECHANISMS: [Mechanism; 10] = [
+    Mechanism {
+        tag: "em",
+        operator: TransportOp::Maxwell,
+        pde_type: PdeType::Mixed,
+        boundary: Boundary::None,
+        interaction: Some(Interaction::Em),
+    },
+    Mechanism {
+        tag: "electric",
+        operator: TransportOp::Maxwell,
+        pde_type: PdeType::Elliptic,
+        boundary: Boundary::None,
+        interaction: Some(Interaction::Em),
+    },
+    Mechanism {
+        tag: "gravity",
+        operator: TransportOp::Poisson,
+        pde_type: PdeType::Elliptic,
+        boundary: Boundary::None,
+        interaction: Some(Interaction::Gravity),
+    },
+    Mechanism {
+        tag: "acoustic",
+        operator: TransportOp::Wave,
+        pde_type: PdeType::Hyperbolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "seismic-body",
+        operator: TransportOp::Wave,
+        pde_type: PdeType::Hyperbolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "seismic-surface",
+        operator: TransportOp::Wave,
+        pde_type: PdeType::Hyperbolic,
+        boundary: Boundary::FreeSurface,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "thermal",
+        operator: TransportOp::Flux(FluxKind::Fourier),
+        pde_type: PdeType::Parabolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "diffusion",
+        operator: TransportOp::Flux(FluxKind::Fick),
+        pde_type: PdeType::Parabolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "advective",
+        operator: TransportOp::Advective,
+        pde_type: PdeType::Advective,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "momentum",
+        operator: TransportOp::Creep,
+        pde_type: PdeType::Elliptic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+];
+
+pub fn mechanism_of(tag: &str) -> Option<&'static Mechanism> {
+    MECHANISMS.iter().find(|m| m.tag == tag)
+}
+
+pub fn interaction_of(ft: u8) -> Option<Interaction> {
+    mechanism_of(FIXED_CHANNELS.get(ft as usize)?.tag).and_then(|m| m.interaction)
+}
+
+pub fn live_channel_hash_of(d: &ChannelDescriptor) -> Option<u64> {
+    let h = d.hash();
+    live_channel_registry().descriptor(h).map(|_| h)
+}
+
+#[derive(Clone, Copy)]
+pub struct FixedChannel {
+    pub tag: &'static str,
+    pub conserved: Conserved,
+    pub unit: &'static str,
+    pub medium: Medium,
+}
+
+pub const FIXED_CHANNELS: [FixedChannel; 10] = [
+    FixedChannel {
+        tag: "em",
+        conserved: Conserved::Energy,
+        unit: "V/m",
+        medium: Medium::Vacuum,
+    },
+    FixedChannel {
+        tag: "seismic-body",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::ElasticSolid,
+    },
+    FixedChannel {
+        tag: "gravity",
+        conserved: Conserved::Mass,
+        unit: "m/s^2",
+        medium: Medium::Vacuum,
+    },
+    FixedChannel {
+        tag: "diffusion",
+        conserved: Conserved::Mass,
+        unit: "kg/m^3",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "advective",
+        conserved: Conserved::Mass,
+        unit: "kg/(m^2 s)",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "seismic-surface",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::ElasticSolid,
+    },
+    FixedChannel {
+        tag: "electric",
+        conserved: Conserved::Energy,
+        unit: "V/m",
+        medium: Medium::Vacuum,
+    },
+    FixedChannel {
+        tag: "thermal",
+        conserved: Conserved::Energy,
+        unit: "K",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "acoustic",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "momentum",
+        conserved: Conserved::Momentum,
+        unit: "mm/yr",
+        medium: Medium::ElasticSolid,
+    },
+];
+
+pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
+    let fc = FIXED_CHANNELS.iter().find(|c| c.tag == name)?;
+    let m = mechanism_of(fc.tag)?;
+    if !is_admissible(fc.conserved, m.operator, medium) {
+        return None;
+    }
+    Some(ChannelDescriptor::new(
+        Quantity {
+            conserved: fc.conserved,
+            role: QuantityRole::Primary,
+        },
+        m.operator,
+        m.pde_type,
+        medium,
+        Domain::Unspecified,
+        m.boundary,
+        fc.unit,
+    ))
+}
+
+pub fn descriptor_for_channel_ref(ft: u8) -> Option<ChannelDescriptor> {
+    let fc = FIXED_CHANNELS.get(ft as usize)?;
+    descriptor_for_force(fc.tag, fc.medium)
+}
+
+pub fn channel_ref_of_descriptor(d: &ChannelDescriptor) -> Option<u8> {
+    let h = d.hash();
+    (0..FIXED_CHANNELS.len() as u8)
+        .find(|&ft| descriptor_for_channel_ref(ft).is_some_and(|fd| fd.hash() == h))
+}
+
+pub fn live_channel_registry() -> ChannelRegistry {
+    let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
+    for ft in 0..FIXED_CHANNELS.len() as u8 {
+        if let Some(d) = descriptor_for_channel_ref(ft) {
+            reg.register(d);
+        }
+    }
+    reg
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ModeRegime {
+    Propagating = 0,
+    Advective = 1,
+    Diffusive = 2,
+    Constraint = 3,
+}
+
+pub fn mode_regime(op: TransportOp) -> ModeRegime {
+    match op {
+        TransportOp::Wave | TransportOp::Maxwell => ModeRegime::Propagating,
+        TransportOp::Advective => ModeRegime::Advective,
+        TransportOp::Flux(_) => ModeRegime::Diffusive,
+        TransportOp::Poisson | TransportOp::Creep => ModeRegime::Constraint,
+    }
+}
+
+#[cfg(test)]
+const CIRCLE_DRUM_MODE_RATIOS: [f64; 9] = [
+    1.0, 1.593_34, 2.135_36, 2.295_49, 2.653_07, 2.917_28, 3.155_46, 3.500_11, 3.598_23,
+];
+
+const FIRST_BESSEL_J0_ZERO: f64 = 2.404_825_557_7;
+
+const CIRCLE_ZERO_SEARCH_MAX: f64 = 20.0;
+const CIRCLE_ZERO_STEP: f64 = 0.05;
+
+const SPHERE_ZERO_EPS: f64 = 1e-4;
+const SPHERE_ZERO_STEP: f64 = 0.02;
+const SPHERE_ZERO_SEARCH_MAX: f64 = 200.0;
+
+fn bessel_j(m: u32, x: f64) -> f64 {
+    if x == 0.0 {
+        return if m == 0 { 1.0 } else { 0.0 };
+    }
+    let half = 0.5 * x;
+    let mut term = 1.0f64;
+    for k in 1..=m {
+        term *= half / k as f64;
+    }
+    let mut sum = term;
+    let mut max_abs = term.abs();
+    let mut k: u32 = 0;
+    loop {
+        k += 1;
+        term *= -(half * half) / (k as f64 * (k as f64 + m as f64));
+        sum += term;
+        let a = term.abs();
+        if a > max_abs {
+            max_abs = a;
+        }
+        if a <= max_abs * 1e-17 || k >= 4096 {
+            break;
+        }
+    }
+    sum
+}
+
+fn bessel_zero(m: u32, lo: f64, hi: f64) -> f64 {
+    let mut a = lo;
+    let mut b = hi;
+    let mut fa = bessel_j(m, a);
+    for _ in 0..200 {
+        if b - a <= 1e-13 {
+            break;
+        }
+        let mid = 0.5 * (a + b);
+        let fm = bessel_j(m, mid);
+        if (fm < 0.0) != (fa < 0.0) {
+            b = mid;
+        } else {
+            a = mid;
+            fa = fm;
+        }
+    }
+    0.5 * (a + b)
+}
+
+fn circular_membrane_zeros(count: usize) -> Vec<f64> {
+    let mut pool: Vec<f64> = Vec::new();
+    for m in 0..=(count as u32) {
+        let mut prev_x = CIRCLE_ZERO_STEP;
+        let mut prev = bessel_j(m, prev_x);
+        let mut x = prev_x + CIRCLE_ZERO_STEP;
+        while x <= CIRCLE_ZERO_SEARCH_MAX {
+            let cur = bessel_j(m, x);
+            if (cur < 0.0) != (prev < 0.0) {
+                pool.push(bessel_zero(m, prev_x, x));
+            }
+            prev_x = x;
+            prev = cur;
+            x += CIRCLE_ZERO_STEP;
+        }
+    }
+    pool.sort_by(|a, b| a.total_cmp(b));
+    pool
+}
+
+fn spherical_bessel_j(l: u32, x: f64) -> f64 {
+    if x == 0.0 {
+        return if l == 0 { 1.0 } else { 0.0 };
+    }
+    let mut jm1 = x.sin() / x;
+    if l == 0 {
+        return jm1;
+    }
+    let mut jn = x.sin() / (x * x) - x.cos() / x;
+    for n in 1..l {
+        let jp1 = (2.0 * n as f64 + 1.0) / x * jn - jm1;
+        jm1 = jn;
+        jn = jp1;
+    }
+    jn
+}
+
+fn spherical_bessel_zero(l: u32, lo: f64, hi: f64) -> f64 {
+    let mut a = lo;
+    let mut b = hi;
+    let mut fa = spherical_bessel_j(l, a);
+    for _ in 0..200 {
+        if b - a <= 1e-13 {
+            break;
+        }
+        let mid = 0.5 * (a + b);
+        let fm = spherical_bessel_j(l, mid);
+        if (fm < 0.0) != (fa < 0.0) {
+            b = mid;
+        } else {
+            a = mid;
+            fa = fm;
+        }
+    }
+    0.5 * (a + b)
+}
+
+fn spherical_bessel_zeros(l: u32, count: usize) -> Option<Vec<f64>> {
+    let mut zeros: Vec<f64> = Vec::with_capacity(count);
+    let mut prev_x = SPHERE_ZERO_EPS;
+    let mut prev = spherical_bessel_j(l, prev_x);
+    let mut x = prev_x + SPHERE_ZERO_STEP;
+    while x <= SPHERE_ZERO_SEARCH_MAX && zeros.len() < count {
+        let cur = spherical_bessel_j(l, x);
+        if (cur < 0.0) != (prev < 0.0) {
+            zeros.push(spherical_bessel_zero(l, prev_x, x));
+        }
+        prev_x = x;
+        prev = cur;
+        x += SPHERE_ZERO_STEP;
+    }
+    if zeros.len() == count {
+        Some(zeros)
+    } else {
+        None
+    }
+}
+
+const ELASTIC_SEARCH_MAX: f64 = 400.0;
+const ELASTIC_ZERO_START: f64 = 0.5;
+
+fn spherical_bessel_j_prime(l: u32, x: f64) -> f64 {
+    if l == 0 {
+        -spherical_bessel_j(1, x)
+    } else {
+        spherical_bessel_j(l - 1, x) - (l + 1) as f64 / x * spherical_bessel_j(l, x)
+    }
+}
+
+fn toroidal_root_function(l: u32, x: f64) -> f64 {
+    spherical_bessel_j(l, x) - x * spherical_bessel_j_prime(l, x)
+}
+
+fn spheroidal_det(l: u32, xi: f64, eta: f64) -> f64 {
+    let lf = l as f64;
+    let t11 = (lf * lf - lf - eta * eta / 2.0) * spherical_bessel_j(l, xi)
+        + 2.0 * xi * spherical_bessel_j(l + 1, xi);
+    let t13 = lf
+        * (lf + 1.0)
+        * ((lf - 1.0) * spherical_bessel_j(l, eta) - eta * spherical_bessel_j(l + 1, eta));
+    let t41 = (lf - 1.0) * spherical_bessel_j(l, xi) - xi * spherical_bessel_j(l + 1, xi);
+    let t43 = (lf * lf - 1.0 - eta * eta / 2.0) * spherical_bessel_j(l, eta)
+        + eta * spherical_bessel_j(l + 1, eta);
+    t11 * t43 - t13 * t41
+}
+
+fn spheroidal_root_function(l: u32, cs_over_cp: f64, eta: f64) -> f64 {
+    let xi = cs_over_cp * eta;
+    if l == 0 {
+        -(eta * eta / 2.0) * spherical_bessel_j(0, xi) + 2.0 * xi * spherical_bessel_j(1, xi)
+    } else {
+        spheroidal_det(l, xi, eta)
+    }
+}
+
+fn bisect(f: impl Fn(f64) -> f64, mut a: f64, mut b: f64) -> f64 {
+    let mut fa = f(a);
+    for _ in 0..200 {
+        if b - a <= 1e-13 {
+            break;
+        }
+        let mid = 0.5 * (a + b);
+        let fm = f(mid);
+        if (fm < 0.0) != (fa < 0.0) {
+            b = mid;
+        } else {
+            a = mid;
+            fa = fm;
+        }
+    }
+    0.5 * (a + b)
+}
+
+fn scan_roots(f: impl Fn(f64) -> f64, count: usize) -> Option<Vec<f64>> {
+    let mut roots: Vec<f64> = Vec::with_capacity(count);
+    let mut a = ELASTIC_ZERO_START;
+    let mut fa = f(a);
+    let mut x = a + SPHERE_ZERO_STEP;
+    while x <= ELASTIC_SEARCH_MAX && roots.len() < count {
+        let fx = f(x);
+        if fx.is_finite() && fa.is_finite() && (fx < 0.0) != (fa < 0.0) {
+            roots.push(bisect(&f, a, x));
+        }
+        a = x;
+        fa = fx;
+        x += SPHERE_ZERO_STEP;
+    }
+    if roots.len() == count {
+        Some(roots)
+    } else {
+        None
+    }
+}
+
+fn elastic_toroidal_frequencies(l: u32, cs: f64, r: f64, count: usize) -> Option<Vec<f64>> {
+    let roots = scan_roots(|x| toroidal_root_function(l, x), count)?;
+    Some(
+        roots
+            .into_iter()
+            .map(|x| cs * x / (std::f64::consts::TAU * r))
+            .collect(),
+    )
+}
+
+fn elastic_spheroidal_frequencies(
+    l: u32,
+    cp: f64,
+    cs: f64,
+    r: f64,
+    count: usize,
+) -> Option<Vec<f64>> {
+    let ratio = cs / cp;
+    let roots = scan_roots(|eta| spheroidal_root_function(l, ratio, eta), count)?;
+    Some(
+        roots
+            .into_iter()
+            .map(|eta| cs * eta / (std::f64::consts::TAU * r))
+            .collect(),
+    )
+}
+
+pub fn eigen_wavenumbers(
+    domain: &Domain,
+    boundary: Boundary,
+    extent: Option<f64>,
+    count: usize,
+) -> Option<Vec<f64>> {
+    if count == 0 {
+        return None;
+    }
+    match domain {
+        Domain::Rectangle { lx, ly } => rectangular_wavenumbers(*lx, *ly, boundary, count),
+        Domain::Line | Domain::Circle | Domain::Sphere { .. } => {
+            let extent = extent?;
+            if !extent.is_finite() || extent <= 0.0 {
+                return None;
+            }
+            match (domain, boundary) {
+                (Domain::Line, Boundary::Dirichlet) => Some(
+                    (1..=count)
+                        .map(|j| j as f64 * std::f64::consts::PI / extent)
+                        .collect(),
+                ),
+                (Domain::Line, Boundary::Neumann) => Some(
+                    (0..count)
+                        .map(|j| j as f64 * std::f64::consts::PI / extent)
+                        .collect(),
+                ),
+                (Domain::Sphere { l: 0 }, Boundary::Dirichlet) => Some(
+                    (1..=count)
+                        .map(|j| j as f64 * std::f64::consts::PI / extent)
+                        .collect(),
+                ),
+                (Domain::Sphere { l }, Boundary::Dirichlet) => {
+                    let zeros = spherical_bessel_zeros(*l, count)?;
+                    Some(zeros.into_iter().map(|z| z / extent).collect())
+                }
+                (Domain::Circle, Boundary::Dirichlet) if count <= CHANNEL_CAP => {
+                    let zeros = circular_membrane_zeros(count);
+                    if zeros.len() < count || (zeros[0] - FIRST_BESSEL_J0_ZERO).abs() > 1e-9 {
+                        return None;
+                    }
+                    Some(zeros[..count].iter().map(|z| z / extent).collect())
+                }
+                _ => None,
+            }
+        }
+        Domain::Unspecified | Domain::Shell { .. } | Domain::Ellipsoid { .. } => None,
+    }
+}
+
+fn rectangular_wavenumbers(lx: f64, ly: f64, boundary: Boundary, count: usize) -> Option<Vec<f64>> {
+    let start = match boundary {
+        Boundary::Dirichlet => 1usize,
+        Boundary::Neumann => 0usize,
+        _ => return None,
+    };
+    let mut bound = count + 1;
+    loop {
+        let mut modes: Vec<f64> = Vec::new();
+        for m in start..=bound {
+            for n in start..=bound {
+                let km = m as f64 * std::f64::consts::PI / lx;
+                let kn = n as f64 * std::f64::consts::PI / ly;
+                modes.push((km * km + kn * kn).sqrt());
+            }
+        }
+        if modes.len() < count {
+            return None;
+        }
+        modes.sort_by(|a, b| a.total_cmp(b));
+        let k_max = modes[count - 1];
+        let need_x = (k_max * lx / std::f64::consts::PI).ceil() as usize + 1;
+        let need_y = (k_max * ly / std::f64::consts::PI).ceil() as usize + 1;
+        if need_x <= bound && need_y <= bound {
+            return Some(modes[..count].to_vec());
+        }
+        bound = need_x.max(need_y).max(bound + 1);
+        if bound > 4096 {
+            return None;
+        }
+    }
+}
+
+pub fn characteristic_speed(medium: Medium, params: Option<&MediumParams>) -> Option<f64> {
+    match medium {
+        Medium::Vacuum => Some(VACUUM_SPEED_M_S),
+        Medium::Fluid => {
+            let p = params?;
+            if p.sound_speed_m_s.is_finite() && p.sound_speed_m_s > 0.0 {
+                Some(p.sound_speed_m_s)
+            } else {
+                None
+            }
+        }
+        Medium::ElasticSolid => None,
+        Medium::Plasma => None,
+    }
+}
+
+pub fn elastic_speeds(params: &MediumParams) -> Option<(f64, f64)> {
+    let cp = params.p_wave_m_s;
+    let cs = params.s_wave_m_s;
+    let finite_positive = |v: f64| v.is_finite() && v > 0.0;
+    if finite_positive(cp) && finite_positive(cs) && cp >= cs {
+        Some((cp, cs))
+    } else {
+        None
+    }
+}
+
+pub fn mode_frequency_hz(op: TransportOp, speed: f64, k: f64) -> Option<f64> {
+    if !k.is_finite() {
+        return None;
+    }
+    match mode_regime(op) {
+        ModeRegime::Propagating => {
+            if !speed.is_finite() || speed <= 0.0 {
+                return None;
+            }
+            Some(speed * k / std::f64::consts::TAU)
+        }
+        ModeRegime::Advective | ModeRegime::Diffusive | ModeRegime::Constraint => None,
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum TriState {
+    Absent = 0,
+    Pending = 1,
+    Present = 2,
+}
+
+pub struct ChannelLatch {
+    pub state: TriState,
+    pub misses: u32,
+    pub hysteresis: u32,
+}
+
+impl ChannelLatch {
+    pub fn new(hysteresis: u32) -> Self {
+        Self {
+            state: TriState::Absent,
+            misses: 0,
+            hysteresis,
+        }
+    }
+
+    pub fn observe(&mut self, value_present: bool) -> TriState {
+        if value_present {
+            self.state = TriState::Present;
+            self.misses = 0;
+        } else if self.state == TriState::Present {
+            self.misses += 1;
+            if self.misses > self.hysteresis {
+                self.state = TriState::Absent;
+            }
+        }
+        self.state
+    }
+
+    pub fn mark_pending(&mut self) {
+        self.state = TriState::Pending;
+        self.misses = 0;
+    }
+}
+
+#[derive(Debug)]
+pub struct ChannelUnitConflict {
+    pub registered_unit: &'static str,
+    pub incoming_unit: &'static str,
+    pub alias: Option<String>,
+}
+
+impl std::fmt::Display for ChannelUnitConflict {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.alias.as_deref() {
+            Some(name) => write!(
+                f,
+                "channel \"{}\" is registered in \"{}\" but \"{}\" arrives",
+                name, self.registered_unit, self.incoming_unit
+            ),
+            None => write!(
+                f,
+                "channel is registered in \"{}\" but \"{}\" arrives",
+                self.registered_unit, self.incoming_unit
+            ),
+        }
+    }
+}
+
+pub struct ChannelRegistry {
+    cap: usize,
+    descs: Vec<ChannelDescriptor>,
+    id: HashMap<u64, usize>,
+    aliases: HashMap<String, u64>,
+}
+
+impl ChannelRegistry {
+    pub fn with_capacity(cap: usize) -> Self {
+        Self {
+            cap,
+            descs: Vec::new(),
+            id: HashMap::new(),
+            aliases: HashMap::new(),
+        }
+    }
+
+    pub fn cap(&self) -> usize {
+        self.cap
+    }
+
+    pub fn len(&self) -> usize {
+        self.descs.len()
+    }
+
+    pub fn descriptors(&self) -> &[ChannelDescriptor] {
+        &self.descs
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.descs.is_empty()
+    }
+
+    pub fn register(&mut self, d: ChannelDescriptor) -> usize {
+        let h = d.hash();
+        match self.register_checked(d) {
+            Ok(i) => i,
+            Err(conflict) => {
+                eprintln!("channel unit refused: {conflict}");
+                self.id[&h]
+            }
+        }
+    }
+
+    pub fn register_checked(&mut self, d: ChannelDescriptor) -> Result<usize, ChannelUnitConflict> {
+        let h = d.hash();
+        if let Some(&i) = self.id.get(&h) {
+            let existing = &self.descs[i];
+            if !units_convertible(existing.unit, d.unit) {
+                return Err(ChannelUnitConflict {
+                    registered_unit: existing.unit,
+                    incoming_unit: d.unit,
+                    alias: d.alias.clone().or_else(|| existing.alias.clone()),
+                });
+            }
+            return Ok(i);
+        }
+        let i = self.descs.len();
+        self.descs.push(d);
+        self.id.insert(h, i);
+        Ok(i)
+    }
+
+    pub fn alias(&mut self, name: &str, target: &ChannelDescriptor) {
+        let h = target.hash();
+        match self.aliases.get(name) {
+            Some(&existing) if existing != h => {
+                eprintln!(
+                    "alias refused: \"{}\" already names a different channel",
+                    name
+                );
+            }
+            _ => {
+                self.aliases.insert(name.to_string(), h);
+            }
+        }
+    }
+
+    pub fn resolve(&self, name: &str) -> Option<&ChannelDescriptor> {
+        let h = self.aliases.get(name)?;
+        let &i = self.id.get(h)?;
+        Some(&self.descs[i])
+    }
+
+    pub fn descriptor(&self, hash: u64) -> Option<&ChannelDescriptor> {
+        self.id.get(&hash).map(|&i| &self.descs[i])
+    }
+
+    pub fn index_of(&self, hash: u64) -> Option<usize> {
+        self.id.get(&hash).copied()
+    }
+
+    pub fn mode_frequencies_hz_for_body(
+        &self,
+        body_name: &str,
+        count: usize,
+    ) -> Vec<Option<Vec<f64>>> {
+        self.descs
+            .iter()
+            .map(|d| d.mode_frequencies_hz_for_body(body_name, count))
+            .collect()
+    }
+
+    pub fn schema_hash(&self) -> u32 {
+        let mut h: u64 = 0xcbf29ce484222325;
+        for d in &self.descs {
+            for b in d.hash().to_le_bytes() {
+                h ^= b as u64;
+                h = h.wrapping_mul(FNV_PRIME);
+            }
+        }
+        h as u32
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
+#[repr(u8)]
+pub enum CouplingKind {
+    IonNeutralFriction = 0,
+    Thermoelectric = 1,
+    Hall = 2,
+    Pedersen = 3,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
+#[repr(u8)]
+pub enum DensityKind {
+    Number = 0,
+    Mass = 1,
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub struct DensityRef {
+    pub channel_ref: u64,
+    pub kind: DensityKind,
+    pub species_mass: Option<f64>,
+}
+
+#[derive(Clone, Debug)]
+pub struct Coupling {
+    pub kind: CouplingKind,
+    pub from: u64,
+    pub to: u64,
+    pub coefficient: Option<f64>,
+    pub unit: &'static str,
+    pub region: Option<String>,
+    pub density_from: Option<DensityRef>,
+    pub density_to: Option<DensityRef>,
+    pub quasi_neutral: Option<String>,
+}
+
+#[derive(Clone, Debug)]
+pub struct DensityRefSpec {
+    pub alias: String,
+    pub kind: DensityKind,
+    pub species_mass: Option<f64>,
+}
+
+#[derive(Clone, Debug)]
+pub struct CouplingSpec {
+    pub kind: CouplingKind,
+    pub from: String,
+    pub to: String,
+    pub rate: Option<f64>,
+    pub density_from: DensityRefSpec,
+    pub density_to: DensityRefSpec,
+    pub region: Option<String>,
+    pub conserves: Option<String>,
+    pub quasi_neutral: Option<String>,
+}
+
+#[derive(Clone, Debug)]
+pub struct QuasiNeutralConstraint {
+    pub name: String,
+    pub region: String,
+}
+
+pub struct ConstraintRegistry {
+    by_name: HashMap<String, QuasiNeutralConstraint>,
+}
+
+impl ConstraintRegistry {
+    pub fn from_constraints(constraints: &[QuasiNeutralConstraint]) -> Self {
+        let mut by_name = HashMap::with_capacity(constraints.len());
+        for c in constraints {
+            if by_name.contains_key(&c.name) {
+                eprintln!("constraint refused: name {:?} already declared", c.name);
+                continue;
+            }
+            by_name.insert(c.name.clone(), c.clone());
+        }
+        Self { by_name }
+    }
+
+    pub fn get(&self, name: &str) -> Option<&QuasiNeutralConstraint> {
+        self.by_name.get(name)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.by_name.is_empty()
+    }
+}
+
+pub struct CouplingRegistry {
+    pairs: Vec<Coupling>,
+    id: HashMap<(u64, u64, CouplingKind), usize>,
+}
+
+impl CouplingRegistry {
+    pub fn with_capacity(cap: usize) -> Self {
+        Self {
+            pairs: Vec::with_capacity(cap),
+            id: HashMap::with_capacity(cap),
+        }
+    }
+
+    pub fn from_specs(
+        specs: &[CouplingSpec],
+        channels: &ChannelRegistry,
+        constraints: &ConstraintRegistry,
+    ) -> CouplingRegistry {
+        let mut reg = CouplingRegistry::with_capacity(specs.len());
+        for s in specs {
+            let (Some(from), Some(to)) = (channels.resolve(&s.from), channels.resolve(&s.to))
+            else {
+                eprintln!(
+                    "coupling refused: aliases {:?} -> {:?} name no channel",
+                    s.from, s.to
+                );
+                continue;
+            };
+            let (Some(density_from), Some(density_to)) = (
+                resolve_density_ref(&s.density_from, channels),
+                resolve_density_ref(&s.density_to, channels),
+            ) else {
+                eprintln!(
+                    "coupling refused: density aliases {:?} / {:?} name no channel",
+                    s.density_from.alias, s.density_to.alias
+                );
+                continue;
+            };
+            if let Some(name) = s.quasi_neutral.as_deref() {
+                let Some(c) = constraints.get(name) else {
+                    eprintln!(
+                        "coupling refused: quasi-neutral {name:?} names no declared constraint"
+                    );
+                    continue;
+                };
+                if s.region.as_deref() != Some(c.region.as_str()) {
+                    eprintln!("coupling refused: quasi-neutral {name:?} region mismatch");
+                    continue;
+                }
+            }
+            reg.register(Coupling {
+                kind: s.kind,
+                from: from.hash(),
+                to: to.hash(),
+                coefficient: s.rate,
+                unit: "",
+                region: s.region.clone(),
+                density_from: Some(density_from),
+                density_to: Some(density_to),
+                quasi_neutral: s.quasi_neutral.clone(),
+            });
+        }
+        reg
+    }
+
+    pub fn len(&self) -> usize {
+        self.pairs.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.pairs.is_empty()
+    }
+
+    pub fn pairs(&self) -> &[Coupling] {
+        &self.pairs
+    }
+
+    pub fn register(&mut self, c: Coupling) -> usize {
+        let key = (c.from, c.to, c.kind);
+        if let Some(&i) = self.id.get(&key) {
+            return i;
+        }
+        let i = self.pairs.len();
+        self.pairs.push(c);
+        self.id.insert(key, i);
+        i
+    }
+
+    pub fn is_coupled(&self, from: u64, to: u64, kind: CouplingKind) -> bool {
+        self.id.contains_key(&(from, to, kind))
+    }
+
+    pub fn coupling_of(&self, from: u64, to: u64, kind: CouplingKind) -> Option<&Coupling> {
+        self.id.get(&(from, to, kind)).map(|&i| &self.pairs[i])
+    }
+
+    pub fn term(&self, phi: &[f32], channels: &ChannelRegistry) -> Option<f32> {
+        let mut acc = 0.0f32;
+        let mut contributed = false;
+        for c in &self.pairs {
+            let Some(coeff) = c.coefficient else { continue };
+            let (Some(i), Some(j)) = (channels.index_of(c.from), channels.index_of(c.to)) else {
+                continue;
+            };
+            if i >= phi.len() || j >= phi.len() {
+                continue;
+            }
+            acc += coeff as f32 * phi[i] * phi[j];
+            contributed = true;
+        }
+        if contributed { Some(acc) } else { None }
+    }
+
+    pub fn exchange(
+        &self,
+        c: &Coupling,
+        phi: &[f32],
+        rho: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<(usize, f32, usize, f32)> {
+        let coeff = c.coefficient? as f32;
+        let i = channels.index_of(c.from)?;
+        let j = channels.index_of(c.to)?;
+        if i >= phi.len() || j >= phi.len() || i >= rho.len() || j >= rho.len() {
+            return None;
+        }
+        let (from_delta, to_delta) = match c.kind {
+            CouplingKind::IonNeutralFriction => {
+                let d = phi[j] - phi[i];
+                let from_delta = coeff * d;
+                let to_delta = -coeff * d * (rho[i] / rho[j]);
+                (from_delta, to_delta)
+            }
+            CouplingKind::Thermoelectric | CouplingKind::Hall | CouplingKind::Pedersen => {
+                let product = coeff * phi[i] * phi[j];
+                (product, product)
+            }
+        };
+        Some((i, from_delta, j, to_delta))
+    }
+
+    pub fn density_at(
+        &self,
+        r: &DensityRef,
+        phi: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<f32> {
+        let idx = channels.index_of(r.channel_ref)?;
+        let raw = *phi.get(idx)?;
+        let rho = match r.kind {
+            DensityKind::Number => r.species_mass? as f32 * raw,
+            DensityKind::Mass => raw,
+        };
+        if rho.is_finite() && rho >= 0.0 {
+            Some(rho)
+        } else {
+            None
+        }
+    }
+
+    pub fn charge_imbalance(
+        &self,
+        constraint: &QuasiNeutralConstraint,
+        phi: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<f64> {
+        let mut acc = 0.0f64;
+        let mut members = 0usize;
+        for c in &self.pairs {
+            if c.quasi_neutral.as_deref() != Some(constraint.name.as_str()) {
+                continue;
+            }
+            for r in [c.density_from.as_ref(), c.density_to.as_ref()]
+                .into_iter()
+                .flatten()
+            {
+                let z = channels.descriptor(r.channel_ref)?.charge?;
+                let rho = self.density_at(r, phi, channels)? as f64;
+                acc += z * rho;
+                members += 1;
+            }
+        }
+        if members == 0 { None } else { Some(acc) }
+    }
+
+    pub fn exchange_resolved(
+        &self,
+        c: &Coupling,
+        phi: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<(usize, f32, usize, f32)> {
+        let k = c.coefficient? as f32;
+        let rho_from = self.density_at(c.density_from.as_ref()?, phi, channels)?;
+        let rho_to = self.density_at(c.density_to.as_ref()?, phi, channels)?;
+        let m_from = c.density_from.as_ref()?.species_mass? as f32;
+        let m_to = c.density_to.as_ref()?.species_mass? as f32;
+        let m_sum = m_from + m_to;
+        if rho_to <= 0.0 || m_sum <= 0.0 {
+            return None;
+        }
+        let i = channels.index_of(c.from)?;
+        let j = channels.index_of(c.to)?;
+        if i >= phi.len() || j >= phi.len() {
+            return None;
+        }
+        match c.kind {
+            CouplingKind::IonNeutralFriction => {
+                let rate = k * rho_to / m_sum;
+                let d = phi[j] - phi[i];
+                let from_delta = rate * d;
+                let to_delta = -from_delta * (rho_from / rho_to);
+                Some((i, from_delta, j, to_delta))
+            }
+            CouplingKind::Thermoelectric | CouplingKind::Hall | CouplingKind::Pedersen => {
+                let product = k * phi[i] * phi[j];
+                Some((i, product, j, product))
+            }
+        }
+    }
+
+    pub fn schema_hash(&self) -> u32 {
+        let mut h: u64 = 0xcbf29ce484222325;
+        for c in &self.pairs {
+            h = fnv1a(&c.from.to_le_bytes(), h);
+            h = fnv1a(&c.to.to_le_bytes(), h);
+            h = fnv1a(&[c.kind as u8], h);
+        }
+        h as u32
+    }
+}
+
+fn resolve_density_ref(spec: &DensityRefSpec, channels: &ChannelRegistry) -> Option<DensityRef> {
+    let descriptor = channels.resolve(&spec.alias)?;
+    Some(DensityRef {
+        channel_ref: descriptor.hash(),
+        kind: spec.kind,
+        species_mass: spec.species_mass,
+    })
+}
+
+fn parse_density_ref_spec(token: &str) -> Result<DensityRefSpec, String> {
+    let segs: Vec<&str> = token.split(':').collect();
+    match segs.as_slice() {
+        ["number", alias, mass_token] => {
+            let species_mass: f64 = mass_token
+                .parse()
+                .map_err(|_| format!("coupling density species mass unreadable: {mass_token}"))?;
+            if !(species_mass.is_finite() && species_mass > 0.0) {
+                return Err(format!(
+                    "coupling density species mass out of range: {mass_token}"
+                ));
+            }
+            Ok(DensityRefSpec {
+                alias: alias.to_string(),
+                kind: DensityKind::Number,
+                species_mass: Some(species_mass),
+            })
+        }
+        ["mass", alias] => Ok(DensityRefSpec {
+            alias: alias.to_string(),
+            kind: DensityKind::Mass,
+            species_mass: None,
+        }),
+        _ => Err(format!("coupling density reference unreadable: {token}")),
+    }
+}
+
+pub fn coupling_spec_from_line(line: &str) -> Result<CouplingSpec, String> {
+    let mut parts = line.split_whitespace();
+    if parts.next() != Some("coupling") {
+        return Err("coupling directive expected".to_string());
+    }
+    let kind = match parts.next() {
+        Some("ion-neutral-friction") => CouplingKind::IonNeutralFriction,
+        Some("thermoelectric") => CouplingKind::Thermoelectric,
+        Some("hall") => CouplingKind::Hall,
+        Some("pedersen") => CouplingKind::Pedersen,
+        other => return Err(format!("coupling kind unknown: {other:?}")),
+    };
+    if parts.next() != Some("from") {
+        return Err("coupling from clause expected".to_string());
+    }
+    let from = parts
+        .next()
+        .ok_or("coupling from alias absent")?
+        .to_string();
+    if parts.next() != Some("to") {
+        return Err("coupling to clause expected".to_string());
+    }
+    let to = parts.next().ok_or("coupling to alias absent")?.to_string();
+    if parts.next() != Some("rate") {
+        return Err("coupling rate clause expected".to_string());
+    }
+    let rate = match parts.next() {
+        Some("pending") => None,
+        Some(token) => {
+            let v: f64 = token
+                .parse()
+                .map_err(|_| format!("coupling rate unreadable: {token}"))?;
+            if !(v.is_finite() && v > 0.0) {
+                return Err(format!("coupling rate out of range: {token}"));
+            }
+            Some(v)
+        }
+        None => return Err("coupling rate absent".to_string()),
+    };
+    if parts.next() != Some("density_from") {
+        return Err("coupling density_from clause expected".to_string());
+    }
+    let density_from = parse_density_ref_spec(parts.next().ok_or("coupling density_from absent")?)?;
+    if parts.next() != Some("density_to") {
+        return Err("coupling density_to clause expected".to_string());
+    }
+    let density_to = parse_density_ref_spec(parts.next().ok_or("coupling density_to absent")?)?;
+
+    let mut region = None;
+    let mut conserves = None;
+    let mut quasi_neutral = None;
+    loop {
+        match parts.next() {
+            None => break,
+            Some("region") => {
+                region = Some(
+                    parts
+                        .next()
+                        .ok_or("coupling region name absent")?
+                        .to_string(),
+                )
+            }
+            Some("conserves") => {
+                conserves = Some(
+                    parts
+                        .next()
+                        .ok_or("coupling conserves token absent")?
+                        .to_string(),
+                )
+            }
+            Some("quasi-neutral") => {
+                let token = parts.next().ok_or("coupling quasi-neutral token absent")?;
+                quasi_neutral = if token == "pending" {
+                    None
+                } else {
+                    Some(token.to_string())
+                };
+            }
+            Some(other) => return Err(format!("coupling clause unknown: {other}")),
+        }
+    }
+
+    Ok(CouplingSpec {
+        kind,
+        from,
+        to,
+        rate,
+        density_from,
+        density_to,
+        region,
+        conserves,
+        quasi_neutral,
+    })
+}
+
+pub fn quasi_neutral_constraint_from_line(line: &str) -> Result<QuasiNeutralConstraint, String> {
+    let mut parts = line.split_whitespace();
+    if parts.next() != Some("constraint") {
+        return Err("constraint directive expected".to_string());
+    }
+    if parts.next() != Some("quasi-neutral") {
+        return Err("constraint kind unknown: quasi-neutral expected".to_string());
+    }
+    let name = parts.next().ok_or("constraint name absent")?.to_string();
+    if parts.next() != Some("region") {
+        return Err("constraint region clause expected".to_string());
+    }
+    let region = parts
+        .next()
+        .ok_or("constraint region name absent")?
+        .to_string();
+    if let Some(other) = parts.next() {
+        return Err(format!("constraint trailing token: {other}"));
+    }
+    Ok(QuasiNeutralConstraint { name, region })
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
+#[repr(u8)]
+pub enum InterfaceCond {
+    Matched = 0,
+    Reflecting = 1,
+    Transmitting = 2,
+    Dirichlet = 3,
+    Neumann = 4,
+    Robin = 5,
+}
+
+#[derive(Clone, Debug)]
+pub struct Interface {
+    pub from: u64,
+    pub to: u64,
+    pub cond: InterfaceCond,
+    pub region: Option<String>,
+}
+
+pub struct InterfaceRegistry {
+    links: Vec<Interface>,
+    id: HashMap<(u64, u64), usize>,
+}
+
+impl InterfaceRegistry {
+    pub fn with_capacity(cap: usize) -> Self {
+        Self {
+            links: Vec::with_capacity(cap),
+            id: HashMap::with_capacity(cap),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.links.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.links.is_empty()
+    }
+
+    pub fn links(&self) -> &[Interface] {
+        &self.links
+    }
+
+    pub fn register(&mut self, i: Interface) -> usize {
+        let key = (i.from, i.to);
+        if let Some(&idx) = self.id.get(&key) {
+            return idx;
+        }
+        let idx = self.links.len();
+        self.links.push(i);
+        self.id.insert(key, idx);
+        idx
+    }
+
+    pub fn is_interface(&self, from: u64, to: u64) -> bool {
+        self.id.contains_key(&(from, to))
+    }
+
+    pub fn interface_of(&self, from: u64, to: u64) -> Option<&Interface> {
+        self.id.get(&(from, to)).map(|&i| &self.links[i])
+    }
+}
+
+pub fn live_schema_hash() -> u32 {
+    live_channel_registry().schema_hash()
+}
+
+pub fn channel_registry_from_sources(sources: &[crate::archivar::SourceConfig]) -> ChannelRegistry {
+    let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
+    for s in sources {
+        for d in &s.channels {
+            let mut d = d.clone();
+            if d.body.is_none() {
+                d.body = s.body.clone();
+            }
+            if let Err(conflict) = reg.register_checked(d.clone()) {
+                eprintln!("channel unit refused: {conflict}");
+            }
+            if let Some(a) = d.alias.as_deref() {
+                reg.alias(a, &d);
+            }
+        }
+    }
+    if reg.is_empty() {
+        return live_channel_registry();
+    }
+    reg
+}
+
+pub fn unit_token(token: &str) -> Option<&'static str> {
+    match token {
+        "V/m" => Some("V/m"),
+        "m/s^2" => Some("m/s^2"),
+        "m/s" => Some("m/s"),
+        "m/s2" => Some("m/s2"),
+        "nm/s2" => Some("nm/s2"),
+        "mm/s2" => Some("mm/s2"),
+        "Pa" => Some("Pa"),
+        "K" => Some("K"),
+        "kg/m^3" => Some("kg/m^3"),
+        "kg/(m^2 s)" => Some("kg/(m^2 s)"),
+        "m^-3" => Some("m^-3"),
+        "mm/yr" => Some("mm/yr"),
+        "1" => Some("1"),
+        _ => None,
+    }
+}
+
+fn dim_scale(d: [i8; 7], k: i8) -> [i8; 7] {
+    d.map(|x| x.saturating_mul(k))
+}
+
+fn dim_mul(a: [i8; 7], b: [i8; 7]) -> [i8; 7] {
+    let mut r = [0i8; 7];
+    for i in 0..7 {
+        r[i] = a[i].saturating_add(b[i]);
+    }
+    r
+}
+
+fn dim_div(a: [i8; 7], b: [i8; 7]) -> [i8; 7] {
+    let mut r = [0i8; 7];
+    for i in 0..7 {
+        r[i] = a[i].saturating_sub(b[i]);
+    }
+    r
+}
+
+fn symbol_dim(sym: &str) -> Option<[i8; 7]> {
+    let mut d = [0i8; 7];
+    match sym {
+        "1" => {}
+        "g" | "kg" => d[0] = 1,
+        "m" => d[1] = 1,
+        "s" => d[2] = 1,
+        "A" => d[3] = 1,
+        "K" => d[4] = 1,
+        "mol" => d[5] = 1,
+        "cd" => d[6] = 1,
+        "N" => {
+            d[0] = 1;
+            d[1] = 1;
+            d[2] = -2;
+        }
+        "J" => {
+            d[0] = 1;
+            d[1] = 2;
+            d[2] = -2;
+        }
+        "W" => {
+            d[0] = 1;
+            d[1] = 2;
+            d[2] = -3;
+        }
+        "Pa" => {
+            d[0] = 1;
+            d[1] = -1;
+            d[2] = -2;
+        }
+        "Hz" => d[2] = -1,
+        "V" => {
+            d[0] = 1;
+            d[1] = 2;
+            d[2] = -3;
+            d[3] = -1;
+        }
+        "T" | "nT" => {
+            d[0] = 1;
+            d[2] = -2;
+            d[3] = -1;
+        }
+        _ => return None,
+    }
+    Some(d)
+}
+
+fn parse_dim_int(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<i8> {
+    let mut sign = 1i8;
+    if let Some('-') = it.peek() {
+        sign = -1;
+        it.next();
+    }
+    let mut val = 0i8;
+    let mut any = false;
+    while let Some(c) = it.peek() {
+        if let Some(d) = c.to_digit(10) {
+            val = val.checked_mul(10)?.checked_add(d as i8)?;
+            it.next();
+            any = true;
+        } else {
+            break;
+        }
+    }
+    if !any {
+        return None;
+    }
+    Some(sign.saturating_mul(val))
+}
+
+fn skip_dim_ws(it: &mut std::iter::Peekable<std::str::Chars>) {
+    while let Some(c) = it.peek() {
+        if c.is_whitespace() {
+            it.next();
+        } else {
+            break;
+        }
+    }
+}
+
+fn parse_dim_factor(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8; 7]> {
+    skip_dim_ws(it);
+    let base = if let Some('(') = it.peek() {
+        it.next();
+        let e = parse_dim_expr(it)?;
+        if it.next() != Some(')') {
+            return None;
+        }
+        e
+    } else {
+        let mut sym = String::new();
+        while let Some(c) = it.peek() {
+            if c.is_ascii_alphabetic() {
+                sym.push(*c);
+                it.next();
+            } else {
+                break;
+            }
+        }
+        symbol_dim(&sym)?
+    };
+    let mut exp = 1i8;
+    if let Some('^') = it.peek() {
+        it.next();
+        exp = parse_dim_int(it)?;
+    } else if let Some(c) = it.peek()
+        && c.is_ascii_digit()
+    {
+        exp = parse_dim_int(it)?;
+    }
+    Some(dim_scale(base, exp))
+}
+
+fn parse_dim_expr(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8; 7]> {
+    let mut acc = parse_dim_factor(it)?;
+    loop {
+        skip_dim_ws(it);
+        match it.peek() {
+            Some('*') => {
+                it.next();
+                acc = dim_mul(acc, parse_dim_factor(it)?);
+            }
+            Some('/') => {
+                it.next();
+                acc = dim_div(acc, parse_dim_factor(it)?);
+            }
+            Some(')') | None => break,
+            Some(c) if c.is_ascii_alphabetic() || *c == '(' => {
+                acc = dim_mul(acc, parse_dim_factor(it)?);
+            }
+            _ => break,
+        }
+    }
+    Some(acc)
+}
+
+pub fn unit_dimension(unit: &str) -> Option<[i8; 7]> {
+    let norm: String = unit.chars().filter(|c| !c.is_whitespace()).collect();
+    if norm.is_empty() || norm == "1" {
+        return Some([0i8; 7]);
+    }
+    let mut it = unit.chars().peekable();
+    let dims = parse_dim_expr(&mut it)?;
+    if it.next().is_some() {
+        return None;
+    }
+    Some(dims)
+}
+
+pub fn units_convertible(a: &str, b: &str) -> bool {
+    match (unit_dimension(a), unit_dimension(b)) {
+        (Some(da), Some(db)) => da == db,
+        _ => a == b,
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct ChannelSum {
+    pub weighted: f64,
+    pub weight: f64,
+    pub active: u32,
+}
+
+impl ChannelSum {
+    pub const EMPTY: Self = Self {
+        weighted: 0.0,
+        weight: 0.0,
+        active: 0,
+    };
+
+    pub fn absorb(&mut self, value: f32, weight: f32, state: TriState) {
+        if state != TriState::Present {
+            return;
+        }
+        self.weighted += value as f64 * weight as f64;
+        self.weight += weight as f64;
+        self.active += 1;
+    }
+
+    pub fn combine(self, other: Self) -> Self {
+        Self {
+            weighted: self.weighted + other.weighted,
+            weight: self.weight + other.weight,
+            active: self.active + other.active,
+        }
+    }
+
+    pub fn mean(self) -> Option<f32> {
+        if self.active == 0 || self.weight == 0.0 {
+            return None;
+        }
+        Some((self.weighted / self.weight) as f32)
+    }
+}
+
+pub fn channel_reduce(phi: &[f32], weight: &[f32], state: &[TriState]) -> Option<f32> {
+    let n = phi.len().min(weight.len()).min(state.len());
+    let mut acc = ChannelSum::EMPTY;
+    for i in 0..n {
+        acc.absorb(phi[i], weight[i], state[i]);
+    }
+    acc.mean()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn differing_fields_differ_in_hash() {
+        let a = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg",
+        );
+        let b = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg",
+        );
+        assert_ne!(a.hash(), b.hash());
+    }
+
+    #[test]
+    fn hash_is_stable() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::FreeSurface,
+            "kg m / s",
+        );
+        assert_eq!(d.hash(), d.hash());
+    }
+
+    #[test]
+    fn domain_enters_the_hash() {
+        let unspecified = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg m / s",
+        );
+        let line = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::None,
+            "kg m / s",
+        );
+        assert_ne!(
+            unspecified.hash(),
+            line.hash(),
+            "the domain axis must enter the hash"
+        );
+
+        let dirichlet_line = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "kg m / s",
+        );
+        assert_ne!(dirichlet_line.hash(), unspecified.hash());
+    }
+
+    #[test]
+    fn role_enters_the_hash() {
+        let primary = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg",
+        );
+        let geometry = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Geometry,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg",
+        );
+        assert_ne!(
+            primary.hash(),
+            geometry.hash(),
+            "the role axis must enter the hash"
+        );
+    }
+
+    #[test]
+    fn pde_type_enters_the_hash() {
+        let elliptic = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Maxwell,
+            PdeType::Elliptic,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "V/m",
+        );
+        let hyperbolic = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Maxwell,
+            PdeType::Hyperbolic,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "V/m",
+        );
+        assert_ne!(
+            elliptic.hash(),
+            hyperbolic.hash(),
+            "Maxwell carries two regimes; the pde_type is identity"
+        );
+    }
+
+    #[test]
+    fn mass_fourier_is_forbidden() {
+        assert!(!is_admissible(
+            Conserved::Mass,
+            TransportOp::Flux(FluxKind::Fourier),
+            Medium::Fluid
+        ));
+    }
+
+    #[test]
+    fn mass_fick_is_admissible() {
+        assert!(is_admissible(
+            Conserved::Mass,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Fluid
+        ));
+    }
+
+    #[test]
+    fn energy_fourier_is_admissible() {
+        assert!(is_admissible(
+            Conserved::Energy,
+            TransportOp::Flux(FluxKind::Fourier),
+            Medium::Fluid
+        ));
+    }
+
+    #[test]
+    fn charge_ohm_is_admissible() {
+        assert!(is_admissible(
+            Conserved::Charge,
+            TransportOp::Flux(FluxKind::Ohm),
+            Medium::Fluid
+        ));
+    }
+
+    #[test]
+    fn plasma_is_a_fourth_medium_in_the_admissibility_relation() {
+        assert_eq!(Medium::parse("plasma"), Some(Medium::Plasma));
+        let d = ChannelDescriptor::parse_spec(
+            "charge:primary:flux-ohm:parabolic:plasma:line:dirichlet",
+            "A/m2",
+        )
+        .expect("the plasma channel is admissible");
+        let round_tripped = ChannelDescriptor::parse_spec(&d.spec_token(), "A/m2")
+            .expect("the plasma token round-trips");
+        assert_eq!(round_tripped.medium, Medium::Plasma);
+        assert!(is_admissible(
+            Conserved::Charge,
+            TransportOp::Flux(FluxKind::Ohm),
+            Medium::Plasma
+        ));
+        assert!(!is_admissible(
+            Conserved::Mass,
+            TransportOp::Flux(FluxKind::Fourier),
+            Medium::Plasma
+        ));
+    }
+
+    #[test]
+    fn the_number_token_parses() {
+        assert_eq!(Conserved::parse("number"), Some(Conserved::Number));
+        assert_eq!(conserved_name(Conserved::Number), "number");
+    }
+
+    #[test]
+    fn number_and_mass_density_of_one_species_hash_apart() {
+        let number = ChannelDescriptor::parse_spec(
+            "number:primary:flux-fick:parabolic:fluid:unspecified:none~species=N2",
+            "m^-3",
+        )
+        .expect("the number-density channel is admissible");
+        let mass = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none~species=N2",
+            "kg/m^3",
+        )
+        .expect("the mass-density channel is admissible");
+        assert_ne!(number.hash(), mass.hash());
+    }
+
+    #[test]
+    fn number_fick_is_admissible_in_fluid_and_plasma() {
+        assert!(is_admissible(
+            Conserved::Number,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Fluid
+        ));
+        assert!(is_admissible(
+            Conserved::Number,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Plasma
+        ));
+        assert!(!is_admissible(
+            Conserved::Number,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Vacuum
+        ));
+    }
+
+    #[test]
+    fn momentum_wave_in_solid_is_admissible() {
+        assert!(is_admissible(
+            Conserved::Momentum,
+            TransportOp::Wave,
+            Medium::ElasticSolid
+        ));
+    }
+
+    #[test]
+    fn energy_wave_in_vacuum_is_forbidden() {
+        assert!(!is_admissible(
+            Conserved::Energy,
+            TransportOp::Wave,
+            Medium::Vacuum
+        ));
+    }
+
+    fn heat() -> ChannelDescriptor {
+        ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "J / (m2 s)",
+        )
+    }
+
+    #[test]
+    fn identical_descriptors_dedupe_to_one_instance() {
+        let mut reg = ChannelRegistry::with_capacity(16);
+        let d = heat();
+        let a = reg.register(d.clone());
+        let b = reg.register(d.clone());
+        assert_eq!(a, b);
+        assert_eq!(reg.len(), 1);
+        assert_eq!(reg.descriptor(d.hash()).map(|x| x.hash()), Some(d.hash()));
+    }
+
+    #[test]
+    fn distinct_conserved_quantities_stay_distinct() {
+        let mut reg = ChannelRegistry::with_capacity(16);
+        reg.register(heat());
+        reg.register(ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        ));
+        assert_eq!(reg.len(), 2);
+    }
+
+    #[test]
+    fn an_alias_resolves_to_the_registered_descriptor() {
+        let mut reg = ChannelRegistry::with_capacity(16);
+        let em = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        let idx = reg.register(em.clone());
+        reg.alias("electric", &em);
+        assert_eq!(reg.resolve("electric").map(|d| d.hash()), Some(em.hash()));
+        assert!(reg.id.get(&em.hash()) == Some(&idx));
+        assert!(reg.resolve("unknown").is_none());
+    }
+
+    #[test]
+    fn the_unit_follows_from_quantity_and_operator_not_identity() {
+        let a = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "J / (m2 s)",
+        );
+        let b = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "W / m2",
+        );
+        assert_eq!(a.hash(), b.hash(), "the unit is not an identity axis");
+    }
+
+    #[test]
+    fn a_flux_operator_needs_a_constitutive_medium() {
+        assert!(!is_admissible(
+            Conserved::Energy,
+            TransportOp::Flux(FluxKind::Fourier),
+            Medium::Vacuum
+        ));
+        assert!(!is_admissible(
+            Conserved::Charge,
+            TransportOp::Flux(FluxKind::Ohm),
+            Medium::Vacuum
+        ));
+        assert!(!is_admissible(
+            Conserved::Momentum,
+            TransportOp::Flux(FluxKind::NewtonViscous),
+            Medium::Vacuum
+        ));
+    }
+
+    #[test]
+    fn mass_wave_is_a_carried_riss() {
+        assert!(!is_admissible(
+            Conserved::Mass,
+            TransportOp::Wave,
+            Medium::Fluid
+        ));
+    }
+
+    #[test]
+    fn em_is_its_own_operator_in_vacuum_and_matter() {
+        assert!(is_admissible(
+            Conserved::Energy,
+            TransportOp::Maxwell,
+            Medium::Vacuum
+        ));
+        assert!(is_admissible(
+            Conserved::Momentum,
+            TransportOp::Maxwell,
+            Medium::ElasticSolid
+        ));
+        assert!(!is_admissible(
+            Conserved::Charge,
+            TransportOp::Maxwell,
+            Medium::Vacuum
+        ));
+    }
+
+    #[test]
+    fn constraint_holds_in_every_medium() {
+        assert!(is_admissible(
+            Conserved::Mass,
+            TransportOp::Poisson,
+            Medium::ElasticSolid
+        ));
+        assert!(is_admissible(
+            Conserved::Charge,
+            TransportOp::Poisson,
+            Medium::ElasticSolid
+        ));
+    }
+
+    #[test]
+    fn the_reduction_divides_by_the_active_weight() {
+        let phi = [2.0, 4.0, 6.0];
+        let w = [1.0, 1.0, 1.0];
+        let all = [TriState::Present; 3];
+        assert_eq!(channel_reduce(&phi, &w, &all), Some(4.0));
+        let w = [1.0, 9.0, 3.0];
+        let active = [TriState::Present, TriState::Absent, TriState::Present];
+        assert_eq!(channel_reduce(&phi, &w, &active), Some(5.0));
+    }
+
+    #[test]
+    fn pending_and_absent_stand_in_neither_sum() {
+        let phi = [10.0, 20.0, 30.0];
+        let w = [1.0, 1.0, 1.0];
+        let state = [TriState::Present, TriState::Pending, TriState::Absent];
+        assert_eq!(channel_reduce(&phi, &w, &state), Some(10.0));
+    }
+
+    #[test]
+    fn no_active_channel_has_no_mean() {
+        let phi = [1.0, 2.0];
+        let w = [1.0, 1.0];
+        let none = [TriState::Absent, TriState::Pending];
+        assert_eq!(channel_reduce(&phi, &w, &none), None);
+    }
+
+    #[test]
+    fn the_monoid_combines_associatively() {
+        let mut a = ChannelSum::EMPTY;
+        a.absorb(2.0, 1.0, TriState::Present);
+        let mut b = ChannelSum::EMPTY;
+        b.absorb(4.0, 3.0, TriState::Present);
+        let mut c = ChannelSum::EMPTY;
+        c.absorb(100.0, 1.0, TriState::Absent);
+        assert_eq!(a.combine(b).mean(), Some(3.5));
+        assert_eq!(a.combine(b).combine(c).mean(), Some(3.5));
+    }
+
+    #[test]
+    fn the_latch_holds_present_through_hysteresis() {
+        let mut latch = ChannelLatch::new(2);
+        assert_eq!(latch.observe(true), TriState::Present);
+        assert_eq!(latch.observe(false), TriState::Present);
+        assert_eq!(latch.observe(false), TriState::Present);
+        assert_eq!(latch.observe(false), TriState::Absent);
+    }
+
+    #[test]
+    fn pending_is_a_register_duty_never_a_miss() {
+        let mut latch = ChannelLatch::new(0);
+        latch.observe(true);
+        latch.mark_pending();
+        assert_eq!(latch.state, TriState::Pending);
+        assert_eq!(latch.observe(false), TriState::Pending);
+    }
+
+    #[test]
+    fn interaction_is_read_from_the_mechanism_row_not_the_operator() {
+        for ft in 0..9u8 {
+            let fc = FIXED_CHANNELS[ft as usize];
+            let expected = mechanism_of(fc.tag).and_then(|m| m.interaction);
+            assert_eq!(interaction_of(ft), expected, "force type {ft}");
+        }
+        assert_eq!(interaction_of(0), Some(Interaction::Em));
+        assert_eq!(interaction_of(1), None);
+        assert_eq!(interaction_of(2), Some(Interaction::Gravity));
+        assert_eq!(Interaction::parse("em"), Some(Interaction::Em));
+        assert_eq!(Interaction::parse("gravity"), Some(Interaction::Gravity));
+        assert_eq!(Interaction::parse("weak"), None);
+    }
+
+    #[test]
+    fn every_legacy_tag_names_a_mechanism_row() {
+        for ft in 0..9u8 {
+            let fc = FIXED_CHANNELS[ft as usize];
+            let name = fc.tag;
+            let m =
+                mechanism_of(name).unwrap_or_else(|| panic!("{name} must name a mechanism row"));
+            let d =
+                descriptor_for_force(name, fc.medium).unwrap_or_else(|| panic!("{name} must map"));
+            assert_eq!(
+                d.op, m.operator,
+                "{name} operator comes from the mechanism row"
+            );
+            assert_eq!(d.pde_type, m.pde_type);
+            assert_eq!(d.boundary, m.boundary);
+        }
+    }
+
+    #[test]
+    fn every_legacy_force_label_maps_onto_its_admissible_descriptor() {
+        let declared = [
+            ("em", Medium::Vacuum),
+            ("gravity", Medium::Vacuum),
+            ("acoustic", Medium::Fluid),
+            ("seismic-body", Medium::ElasticSolid),
+            ("seismic-surface", Medium::ElasticSolid),
+            ("thermal", Medium::Fluid),
+            ("diffusion", Medium::Fluid),
+            ("advective", Medium::Fluid),
+            ("electric", Medium::Vacuum),
+        ];
+        for (name, medium) in declared {
+            let d = descriptor_for_force(name, medium).unwrap_or_else(|| panic!("{name} must map"));
+            assert!(
+                is_admissible(d.conserved, d.op, medium),
+                "{name} must be admissible in {medium:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn the_bridge_refuses_a_medium_the_relation_forbids() {
+        assert!(descriptor_for_force("acoustic", Medium::Vacuum).is_none());
+        assert!(descriptor_for_force("thermal", Medium::Vacuum).is_none());
+        assert!(descriptor_for_force("diffusion", Medium::Vacuum).is_none());
+    }
+
+    #[test]
+    fn electric_is_the_quasi_static_subset_of_em_and_no_longer_collapses() {
+        let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
+        assert_ne!(em.hash(), electric.hash());
+        assert_eq!(em.pde_type, PdeType::Mixed);
+        assert_eq!(electric.pde_type, PdeType::Elliptic);
+    }
+
+    #[test]
+    fn an_unknown_label_is_refused() {
+        assert!(descriptor_for_force("phlogiston", Medium::Fluid).is_none());
+    }
+
+    #[test]
+    fn a_line_is_harmonic() {
+        let k = eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(1.0), 3)
+            .expect("line modes");
+        let pi = std::f64::consts::PI;
+        assert_eq!(k, vec![pi, 2.0 * pi, 3.0 * pi]);
+    }
+
+    #[test]
+    fn a_sphere_dirichlet_is_the_l0_radial_sector() {
+        let pi = std::f64::consts::PI;
+        let k = eigen_wavenumbers(&Domain::Sphere { l: 0 }, Boundary::Dirichlet, Some(1.0), 2)
+            .expect("sphere l=0");
+        assert_eq!(k, vec![pi, 2.0 * pi]);
+    }
+
+    #[test]
+    fn a_sphere_l1_is_the_j1_zero_spectrum() {
+        let k = eigen_wavenumbers(&Domain::Sphere { l: 1 }, Boundary::Dirichlet, Some(1.0), 3)
+            .expect("sphere l=1");
+        assert!((k[0] - 4.493_409).abs() < 1e-3, "first j1 zero {}", k[0]);
+        assert!((k[1] - 7.725_252).abs() < 1e-3, "second j1 zero {}", k[1]);
+        assert!(k[2] > k[1]);
+    }
+
+    #[test]
+    fn a_sphere_carries_its_sector_in_the_hash() {
+        let l0 = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 0 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        let l1 = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 1 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert_ne!(l0.hash(), l1.hash());
+        assert_eq!(Domain::parse("sphere"), Some(Domain::Sphere { l: 0 }));
+        assert_eq!(Domain::parse("sphere(2)"), Some(Domain::Sphere { l: 2 }));
+    }
+
+    #[test]
+    fn a_bare_free_surface_has_no_closed_spectrum() {
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::FreeSurface, Some(2.0), 2).is_none());
+    }
+
+    #[test]
+    fn a_free_surface_binds_through_the_medium() {
+        let fluid = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Line,
+            Boundary::FreeSurface,
+            "Pa",
+        )
+        .with_extent(Some(2.0));
+        let dirichlet =
+            eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(2.0), 2).expect("dir");
+        assert_eq!(fluid.mode_wavenumbers(2), Some(dirichlet));
+
+        let solid = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::FreeSurface,
+            "m",
+        )
+        .with_extent(Some(2.0));
+        let neumann =
+            eigen_wavenumbers(&Domain::Line, Boundary::Neumann, Some(2.0), 2).expect("neumann");
+        assert_eq!(solid.mode_wavenumbers(2), Some(neumann));
+        assert_eq!(solid.mode_wavenumbers(2).expect("solid modes")[0], 0.0);
+    }
+
+    #[test]
+    fn a_neumann_line_keeps_the_constant_mode() {
+        let k = eigen_wavenumbers(&Domain::Line, Boundary::Neumann, Some(1.0), 3).expect("neumann");
+        assert_eq!(k[0], 0.0);
+        assert!(k[1] > 0.0);
+    }
+
+    #[test]
+    fn a_circle_is_the_drum_spectrum() {
+        let k =
+            eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(1.0), 3).expect("circle");
+        assert!((k[0] - FIRST_BESSEL_J0_ZERO).abs() < 1e-9);
+        assert!((k[1] - 3.831_706).abs() < 1e-4);
+        assert!((k[2] - 5.135_622).abs() < 1e-4);
+    }
+
+    #[test]
+    fn a_circle_keeps_the_documented_mode_ratios_through_nine() {
+        let extent = FIRST_BESSEL_J0_ZERO;
+        let k = eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(extent), 9)
+            .expect("circle modes");
+        assert_eq!(k.len(), 9);
+        assert!((k[0] - 1.0).abs() < 1e-9);
+        for (j, &ratio) in CIRCLE_DRUM_MODE_RATIOS.iter().enumerate() {
+            let measured = k[j] / k[0];
+            assert!(
+                (measured - ratio).abs() < 1e-3,
+                "mode {j}: measured ratio {measured} vs documented {ratio}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_circle_carries_the_full_channel_capacity() {
+        let k = eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(1.0), CHANNEL_CAP)
+            .expect("16 circle modes");
+        assert_eq!(k.len(), CHANNEL_CAP);
+        for j in 1..k.len() {
+            assert!(k[j] > k[j - 1], "mode {j} must exceed mode {}", j - 1);
+        }
+    }
+
+    #[test]
+    fn a_circle_with_zero_count_has_no_mode() {
+        assert!(eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(1.0), 0).is_none());
+    }
+
+    #[test]
+    fn a_domain_without_a_closed_mode_is_absent() {
+        assert!(eigen_wavenumbers(&Domain::Unspecified, Boundary::None, Some(1.0), 3).is_none());
+        assert!(
+            eigen_wavenumbers(
+                &Domain::Shell {
+                    r_in: 1.0,
+                    r_out: 2.0
+                },
+                Boundary::Dirichlet,
+                Some(1.0),
+                3
+            )
+            .is_none()
+        );
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Robin, Some(1.0), 3).is_none());
+        assert!(
+            eigen_wavenumbers(
+                &Domain::Circle,
+                Boundary::Dirichlet,
+                Some(1.0),
+                CHANNEL_CAP + 1
+            )
+            .is_none()
+        );
+    }
+
+    #[test]
+    fn a_rectangular_membrane_is_the_pythagorean_drum() {
+        let pi = std::f64::consts::PI;
+        let k = eigen_wavenumbers(
+            &Domain::Rectangle { lx: 2.0, ly: 3.0 },
+            Boundary::Dirichlet,
+            Some(1.0),
+            4,
+        )
+        .expect("rectangle modes");
+        let expected = [
+            pi * (0.25_f64 + 1.0 / 9.0).sqrt(),
+            pi * (0.25_f64 + 4.0 / 9.0).sqrt(),
+            pi * (1.0_f64 + 1.0 / 9.0).sqrt(),
+            pi * (0.25_f64 + 1.0).sqrt(),
+        ];
+        for (j, e) in expected.iter().enumerate() {
+            assert!((k[j] - e).abs() < 1e-9, "mode {j}: {} vs {}", k[j], e);
+        }
+    }
+
+    #[test]
+    fn a_rectangle_carries_its_arity_in_the_domain_not_in_extent() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Rectangle { lx: 1.0, ly: 1.0 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert!(d.mode_wavenumbers(2).is_some());
+    }
+
+    #[test]
+    fn the_compound_domain_token_parses_its_arity() {
+        assert_eq!(
+            Domain::parse("rectangle(2.0,3.0)"),
+            Some(Domain::Rectangle { lx: 2.0, ly: 3.0 })
+        );
+        assert_eq!(
+            Domain::parse("shell(1.0,2.0)"),
+            Some(Domain::Shell {
+                r_in: 1.0,
+                r_out: 2.0
+            })
+        );
+        assert_eq!(
+            Domain::parse("ellipsoid(1.0,2.0,3.0)"),
+            Some(Domain::Ellipsoid {
+                a: 1.0,
+                b: 2.0,
+                c: 3.0
+            })
+        );
+        assert_eq!(Domain::parse("shell(2.0,1.0)"), None);
+        assert_eq!(Domain::parse("rectangle(2.0)"), None);
+        assert_eq!(Domain::parse("rectangle(0.0,3.0)"), None);
+    }
+
+    #[test]
+    fn a_non_positive_extent_has_no_mode() {
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(0.0), 3).is_none());
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(-1.0), 3).is_none());
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(f64::NAN), 3).is_none());
+    }
+
+    #[test]
+    fn a_wave_carries_a_pitch() {
+        let pi = std::f64::consts::PI;
+        let f = mode_frequency_hz(TransportOp::Wave, 343.0, 2.0 * pi).expect("wave tone");
+        assert!((f - 343.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn an_elliptic_or_diffusive_mode_carries_no_pitch() {
+        assert!(mode_frequency_hz(TransportOp::Poisson, 1.0, 1.0).is_none());
+        assert!(mode_frequency_hz(TransportOp::Flux(FluxKind::Fourier), 1.0, 1.0).is_none());
+        assert!(mode_frequency_hz(TransportOp::Advective, 1.0, 1.0).is_none());
+    }
+
+    #[test]
+    fn a_wave_without_a_speed_carries_no_pitch() {
+        assert!(mode_frequency_hz(TransportOp::Wave, 0.0, 1.0).is_none());
+        assert!(mode_frequency_hz(TransportOp::Wave, f64::NAN, 1.0).is_none());
+    }
+
+    #[test]
+    fn a_wave_line_carries_harmonic_mode_frequencies() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:line:dirichlet:2.0",
+            "Pa",
+        )
+        .expect("wave line spec parses");
+        let f = d.mode_frequencies_hz(343.0, 3).expect("modes carry pitch");
+        assert_eq!(f.len(), 3);
+        for (i, fj) in f.iter().enumerate() {
+            let j = (i + 1) as f64;
+            assert!((fj - 343.0 * j / (2.0 * 2.0)).abs() < 1e-9);
+        }
+    }
+
+    #[test]
+    fn a_diffusive_mode_carries_no_mode_frequency() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:flux-fourier:parabolic:fluid:line:dirichlet:2.0",
+            "K",
+        )
+        .expect("fourier spec parses");
+        assert!(d.mode_frequencies_hz(1.0, 3).is_none());
+    }
+
+    #[test]
+    fn a_wave_without_extent_carries_no_mode_frequency() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:line:dirichlet",
+            "Pa",
+        )
+        .expect("wave line spec parses");
+        assert!(d.mode_frequencies_hz(343.0, 3).is_none());
+    }
+
+    #[test]
+    fn a_medium_constitutes_its_characteristic_speed() {
+        let fluid = MediumParams {
+            sound_speed_m_s: 343.0,
+            p_wave_m_s: 0.0,
+            s_wave_m_s: 0.0,
+            thermal_diffusivity_m2_s: 0.0,
+            molecular_diffusivity_m2_s: 0.0,
+        };
+        assert_eq!(
+            characteristic_speed(Medium::Vacuum, None),
+            Some(VACUUM_SPEED_M_S)
+        );
+        assert_eq!(
+            characteristic_speed(Medium::Fluid, Some(&fluid)),
+            Some(343.0)
+        );
+        assert_eq!(characteristic_speed(Medium::Fluid, None), None);
+        assert_eq!(
+            characteristic_speed(Medium::ElasticSolid, Some(&fluid)),
+            None
+        );
+    }
+
+    #[test]
+    fn the_declared_body_constitutes_the_channel_frequencies() {
+        let fluid = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "Pa",
+        )
+        .with_extent(Some(2.0));
+        let f = fluid
+            .mode_frequencies_hz_for_body("earth", 2)
+            .expect("earth carries a sound speed");
+        assert_eq!(f.len(), 2);
+        assert!(f[0] > 0.0);
+
+        let solid = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::Neumann,
+            "m",
+        )
+        .with_extent(Some(2.0));
+        assert!(solid.mode_frequencies_hz_for_body("earth", 2).is_none());
+
+        let vacuum = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Maxwell,
+            PdeType::Mixed,
+            Medium::Vacuum,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "V/m",
+        )
+        .with_extent(Some(2.0));
+        assert!(
+            vacuum.mode_frequencies_hz_for_body("iss", 2).is_some(),
+            "vacuum is the constant light speed, no body needed"
+        );
+    }
+
+    #[test]
+    fn an_elastic_solid_constitutes_two_speeds() {
+        let solid = MediumParams {
+            sound_speed_m_s: 0.0,
+            p_wave_m_s: 5950.0,
+            s_wave_m_s: 3630.0,
+            thermal_diffusivity_m2_s: 0.0,
+            molecular_diffusivity_m2_s: 0.0,
+        };
+        assert_eq!(elastic_speeds(&solid), Some((5950.0, 3630.0)));
+        let inverted = MediumParams {
+            p_wave_m_s: 3630.0,
+            s_wave_m_s: 5950.0,
+            ..solid.clone()
+        };
+        assert_eq!(elastic_speeds(&inverted), None);
+    }
+
+    #[test]
+    fn the_elastic_sphere_solver_matches_its_closed_forms() {
+        let radial =
+            elastic_spheroidal_frequencies(0, 3f64.sqrt(), 1.0, 1.0, 1).expect("radial l=0");
+        assert!(
+            (radial[0] - 0.7067).abs() < 0.02,
+            "radial l=0 first tone {}",
+            radial[0]
+        );
+        let tor = elastic_toroidal_frequencies(1, 1.0, 1.0, 1).expect("toroidal l=1");
+        assert!(
+            (tor[0] - 5.7635 / std::f64::consts::TAU).abs() < 0.02,
+            "toroidal l=1 first tone {}",
+            tor[0]
+        );
+    }
+
+    #[test]
+    fn the_earth_seismic_channel_rings_through_its_body() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Sphere { l: 0 },
+            Boundary::FreeSurface,
+            "Pa",
+        )
+        .with_extent(Some(6_371_000.0))
+        .with_body(Some("earth".to_string()));
+        let f = d
+            .fundamental_hz()
+            .expect("the earth seismic channel carries a fundamental tone");
+        assert!(f.is_finite() && f > 0.0, "fundamental {f}");
+    }
+
+    #[test]
+    fn a_declared_body_stays_data_not_channel_identity() {
+        let d = descriptor_for_force("seismic-body", Medium::ElasticSolid)
+            .expect("the seismic-body channel stands");
+        let with_body = d.clone().with_body(Some("earth".to_string()));
+        assert_eq!(d, with_body, "the body is data, not identity");
+        assert_eq!(d.hash(), with_body.hash(), "the body never enters the hash");
+        assert_eq!(
+            channel_ref_of_descriptor(&with_body),
+            channel_ref_of_descriptor(&d),
+            "a body-carrying descriptor resolves to the same 9-label channel ref"
+        );
+    }
+
+    #[test]
+    fn plasma_parameters_stay_data_not_channel_identity() {
+        let absent = PlasmaParameters::absent();
+        assert!(absent.n_e.is_none());
+        assert!(absent.b0.is_none());
+        assert!(absent.nu.is_none());
+
+        let d = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let with_plasma = d.clone().with_plasma(PlasmaParameters {
+            n_e: Some(1.0e6),
+            b0: Some(1.0e-4),
+            nu: Some(1.0e3),
+        });
+        assert_eq!(
+            d, with_plasma,
+            "the plasma parameters are data, not identity"
+        );
+        assert_eq!(
+            d.hash(),
+            with_plasma.hash(),
+            "the plasma parameters never enter the hash"
+        );
+    }
+
+    #[test]
+    fn a_channel_without_geometry_stays_silent() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Maxwell,
+            PdeType::Mixed,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "V/m",
+        );
+        assert_eq!(d.fundamental_hz(), None);
+    }
+
+    #[test]
+    fn the_propagating_phase_velocity_equals_the_medium_speed() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 0 },
+            Boundary::Dirichlet,
+            "Pa",
+        )
+        .with_extent(Some(2.0))
+        .with_body(Some("earth".to_string()));
+        let k = d
+            .carrier_wavenumber()
+            .expect("geometry carries a wavenumber");
+        let v_p = d
+            .phase_velocity_m_s()
+            .expect("scalar branch carries a velocity");
+        let params = crate::media::medium_params_of("earth");
+        let c = characteristic_speed(Medium::Fluid, params.as_ref()).expect("earth sound speed");
+        assert!(k > 0.0);
+        assert!((v_p - c).abs() < 1e-9, "v_p {v_p} vs c {c}");
+    }
+
+    #[test]
+    fn an_elastic_channel_carries_no_single_phase_velocity() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Sphere { l: 0 },
+            Boundary::FreeSurface,
+            "Pa",
+        )
+        .with_extent(Some(6_371_000.0))
+        .with_body(Some("earth".to_string()));
+        assert_eq!(d.phase_velocity_m_s(), None);
+    }
+
+    #[test]
+    fn an_elastic_solid_defaults_to_the_spheroidal_family() {
+        let base = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Sphere { l: 1 },
+            Boundary::FreeSurface,
+            "m",
+        )
+        .with_extent(Some(1.0));
+        assert_eq!(base.family, ModeFamily::Spheroidal);
+        let toroidal = base.clone().with_family(ModeFamily::Toroidal);
+        assert_ne!(base.hash(), toroidal.hash());
+        let fluid = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 1 },
+            Boundary::Dirichlet,
+            "Pa",
+        )
+        .with_extent(Some(1.0));
+        assert_eq!(fluid.family, ModeFamily::Scalar);
+        assert_eq!(ModeFamily::parse("toroidal"), Some(ModeFamily::Toroidal));
+    }
+
+    #[test]
+    fn a_sphere_sector_carries_its_degeneracy() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 2 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert_eq!(d.mode_degeneracy(), Some(5));
+        let line = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert_eq!(line.mode_degeneracy(), None);
+    }
+
+    #[test]
+    fn a_parsed_channel_spec_meets_the_forced_descriptor() {
+        let gravity = ChannelDescriptor::parse_spec(
+            "mass:primary:poisson:elliptic:vacuum:unspecified:none",
+            "m/s^2",
+        )
+        .expect("gravity spec parses");
+        assert_eq!(
+            gravity.hash(),
+            descriptor_for_force("gravity", Medium::Vacuum)
+                .expect("gravity descriptor")
+                .hash()
+        );
+
+        let em = ChannelDescriptor::parse_spec(
+            "energy:primary:maxwell:mixed:vacuum:unspecified:none",
+            "V/m",
+        )
+        .expect("em spec parses");
+        assert_eq!(
+            em.hash(),
+            descriptor_for_force("em", Medium::Vacuum)
+                .expect("em descriptor")
+                .hash()
+        );
+
+        let seismic = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:elastic-solid:unspecified:none",
+            "Pa",
+        )
+        .expect("seismic spec parses");
+        assert_eq!(
+            seismic.hash(),
+            descriptor_for_force("seismic-body", Medium::ElasticSolid)
+                .expect("seismic descriptor")
+                .hash()
+        );
+    }
+
+    #[test]
+    fn a_channel_spec_with_an_unknown_token_is_refused() {
+        let err = ChannelDescriptor::parse_spec(
+            "mass:primary:poisson:elliptic:aether:unspecified:none",
+            "m/s^2",
+        )
+        .expect_err("aether is not a medium");
+        assert!(err.contains("aether"), "the refused token is named: {err}");
+
+        let arity = ChannelDescriptor::parse_spec("mass:poisson:vacuum", "m/s^2")
+            .expect_err("a partial spec is refused");
+        assert!(arity.contains("7 axes"), "the arity is named: {arity}");
+    }
+
+    #[test]
+    fn an_inadmissible_channel_spec_is_refused() {
+        let err = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fourier:parabolic:fluid:unspecified:none",
+            "K",
+        )
+        .expect_err("Fourier carries energy, not mass");
+        assert!(
+            err.contains("inadmissible"),
+            "the refusal names the relation: {err}"
+        );
+    }
+
+    #[test]
+    fn an_eight_axis_spec_carries_the_geometry_extent() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:circle:dirichlet:2.0",
+            "Pa",
+        )
+        .expect("circle channel with extent parses");
+        assert_eq!(d.extent, Some(2.0));
+        let k = d.mode_wavenumbers(3).expect("circle modes");
+        assert_eq!(k.len(), 3);
+        assert!((k[0] - FIRST_BESSEL_J0_ZERO / 2.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_seven_axis_spec_leaves_the_extent_absent() {
+        let d = ChannelDescriptor::parse_spec(
+            "mass:primary:poisson:elliptic:vacuum:line:dirichlet",
+            "m/s^2",
+        )
+        .expect("seven axes parse");
+        assert_eq!(d.extent, None);
+        assert!(d.mode_wavenumbers(3).is_none(), "absent extent is no mode");
+    }
+
+    #[test]
+    fn a_descriptor_round_trips_through_its_spec_token() {
+        let d = ChannelDescriptor::parse_spec(
+            "momentum:primary:wave:hyperbolic:fluid:rectangle(2,3):dirichlet",
+            "Pa",
+        )
+        .expect("rectangle channel parses")
+        .with_extent(Some(2.5));
+        let token = d.spec_token();
+        let back = ChannelDescriptor::parse_spec(&token, "Pa").expect("round-trips");
+        assert_eq!(token, back.spec_token(), "the token is a fixed point");
+        assert_eq!(d, back, "the descriptor survives its own token");
+        assert_eq!(d.hash(), back.hash(), "identity is stable");
+    }
+
+    #[test]
+    fn the_extent_enters_the_channel_identity() {
+        let bare = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:line:dirichlet",
+            "Pa",
+        )
+        .expect("bare parses");
+        let sized = bare.clone().with_extent(Some(1.0));
+        assert_ne!(bare.hash(), sized.hash());
+        assert_ne!(bare, sized);
+    }
+
+    #[test]
+    fn the_species_enters_the_channel_identity_and_round_trips() {
+        let total = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "m^-3",
+        )
+        .expect("total density parses");
+        let n2 = total.clone().with_species(Some("N2".to_string()));
+        assert_ne!(total.hash(), n2.hash());
+        assert_ne!(total, n2);
+        let token = n2.spec_token();
+        let back = ChannelDescriptor::parse_spec(&token, "m^-3").expect("round-trips");
+        assert_eq!(token, back.spec_token(), "the token is a fixed point");
+        assert_eq!(n2, back, "the descriptor survives its own token");
+        assert_eq!(n2.species.as_deref(), Some("N2"));
+    }
+
+    #[test]
+    fn the_unit_is_representation_not_identity() {
+        let si = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "kg/m^3",
+        )
+        .expect("si density parses");
+        let mut cgs = si.clone();
+        cgs.unit = "m^-3";
+        assert_eq!(si, cgs, "the unit is representation, not identity");
+        assert_eq!(si.hash(), cgs.hash(), "the hash agrees with equality");
+    }
+
+    #[test]
+    fn a_foreign_unit_is_refused_and_never_silently_dropped() {
+        let mut reg = ChannelRegistry::with_capacity(4);
+        let si = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "kg/m^3",
+        )
+        .expect("si density parses");
+        let idx = reg
+            .register_checked(si.clone())
+            .expect("first registration");
+        let same = reg
+            .register_checked(si.clone())
+            .expect("a convertible-same unit returns the registered index");
+        assert_eq!(idx, same, "the same representation keeps its index");
+        let mut foreign = si.clone();
+        foreign.unit = "V/m";
+        let conflict = reg
+            .register_checked(foreign)
+            .expect_err("a foreign unit is a loud refusal");
+        assert_eq!(conflict.registered_unit, "kg/m^3");
+        assert_eq!(conflict.incoming_unit, "V/m");
+        assert_eq!(reg.len(), 1, "the refused descriptor is not inserted");
+    }
+
+    #[test]
+    fn units_of_one_dimension_are_convertible_and_a_foreign_dimension_is_not() {
+        assert_eq!(unit_dimension("kg/m^3"), unit_dimension("kg m^-3"));
+        assert_eq!(unit_dimension("V/m"), unit_dimension("kg m s^-3 A^-1"));
+        assert_eq!(unit_dimension("Pa"), unit_dimension("N/m^2"));
+        assert_eq!(unit_dimension("1"), Some([0i8; 7]));
+        assert_ne!(unit_dimension("kg/m^3"), unit_dimension("m^-3"));
+        assert_eq!(unit_dimension("furlongs"), None);
+        assert!(units_convertible("kg/m^3", "kg m^-3"));
+        assert!(units_convertible("V/m", "kg m s^-3 A^-1"));
+        assert!(!units_convertible("kg/m^3", "m^-3"));
+        assert!(!units_convertible("kg/m^3", "V/m"));
+        assert!(units_convertible("furlongs", "furlongs"));
+        assert!(!units_convertible("furlongs", "kg/m^3"));
+    }
+
+    #[test]
+    fn the_register_accepts_one_dimension_written_two_ways() {
+        let mut reg = ChannelRegistry::with_capacity(4);
+        let si = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "kg/m^3",
+        )
+        .expect("si density parses");
+        let idx = reg
+            .register_checked(si.clone())
+            .expect("first registration");
+        let mut alias = si.clone();
+        alias.unit = "kg m^-3";
+        let same = reg
+            .register_checked(alias)
+            .expect("one dimension written two ways stays convertible");
+        assert_eq!(idx, same);
+        let mut other = si.clone();
+        other.unit = "m^-3";
+        assert!(
+            reg.register_checked(other).is_err(),
+            "a different dimension is refused"
+        );
+    }
+
+    #[test]
+    fn a_nonpositive_or_nan_extent_is_refused() {
+        for token in ["0", "-1", "NaN", "furlongs"] {
+            let err = ChannelDescriptor::parse_spec(
+                &format!("energy:primary:wave:hyperbolic:fluid:circle:dirichlet:{token}"),
+                "Pa",
+            )
+            .expect_err("bad extent is refused");
+            assert!(err.contains("extent"), "the refusal names the axis: {err}");
+        }
+    }
+
+    #[test]
+    fn every_live_channel_ref_carries_a_descriptor() {
+        for ft in 0..FIXED_CHANNELS.len() as u8 {
+            assert!(descriptor_for_channel_ref(ft).is_some(), "force type {ft}");
+        }
+        assert!(descriptor_for_channel_ref(10).is_none());
+    }
+
+    #[test]
+    fn p10_descriptor_axes_resolve_in_the_live_registry_and_refuse_otherwise() {
+        let em = descriptor_from_axes(
+            "primary", "energy", "maxwell", "mixed", "vacuum", "none", "V/m",
+        )
+        .expect("the em axes build a descriptor");
+        assert!(
+            live_channel_hash_of(&em).is_some(),
+            "the em descriptor is an exact registry entry"
+        );
+
+        assert!(
+            descriptor_from_axes(
+                "primary", "energy", "maxwell", "warp", "vacuum", "none", "V/m"
+            )
+            .is_err(),
+            "an unknown pde_type is a named refusal, never a default"
+        );
+        assert!(
+            descriptor_from_axes(
+                "primary",
+                "mass",
+                "flux-fourier",
+                "parabolic",
+                "fluid",
+                "none",
+                "W/m^2"
+            )
+            .is_err(),
+            "Fourier couples to energy, not mass — the admissibility relation refuses"
+        );
+    }
+
+    #[test]
+    fn every_channel_ref_round_trips_through_its_descriptor() {
+        for ft in 0..FIXED_CHANNELS.len() as u8 {
+            let d = descriptor_for_channel_ref(ft).expect("descriptor");
+            assert_eq!(channel_ref_of_descriptor(&d), Some(ft), "force type {ft}");
+        }
+        let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
+        assert_eq!(channel_ref_of_descriptor(&em), Some(0));
+        assert_eq!(channel_ref_of_descriptor(&electric), Some(6));
+    }
+
+    #[test]
+    fn em_and_electric_carry_distinct_regimes_on_the_axis() {
+        let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
+        assert_eq!(em.regime, PdeRegime::Radiating);
+        assert_eq!(electric.regime, PdeRegime::QuasiStatic);
+        let derived = descriptor_from_axes(
+            "primary", "energy", "maxwell", "elliptic", "vacuum", "none", "V/m",
+        )
+        .expect("electric axes");
+        assert_eq!(derived.regime, PdeRegime::QuasiStatic);
+        assert_eq!(channel_ref_of_descriptor(&derived), Some(6));
+    }
+
+    #[test]
+    fn the_momentum_creep_channel_carries_crustal_deformation_rates() {
+        assert_eq!(unit_token("mm/yr"), Some("mm/yr"));
+        let d = descriptor_from_axes(
+            "primary",
+            "momentum",
+            "creep",
+            "elliptic",
+            "elastic-solid",
+            "none",
+            "mm/yr",
+        )
+        .expect("a secular crustal deformation rate builds a descriptor");
+        assert_eq!(channel_ref_of_descriptor(&d), Some(9));
+        assert_eq!(d.unit, "mm/yr");
+        assert_eq!(d.regime, PdeRegime::QuasiStatic);
+        assert_eq!(
+            descriptor_for_force("momentum", Medium::ElasticSolid).map(|x| x.hash()),
+            Some(d.hash())
+        );
+        let matching: Vec<u8> = (0..FIXED_CHANNELS.len() as u8)
+            .filter(|&ft| descriptor_for_channel_ref(ft).is_some_and(|fd| fd.hash() == d.hash()))
+            .collect();
+        assert_eq!(matching, vec![9], "the momentum channel stays unique");
+
+        assert_eq!(crate::force::force_id_of("seismic-body"), Some(1));
+        assert_eq!(crate::force::force_id_of("advective"), Some(4));
+
+        assert!(is_admissible(
+            Conserved::Momentum,
+            TransportOp::Creep,
+            Medium::ElasticSolid
+        ));
+        assert!(!is_admissible(
+            Conserved::Momentum,
+            TransportOp::Creep,
+            Medium::Fluid
+        ));
+        assert!(
+            !is_admissible(
+                Conserved::Momentum,
+                TransportOp::Advective,
+                Medium::ElasticSolid
+            ),
+            "momentum stays outside the fluid advection law"
+        );
+    }
+
+    #[test]
+    fn a_live_registry_carries_ten_channels_and_a_stable_fingerprint() {
+        let reg = live_channel_registry();
+        assert_eq!(reg.len(), 10);
+        assert_eq!(reg.schema_hash(), live_schema_hash());
+        assert_eq!(reg.schema_hash(), live_channel_registry().schema_hash());
+    }
+
+    #[test]
+    fn the_fingerprint_changes_when_a_channel_differs() {
+        let full = live_channel_registry();
+        let mut one = ChannelRegistry::with_capacity(CHANNEL_CAP);
+        one.register(descriptor_for_force("em", Medium::Vacuum).expect("em"));
+        assert_ne!(full.schema_hash(), one.schema_hash());
+    }
+
+    fn a_coupling(kind: CouplingKind, from: u64, to: u64) -> Coupling {
+        Coupling {
+            kind,
+            from,
+            to,
+            coefficient: None,
+            unit: "1",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        }
+    }
+
+    #[test]
+    fn registering_a_coupling_dedupes_on_from_to_kind() {
+        let mut reg = CouplingRegistry::with_capacity(4);
+        let a = reg.register(a_coupling(CouplingKind::Hall, 11, 22));
+        let b = reg.register(a_coupling(CouplingKind::Hall, 11, 22));
+        assert_eq!(a, b);
+        assert_eq!(reg.len(), 1);
+        assert!(!reg.is_empty());
+        assert_eq!(reg.pairs().len(), 1);
+        assert!(reg.is_coupled(11, 22, CouplingKind::Hall));
+        assert!(
+            !reg.is_coupled(11, 22, CouplingKind::Pedersen),
+            "the kind is part of the pair key"
+        );
+        assert!(
+            !reg.is_coupled(22, 11, CouplingKind::Hall),
+            "the direction is part of the pair key"
+        );
+    }
+
+    #[test]
+    fn an_absent_coefficient_stays_absent() {
+        let mut reg = CouplingRegistry::with_capacity(1);
+        reg.register(a_coupling(CouplingKind::Thermoelectric, 1, 2));
+        let c = reg
+            .coupling_of(1, 2, CouplingKind::Thermoelectric)
+            .expect("the registered pair resolves");
+        assert_eq!(c.coefficient, None, "absent is never a fabricated 0.0");
+    }
+
+    #[test]
+    fn a_registered_coupling_leaves_the_reduction_untouched() {
+        let phi = [2.0, 4.0, 6.0];
+        let w = [1.0, 1.0, 1.0];
+        let all = [TriState::Present; 3];
+        let before = channel_reduce(&phi, &w, &all);
+        let mut reg = CouplingRegistry::with_capacity(2);
+        reg.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: 0x1,
+            to: 0x2,
+            coefficient: Some(0.25),
+            unit: "kg/(m^3 s)",
+            region: Some("ionosphere".to_string()),
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let after = channel_reduce(&phi, &w, &all);
+        assert_eq!(
+            before, after,
+            "a coupling registration is not a reduction term"
+        );
+    }
+
+    #[test]
+    fn coupling_term_sums_pairs_over_resolved_indices() {
+        let mut channels = ChannelRegistry::with_capacity(4);
+        let from = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let to = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        let i = channels.register(from.clone());
+        let j = channels.register(to.clone());
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::Thermoelectric,
+            from: from.hash(),
+            to: to.hash(),
+            coefficient: Some(0.25),
+            unit: "1",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let phi = [1.0f32, 2.0, 3.0];
+        assert_eq!(pairs.term(&phi, &channels), Some(0.25f32 * phi[i] * phi[j]));
+    }
+
+    #[test]
+    fn an_absent_coupling_coefficient_contributes_nothing() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let a = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let b = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        channels.register(a.clone());
+        channels.register(b.clone());
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::Thermoelectric,
+            from: a.hash(),
+            to: b.hash(),
+            coefficient: None,
+            unit: "1",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let phi = [1.0f32, 2.0, 3.0];
+        assert_eq!(
+            pairs.term(&phi, &channels),
+            None,
+            "an absent coefficient stays absent, never 0.0"
+        );
+    }
+
+    #[test]
+    fn an_unresolved_coupling_hash_is_skipped() {
+        let channels = ChannelRegistry::with_capacity(2);
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::Hall,
+            from: 0xAA,
+            to: 0xBB,
+            coefficient: Some(0.5),
+            unit: "1",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let phi = [1.0f32, 2.0];
+        assert_eq!(
+            pairs.term(&phi, &channels),
+            None,
+            "a hash with no channel contributes nothing"
+        );
+    }
+
+    #[test]
+    fn a_friction_exchange_is_antisymmetric_through_density() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let from = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let to = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        let i = channels.register(from.clone());
+        let j = channels.register(to.clone());
+        let rate = 0.25f64;
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: from.hash(),
+            to: to.hash(),
+            coefficient: Some(rate),
+            unit: "kg/(m^3 s)",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(from.hash(), to.hash(), CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [2.0f32, 5.0];
+        let rho = [3.0f32, 7.0];
+        let (fi, from_delta, ti, to_delta) = pairs
+            .exchange(c, &phi, &rho, &channels)
+            .expect("the resolved friction pair exchanges");
+        assert_eq!(fi, i);
+        assert_eq!(ti, j);
+        assert_eq!(from_delta, rate as f32 * (phi[j] - phi[i]));
+        let net = rho[i] * from_delta + rho[j] * to_delta;
+        assert!(net.abs() < 1e-4, "rho-weighted exchange sums to zero");
+    }
+
+    #[test]
+    fn an_absent_coupling_coefficient_yields_no_exchange() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let from = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let to = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        channels.register(from.clone());
+        channels.register(to.clone());
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: from.hash(),
+            to: to.hash(),
+            coefficient: None,
+            unit: "kg/(m^3 s)",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(from.hash(), to.hash(), CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [1.0f32, 2.0];
+        let rho = [1.0f32, 1.0];
+        assert_eq!(
+            pairs.exchange(c, &phi, &rho, &channels),
+            None,
+            "an absent coefficient stays absent, never 0.0"
+        );
+    }
+
+    #[test]
+    fn an_unresolved_exchange_hash_is_skipped() {
+        let channels = ChannelRegistry::with_capacity(2);
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: 0xAA,
+            to: 0xBB,
+            coefficient: Some(0.5),
+            unit: "kg/(m^3 s)",
+            region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(0xAA, 0xBB, CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [1.0f32, 2.0];
+        let rho = [1.0f32, 1.0];
+        assert_eq!(
+            pairs.exchange(c, &phi, &rho, &channels),
+            None,
+            "a hash with no channel exchanges nothing"
+        );
+    }
+
+    fn a_mass_descriptor() -> ChannelDescriptor {
+        ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        )
+    }
+
+    #[test]
+    fn a_resolved_friction_exchange_is_antisymmetric_through_density() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor().with_species(Some("ion".to_string()));
+        let neutral = a_mass_descriptor().with_species(Some("neutral".to_string()));
+        let ion_h = ion.hash();
+        let neutral_h = neutral.hash();
+        channels.register(ion);
+        channels.register(neutral);
+        let m_ion = 30.0f64;
+        let m_neutral = 16.0f64;
+        let k = 0.5f64;
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: ion_h,
+            to: neutral_h,
+            coefficient: Some(k),
+            unit: "m3 / s",
+            region: None,
+            density_from: Some(DensityRef {
+                channel_ref: ion_h,
+                kind: DensityKind::Number,
+                species_mass: Some(m_ion),
+            }),
+            density_to: Some(DensityRef {
+                channel_ref: neutral_h,
+                kind: DensityKind::Number,
+                species_mass: Some(m_neutral),
+            }),
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(ion_h, neutral_h, CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [2.0f32, 5.0];
+        let (_, from_delta, _, to_delta) = pairs
+            .exchange_resolved(c, &phi, &channels)
+            .expect("the resolved friction pair exchanges");
+        let rho_i = m_ion as f32 * phi[0];
+        let rho_n = m_neutral as f32 * phi[1];
+        let net = rho_i * from_delta + rho_n * to_delta;
+        assert!(net.abs() < 1e-3, "rho-weighted exchange sums to zero");
+        let rate = k as f32 * rho_n / (m_ion as f32 + m_neutral as f32);
+        assert!(
+            (from_delta - rate * (phi[1] - phi[0])).abs() < 1e-4,
+            "the ion-side per-mass rate is K·rho_n/(m_i+m_n)"
+        );
+    }
+
+    #[test]
+    fn a_number_density_ref_without_a_species_mass_yields_no_resolved_exchange() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = a_mass_descriptor();
+        let ion_h = ion.hash();
+        let neutral_h = neutral.hash();
+        channels.register(ion);
+        channels.register(neutral);
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: ion_h,
+            to: neutral_h,
+            coefficient: Some(0.5),
+            unit: "m3 / s",
+            region: None,
+            density_from: Some(DensityRef {
+                channel_ref: ion_h,
+                kind: DensityKind::Number,
+                species_mass: None,
+            }),
+            density_to: Some(DensityRef {
+                channel_ref: neutral_h,
+                kind: DensityKind::Number,
+                species_mass: Some(16.0),
+            }),
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(ion_h, neutral_h, CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [2.0f32, 5.0];
+        assert_eq!(
+            pairs.exchange_resolved(c, &phi, &channels),
+            None,
+            "a number density needs its species mass; absent stays absent"
+        );
+    }
+
+    #[test]
+    fn a_mass_kind_density_ref_carries_the_density_untouched() {
+        let mut channels = ChannelRegistry::with_capacity(1);
+        let d = a_mass_descriptor();
+        let h = d.hash();
+        channels.register(d);
+        let r = DensityRef {
+            channel_ref: h,
+            kind: DensityKind::Mass,
+            species_mass: None,
+        };
+        let pairs = CouplingRegistry::with_capacity(0);
+        let phi = [3.5f32];
+        assert_eq!(pairs.density_at(&r, &phi, &channels), Some(3.5));
+    }
+
+    fn an_interface(cond: InterfaceCond, from: u64, to: u64) -> Interface {
+        Interface {
+            from,
+            to,
+            cond,
+            region: None,
+        }
+    }
+
+    #[test]
+    fn registering_an_interface_dedupes_on_from_to() {
+        let mut reg = InterfaceRegistry::with_capacity(4);
+        let a = reg.register(an_interface(InterfaceCond::Matched, 7, 9));
+        let b = reg.register(an_interface(InterfaceCond::Matched, 7, 9));
+        assert_eq!(a, b);
+        assert_eq!(reg.len(), 1);
+        assert!(!reg.is_empty());
+        assert_eq!(reg.links().len(), 1);
+        assert!(reg.is_interface(7, 9));
+    }
+
+    #[test]
+    fn an_unknown_pair_is_not_an_interface() {
+        let mut reg = InterfaceRegistry::with_capacity(4);
+        reg.register(an_interface(InterfaceCond::Reflecting, 1, 2));
+        assert!(!reg.is_interface(2, 1), "the direction is part of the key");
+        assert!(!reg.is_interface(1, 3));
+        assert!(reg.interface_of(2, 1).is_none());
+        assert!(reg.interface_of(9, 9).is_none());
+    }
+
+    #[test]
+    fn the_condition_is_not_part_of_the_pair_key() {
+        let mut reg = InterfaceRegistry::with_capacity(4);
+        let a = reg.register(an_interface(InterfaceCond::Dirichlet, 4, 5));
+        let b = reg.register(an_interface(InterfaceCond::Neumann, 4, 5));
+        assert_eq!(a, b, "the same (from,to) pair is one link");
+        assert_eq!(reg.len(), 1);
+        let link = reg.interface_of(4, 5).expect("the link resolves");
+        assert_eq!(
+            link.cond,
+            InterfaceCond::Dirichlet,
+            "the first registered condition stands"
+        );
+    }
+
+    #[test]
+    fn a_coupling_line_parses_pending_rate_and_number_density() {
+        let spec = coupling_spec_from_line(
+            "coupling ion-neutral-friction from ion to neutral rate pending density_from number:ion:30.0 density_to mass:neutral region ionosphere",
+        )
+        .expect("the coupling directive parses");
+        assert_eq!(spec.kind, CouplingKind::IonNeutralFriction);
+        assert_eq!(spec.from, "ion");
+        assert_eq!(spec.to, "neutral");
+        assert_eq!(
+            spec.rate, None,
+            "pending is absent, never a fabricated value"
+        );
+        assert_eq!(spec.density_from.kind, DensityKind::Number);
+        assert_eq!(spec.density_from.alias, "ion");
+        assert_eq!(spec.density_from.species_mass, Some(30.0));
+        assert_eq!(spec.density_to.kind, DensityKind::Mass);
+        assert_eq!(spec.density_to.alias, "neutral");
+        assert_eq!(spec.density_to.species_mass, None);
+        assert_eq!(spec.region.as_deref(), Some("ionosphere"));
+    }
+
+    #[test]
+    fn from_specs_resolves_alias_names_to_channel_hashes() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Number,
+                species_mass: Some(30.0),
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("ionosphere".to_string()),
+            conserves: None,
+            quasi_neutral: None,
+        }];
+        let reg = CouplingRegistry::from_specs(
+            &specs,
+            &channels,
+            &ConstraintRegistry::from_constraints(&[]),
+        );
+        assert_eq!(reg.len(), 1);
+        let c = reg
+            .coupling_of(ion.hash(), neutral.hash(), CouplingKind::IonNeutralFriction)
+            .expect("the resolved coupling stands");
+        assert_eq!(c.coefficient, None);
+        assert_eq!(
+            c.density_from.as_ref().and_then(|r| r.species_mass),
+            Some(30.0)
+        );
+        assert_eq!(c.density_from.map(|r| r.channel_ref), Some(ion.hash()));
+    }
+
+    #[test]
+    fn from_specs_skips_an_unresolved_alias() {
+        let channels = ChannelRegistry::with_capacity(1);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: Some(0.5),
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Number,
+                species_mass: Some(30.0),
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: None,
+            conserves: None,
+            quasi_neutral: None,
+        }];
+        let reg = CouplingRegistry::from_specs(
+            &specs,
+            &channels,
+            &ConstraintRegistry::from_constraints(&[]),
+        );
+        assert_eq!(reg.len(), 0, "an unresolved alias builds no coupling");
+    }
+
+    #[test]
+    fn constraint_registry_refuses_a_duplicate_name() {
+        let constraints = vec![
+            QuasiNeutralConstraint {
+                name: "qn".to_string(),
+                region: "ionosphere".to_string(),
+            },
+            QuasiNeutralConstraint {
+                name: "qn".to_string(),
+                region: "magnetosphere".to_string(),
+            },
+        ];
+        let reg = ConstraintRegistry::from_constraints(&constraints);
+        assert_eq!(
+            reg.get("qn").map(|c| c.region.as_str()),
+            Some("ionosphere"),
+            "the first declaration keeps its region"
+        );
+    }
+
+    #[test]
+    fn from_specs_refuses_an_undeclared_quasi_neutral() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("ionosphere".to_string()),
+            conserves: None,
+            quasi_neutral: Some("missing".to_string()),
+        }];
+        let constraints = ConstraintRegistry::from_constraints(&[]);
+        let reg = CouplingRegistry::from_specs(&specs, &channels, &constraints);
+        assert_eq!(reg.len(), 0, "an undeclared constraint builds no coupling");
+    }
+
+    #[test]
+    fn from_specs_refuses_a_quasi_neutral_region_mismatch() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let constraints = ConstraintRegistry::from_constraints(&[QuasiNeutralConstraint {
+            name: "qn".to_string(),
+            region: "ionosphere".to_string(),
+        }]);
+        let mut spec = CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("magnetosphere".to_string()),
+            conserves: None,
+            quasi_neutral: Some("qn".to_string()),
+        };
+        let reg = CouplingRegistry::from_specs(&[spec.clone()], &channels, &constraints);
+        assert_eq!(reg.len(), 0, "a mismatched region builds no coupling");
+        spec.region = Some("ionosphere".to_string());
+        let reg = CouplingRegistry::from_specs(&[spec], &channels, &constraints);
+        assert_eq!(reg.len(), 1, "a matching region builds the coupling");
+    }
+
+    #[test]
+    fn charge_imbalance_sums_charge_times_density() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        )
+        .with_charge(Some(1.0))
+        .with_alias(Some("ion".to_string()));
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        )
+        .with_charge(Some(-1.0))
+        .with_alias(Some("neutral".to_string()));
+        let ion_h = ion.hash();
+        let neutral_h = neutral.hash();
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("ionosphere".to_string()),
+            conserves: None,
+            quasi_neutral: Some("qn".to_string()),
+        }];
+        let constraints = ConstraintRegistry::from_constraints(&[QuasiNeutralConstraint {
+            name: "qn".to_string(),
+            region: "ionosphere".to_string(),
+        }]);
+        let reg = CouplingRegistry::from_specs(&specs, &channels, &constraints);
+        let mut phi = vec![0.0f32; channels.len()];
+        phi[channels.index_of(ion_h).expect("ion resolves")] = 3.0;
+        phi[channels.index_of(neutral_h).expect("neutral resolves")] = 3.0;
+        let constraint = constraints.get("qn").expect("qn is declared");
+        assert_eq!(
+            reg.charge_imbalance(constraint, &phi, &channels),
+            Some(0.0),
+            "1.0·3.0 + (-1.0)·3.0 sums to zero"
+        );
+    }
+}

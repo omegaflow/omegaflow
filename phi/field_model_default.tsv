@@ -1,0 +1,7 @@
+# default, not measured: one value written by the compiler for the whole format
+ae_ua		15
+pds3_fixed_width		4800
+pds3_fixed_width		150
+(ohne format)		0
+openneuro_pd_eeg		0.003333
+(ohne format)		31536000

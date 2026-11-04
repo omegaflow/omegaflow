@@ -1,0 +1,22 @@
+name: corot-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  corot:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"corot.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"B/corot/Bright_star\" --columns 'ra:RAJ2000;dec:DEJ2000;mag:Vmag;teff:Teff;logg:logg' --skip-null mag --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' --out corot.json"}
+        ]

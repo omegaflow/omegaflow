@@ -1,0 +1,36 @@
+name: port-count
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  count:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Convert the source register and count the pending
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow -- --port "phi/sources.φ" port-converted.φ
+            awk '/^# pending/{n++} END{print "pending field lines: " (n+0)}' port-converted.φ
+            awk '/^url /{if(p>0)c++; b++; p=0} /^# pending/{p++} END{if(p>0)c++; print "pending blocks: " (c+0) " of " (b+0)}' port-converted.φ
+          } > port-count.txt 2>&1
+          awk '/^url /{u=$2} /^# pending/{print u"\t"$0}' port-converted.φ > port-pending.tsv
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: port-count
+          path: |
+            port-count.txt
+            port-pending.tsv
+            port-converted.φ

@@ -1,0 +1,166 @@
+name: tools-build
+on:
+  workflow_dispatch:
+  push:
+    paths: ['tools/**','src/**','bin/**','Cargo.toml','Cargo.lock']
+permissions:
+  contents: write
+concurrency:
+  group: tools-build-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - uses: mozilla-actions/sccache-action@v0.0.9
+      continue-on-error: true
+    - name: Enable sccache when present
+      run: |
+        if command -v sccache >/dev/null 2>&1; then
+          {
+            echo "RUSTC_WRAPPER=sccache"
+            echo "SCCACHE_GHA_ENABLED=true"
+          } >> "$GITHUB_ENV"
+        fi
+    - uses: Swatinem/rust-cache@v2
+      with:
+        shared-key: tools-build
+        cache-targets: true
+    # Which published crates this push touched. A workflow_dispatch (or a core
+    # change) builds everything; otherwise only the changed crate is rebuilt and
+    # the rest of the release is carried over — the core rebuild is skipped.
+    - name: Which published crates changed
+      id: changed
+      env:
+        BEFORE: ${{ github.event.before }}
+        AFTER: ${{ github.sha }}
+      run: |
+        build_all=0
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then build_all=1; fi
+        d=""
+        if [ "$build_all" = "0" ] && [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+          d="$(git diff --name-only "$BEFORE" "$AFTER" 2>/dev/null || echo '')"
+        fi
+        if [ -z "$d" ]; then build_all=1; fi
+        if printf '%s\n' "$d" | grep -qE '^(src/|bin/|Cargo[.]toml$|Cargo[.]lock$)'; then build_all=1; fi
+        reg=0; utl=0; gat=0; svc=0; cor=0; app=0
+        if [ "$build_all" = "1" ]; then reg=1; utl=1; gat=1; svc=1; cor=1; app=1; fi
+        if printf '%s\n' "$d" | grep -q '^tools/register/'; then reg=1; fi
+        if printf '%s\n' "$d" | grep -q '^tools/utils/'; then utl=1; fi
+        if printf '%s\n' "$d" | grep -q '^tools/service/'; then svc=1; fi
+        if printf '%s\n' "$d" | grep -q '^tools/measure/'; then cor=1; fi
+        if printf '%s\n' "$d" | grep -q '^tools/app/'; then app=1; fi
+        printf 'reg=%s\nutl=%s\ngat=%s\nsvc=%s\ncor=%s\napp=%s\n' "$reg" "$utl" "$gat" "$svc" "$cor" "$app" >> "$GITHUB_OUTPUT"
+    # Carry the previous release's binaries into target/release so an unchanged
+    # crate need not be rebuilt. The manifest doubles as the completeness guard.
+    - name: Carry over the previous release
+      env:
+        GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      run: |
+        mkdir -p target/release
+        gh release download tools-latest --repo omegaflow/omegaflow --dir target/release --clobber 2>/dev/null || true
+        if [ -f target/release/tools.manifest ]; then
+          awk '!/^git_sha=/{print $1}' target/release/tools.manifest | while read -r t; do
+            chmod +x "target/release/$t" 2>/dev/null || true
+          done
+        fi
+    - name: Build the changed published crates
+      env:
+        GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      run: |
+        set -e
+        expected=0
+        if [ -f target/release/tools.manifest ]; then
+          expected=$(awk '!/^git_sha=/' target/release/tools.manifest | wc -l)
+        fi
+        got=$(find target/release -maxdepth 1 -type f -executable ! -name '*.so' | wc -l)
+        carry_ok=0
+        if [ "$expected" -gt 0 ] && [ "$got" -ge "$expected" ]; then carry_ok=1; fi
+        # Fallback: no complete carried set -> build the whole published set.
+        if [ "$carry_ok" = "0" ]; then
+          echo "carry incomplete (expected=$expected got=$got) — building the full published set"
+          cargo build --release --bins -p omegaflow-register -p omegaflow-utils -p omegaflow-gate
+          cargo build --release -p omegaflow-service
+          cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
+          exit 0
+        fi
+        if [ "${{ steps.changed.outputs.reg }}" = "1" ]; then cargo build --release --bins -p omegaflow-register; fi
+        if [ "${{ steps.changed.outputs.utl }}" = "1" ]; then cargo build --release --bins -p omegaflow-utils; fi
+        if [ "${{ steps.changed.outputs.gat }}" = "1" ]; then cargo build --release --bins -p omegaflow-gate; fi
+        if [ "${{ steps.changed.outputs.svc }}" = "1" ]; then cargo build --release -p omegaflow-service; fi
+        if [ "${{ steps.changed.outputs.cor }}" = "1" ]; then
+          cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
+        fi
+        if [ "${{ steps.changed.outputs.app }}" = "1" ]; then
+          cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
+        fi
+    - name: Tool list
+      run: |
+        # The published set is derived from the built binaries, never a hand
+        # list: target/release holds the bins of the published crates
+        # (register, utils, gate, service) and the core
+        # omegaflow bin. A new bin in a published crate is published
+        # automatically and can no longer be silently omitted. *.so is not a tool.
+        TOOLS=$(find target/release -maxdepth 1 -type f -executable ! -name '*.so' -printf '%f\n' | sort | tr '\n' ' ')
+        echo "TOOLS=$TOOLS" >> "$GITHUB_ENV"
+    - name: Write tools.manifest
+      env:
+        TOOLS_SHA: ${{ github.sha }}
+      run: |
+        {
+          echo "git_sha=${TOOLS_SHA}"
+          for t in $TOOLS; do
+            echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
+          done
+        } > tools.manifest
+    - uses: taiki-e/install-action@cargo-cyclonedx
+    - name: Stückliste — SBOM des Werkzeug-Baums
+      run: |
+        cargo cyclonedx --format json --all-features
+        sbom=$(find . -name '*.cdx.json' -not -path './target/*' | head -1)
+        if [ -z "$sbom" ]; then
+          echo "sbom: cargo cyclonedx wrote no *.cdx.json — the release ships without a bill of materials" >&2
+          exit 1
+        fi
+        cp "$sbom" sbom.cdx.json
+        echo "sbom: $(jq '.components | length' sbom.cdx.json) components from $sbom"
+    - name: Sign the assets — the origin is proven, not asserted
+      env:
+        SIGNING_KEY: ${{ secrets.OMEGAFLOW_SIGNING_KEY }}
+      run: |
+        # secrets.OMEGAFLOW_SIGNING_KEY has never been set (measured 2026-10-29:
+        # 53 repo secrets, none signing). A missing key must not stop the release:
+        # the manifest then says signing=none, so nothing claims an origin it
+        # does not have. A red step here froze every tool at 2026-10-27.
+        if [ -z "$SIGNING_KEY" ]; then
+          echo "signing=none" >> tools.manifest
+          echo "signing: no key — tools.manifest carries signing=none, the release ships unsigned" >&2
+          exit 0
+        fi
+        printf '%s\n' "$SIGNING_KEY" > /tmp/sign_key
+        chmod 600 /tmp/sign_key
+        echo "signing=ed25519" >> tools.manifest
+        for f in tools.manifest sbom.cdx.json; do
+          ssh-keygen -Y sign -f /tmp/sign_key -n file "$f"
+        done
+        echo "signed: tools.manifest.sig sbom.cdx.json.sig"
+    - name: Publish to tools-latest
+      env:
+        GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      run: |
+        gh release view tools-latest --repo omegaflow/omegaflow >/dev/null 2>&1 || \
+          gh release create tools-latest --title tools-latest --generate-notes --repo omegaflow/omegaflow
+        ARGS=""
+        for t in $TOOLS; do ARGS="$ARGS target/release/$t"; done
+        SIGS=""
+        for s in tools.manifest.sig sbom.cdx.json.sig; do
+          if [ -f "$s" ]; then SIGS="$SIGS $s"; fi
+        done
+        gh release upload tools-latest $ARGS tools.manifest $SIGS sbom.cdx.json --clobber --repo omegaflow/omegaflow

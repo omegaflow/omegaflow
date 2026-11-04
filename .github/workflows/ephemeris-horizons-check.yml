@@ -1,0 +1,50 @@
+name: ephemeris-horizons-check
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ephemeris-horizons-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the eight planet ephemeris bins from the CDN
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov
+          for attempt in 1 2 3; do
+            gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --pattern 'ephemeris_mercury.bin' --pattern 'ephemeris_venus.bin' \
+              --pattern 'ephemeris_earth.bin' --pattern 'ephemeris_mars.bin' \
+              --pattern 'ephemeris_jupiter.bin' --pattern 'ephemeris_saturn.bin' \
+              --pattern 'ephemeris_uranus.bin' --pattern 'ephemeris_neptune.bin' \
+              --clobber --dir data/ssd.jpl.nasa.gov \
+              && break
+            echo "planet corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/ssd.jpl.nasa.gov/ephemeris_earth.bin
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > ephemeris-horizons-check.txt
+      - name: Check the Chebyshev granules of each planet against live Horizons vectors
+        run: |
+          for body in mercury venus earth mars jupiter saturn uranus neptune; do
+            cargo run --release -p omegaflow-harvest --bin ephemeris_horizons_check -- \
+              --body "$body" --ephem "data/ssd.jpl.nasa.gov/ephemeris_${body}.bin" \
+              --window-start 2451545.0 --window-years 30 --step-days 10 \
+              >> ephemeris-horizons-check.txt 2>&1
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ephemeris-horizons-check
+          path: ephemeris-horizons-check.txt

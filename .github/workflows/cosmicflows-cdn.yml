@@ -1,0 +1,22 @@
+name: cosmicflows-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  cosmicflows:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"cosmicflows_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"cosmicflows_cf4.json","args":"--out cosmicflows_cf4.json"}
+        ]

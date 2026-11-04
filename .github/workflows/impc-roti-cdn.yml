@@ -1,0 +1,22 @@
+# harvest: format=impc_roti asset=present arm=impc_roti_compiler pattern=^impc_roti\.bin$ idempotent=true timeout=300 tag=data.impc.dlr.de
+
+name: impc-roti-cdn
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  impc-roti:
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"impc_roti_compiler","netloc":"data.impc.dlr.de","asset":"impc_roti.bin","refresh":true}
+        ]

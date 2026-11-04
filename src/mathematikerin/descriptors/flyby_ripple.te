@@ -1,0 +1,38 @@
+# flyby_ripple.te — der Vorbeiflug auf Koinzidenz, Pass-Raster, alle gegen alle.
+#
+# Fragenform: nicht "welche Zahl", sondern "welche Fäden bewegen sich im selben
+# Fenster". Kein Hypothesenvorlauf, keine Vorauswahl nach Plausibilität — jeder
+# Faden gegen jeden. Das Monatsraster von ripple_scan ist zu grob: der Vorbeiflug
+# hat 39 Pässe in 24 Tagen, die Alias-Frequenzen (Erddrehung, Passrhythmus,
+# Sonnenwinkel) liegen bei Stunden.
+#
+# Regel (bindend/sources.md E6): Parameter stehen im Deskriptor, nicht im Code.
+# Das Raster ist gewählt, nicht gemessen: 3600 s ist die Kadenz, in der die
+# TDM-Blöcke getaktet sind.
+#
+# Der Bestand: das Register trägt 7765 `field`-Zeilen (phi/sources.tsv), fast alle
+# in ICRS/TDB gefaltet und mehrfach validiert. Dieses Raster führt die Fäden, die
+# im Fenster 17.02.–21.03.2005 stündlich belegt sind. Ein Faden ohne Datei ist
+# `pending`, kein `absent` — er ist nicht gemessen, nicht widerlegt.
+#
+# Kandidaten (Sonne → Erde, dann Bord und Boden):
+#   Sonne      f107, xrs_xrsa, eve_1032, eve_131, imf_bz_gsm, imf_bt, wind_speed,
+#              wind_density, kp_3h, dst, ae, newell_dphi
+#   Erde       swarm_vtec, tec_global, aia_304, nino34, qbo_30hpa, d20
+#   Bord       resid_nn11, resid_dss24, resid_dss54, tropo_dry, sun_angle,
+#              pass_gap, att_error, srp, albedo
+#
+# Erwartung: springt im selben Fenster wie das Residuum auch ein Umgebungsfaden,
+# ist das ein Systematik-Kandidat; springt keiner, steht die Anomalie allein.
+# Ein Zwilling ist ein Testergebnis, kein Urteil.
+
+ripple pass 3600
+channels f107,xrs_xrsa,eve_1032,eve_131,imf_bz_gsm,imf_bt,wind_speed,wind_density,kp_3h,dst,ae,newell_dphi,swarm_vtec,tec_global,aia_304,nino34,qbo_30hpa,d20,resid_nn11,resid_dss24,resid_dss54,tropo_dry,sun_angle,pass_gap,att_error,srp,albedo
+series resid_nn11 sources/esa.int/rosetta-flyby-dp-0001/series/resid_nn11.txt
+series resid_dss24 sources/esa.int/rosetta-flyby-dp-0001/series/resid_dss24.txt
+series tropo_dry sources/esa.int/rosetta-flyby-dp-0001/series/tropo_dry.txt
+series sun_angle sources/esa.int/rosetta-flyby-dp-0001/series/sun_angle.txt
+separation 2
+edge 3
+keep 4
+min-bins 12

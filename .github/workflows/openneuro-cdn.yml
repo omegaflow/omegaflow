@@ -1,0 +1,58 @@
+name: openneuro-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: OpenNeuro dataset ID
+        required: false
+        default: ds005034
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  openneuro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if both EEG assets already exist on the CDN
+        id: idempotence
+        if: inputs.dataset == 'ds005034'
+        run: |
+          present=$(gh release view openneuro.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null)
+          if echo "$present" | grep -qx "sub-02_ses-verum_task-rest_eeg.bin" \
+             && echo "$present" | grep -qx "sub-02_ses-sham_task-rest_eeg.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "both EEG assets already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "EEG asset(s) missing — compiling and manifesting"
+          fi
+      - name: Dataset filters — the ds005034 pair carries subject/task, a probe carries none
+        id: filters
+        run: |
+          if [ "${{ inputs.dataset }}" = "ds005034" ]; then
+            echo "args=--subject sub-02 --task rest" >> "$GITHUB_OUTPUT"
+          else
+            echo "args=" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Compile the OpenNeuro dataset and upload to CDN
+        if: inputs.dataset != 'ds005034' || steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin openneuro_compiler -- \
+            --ci-mode --dataset "${{ inputs.dataset }}" ${{ steps.filters.outputs.args }}
+      - name: No IEEG assets on the CDN
+        run: |
+          gh release view openneuro.org --repo omegaflow/sources --json assets \
+            --jq '.assets[].name' | grep '_ieeg.bin' | while read -r a; do
+              gh release delete-asset openneuro.org "$a" --repo omegaflow/sources --yes
+            done || true
