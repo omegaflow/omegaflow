@@ -1,38 +1,34 @@
-# API Keys für omegaflow
+# API keys
 
-Keys werden ausschließlich als **GitHub-Secrets** hinterlegt und **niemals** in
-Repo, Docker-Image oder Laufzeit-Environment des Servers geschrieben.
+Keys live as GitHub secrets and never in the repository, an image or the
+server environment.
 
-Der Workflow `.github/workflows/health-check.yml` liest die Secrets,
-holt die geschützten Daten von den APIs und veröffentlicht sie als Release-Assets
-auf domain-basierten Releases im Repo `omegaflow/sources`.
+The harvest workflows read the secrets, fetch the protected data and publish it
+as release assets on per-domain releases in the data repository. The Rust
+server (Archivar) reads only those release assets and never sees a key. A
+missing secret means the source is skipped, not filled.
 
-Der Rust-Server (Archivar) lädt nur diese öffentlichen Release-Assets — er sieht
-keinen API-Key. Fehlt ein Secret, wird die zugehörige Datenquelle schlicht
-übersprungen (kein Secret hinterlegt).
-
-## Secrets anlegen
+## Where a secret goes
 
 GitHub → Settings → Secrets and variables → Actions → New repository secret.
 
-| GitHub-Secret | Platzhalter in sources.φ | Datenfile (Release) | Registrierung |
-|---|---|---|---|
-| `EBIRD_API_KEY` | — (via Release) | `biosphere_ebird_recent.json` | https://ebird.org/api/keygen (Cornell-Account) |
-| `OPENAQ_API_KEY` | — | `atmosphere_openaq_pm25.json`, `atmosphere_openaq_pm10.json` | https://explore.openaq.org/register |
-| `FIRMS_MAP_KEY` | — | `geosphere_firms_viirs_global_nrt.csv`, `geosphere_firms_modis_global_nrt.csv` | https://firms.modaps.eosdis.nasa.gov/api/area/ → „Get MAP_KEY" (mit Earthdata-Login) |
-| `EARTHDATA_EDL_TOKEN` | — | `astro_nasa_cmr_*.json` via `cmr.earthdata.nasa.gov` Release | https://urs.earthdata.nasa.gov → Profil → „Generate Token" |
-| `CATALOGS_REPO` *(optional)* | — | — | `omegaflow/sources` (Standard) |
-| `OMEGAFLOW_TOKEN` | — | — | classic PAT mit `public_repo`-Scope (Schreibzugriff auf `omegaflow/sources`, eigenes 5.000/h-Konto-Bucket), sonst fällt der Workflow auf `GITHUB_TOKEN` zurück (nur eigenes Repo) |
+| Secret | Data file | Registration |
+|---|---|---|
+| `EBIRD_API_KEY` | `biosphere_ebird_recent.json` | https://ebird.org/api/keygen |
+| `OPENAQ_API_KEY` | `atmosphere_openaq_pm25.json`, `atmosphere_openaq_pm10.json` | https://explore.openaq.org/register |
+| `FIRMS_MAP_KEY` | `geosphere_firms_viirs_global_nrt.csv`, `geosphere_firms_modis_global_nrt.csv` | https://firms.modaps.eosdis.nasa.gov/api/area/ |
+| `EARTHDATA_EDL_TOKEN` | `astro_nasa_cmr_*.json` via `cmr.earthdata.nasa.gov` | https://urs.earthdata.nasa.gov |
+| `OMEGAFLOW_TOKEN` | release uploads to the data repository | a classic PAT with `public_repo` |
 
-## Ablauf
+## The flow
 
-1. Secrets oben im GitHub-Repo setzen.
-2. `Actions` → `Refresh Protected Data` → `Run workflow` (oder auf den 3-Stunden-Cron warten).
-3. Der Workflow erstellt/aktualisiert die domain-basierten Releases auf `omegaflow/sources`.
-4. Der Server lädt die Release-Assets als normale Sources (siehe `phi/sources.φ`).
+1. Set the secrets above.
+2. Actions → the harvest workflow for the source → Run workflow, or wait for the
+   schedule.
+3. The workflow creates or updates the per-domain releases.
+4. The server reads the release assets as ordinary sources (`phi/sources.φ`).
 
-## Lokale Entwicklung
+## Local work
 
-Für lokale Tests genügt `cargo run`; die Release-Sources laufen auch ohne Secrets,
-sobald einmal ein Release gepublished wurde. Falls eine geschützte Quelle nicht
-gefüllt ist, liefert sie einfach keine Samples.
+`cargo run` works without secrets. A protected source simply delivers no
+samples until its release exists.

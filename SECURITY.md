@@ -1,33 +1,21 @@
-# Sicherheitsfunde
+# Security
 
-Diese Datei ist der Meldeweg. Wer eine Lücke findet, meldet sie **privat**, nicht
-im offenen Issue.
+A promise, not an intention.
 
-## Der Weg
+## In scope
 
-GitHub Security Advisories:
+- gaps in the code of this repository;
+- gaps in the assets that the CDN delivers;
+- a misconfiguration that exposes data: a key, a token, a personal field inside
+  an asset.
+
+## Out of scope
+
+A wrong measurement. That is a subject matter error and belongs in the open as
+an issue, with the source, the date and the number that does not hold.
+
+## How to report
+
 https://github.com/omegaflow/omegaflow/security/advisories/new
 
-Das ist ein privater Kanal: der Bericht ist nur für die Maintainer sichtbar, bis
-er veröffentlicht wird.
-
-## Fristen
-
-- Eingang bestätigt: 7 Tage.
-- Erste Einschätzung (betroffen / nicht betroffen, Schwere): 30 Tage.
-- Behebung oder benannter Zwischenstand: 90 Tage.
-
-Wird eine Frist nicht gehalten, steht der Grund im Advisory — eine Frist ist eine
-Zusage, keine Absicht.
-
-## Was dazugehört
-
-- Lücken im Code dieses Repositories.
-- Lücken in Assets, die der CDN (`omegaflow/sources`) ausliefert.
-- Fehlkonfiguration, die Daten preisgibt (Schlüssel, Token, personenbezogene
-  Felder in einem Asset).
-
-## Was nicht hierher gehört
-
-Falsche Messwerte. Die sind ein fachlicher Fehler und gehören als Issue ins
-offene Repository — mit Quelle, Datum und der Zahl, die nicht stimmt.
+Private, like a security finding. An answer follows within seven days.

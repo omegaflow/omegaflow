@@ -1,29 +1,28 @@
 # Changelog
 
-Format nach Keep a Changelog 1.1, Versionen nach SemVer 2.0.0.
+Format follows Keep a Changelog 1.1, versions follow SemVer 2.0.0.
 
 ## [Unreleased]
 
 ### Added
 
-- `omegaflow-membrane` — das Feld als eigenes Paket: ω-Loop, die zwei
-  GPU-Arbeiter, die Radiatoren und ihre zwei Sonden. Der Kern hängt an keinem
-  Werkzeug mehr; `wgpu` liegt nur dort.
-- `ci_matrix_scan` — jedes Workspace-Mitglied braucht einen `nextest`-Schritt,
-  kein `--bin`-Filter.
-- `test_shape_scan` — keine `allow`s, keine Tests, die nur die Existenz prüfen.
+- `omegaflow-membrane` — the field as its own package: the omega loop, the two
+  GPU workers, the radiators and their two probes. The core depends on no tool;
+  `wgpu` lives there and nowhere else.
+- `ci_matrix_scan` — every workspace member needs a `nextest` step, no `--bin`
+  filter.
+- `test_shape_scan` — no `allow`s, no tests that only check existence.
 
 ### Changed
 
-- Die CI-Matrix testet `measure`, `gate`, `science`, `service`, `app` und
-  `harvest` vollständig; vorher liefen 320 Sonden und 507 der 513
-  Harvest-Binaries nie.
-- Der Clippy-Job lintet mit `cache-targets: false` — ein Cache-Treffer meldete
-  vorher „grün", ohne zu übersetzen.
-- `eeglab::eeg_from_bin` weist f64-Proben ab, statt sie still nach f32 zu
-  verengen (wie `brainvision`).
+- The CI matrix tests `measure`, `science`, `service`, `app` and `harvest`
+  completely; before, 320 probes and most harvest binaries never ran.
+- The clippy job lints with `cache-targets: false`; a cache hit used to report
+  green without compiling.
+- `eeglab::eeg_from_bin` refuses f64 samples instead of narrowing them to f32
+  without a word, as `brainvision` does.
 
 ### Fixed
 
-- `decode_etopo1` holt den Körperradius nicht mehr aus dem CDN; er ist ein
-  Parameter. Der Decoder war von einem privaten Credential abhängig.
+- `decode_etopo1` no longer reads the body radius from the CDN; it is a
+  parameter. The decoder depended on a private credential.

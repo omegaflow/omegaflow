@@ -1,31 +1,25 @@
-# Beitragen
+# Contributing
 
-## Bevor du etwas änderst
+## Before you change anything
 
-Lies und die Dokumente in `bindend/` des Werkstatt-Repositories. Sie
-sind kurz und sie gelten: keine `allow`s, keine Testlücken, keine Tests, die nur
-die Existenz prüfen.
+Read `COMMITS.md`. It is short and it holds: an area, a subject of at most 72
+characters, a blank line, then a body that carries the why.
 
-## Der Weg einer Änderung
+## The path of a change
 
-1. **Messen.** Was ist der Ist-Zustand, mit welchem Befehl, mit welchem Datum?
-2. **Bauen.** Die Änderung im selben Commit wie ihr Test.
-3. **Abschließen.** `RUSTFLAGS="-D warnings" cargo check --workspace` und
-   `cargo clippy --workspace --all-targets` müssen ohne Befund durchlaufen. Ein
-   Cache-Treffer zählt nicht: Clippy muss wirklich übersetzen.
-4. **Committen.** Nachricht in Englisch, ein Satz je Sache, die Zahl mit ihrem
-   Befehl. Deutsch trägt die Dokumente, Englisch den Code.
-5. **Pushen.** Kein grüner Lauf, keine Behauptung.
+1. Measure. What is the state, with which command, on which date?
+2. Build. The change and its test in the same commit.
+3. Close. `RUSTFLAGS="-D warnings" cargo check --workspace --all-targets` runs
+   without a finding.
+4. Commit. English, one sentence per thing, the number with its command.
+5. Push. No green run, no claim.
 
-## Was ein Commit nicht darf
+## What a commit must not do
 
-- Werte erfinden: `0.0`, `unwrap_or_default`, erfundene Toleranzen.
-- Eine Prüfung abschalten statt eine Ursache zu beheben.
-- Eine Testlücke lassen: jedes Paket aus `[workspace] members` läuft in der
-  CI-Matrix, kein `--bin`-Filter.
+- invent values: `0.0`, `unwrap_or_default`, invented tolerances;
+- switch a check off instead of fixing the cause;
+- leave a test gap behind: every package in the workspace runs in CI.
 
-## Fragen und Streit
+## Questions and disagreement
 
-Der Rat entscheidet Architektur und Ethik. Ein offener Punkt gehört als Datei in
-`rat/` des Werkstatt-Repositories — nicht in ein Issue, das nach drei Tagen
-untergeht.
+Open an issue. Architecture and ethics are decided by the maintainers.
