@@ -1215,7 +1215,6 @@
 5352a9321529d819	intermagnet_xyz_y_nt	inverse-square	em			
 5352a9321529d819	intermagnet_xyz_z_nt	inverse-square	em			
 5352a9321529d819	magnetosphere_total_field_nt	inverse-square	em			
-536393ff19b86e33	champ_magnetic_field_intensity_nt	inverse-square	em			
 53aec4d6e60d094e	intermagnet_xyz_x_nt	inverse-square	em			
 53aec4d6e60d094e	intermagnet_xyz_y_nt	inverse-square	em			
 53aec4d6e60d094e	intermagnet_xyz_z_nt	inverse-square	em			
@@ -1828,6 +1827,7 @@
 8c07784ba376348d	Speak	inverse-square	em			
 8c5ce9270407ec59	flux	gaussian-inverse-square	em	none		
 8c772100da68eb6f	RANGE	inverse-square	geometry			
+8ccc8987123d1487	champ_magnetic_field_intensity_nt	inverse-square	em			
 8ceb399b4124a7c0	intermagnet_xyz_x_nt	inverse-square	em			
 8ceb399b4124a7c0	intermagnet_xyz_y_nt	inverse-square	em			
 8ceb399b4124a7c0	intermagnet_xyz_z_nt	inverse-square	em			
