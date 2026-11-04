@@ -23,3 +23,21 @@ characters, a blank line, then a body that carries the why.
 ## Questions and disagreement
 
 Open an issue. Architecture and ethics are decided by the maintainers.
+
+
+## File names
+
+Each class has one shape. A new file that breaks it is renamed in the same
+commit that adds it.
+
+| Class | Shape | Example |
+|---|---|---|
+| Rust source and binaries | snake_case | `fdsn_waveform_compiler.rs` |
+| Registers, tables, shell | snake_case | `field_model_definition.tsv`, `cdn-put` aside |
+| Workflows | kebab-case | `fdsn-waveform-cdn.yml` |
+| Markdown below the root | kebab-case | `auftrag-2026-11-02-sources-ci.md` |
+| Root markdown | uppercase | `README.md`, `CHANGELOG.md` |
+| External standards | their own name | `naif0012.tls`, `pck00011.tpc` |
+
+An external file keeps the name its publisher gave it: the version lives in the
+name and a rename would cut the provenance.
