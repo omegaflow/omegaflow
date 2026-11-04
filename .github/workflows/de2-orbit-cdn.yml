@@ -4,13 +4,6 @@ name: de2-orbit-cdn
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'tools/harvest/src/bin/de2_orbit_compiler.rs'
-      - 'src/archivar/ephemeris.rs'
-      - '.github/workflows/de2-orbit-cdn.yml'
-
 concurrency:
   group: de2-orbit-cdn
   cancel-in-progress: false

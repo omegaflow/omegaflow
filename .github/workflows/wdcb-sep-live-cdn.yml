@@ -16,11 +16,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/raw_mirror.rs'
-      - '.github/workflows/wdcb-sep-live-cdn.yml'
-
 permissions:
   contents: write
 

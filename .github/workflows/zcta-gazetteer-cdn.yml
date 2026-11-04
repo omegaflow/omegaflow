@@ -6,10 +6,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/zcta_gazetteer_compiler.rs'
-      - '.github/workflows/zcta-gazetteer-cdn.yml'
 permissions:
   contents: write
 env:

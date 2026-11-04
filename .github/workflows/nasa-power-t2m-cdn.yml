@@ -27,10 +27,6 @@ on:
         description: 'NASA POWER parameter code'
         type: string
         default: 'T2M'
-  push:
-    paths:
-      - 'tools/harvest/src/bin/nasa_power_compiler.rs'
-      - '.github/workflows/nasa-power-t2m-cdn.yml'
   schedule:
     - cron: '29 4 * * *'
 permissions:

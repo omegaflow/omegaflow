@@ -17,10 +17,6 @@ on:
         description: 'CARISMA day (YYYYMMDD)'
         type: string
         default: '20090105'
-  push:
-    paths:
-      - 'tools/harvest/src/bin/carisma_mag_compiler.rs'
-      - '.github/workflows/carisma-mag-cdn.yml'
 permissions:
   contents: write
 env:

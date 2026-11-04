@@ -15,10 +15,6 @@ on:
         description: 'max measured station-days to carry (empty = all)'
         type: string
         default: ''
-  push:
-    paths:
-      - 'tools/harvest/src/bin/epa_aqs_compiler.rs'
-      - '.github/workflows/epa-aqs-pm25-cdn.yml'
 permissions:
   contents: write
 env:

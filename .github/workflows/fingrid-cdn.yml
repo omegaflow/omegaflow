@@ -8,10 +8,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/fingrid_compiler.rs'
-      - '.github/workflows/fingrid-cdn.yml'
 permissions:
   contents: write
 env:

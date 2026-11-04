@@ -8,10 +8,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/mla_compiler.rs'
-      - '.github/workflows/mla-cdn.yml'
 permissions:
   contents: write
 env:

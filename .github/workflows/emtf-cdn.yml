@@ -17,10 +17,6 @@ on:
         description: 'CDN asset name'
         type: string
         default: 'emtf_usarray_cao01_2010.bin'
-  push:
-    paths:
-      - 'tools/harvest/src/bin/emtf_compiler.rs'
-      - '.github/workflows/emtf-cdn.yml'
 permissions:
   contents: write
 env:

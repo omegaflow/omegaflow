@@ -12,11 +12,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/raw_mirror.rs'
-      - '.github/workflows/m10-mdis-raw-cdn.yml'
-
 permissions:
   contents: write
 

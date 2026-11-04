@@ -4,12 +4,6 @@ name: chime-frb-cdn
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'tools/harvest/src/bin/chime_frb_compiler.rs'
-      - '.github/workflows/chime-frb-cdn.yml'
-
 concurrency:
   group: chime-frb-cdn
   cancel-in-progress: false

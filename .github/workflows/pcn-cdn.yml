@@ -13,10 +13,6 @@ on:
         description: 'PCN definitive year (DTU WDC)'
         type: string
         default: '2015'
-  push:
-    paths:
-      - 'tools/harvest/src/bin/pcn_compiler.rs'
-      - '.github/workflows/pcn-cdn.yml'
 permissions:
   contents: write
 env:

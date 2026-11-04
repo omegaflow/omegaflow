@@ -8,9 +8,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/nohrsc_snowfall_compiler.rs'
 permissions:
   contents: write
 env:

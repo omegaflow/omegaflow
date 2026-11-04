@@ -4,11 +4,6 @@ name: gfc-zip-cdn
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/gfc-zip-cdn.yml'
-
 concurrency:
   group: gfc-zip-cdn
   cancel-in-progress: false

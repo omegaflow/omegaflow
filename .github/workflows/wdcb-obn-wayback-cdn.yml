@@ -14,11 +14,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/raw_mirror.rs'
-      - '.github/workflows/wdcb-obn-wayback-cdn.yml'
-
 permissions:
   contents: write
 

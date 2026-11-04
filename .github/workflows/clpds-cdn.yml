@@ -6,9 +6,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/clpds_compiler.rs'
 permissions:
   contents: write
 env:

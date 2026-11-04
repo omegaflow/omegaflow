@@ -5,12 +5,7 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'phi/sources.φ'
-      - 'tools/harvest/src/bin/**'
-
+  workflow_dispatch:
 permissions:
   actions: write
 

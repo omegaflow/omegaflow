@@ -52,10 +52,6 @@ on:
         required: false
         type: boolean
         default: false
-  push:
-    paths:
-      - 'tools/harvest/src/bin/jaxa_gportal_compiler.rs'
-      - '.github/workflows/jaxa-gportal-cdn.yml'
 permissions:
   contents: write
 env:

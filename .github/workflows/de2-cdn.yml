@@ -4,12 +4,6 @@ name: de2-cdn
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'tools/harvest/src/bin/de2_compiler.rs'
-      - '.github/workflows/de2-cdn.yml'
-
 concurrency:
   group: de2-cdn
   cancel-in-progress: false

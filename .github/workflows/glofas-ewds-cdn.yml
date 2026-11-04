@@ -8,10 +8,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/glofas_ewds_compiler.rs'
-      - '.github/workflows/glofas-ewds-cdn.yml'
 permissions:
   contents: write
 env:

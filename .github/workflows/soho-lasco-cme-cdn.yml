@@ -13,10 +13,6 @@ on:
         description: 'CME catalog month (YYYY_MM)'
         type: string
         default: '2024_01'
-  push:
-    paths:
-      - 'tools/harvest/src/bin/soho_lasco_compiler.rs'
-      - '.github/workflows/soho-lasco-cme-cdn.yml'
 permissions:
   contents: write
 env:

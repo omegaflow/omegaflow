@@ -8,10 +8,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/harvest/src/bin/grdc_caravan_compiler.rs'
-      - '.github/workflows/grdc-caravan-cdn.yml'
 permissions:
   contents: write
 env:

@@ -13,10 +13,6 @@ on:
         description: 'CDAWeb GNSS-TEC daily CDF URL'
         type: string
         default: 'https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/2020/gps_tec15min_igs_20201014_v01.cdf'
-  push:
-    paths:
-      - 'tools/harvest/src/bin/cdaweb_tec_compiler.rs'
-      - '.github/workflows/cdaweb-tec-cdn.yml'
 permissions:
   contents: write
 env:
