@@ -86,14 +86,12 @@ jobs:
         # Fallback: no complete carried set -> build the whole published set.
         if [ "$carry_ok" = "0" ]; then
           echo "carry incomplete (expected=$expected got=$got) — building the full published set"
-          cargo build --release --bins -p omegaflow-register -p omegaflow-utils -p omegaflow-gate
           cargo build --release -p omegaflow-service
           cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
           exit 0
         fi
         if [ "${{ steps.changed.outputs.reg }}" = "1" ]; then cargo build --release --bins -p omegaflow-register; fi
         if [ "${{ steps.changed.outputs.utl }}" = "1" ]; then cargo build --release --bins -p omegaflow-utils; fi
-        if [ "${{ steps.changed.outputs.gat }}" = "1" ]; then cargo build --release --bins -p omegaflow-gate; fi
         if [ "${{ steps.changed.outputs.svc }}" = "1" ]; then cargo build --release -p omegaflow-service; fi
         if [ "${{ steps.changed.outputs.cor }}" = "1" ]; then
           cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay

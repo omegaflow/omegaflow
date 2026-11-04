@@ -2196,7 +2196,7 @@ fn named_or_series_channels(
     }
 }
 
-fn csv_to_json(text: &str) -> Option<JsonVal> {
+pub fn csv_to_json(text: &str) -> Option<JsonVal> {
     let mut lines = text
         .lines()
         .filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#'));

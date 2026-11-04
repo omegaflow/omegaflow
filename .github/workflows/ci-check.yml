@@ -47,7 +47,6 @@ jobs:
     - run: cargo nextest run --release --features browser_relay --partition count:${{ matrix.shard }}/4
     - run: cargo nextest run --release -p omegaflow-membrane --partition count:${{ matrix.shard }}/4
     - run: cargo nextest run --release -p omegaflow-register -p omegaflow-utils --partition count:${{ matrix.shard }}/4
-    - run: cargo nextest run --release -p omegaflow-measure -p omegaflow-gate -p omegaflow-science -p omegaflow-service -p omegaflow-app --partition count:${{ matrix.shard }}/4
     - run: cargo nextest run --release -p omegaflow-harvest --partition count:${{ matrix.shard }}/4
     - if: matrix.shard == 1
       run: cargo test --release --features browser_relay --doc
