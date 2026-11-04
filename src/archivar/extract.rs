@@ -1367,6 +1367,11 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             0 => Some("champ_magnetic_field_intensity_nt"),
             _ => None,
         },
+        "ooi_pco2" => match comp {
+            0 => Some("ooi_pco2_uatm"),
+            1 => Some("hydrosphere_sst_ooi_c"),
+            _ => None,
+        },
         "ogimet_synop" => match comp {
             crate::geo::COMP_OGM_TEMP => Some("ogimet_synop_temp_c"),
             crate::geo::COMP_OGM_DEWP => Some("ogimet_synop_dewp_c"),
