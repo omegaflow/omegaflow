@@ -27,7 +27,7 @@ while [ -h "$self" ]; do
 done
 root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
 PHI="${PHI:-$root/phi/sources.φ}"
-LICENCES="${LICENCES:-$root/src/archivar/licences.tsv}"
+LICENCES="${LICENCES:-$root/phi/licences.tsv}"
 CDN_REPO="${CDN_REPO:-omegaflow/sources}"
 
 check=""
@@ -109,7 +109,7 @@ PERL
 
 gate "$@"
 if [ $? -ne 0 ]; then
-    echo "cdn-put: refused before any upload — the dataset's licence in src/archivar/licences.tsv does not admit it" >&2
+    echo "cdn-put: refused before any upload — the dataset's licence in phi/licences.tsv does not admit it" >&2
     exit 2
 fi
 [ -n "$check" ] && { echo "cdn-put: $tag $* admitted"; exit 0; }
