@@ -127,6 +127,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "las" => crate::las::las_series::parse_series(bytes),
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
         "usgs_comcat_m45" => usgs_comcat::parse_bin(bytes),
+        "gwosc_events" => gwosc_events::parse_series(bytes),
         "usgs_geomag_efield" => usgs_geomag::parse_bin(bytes),
         "quake_ptevent" => quake_event::parse_series(bytes),
         "mcon_event" => mcon_event::parse_series(bytes),
@@ -430,6 +431,7 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             (vec![name], rows)
         }
         "imp8_mag_hr" => (imp8_mag::names(), imp8_mag::parse_series(bytes)?),
+        "gwosc_events" => (gwosc_events::names(), gwosc_events::parse_series(bytes)?),
         "helios_merged" => (helios_merged::names(), helios_merged::parse_series(bytes)?),
         "sk_atm_bins" => (sk_atm_bins::names(), sk_atm_bins::parse_series(bytes)?),
         "gras_2c" => {
@@ -525,6 +527,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "jaxa_gpm_ku" => jaxa_gpm_ku::declared_fields(tau),
         "eea_noise" => eea_noise::declared_fields(tau),
         "gaia_rrl" => gaia_rrl::declared_fields(tau),
+        "gwosc_events" => gwosc_events::declared_fields(tau),
         "soho_lasco_cme" => soho_lasco::declared_fields(tau),
         "swpc_radio_bursts" => radio_burst::declared_fields(tau),
         "callisto" => callisto::declared_fields(tau),
@@ -585,6 +588,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "sorce_ascii" | "sorce_sim" => sorce_ascii::component_name(comp),
         "timed_see_spwx" => timed_see::component_name(comp),
         "imp8_mag_hr" => imp8_mag::component_name(comp),
+        "gwosc_events" => gwosc_events::component_name(comp),
         "helios_merged" => helios_merged::component_name(comp),
         "amanda_7yr" => amanda::component_name(comp),
         "sk_atm_bins" => sk_atm_bins::component_name(comp),

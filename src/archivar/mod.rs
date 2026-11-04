@@ -127,6 +127,7 @@ pub mod gras_2c;
 pub mod grib2;
 pub mod grid_outage;
 pub mod gsfc_ssi;
+pub mod gwosc_events;
 pub mod hamqsl;
 pub mod hapi_csv;
 pub mod harvest_table;
