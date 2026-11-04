@@ -26,8 +26,10 @@ jobs:
             before="${{ github.event.before }}"
             if [ "$before" = "0000000000000000000000000000000000000000" ]; then
               commits=$(git rev-list --max-count=20 "${{ github.sha }}")
-            else
+            elif git rev-parse --quiet --verify "$before^{commit}" >/dev/null 2>&1; then
               commits=$(git rev-list "$before..${{ github.sha }}")
+            else
+              commits=$(git rev-list --max-count=20 "${{ github.sha }}")
             fi
           fi
           [ -n "$commits" ] || { echo "no commit in range"; exit 0; }
