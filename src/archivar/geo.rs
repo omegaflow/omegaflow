@@ -33,6 +33,7 @@ pub const MAGIC_NXR: [u8; 4] = *b"NXR1";
 pub const MAGIC_USCRN: [u8; 4] = *b"USC1";
 pub const MAGIC_GDP: [u8; 4] = *b"GDPT";
 pub const MAGIC_CHAMP: [u8; 4] = *b"CHP1";
+pub const MAGIC_CHAMPM: [u8; 4] = *b"CHM1";
 pub const MAGIC_LAS: [u8; 4] = *b"LAS1";
 pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
 pub const MAGIC_HFR: [u8; 4] = *b"HFR1";
@@ -359,6 +360,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "us_crn_hourly" => Some(MAGIC_USCRN),
         "gdp_drifter" => Some(MAGIC_GDP),
         "champ_plpt" => Some(MAGIC_CHAMP),
+        "champ_mag" => Some(MAGIC_CHAMPM),
         "las" => Some(MAGIC_LAS),
         "kyoto_pressure" => Some(MAGIC_KYOTO),
         "hfrnet_rtv" => Some(MAGIC_HFR),

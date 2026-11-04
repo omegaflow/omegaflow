@@ -51,6 +51,7 @@ pub mod ccor;
 pub mod cdaweb_roti;
 pub mod cdaweb_tec;
 pub mod cdf;
+pub mod cdf2;
 pub mod cdf25;
 pub mod cdn;
 pub mod celestrak_eop;
