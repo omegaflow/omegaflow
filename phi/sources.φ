@@ -26321,3 +26321,34 @@ on earth 46.05 -125.0 0
 ttl 86400
 field ooi_pco2_uatm ooi_pco2_uatm uatm
 field hydrosphere_sst_ooi_c hydrosphere_sst_ooi_c C
+
+url https://github.com/omegaflow/sources/releases/download/gong2.nso.edu/gong_modes.bin
+terms nso-gong-open https://nso.edu/data/
+format gong_modes
+origin https://gong2.nso.edu/ftp/TSERIES
+instrument GONG
+compiler tools/harvest/src/bin/gong_compiler.rs
+at sun
+ttl 604800
+field gong_mode_amplitude_m_s gong_mode_amplitude_m_s m/s
+
+url https://github.com/omegaflow/sources/releases/download/api.eumetsat.int/mtg_li_l2.nc
+terms eumetsat-core-open https://user.eumetsat.int/resources/user-guides/data-registration-and-licensing
+format mtg_li
+origin https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691
+instrument LI
+compiler tools/harvest/src/bin/eumetsat_mtg_li_fetch.rs
+at earth
+ttl 600
+field mtg_li_flash_radiance_mw_m2_sr mtg_li_flash_radiance_mw_m2_sr mW/m2/sr
+
+url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gpm_ku.bin
+terms jaxa-gportal-open https://www.gportal.jaxa.jp/gpr/index/eula
+format jaxa_gpm_ku
+origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
+instrument KuPR
+compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
+at earth
+ttl 86400
+field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w W
+
