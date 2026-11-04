@@ -1,0 +1,89 @@
+name: commit-message
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  form:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: the form of every pushed commit
+        run: |
+          set -eu
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            range="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+            commits=$(git rev-list "$range")
+          else
+            before="${{ github.event.before }}"
+            if [ "$before" = "0000000000000000000000000000000000000000" ]; then
+              commits=$(git rev-list --max-count=20 "${{ github.sha }}")
+            else
+              commits=$(git rev-list "$before..${{ github.sha }}")
+            fi
+          fi
+          [ -n "$commits" ] || { echo "no commit in range"; exit 0; }
+
+          fail=0
+          for c in $commits; do
+            subject=$(git log -1 --format=%s "$c")
+            body=$(git log -1 --format=%b "$c")
+            where=$(git log -1 --format='%h %s' "$c" | cut -c1-60)
+
+            case "$subject" in
+              Merge\ *) continue ;;
+            esac
+
+            if ! printf '%s' "$subject" | grep -qE '^[a-z0-9_.-]+: [a-z0-9]'; then
+              echo "RULE 1  $where"
+              echo "        subject must start with 'area: lowercase sentence'"
+              fail=1
+            fi
+            if [ "${#subject}" -gt 72 ]; then
+              echo "RULE 2  $where"
+              echo "        subject is ${#subject} characters, the limit is 72"
+              fail=1
+            fi
+            case "$subject" in
+              *.) echo "RULE 2  $where"; echo "        subject ends with a period"; fail=1 ;;
+            esac
+            if git log -1 --format=%B "$c" | sed -n '2p' | grep -q '[^[:space:]]'; then
+              echo "RULE 3  $where"
+              echo "        the subject is followed by text without a blank line"
+              fail=1
+            fi
+            if [ -z "$body" ]; then
+              echo "RULE 4  $where"
+              echo "        a code commit carries a body"
+              fail=1
+            fi
+            if printf '%s\n' "$body" | grep -qE '.{101,}'; then
+              echo "RULE 5  $where"
+              echo "        a body line is longer than 100 characters"
+              fail=1
+            fi
+            if printf '%s\n%s\n' "$subject" "$body" | grep -q '[äöüßÄÖÜ]'; then
+              echo "RULE 6  $where"
+              echo "        the message carries an umlaut"
+              fail=1
+            fi
+            if printf '%s\n%s\n' "$subject" "$body" | grep -qiE '\b(und|nicht|ist|wird|sind|eine|einen|für|über|auch|aber)\b'; then
+              echo "RULE 6  $where"
+              echo "        the message carries a German stopword"
+              fail=1
+            fi
+            if printf '%s\n%s\n' "$subject" "$body" | grep -qE '/home/|omegaflow-private|omegaflow-personal|johannestyroller|\+49'; then
+              echo "RULE 7  $where"
+              echo "        the message carries a personal path, handle or number"
+              fail=1
+            fi
+          done
+          exit "$fail"
