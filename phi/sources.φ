@@ -26328,6 +26328,7 @@ format gong_modes
 origin https://gong2.nso.edu/ftp/TSERIES
 instrument GONG
 compiler tools/harvest/src/bin/gong_compiler.rs
+sha256 a90177f38183a634985b284f68576e459933702a7765632d68ac39c0e612245b
 at sun
 ttl 604800
 field gong_mode_amplitude_m_s gong_mode_amplitude_m_s m/s
