@@ -203,8 +203,13 @@ fn main() {
         .map(|(i, c)| (c.name.as_str(), i))
         .collect();
 
-    let mut out =
-        String::from("t_tt_s,spot,lat_deg,lon_deg,radius_m,selenoid_m,lola_elevation_m\n");
+    let mut out = String::from(
+        "t_tt_s,spot,sc_lat_deg,sc_lon_deg,sc_radius_mm,selenoid_mm,lat_deg,lon_deg,radius_mm,range_mm,pulse_ps,energy_zj,background_pw,threshold_nv,laser_energy_nj,transmit_width_ps,offnadir_rad,emission_rad,solar_incidence_rad,solar_phase_rad,earth_range,earth_pulse_ps,earth_energy_aj\n",
+    );
+    let cell = |v: Option<f64>| match v {
+        Some(x) => format!("{x}"),
+        None => String::new(),
+    };
     let mut valid_spots = 0usize;
     let mut read_products = 0usize;
     for name in slice {
@@ -248,14 +253,30 @@ fn main() {
                 if !spot_is_valid(radius, selenoid, flag as u64) {
                     continue;
                 }
-                let radius_m = radius / 1000.0;
-                let selenoid_m = selenoid / 1000.0;
                 let _ = writeln!(
                     out,
-                    "{t:.6},{n},{:.7},{:.7},{radius_m:.3},{selenoid_m:.3},{:.3}",
+                    "{t:.6},{n},{},{},{},{},{:.7},{:.7},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                    cell(get(row, "SC_LATITUDE").map(|v| v / 1e7)),
+                    cell(get(row, "SC_LONGITUDE").map(|v| v / 1e7)),
+                    cell(get(row, "SC_RADIUS")),
+                    cell(get(row, "SELENOID_RADIUS")),
                     lat / 1e7,
                     lon / 1e7,
-                    radius_m - selenoid_m
+                    cell(Some(radius)),
+                    cell(get(row, &format!("RANGE_{n}"))),
+                    cell(get(row, &format!("PULSE_{n}"))),
+                    cell(get(row, &format!("ENERGY_{n}"))),
+                    cell(get(row, &format!("BACKGROUND_{n}"))),
+                    cell(get(row, &format!("THRESHOLD_{n}"))),
+                    cell(get(row, "LASER_ENERGY")),
+                    cell(get(row, "TRANSMIT_WIDTH")),
+                    cell(get(row, "OFFNADIR_ANGLE")),
+                    cell(get(row, "EMISSION_ANGLE")),
+                    cell(get(row, "SOLAR_INCIDENCE")),
+                    cell(get(row, "SOLAR_PHASE")),
+                    cell(get(row, "EARTH_RANGE")),
+                    cell(get(row, "EARTH_PULSE")),
+                    cell(get(row, "EARTH_ENERGY")),
                 );
                 valid_spots += 1;
             }
