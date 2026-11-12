@@ -26,7 +26,7 @@ fn curl_text(url: &str) -> Result<String, String> {
     Ok(String::from_utf8_lossy(&bytes).to_string())
 }
 
-fn links(listing: &str, needle: &str) -> Vec<String> {
+fn links(listing: &str, needles: &[String]) -> Vec<String> {
     let mut out = Vec::new();
     for part in listing.split("href=\"").skip(1) {
         let Some(name) = part.split('"').next() else {
@@ -35,7 +35,7 @@ fn links(listing: &str, needle: &str) -> Vec<String> {
         if name.is_empty() || name.starts_with('?') || name.starts_with('/') || name.contains("..") {
             continue;
         }
-        if !name.contains(needle) {
+        if !needles.iter().any(|n| name.contains(n.as_str())) {
             continue;
         }
         out.push(name.to_string());
@@ -47,15 +47,16 @@ fn links(listing: &str, needle: &str) -> Vec<String> {
 
 fn run(args: &[String]) -> Result<(), String> {
     let base = arg_value(args, "--base").ok_or_else(|| "--base <listing url> absent".to_string())?;
-    let needle = arg_value(args, "--name").ok_or_else(|| "--name <name fragment> absent".to_string())?;
+    let needles: Vec<String> = args.iter().enumerate().filter(|(_, a)| a.as_str() == "--name").filter_map(|(i, _)| args.get(i + 1).cloned()).collect();
+    if needles.is_empty() { return Err("--name <fragment> absent".to_string()); }
     let out = arg_value(args, "--out").ok_or_else(|| "--out <asset> absent".to_string())?;
     let tag = arg_value(args, "--tag").ok_or_else(|| "--tag <netloc> absent".to_string())?;
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
 
     let listing = curl_text(&base)?;
-    let names = links(&listing, &needle);
+    let names = links(&listing, &needles);
     if names.is_empty() {
-        return Err(format!("{base}: no entry carries {needle}"));
+        return Err(format!("{base}: no entry carries {:?}", needles));
     }
     let mut buf: Vec<u8> = Vec::new();
     for name in &names {
