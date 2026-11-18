@@ -54,6 +54,7 @@ jobs:
         if [ "$build_all" = "1" ]; then reg=1; utl=1; gat=1; svc=1; cor=1; app=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/register/'; then reg=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/utils/'; then utl=1; fi
+        if printf '%s\n' "$d" | grep -q '^tools/gate/'; then gat=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/service/'; then svc=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/measure/'; then cor=1; fi
         if printf '%s\n' "$d" | grep -q '^tools/app/'; then app=1; fi
@@ -92,6 +93,7 @@ jobs:
         fi
         if [ "${{ steps.changed.outputs.reg }}" = "1" ]; then cargo build --release --bins -p omegaflow-register; fi
         if [ "${{ steps.changed.outputs.utl }}" = "1" ]; then cargo build --release --bins -p omegaflow-utils; fi
+        if [ "${{ steps.changed.outputs.gat }}" = "1" ]; then cargo build --release --bins -p omegaflow-gate; fi
         if [ "${{ steps.changed.outputs.svc }}" = "1" ]; then cargo build --release -p omegaflow-service; fi
         if [ "${{ steps.changed.outputs.cor }}" = "1" ]; then
           cargo build --release -p omegaflow-app --bin omegaflow --features browser_relay
