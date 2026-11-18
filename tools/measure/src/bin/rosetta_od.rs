@@ -3,9 +3,11 @@ use std::path::{Path, PathBuf};
 
 use omegaflow::archivar::ephemeris::body_of_ephemeris_asset;
 use omegaflow::archivar::{
-    BodyEphemeris, aux, body_barycenter_position, body_fixed_vector_to_icrs, csp, embedded_lsk,
-    gfc, icrs_to_body_fixed, oem, parse_ephemeris_binary, parse_iso_tdb, tdm,
+    BodyEphemeris, aux, body_barycenter_position, body_barycenter_velocity,
+    body_fixed_vector_to_icrs, csp, embedded_lsk, gfc, icrs_to_body_fixed, oem,
+    parse_ephemeris_binary, parse_iso_tdb, tdm,
 };
+use omegaflow::odp;
 
 struct Station {
     body: String,
@@ -567,6 +569,124 @@ fn check_forces(package: &Path, earth_path: &Path, gravity_path: &Path) -> Optio
     Some(())
 }
 
+fn check_propagation(package: &Path, earth_path: &Path, planets_dir: &Path) -> Option<()> {
+    let ephemerides = load_ephemeris(earth_path)?;
+    let body_name = body_of_ephemeris_asset(earth_path.to_str()?)?;
+    let mut eph = ephemerides.clone();
+    let mut planets = Vec::new();
+    let mut names = omegaflow::weberin::planetary_bodies();
+    if !names.iter().any(|name| name == "moon") {
+        names.push("moon".to_string());
+    }
+    for name in names {
+        let path = planets_dir.join(format!("ephemeris_{name}.bin"));
+        let Ok(bytes) = std::fs::read(&path) else {
+            continue;
+        };
+        let Some(parsed) = parse_ephemeris_binary(&bytes) else {
+            continue;
+        };
+        let props = parsed.props.as_ref();
+        let Some(gm) = props
+            .and_then(|p| p.gm)
+            .filter(|g| g.is_finite() && *g > 0.0)
+        else {
+            continue;
+        };
+        let j2 = props
+            .and_then(|p| p.j2)
+            .filter(|v| v.is_finite() && *v > 0.0);
+        let radius_m = props.map(|p| p.radius_m).unwrap_or(0.0);
+        eph.insert(name.clone(), parsed);
+        planets.push(odp::PointMass {
+            name,
+            gm_m3_s2: gm,
+            j2,
+            radius_m: if j2.is_some() { Some(radius_m) } else { None },
+        });
+    }
+    if planets.is_empty() {
+        println!(
+            "rosetta_od: propagation absent — {} carries no planet ephemerides",
+            planets_dir.display()
+        );
+        return None;
+    }
+    let text = std::fs::read_to_string(package.join("ros.oem")).ok()?;
+    let segments = oem::parse_oem(&text)?;
+    let center = body_name.to_ascii_uppercase();
+    let points = oem::positions_in_center(&segments, &center);
+    let (perigee_index, _) = points.iter().enumerate().min_by(|a, b| {
+        let ra = norm3(a.1.position_km);
+        let rb = norm3(b.1.position_km);
+        ra.total_cmp(&rb)
+    })?;
+    let start = &points[perigee_index];
+    let start_earth = body_barycenter_position(&body_name, start.seconds, &eph)?;
+    let start_earth_velocity = body_barycenter_velocity(&body_name, start.seconds, &eph)?;
+    let mut state = [
+        start.position_km[0] * 1000.0 + start_earth[0],
+        start.position_km[1] * 1000.0 + start_earth[1],
+        start.position_km[2] * 1000.0 + start_earth[2],
+        start.velocity_km_s[0] * 1000.0 + start_earth_velocity[0],
+        start.velocity_km_s[1] * 1000.0 + start_earth_velocity[1],
+        start.velocity_km_s[2] * 1000.0 + start_earth_velocity[2],
+    ];
+    let accel =
+        |t: f64, r: [f64; 3]| odp::n_body_accel(r, t, &planets, &eph).unwrap_or([f64::NAN; 3]);
+    let mut t = start.seconds;
+    let horizon = start.seconds + 6.0 * 3600.0;
+    let mut worst: Option<(f64, f64)> = None;
+    let mut compared = 0usize;
+    let mut final_delta = 0.0;
+    for point in points.iter().skip(perigee_index + 1) {
+        if point.seconds > horizon {
+            break;
+        }
+        while t < point.seconds {
+            let step = (point.seconds - t).min(4.0);
+            state = odp::rk4_accel_step(state, t, step, &accel);
+            if !state.iter().all(|value| value.is_finite()) {
+                println!(
+                    "rosetta_od: propagation absent — the state left the finite range at {t:.3} s"
+                );
+                return None;
+            }
+            t += step;
+        }
+        let earth = body_barycenter_position(&body_name, point.seconds, &eph)?;
+        let model = [
+            state[0] - earth[0],
+            state[1] - earth[1],
+            state[2] - earth[2],
+        ];
+        let delta_km = norm3([
+            model[0] - point.position_km[0] * 1000.0,
+            model[1] - point.position_km[1] * 1000.0,
+            model[2] - point.position_km[2] * 1000.0,
+        ]) / 1000.0;
+        compared += 1;
+        final_delta = delta_km;
+        if worst.is_none_or(|(value, _)| delta_km > value) {
+            worst = Some((delta_km, point.seconds - start.seconds));
+        }
+    }
+    let (worst_km, worst_after_s) = worst?;
+    println!(
+        "rosetta_od: propagation {compared} point(s) over {:.1} h · planets {} · max |dr| {:.3} km after {:.0} s · final {:.3} km",
+        (t - start.seconds) / 3600.0,
+        planets.len(),
+        worst_km,
+        worst_after_s,
+        final_delta
+    );
+    Some(())
+}
+
+fn norm3(v: [f64; 3]) -> f64 {
+    (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
+}
+
 struct Tally {
     observations: usize,
     solved: usize,
@@ -716,11 +836,13 @@ fn main() {
     let mut earth = PathBuf::new();
     let mut stations = PathBuf::new();
     let mut gravity = PathBuf::new();
+    let mut planets_dir = PathBuf::from("sources/ssd.jpl.nasa.gov");
     let mut transponder: Option<f64> = None;
     let mut check = false;
     let mut media = false;
     let mut range = false;
     let mut forces = false;
+    let mut propagation = false;
     let mut i = 0;
     while i < args.len() {
         match args[i].as_str() {
@@ -770,6 +892,16 @@ fn main() {
                 forces = true;
                 i += 1;
             }
+            "--check-propagation" => {
+                propagation = true;
+                i += 1;
+            }
+            "--planets" => {
+                if let Some(value) = args.get(i + 1) {
+                    planets_dir = PathBuf::from(value);
+                }
+                i += 2;
+            }
             _ => i += 1,
         }
     }
@@ -791,6 +923,18 @@ fn main() {
         if check_range(&package, earth_arg, stations_arg, transponder).is_none() {
             println!(
                 "rosetta_od: range absent — --earth and --stations name the prior; without them the wrap count has no anchor"
+            );
+        }
+        return;
+    }
+    if propagation {
+        let Some(earth_path) = earth_arg else {
+            println!("rosetta_od: propagation absent — --earth names the body ephemeris");
+            return;
+        };
+        if check_propagation(&package, earth_path, &planets_dir).is_none() {
+            println!(
+                "rosetta_od: propagation absent — the OEM or the planet set carries no readable state"
             );
         }
         return;
