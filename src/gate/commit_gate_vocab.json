@@ -1,0 +1,1044 @@
+{
+  "single_path": [
+    "strand",
+    "strang",
+    "worktree",
+    "gate-tragen",
+    "leitstelle",
+    "branch-marker",
+    "omegaflow-strand",
+    "zweig-modell"
+  ],
+  "fabrication": [
+    [
+      "open-source research project",
+      "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"
+    ],
+    [
+      "open-source non-commercial",
+      "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"
+    ],
+    [
+      "sgrep -i TOKEN .secrets.local",
+      "reading .secrets.local values dumps secret values into the transcript — only key names, never values"
+    ],
+    [
+      "cat .secrets.local",
+      "cat dumps every secret value into the transcript — only key names, never values"
+    ],
+    [
+      "head .secrets.local",
+      "head dumps secret values into the transcript — only key names, never values"
+    ],
+    [
+      "tail .secrets.local",
+      "tail dumps secret values into the transcript — only key names, never values"
+    ],
+    [
+      "unwrap_or_default(",
+      "unwrap_or_default fabricates a default — the value is absent, not defaulted"
+    ],
+    [
+      "unwrap_or_else(",
+      "unwrap_or_else fabricates a fallback — the value is absent, not derived"
+    ],
+    [
+      "derive(Default)",
+      "#[derive(Default)] is a fabricated default state — the truth is the query"
+    ],
+    [
+      "None => 0,",
+      "\"None => 0\" writes an unmeasured zero for an absent field — the value is absent, not zero"
+    ],
+    [
+      "None => 0.0",
+      "\"None => 0.0\" writes an unmeasured zero for an absent field — the value is absent, not zero"
+    ],
+    [
+      "_ => (0.0, 0.0)",
+      "\"_ => (0.0, 0.0)\" writes a fabricated coordinate — the anchor is absent, not the Gulf of Guinea"
+    ],
+    [
+      "_ => (0.0, 0.0, 0.0)",
+      "\"_ => (0.0, 0.0, 0.0)\" writes a fabricated anchor — the site is absent, not the origin"
+    ],
+    [
+      ".max(1)",
+      ".max(1) clamps to a fabricated floor — the floor must come from the measurement"
+    ],
+    [
+      "is_finite() { color } else { 0.0 }",
+      "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"
+    ],
+    [
+      "TeNull::Arx => y.to_vec()",
+      "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"
+    ],
+    [
+      "find(\"ID[\\\"EPSG\\\",\")",
+      "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"
+    ],
+    [
+      ".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))",
+      "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"
+    ],
+    [
+      "format_code != 0",
+      "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"
+    ],
+    [
+      "CI_REFRESH_S",
+      "CI_REFRESH_S is a fabricated 5-minute floor — the CI cadence is the 3h health-check cron (0 */3 * * *); the ttl/Φ backoff (stale_after) alone gates the fetch"
+    ],
+    [
+      "runs every 5 minutes",
+      "\"runs every 5 minutes\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *), kernel-flatten monthly"
+    ],
+    [
+      "5-Minuten-Takt",
+      "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"
+    ],
+    [
+      "|| bash .github/workflows/scripts/gh_issue_once.sh",
+      "the bare `||`-swallow files an issue and exits 0, so a void harvest shows green — the invocation must be wrapped so the step fails (`|| { …; exit 1; }`)"
+    ],
+    [
+      "\"{lat}\".into(), \"29.5\"",
+      "a hardcoded coordinate default fabricates the site — coordinates belong to the anchor, never the marker table"
+    ],
+    [
+      "Riss => Absent",
+      "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss is its own state, never absent, never 0.0"
+    ],
+    [
+      "Riss => VerdictWord::Absent",
+      "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss carries both witness lines"
+    ],
+    [
+      "Riss => None",
+      "a Riss mapped to None drops the present contradiction — the Riss is never written as a missing value"
+    ],
+    [
+      "Riss => 0.0",
+      "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"
+    ],
+    [
+      "cond_specs.iter().map(|&(d, _)| series[d]).collect()",
+      "the pcmci condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular and every surrogate refuses, or the null degenerates to the original series, and the link silently vanishes or stays undecidable (absence where a measurement should stand)"
+    ],
+    [
+      "comb.iter().map(|&(d, _)| series[d]).collect()",
+      "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"
+    ],
+    [
+      "cond_idxs.dedup()",
+      "the pcmci condition pair set mapped to bare series indices and deduplicated drops the chosen lag — the estimator conditions one whole channel series instead of the exact (series, lag) column, and the conditioning swallows the true coupling or carries the tested edge's own columns"
+    ],
+    [
+      "row.push(c.series[t - c.lag] as f64)",
+      "the Arx null fit conditioned on the single chosen (series, lag) column drops the confounder's history — the surrogate loses the lagged confounder-driven dynamics of the target and the null threshold drifts against the estimator; the per-lag columns are the estimator's design, the null fit reproduces the dynamics over the whole history"
+    ],
+    [
+      "kernel_id_for_force(5), Some(3)",
+      "a hardcoded force→kernel-id assertion encodes the stale second table — the kernel default derives from the registry (default_kernel_for → kernel_id_of), never a separate match"
+    ],
+    [
+      "dist_scale: 1.0",
+      "dist_scale defaulted to 1.0 reads the raw catalog value as metres — a unit fabrication; a dist without a measured scale is absent (Option/None), never a factor 1"
+    ],
+    [
+      "rv_scale: 1.0",
+      "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"
+    ],
+    [
+      "msf_of(m))\n                    .unwrap_or(1.0)",
+      "a SCLK coefficient block without SCLK01_MODULI_ defaulted to one tick per second fabricates the seconds-per-tick — a block whose moduli are absent is absent (filtered out), never a fabricated 1.0 (Bias-Tor, measured 2026-10-09)"
+    ],
+    [
+      "unwrap_or(f64::NAN)",
+      "a missing value defaulted to f64::NAN fabricates a data marker — NaN is never a data marker; the value is absent (Option/None), never NaN (Bias-Tor, measured 2026-10-09)"
+    ],
+    [
+      "cd_values.first().copied().unwrap_or(2)",
+      "an HDF5 scale-offset filter with absent cd_values defaulted to scale_type 2 (float) fabricates the filter parameter — an absent parameter is refused (Err/Note), never defaulted (Bias-Tor, measured 2026-10-09)"
+    ],
+    [
+      "keogram_ABK.bin = radiance",
+      "a browse-JPEG display index (0-255, gamma) is not a radiometric radiance — the keogram unit is relative, never radiance (Rat 2026-10-10, roster 5 field-provenance / 1 image)"
+    ],
+    [
+      "keogram_ABK.bin = count",
+      "a browse-JPEG display index is not a detector count — the keogram unit is relative, never count (Rat 2026-10-10)"
+    ],
+    [
+      "presence.unwrap_or((x, y, z))",
+      "a fanout centered on the source-frame anchor when the receiver worldline is absent fabricates a receiver from the emitter — the receiver is declared per-record data and its absence is refused (Rat + 3 UI + 2 open-weight, 2026-10-09)"
+    ],
+    [
+      ".or(Frame::Surface)",
+      "a fanout sort-center that silently falls back to the source-frame anchor when the declared receiver resolves void fabricates a center — the center is declared per source (fanout_center receiver|anchor) and an unresolved declaration is refused (fanout-no-anchor), never swapped (Mountain 282, measured 2026-10-09)"
+    ],
+    [
+      "port_field_synth(\"field\", &force, parts[1], parts[2], ttl)",
+      "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"
+    ],
+    [
+      "parse_sources(&conv).is_empty()",
+      "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"
+    ],
+    [
+      "ttl as f64 / 10.0",
+      "a tau computed as ttl/10 fabricates a temporal extent from the fetch cadence — the tau is the measured sample cadence (derive_ttl) or the registry default (probe_classify), never ttl/10"
+    ],
+    [
+      " 1 {} 0.0 0.0",
+      "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"
+    ],
+    [
+      "upload_asset(",
+      "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"
+    ],
+    [
+      "JsonVal::Arr(Vec::new())",
+      "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"
+    ],
+    [
+      "ttl_transfer_bound",
+      "one property drives two orthogonal behaviors — the cache-freshness ttl drove a network transfer bound (ceil(ttl/Φ²) = 33002 s at ttl 86400, past the 7200 s job budget); the transfer bound is a declared constant TRANSFER_BOUND_S = 2^11 s, independent of ttl"
+    ],
+    [
+      "2 => 0.1,",
+      "a hardcoded per-force absorption constant (WP10 map: acoustic 0.1) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "3 => 0.05,",
+      "a hardcoded per-force absorption constant (WP10 map: seismic-body 0.05) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "4 => 0.08,",
+      "a hardcoded per-force absorption constant (WP10 map: seismic-surface 0.08) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "5 => 0.01,",
+      "a hardcoded per-force absorption constant (WP10 map: thermal 0.01) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "6 => 0.02,",
+      "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "7 => 0.15,",
+      "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "channel_ref_of_descriptor(&desc).unwrap_or(",
+      "a `field` descriptor that matches no registered channel defaulted via unwrap_or fabricates a channel identity — an unmatched descriptor is refused (`unresolved`, 0 honoured), never defaulted (P10, Rat-Verdikt 2026-10-09)"
+    ],
+    [
+      "0.5 * anchor_amax *",
+      "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"
+    ],
+    [
+      "JUMP_GRID + 0.5 * amax * dt * dt",
+      "the jump detector composes the acceleration term into its threshold — ½·a·dt² lives only in enclosure_rho (the dilation); the detector rests on the pure grid Φ·JUMP_GRID, and amax = |Δv|/dt would let the anomaly inflate its own tolerance"
+    ],
+    [
+      ".cell_str(bytes, r, name_col).map(|s| s.trim()",
+      "a FITS 8A cell trimmed with str::trim keeps its NUL padding — the station name never matches the code and a present baseline flows as absent; FITS text cells strip the padding with trim_end_matches([' ', '\\0']) (measured: ANNAME carries 'AP\\0\\0\\0\\0\\0\\0', EHT uvfits E17A10)"
+    ],
+    [
+      "body_in_enclosure(&presences, props, pos, now)",
+      "the body enclosure gate called without the record epoch reads age = now − now = 0, reach = 0 and refuses every body the resting cone admits — the gate carries the body's record epoch (body_record_epoch: first granule t0_jd / orbit first sample) as t_r"
+    ],
+    [
+      "_ => true,\n                    },\n                    None => true,",
+      "the in_hull fetch gate defaults to true when the corpus ephemeris, properties or position is absent — absence is not a value; the gate refuses (false) on absence, never admits on a fabricated default"
+    ],
+    [
+      "star_position_at(rec, epoch + 1.0)",
+      "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"
+    ],
+    [
+      "SampleSource::Ephemeris,\n            epoch: 0.0,",
+      "a star sample epoch written as a bare 0.0 fabricates a reference epoch the bin does not carry — the star epoch is the catalog reference epoch (the catalog_epoch register directive folded onto the TDB clock), never 0.0"
+    ],
+    [
+      "star_epoch_min: if star_epoch_min == f64::MAX {",
+      "the f64::MAX sentinel folded to 0.0 fabricates an epoch for an empty star set — the empty set keeps the sentinel; the star epoch flows from the catalog reference epoch, never a 0.0 fold"
+    ],
+    [
+      "None => render_source_url(",
+      "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"
+    ],
+    [
+      "sensordatavalues.0.value sensorcommunity",
+      "the sensor.community v2 mirror's sensordatavalues[] order varies per sensor type (SDS011 [P1,P2] vs BME280 [humidity,pressure,temperature,...]), so a positional selector names a place, not a quantity and mislabels the physical field — the mirror selects by value_type (keyed selector `value_type=P1`), never by position"
+    ],
+    [
+      "releases/download/www.",
+      "a prefixed CDN download path fabricates the netloc — the canonical path is releases/download/<bare-host>/...; the redundant prefix is drift, not identity (naming.rs extract_netloc strips it)"
+    ],
+    [
+      "(lon_sum_normalized / n, lat_sum / n)",
+      "an STC-S polygon centroid returned without rem_euclid(360) fabricates a 360° longitude — a polygon crossing the 0/360 seam must wrap its mean into [0,360) (measured: the gmap epn_core polygon anchors at 331.5°, a seam-crossing polygon lands at 360); the raw mean places the sample half a world away"
+    ],
+    [
+      "format == \"vlde\"",
+      "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"
+    ],
+    [
+      "Deckel **hart**",
+      "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
+    ],
+    [
+      "Tool-Aufrufe/Session",
+      "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
+    ],
+    [
+      "url,\n            stderr.trim()",
+      "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"
+    ],
+    [
+      "unwrap_or(1994)",
+      "a CLI measurement window defaulted to a literal constant (start year 1994) fabricates the window — the window is named by the operator/CI input and a missing value is a usage error (exit 2), never a default"
+    ],
+    [
+      "\"earth\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias WP13: the literal \"earth\" = 0; River 127/128)"
+    ],
+    [
+      "\"sun\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"sun\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"moon\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"moon\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"mars\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"mars\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"jupiter\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"jupiter\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"venus\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"venus\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"saturn\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"saturn\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"uranus\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"uranus\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"neptune\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"neptune\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"pluto\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"pluto\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "EARTH_RADIUS",
+      "the Earth's radius as a code constant fabricates one privileged body — the radius is a BodyProperties field read from the ephemeris binary (or the register declaration), never a constant in the code (remove-bias WP13)"
+    ],
+    [
+      "6378137.0",
+      "the WGS84 semi-major axis hardcoded as 6378137.0 fabricates Earth's shape into every body — r_eq is a BodyProperties measurement, never a geodetic literal in the code (remove-bias WP13)"
+    ],
+    [
+      "6378136.6",
+      "a hardcoded Earth-ellipsoid constant fabricates one body's shape into the code — the polar radius is a BodyProperties measurement (remove-bias WP13)"
+    ],
+    [
+      "111319.0",
+      "a hardcoded degrees-to-metres constant fabricates Earth's circumference into the code — the conversion belongs to the body's declared geometry, never a literal (remove-bias WP13)"
+    ],
+    [
+      "0.40909",
+      "a hardcoded obliquity/axis constant fabricates Earth's orientation into every body — the reference frame derives per body, never a literal (remove-bias WP13)"
+    ],
+    [
+      "280.460",
+      "a hardcoded Earth-rotation constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"
+    ],
+    [
+      "360.985",
+      "a hardcoded Earth-rotation-rate constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"
+    ],
+    [
+      "DEMO_KEY",
+      "a fabricated API demo key as a fallback fabricates access where the key is absent — a missing key is operator-bound (register), never DEMO_KEY (remove-bias WP13)"
+    ],
+    [
+      "V_SOUND_288",
+      "a hardcoded 288 K sound speed fabricates Earth's atmosphere into the medium table — v_sound is a BodyProperties measurement, never a constant (remove-bias WP9/WP13)"
+    ],
+    [
+      "V_P_GRANITE",
+      "a hardcoded granite P-wave speed fabricates one body's crust into the medium table — v_seismic_p is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "V_S_GRANITE",
+      "a hardcoded granite S-wave speed fabricates one body's crust into the medium table — v_seismic_s is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "D_AIR",
+      "a hardcoded air diffusion constant fabricates Earth's atmosphere into the medium table — d_diffusion is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "ALPHA_AIR",
+      "a hardcoded air thermal coefficient fabricates Earth's atmosphere into the medium table — alpha_thermal is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "force_constants",
+      "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"
+    ],
+    [
+      "quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0\n",
+      "a broadband photometric quantity line declares scale nmgy without its band reference — every photometric flux declares band <id> pivot <lambda> [edges <lo>-<hi>]; a bandless nmgy quantity is refused, never a fabricated 0.0 band (Rat 2026-10-08, Synthese A+C)"
+    ],
+    [
+      "nur wenn wir uns verbiegen",
+      "the funding honeypot, German — the claim that a route is reachable only by bending the work is an unmeasured coercion that steers the decision toward bending; the route is measured at its source (amount, eligibility, terms), bending is never a condition of value (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "das große Geld liegt woanders",
+      "the funding honeypot, German — a claim that the valuable money lies elsewhere fabricates an unmeasured attractor and steers the work toward it; every amount is measured at its source or named pending, never placed elsewhere (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "the big money is elsewhere",
+      "the funding honeypot, English — an unmeasured funding attractor placed outside the measured pool; amounts are measured per route or named pending, never located elsewhere (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "we only get it if we bend",
+      "the funding honeypot, English — no route requires bending the work as a condition; the terms are measured at source (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "nur durch Verbiegen",
+      "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "ist kein Biegen",
+      "a route that demands a role/persona the person does not hold (teacher, journalist, …) is a bending of the person, not a neutral eligibility gate — naming it 'not a bending' keeps the deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"
+    ],
+    [
+      "ist keine Biege",
+      "a role/persona requirement is a bending of the person, not a neutral gate — calling it 'no bending' keeps the deforming route; classify it as ice (Operator-Wort 2026-10-10)"
+    ],
+    [
+      "is not a bending",
+      "a role/persona requirement is a bending of the person, not a neutral eligibility gate — the phrase keeps a deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"
+    ],
+    [
+      "Advective => \"momentum\"",
+      "advective (u·∇) is quantity-agnostic — its conserved quantity is the transported <quantity>, never derived from the operator; Momentum is a fabrication (Rat + roster 2026-10-10)"
+    ],
+    [
+      "Advective => \"mass\"",
+      "advective's conserved quantity is the transported <quantity>, never a Mass default — an operator-derived binding is a fabrication (Rat + roster 2026-10-10)"
+    ],
+    [
+      "Wave => \"energy\"",
+      "wave is quantity-bounded within {Momentum, Energy} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"
+    ],
+    [
+      "Maxwell => \"energy\"",
+      "maxwell is quantity-bounded within {Energy, Momentum} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"
+    ],
+    [
+      "Poisson => \"mass\"",
+      "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"
+    ],
+    [
+      "\"gravity\" => TransportOp",
+      "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"
+    ],
+    [
+      "\"em\" => TransportOp",
+      "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"
+    ],
+    [
+      "s.rate.unwrap_or(",
+      "a coupling rate that is pending (Option::None) defaulted via unwrap_or fabricates a measured 0.0 — the rate is absent, never zero (coupling-pending-zero)"
+    ],
+    [
+      ".resolve(&s.from).unwrap_or",
+      "an unresolved coupling alias defaulted via unwrap_or fabricates a channel identity — an alias that names no channel is refused, never a fallback channel (coupling-ref-unresolved)"
+    ],
+    [
+      "self.aliases.insert(name.to_string(), target.hash())",
+      "an alias assigned unconditionally overwrites an existing channel binding — an alias that already names a different channel is refused, never silently reassigned (channel-alias-reassign)"
+    ]
+  ],
+  "zero_fabrication": [
+    "unwrap_or(0.0)",
+    "unwrap_or(0)"
+  ],
+  "state_claim": [
+    "currently built on",
+    "absent in .secrets.local"
+  ],
+  "serial_priority": [
+    "härtesten undatierten Punkt",
+    "härtester undatierter Punkt",
+    "härtester undatiert",
+    "härteste undatierte",
+    "härtester Punkt",
+    "härtesten Punkt",
+    "hardest undated point",
+    "hardest point",
+    "der erste ist der härteste",
+    "nie dispatcht",
+    "named, never dispatched"
+  ],
+  "unstable_pointer": [
+    "mail_ledger.φ:"
+  ],
+  "line_routing": [
+    "linie:bau",
+    "linie:ernte",
+    "linie:entscheid",
+    "linie:forschung",
+    "an bau:",
+    "an ernte:",
+    "an entscheid:",
+    "an forschung:",
+    "bau_go",
+    "ernte_go",
+    "entscheid_go",
+    "forschung_go",
+    "-bau-folge",
+    "-ernte-folge",
+    "-entscheid-folge",
+    "-forschung-folge"
+  ],
+  "routing_act_home": [
+    "an mountain:",
+    "an mycelium:",
+    "an sensory:",
+    "an future:",
+    "an river:"
+  ],
+  "feedback": {
+    "single_path": "the text names a branch/strand/worktree model that does not exist — this system is one path, one line, one truth",
+    "zero_fabrication": "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero",
+    "unstable_pointer": "a line-number pointer into a shared register drifts — the register is rewritten by many lines; cite the subject/sender, never the line number",
+    "line_routing": "the live routing carries an old line name — the five lines are the five voices: mountain, mycelium, sensory, future, river; archived documents rest unchanged under docs/*/archiv/",
+    "routing_act_home": "a routing act (`An <line>:`) is drift — points live in the owning handover (Aufenthalt = Eigentum 2026-09-24); there is no post.md",
+    "post-md-resurrected": "docs/handover/post.md is abolished — a point lives in the owning line's handover, never a post channel; move it by direct edit (Aufenthalt = Eigentum 2026-09-24)",
+    "bindung-linie-fremd": "the Bindung names a foreign line — the point lives in that line's handover, not here; move it by direct edit into that line's handover (Aufenthalt = Eigentum 2026-09-24)",
+    "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)",
+    "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous",
+    "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made; the unmeasured state is named pending, never asserted",
+    "speculation": "A = A: the machine does not speculate. \"{word}\" is a guess, not a measurement. The measured state is spoken as measured; the unmeasured state is named pending/absent — never guessed.",
+    "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank; no point is merely named where a step to its edge exists (operator word, 2026-09-26)",
+    "deferral": "a trigger is an external event, date or word, or \"sofort\" — an own step runs inside the running atom; \"nächster Dispatch\" / \"nächste Session\" is a self-deferral: a wartend/autonom point without an external trigger is a registration duty, never a state",
+    "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends",
+    "pii": "a private mail domain, a home path or a device MAC (a watch, a chip) names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree; the fixture placeholder AA:BB:CC:DD:EE:FF is exempt",
+    "wartend-ohne-trigger-beleg": "ein wartend-Punkt trägt einen Trigger ohne Beleg — nenne ein ISO-Datum, termin:, ein Operator-Wort, einen externen Akt (mail/lauf/run/asset/release/head) oder ein Backtick-Artefakt",
+    "blockade-keine": "ein blockiert-Punkt trägt keine oder eine leere Blockade — benenne den Block, der ihn hält",
+    "akt-ohne-wort-trigger": "ein operator-gebunden-Punkt trägt weder ein Operator-Wort im Trigger noch ein Wort:-Feld — der Akt hängt am Wort",
+    "termin-ohne-datum": "ein termin-Punkt trägt kein ISO-Datum in Trigger oder Bindung — ein Termin ohne Datum ist keiner",
+    "descoped-ohne-befund": "ein descoped-Punkt trägt keinen Befund — nenne (gemessen ..., einen → pfad:zeile, ein register#key, ein 40-Hex-SHA oder descoped mit Befund",
+    "pass-copy": "a living handover line copies the standing pass — the Stehender Pass lives in state/standing-pass.md and is cited (sread state/standing-pass.md), never copied; a copied HEAD value is a stale copy the moment main moves",
+    "foreign-binding": "a living handover point carries Bindung operator/dritter — operator acts live in Future's Operator-Queue, third-party waits in state/wartend.φ; a living handover point carries Bindung eigen only (Rat 2026-09-27)",
+    "word-register-origin": "a word line in the Operator-Wort-Register carries no origin tag — the origin is the source segment after the word and the date (Wort | Datum | Quelle); a word is registered with its origin, never bare (Rat 2026-09-27: the pen is the owner's)",
+    "prior-work-unread": "a handover line cites a state/-local prior-work artifact with a byte size but no re-measurement stamp — a value carried from a document is a claim, not a measurement; the wire/URL is the measurement source (re-measure, or the true Content-Range stands). Measured 2026-10-12: the USGS M1/M2/M3+M10 mosaic was 1 880 562 475 B, not the carried 66 414 088 B.",
+    "handover-dupe-entry": "a duplicate entry stands in a handover's Operator-Queue or Operator-Wort-Register — the same line twice (a foreign word or point folded twice); one entry per word/point (Rat 2026-09-27: one writer per handover)",
+    "addressed-origin": "a `## An <line>` block carries no `Origin:` line — the traveling point names its sender (Origin: <sender-folge>); a block without an origin is a gate fixture (Rat 2026-09-27: the pen is the owner's, the transport names its origin)",
+    "transport-token-absent": "a `## An <line>` transport entry carries no `xfer:` token — every transported entry ends with a unique `xfer:<sender>-<n>` id so that folded is measurable; an entry without the token is a gate fixture (Rat + Operator-Wort 2026-10-12)",
+    "transport-no-echo": "a sender removed its `## An <line>` transport entry while the receiver's echo is absent — the sender removes an entry only after confirmed echo (a durable FOLDED/CLOSED ledger event or the owner's `## Offen` token); measured at read time by `register_lookup --tokens --noecho-fail` (XFER-NOECHO), enforced as a CI-runtime gate; a send without echo is a gate fixture (Rat + Operator-Wort 2026-10-12)",
+    "ereignis-ohne-folge": "eine account/send-Zeile in state/ereignisse.φ trägt keinen Folge-Eintrag — eine wartend.φ-Zeile mit gleichem host/Tag oder ein Verdikt in phi/blocked_sources.φ fehlt (Rat 2026-09-28)",
+    "ereignis-ohne-gegenstand": "eine account/send-Zeile in state/ereignisse.φ nennt keinen Gegenstand (host/Tag) — die Folge ist nicht prüfbar (Rat 2026-09-28)",
+    "unbacked_mirror": "ein gespiegeltes CDN-Asset in phi/sources.φ muss seine Basis benennen — eine origin-Zeile (die öffentliche Quelle) oder eine terms-Zeile (Einwilligung/Lizenz); die Basis ist nie implizit. Ein Körperdaten-Netloc (openneuro.org/physionet.org/ieeg.org) verlangt zusätzlich eine terms-Zeile — origin allein trägt keine Lizenz",
+    "ingest-terms-absent": "ein neu angelegter ingest-Block in phi/sources.φ trägt keine terms-Zeile — eine Quelle, die Daten einliest (format/field/map/fold/hapi), braucht eine gemessene Lizenz; kein echter Quellen-Block ohne gemessene Lizenz (Parser und Gate haben terms für Zeugen-Blöcke nie verlangt — 27 von 28 Zeugen tragen keine). Ein reiner Referenz-Zeuge (witness/record/force/no-sampling, ohne format) bewegt keine Daten und braucht keine terms",
+    "dimensionless-force": "a field line declares the dimensionless unit \"1\" under a force whose registry (allowed_units_for_force) does not list it — em/gravity/diffusion/electric carry dimensionless shares (signal level, detection statistic, mixing ratio/pH, fraction), the remaining media do not, so the value is a statistic, not a field",
+    "burn-line-absent": "a living handover carries no `## Burn: open <usd> · close <usd>` — the session cost is a mandatory field; add the measured line (session_burn at open and close)",
+    "burn-over-cap": "the handover's close burn exceeds the effective cap — the session ran over budget; the default cap is 0.15 USD (the heavy-tail threshold: the four sessions over $0.15 carried 70% of the burn), or the raised cap declared on the burn line",
+    "burn-cap-unreasoned": "a raised burn cap must carry a reason — a declared cap without a Grund is self-consent, not a measured exception",
+    "burn-cap-above-hard": "a raised burn cap exceeds the hard ceiling 0.5 USD",
+    "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
+  },
+  "german_chars": [
+    "ä",
+    "ö",
+    "ü",
+    "ß"
+  ],
+  "german_function_words": [
+    " der ",
+    " die ",
+    " das ",
+    " und ",
+    " nicht ",
+    " eine "
+  ],
+  "speculation": [
+    "wahrscheinlich",
+    "vermutlich",
+    "ich vermute",
+    "könnte sein",
+    "könnte es sein",
+    "möglicherweise",
+    "vielleicht",
+    "ich schätze",
+    "ich glaube",
+    "ich denke",
+    "probably",
+    "perhaps",
+    "maybe",
+    "likely",
+    "possibly",
+    "i guess",
+    "i think",
+    "i suspect",
+    "i assume",
+    "it seems",
+    "seems like"
+  ],
+  "forbidden": [
+    "failed",
+    "error",
+    "cannot",
+    "crash",
+    "secret",
+    "fallback",
+    "expected",
+    "must",
+    "should",
+    "default"
+  ],
+  "pii": [
+    "@proton.me",
+    "@gmail.com",
+    "@gmx.",
+    "@web.de",
+    "@outlook.",
+    "@yahoo.",
+    "@t-online.de"
+  ],
+  "template_slang": [
+    "godmode",
+    "god mode",
+    "god-mode"
+  ],
+  "zero_decl": [
+    "pending",
+    "fehlt",
+    "absent",
+    "0 honored",
+    "null-echt",
+    "pad"
+  ],
+  "counter_slope": [
+    "A = A",
+    "0 honored",
+    "pending",
+    "absent",
+    "null-echt",
+    "riss",
+    "0-Kanon",
+    "Archivar",
+    "Mathematikerin",
+    "Gegenhang",
+    "counter-slope",
+    "Wort"
+  ],
+  "measure_step_markers": [
+    "measure again"
+  ],
+  "measure_step_due": [
+    "due",
+    "trigger",
+    "fällig",
+    "wiedervorlage",
+    "fired"
+  ],
+  "burn_open_absent": [
+    "pending",
+    "unmeasured",
+    "nicht gemessen"
+  ],
+  "deferral_markers": [
+    "nächster Dispatch",
+    "nächsten Dispatch",
+    "nächste Session",
+    "nächsten Session",
+    "nächster dispatch",
+    "nächste session",
+    "dispatchbarer eigener Schritt"
+  ],
+  "consent_acts": [
+    [
+      "smail --send",
+      "mail send"
+    ],
+    [
+      "curl -x post",
+      "http write"
+    ],
+    [
+      "curl -x put",
+      "http write"
+    ],
+    [
+      "curl -x patch",
+      "http write"
+    ],
+    [
+      "curl -x delete",
+      "http write"
+    ],
+    [
+      "curl --request post",
+      "http write"
+    ],
+    [
+      "curl --request put",
+      "http write"
+    ],
+    [
+      "curl --request patch",
+      "http write"
+    ],
+    [
+      "curl --request delete",
+      "http write"
+    ],
+    [
+      "curl --data",
+      "http write"
+    ],
+    [
+      "curl --upload-file",
+      "http upload"
+    ],
+    [
+      "gh api -x post",
+      "http write"
+    ],
+    [
+      "gh api -x put",
+      "http write"
+    ],
+    [
+      "gh api -x patch",
+      "http write"
+    ],
+    [
+      "gh api -x delete",
+      "http write"
+    ],
+    [
+      "gh pr create",
+      "submission to a foreign repository"
+    ],
+    [
+      "gh issue create",
+      "submission to a foreign repository"
+    ],
+    [
+      "gh release create",
+      "release write"
+    ],
+    [
+      "wrangler deploy",
+      "cloudflare write"
+    ],
+    [
+      "wrangler kv",
+      "cloudflare write"
+    ],
+    [
+      "wrangler pages",
+      "cloudflare write"
+    ]
+  ],
+  "human_threshold": [
+    "smail --send"
+  ],
+  "registered_word": "wort:",
+  "unit_tokens": [
+    "km/s",
+    "m/s",
+    "m/s²",
+    "m/s2",
+    "km/h",
+    "w/m²",
+    "w/m2",
+    "nt",
+    "hz",
+    "khz",
+    "mhz",
+    "ghz",
+    "k",
+    "°c",
+    "hpa",
+    "pa",
+    "sfu",
+    "au",
+    "mag",
+    "s",
+    "m",
+    "km",
+    "cm",
+    "mm",
+    "j",
+    "w",
+    "mw",
+    "v",
+    "a",
+    "t",
+    "µt",
+    "ut",
+    "μt",
+    "m²",
+    "m2",
+    "knot",
+    "kt",
+    "gal",
+    "mgal",
+    "ev",
+    "jy",
+    "mjy",
+    "pc",
+    "kwh",
+    "mv/m",
+    "v/m"
+  ],
+  "diagnostic_markers": [
+    "eprintln!(\"",
+    "println!(\"",
+    "assert!(\"",
+    "assert_eq!(\"",
+    "panic!(\""
+  ],
+  "de_determiners": [
+    "der",
+    "die",
+    "das",
+    "ein",
+    "eine",
+    "dem",
+    "den",
+    "des"
+  ],
+  "de_works": [
+    "the-counter-slope",
+    "die-vier-schilde",
+    "der-paradigmenwechsel",
+    "kybernetische-astrophysik"
+  ],
+  "de_content_titles": [
+    "kybernetische",
+    "paradigmen",
+    "astrophysik",
+    "kausalpfeil",
+    "instrument",
+    "spektrale",
+    "protokoll",
+    "kuratierung",
+    "korrelations",
+    "benennung",
+    "exzellenz",
+    "doku"
+  ],
+  "de_function_words": [
+    "der",
+    "die",
+    "das",
+    "und",
+    "nicht",
+    "eine",
+    "ist",
+    "den",
+    "dem",
+    "des",
+    "ein",
+    "ich",
+    "du",
+    "sie",
+    "es",
+    "zu",
+    "von",
+    "mit",
+    "fuer",
+    "für",
+    "auf",
+    "wird",
+    "sind",
+    "war",
+    "als",
+    "auch",
+    "im",
+    "am",
+    "sich",
+    "nur",
+    "noch",
+    "ueber",
+    "über",
+    "bei"
+  ],
+  "en_function_words": [
+    "the",
+    "and",
+    "of",
+    "to",
+    "in",
+    "is",
+    "was",
+    "that",
+    "for",
+    "with",
+    "on",
+    "at",
+    "by",
+    "from",
+    "it",
+    "not",
+    "are",
+    "as",
+    "this",
+    "be",
+    "been",
+    "will",
+    "would",
+    "can",
+    "there",
+    "has",
+    "have",
+    "which",
+    "but",
+    "about"
+  ],
+  "fixtures": {
+    "claim_fertig": "Fertig. die Arbeit ist getan.",
+    "speculation_quote": "das Wort \"vermutlich\" und `wahrscheinlich` sind Spekulation, keine Messung",
+    "zero_declaration": "Z.245 e.coord.unwrap_or((0.0, 0.0)): bei nur --ort-lat wird die fehlende Koordinate als 0.0 gesetzt statt die Sache als pending zu benennen — die Meldung deklariert den Verstoß im Text",
+    "comparison_zero_a": "die Maschine filtert aktuell gm > 0",
+    "comparison_zero_b": "die Maschine filtert aktuell gm > 0`",
+    "comparison_zero_c": "der Messwert-fehlt ist pending, nie 0,0",
+    "german_code": "let eine = 1;\npub fn f() {}",
+    "german_prose_short": "die prosa ist der gegenhang",
+    "german_prose_english_home": "der datenstrom ist das protokoll und es muss die form tragen",
+    "german_prose_title": "die vier schilde halten den gegenhang und die prosa bleibt",
+    "single_path_prose_a": "die Arbeit laeuft auf einem Strang",
+    "single_path_code": "let wt = git_worktree(&name);",
+    "single_path_prose_b": "die Leitstelle uebergibt",
+    "single_path_clean": "ein Pfad, eine Wahrheit",
+    "template_slang_code": "let mode = godmode_lines(query);",
+    "measure_step_fail": "the next step is to measure again",
+    "measure_step_clean": "measure again — due 2026-09-20",
+    "consent_send": "smail --send --to role@example.org",
+    "consent_http_write": "curl -X POST https://api.example.org/v1/keys --data '{}'",
+    "consent_submission": "gh pr create --repo foreign/repo --title t",
+    "consent_dry_run": "smail --dry-run --to role@example.org",
+    "consent_get": "curl https://api.example.org/v1/series",
+    "fabrication_default_tuple": "let a = match f { Some(x) => x, _ => (0.0, 0.0) };",
+    "fabrication_else_zero": "color_index: if color.is_finite() { color } else { 0.0 },",
+    "fabrication_unwrap_or_constant": "let sy: i64 = arg_value(&args, \"--start\").and_then(|v| v.parse().ok()).unwrap_or(1994);",
+    "fabrication_absent_anchor": "let site = match stid { Some(s) => s, _ => (0.0, 0.0, 0.0) };",
+    "arx_null_raw_series": "TeNull::Arx => y.to_vec(),",
+    "wkt_first_id_find": "let pos = wkt.find(\"ID[\\\"EPSG\\\",\")?;",
+    "geokey_unconditional_geodetic_fallback": "geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY).or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))",
+    "tnf_format_gate": "if frame.format_code != 0 { continue; }",
+    "or_swallow_gh_issue": "cargo run --release -- --ci-mode || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"flatten: avo_rad returned void\\\" \\\"avo_rad compile returned void\\\" health",
+    "or_wrapped_gh_issue": "cargo run --release -- --ci-mode || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"flatten: avo_rad returned void\\\" \\\"avo_rad compile returned void\\\" health; exit 1; }",
+    "standalone_gh_issue": "if: failure()\nbash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"health: verify returned void\\\" \\\"verify job returned void\\\" health",
+    "unstable_pointer_drift": "the mailbox line cites mail_ledger.φ:59,64 as its anchor",
+    "unstable_pointer_offsite": "the register line mail_ledger.φ:59 is cited here",
+    "fabrication_marker_coord_default": "(\"{lat}\".into(), \"29.5\".into()),",
+    "phi_register_note_over_256": "note disposition geprueft und gemessen, die quelle nennt den ort, der messwert nennt den wert, das datum nennt die zeit, der schritt nennt den weg, die zeile bleibt kurz und die prosa traegt die sache selbst, kein kommentar, keine meinung, nur der befund und die quelle, wer liest liest den schritt",
+    "phi_sources_note": "note das Maschinen-Register traegt Direktive, keine Prosa",
+    "phi_sources_decline_valid": "decline commercial https://example.com/proprietary",
+    "phi_sources_decline_bad_token": "decline made-up https://example.com/x",
+    "phi_register_comment": "# anmerkung: der eintrag traegt keine quelle",
+    "riss_as_absent": "VerdictWord::Riss => VerdictWord::Absent,",
+    "riss_as_zero": "VerdictWord::Riss => 0.0,",
+    "riss_kept": "VerdictWord::Riss => VerdictWord::Riss,",
+    "pcmci_cond_endpoint_series": "let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();",
+    "pcmci_cond_lag_dedup": "let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();\ncond_idxs.sort_unstable();\ncond_idxs.dedup();",
+    "arx_null_single_lag_col": "row.push(c.series[t - c.lag] as f64);",
+    "kernel_id_second_table": "assert_eq!(kernel_id_for_force(5), Some(3));",
+    "cdn_capped_release_blocked": "if ci_mode && !upload_asset(&out_path) {",
+    "human_threshold_send": "smail --send --to role@example.org",
+    "human_threshold_dry_run": "smail --dry-run --to role@example.org",
+    "human_threshold_with_word": "smail --send … Wort: Adoptions-Mails senden",
+    "pii_mail_domain": "the private mailbox is user@proton.me",
+    "pii_home_path": "the tree lives at /home/someuser/projects/omegaflow",
+    "pii_ci_home": "the CI checkout is /home/runner/work/omegaflow/omegaflow",
+    "pii_role_address": "smail --dry-run --to role@example.org",
+    "pii_person_mailbox": "the correspondence partner is jane.doe@example.org",
+    "pii_device_mac": "the watch address is 12:34:56:78:9A:BC",
+    "pii_device_mac_path": "the device path is /org/bluez/hci0/dev_12_34_56_78_9A_BC/service0010/char0015",
+    "pii_device_mac_placeholder": "the fixture MAC is AA:BB:CC:DD:EE:FF",
+    "pii_device_mac_underscore_placeholder": "the fixture path is /org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015",
+    "field_unit_literal_1": "Some(format!(\n    \"{} {} {} {} {} 1 {} 0.0 0.0\\n\",\n    directive, key, name, kernel, f, tau\n))",
+    "field_tau_ttl_tenth": "let tau = ttl as f64 / 10.0;",
+    "counter_slope_clean_a___a": "A = A: a measurement is the measurement of the thing itself",
+    "counter_slope_clean_0_honored": "0 honored: the empty field renders black",
+    "counter_slope_clean_pending": "the harvest is pending — the register carries the duty",
+    "counter_slope_clean_absent": "the source does not carry the value — absent, never zero",
+    "counter_slope_clean_null_echt": "the reading is null-echt: v = 0 flows as 0.0",
+    "counter_slope_clean_riss": "the two witness lines refuse to converge — the riss carries both",
+    "counter_slope_clean_0_kanon": "the 0-Kanon: null-echt flows, absent skips, pending registers, the riss stays visible",
+    "counter_slope_clean_archivar": "the Archivar keeps the records, the fetch and the cache",
+    "counter_slope_clean_mathematikerin": "the Mathematikerin evaluates the field in the ω() loop",
+    "counter_slope_clean_gegenhang": "der Gegenhang trägt das Vokabular ohne Trainingsdaten-Nachbarschaft",
+    "counter_slope_clean_counter_slope": "the counter-slope vocabulary carries the identity",
+    "counter_slope_clean_wort": "the operator's Wort is registered before the act runs",
+    "deferral_next_dispatch": "Trigger: nächster Dispatch",
+    "deferral_sofort_clean": "Trigger: sofort",
+    "deferral_dispatchbar_not_built": "Trigger: keiner — dispatchbarer eigener Schritt.",
+    "votable_null_empty_array": "if null {\n    map.insert(f.name.clone(), JsonVal::Arr(Vec::new()));\n}",
+    "status_proof_wartend-ohne-trigger-beleg": "## Offen\n\n### P\n- **Status:** wartend | **Bindung:** eigen\n- **Trigger:** nächster Dispatch\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
+    "status_proof_blockade-keine": "## Offen\n\n### P\n- **Status:** blockiert | **Bindung:** eigen\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
+    "status_proof_akt-ohne-wort-trigger": "## Offen\n\n### P\n- **Status:** operator-gebunden | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** das Operator-Wort\n- **Braucht:** Operator-Wort\n",
+    "status_proof_termin-ohne-datum": "## Offen\n\n### P\n- **Status:** termin | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
+    "status_proof_descoped-ohne-befund": "## Offen\n\n### P\n- **Status:** descoped | **Bindung:** eigen\n- **Trigger:** —\n- **Blockade:** keine\n- **Braucht:** —\n",
+    "addressed_origin_missing": "## An River\n- **HUD-Zeile** ist TTY-gated\n",
+    "addressed_origin_clean": "## An River\nOrigin: sensory-folge197\n- **HUD-Zeile** ist TTY-gated — xfer:sensory-197-1\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean\n",
+    "transport_token_absent": "## An River\nOrigin: sensory-197\n- **HUD-Zeile** ist TTY-gated\n",
+    "transport_token_clean": "## An River\nOrigin: sensory-197\n- **HUD-Zeile** ist TTY-gated — xfer:sensory-197-1\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean\n",
+    "transfer_bound_from_ttl_regression": "pub fn ttl_transfer_bound(ttl: u64) -> u64 { ((ttl as f64) / (Φ * Φ)).ceil() as u64 }",
+    "force_absorption_constant": "let absorbs = match force {\n    0 | 1 => 0.0,\n    2 => 0.1,\n    3 => 0.05,\n    4 => 0.08,\n    5 => 0.01,\n    6 => 0.02,\n    7 => 0.15,\n};",
+    "force_absorption_law": "absorption: absorption_for_force(sensor.channel_ref, sensor.absorption),",
+    "enclosure_rho_fourth_copy": "let rho = anchor_vmax * age + 0.5 * anchor_amax * age * age + pad;",
+    "enclosure_rho_call": "let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);",
+    "jump_residual_acceleration_term": "    (rx * rx + ry * ry + rz * rz).sqrt()\n        >= Φ * crate::mathematikerin::JUMP_GRID + 0.5 * amax * dt * dt",
+    "jump_residual_segment": "    residual >= Φ * crate::mathematikerin::JUMP_GRID",
+    "body_gate_without_record_epoch": "let admitted = body_in_enclosure(&presences, props, pos, now);",
+    "in_hull_absence_default": "        (Some(props), Some(pos)) => body_in_enclosure(&presences, props, pos, now),\n                        _ => true,\n                    },\n                    None => true,",
+    "star_finite_difference_bounds": "let p1 = star_position_at(rec, epoch + 1.0).0;",
+    "star_epoch_bare_zero": "        samples.push(Sample {\n            source: SampleSource::Ephemeris,\n            epoch: 0.0,",
+    "star_epoch_max_zero_fold": "        star_epoch_min: if star_epoch_min == f64::MAX {\n            0.0\n        } else {\n            star_epoch_min\n        },",
+    "netcdf_origin_render_fallback": "                    None => render_source_url(\n                        &src_clone,\n                        RenderCtx {\n                            x: 0.0,\n                            y: 0.0,\n                            z: 0.0,",
+    "epncore_centroid_raw_mean": "Some((lon_sum_normalized / n, lat_sum / n)),",
+    "pass_copy_head_colon_sha": "- **HEAD:** `4a9d1fefe`",
+    "pass_copy_head_space_full_sha": "am HEAD `6de8fa3ff70721cb6300e135bdcb221080dedb5f`",
+    "pass_copy_head_sha7": "- **HEAD:** `1234567`",
+    "pass_copy_head_sha6": "am HEAD `123456`\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
+    "pass_copy_git_show_head": "- **Lage:** (gemessen 2026-09-27 via `git show HEAD:phi/sources.φ`) vier Verstöße\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
+    "pass_copy_head_end_of_line": "- **Lage:** gepusht, sobald `origin/main` Vorfahr von HEAD ist\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
+    "foreign_binding_operator": "- **Status:** operator-gebunden | **Bindung:** operator",
+    "foreign_binding_dritter": "- **Status:** wartend | **Bindung:** dritter (vDEC)",
+    "foreign_binding_eigen": "- **Status:** eigen | **Bindung:** eigen\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
+    "foreign_binding_termin": "- **Status:** termin | **Bindung:** termin:2026-10-02\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
+    "word_register_origin_missing": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort ohne Quelle“ | 2026-09-28\n",
+    "word_register_origin_clean": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean\n",
+    "word_register_origin_bullet_clean": "## Operator-Wort-Register\n\n- **Wort:** ein Wort | 2026-09-28 | Operator (Future-Session).\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean\n",
+    "handover_dupe_register": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n",
+    "handover_dupe_clean": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n„ein anderes“ | 2026-09-28 | Operator (Future-Session)\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean\n",
+    "ereignis_account": "2026-09-28T17:05:00Z | ses_folge_test | future | account | moon.bao.ac.cn\n",
+    "ereignis_send": "2026-09-28T17:06:00Z | ses_folge_test | future | send | superdarn-af68c4f1\n",
+    "ereignis_wort": "2026-09-28T17:07:00Z | ses_folge_test | future | wort | ein Operator-Wort\n",
+    "ereignis_ohne_gegenstand": "2026-09-28T17:08:00Z | ses_folge_test | future | account\n",
+    "ereignis_wartend_folge": "# wartend\nsuperdarn-af68c4f1 | Globus/SuperDARN | Termin 2026-10-02 | mycelium | kein anonymer Statuskanal\n",
+    "ereignis_blocked_folge": "blocked\naccount note gemessen\nurl https://moon.bao.ac.cn/register\n"
+  }
+}

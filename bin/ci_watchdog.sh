@@ -1,0 +1,196 @@
+#!/usr/bin/env bash
+# The CI watchdog: reads the repo's GitHub Actions runs through bin/ci_manage
+# (gh API, network-only — never the DB, never the opencode process, never a
+# tracked doc), cancels only what does not flow, and reruns only a measured
+# transient failure. Its state lives in its own log and seen-file; the
+# CI-Status line stays the session's (one measurement, one author).
+# Autostart: the systemd user timer ci-watchdog.timer runs this with --once
+# every 64 min (install: ./bin/ci_watchdog.sh --install, then
+# systemctl --user enable --now ci-watchdog.timer). A manual run is the same
+# --once; without an argument the script loops itself.
+set -u
+cd "$(dirname "$0")/.." || exit 1
+source ./bin/_roots.sh
+LOG="${CI_WATCHDOG_LOG:-$OMEGAFLOW_TMP/ci/ci_watchdog.log}"
+SEEN="${CI_WATCHDOG_SEEN:-$OMEGAFLOW_TMP/ci/ci_watchdog.seen}"
+POLL_S="${CI_WATCHDOG_POLL:-3840}"
+CI="${CI_MANAGE:-./bin/ci_manage}"
+SNAP="${CI_WATCHDOG_SNAPSHOT:-$OMEGAFLOW_TMP/ci_status.md}"
+UNITSRC="$PWD/bin"
+UNITDIR="$HOME/.config/systemd/user"
+mkdir -p "$(dirname "$LOG")"
+touch "$SEEN"
+
+log() { echo "[ci_watchdog] $(date -Is) $*" >>"$LOG"; }
+seen() { grep -qx "$1" "$SEEN" 2>/dev/null; }
+mark() { echo "$1" >>"$SEEN"; }
+
+# Median duration (s) of the last <=10 *successful* runs of one workflow,
+# read from the single poll table. Failures are fast and would poison the
+# floor; a run past 2x the success median is the one that does not flow.
+# Fewer than two successes carry no median basis: one sample has no spread,
+# and a single empty green run must not set the floor for every later run.
+median_duration() {
+  local wf="$1"
+  printf '%s\n' "$rows" | awk -F'\t' -v w="$wf" '
+    $5==w && $3=="success" && $6!="" && $6!="?" && $7!="" && $7!="?" {
+      cmd="date -d \""$6"\" +%s"; cmd|getline s; close(cmd);
+      cmd="date -d \""$7"\" +%s"; cmd|getline e; close(cmd);
+      if (e>s) print e-s
+    }' | head -10 | sort -n |
+  awk '{a[NR]=$1} END{if(NR>=2) print a[int((NR+1)/2)]}'
+}
+
+poll_once() {
+  local now
+  now=$(date +%s)
+  rows=$($CI list --limit 60 2>/dev/null) || {
+    {
+      printf '# CI status — %s\n' "$(date -Is)"
+      printf '# list void — the gh-API answered void (rate limit or unreachable); no action\n'
+    } > "$SNAP"
+    log "list void — no action"
+    return
+  }
+
+  # 1. cancel: an in_progress run past 2x its workflow's successful median.
+  #    No successful history -> report, never guess a floor.
+  printf '%s\n' "$rows" | awk -F'\t' '$2=="in_progress"{print $1"\t"$5"\t"$6}' |
+  while IFS=$'\t' read -r id wf started; do
+    [ -n "$id" ] && [ -n "$wf" ] && [ -n "$started" ] && [ "$started" != "?" ] || continue
+    seen "$id" && continue
+    # release workflows run long by design (a cold build, a large CDN upload); the
+    # 2x-median rule would kill a correct build against a cache-hit median
+    case "$wf" in
+      tools-build|*-cdn)
+        log "run $id in_progress ($wf) — release workflow, exempt from the median cancel"
+        mark "$id"
+        continue
+        ;;
+    esac
+    local s med dur
+    s=$(date -d "$started" +%s 2>/dev/null) || continue
+    med=$(median_duration "$wf")
+    if [ -z "$med" ]; then
+      log "run $id in_progress ($wf), no median basis — fewer than two successful runs — no action"
+      mark "$id"
+      continue
+    fi
+    dur=$(( now - s ))
+    if [ "$dur" -gt $(( 2 * med )) ]; then
+      log "cancel $id ($wf): ${dur}s > 2x successful median ${med}s"
+      $CI cancel "$id" >>"$LOG" 2>&1
+      mark "$id"
+      sleep 1
+    fi
+  done
+
+  # 2. queued runs: report only. A queued follower is indistinguishable from
+  #    a runner/concurrency queue in the list API — a cancel here would kill
+  #    a correctly waiting run, so the measured state is logged, not acted on.
+  printf '%s\n' "$rows" | awk -F'\t' '$2=="queued"{print $1"\t"$5"\t"$6}' |
+  while IFS=$'\t' read -r id wf started; do
+    [ -n "$id" ] || continue
+    seen "$id" && continue
+    log "queued $id ($wf) since ${started:-?} — reported, no action"
+    mark "$id"
+  done
+
+  # 2b. queued `ci-gate` run of a superseded SHA: its workflow concurrency is
+  #     per-SHA (ci-gate-${{ github.sha }}), so a newer push never evicts an
+  #     older SHA's waiting run — it waits for nothing and only saturates the
+  #     ubuntu queue (measured 2026-10-09: 22 queued runs, ~6 jobs each). The
+  #     tip is read once from the remote; a queued ci-gate run whose head_sha
+  #     differs is cancelled. Its per-SHA verdict stays `pending` in the local
+  #     register (ci_gate_register reads the cancelled run as pending, never
+  #     fabricated green). Only `ci-gate` is cancelled here — other workflows
+  #     have real work and are left waiting.
+  tip=$(git ls-remote origin -h refs/heads/main 2>/dev/null | awk '{print $1}')
+  if [ -n "$tip" ]; then
+    printf '%s\n' "$rows" | awk -F'\t' '$2=="queued" && $5=="ci-gate"{print $1}' |
+    while IFS= read -r id; do
+      [ -n "$id" ] || continue
+      seen "$id" && continue
+      sha=$($CI view "$id" 2>/dev/null | awk -F': ' '/^head_sha:/{print $2}')
+      [ -n "$sha" ] || continue
+      if [ "$sha" != "$tip" ]; then
+        log "cancel queued ci-gate $id ($sha != tip $tip)"
+        $CI cancel "$id" >>"$LOG" 2>&1
+      fi
+      mark "$id"
+    done
+  else
+    log "tip void — git ls-remote origin answered void; queued ci-gate left alone"
+  fi
+
+  # 3. rerun: a failure at attempt 1 with a measured transient cause only —
+  #    never an assertion (red is the null holding not), never a cap class.
+  printf '%s\n' "$rows" | awk -F'\t' '$3=="failure" && $4=="1"{print $1"\t"$5}' |
+  head -8 |
+  while IFS=$'\t' read -r id wf; do
+    [ -n "$id" ] || continue
+    seen "$id" && continue
+    local txt
+    txt=$($CI log "$id" 2>/dev/null)
+    # The loudest measurement wins: a runner shutdown is transient and stays a
+    # rerun even if a compile line carries the substring "assertion". The
+    # assertion class is limited to real red markers (never `static_assertions`).
+    if printf '%s' "$txt" | grep -qiE 'runner has received a shutdown signal|timed out|could not resolve host|connection reset|curl: \('; then
+      log "rerun $id ($wf): measured transient cause"
+      $CI rerun "$id" >>"$LOG" 2>&1
+      mark "$id"
+      sleep 1
+      continue
+    fi
+    if printf '%s' "$txt" | grep -qiE 'panicked at|assertion failed|assertion .* failed|test result: FAILED|error\[E[0-9]'; then
+      log "no rerun $id ($wf): assertion-red"
+      mark "$id"
+    else
+      log "no rerun $id ($wf): cause not measured transient"
+      mark "$id"
+    fi
+  done
+
+  # 4. per-SHA verdict: measure the current HEAD once and record it in the local
+  #    ci-gate register (state/ci-gate.phi, external-state form — a
+  #    gitignored cache of the commit's check-runs, never a tracked doc). The
+  #    wrapper reads pending while its release binary is absent, named, never a
+  #    silent zero; a void call leaves the register untouched.
+  ./bin/ci_gate_register >>"$LOG" 2>&1 || log "ci_gate_register returned void — register untouched"
+
+  # The snapshot is the watchdog's sensor buffer: a session reads this file at
+  # the planning pass (no API call, no polling). The tracked CI-Status line in
+  # state/external-state.md (the tracked pointer) names the ledgers true
+  # home `state/external-state.md`; the session writes there.
+  {
+    printf '# CI status — %s (ci_watchdog poll, every %ss)\n' "$(date -Is)" "$POLL_S"
+    printf '# read by sessions at the planning pass; never written by a session\n'
+    printf '## active (in_progress/queued)\n'
+    printf '%s\n' "$rows" | awk -F'\t' '$2=="in_progress"||$2=="queued"{print $1"\t"$2"\t"$5"\t"$6}'
+    printf '## failed (attempt 1)\n'
+    printf '%s\n' "$rows" | awk -F'\t' '$3=="failure"&&$4=="1"{print $1"\t"$5"\t"$6}'
+  } > "$SNAP"
+}
+
+install_unit() {
+  mkdir -p "$UNITDIR"
+  cp "$UNITSRC/ci-watchdog.service" "$UNITDIR/ci-watchdog.service"
+  cp "$UNITSRC/ci-watchdog.timer" "$UNITDIR/ci-watchdog.timer"
+  systemctl --user daemon-reload >/dev/null 2>&1 || true
+}
+
+case "${1:-}" in
+  --once)
+    poll_once
+    ;;
+  --install)
+    install_unit
+    echo "ci-watchdog units installed — enable: systemctl --user enable --now ci-watchdog.timer"
+    ;;
+  *)
+    while true; do
+      poll_once
+      sleep "$POLL_S"
+    done
+    ;;
+esac

@@ -1,0 +1,50 @@
+#!/bin/sh
+# text-fallback — holt die Textschicht einer Adresse über einen Ersatzweg.
+#
+#   bin/text-fallback <cachedir> <url> <nummer>
+#
+# Reihenfolge: direkter Abruf mit Zertifikatstoleranz, dann r.jina.ai (rendert JS),
+# dann der Wayback-Snapshot derselben Adresse. Ergebnis geht als manual-<n>.txt in
+# den Cache und wird in index.tsv eingetragen. Kein Eintrag, wenn kein Text kommt.
+set -u
+dir="$1"; url="$2"; n="$3"
+file="$dir/manual-$n.txt"
+raw="$(mktemp "${TMPDIR:-/tmp}/tf.XXXXXX")"
+trap 'rm -f "$raw"' 0 1 2 15
+
+try_direct() {
+    curl -sSLk -A 'Mozilla/5.0' --max-time 60 -r 0-8000000 "$url" 2>/dev/null > "$raw"
+    [ -s "$raw" ] || return 1
+    case "$(head -c 4 "$raw")" in
+        %PDF) pdftotext -layout "$raw" - 2>/dev/null | head -c 4000000 > "$file" ;;
+        *) sed 's/<[^>]*>/ /g' "$raw" | tr -s ' \r\n' ' ' | head -c 4000000 > "$file" ;;
+    esac
+    [ -s "$file" ]
+}
+
+try_jina() {
+    curl -sSL -A 'Mozilla/5.0' --max-time 90 "https://r.jina.ai/$url" 2>/dev/null | head -c 4000000 > "$file"
+    [ -s "$file" ]
+}
+
+try_wayback() {
+    api="http://archive.org/wayback/available?url=$url"
+    snap="$(curl -sSL --max-time 45 "$api" 2>/dev/null | sed -n 's/.*"url": *"\([^"]*\)".*/\1/p' | head -1)"
+    [ -n "$snap" ] || return 1
+    curl -sSLk -A 'Mozilla/5.0' --max-time 90 "$snap" 2>/dev/null > "$raw"
+    [ -s "$raw" ] || return 1
+    case "$(head -c 4 "$raw")" in
+        %PDF) pdftotext -layout "$raw" - 2>/dev/null | head -c 4000000 > "$file" ;;
+        *) sed 's/<[^>]*>/ /g' "$raw" | tr -s ' \r\n' ' ' | head -c 4000000 > "$file" ;;
+    esac
+    [ -s "$file" ]
+}
+
+for step in try_direct try_jina try_wayback; do
+    if $step; then
+        printf '%s\t%s\t%s\t%s\n' "$url" "$file" "$step" "$(wc -c < "$file")" >> "$dir/index.tsv"
+        exit 0
+    fi
+done
+rm -f "$file"
+exit 1

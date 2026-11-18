@@ -1,0 +1,68 @@
+#!/bin/sh
+# Kanonische Pfade: neue Dateien nur unter den zehn Orten (plus Werkzeug-Orte).
+# Blockt neue Top-Level-Ordner, neue Root-Dateien außerhalb der Liste und
+# getracktes scratch/. Prüft nur hinzugefügte/kopierte/umbenannte Pfade.
+set -u
+allow_dirs="bin build docs LICENSES experiments handover phi post projects research sources src state static templates tools .github .opencode .githooks .cargo"
+allow_root="AGENTS.md REUSE.toml opencode.json Cargo.toml Cargo.lock README.md .gitignore .gitattributes NOTICE LICENSE rust-toolchain.toml .env.example SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md CHANGELOG.md CITATION.cff deny.toml"
+fail=0
+tmp="$(mktemp)" || exit 2
+trap 'rm -f "$tmp"' 0 1 2 15
+git -c core.quotePath=false diff --cached --name-only --diff-filter=ACR > "$tmp"
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    case "$f" in
+        */*) top="${f%%/*}" ;;
+        *)   top="" ;;
+    esac
+    if [ -z "$top" ]; then
+        case " $allow_root " in
+            *" $f "*) ;;
+            *) echo "canonical_paths: neue Root-Datei außerhalb der Liste: $f" >&2; fail=1 ;;
+        esac
+    else
+        case " $allow_dirs " in
+            *" $top "*) ;;
+            *) echo "canonical_paths: neuer Top-Level-Ordner: $top ($f)" >&2; fail=1 ;;
+        esac
+        if [ "$top" = "scratch" ]; then
+            echo "canonical_paths: scratch/ ist flüchtig und wird nicht getrackt: $f" >&2
+            fail=1
+        fi
+    fi
+done < "$tmp"
+
+# --- Gate 1 — nur die Register tragen `terms `-Zeilen -----------------------
+registries="phi/sources.φ research/sources/sources.tsv"
+while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    case " $registries " in *" $f "*) continue ;; esac
+    n=$(perl -ne 'BEGIN{$n=0} $n++ if /^terms /; END{print $n+0}' "$f")
+    if [ "${n:-0}" -ge 5 ]; then
+        echo "canonical_paths: $f traegt $n terms-Zeilen — ein zweites Register" >&2
+        fail=1
+    fi
+done < "$tmp"
+
+# --- Gate 2 — Ersatz, nicht Ergaenzung --------------------------------------
+added=$(git diff --cached --name-only --diff-filter=A | wc -l)
+deleted=$(git diff --cached --name-only --diff-filter=D | wc -l)
+if [ "$added" -gt "$deleted" ] && [ -z "${OMEGAFLOW_NEW:-}" ]; then
+    echo "canonical_paths: $added neu, $deleted geloescht — Ergaenzung ohne Ersatz." >&2
+    echo "canonical_paths: OMEGAFLOW_NEW=\"<grund>\" nennen oder loeschen, was ersetzt wird." >&2
+    fail=1
+fi
+
+# --- Gate 5 — bindend nur in bindend/ ---------------------------------------
+for f in $(git diff --cached --name-only --diff-filter=ACR); do
+    case "$f" in *.md) ;; *) continue ;; esac
+    case "$f" in bindend/*) continue ;; esac
+    [ -f "$f" ] || continue
+    if head -12 "$f" | perl -ne '$b=1 if /^\s*status:\s*bindend\s*$/; END { exit($b?0:1) }'; then
+        echo "canonical_paths: $f ist bindend, liegt aber nicht in bindend/" >&2
+        fail=1
+    fi
+done
+
+
+exit $fail

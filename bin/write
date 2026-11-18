@@ -1,0 +1,16 @@
+#!/bin/sh
+# write — dieselbe Ersetzung wie bin/dry, aber schreibend; nur nach Sicht.
+#
+#   bin/write 's|a|b|' <datei> [<datei> ...]
+set -u
+expr="${1:-}"
+[ -n "$expr" ] || { echo "usage: bin/write 's|a|b|' <datei> [...]" >&2; exit 2; }
+shift
+[ $# -gt 0 ] || { echo "bin/write: keine Datei" >&2; exit 2; }
+for f in "$@"; do
+    [ -f "$f" ] || { echo "bin/write: $f fehlt" >&2; exit 2; }
+done
+for f in "$@"; do
+    sed -i "$expr" "$f" || exit $?
+    printf '%s: geschrieben\n' "$f"
+done

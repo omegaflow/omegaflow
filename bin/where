@@ -1,0 +1,55 @@
+#!/bin/sh
+# where — the canonical pointer for a term, BEFORE a new internet search: register,
+# then the live handovers, then the spilled searches we already ran, then the
+# history, then the docs. One call instead of a repo-wide hunt.
+# usage: where <term>
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+. "$root/bin/_roots.sh"
+term="${1:?usage: where <term>}"
+cd "$root" || exit 2
+
+printf '== reference (archive-search, lokal) ==\n'
+if [ -d "$OMEGAFLOW_WORK/research/archive-search/reference" ]; then
+    grep -rI -i -m1 -- "$term" "$OMEGAFLOW_WORK/research/archive-search/reference" 2>/dev/null | cut -c1-240 | head -20
+fi
+
+printf '== register (phi/sources) ==\n'
+sgrep -i "$term" phi 2>/dev/null || true
+
+printf '== live handovers ==\n'
+sgrep -i -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover" 2>/dev/null || true
+
+printf '== spilled searches (already run) ==\n'
+if [ -n "${OMEGAFLOW_SPILL_DIR:-}" ] && [ -d "$OMEGAFLOW_SPILL_DIR" ]; then
+    fd -H -t f "$term" "$OMEGAFLOW_SPILL_DIR" 2>/dev/null || true
+    grep -rI -i -m1 -- "$term" "$OMEGAFLOW_SPILL_DIR" 2>/dev/null | cut -c1-240 | head -40 || true
+fi
+
+printf '== sources cache (INDEX.tsv) ==\n'
+if [ -n "${OMEGAFLOW_SOURCES:-}" ] && [ -f "${OMEGAFLOW_SOURCES}/INDEX.tsv" ]; then
+    awk -F'\t' -v t="$term" -v base="${OMEGAFLOW_SOURCES}" '
+        BEGIN { tl = tolower(t) }
+        index(tolower($0), tl) { printf "%s/%s  (%s B)\n", base, $2, $3 }
+    ' "${OMEGAFLOW_SOURCES}/INDEX.tsv" | head -40
+else
+    printf '  (kein INDEX.tsv — bin/sources_index laufen lassen)\n'
+fi
+
+printf '== scratch (unfertige Funde) ==\n'
+if [ -n "${OMEGAFLOW_TMP:-}" ] && [ -d "$OMEGAFLOW_TMP" ]; then
+    fd -H -t f "$term" "$OMEGAFLOW_TMP" 2>/dev/null | head -20
+    timeout 15 grep -rI -i -m1 -- "$term" "$OMEGAFLOW_TMP" 2>/dev/null | cut -c1-240 | head -20 || true
+fi
+
+printf '== history (archiv) ==\n'
+sgrep -i --all -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover/archiv" 2>/dev/null || true
+
+printf '== docs ==\n'
+sgrep -i "$term" docs 2>/dev/null || true

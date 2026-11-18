@@ -1,0 +1,40 @@
+# reference coverage — every function whose name claims a model must name its reference
+#
+#   function <TAB> state <TAB> reference
+#
+# state = reference  a test in the tree compares against an external source
+# state = pending    no such test exists yet; the claim lives in the name only
+#
+# The guard test reads this file and fails when a `pub fn` with a model-claiming
+# token is missing here. Adding a claim means adding a line — no silent precision.
+
+body_fixed_to_icrs	pending	no reference test; the Earth path is covered by itrf_to_icrs, the body path by the IAU series only
+body_fixed_to_icrs_smooth	pending	no reference test
+body_fixed_vector_to_icrs	pending	no reference test
+diurnal_velocity_icrs	pending	no reference test
+elements_to_icrs	pending	no reference test
+elements_to_icrs_state	pending	no reference test
+epoch_utc_days_to_tdb	pending	no reference test
+frame_bias_fk5_to_icrs	pending	no reference test
+galactic_to_icrs	pending	no reference test
+gmst_iau82	pending	no reference test
+iau_angles_from_matrix	pending	no reference test
+icrs_at	pending	no reference test
+icrs_to_body_geodetic	pending	no reference test
+icrs_to_body_surface	pending	no reference test
+icrs_to_galactic	pending	no reference test
+itrf_to_icrs	reference	ERFA t_c2t06a (the_chain_matches_the_erfa_c2t06a_reference)
+jd_utc_to_tdb	pending	no reference test
+machine_now_tdb	pending	no reference test
+mean_obliquity_iau80	pending	no reference test
+mjd_to_tdb	pending	no reference test
+nutation_iau80	pending	SOFA 2006 vector (nutation_iau80_reproduces_the_sofa_2006_vector)
+parse_iso_tdb	pending	no reference test
+precession_iau76	pending	no reference test
+rotate_icrs_to_body_frame	pending	no reference test
+system_now_tdb	pending	no reference test
+tdb_to_jd	pending	no reference test
+tdb_to_unix	pending	no reference test
+tdb_window	pending	no reference test
+teme_to_icrs	pending	no reference test
+unix_to_tdb	pending	no reference test; the TDB-TT term is bounded (<1.8 ms) but not compared

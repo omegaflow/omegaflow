@@ -1,0 +1,272 @@
+<!--
+  title: The Blatt: the direction of lithosphere-atmosphere-ionosphere coupling
+  class: paper
+  date: 2026-08-21
+  version: 4
+  sha256: 3d6da2217d2ffc55332e590048e397208b0a2469c3ba37062c5015293354a129
+  status: live
+  see-also: blatt-papier-resultat
+-->
+# The Blatt: the direction of lithosphere-atmosphere-ionosphere coupling
+
+## Abstract
+
+Instrument B (window stacking) measures transfer entropy between the lithosphere and the ionosphere. TE(Lithosphere → Ionosphere) = −7.97e-2 nats and TE(Ionosphere → Lithosphere) = −1.08e-2 nats (stack mean, n = 176 windows; null = 40 random windows, threshold μ + 2σ); the solar control TE(Solar Bz → Ionosphere) = +4.35e-2 nats (n = 171). These are stack means of the per-window maximum-over-lag TE *excess* (measured TE minus that window's own surrogate floor), not of TE itself; a negative sign means the measured coupling sits below its surrogate noise floor, and that floor is itself negative under random windows (null mean ≈ −0.1), so the negative sign is the estimator's bias floor, not measured negative flow. No lag in either direction reaches its surrogate threshold, and the one-sided arrow rule is upper-only — it does not establish that the event windows lie significantly below the random-window null. The verdict is silence in both directions; the finding is fully valid (0 honored). The solar common driver is not a hidden positive confound here: the measured Bz→ionosphere control is itself below its null threshold — silent.
+
+
+## The Blatt
+
+```
+TE(Lithosphere → Ionosphere) = −7.97e-2   (stack-mean TE excess, not TE; n = 176)
+TE(Ionosphere → Lithosphere) = −1.08e-2   (stack-mean TE excess; n = 176)
+Control TE(Solar Bz → Ionosphere) = +4.35e-2   (stack-mean TE excess; n = 171)
+Lag                          = 0 h   (largest mean excess of both directions; all lag means negative)
+n (events), threshold       = 176 windows, null ensemble = 40 random windows, threshold μ + 2σ
+Verdict                      = silence in both directions — a fully valid finding
+```
+
+Thresholds of the null ensemble (μ + 2σ over 40 random windows):
+Litho→Iono −1.60e-2, Iono→Litho +4.90e-2, control +1.28e-1. The
+event stack lies under the threshold in both directions — for
+Litho→Iono deep below it. The negative excess is not evidence of a
+suppression: random windows carry a similar negative floor (null mean
+≈ −0.1 for Litho→Iono), and the one-sided arrow test is upper-only, so
+no significant deficit is claimed. The solar control is silent:
+the common driver carries no arrow on this grid.
+
+## Protocol (Instrument B — window stacking)
+
+- Events: USGS-FDSN M ≥ 6.0, the 250 most recent of the era 2014-01-01 …
+  run time (catalogue: 1726).
+- Windows: 72 h before t0; cells 30 min (n = 144).
+- Litho series: count rate of the catalogue events (M ≥ 2.0) per cell in
+  the 2000-km radius around the epicentre (the FDSN catalogue is a
+  point process — the count series is the named construction, no
+  invented continuity; MiniSEED envelopes: decoder built (`tools/measure/src/miniseed.rs`)).
+- Iono series: INTERMAGNET total field F of the nearest BGS observatory
+  (≤ 3000 km), 1-min mean per cell.
+- TE: scalar path `transfer_entropy_lag` (the probe); threshold per lag =
+  μ + 2σ over 10 phase-randomized surrogates per series
+  (`surrogate_stats_phase`, seed deterministic); lag sweep 0…72 h in
+  1-h steps, lags with m < 30 cells underdetermined (effectively 0…57 h —
+  the rest is a named non-judgement).
+- Window statistic per direction = maximum excess over the sweep; stack =
+  mean over the event windows; arrow ⇔ stack > μ + 2σ of the
+  null ensemble.
+- Null ensemble: random windows (t0 uniformly distributed in the era, centre =
+  random catalogue epicentre, same pipeline, no exclusion — the
+  null window carries what the catalogue carries). The
+  multiple-comparison correction is structural: the null windows carry
+  the same maximum statistic over the same lag sweep; in addition a
+  Bonferroni-adjusted threshold stands per lag (z = 3.32 for 116
+  direction×lag cells, z = 3.35 for the 43 control lags) in the run protocol.
+- Control: TE(Solar Bz → F) on 1-h cells, sweep 0…48 h (m ≥ 30 →
+  ≤ 42 h) — the common driver is measured, not assumed.
+- Instrument A — event rate (one global rate series × one
+  ionosphere series across the whole era): named, not built → register.
+
+## Finding
+
+- Silence in both directions; no lag carries an arrow (all
+  lag means negative, maximum at lag 0).
+- Window balance: 176 qualified; 2 without observatory ≤ 3000 km; 66
+  with empty count rate (Silverman on a constant series → fehlt, no
+  value); 6 with BGS data gaps; BGS harvest gaps (data not yet in the
+  archive) carry fehlt.
+- Swarm FAC (SW_OPER_FACATMS_2F, subset 10 windows): 7 windows carry
+  FAC samples in the radius (514–8576), but only 8–25 of 144 cells —
+  the FAC series per window is underdetermined (m < 30): the Blatt carries
+  INTERMAGNET-F, the FAC stack stays open.
+- The control direction solar→ionosphere is silent — the causal arrow
+  of the thing itself was not measured, but also no solar arrow
+  fabricated. Silence is the answer.
+
+## The Blatt — full era + sensitivity matrix
+
+Harvest/analysis architecture (v2): `laic_probe --harvest` lays the
+raw series per window on disk (`phi/pipeline/laic_harvest/`, 4.1 GB, 1726
+event windows of the full era 2014-01-01 … 2026-08-21, 60
+null windows, Swarm A+B+C for 60/30 windows each) — `--analyze` computes
+offline, the same holding carries every parameter cell, the run is
+resumable.
+
+```
+TE(Lithosphere → Ionosphere) = −7.63e-2   (stack-mean TE excess, not TE; n = 1369, full era)
+TE(Ionosphere → Lithosphere) = −1.26e-2   (stack-mean TE excess; n = 1369)
+Control TE(Solar Bz → Ionosphere) = +4.06e-2   (stack-mean TE excess; n = 1400)
+Lag                          = 0 h   (largest mean excess; all lag means negative)
+n (events), threshold       = 1369 windows, null ensemble 60 random windows, threshold μ + 2σ
+Verdict                      = silence in both directions — the arrow stays silent
+```
+
+Thresholds: L→I −2.54e-2, I→L +1.86e-2, control +1.33e-1. The
+event stack lies under the threshold in both directions — for
+L→I deep below it, across the whole era. The negative excess is the
+estimator's surrogate-floor bias (random windows carry a similar
+negative mean), not a measured deficit. The solar control is silent.
+
+Sensitivity matrix (every cell silent; r/c/k cells on the 250
+most recent events, main cell full era):
+
+| cell | n | L→I stack | L→I threshold | I→L stack | I→L threshold |
+|---|---|---|---|---|---|
+| Radius 500 km, 30 min | 140 | −8.23e-2 | −2.44e-2 | −1.48e-2 | +1.80e-2 |
+| Radius 1000 km, 30 min | 165 | −8.40e-2 | −3.38e-2 | −1.26e-2 | +1.87e-2 |
+| Radius 2000 km, 30 min (Haupt) | 1369 | −7.63e-2 | −2.54e-2 | −1.26e-2 | +1.86e-2 |
+| Radius 2000 km, 15 min | 176 | −5.40e-2 | −1.92e-2 | −5.61e-3 | +7.77e-3 |
+| Radius 2000 km, 60 min | 170 | −9.81e-2 | −4.61e-2 | −1.01e-2 | +3.98e-2 |
+| KDE-Skalierung 0.5 und 2.0 | 176 | −7.97e-2 | −2.54e-2 | −1.08e-2 | +1.86e-2 |
+
+- Control (Solar Bz → F): silent in every cell (+4.06e-2 … +4.35e-2
+  against threshold +1.33e-1).
+- FAC stack: underdetermined — Swarm A+B+C cover
+  8–26 of 144 cells per window; 12/60 event windows reach m ≥ 30
+  (30-min cells) → no statement. Measured, not assumed: the
+  FAC channel carries no judgement with this instrument.
+- KDE h: the series scaling is not an h-sensitivity — Silverman
+  adapts, TE(k·x, k·y) = TE(x, y); the probe confirms it
+  (identical stacks at k = 0.5 and 2.0). The true h-sensitivity
+  stays open as long as `transfer_entropy_lag` stays untouched.
+- Repeatability: the 250-analysis reproduces the first run
+  (identical stack −7.9662e-2).
+
+The arrow now carries: on every living channel and in every
+parameter cell the information flow in the 72-h window before M≥6 is
+silent — in both directions, and the solar control also remains
+silent. With that, the direction question on the existing holding is
+concluded: the arrow does not strike. The LAIC hypothesis itself
+(electromagnetic or plasma-physical precursors in the
+ionosphere) stays channel-open — the ground-F signature is a proxy,
+not an ionosphere instrument. A future instrument (TEC-GIM retro
+via CDDIS OAuth, CSES, MiniSEED envelopes) can re-pose the question on
+a denser channel — that is a channel open item, not a hole
+in this measurement.
+
+## The true ionospheric channel — TEC-GIM (v3, 2026-08-22)
+
+The anonymous IONEX route lives: the ESA-GSSC FTP
+(`ftp://gssc.esa.int/gnss/products/ionex`) carries the COD 1-h rapid GIMs
+anonymously — CDDIS answers without token 302 → Earthdata OAuth (measured),
+but `.secrets.local` carries a filled `EARTHDATA_EDL_TOKEN`: verified
+against CDDIS (with token full directory listing, without token
+302) — the second route (COD0OPSFIN, final products) lives with it
+likewise; AIUB/WHU/ASI are unreachable from here (measured, 000).
+`laic_probe` v2.1 harvests the GIM daily files per window (gzip →
+`omegaflow::inflate::gunzip`), reads the TEC grid (own IONEX reader
+in the binary, bilinear at the epicentre, 71×73, exponent −1 —
+the Archivar IONEX parser stays untouched) and lays the 1-h series down as a
+sidecar. TEC era: 2024-01-01 … 2026-08 — RINEX3 GIMs exist only
+from 2024; pre-2024 the holding carries only `codg*.Z` (compress/LZW,
+decompressor open item).
+
+```
+TE(Lithosphere → TEC-GIM)        = −6.31e-2   (stack-mean TE excess; n = 336 events of the TEC era, threshold −3.25e-2)
+TE(TEC-GIM → Lithosphere)        = −1.47e-2   (stack-mean TE excess; threshold +2.22e-2)
+Control TE(Solar Bz → TEC-GIM) = +3.22e-2   (stack-mean TE excess; threshold +1.28e-1)
+Lag                              = 0 h   (all lag means negative)
+Verdict                          = silence in both directions — also on the true channel
+```
+
+With the true ionospheric electron content (TEC at the epicentre,
+1-h cadence, 72-h window, 60 TEC null windows from the same era) the
+arrow stays silent — in both directions, and the solar control remains
+likewise silent: the common driver carries no arrow on this grid.
+The ground-F reference on the same subset (−7.90e-2 against
+−2.54e-2) reproduces the full-era finding.
+
+With that, the operator's plan has run: anonymous route found (ESA
+GSSC), CSES measured unreachable (portal `leos.ac.cn` from here 000 —
+channel-open), probe v2.1 built, silence measured again. The arrow
+does not strike on the existing holding — now with the detector
+in space, not through the door. The LAIC hypothesis is measured silent on
+the living channels (INTERMAGNET-F, Swarm FAC A+B+C, TEC-GIM); a
+future denser channel (CSES, retro-TEC, MiniSEED envelopes) can
+re-pose the question.
+
+## The CHAMP channel — in-situ electron density 2002–2010 (v4, 2026-08-22)
+
+The anonymous GFZ-ISDC route carries the CHAMP Langmuir electron density
+(CH-ME-2-PLPT, 15-s ASCII in daily zips, CC BY 4.0) open to the file level —
+`laic_probe` harvests it as a fourth window series (era
+2002-01-01 … 2010-12-31, 1462 events, 60 null windows). The
+cell coverage of a LEO pass is thin: at 2000 km/30 min only
+6 windows reach m ≥ 30 (no statement — named); at radius 4000 km /
+60-min cells 229 windows become computable.
+
+```
+TE(Lithosphere → CHAMP density)   = −1.24e-1   (stack-mean TE excess; n = 229, threshold +3.29e-2)
+TE(CHAMP density → Lithosphere)   = −2.81e-2   (stack-mean TE excess; n = 229, threshold +7.72e-2)
+Lag                              = 1 h (Litho → density); 0 h (reverse direction)
+Verdict                          = silence in both directions
+```
+
+The fourth channel — true in-situ electron density in the ionosphere —
+also carries no arrow: the event stack lies deep under the
+null threshold, the same sign as on F and TEC. The negative excess is
+the surrogate-floor bias, not a measured deficit. The ground-F reference of the
+same era (n = 656/659, BGS reaches to 2002) stays silent, the
+solar control (Bz→F, +3.97e-2 against +1.18e-1) likewise. With that,
+the direction question carries four channels: INTERMAGNET-F (full era),
+TEC-GIM (2024–2026), Swarm-FAC (measured underdetermined),
+CHAMP density (2002–2010) — silence everywhere, the same sign everywhere.
+
+The harvest now lives as a CDN asset (chunks like the ephemeris bodies):
+`laic.bin` (F+TEC) and `laic_champ.bin` (676 MB) lie under
+`ssd.jpl.nasa.gov`; `laic_probe --cdn <name>` computes CDN-first, the
+CI workflow `laic_cdn.yml` harvests + compiles + uploads monthly.
+
+## What the Blatt does not carry (register)
+
+- Instrument A — event rate: named, unbuilt.
+- Channel open items: CSES — standardized probe cadence run
+  (SOURCE_PORT §13, four-stage; finding
+  `phi/pipeline/research/agent_output/cses_kanal_2026-08-22.φ`): portal
+  leos.ac.cn re-measured 2026-09-16 — stage1 direct 000, stage2 Proton 000,
+  stage3 Wayback 503/no snapshot; the Jina-reader route 422 (host
+  unreachable; the login-gated SPA stays inaccessible). The
+  Zhangheng-1 holding lives at data.earthquake.cn (96 TB, 2019–2023;
+  no registered DOI in the global handle register), portal re-measured
+  2026-09-16 HTTP 200 (51 065 B), but the data route is offline procurement
+  离线获取 (application) — the registration requires a Chinese mobile number
+  (restriction type SMS-CN; virtual number refused). The block needs
+  no live feed — the harvest is fehlt. Alternatives re-measured 2026-09-16:
+  **DEMETER/CDPP** (ICE-E field + ISL electron density, 2004–2010 —
+  `cdpp.irap.omp.eu` / `regards.cnes.fr` / `cdpp-archive.cnes.fr` direct 200,
+  login verified; the data files are order-gated — a product download returns
+  `online:false` → GET 500; open: order flow; DEMETER-.DAT parser + harvest
+  built (`src/archivar/demeter.rs`, `tools/harvest/src/bin/demeter_compiler.rs`)),
+  **CHAMP/GFZ-ISDC** (`isdc.gfz-potsdam.de` / `isdc-data.gfz.de` direct 200;
+  `champ/ME/Level2/PLPT/2005/CH-ME-2-PLPT+2005-01-01_1.zip` 200, 297 737 B,
+  magic zip — anonymous verified to the file level; harvested as
+  `champ_plpt.bin`), COSMIC/CDAAC
+  (`data.cosmic.ucar.edu` direct 200; `…/ivmL2m_postProc_2022_001.tar.gz`
+  200, 14 167 499 B, netCDF inside — parser built (`cosmic_ro.bin`,
+  `tools/harvest/src/bin/cosmic_ro_compiler.rs`)). TEC-GIM retro pre-2024
+  (`codg*.Z` now reachable via ESA GSSC FTP
+  `ftp://gssc.esa.int/gnss/products/ionex/2003/001/codg0010.03i.Z`, 365 785 B;
+  the LZW `uncompress_z` decoder is built (`src/archivar/lzw.rs`) — CDDIS holds other
+  IONEX, not `codg*`), MiniSEED waveform envelopes (IRIS FDSN dataselect
+  direct 200, 8 128 B — decoder built (`tools/measure/src/miniseed.rs`)). CDDIS
+  lives over the EDL token from `.secrets.local` (verified) — a re-harvest
+  with COD0OPSFIN (final instead of rapid) would be a quality option,
+  not a new channel.
+- True KDE h-sensitivity: open as long as the scalar TE path
+  stays untouched (Silverman adaptivity makes the scaling probe
+  invariant).
+- F is the intensity of the nearest ground observatory (up to 3000 km) —
+  since v3 the true ionospheric electron content (TEC) stands beside it;
+  the FAC stack is measured underdetermined.
+- The FDSN catalogue carries small events only thinly in this world
+  (region 2000 km/72 h ≈ 0–5, M ≥ 2) — the count series measures what
+  the catalogue carries; the surrogate null judges honestly.
+
+## Run
+
+```
+cargo run --release --bin laic_probe -- --max-events 250 --null 40 --swarm-limit 10
+```
+
+Gates: `cargo check` 0 errors / 0 warnings; no test opens a
+window or radiates; `src/mathematikerin/te.rs`, `nobel_probe_corona`, the scalar
+path `transfer_entropy_lag`, the membrane physics and the IONEX parser
+untouched (only use, no rebuild).

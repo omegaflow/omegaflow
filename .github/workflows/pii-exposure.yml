@@ -1,0 +1,41 @@
+name: pii-exposure
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Measure the PII exposure of the pre-rewrite objects
+        run: |
+          set +e
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-register --bin pii_exposure
+          } | tee pii-exposure.txt
+          code=${PIPESTATUS[0]}
+          set -e
+          {
+            echo "## PII exposure"
+            echo '```'
+            cat pii-exposure.txt
+            echo '```'
+            echo "exit code: $code — 0 absent, 2 retrievable, 1 incomplete"
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pii-exposure
+          path: pii-exposure.txt

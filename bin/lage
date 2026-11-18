@@ -1,0 +1,95 @@
+#!/bin/bash
+# lage — gibt den Stand auf stdout aus (keine gespeicherte Lage-Datei).
+# Der Live-Index, den jede Sitzung zuerst liest. Kein Hand-Prosa, nur Abgeleitetes.
+set -u
+repo="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
+cd "$repo" || exit 1
+
+head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo "?")
+work_head=$(git -C "${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}" rev-parse --short HEAD 2>/dev/null || echo "?")
+ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahren\*\*' ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md 2>/dev/null | sed 's/^/  /' | head -25)
+
+last_runs=$(ls -1t ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
+
+work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+post_in=$(ls -1 "$work"/post/*-an-future-*.md 2>/dev/null | wc -l)
+post_today=$(ls -1 "$work"/post/"$(date +%F)"-*-an-future-*.md 2>/dev/null | wc -l)
+post_out=$(ls -1 "$work"/post/*-future-an-*.md 2>/dev/null | wc -l)
+post_head=$(git -C "$work" rev-parse --short HEAD 2>/dev/null || echo 'kein Repo')
+post_dirty=$(git -C "$work" status --porcelain 2>/dev/null | wc -l)
+
+models=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/models.tsv 2>/dev/null | wc -l)
+alive=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/alive.tsv 2>/dev/null | wc -l)
+free=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/models.tsv 2>/dev/null | awk -F'\t' '$3==0 && $4==0' | wc -l)
+unknown=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/models.tsv 2>/dev/null | awk -F'\t' '$6==""' | wc -l)
+age() { [ -f "$1" ] && echo "$(( ( $(date +%s) - $(stat -c %Y "$1") ) / 3600 ))h" || echo '?'; }
+hage() { t=$(git log -1 --format=%ct -- "$1" 2>/dev/null); [ -n "${t:-}" ] || t=$(stat -c %Y "$1" 2>/dev/null); [ -n "${t:-}" ] && echo "$(( ( $(date +%s) - t ) / 3600 ))h" || echo '?'; }
+balance=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/balance.tsv 2>/dev/null | sed 's/^/  /')
+
+line_rows=$(for line in mountain mycelium river sensory future; do
+  h=$(ls -1 "$work"/handover/handover-*.md 2>/dev/null | grep -v '/archiv/' | grep -E -- "-$line(-|\.)" | sort | tail -1)
+  [ -f "$h" ] || continue
+  n=$(awk '/^## Offen/{f=1;next} /^## /{f=0} f{if(/^### /)h++; else if(/^- /)b++} END{if(h)print h; else print b+0}' "$h")
+  b=$(awk '/^## Offen/{f=1;next} /^## /{f=0} f' "$h" | grep -ci 'braucht')
+  c=0
+  for f in $(awk '/^## Offen/{f=1;next} /^## /{f=0} f' "$h" | grep -o '`[^`]*`' | tr -d '`' | sed -E 's/:[0-9]+$//' | grep -E '^(state|docs)/' | sort -u); do
+    [ -f "$f" ] && grep -qi 'offen' "$f" && c=$((c+1))
+  done
+  d=$(basename "$h" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+  nfolge=$(basename "$h" | grep -oE 'folge[0-9]+' | grep -oE '[0-9]+' | head -1)
+  printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s (Pass %s seit %s · Commit %s)\n' "$line" "$n" "$b" "$c" "$(basename "$h")" "${nfolge:-?}" "${d:-?}" "$(hage "$h")"
+done)
+
+{
+  echo "# Lage — generiert $ts"
+  echo
+  echo "HEAD public \`$head_sha\` · Werkstatt \`$work_head\`"
+  echo
+  echo "## Sitze / Routen (Gateway)"
+  echo "- Katalog (tsv, letzter Start: $(age ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/models.tsv)): $models · frei: $free · Preis unbekannt: $unknown · lebendig: $alive ($(age ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/alive.tsv) alt)"
+  echo "- Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl"
+  if [ -n "$balance" ]; then
+    echo "- Guthaben (USD):"
+    echo "$balance"
+  fi
+  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` (Entscheidungen; die 17.10.-Anweisung ist nicht mehr geführt)"
+  echo
+  echo "## Offen je Linie (Handover)"
+  if [ -n "$line_rows" ]; then
+    echo "$line_rows"
+  else
+    echo "  (keine)"
+  fi
+  echo
+  echo "## Post (Arbeitsbaum \`$work\`)"
+  echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
+  echo
+  echo "## Wo was liegt (Kanon — hier nachsehen, nicht suchen)"
+  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/*.md 2>/dev/null | grep -vcE '_lage|entscheidungen') Runden · Entscheidungen \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` · Regeln \`docs/concepts/house-rules.md\`)"
+  echo "- Post: \`$work/post/\` ($post_in Briefe an future, $post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
+  echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
+  echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
+  echo "- Recherche: \`$work/research/\` ($(find "$work/research/projects" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l) Projekte · Referenzen lokal)"
+  echo "- Quellenaufnahme: \`$work/research/ephemerides/notes/source-admission/\` ($(find "$work/research/ephemerides/notes/source-admission" -name '*.proposal.φ' 2>/dev/null | wc -l) offene Vorschläge für \`phi/sources.φ\`)"
+  echo "- Gateway-Zustand: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/\` (models, alive, balance, provenance, catalog, paid-open)"
+  echo "- Register (Herkunft): \`phi/sources.φ\` · Übergaben: \`$work/handover/\`"
+  echo
+  echo "## Rat-Fragen (offen | rat-konvergiert)"
+  if [ -n "$open_rows" ]; then
+    echo "$open_rows"
+  else
+    echo "  (keine)"
+  fi
+  echo
+  echo "## Letzte Läufe / Sammlungen"
+  if [ -n "$last_runs" ]; then
+    echo "$last_runs"
+  else
+    echo "  (keine)"
+  fi
+  echo
+  echo "Regenerieren: \`bin/lage\`"
+}
+

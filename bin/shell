@@ -1,0 +1,61 @@
+#!/bin/sh
+# Shell wrapper: setzt TMPDIR auf den kanonischen flüchtigen Ort.
+fallback="${TMPDIR:-/tmp}"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+tmp="$root/scratch"
+if mkdir -p "$tmp" 2>/dev/null && [ -w "$tmp" ]; then
+    TMPDIR="$tmp"
+else
+    TMPDIR="$fallback"
+fi
+export TMPDIR
+
+cmd="$*"
+case "$cmd" in
+    *"commit"*)
+        if printf '%s\n' "$cmd" | grep -Eq 'git([[:space:]]+-[Cc][[:space:]]+[^[:space:]]+)*[[:space:]]+commit([[:space:]]+[^;&|]*)?[[:space:]]+-[A-Za-z]*n[A-Za-z]*([[:space:]]|$)' \
+            || printf '%s\n' "$cmd" | grep -Eq 'git([[:space:]]+-[Cc][[:space:]]+[^[:space:]]+)*[[:space:]]+commit[^;&|]*--no-verify'; then
+            echo "blocked: git commit with -n/--no-verify (hooks are not optional)" >&2
+            exit 2
+        fi
+        ;;
+esac
+
+body="$*"
+case "$body" in
+    -c\ *) body="${body#-c }" ;;
+esac
+case "$body" in
+    *"sgrep"*"--all"*|*"archive_search"*"--all"*)
+        if [ "${OMEGAFLOW_ALL:-}" != "1" ]; then
+            echo "blocked: --all ist der Breitenmodus (Baumwalk, kann Stunden laufen) — eng suchen oder OMEGAFLOW_ALL=1" >&2
+            exit 2
+        fi ;;
+esac
+
+if [ "${OMEGAFLOW_LOCAL:-}" != "1" ]; then
+    case "$body" in
+        *"cargo test"*|*"cargo bench"*|*"cargo clippy"*|*"nextest"*)
+            echo "blocked: Tests, Benchmarks und Clippy laufen in CI — dispatch (gh workflow run), lokal nur cargo check" >&2
+            exit 2 ;;
+        *"cargo build"*|*"cargo run"*)
+            case "$body" in
+                *"--bin"*) ;;
+                *) echo "blocked: lokal nur ein benanntes Bin (--bin); ganze Crates und Release baut CI" >&2
+                   exit 2 ;;
+            esac ;;
+    esac
+fi
+if [ "${OMEGAFLOW_WRITE:-}" != "1" ]; then
+    case "$body" in
+        *"sed -i"*|*"perl -i"*|*"truncate"*)
+            case "$body" in
+                *"scratch/"*) ;;
+                *)
+                    echo "blocked: in-place Schreiben — erst bin/dry auf der Kopie, dann bin/write (oder OMEGAFLOW_WRITE=1)" >&2
+                    exit 2 ;;
+            esac ;;
+    esac
+fi
+
+exec /bin/bash "$@"

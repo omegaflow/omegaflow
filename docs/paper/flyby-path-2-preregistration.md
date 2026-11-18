@@ -1,0 +1,70 @@
+<!--
+  title: The flyby proof, Path 2 — the pre-registration (Operation Ⅵ)
+  class: paper
+  date: 2026-08-22
+  sha256: 3c45699cc616a14b330228ecd8b27404a4ba5d27f0c587a3418aed49eb4edf9f
+  status: live
+  see-also: docs/paper/flyby-path-1-cold-cases.md der-paradigmenwechsel
+-->
+# The flyby proof, Path 2 — the pre-registration (Operation Ⅵ)
+
+## Abstract
+
+This Blatt is the seal, registered 2026-08-22 — before the JUICE Earth flyby (28./29 September 2026). It is not backdated and not changed after the flyby; what changes after the seal is named. The trajectory stands as ephemeris_juice.bin (sha256 aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a); the second window, Europa Clipper (03.12.2026), carries sha256 dae553fb3ef787b4faba8b844e224193a87aba718a7d20fe021e2d097703682c. Only the field state is pre-registered — no mm/s number (0 honored; a number from a missing arrow would be fabricated). The field state along the perigee — plasma-pressure gradient, IMF-Bz, Kp, Swarm — is a function of the measured plasma with transit-time correction; every cell not yet measurable stays not measured, never 0.0.
+
+
+## The seal
+
+- **Trajectory:** the JUICE orbit stands in the block as
+  `ephemeris_juice.bin` (Horizons −28, flyby window ±21 d around
+  28.09.2026, two-stage 5-min/1-min, perigee in the tube).
+  `sha256 aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a`.
+  The second window, Europa Clipper (03.12.2026), carries
+  `sha256 dae553fb3ef787b4faba8b844e224193a87aba718a7d20fe021e2d097703682c`.
+  If the flattener renews the orbit before the flight, the new version
+  is named — the seal binds to the state of this Blatt.
+- **Path-1 finding:** no fam-carrying arrow from the solar-wind phase into
+  the jerk (seven cold cases). The prediction form follows from it:
+  **only the field state** is pre-registered — no mm/s number (0
+  honored; a number from a missing arrow would be fabricated).
+- **The prediction:** the field state along the JUICE orbit at the perigee —
+  plasma-pressure gradient, IMF-Bz, Kp, Swarm magnetic field — computed
+  from the living channels with their transit time (RTSW at L1 leads by
+  the L1 transit time; Kp 3-h; Swarm at the site). The field state is a
+  function of the measured plasma, not a postdicted value.
+
+## What arrives and is sealed by 28.09.
+
+The field state at the perigee tube fills from the living
+channels, as soon as the measurement (transit-time corrected) is present.
+Every cell that is not yet measurable stays `pending` — never 0,0. The
+seal stands with the method and the trajectory hash; the field values
+join as soon as they exist.
+
+Readiness measured 2026-09-26 (two days before the flyby): the prediction
+channel stands — RTSW mag/wind, the Kp NOAA URL, Swarm and OMNI2 are all
+reachable HTTP 200 (stage 1 direct). Every cell remains `pending`: the
+perigee tube lies in the future, and the field state is a function of the
+measured plasma with its transit time, never a postdicted value. The
+operator seal word is operator-bound and not yet set; route drift and the
+Kp-route removal are carried in the addendum §"Chain readiness".
+
+## What arrives after the flyby
+
+The Doppler residuals. The verdict: the agreement of the measured
+field state with the pre-registered one — the first pre-registered
+astrophysical experiment whose prediction is a field state.
+
+## Addendum — the renewed trajectory (named 2026-09-27)
+
+The flattener renewed the JUICE orbit before the flight. The CDN
+`ephemeris_juice.bin` now carries sha256
+`eee376effcb4def668a61d47ab7ea2e6f7b0b7cc3f884ea6634997349d4389b5`
+(538 696 B); the seal registered
+`aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a`
+(§"The seal"). The renewed version is named here, as the seal clause
+requires. Reason: the prediction was propagated after tracking data up
+to 2026-09-16 (measured 2026-09-27). The riss between the sealed hash
+and the CDN hash is carried, never averaged: `flyby_path2_fill`
+prints both hashes and builds no tube from the unsealed arc until the
+operator names the renewed orbit as the trajectory.

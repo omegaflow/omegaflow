@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+case "${1:-status}" in
+  status)
+    gh run list --branch main --limit 5
+    ;;
+  watch)
+    id="$(gh run list --branch main --limit 1 --json databaseId --jq '.[0].databaseId')"
+    gh run watch "$id" --exit-status
+    ;;
+  log)
+    id="$(gh run list --branch main --limit 1 --json databaseId --jq '.[0].databaseId')"
+    gh run view "$id" --log-failed
+    ;;
+  *)
+    echo "ci: status|watch|log" >&2
+    exit 2
+    ;;
+esac

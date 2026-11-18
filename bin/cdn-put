@@ -1,0 +1,121 @@
+#!/bin/sh
+# cdn-put — das Tor der Manifestation.
+#
+# Manifestation ist der Begriff der Membran (research/concepts/4d-membrane.md):
+# die Messfläche wird in das Feld gespannt, und was an ihr ankommt, wird
+# manifestiert. Hier heißt das: ein Datensatz wird als CDN-Asset manifestiert.
+# Dieses Tor entscheidet, welche Datensätze manifestiert werden dürfen.
+#
+# usage: bin/cdn-put <tag> <datei>...
+#        bin/cdn-put --check <tag> <datei>...
+#
+# Geprüft wird der DATENSATZ, nicht der Tag: der Block in phi/sources.φ, dessen
+# `url …/download/<tag>/<datei>` genau dieses Asset nennt, trägt die Lizenz.
+# Ein Tag ist nur der Ablageort (ein GitHub-Release je Host) — er sagt nichts
+# über die Lizenz. Deshalb gilt:
+#   - Block mit genau dieser Datei gefunden  -> sein `terms` entscheidet
+#   - kein solcher Block                     -> verweigert (nicht registriert)
+# `gh release upload` geht an dieser Prüfung vorbei; `bin/cdn-audit` nennt jede
+# solche Zeile.
+set -u
+export LC_ALL=C
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+PHI="${PHI:-$root/phi/sources.φ}"
+LICENCES="${LICENCES:-$root/src/archivar/licences.tsv}"
+CDN_REPO="${CDN_REPO:-omegaflow/sources}"
+
+check=""
+if [ "${1:-}" = "--check" ]; then check=1; shift; fi
+
+if [ $# -lt 2 ]; then
+    echo "cdn-put: usage: cdn-put [--check] <tag> <datei>..." >&2
+    exit 2
+fi
+tag="$1"; shift
+
+[ -f "$PHI" ] || { echo "cdn-put: no register at $PHI" >&2; exit 2; }
+[ -f "$LICENCES" ] || { echo "cdn-put: no licence list at $LICENCES" >&2; exit 2; }
+
+gate() {
+    perl - "$PHI" "$LICENCES" "$tag" "$@" <<'PERL'
+use strict; use warnings;
+my ($phi, $lic, $tag, @files) = @ARGV;
+
+my %admitted;
+open my $lh, '<', $lic or die "cdn-put: $lic: $!\n";
+while (<$lh>) {
+    chomp; next if /^#/ || /^\s*$/;
+    my ($t, $v) = split /\t/;
+    next unless defined $v;
+    $admitted{lc $t} = 1 if lc($v) eq 'admitted';
+}
+close $lh;
+
+# Asset-Datei -> Lizenz des Datensatzes, der sie nennt.
+my %asset;
+open my $ph, '<:encoding(UTF-8)', $phi or die "cdn-put: $phi: $!\n";
+my ($terms, @keys);
+my $flush = sub {
+    for my $k (@keys) { $asset{$k} = $terms }
+    @keys = (); $terms = undef;
+};
+while (<$ph>) {
+    chomp;
+    if (/^\s*$/) { $flush->(); next }
+    if (/^terms (\S+)/) { $terms = $1; next }
+    my ($t, $file) = m{^url\s+\S*/releases/download/([^/]+)/(\S+)$} or next;
+        (my $base = $file) =~ s{.*/}{};
+        push @keys, "$t/$base";
+}
+$flush->();
+close $ph;
+
+my @bad;
+for my $path (@files) {
+    (my $base = $path) =~ s{.*/}{};
+    my $key = "$tag/$base";
+    if (!exists $asset{$key}) {
+        # Beidatei: <asset>.sha256 / <asset>.manifest ist ein Index über andere
+        # Assets, kein Datensatz — er erbt die Lizenz dessen, was er aufführt.
+        if ($base =~ /^(.+?)\.(?:sha256|manifest)$/ && exists $asset{"$tag/$1"}) {
+            $key = "$tag/$1";
+        }
+        # eigene Messausgaben (Verdict-/Audit-Logs) sind eigene Arbeit
+        elsif ($base =~ /(?:verdict|audit).*\.log$/i) {
+            next;
+        }
+        else {
+            push @bad, [$path, 'nicht im Register (kein Block nennt dieses Asset)'];
+            next;
+        }
+    }
+    my $t = $asset{$key};
+    if (!defined $t || !$admitted{lc $t}) {
+        push @bad, [$path, 'terms ' . ($t // '-') . ' ist nicht aufgenommen'];
+    }
+}
+for my $b (@bad) {
+    print STDERR "cdn-put: $tag/" . do { (my $x = $b->[0]) =~ s{.*/}{}; $x } . ": $b->[1]\n";
+}
+exit(@bad ? 2 : 0);
+PERL
+}
+
+gate "$@"
+if [ $? -ne 0 ]; then
+    echo "cdn-put: refused before any upload — the dataset's licence in src/archivar/licences.tsv does not admit it" >&2
+    exit 2
+fi
+[ -n "$check" ] && { echo "cdn-put: $tag $* admitted"; exit 0; }
+
+if ! gh release upload "$tag" "$@" --clobber --repo "$CDN_REPO"; then
+    gh release create "$tag" --repo "$CDN_REPO" >/dev/null 2>&1 || true
+    gh release upload "$tag" "$@" --clobber --repo "$CDN_REPO" || exit 1
+fi
+exit 0

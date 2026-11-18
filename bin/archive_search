@@ -1,0 +1,23 @@
+#!/bin/sh
+# The divers' research tool: execs the release binary refreshed by bin/.tools_ensure; never builds.
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" archive_search
+bin="$root/target/release/archive_search"
+if [ ! -x "$bin" ]; then
+    echo "archive_search: pending — no release installed; the build belongs to CI (tools-build)" >&2
+    exit 2
+fi
+export OMEGAFLOW_REPO="$root"
+if [ -f "$root/.secrets.local" ]; then
+    export OMEGAFLOW_SECRETS_FILE="${OMEGAFLOW_SECRETS_FILE:-$root/.secrets.local}"
+fi
+. "$root/bin/_roots.sh"
+export OMEGAFLOW_SPILL_DIR="${OMEGAFLOW_SPILL_DIR:-$OMEGAFLOW_WORK/research/tmp/archive_search/search}"
+exec "$bin" "$@"

@@ -1,0 +1,19 @@
+# Orphan-Docs-Baseline — die benannten Waisen, die nicht still verschwinden dürfen.
+#
+# Form: dieselbe Zeile wie `register_lookup --orphan-docs`, also
+#   ORPHAN_DOC<TAB>docs/<klasse>/<datei>.md<TAB><marker>
+# Zeilen, die nicht mit `ORPHAN_DOC` beginnen (Kommentar, Zusammenfassung),
+# werden ignoriert.
+#
+# Regeln:
+# - `register_lookup --orphan-docs --baseline docs/specs/orphan-docs-baseline.tsv`
+#   vergleicht die lebende Menge gegen diese Datei.
+# - LOST = hier benannt, aber nicht mehr Waise (z. B. ein Dokument wurde
+#   getragen, ohne dass die Baseline gesenkt wurde) -> Exit 1.
+# - NEW  = Waise, die hier (noch) nicht steht -> gemeldet, kein Fehler.
+# - Wer ein Dokument trägt, senkt die Baseline im selben Commit.
+#
+# Stand 2026-10-20: leer. Die letzte Messung aus der Public-Wurzel ergab
+# 0 Waisen; die sieben Future-Cluster-Dokumente wurden getragen (drei davon
+# in `work/handover/handover-2026-10-19-future-folge1.md`). Wächst die Menge
+# wieder, wird sie hier benannt, bevor der erste Träger-Commit sie senkt.

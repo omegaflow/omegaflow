@@ -1,0 +1,14 @@
+[Unit]
+Description=Proton WireGuard userspace exit (wireproxy SOCKS5)
+ConditionPathExists=%h/.config/proton-wg/active.conf
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/wireproxy -c %h/.config/proton-wg/active.conf
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

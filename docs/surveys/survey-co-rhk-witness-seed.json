@@ -1,0 +1,728 @@
+[
+ {
+  "hostname": "HAT-P-14",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR195-003",
+  "ch": -0.31,
+  "oh": 0.25,
+  "nh": 0.06,
+  "feh": 0.06,
+  "logrhk": -4.9
+ },
+ {
+  "hostname": "HAT-P-18",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR239-004",
+  "ch": 0.16,
+  "oh": 0.09,
+  "nh": -0.06,
+  "feh": 0.18,
+  "logrhk": -4.63
+ },
+ {
+  "hostname": "HAT-P-26",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR376-001",
+  "ch": 0.14,
+  "oh": 0.2,
+  "nh": -0.07,
+  "feh": 0.05,
+  "logrhk": null,
+  "s_index": 0.18
+ },
+ {
+  "hostname": "HAT-P-30",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR365-001",
+  "ch": 0.03,
+  "oh": 0.14,
+  "nh": 0.17,
+  "feh": 0.07,
+  "logrhk": null,
+  "s_index": 0.13
+ },
+ {
+  "hostname": "TrES-4",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "TrES-4",
+  "ch": 0.1,
+  "oh": 0.42,
+  "nh": 0.43,
+  "feh": 0.32,
+  "logrhk": -5.09
+ },
+ {
+  "hostname": "WASP-15",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "WASP15",
+  "ch": -0.11,
+  "oh": -0.16,
+  "nh": 0.38,
+  "feh": -0.07,
+  "logrhk": null
+ },
+ {
+  "hostname": "WASP-17",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "WASP-17",
+  "ch": -0.45,
+  "oh": 0.08,
+  "nh": -0.14,
+  "feh": -0.01,
+  "logrhk": null,
+  "s_index": 0.12
+ },
+ {
+  "hostname": "HAT-P-14",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "HAT-P-14",
+  "ch": -0.25,
+  "oh": 0.27,
+  "nh": 0.14,
+  "feh": 0.07,
+  "logrhk": null
+ },
+ {
+  "hostname": "HAT-P-18",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "HAT-P-18",
+  "ch": 0.39,
+  "oh": 0.38,
+  "nh": 0.08,
+  "feh": 0.19,
+  "logrhk": null
+ },
+ {
+  "hostname": "TrES-4",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "TRES-4",
+  "ch": 0.15,
+  "oh": 0.44,
+  "nh": 0.42,
+  "feh": 0.31,
+  "logrhk": null
+ },
+  {
+   "hostname": "WASP-52",
+   "analysis": "2018ApJS..237...38B",
+   "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+   "catname": "WASP-52",
+   "ch": 0.17,
+   "oh": 0.18,
+   "nh": 0.26,
+   "feh": 0.31,
+   "logrhk": null
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "arXiv:2211.10490 (Tsai/Powell et al., SO2-Paper; Zitat auf Fischer/Polanski-Referenz)",
+   "delivery": "Sonnet 5 High Search",
+   "logrhk": -4.97,
+   "p_rot": 42.1,
+   "pending": "lx,co",
+   "note": "log R'HK -4.97 ± 0.06; P_rot 42.1 ± 2.6 d; L_X: nicht gefunden in gepruefter Quelle; C/O: nicht geprueft"
+  },
+  {
+   "hostname": "WASP-107",
+   "analysis": "arXiv:2311.12515 (XMM-Newton)",
+   "delivery": "Sonnet 5 High Search",
+   "lx": 8.8e27,
+   "p_rot": 17.5,
+   "pending": "logrhk",
+   "note": "L_X ≈8.8e27 erg/s (0.1-10 keV, abs.-korr.); P_rot 17.5 ± 1.5 d (K2), 17 ± 1 d (WASP-Phot.); log R'HK nicht geprueft"
+  },
+  {
+   "hostname": "WASP-107",
+   "analysis": "arXiv:2304.03808 (Brewer & Fischer-Vergleich)",
+   "delivery": "Sonnet 5 High Search",
+   "co": 0.5,
+   "note": "C/O = 0.50; Mg/Si = 1.08"
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Czesla et al. 2024 (XMM-Newton, 5-100 Å)",
+   "delivery": "Sonnet 5 High Search",
+   "lx": 1.3e29,
+   "pending": "logrhk,p_rot",
+   "note": "L_X 1.3e29 erg/s (5-100 Å); log R'HK und P_rot nicht geprueft"
+  },
+  {
+   "hostname": "WASP-94 A",
+   "analysis": "arXiv:2201.02212 (HARPS)",
+   "delivery": "Sonnet 5 High Search",
+   "logrhk": -5.18,
+   "pending": "lx",
+   "note": "log R'HK -5.18 ± 0.27; keine publizierten Roentgen-/EUV-Beschraenkungen (dokumentierte Luecke)"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "arXiv:2510.06939 (XMM-Newton 100 ks + Chandra + eROSITA)",
+   "delivery": "Sonnet 5 High Search",
+   "fx": 1e-15,
+   "lxlbol": 1e-5,
+   "pending": "co",
+   "note": "F_X ≈1e-15 erg/s/cm² (0.2-2 keV); L_X/L_bol ≈1e-5; kleine Flare detektiert"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Sarkis et al. 2018 (K2-Photometrie)",
+   "delivery": "Sonnet 5 High Search",
+   "p_rot": 39.6,
+   "note": "P_rot 39.6 ± 0.9 d"
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "arXiv:2208.01650 (Caldiroli/Sanz-Forcada et al.)",
+   "delivery": "Sonnet 5 High Search",
+   "s_index": 0.677,
+   "pending": "lx",
+   "note": "S-Index 0.677 ± 0.034 (HARPS), 0.739 ± 0.021 (HARPS-N) — kein log R'HK; erste Roentgendetektion berichtet, kein L_X-Zahlenwert extrahiert"
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "arXiv:1802.09557, arXiv:2009.03398",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "p_rot",
+   "note": "P_rot ~15 d oder ~30 d (harmonische Mehrdeutigkeit)"
+  },
+  {
+   "hostname": "TOI-270",
+   "analysis": "arXiv:2101.01593",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "p_rot",
+   "note": "P_rot je nach Methode: Hα 54.0 ± 2.4 d; NaD 61.5 ± 4.0 d; CCF-FWHM 57.5 ± 5.7 d; TESS 57.90 ± 0.23 d"
+  },
+  {
+   "hostname": "HAT-P-12",
+   "analysis": "GAPS-XVI, arXiv:1802.03859",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "logrhk,p_rot",
+   "note": "log R'HK: niedrige Aktivitaet bestaetigt, Zahlenwert nicht extrahiert; P_rot photometrisch nicht detektiert"
+  },
+  {
+   "hostname": "HAT-P-30",
+   "analysis": "arXiv:1612.01739",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "logrhk",
+   "note": "log R'HK anomal niedrig fuer sein Alter, Zahlenwert nicht extrahiert"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "arXiv:1612.01739",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "logrhk",
+   "note": "log R'HK anomal hoch, Zahlenwert nicht extrahiert"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Boro Saikia et al. 2018",
+   "delivery": "Gemini 3 Chat",
+   "lx": 1e26,
+   "note": "L_X ~1e26 erg/s (XMM limitiert)"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Newton et al. 2019 (VizieR J/ApJ/866/99)",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 38.8,
+   "feh": -0.14,
+   "note": "P_rot 38.8 d; [Fe/H] -0.14"
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Knutson et al. 2010",
+   "delivery": "Gemini 3 Chat",
+   "logrhk": -4.95
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Brewer & Fischer 2018",
+   "delivery": "Gemini 3 Chat",
+   "ch": -0.15,
+   "oh": -0.1,
+   "feh": -0.12,
+   "co": 0.55
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Gaia DR3 / Activity (zit. Gemini 3 Chat)",
+   "delivery": "Gemini 3 Chat",
+   "logrhk": -4.42
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Rice et al. 2019",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 12.3,
+   "feh": -0.28,
+   "note": "P_rot 12.3 d; [Fe/H] -0.28 (Soubiran et al. 2018)"
+  },
+  {
+   "hostname": "WASP-107",
+   "analysis": "Dai & Winn 2018",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 15.6,
+   "feh": -0.03
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Knutson et al. 2013",
+   "delivery": "Gemini 3 Chat",
+   "logrhk": -4.9
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Hartman et al. 2011",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 22.3
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Brewer et al. 2016",
+   "delivery": "Gemini 3 Chat",
+   "ch": 0.08,
+   "oh": 0.12,
+   "feh": 0.1,
+   "co": 0.54
+  },
+  {
+   "hostname": "LP 791-18",
+   "analysis": "Crossfield et al. 2019",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 38.0,
+   "feh": -0.32
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Bonomo et al. 2017",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 2.7
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Mesa et al. 2019",
+   "delivery": "Gemini 3 Chat",
+   "ch": 0.1,
+   "oh": 0.15,
+   "feh": 0.13,
+   "co": 0.51
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Polanski et al. 2022 (RNAAS, KeckSpec/HIRES) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "ch": -0.04,
+   "oh": 0.04,
+   "feh": -0.01,
+   "co": 0.46,
+   "note": "C/O 0.46 ± 0.09",
+   "nh": -0.06,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "HAT-P-12",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.82
+  },
+  {
+   "hostname": "HAT-P-14",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.77
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.47
+  },
+  {
+   "hostname": "WASP-15",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.74
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.74
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.0,
+   "note": "aktivster der GAPS-Stichprobe"
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.07
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Passegger et al. 2024 (ESPRESSO)",
+   "delivery": "Kimi K2",
+   "logrhk": -5.28,
+   "note": "log R'HK -5.28 ± 0.05"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Cloutier et al. 2017",
+   "delivery": "Kimi K2",
+   "p_rot": 38.6
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Rukdee et al. 2025 (XMM)",
+   "delivery": "Kimi K2",
+   "lx": 7e26,
+   "note": "L_X ≈7e26 erg/s; L_EUV ≈2.7e26 erg/s (dos Santos et al. 2020, HST/Lyα)"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "Hellier et al. 2011",
+   "delivery": "Kimi K2",
+   "p_rot": 15.6
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Hébrard et al. 2013",
+   "delivery": "Kimi K2",
+   "p_rot": 16.4
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Bourrier et al. 2020",
+   "delivery": "Kimi K2",
+   "p_rot": 1.13
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Engle & Guinan 2023",
+   "delivery": "Kimi K2",
+   "p_rot": 28.7
+  },
+  {
+   "hostname": "TOI-421",
+   "analysis": "Krenn et al. 2024",
+   "delivery": "Kimi K2",
+   "p_rot": 39.6
+  },
+  {
+   "hostname": "L 98-59",
+   "analysis": "arXiv:2507.09343",
+   "delivery": "Kimi K2",
+   "p_rot": 76.7
+  },
+  {
+   "hostname": "HIP 67522",
+   "analysis": "Rizzuto et al. 2020",
+   "delivery": "Kimi K2",
+   "p_rot": 1.4
+  },
+  {
+   "hostname": "V1298 Tau",
+   "analysis": "Feinstein et al. 2022",
+   "delivery": "Kimi K2",
+   "p_rot": 2.97
+  },
+  {
+   "hostname": "HAT-P-14",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.24 +/- 0.05 (KeckSpec-Maschinentabelle); Gruppe HAT-P-14/WASP-17/WASP-121 niedriges C/O bestaetigt (<0.25)",
+   "ch": -0.15,
+   "oh": 0.22,
+   "nh": 0.15,
+   "feh": -0.02,
+   "co": 0.24,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "HAT-P-26",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.41 +/- 0.08 (KeckSpec-Maschinentabelle)",
+   "ch": 0.11,
+   "oh": 0.24,
+   "nh": -0.1,
+   "feh": 0.02,
+   "co": 0.41,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "WASP-17",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.18 +/- 0.04 (KeckSpec-Maschinentabelle); Gruppe HAT-P-14/WASP-17/WASP-121 niedriges C/O bestaetigt (<0.25)",
+   "ch": -0.29,
+   "oh": 0.19,
+   "nh": 0.09,
+   "feh": 0.0,
+   "co": 0.18,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.59 +/- 0.12 (KeckSpec-Maschinentabelle)",
+   "ch": 0.16,
+   "oh": 0.13,
+   "nh": 0.29,
+   "feh": 0.29,
+   "co": 0.59,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.23 +/- 0.05 (KeckSpec-Maschinentabelle); Gruppe HAT-P-14/WASP-17/WASP-121 niedriges C/O bestaetigt (<0.25)",
+   "ch": 0.04,
+   "oh": 0.42,
+   "nh": 0.54,
+   "feh": 0.24,
+   "co": 0.23,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "WASP-127",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.43 +/- 0.09 (KeckSpec-Maschinentabelle)",
+   "ch": -0.12,
+   "oh": -0.01,
+   "nh": -0.38,
+   "feh": -0.16,
+   "co": 0.43,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "WASP-166",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.41 +/- 0.08 (KeckSpec-Maschinentabelle)",
+   "ch": 0.15,
+   "oh": 0.28,
+   "nh": 0.27,
+   "feh": 0.23,
+   "co": 0.41,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
+  },
+  {
+   "hostname": "HAT-P-12",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "HAT-P-26",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "WASP-127",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "WASP-17",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "L 98-59",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "LP 791-18",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Sairam & Madhusudhan 2025 (arXiv:2503.19908)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "Aktivitaets/X-ray beansprucht (obere Grenze); Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "LTT 3780",
+   "analysis": "Sairam & Madhusudhan 2025 (arXiv:2503.19908)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "Aktivitaets/X-ray beansprucht (obere Grenze); Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "V1298 Tau",
+   "analysis": "Maggio et al. 2023/2024 (XUV)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "XUV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "HIP 67522",
+   "analysis": "Maggio et al. 2023/2024 (XUV)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "XUV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "GJ 3090",
+   "analysis": "eROSITA eRASS1 (erass1main, broad 0.2-2.3 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "1eRASS J012145.2-464250",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 1.62170868e-13,
+   "lx": 9.8e+27,
+   "note": "F_X = b1_flux eRASS1 (0.2-2.3 keV); L_X = 4 pi d^2 F_X mit d = 22.48 pc (NExScI pscomppars); Offset 3.0\"; kein 5XMM-/2RXS-Eintrag"
+  },
+  {
+   "hostname": "HIP 67522",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J135006.1-405011",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 2.27514e-12,
+   "lx": 4.4e+30,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 127.28 pc (pscomppars); Offset 2.6\"; zusaetzlich eRASS1 b1 1.90e-12 (2.1\") und 2RXS plaw 2.02e-12 (10.3\")"
+  },
+  {
+   "hostname": "L 98-59",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J081808.1-681854",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 9.86531e-14,
+   "lx": 1.3e+27,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 10.62 pc (pscomppars); Offset 3.2\"; zusaetzlich eRASS1 b1 2.52e-14 (5.2\"); zweite 5XMM-Epoche ep 4.86e-14"
+  },
+  {
+   "hostname": "V1298 Tau",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J040519.6+200924",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 1.14086e-12,
+   "lx": 1.6e+30,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 108.20 pc (pscomppars); Offset 0.7\"; 2RXS-Quelle 22\" entfernt nicht zugeordnet"
+  },
+  {
+   "hostname": "TOI-270",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J043339.7-515726",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 6.81733e-15,
+   "lx": 4.1e+26,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 22.48 pc (pscomppars); Offset 0.8\"; kein eRASS1-/2RXS-Eintrag"
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J232705.3-011706",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 5.78275e-15,
+   "lx": 6.1e+26,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 29.66 pc (pscomppars); Offset 1.8\"; zweite 5XMM-Epoche ep 9.13e-15; erste Roentgen-Nachweis-Bericht (Sanz-Forcada et al.) bestaetigt"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J101938.0-094823",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 9.83756e-15,
+   "lx": 8.9e+27,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 86.75 pc (pscomppars); Offset 0.9\"; zweite 5XMM-Epoche ep 8.74e-15"
+  },
+  {
+   "hostname": "GJ 3090",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "GJ 3090",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 17.95
+  },
+  {
+   "hostname": "TOI-1130",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "TOI-1130",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 25.6
+  },
+  {
+   "hostname": "WASP-96",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "WASP-96",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 20.16
+  },
+  {
+   "hostname": "LTT 3780",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "LTT 3780",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 104.0
+  },
+  {
+   "hostname": "WASP-166",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "WASP-166",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 12.1
+  },
+  {
+   "hostname": "TOI-199",
+   "analysis": "Suchstand maschinelle Kataloge 2026-09-05",
+   "catalog": "NExScI pscomppars; HEASARC 2RXS/5XMM/eRASS1; VizieR Brewer 2016+2018; aspolanski KeckSpec",
+   "delivery": "Research-Ingest (2026-09-05)",
+   "note": "alle geprueften maschinellen Kataloge ohne Wert: st_rotp leer (pscomppars); 2RXS/5XMM/eRASS1 kein Eintrag; Brewer 2016/2018 kein Eintrag; KeckSpec-Liste fuehrt den Wirt nicht - logrhk/lx/abundanz pending"
+  },
+  {
+   "hostname": "TOI-5205",
+   "analysis": "Suchstand maschinelle Kataloge 2026-09-05",
+   "catalog": "NExScI pscomppars; HEASARC 2RXS/5XMM/eRASS1; VizieR Brewer 2016+2018; aspolanski KeckSpec",
+   "delivery": "Research-Ingest (2026-09-05)",
+   "note": "alle geprueften maschinellen Kataloge ohne Wert: st_rotp leer (pscomppars); 2RXS/5XMM/eRASS1 kein Eintrag; Brewer 2016/2018 kein Eintrag (M-Zwerg); KeckSpec-Liste fuehrt den Wirt nicht - logrhk/lx/abundanz pending"
+  }
+]

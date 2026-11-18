@@ -1,0 +1,5 @@
+#!/bin/sh
+# Wrapper: the rule lives in the walled tools/gate/ (edit:deny). R-2026-10-18-e.
+set -u
+root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+exec "$root/tools/gate/commit_msg.sh" "$@"

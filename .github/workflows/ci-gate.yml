@@ -1,0 +1,222 @@
+name: ci-gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'phi/**'
+      - 'bin/source_branch_guard'
+  push:
+    paths:
+      - 'src/**'
+      - 'static/**'
+      - 'phi/**'
+      - 'tools/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'tools/register/**'
+      - 'tools/utils/**'
+      - 'docs/**'
+      - 'Cargo.toml'
+
+permissions:
+  issues: write
+
+# The fast per-push gate for the HEAD. Keyed per SHA, not per ref: a newer push
+# can never evict an older SHA's waiting run — only duplicate runs of the SAME
+# SHA cancel each other. (Measured 2026-10-08: `group: ci-gate-${{ github.ref }}`
+# let every newer push on main cancel the older SHA's waiting run; `ci-check`'s
+# `cancel-in-progress: false` protects only a running run, never a waiting one —
+# 15/17 cancelled with 0 jobs. Rat + Duck + Qwen + Z.ai: the per-SHA group is the
+# necessary mechanics; the durable per-SHA verdict (`SHA -> {green,red,pending}`,
+# default pending) is a separate data invariant, still to build.)
+concurrency:
+  group: ci-gate-${{ github.sha }}
+  cancel-in-progress: true
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo check
+    - run: cargo check --features browser_relay
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: cargo check returned void" \
+          "Build job failed on ${{ github.sha }}" \
+          health
+
+  subset:
+    # GitHub-hosted and free + unlimited for a public repo
+    # (survey-2026-10-10-github-ci-cdn-optimierung.md:59). The self-hosted t420
+    # is the single shared runner for ~20 CDN workflows and starved the subset
+    # under a commit burst (measured 2026-10-10: every SHA's `cargo test --lib`
+    # cancelled mid-run, `ci-gate-subset-${{ github.ref }}` let each push evict
+    # the running one). The per-SHA group mirrors the top-level
+    # `ci-gate-${{ github.sha }}` so a newer push can never evict an older SHA's
+    # subset — every SHA gets a real verdict. Operator word 2026-10-10 "mach A".
+    concurrency:
+      group: ci-gate-subset-${{ github.sha }}
+      cancel-in-progress: true
+    runs-on: ubuntu-24.04-arm
+    # 60 min: the un-ignored heavy TE calibration tests push the suite past the
+    # old 30-min cap (measured 2026-10-14: the job was cancelled at 30:18 with
+    # the failure summary still unprinted). Longer cap + `--nocapture` let the
+    # suite finish and the reasons stand. The heavy tests belong in te-gate.yml
+    # (the `#[ignore]` convention is incomplete) — that move is the follow-up.
+    timeout-minutes: 60
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    # `--nocapture`: the failure reason prints at the moment a test panics (the
+    # default harness buffers it to the final summary, which a timeout never
+    # reaches). This makes the red names *and* their reasons visible in the log
+    # even while the heavy TE calibration tests still run.
+    - run: cargo test --lib -- --nocapture
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: subset test returned void" \
+          "Subset (cargo test --lib) failed on ${{ github.sha }}" \
+          health
+
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo fmt --check
+
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo test -p omegaflow-gate --lib
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: the gate crate's tests returned void" \
+          "omegaflow-gate --lib failed on ${{ github.sha }}" \
+          health
+
+  clippy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo clippy --all-targets -- -D clippy::unreachable -D clippy::todo -D clippy::unimplemented
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: cargo clippy returned void" \
+          "Clippy job failed on ${{ github.sha }}" \
+          health
+
+  dropped-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo build --release -p omegaflow-register --bin register_lookup
+    - name: Key-Set-Gate — no open point dropped by this push beyond the frozen list
+      run: |
+        pin=docs/state/dropped-legacy-baseline.txt
+        if [ ! -f "$pin" ]; then
+          echo "dropped-set-gate: pending — $pin absent; seed it from the register-dropped sweep artifact" >&2
+          exit 0
+        fi
+        since='${{ github.event.before }}'
+        if [ -z "$since" ] || [ "$since" = "0000000000000000000000000000000000000000" ]; then
+          since="$(git rev-parse HEAD~1 2>/dev/null || echo '')"
+        fi
+        if [ -n "$since" ]; then
+          target/release/register_lookup --dropped-keys --changed-since "$since" | sort -u > current.txt
+        else
+          target/release/register_lookup --dropped-keys | sort -u > current.txt
+        fi
+        awk '!/^#/ && NF' "$pin" | sort -u > pin.txt
+        comm -23 current.txt pin.txt > new-drops.txt
+        echo "dropped-set-gate: current $(wc -l < current.txt) | pinned $(wc -l < pin.txt) | new $(wc -l < new-drops.txt)"
+        if [ -s new-drops.txt ]; then
+          echo "dropped-set-gate: new drops not in the frozen list:" >&2
+          cat new-drops.txt >&2
+          exit 1
+        fi
+    - name: Gate self-test — shadow null-control is sharp
+      run: |
+        cargo build --release -p omegaflow-register --bin dropped_gate
+        target/release/dropped_gate --shadow
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: dropped-gate returned void" \
+          "dropped-gate failed on ${{ github.sha }}" \
+          health
+
+  source-branch-guard:
+    # A source branch is a proposal, not the register. Refuse a PR that
+    # regresses resolved blocks to `pending`, deletes blocks, or bends anchors
+    # to what the parser currently carries. (Measured 2026-10-22 on
+    # river-sources: 992 regressed, 681 deleted, 687 anchor rewrites.)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - name: Fetch the base branch
+      run: |
+        git fetch origin "${{ github.base_ref }}"
+        git branch -f base FETCH_HEAD
+    - name: Source branch guard
+      run: bin/source_branch_guard base HEAD
+
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
+    - run: cargo run -q -p omegaflow-register --bin cdn_reconcile -- --fail
+    - name: License vocabulary gate — every terms value lies in the closed SPDX set
+      run: cargo run -q -p omegaflow-register --bin license_census -- --fail
+    - name: clean-tree acceptance — no privileged body name or constant in non-test src/
+      run: cargo run -q -p omegaflow-register --bin clean_tree -- --fail
+    - run: cargo run -q -p omegaflow-register --bin path_reference_scan -- .
+    - name: werkstatt — no write call reaches into the release tree with a repo literal
+      run: cargo run -q -p omegaflow-register --bin repo_write_scan
+    - name: test shape — no allow, no test that only asserts existence
+      run: |
+        cargo run -q -p omegaflow-register --bin test_shape_scan -- --allows
+        cargo run -q -p omegaflow-register --bin test_shape_scan
+    - name: matrix — every workspace member runs, no --bin filter
+      run: cargo run -q -p omegaflow-register --bin ci_matrix_scan
+    - name: PII — no personal-data field in the register (NIST SP 800-122)
+      run: cargo run -q -p omegaflow-register --bin pii_scan -- --register phi/sources.φ
+    - uses: taiki-e/install-action@cargo-deny
+    - name: dependencies — advisories, licences, sources
+      run: cargo deny check advisories licenses sources
