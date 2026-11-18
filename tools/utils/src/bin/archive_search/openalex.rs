@@ -1,5 +1,33 @@
 use crate::json;
 use crate::net::{get, urlencode};
+use std::time::Duration;
+
+const OPENALEX_ATTEMPTS: usize = 3;
+
+/// OpenAlex occasionally answers a paginated request with 401 before the
+/// polite pool settles; a short retry turns that into a result instead of a
+/// truncated page list. 401 is not part of the negative HTTP cache, so the
+/// retry really goes back to the network.
+fn get_openalex(url: &str) -> Option<crate::net::Fetch> {
+    let mut last = None;
+    for attempt in 0..OPENALEX_ATTEMPTS {
+        if attempt > 0 {
+            std::thread::sleep(Duration::from_secs(2 * attempt as u64));
+        }
+        match get(url, &[], "40") {
+            Some(f) if retryable(f.status) && attempt + 1 < OPENALEX_ATTEMPTS => last = Some(f),
+            other => return other,
+        }
+    }
+    last
+}
+
+fn retryable(status: Option<i32>) -> bool {
+    matches!(
+        status,
+        Some(401) | Some(500) | Some(502) | Some(503) | Some(504)
+    )
+}
 
 pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
     let (text, refine) = crate::refine::split_refine(query, &["filter", "select", "sort"]);
@@ -31,7 +59,7 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
             url.push_str("&cursor=");
             url.push_str(&urlencode(c));
         }
-        match get(&url, &[], "40") {
+        match get_openalex(&url) {
             Some(f) if f.status == Some(200) => match json::parse(&f.body) {
                 Some(v) => {
                     let out = parse_openalex(&f.body);

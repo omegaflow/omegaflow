@@ -15,6 +15,13 @@ Format follows Keep a Changelog 1.1, versions follow SemVer 2.0.0.
 
 ### Changed
 
+- `archive_search --openfda` liest jetzt Drug-Labels, FAERS-Adverse-Events und
+  Drugs@FDA (`field=generic|brand`, `endpoint=label|event|drug|all`);
+  `--openalex` wiederholt 401/5xx-Seiten, statt die Ergebnisliste abzuschneiden,
+  und 401 gilt im Exit-Ladder als blockiert. Die Biomedizin-Arme
+  (`--pubmed`, `--europepmc`, `--openalex`, `--cochrane`, `--clinicaltrials`,
+  `--openfda`) stehen wieder in `--help-all`.
+
 - The CI matrix tests `measure`, `science`, `service`, `app` and `harvest`
   completely; before, 320 probes and most harvest binaries never ran.
 - The clippy job lints with `cache-targets: false`; a cache hit used to report

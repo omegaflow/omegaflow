@@ -373,7 +373,10 @@ fn exits() -> Vec<Exit> {
 }
 
 fn is_block(status: Option<i32>) -> bool {
-    matches!(status, None | Some(0) | Some(403) | Some(429))
+    // 401 belongs here: a route that answers "unauthorized" is exhausted, but
+    // the next exit in the ladder may still carry the request (OpenAlex does
+    // this intermittently on cursor pages).
+    matches!(status, None | Some(0) | Some(401) | Some(403) | Some(429))
 }
 
 fn first_answer<F: Fn(&Exit) -> Option<Fetch>>(ladder: &[Exit], attempt: F) -> Option<Fetch> {
@@ -7145,6 +7148,7 @@ mod tests {
     fn is_block_names_the_walls_not_the_end() {
         assert!(is_block(None));
         assert!(is_block(Some(0)));
+        assert!(is_block(Some(401)));
         assert!(is_block(Some(403)));
         assert!(is_block(Some(429)));
         assert!(!is_block(Some(404)));

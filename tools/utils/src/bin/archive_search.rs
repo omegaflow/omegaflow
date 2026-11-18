@@ -2926,6 +2926,25 @@ fn usage_full() {
     );
     eprintln!();
     eprintln!(
+        "  --pubmed    PubMed search (eutils.ncbi.nlm.nih.gov), keyless; url + title/journal/date/doi/authors"
+    );
+    eprintln!(
+        "  --europepmc Europe PMC search (europepmc.org), keyless; url + doi/title/year/cites/authors/journal/abstract"
+    );
+    eprintln!(
+        "  --openalex  OpenAlex works (api.openalex.org), keyless; filter=/select=/sort=; url + title/doi/year/cites/authors/abstract"
+    );
+    eprintln!(
+        "  --cochrane  Cochrane reviews (cochranelibrary.com), keyless; url + title/doi/year"
+    );
+    eprintln!(
+        "  --clinicaltrials ClinicalTrials.gov API v2 (clinicaltrials.gov), keyless; url + title/status"
+    );
+    eprintln!(
+        "  --openfda   openFDA drugs (api.fda.gov), keyless; field=generic|brand, endpoint=label|event|drug|all; url + title/manufacturer/date or serious/reactions"
+    );
+    eprintln!();
+    eprintln!(
         "  --scholexplorer OpenAIRE Scholexplorer links (api.scholexplorer.openaire.eu/v3/Links, DOI/PMID), keyless; target + relation type"
     );
     eprintln!(
