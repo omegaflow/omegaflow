@@ -11,6 +11,7 @@ homepage = "https://omegaflow.space"
 [workspace]
 members = [
     "tools/app",
+    "tools/gate",
     "tools/harvest",
     "tools/measure",
     "tools/membrane",

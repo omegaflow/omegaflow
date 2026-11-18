@@ -1,10 +1,14 @@
 #![allow(mixed_script_confusables)]
 pub mod archivar;
+#[cfg(feature = "commit_gate")]
+pub mod gate;
 pub mod mathematikerin;
 #[cfg(target_arch = "wasm32")]
 pub mod wasm;
 pub mod weberin;
 
+#[cfg(feature = "commit_gate")]
+pub use gate::{axioms, commit_gate, friction, handover, mcp, state, tool_perm};
 
 pub fn or_temp(value: Option<&str>, name: &str) -> String {
     match value {
