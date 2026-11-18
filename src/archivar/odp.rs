@@ -284,11 +284,11 @@ pub fn interp(grid: &[(f64, [f64; 6])], t: f64) -> Option<[f64; 6]> {
 pub struct PointMass {
     pub name: String,
     pub gm_m3_s2: f64,
-    pub j2: f64,
-    pub radius_m: f64,
+    pub j2: Option<f64>,
+    pub radius_m: Option<f64>,
 }
 
-pub const N_BODY_CONVENTION: &str = "n_body_accel sums the Sun and every declared point mass on the spacecraft at r in km; each body position comes from body_barycenter_position at the same TDB epoch; the J2 term is the zonal harmonic with the body's pole along the ICRS z of the body-spacecraft difference, applied only when j2 > 0 and radius_m > 0; a missing body position returns None, never a partial sum; integrate_leg steps the same force with the kick-drift-kick leapfrog at the given dt and returns one position per hour";
+pub const N_BODY_CONVENTION: &str = "n_body_accel sums the Sun and every declared point mass on the spacecraft at r in metres; each body position comes from body_barycenter_position at the same TDB epoch, also in metres; the J2 term is the zonal harmonic with the body's pole along the ICRS z of the body-spacecraft difference, applied only when j2 > 0 and radius_m > 0; a missing body position returns None, never a partial sum; integrate_leg steps the same force with the kick-drift-kick leapfrog at the given dt, carrying metres and metres per second, and returns one position per hour";
 
 pub fn n_body_accel(
     r_km: [f64; 3],
@@ -316,8 +316,11 @@ pub fn n_body_accel(
         a[0] += p.gm_m3_s2 * dx / d3;
         a[1] += p.gm_m3_s2 * dy / d3;
         a[2] += p.gm_m3_s2 * dz / d3;
-        if p.j2 > 0.0 && p.radius_m > 0.0 {
-            let k = 1.5 * p.gm_m3_s2 * p.j2 * p.radius_m * p.radius_m / (d2 * d3);
+        if let (Some(j2), Some(radius_m)) = (p.j2, p.radius_m)
+            && j2 > 0.0
+            && radius_m > 0.0
+        {
+            let k = 1.5 * p.gm_m3_s2 * j2 * radius_m * radius_m / (d2 * d3);
             let zr = dz * dz / d2;
             let w = 5.0 * zr - 1.0;
             a[0] += k * w * dx;
