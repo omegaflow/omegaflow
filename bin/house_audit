@@ -38,6 +38,9 @@ EXCL4=":(exclude)docs/concepts/archiv/tool-forms.md"
 # Primaerquelle (eine Zeile, alternierte Muster). Fehlt sie, wird die pii-Klasse
 # benannt uebersprungen — kein stilles Null.
 PII_FILE="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-private}/pii-patterns.txt"
+if [ ! -f "$PII_FILE" ] && [ -f "${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-private}/credentials/pii-patterns.txt" ]; then
+    PII_FILE="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-private}/credentials/pii-patterns.txt"
+fi
 PII=""
 if [ -f "$PII_FILE" ]; then
     IFS= read -r PII < "$PII_FILE" || PII=""

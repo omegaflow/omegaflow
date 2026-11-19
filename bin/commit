@@ -136,6 +136,32 @@ if [ "$no_change" -eq 0 ]; then
         echo "commit: oder OMEGAFLOW_PUBLISH_OK=\"<Grund>\" nennen" >&2
         exit 2
     fi
+
+    # PII-Riegel: Namen, Adressen und Nummern aus dem privaten Haus kommen nicht
+    # in den Baum. Die Muster liegen dort, wo der Schwärzer sie liest; die
+    # Ausgabe nennt nur Datei und Zahl, nie den Treffer.
+    PII_PAT=""
+    for _p in "$HOME/projects/omegaflow-private/pii-patterns.txt" \
+              "$HOME/projects/omegaflow-private/credentials/pii-patterns.txt"; do
+        [ -f "$_p" ] && PII_PAT=$(head -1 "$_p") && break
+    done
+    if [ -n "$PII_PAT" ]; then
+        pii=""
+        for f in $(GIT_INDEX_FILE="$tmpidx" git diff --cached --name-only --diff-filter=ACM -- $paths); do
+            case "$f" in
+                *.md|*.txt|*.φ|*.tsv|*.json|*.csv|*.yml|*.yaml) ;;
+                *) continue ;;
+            esac
+            n=$(GIT_INDEX_FILE="$tmpidx" git diff --cached -U0 -- "$f" 2>/dev/null | sed -n 's/^+//p' | grep -Eic -- "$PII_PAT" 2>/dev/null || true)
+            [ "${n:-0}" -gt 0 ] && pii="$pii
+  $f ($n Zeile)"
+        done
+        if [ -n "$pii" ]; then
+            echo "commit: PII im Baum — nicht committet:$pii" >&2
+            echo "commit: privater Kanal gehört nach omegaflow-private (bindend/source-curation.md)" >&2
+            exit 2
+        fi
+    fi
 fi
 
 fail=0
