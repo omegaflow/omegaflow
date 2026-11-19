@@ -14,7 +14,7 @@ const SUPERMAG_URL: &str =
     "https://raw.githubusercontent.com/spacecataz/supermag/master/station_info.txt";
 const DEFAULT_OUT: &str = "state/river/gic-cgm-lat.tsv";
 const DEFAULT_PAUSE_MS: u64 = 150;
-const FAMILY_CHANNEL_FIELD: &str = "intermagnet_xyz_x_nt";
+const FAMILY_CHANNEL_FIELD: &str = "bfield_x";
 
 struct Station {
     code: String,
@@ -416,10 +416,10 @@ mod tests {
         let mid = family_channels(&p, "mid-latitude");
         assert_eq!(
             auroral,
-            vec!["intermagnet_xyz_x_nt_aaa", "intermagnet_xyz_x_nt_bbb"]
+            vec!["bfield_x_aaa", "bfield_x_bbb"]
         );
-        assert_eq!(sub, vec!["intermagnet_xyz_x_nt_ccc"]);
-        assert_eq!(mid, vec!["intermagnet_xyz_x_nt_ddd"]);
+        assert_eq!(sub, vec!["bfield_x_ccc"]);
+        assert_eq!(mid, vec!["bfield_x_ddd"]);
         let mut all: Vec<String> = auroral.into_iter().chain(sub).chain(mid).collect();
         all.sort();
         let union = all.len();

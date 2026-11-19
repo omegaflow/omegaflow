@@ -921,9 +921,9 @@ igra_wind_direction_deg	patch-levy	advective
 igra_wind_speed_ms	patch-levy	advective
 impc_roti_tecu_min	inverse-square	scale
 intensity	gaussian-inverse-square	advective
-intermagnet_xyz_x_nt	inverse-square	em
-intermagnet_xyz_y_nt	inverse-square	em
-intermagnet_xyz_z_nt	inverse-square	em
+bfield_x	inverse-square	em
+bfield_y	inverse-square	em
+bfield_z	inverse-square	em
 irradiance	inverse-square	em
 isc_bulletin_magnitude	erfc	source-parameter
 iss_lis_flash_radiance_uj_sr_m2_um	inverse-square	em
@@ -1050,7 +1050,7 @@ magMax	gaussian-inverse-square	source-parameter
 magnetosphere_imf_bt_nt	inverse-square	em
 magnetosphere_imf_by_nt	inverse-square	em
 magnetosphere_imf_bz_nt	inverse-square	em
-magnetosphere_total_field_nt	inverse-square	em
+bfield_f	inverse-square	em
 magnitude	inverse-square	source-parameter
 mag_v	inverse-square	source-parameter
 MARS_RADIUS	inverse-square	geometry

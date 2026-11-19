@@ -9,7 +9,7 @@ use omegaflow::weberin::{StationLine, WitnessLine};
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const GROUND_FIELDS: &str = "intermagnet_xyz_x_nt+intermagnet_xyz_y_nt+intermagnet_xyz_z_nt";
+const GROUND_FIELDS: &str = "bfield_x+bfield_y+bfield_z";
 const SWARM_FIELD: &str = "swarm_magnetic_field_intensity_nt";
 const GROUND_NETLOC: &str = "imag-data.bgs.ac.uk";
 const SWARM_NETLOC: &str = "vires.services";
@@ -161,7 +161,7 @@ fn source_carries(src: &SourceConfig, field: &str) -> bool {
 
 fn register_station_point(sources: &[SourceConfig]) -> Option<(f64, f64)> {
     for src in sources {
-        if source_carries(src, "intermagnet_xyz_x_nt")
+        if source_carries(src, "bfield_x")
             && let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame()
         {
             return Some((lat, lon));
@@ -378,7 +378,7 @@ fn load_ground_derived_bin(station: &str, data_dir: &PathBuf) -> Option<String> 
     let bytes = std::fs::read(&bin).ok()?;
     let recs = intermagnet::parse_bin(&bytes)?;
     Some(format!(
-        "local bin {} reads {} hour(s) of the derived |dB/dt| — not the intermagnet_xyz B magnitude, the convergence quantity stays absent",
+        "local bin {} reads {} hour(s) of the derived |dB/dt| — not the bfield_f B magnitude, the convergence quantity stays absent",
         bin.display(),
         recs.len()
     ))

@@ -1385,7 +1385,7 @@ fn load_dbdt_across_sources(
     let Some(station) = name.strip_prefix("intermagnet_dbdt_") else {
         return Ok(None);
     };
-    let axis = |a: &str| format!("intermagnet_xyz_{a}_nt_{station}");
+    let axis = |a: &str| format!("bfield_{a}_{station}");
     let xs = load_field_across_sources(sources, &axis("x"), anchor)?;
     let ys = load_field_across_sources(sources, &axis("y"), anchor)?;
     let zs = load_field_across_sources(sources, &axis("z"), anchor)?;
@@ -6564,10 +6564,10 @@ mod tests {
 
     #[test]
     fn field_sources_resolves_station_qualified_channel_to_its_block() {
-        let aae = source_cfg(field_cfg("intermagnet_xyz_x_nt"), Some("AAE"));
-        let abg = source_cfg(field_cfg("intermagnet_xyz_x_nt"), Some("ABG"));
+        let aae = source_cfg(field_cfg("bfield_x"), Some("AAE"));
+        let abg = source_cfg(field_cfg("bfield_x"), Some("ABG"));
 
-        let qualified = field_sources(std::slice::from_ref(&aae), "intermagnet_xyz_x_nt_aae");
+        let qualified = field_sources(std::slice::from_ref(&aae), "bfield_x_aae");
         assert_eq!(
             qualified.len(),
             1,
@@ -6579,7 +6579,7 @@ mod tests {
             "the resolved block carries the station of the request"
         );
 
-        let bare = field_sources(std::slice::from_ref(&aae), "intermagnet_xyz_x_nt");
+        let bare = field_sources(std::slice::from_ref(&aae), "bfield_x");
         assert_eq!(
             bare.len(),
             1,
@@ -6588,7 +6588,7 @@ mod tests {
         assert_eq!(bare[0].0.station_code.as_deref(), Some("AAE"));
 
         let both = [aae, abg];
-        let abg_only = field_sources(&both, "intermagnet_xyz_x_nt_abg");
+        let abg_only = field_sources(&both, "bfield_x_abg");
         assert_eq!(
             abg_only.len(),
             1,
@@ -6596,7 +6596,7 @@ mod tests {
         );
         assert_eq!(abg_only[0].0.station_code.as_deref(), Some("ABG"));
         assert!(
-            field_sources(&both, "intermagnet_xyz_x_aae").is_empty(),
+            field_sources(&both, "bfield_x_aae").is_empty(),
             "an unqualified/unknown channel resolves nothing, never the first hit"
         );
     }

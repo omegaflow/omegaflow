@@ -83,7 +83,7 @@ mod tests {
     }
 
     #[test]
-    fn intermagnet_xyz_bin_roundtrip() {
+    fn bfield_bin_roundtrip() {
         let records: Vec<(f64, f64, f64, f64)> =
             vec![(1.7e9, 1.0, 2.0, 3.0), (1.7e9 + 60.0, 4.0, 5.0, 6.0)];
         let bytes = write_xyz_bin(&records);
