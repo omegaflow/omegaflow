@@ -164,6 +164,34 @@ if [ "$no_change" -eq 0 ]; then
     fi
 fi
 
+# Form-Riegel für den öffentlichen Baum: eine hinzugefügte Datei ist Code,
+# ein Dokument mit Klasse oder eine Wurzeldatei. Alles andere kommt nicht hinein.
+public=0
+case "$(git remote get-url origin 2>/dev/null || true)" in
+    */omegaflow/omegaflow.git) public=1 ;;
+esac
+if [ "$public" -eq 1 ] && [ "$no_change" -eq 0 ]; then
+    bad=""
+    for f in $(GIT_INDEX_FILE="$tmpidx" git diff --cached --name-only --diff-filter=A -- $paths); do
+        case "$f" in
+            src/*|tools/*|bin/*|tests/*|static/*|phi/*|.github/*|.githooks/*|.devcontainer/*) continue ;;
+        esac
+        case "$f" in
+            */*) ;;
+            *) continue ;;
+        esac
+        case "$f" in
+            *.md) head -20 "$f" 2>/dev/null | grep -q '^  class:' || bad="$bad $f" ;;
+            *) bad="$bad $f" ;;
+        esac
+    done
+    if [ -n "$bad" ]; then
+        echo "commit: keine Form — nicht veröffentlicht:$bad" >&2
+        echo "commit: Code in einem Codeordner, Dokument mit '  class:' im Kopf, oder Wurzeldatei" >&2
+        exit 2
+    fi
+fi
+
 fail=0
 
 iso29148() {
