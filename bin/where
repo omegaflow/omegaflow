@@ -23,6 +23,11 @@ fi
 printf '== register (phi/sources) ==\n'
 sgrep -i "$term" phi 2>/dev/null || true
 
+printf '== research (Notizen und Specs) ==\n'
+if [ -d "$OMEGAFLOW_WORK/research" ]; then
+    grep -rI -i -m1 -- "$term" "$OMEGAFLOW_WORK/research" 2>/dev/null | cut -c1-240 | head -40
+fi
+
 printf '== live handovers ==\n'
 sgrep -i -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover" 2>/dev/null || true
 
