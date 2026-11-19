@@ -1,5 +1,6 @@
 #!/bin/sh
 # commit — committet ausschliesslich die genannten Pfade, ueber einen eigenen Index.
+# Der direkte git commit ist per pre-commit-Hook gesperrt (OMEGAFLOW_COMMIT_OK).
 #
 # Warum: `git commit` nimmt den ganzen Index mit. Wenn eine andere Linie Dateien
 # gestaged hat, reisen sie mit — und der Gate prueft sie mit. Dieses Skript baut
@@ -35,30 +36,6 @@ done
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "commit: kein Repo" >&2; exit 2; }
 cd "$root" || exit 2
 
-for p in $paths; do
-    case "$p" in
-        phi/sources.*)
-            if [ -z "${OMEGAFLOW_REGISTER_RELEASE:-}" ]; then
-                echo "commit: $p — Register; nur ueber den Release-Schritt (OMEGAFLOW_REGISTER_RELEASE=1)" >&2
-                exit 2
-            fi ;;
-        phi/*|src/gate/*|tools/gate/*)
-            if [ -z "${OMEGAFLOW_OWNER_OK:-}" ]; then
-                echo "commit: $p — geschuetzter Pfad; nur mit OMEGAFLOW_OWNER_OK=\"<Eigentuemer-Wort>\"" >&2
-                exit 2
-            fi ;;
-    esac
-    case "$p" in
-        *.rs)
-            if [ -f "$p" ] && command -v rustfmt >/dev/null 2>&1; then
-                if ! rustfmt --edition 2024 --check "$p" >/dev/null 2>&1; then
-                    echo "commit: $p — rustfmt wuerde aendern; cargo fmt vor dem Commit" >&2
-                    exit 2
-                fi
-            fi ;;
-    esac
-done
-
 missing=""
 for p in $paths; do
     if [ ! -e "$p" ] && ! git cat-file -e "HEAD:$p" 2>/dev/null; then
@@ -91,7 +68,344 @@ if ! GIT_INDEX_FILE="$tmpidx" git add -A -- $paths; then
     echo "commit: add fehlgeschlagen" >&2
     exit 2
 fi
+no_change=0
 if GIT_INDEX_FILE="$tmpidx" git diff --cached --quiet; then
+    no_change=1
+fi
+
+# Die Zahlen des Commits stehen vor dem Commit: wer 5.799 Löschungen schreibt,
+# sieht sie hier, nicht erst danach. `bin/dry` zeigt denselben Wert vorher.
+# Für phi/ ist die Nennung Pflicht (--numstat <neu> <gelöscht>): der Riegel
+# liegt nicht im Vorsatz, sondern im Vergleich mit dem, was der Commit tut.
+declared_ins=""
+declared_del=""
+if [ -n "${NUMSTAT_INS:-}" ] && [ -n "${NUMSTAT_DEL:-}" ]; then
+    declared_ins="$NUMSTAT_INS"
+    declared_del="$NUMSTAT_DEL"
+fi
+if [ "$no_change" -eq 0 ]; then
+    echo "commit: numstat der genannten Pfade (neu gelöscht Datei)" >&2
+    GIT_INDEX_FILE="$tmpidx" git diff --cached --numstat -- $paths | sed 's/^/  /' >&2
+fi
+
+# Summe der Änderung, und ob ein Registerpfad dabei ist.
+sums=$(GIT_INDEX_FILE="$tmpidx" git diff --cached --numstat -- $paths | awk '{i+=$1; d+=$2} END {print i+0, d+0}')
+touch_phi=0
+for p in $paths; do case "$p" in phi/*) touch_phi=1 ;; esac; done
+
+if [ "$touch_phi" -eq 1 ] && [ "$no_change" -eq 0 ]; then
+    if [ -z "$declared_ins" ]; then
+        echo "commit: phi/ geändert — die Zahlen müssen genannt werden:" >&2
+        echo "commit:   NUMSTAT_INS=${sums%% *} NUMSTAT_DEL=${sums##* } bin/commit …" >&2
+        echo "commit: kein Commit ohne Nennung (5.799 Löschungen sahen wie ein Commit aus)" >&2
+        exit 2
+    fi
+    if [ "$declared_ins" != "${sums%% *}" ] || [ "$declared_del" != "${sums##* }" ]; then
+        echo "commit: Nennung ${declared_ins}/${declared_del} ≠ tatsächlich ${sums%% *}/${sums##* }" >&2
+        echo "commit: kein Commit — erst nachsehen, dann nennen" >&2
+        exit 2
+    fi
+fi
+
+# Publikations-Riegel: eine Binär-/Datendatei kommt nur in den öffentlichen Baum,
+# wenn ihr sha256 im Register steht — dort trägt sie ihre Lizenz (terms). Was nicht
+# im Register steht, hat keine belegte Lizenz und wird nicht veröffentlicht.
+if [ "$no_change" -eq 0 ]; then
+    added=$(GIT_INDEX_FILE="$tmpidx" git diff --cached --name-only --diff-filter=A -- $paths)
+    blocked=""
+    for f in $added; do
+        case "$f" in
+            tests/*|.github/*|.githooks/*) continue ;;
+        esac
+        case "$f" in
+            *.pdf|*.bin|*.nc|*.nc4|*.fits|*.fit|*.zip|*.gz|*.bz2|*.xz|*.csv|*.dat|*.h5|*.hdf5|*.parquet|*.grib2|*.laz|*.las|*.mat|*.sav|*.dcm|*.jpg|*.jpeg|*.png|*.tif|*.tiff)
+                ;;
+            *) continue ;;
+        esac
+        [ -n "${OMEGAFLOW_PUBLISH_OK:-}" ] && continue
+        sum=$(sha256sum "$f" 2>/dev/null | awk '{print $1}')
+        [ -n "$sum" ] || continue
+        if ! grep -q "$sum" phi/*.φ 2>/dev/null; then
+            blocked="$blocked
+  $f"
+        fi
+    done
+    if [ -n "$blocked" ]; then
+        echo "commit: Datei ohne Lizenz im Register — nicht veröffentlicht:$blocked" >&2
+        echo "commit: erst als Asset registrieren (Block mit url/origin/terms/sha256)," >&2
+        echo "commit: oder OMEGAFLOW_PUBLISH_OK=\"<Grund>\" nennen" >&2
+        exit 2
+    fi
+fi
+
+fail=0
+
+iso29148() {
+    f=$1
+    ids=""
+    td=$(mktemp -d) || return 1
+    grep -n '^###[#]* [0-9]' "$f" | cut -d: -f1 > "$td/starts"
+    [ -s "$td/starts" ] || { rm -rf "$td"; return 0; }
+    n=$(wc -l < "$td/starts")
+    i=1
+    while [ "$i" -le "$n" ]; do
+        a=$(sed -n "${i}p" "$td/starts")
+        if [ "$i" -lt "$n" ]; then
+            nx=$(sed -n "$((i+1))p" "$td/starts")
+            b=$((nx - 1))
+        else
+            b=$(wc -l < "$f")
+        fi
+        sed -n "${a},${b}p" "$f" > "$td/blk"
+        head_line=$(sed -n '1p' "$td/blk")
+        id=$(printf '%s' "$head_line" | sed -n 's/^###[#]* \([0-9][0-9a-z]*\)\..*/\1/p')
+        case " $ids " in
+            *" $id "*) echo "commit: $f — Punkt $id doppelt (ISO 29148: single)" >&2; fail=1 ;;
+        esac
+        ids="$ids $id"
+        case "$head_line" in
+            *[0-9].\ *) ;;
+            *) if ! printf '%s' "$head_line" | grep -qE '^###[#]* [0-9][0-9a-z]*\. [^ ]'; then
+                   echo "commit: $f — Punkt $id ohne Titel nach der Nummer (ISO 29148: single)" >&2; fail=1
+               fi ;;
+        esac
+        grep -q '^- \*\*Standard:\*\*' "$td/blk" || { echo "commit: $f — Punkt $id ohne Standard (ISO 29148: correct)" >&2; fail=1; }
+        grep -q '^- \*\*Quelle:\*\*' "$td/blk" || { echo "commit: $f — Punkt $id ohne Quelle (ISO 29148: correct)" >&2; fail=1; }
+        grep -q '^- \*\*Test:\*\*' "$td/blk" || { echo "commit: $f — Punkt $id ohne Test (ISO 29148: verifiable)" >&2; fail=1; }
+        case "$head_line" in
+            *erledigt*) ;;
+            *)
+                st=$(sed -n 's/^- \*\*Status:\*\* *\([^ ]*\).*/\1/p' "$td/blk" | head -1)
+                case "$st" in
+                    offen|wartend|blockiert) ;;
+                    "") echo "commit: $f — Punkt $id ohne Status (ISO 29148: necessary)" >&2; fail=1 ;;
+                    *) echo "commit: $f — Punkt $id Status $st ausserhalb offen|wartend|blockiert (ISO 29148: unambiguous)" >&2; fail=1 ;;
+                esac
+                br=$(sed -n '/^- \*\*Braucht:\*\*/,/^- \*\*/p' "$td/blk")
+                if [ -z "$br" ]; then
+                    echo "commit: $f — Punkt $id ohne Braucht (ISO 29148: feasible)" >&2; fail=1
+                else
+                    case "$br" in
+                        *http*|*/*|[0-9]*) ;;
+                        *) echo "commit: $f — Punkt $id Braucht ohne Pfad, URL oder Zahl (ISO 29148: verifiable)" >&2; fail=1 ;;
+                    esac
+                fi
+                if grep -qiE '\b(ggf|eventuell|moeglichst|schnellst|bald|angemessen|robust|benutzerfreundlich|effizient|sinnvoll|geeignet)\b' "$td/blk"; then
+                    echo "commit: $f — Punkt $id traegt schwache Woerter (ISO 29148: unambiguous)" >&2; fail=1
+                fi
+                ;;
+        esac
+        i=$((i + 1))
+    done
+    rm -rf "$td"
+    return 0
+}
+
+for p in $paths; do
+    case "$p" in
+        handover/*.md)
+            [ -f "$p" ] || continue
+            own=$(sed -n 's/^ *owner: *//p' "$p" | head -1)
+            hdr=$(sed -n 's/^ *sha256: *//p' "$p" | head -1)
+            body=$(sed '1,/^-->/d' "$p")
+            bytes=$(printf '%s' "$body" | wc -c | tr -d ' ')
+            want=$(printf '%s' "$body" | sha256sum | cut -d' ' -f1)
+            if [ -z "$own" ]; then echo "commit: $p — owner fehlt" >&2; fail=1; fi
+            if [ -z "$(sed -n "s/^ *status: *//p" "$p" | head -1)" ]; then echo "commit: $p — status fehlt" >&2; fail=1; fi
+            if [ "$bytes" -gt 1536 ]; then echo "commit: $p — Body $bytes B, Cap 1536 (Liste in den Auftrag)" >&2; fail=1; fi
+            if [ "$hdr" != "$want" ]; then echo "commit: $p — sha256 passt nicht zum Body" >&2; fail=1; fi
+            line=$(basename "$p" .md | sed 's/^handover-[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')
+            case "$line" in
+                future|mountain|mycelium|river|sensory) ;;
+                *) echo "commit: $p — Linie nicht erlaubt (future|mountain|mycelium|river|sensory)" >&2; fail=1 ;;
+            esac
+            ;;
+        post/*.md)
+            [ -f "$p" ] || continue
+            case "$(basename "$p")" in
+                [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*-an-*-*.md) ;;
+                *) echo "commit: $p — Name nicht erlaubt (<datum>-<von>-an-<an>-<slug>.md)" >&2; fail=1 ;;
+            esac
+            if ! grep -q '^## Fertig, wenn' "$p"; then
+                echo "commit: $p — Fertig, wenn fehlt (der Brief nennt seinen pruefbaren Schritt)" >&2; fail=1
+            fi
+            ;;
+        projects/auftrag-*.md)
+            [ -f "$p" ] || continue
+            if ! grep -q '^ *owner: *[^[:space:]]' "$p"; then echo "commit: $p — owner fehlt" >&2; fail=1; fi
+            if ! grep -q '^ *\(termin\|trigger\): *[^[:space:]]' "$p"; then echo "commit: $p — termin oder trigger fehlt" >&2; fail=1; fi
+            if ! grep -q '^## \(Fertig, wenn\|Abnahme\)' "$p"; then echo "commit: $p — Abnahme fehlt (## Fertig, wenn oder ## Abnahme)" >&2; fail=1; fi
+            pts=$(grep -c '^### ' "$p" 2>/dev/null || true)
+            steps=$(grep -c '^- \*\*Braucht:\*\*' "$p" 2>/dev/null || true)
+            sts=$(grep -c '^- \*\*Status:\*\*' "$p" 2>/dev/null || true)
+            if [ "${pts:-0}" -gt 0 ] && [ "${steps:-0}" -lt "${pts:-0}" ]; then
+                echo "commit: $p — $pts Punkte, $steps Braucht-Zeilen (jeder Punkt nennt seinen Schritt)" >&2; fail=1
+            fi
+            if [ "${pts:-0}" -gt 0 ] && [ "${sts:-0}" -lt "${pts:-0}" ]; then
+                echo "commit: $p — $pts Punkte, $sts Status-Zeilen (jeder Punkt traegt seinen Zustand)" >&2; fail=1
+            fi
+            if grep '^- \*\*Braucht:\*\*' "$p" 2>/dev/null | grep -vq '`[^`]*/[^`]*`\|https\?://\|[0-9]\|Operator'; then
+                echo "commit: $p — ein Braucht-Schritt ist nicht pruefbar: kein Pfad, keine URL, keine Zahl (ISO 29148: verifiable)" >&2; fail=1
+            fi
+            if grep -qiE '\b(ggf|eventuell|moeglichst|schnellst|bald|angemessen|robust|benutzerfreundlich|effizient|sinnvoll|geeignet)\b' "$p"; then
+                echo "commit: $p — schwache Woerter: nicht eindeutig (ISO 29148: unambiguous)" >&2; fail=1
+            fi
+            iso29148 "$p"
+            ;;
+    esac
+done
+for p in $paths; do
+    case "$p" in
+        *.md)
+            [ -f "$p" ] || continue
+            st=$(sed -n 's/^ *status: *\([^ 	]*\).*/\1/p' "$p" | head -1)
+            case "$p" in
+                bindend/README.md) ;;
+                bindend/*.md)
+                    [ -n "$st" ] || { echo "commit: $p — status fehlt (bindend/ verlangt status: bindend)" >&2; fail=1; } ;;
+                rat/*-rat-*.md)
+                    [ -n "$st" ] || { echo "commit: $p — status fehlt (die Verdikt-Datei traegt ihren Zustand)" >&2; fail=1; }
+                    ratname=$(basename "$p")
+                    ratrows=$(sed -n '/^| R-/p' rat/entscheidungen.md | grep -F -c -- "$ratname")
+                    [ "$ratrows" = "1" ] || { echo "commit: $p — $ratrows Zeilen in rat/entscheidungen.md (genau eine verlangt)" >&2; fail=1; } ;;
+            esac
+            if [ -n "$st" ]; then
+                case "$p" in
+                    bindend/*)
+                        [ "$st" = "bindend" ] || { echo "commit: $p — bindend/ verlangt status: bindend (nicht $st)" >&2; fail=1; } ;;
+                    *)
+                        case "$st" in
+                            live|offen|verworfen|bindend) ;;
+                            *) echo "commit: $p — status: $st steht nicht in der Allowlist (bindend/form.md)" >&2; fail=1 ;;
+                        esac ;;
+                esac
+            fi
+            case "$p" in
+                handover/*.md|post/*.md|projects/auftrag-*.md)
+                    if grep -qiE '\b(ehrlich|eigentlich|quasi|sozusagen|grundsätzlich|leider)\b' "$p"; then
+                        echo "commit: $p — Haltungs-Wort statt Schritt (bindend/form.md)" >&2; fail=1
+                    fi ;;
+            esac
+            case "$(basename "$p")" in
+                entscheidungen.md)
+                    tmprows=$(mktemp "${TMPDIR:-/tmp}/omegaflow-rows.XXXXXX") || exit 2
+                    sed -n '/^| R-/p' "$p" > "$tmprows"
+                    while IFS= read -r row; do
+                        v=$(printf '%s' "$row" | cut -d'|' -f6 | tr -d ' *' | sed 's/[^a-zäöü].*//')
+                        case "$v" in
+                            offen|entschieden|verworfen) ;;
+                            *) echo "commit: $p — Stand '$v' steht nicht in der Allowlist" >&2; fail=1 ;;
+                        esac
+                        cell=$(printf '%s' "$row" | cut -d'|' -f7)
+                        case "$cell" in
+                            *'git show'*) ;;
+                            *)
+                                ref=$(printf '%s' "$cell" | grep -o '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-rat-[A-Za-z0-9._-]*\.md' | head -1)
+                                if [ -n "$ref" ] && [ ! -f "rat/$ref" ]; then
+                                    echo "commit: $p — $ref fehlt und ist kein git show" >&2; fail=1
+                                fi ;;
+                        esac
+                    done < "$tmprows"
+                    rm -f "$tmprows" ;;
+            esac
+            for v in $(sed -n 's/^ *- \*\*Status:\*\* *\([a-zäöü-]*\).*/\1/p' "$p" | sort -u); do
+                case "$v" in
+                    offen|wartend|blockiert) ;;
+                    *) echo "commit: $p — Status: $v steht nicht in der Allowlist (bindend/form.md)" >&2; fail=1 ;;
+                esac
+            done
+            ;;
+    esac
+done
+pairs=" "
+for p in $paths; do
+    case "$p" in
+        post/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*-an-*-*.md) ;;
+        *) continue ;;
+    esac
+    b=$(basename "$p")
+    pair=$(printf '%s' "$b" | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}-([a-z]+)-an-([a-z]+)-.*/\1->\2/')
+    back=$(printf '%s' "$pair" | sed -E 's/^([a-z]+)->([a-z]+)$/\2->\1/')
+    pairs="$pairs$pair $back "
+done
+if [ "$pairs" != " " ]; then
+    for q in post/*.md; do
+        [ -f "$q" ] || continue
+        qb=$(basename "$q")
+        qpair=$(printf '%s' "$qb" | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}-([a-z]+)-an-([a-z]+)-.*/\1->\2/')
+        case "$pairs" in *" $qpair "*) ;; *) continue ;; esac
+        case " $paths " in *" $q "*) continue ;; esac
+        cmd=$(sed -n '/^## Fertig, wenn/,$p' "$q" | sed -n 's/.*`\([^`]*\)`.*/\1/p' | head -1)
+        [ -n "$cmd" ] || continue
+        case "$cmd" in *cargo*|*"gh "*|*git*|*npm*|*make*|*docker*) continue ;; esac
+        if timeout 15 sh -c "$cmd" >/dev/null 2>&1; then
+            echo "commit: $q — abgeholt (der Fertig-Befehl ist gruen); loeschen" >&2
+            fail=1
+        fi
+    done
+fi
+
+seen_pairs=" "
+for p in $paths; do
+    case "$p" in
+        post/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*-an-*-*.md) ;;
+        *) continue ;;
+    esac
+    pair=$(basename "$p" | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}-([a-z]+)-an-([a-z]+)-.*/\1->\2/')
+    case "$seen_pairs" in *" $pair "*) continue ;; esac
+    seen_pairs="$seen_pairs$pair "
+    n=0
+    for q in post/*.md; do
+        [ -f "$q" ] || continue
+        qpair=$(basename "$q" | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}-([a-z]+)-an-([a-z]+)-.*/\1->\2/')
+        [ "$qpair" = "$pair" ] && n=$((n+1))
+    done
+    if [ "$n" -gt 1 ]; then
+        echo "commit: Paar $pair hat $n Briefe — einer (bindend/form.md)" >&2; fail=1
+    fi
+done
+
+# die Form der Nachricht (bindend/commit.md)
+subject=$(printf '%s\n' "$msg" | sed -n '1p')
+body=$(printf '%s\n' "$msg" | sed -n '3,$p')
+case "$subject" in
+    Merge\ *) ;;
+    *)
+        printf '%s' "$subject" | grep -qE '^[a-z0-9_.-]+: [a-z0-9]' || {
+            echo "commit: Nachricht — Betreff muss 'bereich: satz' sein (bindend/commit.md)" >&2; fail=1; }
+        if [ "${#subject}" -gt 72 ]; then
+            echo "commit: Nachricht — Betreff ${#subject} Zeichen, Grenze 72" >&2; fail=1
+        fi
+        case "$subject" in
+            *.) echo "commit: Nachricht — Betreff endet mit Punkt" >&2; fail=1 ;;
+        esac
+        if printf '%s\n' "$msg" | sed -n '2p' | grep -q '[^[:space:]]'; then
+            echo "commit: Nachricht — Leerzeile nach dem Betreff fehlt" >&2; fail=1
+        fi
+        if [ -z "$(printf '%s' "$body" | tr -d '[:space:]')" ]; then
+            echo "commit: Nachricht — Body fehlt" >&2; fail=1
+        fi
+        if printf '%s\n' "$body" | grep -qE '.{101,}'; then
+            echo "commit: Nachricht — Body-Zeile ueber 100 Zeichen" >&2; fail=1
+        fi
+        if printf '%s\n' "$msg" | grep -q '[äöüßÄÖÜ]'; then
+            echo "commit: Nachricht — Umlaut" >&2; fail=1
+        fi
+        if printf '%s\n' "$msg" | grep -qiE '\b(und|nicht|ist|wird|sind|eine|einen|fuer|ueber|auch|aber|der|das|den|dem|des|von|mit|bei|aus|auf|zum|zur|nur|noch|schon|mehr|werden|wurde|wurden|dass|weil|wenn|dann|nach|vor|ein|einer|kein|keine|im)\b'; then
+            echo "commit: Nachricht — deutsches Stoppwort" >&2; fail=1
+        fi
+        if printf '%s\n' "$msg" | grep -qE '/home/|omegaflow-private|omegaflow-personal|johannestyroller|\+49'; then
+            echo "commit: Nachricht — Personendaten" >&2; fail=1
+        fi
+        ;;
+esac
+
+if [ "$fail" -ne 0 ]; then
+    echo "commit: die Form ist nicht erfuellt (bindend/form.md, bindend/commit.md)" >&2
+    exit 2
+fi
+
+if [ "$no_change" -eq 1 ]; then
     echo "commit: keine Aenderung in den genannten Pfaden" >&2
     exit 2
 fi
