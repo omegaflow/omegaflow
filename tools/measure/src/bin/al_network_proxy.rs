@@ -258,7 +258,7 @@ fn family_code(line: &str) -> Option<String> {
     if line.is_empty() || line.starts_with('#') {
         return None;
     }
-    let code = match line.strip_prefix("bfield_x_") {
+    let code = match line.strip_prefix("magnetic_field_x_") {
         Some(c) => c,
         None => line,
     };
@@ -592,7 +592,7 @@ mod tests {
     #[test]
     fn the_family_line_yields_the_station_code() {
         assert_eq!(
-            family_code("bfield_x_abk"),
+            family_code("magnetic_field_x_abk"),
             Some("abk".to_string())
         );
         assert_eq!(family_code("SOD"), Some("sod".to_string()));

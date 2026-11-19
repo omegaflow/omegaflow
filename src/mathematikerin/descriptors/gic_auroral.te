@@ -2,12 +2,12 @@
 #   ueber die 31 Stationen des Bandes. Die Bandzugehoerigkeit ist eine deklarierte Ableitung
 #   aus `cgm_lat` (phi/sources.φ, per Station) und den fixierten Grenzen — kein `family`-Token.
 #   Partition gemessen 2026-10-07: 154 = 31 auroral + 25 sub-auroral + 98 mid-latitude
-#   (Artefakt state/river/gic-cgm-lat.tsv). Kanalkanal `bfield_x_<code>` loest
+#   (Artefakt state/river/gic-cgm-lat.tsv). Kanalkanal `magnetic_field_x_<code>` loest
 #   ueber `field_sources` auf den station-qualifizierten Block auf.
 #   Lauf: .github/workflows/field-te-query.yml Job `matrix-gic-auroral` (CI), nie lokal.
 matrix gic_auroral full
 register sources
-channels bfield_x_abk,bfield_x_ale,bfield_x_blc,bfield_x_brw,bfield_x_cbb,bfield_x_cmo,bfield_x_csy,bfield_x_ded,bfield_x_dmc,bfield_x_drv,bfield_x_fcc,bfield_x_gdh,bfield_x_hrn,bfield_x_iqa,bfield_x_jco,bfield_x_kir,bfield_x_lyc,bfield_x_maw,bfield_x_mbc,bfield_x_mcq,bfield_x_mea,bfield_x_naq,bfield_x_pbq,bfield_x_res,bfield_x_sba,bfield_x_sod,bfield_x_thl,bfield_x_tik,bfield_x_vna,bfield_x_vos,bfield_x_ykc
+channels magnetic_field_x_abk,magnetic_field_x_ale,magnetic_field_x_blc,magnetic_field_x_brw,magnetic_field_x_cbb,magnetic_field_x_cmo,magnetic_field_x_csy,magnetic_field_x_ded,magnetic_field_x_dmc,magnetic_field_x_drv,magnetic_field_x_fcc,magnetic_field_x_gdh,magnetic_field_x_hrn,magnetic_field_x_iqa,magnetic_field_x_jco,magnetic_field_x_kir,magnetic_field_x_lyc,magnetic_field_x_maw,magnetic_field_x_mbc,magnetic_field_x_mcq,magnetic_field_x_mea,magnetic_field_x_naq,magnetic_field_x_pbq,magnetic_field_x_res,magnetic_field_x_sba,magnetic_field_x_sod,magnetic_field_x_thl,magnetic_field_x_tik,magnetic_field_x_vna,magnetic_field_x_vos,magnetic_field_x_ykc
 cond none
 fdr bh 0.05 over matrix
 expect cells 930

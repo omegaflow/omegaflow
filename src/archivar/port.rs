@@ -4178,10 +4178,10 @@ mod probe_classify_tests {
             ("em", "W/m2/sr/um", 3600.0)
         );
         assert_eq!(
-            probe_classify("bfield_f"),
+            probe_classify("magnetic_field_f"),
             ("em", "nT", 60.0)
         );
-        assert_eq!(probe_classify("bfield_x"), ("em", "nT", 60.0));
+        assert_eq!(probe_classify("magnetic_field_x"), ("em", "nT", 60.0));
         assert_eq!(
             probe_classify("hydrosphere_drifter_sst_k"),
             ("thermal", "K", 360.0)

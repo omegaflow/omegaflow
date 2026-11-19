@@ -6564,10 +6564,10 @@ mod tests {
 
     #[test]
     fn field_sources_resolves_station_qualified_channel_to_its_block() {
-        let aae = source_cfg(field_cfg("bfield_x"), Some("AAE"));
-        let abg = source_cfg(field_cfg("bfield_x"), Some("ABG"));
+        let aae = source_cfg(field_cfg("magnetic_field_x"), Some("AAE"));
+        let abg = source_cfg(field_cfg("magnetic_field_x"), Some("ABG"));
 
-        let qualified = field_sources(std::slice::from_ref(&aae), "bfield_x_aae");
+        let qualified = field_sources(std::slice::from_ref(&aae), "magnetic_field_x_aae");
         assert_eq!(
             qualified.len(),
             1,
@@ -6579,7 +6579,7 @@ mod tests {
             "the resolved block carries the station of the request"
         );
 
-        let bare = field_sources(std::slice::from_ref(&aae), "bfield_x");
+        let bare = field_sources(std::slice::from_ref(&aae), "magnetic_field_x");
         assert_eq!(
             bare.len(),
             1,
@@ -6588,7 +6588,7 @@ mod tests {
         assert_eq!(bare[0].0.station_code.as_deref(), Some("AAE"));
 
         let both = [aae, abg];
-        let abg_only = field_sources(&both, "bfield_x_abg");
+        let abg_only = field_sources(&both, "magnetic_field_x_abg");
         assert_eq!(
             abg_only.len(),
             1,
@@ -6596,7 +6596,7 @@ mod tests {
         );
         assert_eq!(abg_only[0].0.station_code.as_deref(), Some("ABG"));
         assert!(
-            field_sources(&both, "bfield_x_aae").is_empty(),
+            field_sources(&both, "magnetic_field_x_aae").is_empty(),
             "an unqualified/unknown channel resolves nothing, never the first hit"
         );
     }
