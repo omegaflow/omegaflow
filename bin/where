@@ -29,7 +29,9 @@ if [ -d "$OMEGAFLOW_WORK/research" ]; then
 fi
 
 printf '== live handovers ==\n'
-sgrep -i -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover" 2>/dev/null || true
+if [ -d "$OMEGAFLOW_WORK/handover" ]; then
+    grep -rI -i -m1 --include='handover-*.md' -- "$term" "$OMEGAFLOW_WORK/handover" 2>/dev/null | cut -c1-240 | head -20
+fi
 
 printf '== spilled searches (already run) ==\n'
 if [ -n "${OMEGAFLOW_SPILL_DIR:-}" ] && [ -d "$OMEGAFLOW_SPILL_DIR" ]; then
@@ -54,7 +56,9 @@ if [ -n "${OMEGAFLOW_TMP:-}" ] && [ -d "$OMEGAFLOW_TMP" ]; then
 fi
 
 printf '== history (archiv) ==\n'
-sgrep -i --all -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover/archiv" 2>/dev/null || true
+if [ -d "$OMEGAFLOW_WORK/handover/archiv" ]; then
+    grep -rI -i -m1 --include='handover-*.md' -- "$term" "$OMEGAFLOW_WORK/handover/archiv" 2>/dev/null | cut -c1-240 | head -20
+fi
 
 printf '== docs ==\n'
 sgrep -i "$term" docs 2>/dev/null || true
