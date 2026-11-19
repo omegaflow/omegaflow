@@ -45,7 +45,7 @@ jobs:
             exit 1
           fi
 
-      - name: Dokumente tragen ihre Klasse
+      - name: Texte tragen ihre Klasse
         run: |
           set -eu
           before="${{ github.event.before }}"
@@ -54,13 +54,30 @@ jobs:
           else
             range="$before..HEAD"
           fi
-          added=$(git diff --name-only --diff-filter=A "$range" | grep '^docs/.*\.md$' || true)
+          added=$(git diff --name-only --diff-filter=A "$range" || true)
           bad=""
           for f in $added; do
-            head -20 "$f" | grep -q '^  class:' || bad="$bad $f"
+            case "$f" in
+              src/*|tools/*|bin/*|tests/*|static/*|phi/*|.github/*|.githooks/*|.devcontainer/*) continue ;;
+            esac
+            case "$f" in
+              */*) ;;          # Wurzeldateien (README, LICENSE …) sind frei
+              *) continue ;;
+            esac
+            case "$f" in
+              *.md)
+                head -20 "$f" | grep -q '^  class:' || bad="$bad $f"
+                ;;
+              *)
+                # alles andere als Code oder Dokument ist Beiwerk: nicht in den Baum
+                bad="$bad $f"
+                ;;
+            esac
           done
           if [ -n "$bad" ]; then
-            echo "ohne class im Kopf:$bad"
+            echo "ohne Klasse oder außerhalb der Codeordner:$bad"
+            echo "ein Dokument braucht '  class:' im Kopf (bindend/form.md);"
+            echo "Daten brauchen einen Registerblock (url/origin/terms/sha256)"
             exit 1
           fi
 
