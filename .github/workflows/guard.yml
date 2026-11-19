@@ -1,0 +1,68 @@
+name: guard
+
+# Der Riegel auf dem Server. Lokal kann jeder bin/commit ändern; dieser Lauf
+# läuft auf GitHub und prüft den Push selbst. Was hier rot ist, ist nicht
+# veröffentlicht, egal was lokal passiert ist.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  daten:
+    runs-on: [self-hosted, Linux]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Binärdateien brauchen eine Lizenz im Register
+        run: |
+          set -eu
+          before="${{ github.event.before }}"
+          if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            range="HEAD~1..HEAD"
+          else
+            range="$before..HEAD"
+          fi
+          added=$(git diff --name-only --diff-filter=A "$range" || true)
+          bad=""
+          for f in $added; do
+            case "$f" in
+              tests/*|.github/*) continue ;;
+            esac
+            case "$f" in
+              *.pdf|*.bin|*.nc|*.nc4|*.fits|*.fit|*.zip|*.gz|*.bz2|*.xz|*.csv|*.dat|*.h5|*.hdf5|*.parquet|*.grib2|*.laz|*.las|*.mat|*.sav|*.dcm|*.jpg|*.jpeg|*.png|*.tif|*.tiff) ;;
+              *) continue ;;
+            esac
+            sum=$(sha256sum "$f" | awk '{print $1}')
+            grep -q "$sum" phi/*.φ || bad="$bad $f"
+          done
+          if [ -n "$bad" ]; then
+            echo "ohne Lizenz im Register:$bad"
+            echo "erst als Asset registrieren (url/origin/terms/sha256), dann pushen"
+            exit 1
+          fi
+
+      - name: Dokumente tragen ihre Klasse
+        run: |
+          set -eu
+          before="${{ github.event.before }}"
+          if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            range="HEAD~1..HEAD"
+          else
+            range="$before..HEAD"
+          fi
+          added=$(git diff --name-only --diff-filter=A "$range" | grep '^docs/.*\.md$' || true)
+          bad=""
+          for f in $added; do
+            head -20 "$f" | grep -q '^  class:' || bad="$bad $f"
+          done
+          if [ -n "$bad" ]; then
+            echo "ohne class im Kopf:$bad"
+            exit 1
+          fi
+
+      - name: Der Hausbestand bleibt sauber
+        run: ./bin/house_audit
