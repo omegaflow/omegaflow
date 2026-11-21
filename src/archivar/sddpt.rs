@@ -136,7 +136,7 @@ pub fn station_from_code(code: u64) -> Option<u8> {
         0x12 => Some(4),
         0x54 | 0x56 => Some(5),
         0x32 => Some(12),
-        0x74 | 0x75 | 0x76 => Some(13),
+        0x74..=0x76 => Some(13),
         0xb8 | 0xba => Some(14),
         _ => None,
     }
@@ -214,6 +214,34 @@ pub struct CmrRecord {
     pub index: usize,
     pub time_count: Option<u64>,
     pub words: Vec<u32>,
+}
+
+pub struct CmrSummary {
+    pub records: usize,
+    pub first_count: Option<u64>,
+    pub last_count: Option<u64>,
+}
+
+pub fn cmr_summary(bytes: &[u8]) -> CmrSummary {
+    let mut out = CmrSummary {
+        records: 0,
+        first_count: None,
+        last_count: None,
+    };
+    for record in records(bytes, Framing::LittleEndian16) {
+        if record.payload.len() < 70 {
+            continue;
+        }
+        let Some(count) = record.payload.get(12..18).and_then(word36) else {
+            continue;
+        };
+        out.records += 1;
+        if out.first_count.is_none() {
+            out.first_count = Some(count);
+        }
+        out.last_count = Some(count);
+    }
+    out
 }
 
 pub fn cmr_records(bytes: &[u8]) -> Vec<CmrRecord> {
@@ -323,6 +351,48 @@ pub fn pt_records(bytes: &[u8]) -> Vec<PtRecord> {
             doppler_hz: candidate_f32(&words, 9).filter(|v| (1.0e2..1.0e8).contains(v)),
             words,
         });
+    }
+    out
+}
+
+pub struct PtSummary {
+    pub records: usize,
+    pub first_range: Option<f64>,
+    pub last_range: Option<f64>,
+    pub label: Option<PtLabelEpoch>,
+}
+
+pub fn pt_summary(bytes: &[u8]) -> PtSummary {
+    let mut out = PtSummary {
+        records: 0,
+        first_range: None,
+        last_range: None,
+        label: pt_label_epoch(bytes),
+    };
+    for record in records(bytes, Framing::LittleEndian16Sequence) {
+        let Some(sequence) = record.sequence else {
+            continue;
+        };
+        if record.payload.len() != PT_RECORD_CHARS {
+            continue;
+        }
+        let mut packed = Vec::with_capacity(24);
+        packed.push(sequence);
+        packed.extend_from_slice(&record.payload[..23]);
+        let unpacked = unpack_six_bit(&packed);
+        let range = unpacked
+            .get(12..16)
+            .map(|raw| {
+                f32::from_bits(u32::from_be_bytes(raw.try_into().expect("four bytes"))) as f64
+            })
+            .filter(|value| value.is_finite() && (1.0e5..1.0e9).contains(value));
+        out.records += 1;
+        if out.first_range.is_none() {
+            out.first_range = range;
+        }
+        if range.is_some() {
+            out.last_range = range;
+        }
     }
     out
 }

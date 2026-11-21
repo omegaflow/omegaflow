@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -23,11 +23,32 @@ struct Row {
 struct CensusRow {
     dataset: String,
     source: String,
+    files: usize,
     records: usize,
-    first: f64,
-    last: f64,
+    first: Option<f64>,
+    last: Option<f64>,
     description: String,
     note: String,
+}
+
+struct CensusAccum {
+    files: usize,
+    records: usize,
+    first: Option<f64>,
+    last: Option<f64>,
+    label: Option<String>,
+}
+
+impl CensusAccum {
+    fn empty() -> Self {
+        Self {
+            files: 0,
+            records: 0,
+            first: None,
+            last: None,
+            label: None,
+        }
+    }
 }
 
 fn csv_field(value: &str) -> String {
@@ -165,7 +186,7 @@ fn run(args: &[String]) -> Result<(), String> {
     if !census.is_empty() {
         write_census(&census_out, &census)?;
         eprintln!(
-            "{}: {} file rows (one per tape file; raw fields have no epoch yet)",
+            "{}: {} band rows (one per tape; raw fields have no epoch yet)",
             census_out.display(),
             census.len()
         );
@@ -210,15 +231,24 @@ fn write_rows(path: &Path, rows: &[Row]) -> Result<(), String> {
 
 fn write_census(path: &Path, rows: &[CensusRow]) -> Result<(), String> {
     let mut text = String::with_capacity(64 + rows.len() * 160);
-    text.push_str("dataset,source,records,first,last,description,note\n");
+    text.push_str("dataset,source,files,records,first,last,description,note\n");
     for row in rows {
+        let first = match row.first {
+            Some(value) => format!("{value:.6}"),
+            None => String::new(),
+        };
+        let last = match row.last {
+            Some(value) => format!("{value:.6}"),
+            None => String::new(),
+        };
         text.push_str(&format!(
-            "{},{},{},{:.6},{:.6},{},{}\n",
+            "{},{},{},{},{},{},{},{}\n",
             csv_field(&row.dataset),
             csv_field(&row.source),
+            row.files,
             row.records,
-            row.first,
-            row.last,
+            first,
+            last,
             csv_field(&row.description),
             csv_field(&row.note),
         ));
@@ -282,25 +312,25 @@ fn mariner10_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Ce
     let dir = dataset_dir(root, "PSCM-00009")?;
     let descriptions = cmr_descriptions(&dir)?;
     let files = data_files(&dir, "CMR_")?;
+    let mut bands: BTreeMap<String, CensusAccum> = descriptions
+        .keys()
+        .cloned()
+        .map(|key| (key, CensusAccum::empty()))
+        .collect();
     let mut rows = Vec::new();
-    let mut census = Vec::new();
     for path in &files {
         let bytes = fs::read(path).map_err(|e| format!("read {}: {e}", path.display()))?;
         let source = dataset_source("PSCM-00009", &dir, path);
-        let records = sddpt::cmr_records(&bytes);
-        let mut first = 0.0;
-        let mut last = 0.0;
-        let mut seen = 0usize;
-        for record in &records {
-            let Some(count) = record.time_count else {
-                continue;
-            };
-            if seen == 0 {
-                first = count as f64;
-            }
-            last = count as f64;
-            seen += 1;
-            if collect {
+        let key = match tape_component(path) {
+            Some(key) => key,
+            None => continue,
+        };
+        let summary = sddpt::cmr_summary(&bytes);
+        if collect {
+            for record in sddpt::cmr_records(&bytes) {
+                let Some(count) = record.time_count else {
+                    continue;
+                };
                 rows.push(Row {
                     target: "Venus".to_string(),
                     epoch_tdb: String::new(),
@@ -313,16 +343,40 @@ fn mariner10_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Ce
                 });
             }
         }
-        census.push(CensusRow {
-            dataset: "PSCM-00009".to_string(),
-            description: tape_description(path, &descriptions),
-            source,
-            records: seen,
-            first,
-            last,
-            note: "cmr word2 monotone counter; unit not established".to_string(),
-        });
+        let accum = bands.entry(key).or_insert_with(CensusAccum::empty);
+        accum.files += 1;
+        accum.records += summary.records;
+        if accum.first.is_none() {
+            accum.first = summary.first_count.map(|count| count as f64);
+        }
+        if summary.last_count.is_some() {
+            accum.last = summary.last_count.map(|count| count as f64);
+        }
     }
+    let census = bands
+        .into_iter()
+        .map(|(key, accum)| {
+            let description = match descriptions.get(&key) {
+                Some(description) => description.clone(),
+                None => "not listed".to_string(),
+            };
+            let note = if accum.files == 0 {
+                "no CMR data file in delivery".to_string()
+            } else {
+                "cmr word2 monotone counter; unit not established".to_string()
+            };
+            CensusRow {
+                dataset: "PSCM-00009".to_string(),
+                source: format!("PSCM-00009/{key}"),
+                files: accum.files,
+                records: accum.records,
+                first: accum.first,
+                last: accum.last,
+                description,
+                note,
+            }
+        })
+        .collect();
     Ok((rows, files.len(), census))
 }
 
@@ -330,26 +384,26 @@ fn viking_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Censu
     let dir = dataset_dir(root, "PSPG-00457")?;
     let descriptions = pd_descriptions(&dir)?;
     let files = data_files(&dir, "PT_")?;
+    let mut bands: BTreeMap<String, CensusAccum> = descriptions
+        .keys()
+        .cloned()
+        .map(|key| (key, CensusAccum::empty()))
+        .collect();
     let mut rows = Vec::new();
-    let mut census = Vec::new();
     for path in &files {
         let bytes = fs::read(path).map_err(|e| format!("read {}: {e}", path.display()))?;
         let source = dataset_source("PSPG-00457", &dir, path);
-        let records = sddpt::pt_records(&bytes);
-        let mut first = 0.0;
-        let mut last = 0.0;
-        let mut seen = 0usize;
-        for record in &records {
-            let (observable, value) = match record.range_km {
-                Some(range) => ("pt_range_km", range),
-                None => ("pt_word3", f64::from(record.words[3])),
-            };
-            if seen == 0 {
-                first = value;
-            }
-            last = value;
-            seen += 1;
-            if collect {
+        let key = match tape_component(path) {
+            Some(key) => key,
+            None => continue,
+        };
+        let summary = sddpt::pt_summary(&bytes);
+        if collect {
+            for record in sddpt::pt_records(&bytes) {
+                let (observable, value) = match record.range_km {
+                    Some(range) => ("pt_range_km", range),
+                    None => ("pt_word3", f64::from(record.words[3])),
+                };
                 rows.push(Row {
                     target: "Mars".to_string(),
                     epoch_tdb: String::new(),
@@ -362,23 +416,48 @@ fn viking_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Censu
                 });
             }
         }
-        let note = match sddpt::pt_label_epoch(&bytes) {
-            Some(epoch) => format!(
-                "label epoch {}; per-record epoch not established; pt word3 candidate range (km)",
-                label_epoch_text(epoch)
-            ),
-            None => "label epoch absent; pt word3 candidate range (km)".to_string(),
-        };
-        census.push(CensusRow {
-            dataset: "PSPG-00457".to_string(),
-            description: tape_description(path, &descriptions),
-            source,
-            records: seen,
-            first,
-            last,
-            note,
-        });
+        let accum = bands.entry(key).or_insert_with(CensusAccum::empty);
+        accum.files += 1;
+        accum.records += summary.records;
+        if accum.first.is_none() {
+            accum.first = summary.first_range;
+        }
+        if summary.last_range.is_some() {
+            accum.last = summary.last_range;
+        }
+        if accum.label.is_none() {
+            accum.label = summary.label.map(label_epoch_text);
+        }
     }
+    let census = bands
+        .into_iter()
+        .map(|(key, accum)| {
+            let description = match descriptions.get(&key) {
+                Some(description) => description.clone(),
+                None => "not listed".to_string(),
+            };
+            let note = if accum.files == 0 {
+                "no PT/PM tracking file; other prefixes not decoded".to_string()
+            } else {
+                match accum.label {
+                    Some(label) => format!(
+                        "label epoch {label}; per-record epoch not established; pt word3 candidate range (km)"
+                    ),
+                    None => "label epoch absent; pt word3 candidate range (km)".to_string(),
+                }
+            };
+            CensusRow {
+                dataset: "PSPG-00457".to_string(),
+                source: format!("PSPG-00457/{key}"),
+                files: accum.files,
+                records: accum.records,
+                first: accum.first,
+                last: accum.last,
+                description,
+                note,
+            }
+        })
+        .collect();
     Ok((rows, files.len(), census))
 }
 
@@ -402,13 +481,6 @@ fn tape_component(path: &Path) -> Option<String> {
         }
     }
     None
-}
-
-fn tape_description(path: &Path, descriptions: &HashMap<String, String>) -> String {
-    match tape_component(path).and_then(|key| descriptions.get(&key)) {
-        Some(description) => description.clone(),
-        None => "not listed".to_string(),
-    }
 }
 
 fn info_files(dir: &Path, name: &str) -> Result<Vec<PathBuf>, String> {
@@ -437,24 +509,20 @@ fn cmr_descriptions(dir: &Path) -> Result<HashMap<String, String>, String> {
             if !(tape.starts_with("CMR_") || tape.starts_with("CMR-")) {
                 continue;
             }
-            let description = match fields
+            let description = fields
                 .iter()
                 .skip(1)
                 .rev()
                 .map(|field| field.trim())
-                .find(|field| !field.is_empty())
-            {
-                Some(field) => field,
-                None => "",
-            };
+                .find(|field| !field.is_empty());
             let key = tape_key(tape);
             let replace = match out.get(&key) {
                 None => true,
                 Some(old) if old.is_empty() => true,
-                Some(old) if old == "NO INFORMATION" && !description.is_empty() => true,
+                Some(old) if old == "NO INFORMATION" && description.is_some() => true,
                 _ => false,
             };
-            if replace {
+            if replace && let Some(description) = description {
                 out.insert(key, description.to_string());
             }
         }
