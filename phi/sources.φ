@@ -26354,3 +26354,14 @@ at earth
 ttl 86400
 field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w W
 
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_earth.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+instrument INPOP19a
+compiler tools/harvest/src/bin/inpop_compiler.rs
+harvest tools/harvest/src/bin/inpop_compiler.rs
+sha256 101b69508386f7f85df3eb86fbff12a6af39e2c457f46754b33f9509396c3c25
+ttl 86400
+field inpop_barycentre inpop_barycentre km
