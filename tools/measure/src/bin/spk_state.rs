@@ -131,6 +131,12 @@ fn main() {
         let r = (state[0] * state[0] + state[1] * state[1] + state[2] * state[2]).sqrt();
         let v = (state[3] * state[3] + state[4] * state[4] + state[5] * state[5]).sqrt();
         let mut line = format!("{stamp}  et {:.3}  r {:.1} km  v {:.3} km/s", et, r, v);
+        if args.iter().any(|a| a == "--vector") {
+            line.push_str(&format!(
+                "  xyz {:.3} {:.3} {:.3} km",
+                state[0], state[1], state[2]
+            ));
+        }
         if let Some(other) = against.first()
             && let Ok(o) = spac.state(*other, center, et)
         {
