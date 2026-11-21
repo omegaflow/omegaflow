@@ -907,7 +907,7 @@ mod tests {
         assert!(admitted_terms("jp-public-data-license-1.0"));
         assert!(admitted_terms("own-work"));
         assert!(!admitted_terms("free-open"));
-        assert!(!admitted_terms("vizier-scientific-free"));
+        assert!(admitted_terms("vizier-scientific-free"));
         assert!(!admitted_terms("other-attribution"));
         assert!(admitted_terms("ODbL-1.0"));
         assert!(!admitted_terms("per-service-terms"));
@@ -919,6 +919,14 @@ mod tests {
         assert!(!admitted_terms("no-redistribution"));
         assert!(!admitted_terms("lasp-permission-required"));
         assert!(!admitted_terms(""));
+    }
+
+    #[test]
+    fn a_tag_is_admitted_from_the_ephemerides_register() {
+        let mut set = HashSet::new();
+        let text = "url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_earth.bin\nterms etalab-2.0 https://seop.obspm.fr/en/terms/\n\n";
+        collect_registered_netlocs(text, &mut set);
+        assert!(set.contains("ftp.imcce.fr"));
     }
 
     #[test]
