@@ -100,45 +100,13 @@ impl GeoidModel {
         let phi = lat_deg.to_radians();
         let psi = ((1.0 - WGS84_F).powi(2) * phi.tan()).atan();
         let theta = std::f64::consts::FRAC_PI_2 - psi;
-        let x = theta.cos();
-        let sin_theta = theta.sin();
         let lam = lon_deg.to_radians();
         let nmax = self.degree;
-        let mut p = vec![vec![0.0f64; nmax + 1]; nmax + 1];
-        p[0][0] = 1.0;
+        let p = crate::archivar::gfc::fully_normalized_legendre(nmax, theta);
         let mut sum = 1.0f64;
         let mut r_l = 1.0f64;
         let ratio = self.radius_m / r_m;
         for n in 1..=nmax {
-            if n == 1 {
-                p[1][0] = 3.0f64.sqrt() * x;
-                p[1][1] = 3.0f64.sqrt() * sin_theta;
-            } else {
-                p[n][n] = ((2.0 * n as f64 + 1.0) / (2.0 * n as f64)).sqrt()
-                    * sin_theta
-                    * p[n - 1][n - 1];
-                let mut row = vec![0.0f64; n];
-                for (m, &pm) in p[n - 1].iter().enumerate().take(n) {
-                    let a = ((2.0 * n as f64 + 1.0) * (2.0 * n as f64 - 1.0)
-                        / ((n as f64 - m as f64) * (n as f64 + m as f64)))
-                        .sqrt();
-                    let first = a * x * pm;
-                    let second = if n >= 2 && m + 1 < n {
-                        let b = ((2.0 * n as f64 + 1.0)
-                            * (n as f64 + m as f64 - 1.0)
-                            * (n as f64 - m as f64 - 1.0)
-                            / ((2.0 * n as f64 - 3.0)
-                                * (n as f64 - m as f64)
-                                * (n as f64 + m as f64)))
-                            .sqrt();
-                        b * p[n - 2][m]
-                    } else {
-                        0.0
-                    };
-                    row[m] = first - second;
-                }
-                p[n][..n].copy_from_slice(&row);
-            }
             r_l *= ratio;
             let mut inner = self.c[n][0] * p[n][0];
             for (m, &pnm) in p[n].iter().enumerate().take(n + 1).skip(1) {
@@ -180,42 +148,10 @@ impl GeoidModel {
         }
         let theta = (90.0 - lat_deg).to_radians();
         let lam = lon_deg.to_radians();
-        let x = theta.cos();
-        let sin_theta = theta.sin();
         let nmax = self.degree;
-        let mut p = vec![vec![0.0f64; nmax + 1]; nmax + 1];
-        p[0][0] = 1.0;
+        let p = crate::archivar::gfc::fully_normalized_legendre(nmax, theta);
         let mut sum = 0.0f64;
         for n in 1..=nmax {
-            if n == 1 {
-                p[1][0] = 3.0f64.sqrt() * x;
-                p[1][1] = 3.0f64.sqrt() * sin_theta;
-            } else {
-                p[n][n] = ((2.0 * n as f64 + 1.0) / (2.0 * n as f64)).sqrt()
-                    * sin_theta
-                    * p[n - 1][n - 1];
-                let mut row = vec![0.0f64; n];
-                for (m, &pm) in p[n - 1].iter().enumerate().take(n) {
-                    let a = ((2.0 * n as f64 + 1.0) * (2.0 * n as f64 - 1.0)
-                        / ((n as f64 - m as f64) * (n as f64 + m as f64)))
-                        .sqrt();
-                    let first = a * x * pm;
-                    let second = if n >= 2 && m + 1 < n {
-                        let b = ((2.0 * n as f64 + 1.0)
-                            * (n as f64 + m as f64 - 1.0)
-                            * (n as f64 - m as f64 - 1.0)
-                            / ((2.0 * n as f64 - 3.0)
-                                * (n as f64 - m as f64)
-                                * (n as f64 + m as f64)))
-                            .sqrt();
-                        b * p[n - 2][m]
-                    } else {
-                        0.0
-                    };
-                    row[m] = first - second;
-                }
-                p[n][..n].copy_from_slice(&row);
-            }
             if n < 2 {
                 continue;
             }
@@ -366,6 +302,29 @@ mod tests {
         assert!(GeoidModel::parse("", 10).is_none());
         assert!(GeoidModel::parse("radius 6371000.0\n", 10).is_none());
         assert!(GeoidModel::parse("gfc 2 0 -4.8e-4 0.0\n", 10).is_none());
+    }
+
+    #[test]
+    fn the_geoid_stays_finite_to_degree_2190_over_the_whole_latitude_range() {
+        let mut text = String::from("radius 6378136.3\n");
+        for n in [2usize, 20, 200, 720, 1200, 1800, 2190] {
+            text.push_str(&format!("gfc {n} 0 -4.8e-4 0.0\n"));
+        }
+        let model = GeoidModel::parse(&text, 2190).expect("model");
+        let mut previous = f64::NAN;
+        for step in 0..=900 {
+            let lat = step as f64 / 10.0;
+            let value = model.geoid_m(lat, 0.0).expect("finite geoid");
+            assert!(value.is_finite(), "latitude {lat}: {value}");
+            assert!(value.abs() < 1.0e6, "latitude {lat}: {value}");
+            if previous.is_finite() {
+                assert!(
+                    (value - previous).abs() < 1.0e3,
+                    "latitude {lat}: {previous} -> {value}"
+                );
+            }
+            previous = value;
+        }
     }
 
     #[test]
