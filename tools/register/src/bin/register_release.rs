@@ -35,6 +35,8 @@ fn build(text: &str) -> (String, usize, usize, usize) {
         }
         let cols: Vec<&str> = line.split('\t').collect();
         if cols.len() < 2 {
+            rows += 1;
+            lines.push(line.to_string());
             continue;
         }
         let original = cols.first().copied().unwrap_or("");
@@ -62,25 +64,29 @@ fn build(text: &str) -> (String, usize, usize, usize) {
     (lines.join("\n") + "\n", rows, applied, notes)
 }
 
+fn block_key(block: &str) -> String {
+    if let Some(u) = block.lines().find_map(|line| line.strip_prefix("url ")) {
+        return u.split_whitespace().next().unwrap_or("").to_string();
+    }
+    block
+        .lines()
+        .filter(|line| {
+            !line.starts_with("seen ")
+                && !line.starts_with("url ")
+                && !line.starts_with("origin ")
+                && !line.starts_with("sha256 ")
+                && !line.starts_with("coverage ")
+                && !line.trim().is_empty()
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 fn blocks(text: &str) -> Vec<(String, String)> {
-    let mut out: Vec<(String, String)> = Vec::new();
-    let mut cur: Option<(String, Vec<&str>)> = None;
-    for line in text.lines() {
-        if let Some(rest) = line.strip_prefix("url ") {
-            if let Some((u, body)) = cur.take() {
-                out.push((u, body.join("\n")));
-            }
-            cur = Some((rest.trim().to_string(), vec![line]));
-        } else if let Some((_, body)) = cur.as_mut()
-            && !line.trim().is_empty()
-        {
-            body.push(line);
-        }
-    }
-    if let Some((u, body)) = cur.take() {
-        out.push((u, body.join("\n")));
-    }
-    out
+    text.split("\n\n")
+        .filter(|b| !b.trim().is_empty())
+        .map(|b| (block_key(b), b.to_string()))
+        .collect()
 }
 
 fn report(release: &str, published: &str, label: &str) {
@@ -127,6 +133,38 @@ fn licence_admitted(token: &str) -> bool {
     table.get(token).copied() == Some("admitted")
 }
 
+fn delivery_index() -> &'static std::collections::HashMap<String, std::collections::BTreeMap<String, String>> {
+    static TABLE: std::sync::OnceLock<
+        std::collections::HashMap<String, std::collections::BTreeMap<String, String>>,
+    > = std::sync::OnceLock::new();
+    TABLE.get_or_init(|| {
+        let mut m = std::collections::HashMap::new();
+        let path = work_root().join("phi/delivery.\u{03c6}");
+        if let Ok(text) = std::fs::read_to_string(path) {
+            for block in text.split("\n\n") {
+                let Some(key) = block
+                    .lines()
+                    .find_map(|l| l.strip_prefix("artifact ").map(|r| r.trim().to_string()))
+                else {
+                    continue;
+                };
+                let mut kv = std::collections::BTreeMap::new();
+                for line in block.lines() {
+                    let line = line.trim();
+                    for prefix in ["url ", "origin ", "sha256 ", "coverage "] {
+                        if let Some(rest) = line.strip_prefix(prefix) {
+                            let value = rest.split_whitespace().next().unwrap_or("");
+                            kv.insert(prefix.trim().to_string(), value.to_string());
+                        }
+                    }
+                }
+                m.insert(key, kv);
+            }
+        }
+        m
+    })
+}
+
 fn block_is_evidenced(block: &str) -> bool {
     let has_field = block.lines().any(|line| {
         line.starts_with("field ")
@@ -152,33 +190,22 @@ fn block_is_evidenced(block: &str) -> bool {
     let has_artifact_sha = block
         .lines()
         .any(|line| line.starts_with("artifact ") && line.contains("sha256="));
+    let artifact_sha_in_delivery = block.lines().any(|line| {
+        let Some(key) = line.strip_prefix("artifact ") else {
+            return false;
+        };
+        if key.contains('=') {
+            return false;
+        }
+        delivery_index()
+            .get(key.trim())
+            .map(|kv| kv.contains_key("sha256"))
+            .unwrap_or(false)
+    });
     let live = ["schema ", "sample ", "ts "]
         .iter()
         .all(|prefix| block.lines().any(|line| line.starts_with(prefix)));
-    has_sha || has_artifact_sha || live
-}
-
-fn directive_tokens(line: &str) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut cur = String::new();
-    let mut in_quotes = false;
-    for c in line.chars() {
-        if c == '"' {
-            in_quotes = !in_quotes;
-            continue;
-        }
-        if c.is_whitespace() && !in_quotes {
-            if !cur.is_empty() {
-                out.push(std::mem::take(&mut cur));
-            }
-        } else {
-            cur.push(c);
-        }
-    }
-    if !cur.is_empty() {
-        out.push(cur);
-    }
-    out
+    has_sha || has_artifact_sha || artifact_sha_in_delivery || live
 }
 
 fn expand_artifacts(text: &str) -> String {
@@ -190,14 +217,19 @@ fn expand_artifacts(text: &str) -> String {
         if !block_is_evidenced(block) {
             continue;
         }
-        let mut shared: Vec<&str> = Vec::new();
-        let mut artifacts: Vec<std::collections::BTreeMap<&str, &str>> = Vec::new();
+        let mut body: Vec<String> = Vec::new();
+        let mut artifacts: Vec<std::collections::BTreeMap<String, String>> = Vec::new();
         for line in block.lines() {
             if let Some(rest) = line.strip_prefix("artifact ") {
                 let mut kv = std::collections::BTreeMap::new();
                 for token in rest.split_whitespace() {
                     if let Some((key, value)) = token.split_once('=') {
-                        kv.insert(key, value);
+                        kv.insert(key.to_string(), value.to_string());
+                    }
+                }
+                if kv.is_empty() {
+                    if let Some(d) = delivery_index().get(rest.trim()) {
+                        kv = d.clone();
                     }
                 }
                 artifacts.push(kv);
@@ -206,51 +238,28 @@ fn expand_artifacts(text: &str) -> String {
                 && !line.starts_with("coverage ")
                 && !line.starts_with("origin ")
             {
-                shared.push(line);
+                body.push(line.to_string());
             }
         }
-        if artifacts.is_empty() {
-            out.push_str(block.trim_end());
-            out.push_str("\n\n");
-            continue;
-        }
-        for artifact in &artifacts {
-            let url = artifact.get("url").copied().unwrap_or("");
-            if url.is_empty() {
-                continue;
-            }
-            let sha = artifact.get("sha256").copied().unwrap_or("");
-            let interval = artifact.get("interval").copied().unwrap_or("");
-            let coverage = artifact.get("coverage").copied().unwrap_or("");
-            let origin = artifact.get("origin").copied().unwrap_or("");
-            out.push_str(&format!("url {url}\n"));
-            if !sha.is_empty() {
-                out.push_str(&format!("sha256 {sha}\n"));
-            }
-            if !origin.is_empty() {
-                out.push_str(&format!("origin {origin}\n"));
-            }
-            if !coverage.is_empty() {
-                out.push_str(&format!("coverage {coverage}\n"));
-            }
-            if !interval.is_empty() && !shared.iter().any(|line| line.starts_with("interval ")) {
-                out.push_str(&format!("interval {interval}\n"));
-            }
-            for line in &shared {
-                if line.starts_with("field ") && directive_tokens(line).len() == 4 {
-                    out.push_str(line);
-                    out.push('\n');
-                    continue;
-                }
-                if line.starts_with("field ") && !interval.is_empty() {
-                    out.push_str(&format!("{line} {interval} 0.0 0.0\n"));
-                } else {
-                    out.push_str(line);
-                    out.push('\n');
-                }
-            }
+        for line in &body {
+            out.push_str(line);
             out.push('\n');
         }
+        for artifact in &artifacts {
+            if let Some(url) = artifact.get("url") {
+                out.push_str(&format!("url {url}\n"));
+            }
+            if let Some(sha) = artifact.get("sha256") {
+                out.push_str(&format!("sha256 {sha}\n"));
+            }
+            if let Some(origin) = artifact.get("origin") {
+                out.push_str(&format!("origin {origin}\n"));
+            }
+            if let Some(coverage) = artifact.get("coverage") {
+                out.push_str(&format!("coverage {coverage}\n"));
+            }
+        }
+        out.push('\n');
     }
     out
 }
