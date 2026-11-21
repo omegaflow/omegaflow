@@ -2,7 +2,7 @@ use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use omegaflow::archivar::sddpt;
+use omegaflow::archivar::{lsk, sddpt};
 
 const HEADER: &str = "target,epoch_tdb,observable,value,sigma,station,source,method,version\n";
 
@@ -343,13 +343,20 @@ fn viking_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Censu
                 });
             }
         }
+        let note = match sddpt::pt_label_epoch(&bytes) {
+            Some(epoch) => format!(
+                "label epoch {}; per-record epoch not established; pt word3 candidate range (km)",
+                label_epoch_text(epoch)
+            ),
+            None => "label epoch absent; pt word3 candidate range (km)".to_string(),
+        };
         census.push(CensusRow {
             dataset: "PSPG-00457".to_string(),
             source,
             records: seen,
             first,
             last,
-            note: "pt word3 candidate range (km); epoch not established".to_string(),
+            note,
         });
     }
     Ok((rows, files.len(), census))
@@ -389,6 +396,21 @@ fn dataset_source(dataset: &str, dir: &Path, path: &Path) -> String {
     format!(
         "{dataset}/{}",
         path.strip_prefix(dir).unwrap_or(path).to_string_lossy()
+    )
+}
+
+fn label_epoch_text(epoch: sddpt::PtLabelEpoch) -> String {
+    let Some(start) = lsk::days_from_civil(i64::from(epoch.year), 1, 1) else {
+        return format!(
+            "{:04}-{:03}T{:02}:{:02}:{:02}Z",
+            epoch.year, epoch.day_of_year, epoch.hour, epoch.minute, epoch.second
+        );
+    };
+    let days = start + i64::from(epoch.day_of_year) - 1;
+    let (year, month, day) = civil_from_days(days);
+    format!(
+        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}Z",
+        epoch.hour, epoch.minute, epoch.second
     )
 }
 

@@ -240,6 +240,49 @@ pub fn cmr_records(bytes: &[u8]) -> Vec<CmrRecord> {
     out
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PtLabelEpoch {
+    pub year: i32,
+    pub day_of_year: u32,
+    pub hour: u32,
+    pub minute: u32,
+    pub second: u32,
+}
+
+pub fn pt_label_epoch(bytes: &[u8]) -> Option<PtLabelEpoch> {
+    let first = records(bytes, Framing::LittleEndian16Sequence)
+        .into_iter()
+        .next()?;
+    let sequence = first.sequence?;
+    if first.payload.len() != 59 {
+        return None;
+    }
+    let mut packed = Vec::with_capacity(60);
+    packed.push(sequence);
+    packed.extend_from_slice(first.payload);
+    let unpacked = unpack_six_bit(&packed);
+    let year = 1900 + i32::from(*unpacked.get(36)?);
+    let day = u32::from(u16::from_be_bytes([*unpacked.get(37)?, *unpacked.get(38)?]));
+    let hour = u32::from(*unpacked.get(39)?);
+    let minute = u32::from(*unpacked.get(40)?);
+    let second = u32::from(*unpacked.get(41)?);
+    if !(1900..=2100).contains(&year)
+        || !(1..=366).contains(&day)
+        || hour > 23
+        || minute > 59
+        || second > 59
+    {
+        return None;
+    }
+    Some(PtLabelEpoch {
+        year,
+        day_of_year: day,
+        hour,
+        minute,
+        second,
+    })
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct PtRecord {
     pub index: usize,
@@ -398,6 +441,24 @@ mod tests {
         let split = records(&bytes, Framing::LittleEndian16);
         assert_eq!(split[0].payload, &[1, 2, 3]);
         assert!(split[1].payload.is_empty());
+    }
+
+    #[test]
+    fn pt_label_epoch_reads_the_year_day_and_clock() {
+        let mut header = vec![0u8; 45];
+        header[36] = 77;
+        header[37] = 0;
+        header[38] = 130;
+        header[39] = 17;
+        header[40] = 48;
+        header[41] = 28;
+        let packed = pack_six_bit(&header);
+        let mut record = vec![59, 0];
+        record.extend_from_slice(&packed);
+        let epoch = pt_label_epoch(&record).expect("label epoch");
+        assert_eq!(epoch.year, 1977);
+        assert_eq!(epoch.day_of_year, 130);
+        assert_eq!((epoch.hour, epoch.minute, epoch.second), (17, 48, 28));
     }
 
     #[test]
