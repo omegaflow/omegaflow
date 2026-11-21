@@ -3027,7 +3027,7 @@ pub fn parse_iso_unix(s: &str) -> Option<f64> {
     let hh: u32 = tp.next()?.parse().ok()?;
     let mm: u32 = tp.next().unwrap_or("0").parse().ok()?;
     let ss: u32 = tp.next().unwrap_or("0").parse().ok()?;
-    let days = ymd_to_days(y, m, d)? as i64;
+    let days = crate::archivar::lsk::days_from_civil(y, m as i64, d as i64)?;
     let whole = (days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64) as f64;
     match fraction {
         Some(fraction) => {
@@ -5619,5 +5619,14 @@ ttl 60\n\
 on earth frame=body lat=1 lon=2 alt_ref=0 alt_key=height datum=msl time=epoch time_key=t time_scale=UTC\n\
 field u u m/s source_column=1 alt_offset=0\n";
         assert!(parse_source_blocks(content).is_err());
+    }
+
+    #[test]
+    fn an_epoch_before_1970_carries_a_negative_unix_time() {
+        let unix = parse_iso_unix("1960-01-01T00:00:00Z").expect("1960 parses");
+        assert!(unix < 0.0, "1960 lies before the unix epoch: {unix}");
+        assert!((unix + 315619200.0).abs() < 1.0, "1960-01-01: {unix}");
+        let ancient = parse_iso_unix("-13200-01-01T00:00:00Z").expect("de441 start parses");
+        assert!(ancient < 0.0);
     }
 }
