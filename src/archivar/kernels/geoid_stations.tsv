@@ -9,8 +9,8 @@
 #   Somigliana-Schwere an der Breite, geodaetischer Radius re(phi). Das Normalfeld traegt nur
 #   C20 und C40; das ist der verbleibende Unterschied zur vollstaendigen Vorschrift.
 # Formel (ours, Bruns): N = (W - W0)/gamma, iteriert, W = GM/r sum + 0.5 omega^2 (r cos psi)^2,
-#   psi geozentrisch, r exakter geozentrischer Ellipsoidradius. W0 ist nicht gespeichert; es
-#   wird aus den Gitterzeilen abgeleitet (Mittel der Potentiale an der Gitter-Geoidflaeche).
+#   psi geozentrisch, r exakter geozentrischer Ellipsoidradius. W0 = 62636855.7294 m2/s2
+#   (EGM2008, veroeffentlicht, gemessen 2026-11-21). Der abgeleitete Wert lag 4,5 mm daneben.
 #
 # Nachrechnen: target/release/geoid_chain --model "ours EGM96=<pfad>:360" --model "ours EGM2008=<pfad>:2190" \
 #              --grid "ours EGM96=PROJ EGM96 grid" --grid "ours EGM2008=EGM2008 grid"
@@ -34,7 +34,7 @@ Berlin	52.52	13.40	ours EGM96	360	n	39.561
 Berlin	52.52	13.40	ours EGM2008	360	n	39.479
 Berlin	52.52	13.40	ours EGM2008	2190	n	39.503
 Berlin	52.52	13.40	ours XGM2019e	360	n	39.445
-Berlin	52.52	13.40	ours EGM2008 bruns	2190	n	39.485
+Berlin	52.52	13.40	ours EGM2008 bruns	2190	n	39.490
 Berlin	52.52	13.40	EGM2008 grid	2190	n	39.491
 Berlin	52.52	13.40	PROJ EGM96 grid	360	n	39.529
 Berlin	52.52	13.40	ours EGM96	360	w	62637244.7516
@@ -45,7 +45,7 @@ Honolulu	21.30	-157.86	ours EGM96	360	n	14.867
 Honolulu	21.30	-157.86	ours EGM2008	360	n	15.372
 Honolulu	21.30	-157.86	ours EGM2008	2190	n	15.759
 Honolulu	21.30	-157.86	ours XGM2019e	360	n	15.404
-Honolulu	21.30	-157.86	ours EGM2008 bruns	2190	n	15.737
+Honolulu	21.30	-157.86	ours EGM2008 bruns	2190	n	15.741
 Honolulu	21.30	-157.86	EGM2008 grid	2190	n	15.728
 Honolulu	21.30	-157.86	PROJ EGM96 grid	360	n	14.876
 Honolulu	21.30	-157.86	ours EGM96	360	w	62637006.8989
@@ -56,7 +56,7 @@ Cape Town	-33.93	18.42	ours EGM96	360	n	31.407
 Cape Town	-33.93	18.42	ours EGM2008	360	n	31.536
 Cape Town	-33.93	18.42	ours EGM2008	2190	n	31.418
 Cape Town	-33.93	18.42	ours XGM2019e	360	n	31.561
-Cape Town	-33.93	18.42	ours EGM2008 bruns	2190	n	31.134
+Cape Town	-33.93	18.42	ours EGM2008 bruns	2190	n	31.138
 Cape Town	-33.93	18.42	EGM2008 grid	2190	n	31.136
 Cape Town	-33.93	18.42	PROJ EGM96 grid	360	n	31.050
 Cape Town	-33.93	18.42	ours EGM96	360	w	62637160.9678
