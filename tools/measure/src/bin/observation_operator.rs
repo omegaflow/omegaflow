@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -25,7 +26,16 @@ struct CensusRow {
     records: usize,
     first: f64,
     last: f64,
+    description: String,
     note: String,
+}
+
+fn csv_field(value: &str) -> String {
+    if value.contains(',') || value.contains('"') || value.contains('\n') || value.contains('\r') {
+        format!("\"{}\"", value.replace('"', "\"\""))
+    } else {
+        value.to_string()
+    }
 }
 
 impl Row {
@@ -36,14 +46,14 @@ impl Row {
         };
         format!(
             "{},{},{},{:.9},{},{},{},{},1\n",
-            self.target,
-            self.epoch_tdb,
-            self.observable,
+            csv_field(&self.target),
+            csv_field(&self.epoch_tdb),
+            csv_field(&self.observable),
             self.value,
             sigma,
-            self.station,
-            self.source,
-            self.method,
+            csv_field(&self.station),
+            csv_field(&self.source),
+            csv_field(&self.method),
         )
     }
 }
@@ -199,12 +209,18 @@ fn write_rows(path: &Path, rows: &[Row]) -> Result<(), String> {
 }
 
 fn write_census(path: &Path, rows: &[CensusRow]) -> Result<(), String> {
-    let mut text = String::with_capacity(64 + rows.len() * 120);
-    text.push_str("dataset,source,records,first,last,note\n");
+    let mut text = String::with_capacity(64 + rows.len() * 160);
+    text.push_str("dataset,source,records,first,last,description,note\n");
     for row in rows {
         text.push_str(&format!(
-            "{},{},{},{:.6},{:.6},{}\n",
-            row.dataset, row.source, row.records, row.first, row.last, row.note
+            "{},{},{},{:.6},{:.6},{},{}\n",
+            csv_field(&row.dataset),
+            csv_field(&row.source),
+            row.records,
+            row.first,
+            row.last,
+            csv_field(&row.description),
+            csv_field(&row.note),
         ));
     }
     fs::write(path, text).map_err(|e| format!("write {}: {e}", path.display()))
@@ -264,6 +280,7 @@ fn mariner5_points(root: &Path) -> Result<Vec<(String, sddpt::Mariner5Point)>, S
 
 fn mariner10_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<CensusRow>), String> {
     let dir = dataset_dir(root, "PSCM-00009")?;
+    let descriptions = cmr_descriptions(&dir)?;
     let files = data_files(&dir, "CMR_")?;
     let mut rows = Vec::new();
     let mut census = Vec::new();
@@ -298,6 +315,7 @@ fn mariner10_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Ce
         }
         census.push(CensusRow {
             dataset: "PSCM-00009".to_string(),
+            description: tape_description(path, &descriptions),
             source,
             records: seen,
             first,
@@ -310,6 +328,7 @@ fn mariner10_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Ce
 
 fn viking_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<CensusRow>), String> {
     let dir = dataset_dir(root, "PSPG-00457")?;
+    let descriptions = pd_descriptions(&dir)?;
     let files = data_files(&dir, "PT_")?;
     let mut rows = Vec::new();
     let mut census = Vec::new();
@@ -352,6 +371,7 @@ fn viking_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Censu
         };
         census.push(CensusRow {
             dataset: "PSPG-00457".to_string(),
+            description: tape_description(path, &descriptions),
             source,
             records: seen,
             first,
@@ -360,6 +380,156 @@ fn viking_rows(root: &Path, collect: bool) -> Result<(Vec<Row>, usize, Vec<Censu
         });
     }
     Ok((rows, files.len(), census))
+}
+
+fn tape_key(value: &str) -> String {
+    value.trim().to_uppercase().replace('_', "-")
+}
+
+fn tape_component(path: &Path) -> Option<String> {
+    for ancestor in path.ancestors().skip(1) {
+        let Some(name) = ancestor.file_name().and_then(|name| name.to_str()) else {
+            continue;
+        };
+        let upper = name.to_uppercase();
+        let known = [
+            "CMR_", "CMR-", "PT_", "PT-", "PD_", "PD-", "PJ_", "PJ-", "PM_", "PM-", "PL_", "PL-",
+        ]
+        .iter()
+        .any(|prefix| upper.starts_with(prefix));
+        if known {
+            return Some(tape_key(name));
+        }
+    }
+    None
+}
+
+fn tape_description(path: &Path, descriptions: &HashMap<String, String>) -> String {
+    match tape_component(path).and_then(|key| descriptions.get(&key)) {
+        Some(description) => description.clone(),
+        None => "not listed".to_string(),
+    }
+}
+
+fn info_files(dir: &Path, name: &str) -> Result<Vec<PathBuf>, String> {
+    let mut out = Vec::new();
+    walk(dir, &mut out).map_err(|e| format!("walk {}: {e}", dir.display()))?;
+    out.retain(|path| {
+        path.file_name()
+            .and_then(|file| file.to_str())
+            .is_some_and(|file| file == name)
+    });
+    out.sort();
+    Ok(out)
+}
+
+fn cmr_descriptions(dir: &Path) -> Result<HashMap<String, String>, String> {
+    let mut out: HashMap<String, String> = HashMap::new();
+    for path in info_files(dir, "CMR_INFO.TXT")? {
+        let text =
+            fs::read_to_string(&path).map_err(|e| format!("read {}: {e}", path.display()))?;
+        for line in text.lines() {
+            let line = line.trim_end_matches('\r');
+            let fields: Vec<&str> = line.split('\t').collect();
+            let Some(tape) = fields.first().map(|field| field.trim()) else {
+                continue;
+            };
+            if !(tape.starts_with("CMR_") || tape.starts_with("CMR-")) {
+                continue;
+            }
+            let description = match fields
+                .iter()
+                .skip(1)
+                .rev()
+                .map(|field| field.trim())
+                .find(|field| !field.is_empty())
+            {
+                Some(field) => field,
+                None => "",
+            };
+            let key = tape_key(tape);
+            let replace = match out.get(&key) {
+                None => true,
+                Some(old) if old.is_empty() => true,
+                Some(old) if old == "NO INFORMATION" && !description.is_empty() => true,
+                _ => false,
+            };
+            if replace {
+                out.insert(key, description.to_string());
+            }
+        }
+    }
+    Ok(out)
+}
+
+fn pd_descriptions(dir: &Path) -> Result<HashMap<String, String>, String> {
+    let mut best: HashMap<String, String> = HashMap::new();
+    for path in info_files(dir, "PD_INFO.TXT")? {
+        let text =
+            fs::read_to_string(&path).map_err(|e| format!("read {}: {e}", path.display()))?;
+        let parsed = parse_pd_info(&text);
+        if parsed.len() > best.len() {
+            best = parsed;
+        }
+    }
+    Ok(best)
+}
+
+fn parse_pd_info(text: &str) -> HashMap<String, String> {
+    let mut out: HashMap<String, String> = HashMap::new();
+    let mut current: Option<String> = None;
+    for raw in text.lines() {
+        let line = raw.trim_end_matches('\r');
+        if line.trim().is_empty() {
+            current = None;
+            continue;
+        }
+        let fields: Vec<&str> = line.split('\t').collect();
+        let first = match fields.first() {
+            Some(field) => field.trim(),
+            None => continue,
+        };
+        let bytes = first.as_bytes();
+        let is_tape = bytes.len() >= 5
+            && bytes[2] == b'-'
+            && bytes[0].is_ascii_uppercase()
+            && bytes[1].is_ascii_uppercase();
+        if is_tape {
+            let key = tape_key(first);
+            let mut parts: Vec<String> = fields
+                .iter()
+                .skip(3)
+                .map(|field| field.trim().to_string())
+                .filter(|field| !field.is_empty())
+                .collect();
+            if parts
+                .last()
+                .is_some_and(|part| part.chars().all(|c| c.is_ascii_digit()))
+            {
+                parts.pop();
+            }
+            out.insert(key.clone(), parts.join(" "));
+            current = Some(key);
+        } else if let Some(key) = &current {
+            let parts: Vec<&str> = line
+                .split('\t')
+                .map(|field| field.trim())
+                .filter(|field| !field.is_empty())
+                .collect();
+            if let Some(description) = out.get_mut(key) {
+                for part in parts {
+                    if part.chars().all(|c| c.is_ascii_digit()) && part.len() <= 2 {
+                        continue;
+                    }
+                    if !description.is_empty() {
+                        description.push(' ');
+                    }
+                    description.push_str(part);
+                }
+            }
+        }
+    }
+    out
 }
 
 fn data_files(root: &Path, prefix: &str) -> Result<Vec<PathBuf>, String> {
