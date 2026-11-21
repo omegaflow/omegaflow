@@ -2,6 +2,8 @@
 # Spalten: Station <TAB> Breite <TAB> Laenge <TAB> Quelle <TAB> Grad <TAB> Groesse <TAB> Wert
 # Groesse: n = Geoidhoehe in Metern, w = Potential in m2/s2 am Ellipsoid
 # Quellen: "ours ..." ist unsere Rechnung, "ICGEM ..." der Dienst, "... grid" ein amtliches Gitter.
+# Referenz-Gitter: NGA EGM2008, 2,5 Bogenminuten, https://cdn.proj.org/us_nga_egm08_25.tif
+#   (SHA-256 4191d471…bef17a, gemessen von nebra 2026-11-21), an der Station interpoliert.
 #
 # Formel (ours, geschlossene Form): Barthelmes STR09/02 (4.2), N = GM/(re*gamma(phi)) * sum,
 #   Somigliana-Schwere an der Breite, geodaetischer Radius re(phi). Das Normalfeld traegt nur
