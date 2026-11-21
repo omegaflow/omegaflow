@@ -193,41 +193,46 @@ fn registered_netlocs() -> &'static HashSet<String> {
     static SET: OnceLock<HashSet<String>> = OnceLock::new();
     SET.get_or_init(|| {
         let mut set = HashSet::new();
-        let Ok(text) = std::fs::read_to_string("phi/sources.φ") else {
-            return set;
-        };
-        let mut netlocs: Vec<String> = Vec::new();
-        let mut admitted = false;
-        let flush = |netlocs: &mut Vec<String>, admitted: bool, set: &mut HashSet<String>| {
-            if admitted {
-                for n in netlocs.drain(..) {
-                    set.insert(n);
-                }
-            } else {
-                netlocs.clear();
-            }
-        };
-        for line in text.lines() {
-            if line.trim().is_empty() {
-                flush(&mut netlocs, admitted, &mut set);
-                admitted = false;
-                continue;
-            }
-            if let Some(rest) = line.strip_prefix("url ") {
-                if let Some(k) = cdn_tag_of(rest).or_else(|| netloc_of(rest)) {
-                    netlocs.push(normalize_tag(k).to_string());
-                }
-            } else if let Some(rest) = line.strip_prefix("origin ") {
-                if let Some(nl) = netloc_of(rest) {
-                    netlocs.push(normalize_tag(nl).to_string());
-                }
-            } else if let Some(rest) = line.strip_prefix("terms ") {
-                admitted = admitted_terms(rest.split_whitespace().next().unwrap_or(""));
+        for path in ["phi/sources.φ", "phi/ephemerides.φ"] {
+            if let Ok(text) = std::fs::read_to_string(path) {
+                collect_registered_netlocs(&text, &mut set);
             }
         }
-        flush(&mut netlocs, admitted, &mut set);
         set
     })
+}
+
+fn collect_registered_netlocs(text: &str, set: &mut HashSet<String>) {
+    let mut netlocs: Vec<String> = Vec::new();
+    let mut admitted = false;
+    let flush = |netlocs: &mut Vec<String>, admitted: bool, set: &mut HashSet<String>| {
+        if admitted {
+            for n in netlocs.drain(..) {
+                set.insert(n);
+            }
+        } else {
+            netlocs.clear();
+        }
+    };
+    for line in text.lines() {
+        if line.trim().is_empty() {
+            flush(&mut netlocs, admitted, set);
+            admitted = false;
+            continue;
+        }
+        if let Some(rest) = line.strip_prefix("url ") {
+            if let Some(k) = cdn_tag_of(rest).or_else(|| netloc_of(rest)) {
+                netlocs.push(normalize_tag(k).to_string());
+            }
+        } else if let Some(rest) = line.strip_prefix("origin ") {
+            if let Some(nl) = netloc_of(rest) {
+                netlocs.push(normalize_tag(nl).to_string());
+            }
+        } else if let Some(rest) = line.strip_prefix("terms ") {
+            admitted = admitted_terms(rest.split_whitespace().next().unwrap_or(""));
+        }
+    }
+    flush(&mut netlocs, admitted, set);
 }
 
 pub fn print_block(tag: &str, asset: &str, origin: &str, format: &str, compiler: &str) {
