@@ -63,7 +63,7 @@ jobs:
                  "de44-cdn: a de441 part returned void" \
                  "curl on naif.jpl.nasa.gov did not reach a de441 kernel part. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          cargo run -p omegaflow-harvest --release --bin de_compiler -- de441_part-1.bsp de441_part-2.bsp --label de441 --bodies sun,moon,earth --bpc moon_pa_de440.bpc --fk moon_de440.tf --ci-mode
+          cargo run -p omegaflow-harvest --release --bin de_compiler -- de441_part-1.bsp de441_part-2.bsp --label de441 --bodies sun,moon,earth,mercury,venus,mars,jupiter,saturn,uranus,neptune,pluto --bpc moon_pa_de440.bpc --fk moon_de440.tf --ci-mode
       - name: Verify every compiled ssd.jpl.nasa.gov-de asset is manifested
         run: |
           set -euo pipefail
