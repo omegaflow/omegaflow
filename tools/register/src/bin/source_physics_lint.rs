@@ -36,8 +36,8 @@ const GEOMETRY_HINTS: [&str; 15] = [
 const REGISTERS: [&str; 4] = [
     "phi/sources.φ",
     "phi/pipeline/ledger.φ",
-    "phi/library.tsv",
-    "phi/bands.tsv",
+    "data/library.tsv",
+    "data/bands.tsv",
 ];
 
 fn is_force(token: &str) -> bool {
