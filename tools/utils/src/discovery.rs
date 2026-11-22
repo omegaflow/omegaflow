@@ -2,7 +2,7 @@ use omegaflow::force::gate_weigh;
 use std::collections::HashSet;
 use std::io::Write;
 
-pub const LIBRARY_PATH: &str = "data/library.tsv";
+pub const LIBRARY_PATH: &str = "data/classifier.tsv";
 pub const CATALOG_DIR: &str = "phi/pipeline/catalog";
 pub const MASTER_URLS_PATH: &str = "phi/pipeline/master_urls.txt";
 pub const CANDIDATES_PATH: &str = "phi/pipeline/probe_url_candidates.txt";

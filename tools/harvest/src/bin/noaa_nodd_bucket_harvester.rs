@@ -9,7 +9,7 @@ const NETLOC: &str = "storage.googleapis.com";
 
 const DEFAULT_BUCKET: &str = "noaa-passive-bioacoustic";
 const DEFAULT_PREFIX: &str = "nrs/products/";
-const STATIONS_TABLE: &str = "data/nrs_stations.tsv";
+const STATIONS_TABLE: &str = "data/stations_nrs.tsv";
 const NO_LIMIT: usize = 0;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
