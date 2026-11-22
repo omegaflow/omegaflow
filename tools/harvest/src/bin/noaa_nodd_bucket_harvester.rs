@@ -9,7 +9,7 @@ const NETLOC: &str = "storage.googleapis.com";
 
 const DEFAULT_BUCKET: &str = "noaa-passive-bioacoustic";
 const DEFAULT_PREFIX: &str = "nrs/products/";
-const STATIONS_TABLE: &str = "data/stations_nrs.tsv";
+const STATIONS_TABLE: &str = "data/stations.tsv";
 const NO_LIMIT: usize = 0;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -432,15 +432,22 @@ fn parse_station_table(text: &str) -> Vec<(String, f64, f64)> {
         if line.is_empty() || line.starts_with('#') {
             continue;
         }
-        let mut it = line.split_whitespace();
-        let (Some(site), Some(lat), Some(lon)) = (it.next(), it.next(), it.next()) else {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 5 || cols[0] == "code" || cols[4] != "nrs" {
+            continue;
+        }
+        let Some(inner) = cols[1].strip_prefix("POINT Z (").and_then(|v| v.strip_suffix(')')) else {
             continue;
         };
-        let (Ok(lat), Ok(lon)) = (lat.parse::<f64>(), lon.parse::<f64>()) else {
+        let mut it = inner.split_whitespace();
+        let (Some(lon), Some(lat)) = (it.next(), it.next()) else {
+            continue;
+        };
+        let (Ok(lon), Ok(lat)) = (lon.parse::<f64>(), lat.parse::<f64>()) else {
             continue;
         };
         if lat.is_finite() && lon.is_finite() {
-            out.push((site.to_string(), lat, lon));
+            out.push((cols[0].to_string(), lat, lon));
         }
     }
     out
