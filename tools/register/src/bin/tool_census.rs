@@ -3,6 +3,16 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+fn work_root() -> PathBuf {
+    if let Some(dir) = env::var_os("OMEGAFLOW_WORK").filter(|v| !v.is_empty()) {
+        return PathBuf::from(dir);
+    }
+    if let Some(home) = env::var_os("HOME").filter(|v| !v.is_empty()) {
+        return PathBuf::from(home).join("projects/omegaflow-work");
+    }
+    PathBuf::from("omegaflow-work")
+}
+
 fn code_root() -> PathBuf {
     if let Some(dir) = env::var_os("OMEGAFLOW_CODE").filter(|v| !v.is_empty()) {
         return PathBuf::from(dir);
@@ -75,9 +85,12 @@ fn read_tree(path: &Path, out: &mut String) {
     }
 }
 
-fn doc_words(root: &Path) -> BTreeSet<String> {
+fn doc_words(root: &Path, work: &Path) -> BTreeSet<String> {
     let mut text = String::new();
     read_tree(root, &mut text);
+    if work.exists() {
+        read_tree(work, &mut text);
+    }
     words(&text).into_iter().map(|w| w.to_string()).collect()
 }
 
@@ -175,7 +188,8 @@ fn main() {
     };
 
     let ci = workflow_words(&root);
-    let docs = doc_words(&root);
+    let work = work_root();
+    let docs = doc_words(&root, &work);
     let register_names = compiler_names(&register);
 
     let rows: Vec<Row> = bins_under(&root)
@@ -227,9 +241,11 @@ fn main() {
     }
 
     println!(
-        "tool_census — {} binaries in {} crates",
+        "tool_census — {} binaries in {} crates (docs: {} + {})",
         rows.len(),
-        crates.len()
+        crates.len(),
+        root.display(),
+        work.display()
     );
     println!("crate                              bins     ci  register    docs    none");
     for (krate, slot) in &crates {
