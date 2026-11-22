@@ -23,6 +23,10 @@ jobs:
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v7
+        with:
+          repository: omegaflow/work
+          token: ${{ secrets.OMEGAFLOW_TOKEN }}
+          path: work
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Compile the Planck AV_RQ map (column 3) to a NSIDE-512 dist shell and upload to CDN
         run: |
@@ -41,5 +45,5 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin dust_map_compiler -- \
             --input kernels/dl07_av.fits --nside 512 --column 3 \
             --screen-pc "${{ inputs.screen_pc }}" --out planck_dust_av_rq_n512.json \
-            --mask-run --binding phi/dust_mask.φ --ci-mode
+            --mask-run --binding work/phi/dust_mask.tsv --ci-mode
           bin/cdn_put irsa.ipac.caltech.edu kernels/dl07_av.fits.sha256

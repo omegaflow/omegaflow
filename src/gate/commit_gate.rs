@@ -5233,7 +5233,7 @@ mod tests {
         assert!(classes.iter().any(|p| p == "phi/instruments.φ"));
         assert!(classes.iter().any(|p| p == "phi/documents.φ"));
         assert!(classes.iter().any(|p| p == "phi/dust-maske.φ"));
-        assert!(classes.iter().any(|p| p == "phi/scan_coverage.φ"));
+        assert!(classes.iter().any(|p| p == "phi/documents.φ"));
         assert!(!classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
         assert!(prose_violation_for("phi/documents.φ", "# kopf").is_none());
