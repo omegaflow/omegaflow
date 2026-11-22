@@ -1,0 +1,30 @@
+name: waiting-check
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  waiting:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: omegaflow/work
+          token: ${{ secrets.OMEGAFLOW_TOKEN }}
+          path: work
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Every wait whose date passed turns this run red
+        run: cargo run -q -p omegaflow-register --bin waiting_check
+        env:
+          OMEGAFLOW_WORK: ${{ github.workspace }}/work
