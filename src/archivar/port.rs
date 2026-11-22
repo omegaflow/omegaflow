@@ -3979,10 +3979,12 @@ pub fn gate_learn_mode() -> i32 {
             pipeline_path("library_gate_delta.φ")
         );
     }
-    let library = match std::fs::read_to_string("phi/library.φ") {
+    let library = match std::fs::read_to_string(
+        crate::archivar::asset_path::work_root().join("phi/library.tsv"),
+    ) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("learn-gate: read phi/library.φ: {}", e);
+            eprintln!("learn-gate: read phi/library.tsv: {}", e);
             String::new()
         }
     };
@@ -4010,7 +4012,7 @@ pub fn gate_learn_mode() -> i32 {
             out.push('\n');
         }
     }
-    let library = crate::archivar::asset_path::work_root().join("phi/library.φ");
+    let library = crate::archivar::asset_path::work_root().join("phi/library.tsv");
     if std::fs::write(&library, out).is_err() {
         eprintln!(
             "write {}: the register does not remember",
@@ -4018,7 +4020,7 @@ pub fn gate_learn_mode() -> i32 {
         );
     }
     eprintln!(
-        "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
+        "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.tsv + library_gate_delta.φ",
         delta.len(),
         pos,
         neg
