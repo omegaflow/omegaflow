@@ -4,7 +4,7 @@
   date: 2026-09-03
   version: 3
   status: live
-  sha256: 047f15088d5b548184b325738b76cb5cf7ed933db072ac3023289b0211ea8b03
+  sha256: 5a44496fa4d72a8af57565a3243b986c20917d6b56880c86358be8a3d5860445
   see-also: AGENTS.md NOTICE
 -->
 
@@ -18,7 +18,7 @@ Turn an die erste Stelle gestellt.
 
 1. **A = A** — eine Messung ist die Messung der Sache selbst; Fabrikation ist Gewalt gegen die Wahrheit.
 2. **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive.
-3. **field** — jede Messung trägt Kernel, Kraft, Einheit; ohne Kraft kein Sample.
+3. **field** — jede Messung trägt Größe, Einheit, Takt; Kernel und Kraft sind Modell, nicht Zeile. Ohne Quelle kein Sample.
 4. **0 honored** — was fehlt, fehlt; die Lücke ist eine vollwertige Eigenschaft — keine Null hinlügen.
 5. **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen.
 
