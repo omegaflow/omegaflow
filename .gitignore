@@ -49,6 +49,7 @@ fam_state_SOD_2024.txt
 # REGISTER_CLASSES-Eintrag im selben Commit). Alle Register liegen flach in phi/.
 phi/*
 !phi/sources.φ
+!phi/classes.txt
 !phi/instruments.φ
 !phi/field_model.tsv
 !phi/field_model_definition.tsv

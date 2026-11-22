@@ -1,0 +1,11 @@
+phi/sources.φ
+phi/instruments.φ
+phi/bands.φ
+phi/digests.φ
+phi/library.φ
+phi/nrs_stations.φ
+phi/dust_mask.φ
+phi/ci_measurements.φ
+phi/scan_coverage.φ
+phi/asteroid_gm_inpop25c.φ
+phi/asteroid_gm_sb441.φ

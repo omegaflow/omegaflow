@@ -2505,8 +2505,52 @@ pub const REGISTER_CLASSES: [&str; 11] = [
     "phi/asteroid_gm_sb441.φ",
 ];
 
+fn register_list() -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let work = std::env::var_os("OMEGAFLOW_WORK")
+        .map(std::path::PathBuf::from)
+        .or_else(|| {
+            std::env::var_os("HOME").map(|h| std::path::PathBuf::from(h).join("projects/omegaflow-work"))
+        });
+    if let Some(w) = work {
+        if let Ok(text) = std::fs::read_to_string(w.join("bindend/orte.md")) {
+            for line in text.lines() {
+                if !line.starts_with("- ") {
+                    continue;
+                }
+                let Some((_, rel)) = line.split_once('→') else {
+                    continue;
+                };
+                if let Some(start) = rel.find('`') {
+                    let rest = &rel[start + 1..];
+                    if let Some(end) = rest.find('`') {
+                        let name = &rest[..end];
+                        if name.ends_with(".φ") {
+                            out.push(format!("phi/{name}"));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if out.is_empty() {
+        if let Ok(text) = std::fs::read_to_string("phi/classes.txt") {
+            for line in text.lines() {
+                let l = line.trim();
+                if !l.is_empty() && !l.starts_with('#') {
+                    out.push(l.to_string());
+                }
+            }
+        }
+    }
+    if out.is_empty() {
+        out = REGISTER_CLASSES.iter().map(|s| s.to_string()).collect();
+    }
+    out
+}
+
 pub fn declared_canon() -> Vec<String> {
-    REGISTER_CLASSES.iter().map(|s| s.to_string()).collect()
+    register_list()
 }
 
 pub const PHI_NOTE_MAX: usize = 256;
@@ -2676,7 +2720,7 @@ pub fn doc_open_marker_line(line: &str) -> bool {
 }
 
 pub fn register_classes() -> Vec<String> {
-    REGISTER_CLASSES.iter().map(|s| s.to_string()).collect()
+    register_list()
 }
 
 pub fn home_of(path: &str) -> Option<&'static str> {
