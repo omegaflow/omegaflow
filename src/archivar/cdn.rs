@@ -193,7 +193,7 @@ fn registered_netlocs() -> &'static HashSet<String> {
     static SET: OnceLock<HashSet<String>> = OnceLock::new();
     SET.get_or_init(|| {
         let mut set = HashSet::new();
-        for path in ["phi/sources.φ", "phi/ephemerides.φ"] {
+        for path in ["phi/measurements.φ", "phi/ephemerides.φ"] {
             if let Ok(text) = std::fs::read_to_string(path) {
                 collect_registered_netlocs(&text, &mut set);
             }
@@ -330,7 +330,7 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
     }
     if !tag_is_admitted(tag) {
         eprintln!(
-            "upload {}: tag {} is not a licensed source in phi/sources.φ — a CDN release is only created for a registered source with an admitted licence (no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required stay off the CDN)",
+            "upload {}: tag {} is not a licensed source in phi/measurements.φ — a CDN release is only created for a registered source with an admitted licence (no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required stay off the CDN)",
             path, tag
         );
         return false;
@@ -743,7 +743,7 @@ mod tests {
 
     #[test]
     fn an_unjudged_terms_token_is_not_admitted() {
-        let Ok(text) = std::fs::read_to_string("phi/sources.φ") else {
+        let Ok(text) = std::fs::read_to_string("phi/measurements.φ") else {
             return;
         };
         let mut tokens: Vec<String> = text

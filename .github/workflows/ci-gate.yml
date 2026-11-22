@@ -206,7 +206,7 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
+    - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/measurements.φ
     - run: cargo run -q -p omegaflow-register --bin cdn_reconcile -- --fail
     - name: License vocabulary gate — every terms value lies in the closed SPDX set
       run: cargo run -q -p omegaflow-register --bin license_census -- --fail
@@ -222,7 +222,7 @@ jobs:
     - name: matrix — every workspace member runs, no --bin filter
       run: cargo run -q -p omegaflow-register --bin ci_matrix_scan
     - name: PII — no personal-data field in the register (NIST SP 800-122)
-      run: cargo run -q -p omegaflow-register --bin pii_scan -- --register phi/sources.φ
+      run: cargo run -q -p omegaflow-register --bin pii_scan -- --register phi/measurements.φ
     - uses: taiki-e/install-action@cargo-deny
     - name: dependencies — advisories, licences, sources
       run: cargo deny check advisories licenses sources

@@ -111,7 +111,7 @@ fn main() {
     println!("=== s2-weberin-probe - the council measurements for step 3 (body fold, sorted) ===");
     println!("epoch   : now, TDB {tdb:.3} s since J2000 = {date} (naif0012.tls, system_now_tdb)");
     println!(
-        "source  : phi/sources.φ via load_sources - {} registered body source(s) (ephemeris_binary/orbit_bin), {} registered station(s) (Frame::Surface)",
+        "source  : phi/measurements.φ via load_sources - {} registered body source(s) (ephemeris_binary/orbit_bin), {} registered station(s) (Frame::Surface)",
         body_sources.len(),
         stations.len()
     );
@@ -254,7 +254,7 @@ fn main() {
         .map(|p| p.radius_m);
     println!();
     println!(
-        "2. earth stacking (theta_max = asin(R_E/d_E), R_E from BodyProperties, stations from phi/sources.φ)"
+        "2. earth stacking (theta_max = asin(R_E/d_E), R_E from BodyProperties, stations from phi/measurements.φ)"
     );
     match (earth_d, earth_r) {
         (Some(d), Some(r)) if r.is_finite() && r > 0.0 && d > r => {

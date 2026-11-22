@@ -116,7 +116,7 @@ fn main() {
     let sources = work.join("sources");
     let register = match arg_value(&args, "--register") {
         Some(v) => v,
-        None => "phi/sources.φ".to_string(),
+        None => "phi/measurements.φ".to_string(),
     };
     let fail = args.iter().any(|a| a == "--fail");
     let write_flags = args.iter().any(|a| a == "--write-flags");

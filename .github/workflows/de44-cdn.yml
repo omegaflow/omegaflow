@@ -67,7 +67,7 @@ jobs:
       - name: Verify every compiled ssd.jpl.nasa.gov-de asset is manifested
         run: |
           set -euo pipefail
-          # phi/sources.φ does not carry this netloc: the register lists the
+          # phi/measurements.φ does not carry this netloc: the register lists the
           # handwritten ssd.jpl.nasa.gov release, not the -de line this
           # workflow writes. The expected set is therefore what the three
           # compile steps actually produced in this job — an asset that was

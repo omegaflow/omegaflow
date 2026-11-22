@@ -28,7 +28,7 @@ pub fn body_ellipsoid_of(body: &BodyEphemeris) -> Option<(f64, f64)> {
 }
 
 pub fn receiver_body_for_compiler(bin: &str) -> Option<String> {
-    for path in ["phi/sources.φ"] {
+    for path in ["phi/measurements.φ"] {
         let Ok(content) = std::fs::read_to_string(path) else {
             continue;
         };

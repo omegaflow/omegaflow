@@ -66,7 +66,7 @@ fn value_of(block: &[String], key: &str) -> Option<String> {
 }
 
 fn stage_report(root: &str, show: usize) {
-    let sources_path = format!("{root}/phi/sources.tsv");
+    let sources_path = format!("{root}/phi/measurements.tsv");
     let model_path = format!("{root}/phi/field_model.tsv");
     let instruments_path = format!("{root}/phi/instruments.φ");
     let sources_text = match fs::read_to_string(&sources_path) {
@@ -300,7 +300,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let sources_path = match arg_value(&args, "--sources") {
         Some(v) => v,
-        None => "phi/sources.tsv".to_string(),
+        None => "phi/measurements.tsv".to_string(),
     };
     let specs_path = match arg_value(&args, "--specs") {
         Some(v) => v,

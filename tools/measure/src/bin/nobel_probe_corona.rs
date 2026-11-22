@@ -536,7 +536,7 @@ fn main() {
     println!(
         "{:<14} | Block {} | {} | details entries frequency == 2695 | Sync t_sun = t − {:.3} s",
         "Radio-2695",
-        "parser-def nested-filter (phi/sources.φ) — series via harvest_radio",
+        "parser-def nested-filter (phi/measurements.φ) — series via harvest_radio",
         radio_url,
         GOES_SYNC_S
     );
@@ -897,7 +897,7 @@ fn main() {
         "region aperture: built in aia_compiler (--region cx,cy,r on --file, crpix-relative pixels) — no region-sum asset produced"
     );
     println!(
-        "region catalog: pending — no active-region/sunspot route in phi/sources.φ (measured 2026-09-26 via sgrep: active_region, sunspot, ar_catalog — absent)"
+        "region catalog: pending — no active-region/sunspot route in phi/measurements.φ (measured 2026-09-26 via sgrep: active_region, sunspot, ar_catalog — absent)"
     );
     println!(
         "sub-minute resolution: the 12-s AIA cadence is registered (CI-only corpus); the live SWPC endpoints serve 1-min — sub-minute stays pending"

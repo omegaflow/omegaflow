@@ -143,7 +143,7 @@ pub fn cdn_manifest_for(urls: impl Iterator<Item = String>) -> HashMap<String, S
 pub fn cdn_manifest_map() -> &'static HashMap<String, String> {
     static MANIFEST: OnceLock<HashMap<String, String>> = OnceLock::new();
     MANIFEST.get_or_init(|| {
-        if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+        if let Ok(content) = std::fs::read_to_string("phi/measurements.φ") {
             let sources = load_sources_from(&content);
             cdn_manifest_for(sources.iter().map(|s| s.url.clone()))
         } else {

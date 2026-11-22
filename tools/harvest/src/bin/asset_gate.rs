@@ -325,14 +325,14 @@ fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.is_empty() {
         return Err(
-            "usage: asset_gate <bin> [<bin> ...]  |  asset_gate --register [<phi/sources.φ>]"
+            "usage: asset_gate <bin> [<bin> ...]  |  asset_gate --register [<phi/measurements.φ>]"
                 .to_string(),
         );
     }
     if args[0] == "--register" {
         let register = args
             .get(1)
-            .ok_or_else(|| "usage: asset_gate --register <phi/sources.φ>".to_string())?;
+            .ok_or_else(|| "usage: asset_gate --register <phi/measurements.φ>".to_string())?;
         return coverage(register);
     }
     let mut failed = 0;

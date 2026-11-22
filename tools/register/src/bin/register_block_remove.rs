@@ -2,13 +2,13 @@ use std::env;
 use std::fs;
 use std::process::exit;
 
-const DEFAULT_REGISTER: &str = "phi/sources.φ";
+const DEFAULT_REGISTER: &str = "phi/measurements.φ";
 
 fn usage() {
     eprintln!("usage: register_block_remove <pattern> [--write] [--path <register>]");
     eprintln!("  drops every source block whose url or origin contains <pattern>");
     eprintln!(
-        "  phi/sources.φ is sources-only — a removed source leaves no tombstone (git carries it)"
+        "  phi/measurements.φ is sources-only — a removed source leaves no tombstone (git carries it)"
     );
     eprintln!("  without --write it reports only");
 }

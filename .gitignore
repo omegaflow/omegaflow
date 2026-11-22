@@ -48,7 +48,7 @@ fam_state_SOD_2024.txt
 # getrackte phi/*.φ-Datei ist ein Architektur-Akt (Operator/Council-Wort +
 # REGISTER_CLASSES-Eintrag im selben Commit). Alle Register liegen flach in phi/.
 phi/*
-!phi/sources.φ
+!phi/measurements.φ
 !phi/classes.txt
 !phi/documents.φ
 !phi/instruments.φ

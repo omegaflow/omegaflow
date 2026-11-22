@@ -38,7 +38,7 @@ struct Report {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let mut root: Option<String> = None;
-    let mut sources_rel = String::from("phi/sources.φ");
+    let mut sources_rel = String::from("phi/measurements.φ");
     let mut json_mode = false;
     let mut full = false;
     let mut limit = 30usize;
@@ -80,7 +80,7 @@ fn main() {
         None => match find_repo_root() {
             Some(root) => root,
             None => {
-                eprintln!("area_reconcile: phi/sources.φ absent here and in the parents");
+                eprintln!("area_reconcile: phi/measurements.φ absent here and in the parents");
                 std::process::exit(2);
             }
         },
@@ -129,7 +129,7 @@ fn usage() -> ! {
         "usage: area_reconcile [--root <dir>] [--sources <path>] [--json] [--full] [--limit <n>]"
     );
     eprintln!(
-        "       reconciles the four asset areas: CDN (omegaflow/sources), data/, cache/, phi/sources.φ"
+        "       reconciles the four asset areas: CDN (omegaflow/sources), data/, cache/, phi/measurements.φ"
     );
     eprintln!("       --json emits the whole reconciliation as one JSON object");
     eprintln!(
@@ -465,7 +465,7 @@ fn print_plain(report: &Report, full: bool, limit: usize) {
         report.cache_hosts, report.cache_files
     );
     println!(
-        "  4 phi/sources.φ — {} registered CDN url-lines, {} distinct assets",
+        "  4 phi/measurements.φ — {} registered CDN url-lines, {} distinct assets",
         report.registered.len(),
         report.registered_names.len()
     );

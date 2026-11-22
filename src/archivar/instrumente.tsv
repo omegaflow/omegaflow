@@ -1,6 +1,6 @@
 # Instrument inventory — per measurement class the instrument, its band, and the evidence.
 #
-# Why this file: the register (phi/sources.φ) carries force, unit and cadence per
+# Why this file: the register (phi/measurements.φ) carries force, unit and cadence per
 # field, but neither the instrument nor its band. Without that column the only
 # search axis left is the brand in the URL — exactly the mistake that cost the
 # Schumann route and the MISCHA blocks.

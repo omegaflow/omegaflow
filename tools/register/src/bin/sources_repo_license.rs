@@ -6,7 +6,7 @@ use std::process::exit;
 
 use omegaflow::archivar::naming::extract_netloc;
 
-const SOURCES: &str = "phi/sources.φ";
+const SOURCES: &str = "phi/measurements.φ";
 const DEFAULT_OUT_DIR: &str = "state/mountain/sources-repo-license/";
 
 fn blocks(content: &str) -> Vec<Vec<&str>> {
@@ -125,7 +125,7 @@ fn attribute(content: &str) -> Attribution {
 fn license_text(attribution: &Attribution) -> String {
     let mut out = String::new();
     out.push_str("# omegaflow/sources — per-source attribution\n");
-    out.push_str("# Generated from the `terms` directives in phi/sources.φ.\n");
+    out.push_str("# Generated from the `terms` directives in phi/measurements.φ.\n");
     out.push_str("# Each line: <source-url> | <terms-token> | <terms-url>\n");
     out.push_str(
         "# One line per source; a source repeated carries disagreeing terms — never smoothed.\n",
@@ -143,7 +143,7 @@ fn license_text(attribution: &Attribution) -> String {
 fn readme_text(attribution: &Attribution) -> String {
     format!(
         "# omegaflow/sources\n\n\
-         Flattened CDN assets referenced by `phi/sources.φ`; the register is `phi/sources.φ`.\n\
+         Flattened CDN assets referenced by `phi/measurements.φ`; the register is `phi/measurements.φ`.\n\
          Source attribution is generated into `LICENSE` from the `terms` lines.\n\
          Measured: {} netlocs, {} terms directives, {} blocks carry no terms.\n",
         attribution.netlocs, attribution.terms, attribution.no_terms

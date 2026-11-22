@@ -301,7 +301,7 @@ mod tests {
 
     #[test]
     fn kernel_riss_thermal_diffusion_advective() {
-        let register = include_str!("../../phi/sources.φ");
+        let register = include_str!("../../phi/measurements.φ");
         let live_kernels = |force: &str| -> Vec<&str> {
             register
                 .lines()

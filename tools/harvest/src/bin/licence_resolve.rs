@@ -434,7 +434,7 @@ fn parse_register(text: &str) -> Vec<Block> {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut register = "phi/sources.φ".to_string();
+    let mut register = "phi/measurements.φ".to_string();
     let mut out: Option<String> = None;
     let mut rules_path: Option<String> = None;
     let mut i = 1;

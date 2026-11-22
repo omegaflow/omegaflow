@@ -340,7 +340,7 @@ fn print_planck_report(
     ebv.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     println!("=== deredden_baseline_probe — the local intrinsic color field, dust subtracted ===");
     println!(
-        "dust map: Planck DL07 A_V (2D, nside 512) via phi/sources.φ, A_V = 3.1 E(B-V) — the column is the whole line of sight, not truncated at a parallax distance"
+        "dust map: Planck DL07 A_V (2D, nside 512) via phi/measurements.φ, A_V = 3.1 E(B-V) — the column is the whole line of sight, not truncated at a parallax distance"
     );
     println!("extinction law: E(BP-RP) = A_V/{WANG_GBP_FACTOR} — Wang & Chen 2019 (ApJ 877, 116)");
     let observed: Vec<f64> = report.members.iter().map(|m| m.observed_bp_rp).collect();

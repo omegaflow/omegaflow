@@ -54,8 +54,8 @@ jobs:
             awk -F'\t' -v f="$fam" '$2==f { print $1 }' /tmp/partition.tsv > family.txt
           fi
           awk '/^station /{s=tolower($2)} /^on earth /{la=$3; lo=$4} /^$/ {if (s != "" && la != "" && !seen[s]++) print s "\t" la "\t" lo; s=""; la=""; lo=""}' \
-            phi/sources.φ > /tmp/geo.tsv
-          awk 'NR==FNR { la[$1]=$2; lo[$1]=$3; next } { glat=la[$1]; glon=lo[$1]; if (glat=="" || glon=="") { print "al_network_proxy: " $1 " carries no geodetic coordinate in phi/sources.φ" > "/dev/stderr"; exit 1 } print $1 "\t" "auto" "\t" "/tmp/xyz/" $1 "_xyz_1m.bin" "\t" glat "\t" glon }' \
+            phi/measurements.φ > /tmp/geo.tsv
+          awk 'NR==FNR { la[$1]=$2; lo[$1]=$3; next } { glat=la[$1]; glon=lo[$1]; if (glat=="" || glon=="") { print "al_network_proxy: " $1 " carries no geodetic coordinate in phi/measurements.φ" > "/dev/stderr"; exit 1 } print $1 "\t" "auto" "\t" "/tmp/xyz/" $1 "_xyz_1m.bin" "\t" glat "\t" glon }' \
             /tmp/geo.tsv family.txt > family.manifest
           echo "family $fam → $(wc -l < family.txt) stations"
       - name: Fetch the station xyz bins from the CDN

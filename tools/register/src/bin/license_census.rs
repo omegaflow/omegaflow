@@ -3,7 +3,7 @@ use std::env;
 use std::path::Path;
 use std::process::exit;
 
-const SOURCES: &str = "phi/sources.φ";
+const SOURCES: &str = "phi/measurements.φ";
 const CENSUS: &str = "state/mountain/license-census.tsv";
 
 const TERMS: &[&str] = &[

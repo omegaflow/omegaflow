@@ -10,11 +10,11 @@
 # Die kuratierte Seite steht in src/archivar/werkzeuge.tsv:
 #   klasse  instrument  band  beleg
 # Die Zahlen (Zeilen, Kadenz, Lizenzen) werden bei jedem Lauf frisch aus
-# phi/sources.φ gezählt — sie stehen nicht in der Datei.
+# phi/measurements.φ gezählt — sie stehen nicht in der Datei.
 set -u
 export LC_ALL=C
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-PHI="${PHI:-$root/phi/sources.φ}"
+PHI="${PHI:-$root/phi/measurements.φ}"
 KURATIERT="${KURATIERT:-$root/src/archivar/instrumente.tsv}"
 muster="${1:-}"
 

@@ -8,7 +8,7 @@ concurrency:
 
 on:
   # workflow_dispatch only: the register line for obis.osha.gov/osha_cehd_si is not
-  # yet in phi/sources.φ (Mountain's admission). A push trigger would fire the
+  # yet in phi/measurements.φ (Mountain's admission). A push trigger would fire the
   # verify step against an unregistered asset and leave a red run; dispatch after
   # the register line lands (Mountain: "danach die OSHA url/format-Zeile und den Ausgang messen").
   workflow_dispatch:

@@ -119,7 +119,7 @@ fn main() {
     };
     let register = match args.get(1) {
         Some(a) => a.clone(),
-        None => "phi/sources.φ".to_string(),
+        None => "phi/measurements.φ".to_string(),
     };
     let xml = match std::fs::read_to_string(&essence) {
         Ok(t) => t,

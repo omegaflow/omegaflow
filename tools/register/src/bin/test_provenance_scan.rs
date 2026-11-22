@@ -184,7 +184,7 @@ fn main() {
     } else if args[0] == "--formats" {
         let register = match args.get(1) {
             Some(r) => r.clone(),
-            None => return eprintln!("usage: test_provenance_scan --formats <phi/sources.φ>"),
+            None => return eprintln!("usage: test_provenance_scan --formats <phi/measurements.φ>"),
         };
         return formats(&register);
     } else {

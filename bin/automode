@@ -11,7 +11,7 @@ export LC_ALL=C
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$root" || exit 2
 
-phi="phi/sources.φ"
+phi="phi/measurements.φ"
 [ -f "$phi" ] || { echo "automode: $phi fehlt" >&2; exit 2; }
 
 mode=""

@@ -58,7 +58,7 @@ jobs:
       - name: Harvest the ${{ matrix.asset }} and manifest it to the CDN
         run: |
           if [ "${{ matrix.sharded }}" = "true" ]; then
-            expected=$(grep -oE "releases/download/${{ matrix.netloc }}/${{ matrix.prefix }}(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin" phi/sources.φ \
+            expected=$(grep -oE "releases/download/${{ matrix.netloc }}/${{ matrix.prefix }}(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin" phi/measurements.φ \
               | xargs -r -n1 basename | sort -u)
             if [ -z "$expected" ]; then
               echo "no ${{ matrix.prefix }} shards registered — harvest runs (an unharvested volume is pending, not zero)"

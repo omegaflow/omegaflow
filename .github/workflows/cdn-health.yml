@@ -2,7 +2,7 @@ name: cdn-health
 
 # Port des lokalen cds_watchdog (systemd-Timer): prüft die zehn überwachten
 # CDN-Assets auf Erreichbarkeit (HTTP-Code) UND ob der Pfad im Register
-# phi/sources.φ steht. Die Auswahl ist die des lokalen cds_watchdog, NICHT
+# phi/measurements.φ steht. Die Auswahl ist die des lokalen cds_watchdog, NICHT
 # register-gebunden (das Register ist der Kanon; eine fehlende Zeile wird als
 # UNREGISTERED benannt, nie erfunden). Rot nur, wenn ein Asset nicht
 # erreichbar ist; eine fehlende Register-Zeile ist eine Meldung, kein Rot.
@@ -29,7 +29,7 @@ jobs:
         run: |
           set +e
           base="https://github.com/omegaflow/sources/releases/download"
-          register=phi/sources.φ
+          register=phi/measurements.φ
           fail=0
           check() {
             local asset="$1" release="$2" code reg

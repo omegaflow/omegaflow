@@ -150,7 +150,7 @@ fn stream_hash(token: &str, api: &str) -> Result<String, String> {
 
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().skip(1).collect();
-    let usage = "usage: asset_verify --register <phi/sources.φ> --max-bytes <n> [--format <name>] [--limit <n>] [--out <tsv>] [--append]";
+    let usage = "usage: asset_verify --register <phi/measurements.φ> --max-bytes <n> [--format <name>] [--limit <n>] [--out <tsv>] [--append]";
     let mut register = None;
     let mut only: Option<String> = None;
     let mut max_bytes: Option<usize> = None;

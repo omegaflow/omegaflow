@@ -7,7 +7,7 @@
 #
 # The measured open x-core series are four (survey §F:279-280): OpenAQ (206),
 # Open-Meteo (200), NASA POWER (206), OMNIWeb (200). The y-series of the matrix
-# classes are not yet registered in `phi/sources.φ` (handover
+# classes are not yet registered in `phi/measurements.φ` (handover
 # 2026-10-06-mycelium-folge239-241: "die y-Serien der Matrix-Klassen sind
 # unregistriert") — the run therefore takes both channel sources as dispatch
 # inputs, never as a fabricated default.

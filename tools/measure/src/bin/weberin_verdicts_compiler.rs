@@ -215,7 +215,7 @@ fn main() {
     bodies.sort_by(|a, b| a.0.cmp(&b.0));
     if bodies.is_empty() {
         println!(
-            "weberin-verdicts: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void"
+            "weberin-verdicts: phi/measurements.φ carries no ephemeris_binary/orbit_bin body — the body chain is void"
         );
         return;
     }

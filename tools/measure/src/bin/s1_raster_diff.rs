@@ -763,7 +763,7 @@ fn main() {
 
     println!("\n=== Surface-artifact pass ===");
     println!(
-        "layover/shadow: pending — no gridded DEM registered in phi/sources.φ (gebco_bathymetry_compiler is a point-query Gestalt witness, not a raster DEM)"
+        "layover/shadow: pending — no gridded DEM registered in phi/measurements.φ (gebco_bathymetry_compiler is a point-query Gestalt witness, not a raster DEM)"
     );
     println!(
         "incidence-out-of-band: absent — the S1-GRD COG carries backscatter amplitude only (assets vv/vh; no incidence band, sat:incidence_angle absent in STAC)"

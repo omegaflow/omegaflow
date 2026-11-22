@@ -3,7 +3,7 @@ name: gic-station-sweep
 # The sharpness surface (operator word 2026-10-15): how does the onset detector's
 # precision/recall move with (a) the number of stations in the AL network and
 # (b) the matching tolerance? The stations of a declared family are ordered by
-# |cgm_lat| (from phi/sources.φ) and grown cumulatively; at every count the
+# |cgm_lat| (from phi/measurements.φ) and grown cumulatively; at every count the
 # lower-envelope + detector runs with the surrogate null. The detector prints the
 # compare rows for 5/15/30 min, so one run per count yields the full tolerance row.
 # The 420 MB xyz bins are fetched once, the envelopes are built on the same bins.
@@ -90,13 +90,13 @@ jobs:
             awk -F'\t' -v f="$fam" '$2==f { print $1 }' /tmp/part.tsv > /tmp/fam.txt
           fi
           awk '/^station /{s=tolower($2)} /^cgm_lat /{if (s != "") { print s "\t" $2; s="" }}' \
-            phi/sources.φ > /tmp/lat.tsv
+            phi/measurements.φ > /tmp/lat.tsv
           awk '/^station /{s=tolower($2)} /^on earth /{la=$3; lo=$4} /^$/ {if (s != "" && la != "" && !seen[s]++) print s "\t" la "\t" lo; s=""; la=""; lo=""}' \
-            phi/sources.φ > /tmp/geo.tsv
+            phi/measurements.φ > /tmp/geo.tsv
           awk 'NR==FNR { n[$1]=$2; next } { lat=n[$1]; if (lat=="") lat=-999; print $1 "\t" lat }' \
             /tmp/lat.tsv /tmp/fam.txt | sort -t$'\t' -k2,2gr > /tmp/order.tsv
           cut -f1 /tmp/order.tsv > /tmp/order.txt
-          awk 'NR==FNR { la[$1]=$2; lo[$1]=$3; next } { glat=la[$1]; glon=lo[$1]; if (glat=="" || glon=="") { print "al_network_proxy: " $1 " carries no geodetic coordinate in phi/sources.φ" > "/dev/stderr"; exit 1 } print $1 "\t" "auto" "\t" "/tmp/xyz/" $1 "_xyz_1m.bin" "\t" glat "\t" glon }' \
+          awk 'NR==FNR { la[$1]=$2; lo[$1]=$3; next } { glat=la[$1]; glon=lo[$1]; if (glat=="" || glon=="") { print "al_network_proxy: " $1 " carries no geodetic coordinate in phi/measurements.φ" > "/dev/stderr"; exit 1 } print $1 "\t" "auto" "\t" "/tmp/xyz/" $1 "_xyz_1m.bin" "\t" glat "\t" glon }' \
             /tmp/geo.tsv /tmp/order.txt > /tmp/order.manifest
           echo "family $fam ordered by |cgm_lat| (station	lat):"
           cat /tmp/order.tsv

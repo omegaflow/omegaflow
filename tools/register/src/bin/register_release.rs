@@ -273,7 +273,7 @@ fn main() {
         .find(|a| !a.starts_with("--"))
         .map(PathBuf::from);
 
-    let work = work_root().join("phi/sources.tsv");
+    let work = work_root().join("phi/measurements.tsv");
     let text = match std::fs::read_to_string(&work) {
         Ok(t) => t,
         Err(e) => {
@@ -291,21 +291,21 @@ fn main() {
             );
             std::process::exit(2);
         }
-        code_root().join("phi/sources.\u{03c6}")
+        code_root().join("phi/measurements.\u{03c6}")
     } else {
         match explicit {
             Some(p) => p,
-            None => work_root().join("build/sources.\u{03c6}"),
+            None => work_root().join("build/measurements.\u{03c6}"),
         }
     };
 
     if check {
-        let published = code_root().join("phi/sources.\u{03c6}");
+        let published = code_root().join("phi/measurements.\u{03c6}");
         match std::fs::read_to_string(&published) {
             Ok(p) => report(&body, &p, "published"),
             Err(_) => println!("register_release --check: {} absent", published.display()),
         }
-        let previous = work_root().join("build/sources.\u{03c6}");
+        let previous = work_root().join("build/measurements.\u{03c6}");
         if let Ok(p) = std::fs::read_to_string(&previous) {
             report(&body, &p, "build");
         }

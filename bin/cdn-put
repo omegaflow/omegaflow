@@ -9,7 +9,7 @@
 # usage: bin/cdn-put <tag> <datei>...
 #        bin/cdn-put --check <tag> <datei>...
 #
-# Geprüft wird der DATENSATZ, nicht der Tag: der Block in phi/sources.φ, dessen
+# Geprüft wird der DATENSATZ, nicht der Tag: der Block in phi/measurements.φ, dessen
 # `url …/download/<tag>/<datei>` genau dieses Asset nennt, trägt die Lizenz.
 # Ein Tag ist nur der Ablageort (ein GitHub-Release je Host) — er sagt nichts
 # über die Lizenz. Deshalb gilt:
@@ -26,7 +26,7 @@ while [ -h "$self" ]; do
     case "$self" in /*) ;; *) self="$d/$self" ;; esac
 done
 root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
-PHI="${PHI:-$root/phi/sources.φ}"
+PHI="${PHI:-$root/phi/measurements.φ}"
 LICENCES="${LICENCES:-$root/src/archivar/licences.tsv}"
 CDN_REPO="${CDN_REPO:-omegaflow/sources}"
 

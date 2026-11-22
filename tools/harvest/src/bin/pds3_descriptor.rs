@@ -380,7 +380,7 @@ fn resolve_fmt(
 }
 
 fn run_register(args: &[String]) -> Result<(), String> {
-    let usage = "usage: pds3_descriptor --register <phi/sources.φ> --format <name> [--limit <n>] [--out <tsv>]";
+    let usage = "usage: pds3_descriptor --register <phi/measurements.φ> --format <name> [--limit <n>] [--out <tsv>]";
     let mut register = None;
     let mut format = None;
     let mut limit = usize::MAX;

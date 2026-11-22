@@ -34,7 +34,7 @@ const GEOMETRY_HINTS: [&str; 15] = [
 ];
 
 const REGISTERS: [&str; 4] = [
-    "phi/sources.φ",
+    "phi/measurements.φ",
     "phi/pipeline/ledger.φ",
     "data/library.tsv",
     "data/bands.tsv",

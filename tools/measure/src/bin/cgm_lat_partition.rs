@@ -276,8 +276,8 @@ fn main() {
         return;
     }
 
-    let src = format!("{}/phi/sources.φ", repo_root());
-    let text = fs::read_to_string(&src).expect("phi/sources.φ reads");
+    let src = format!("{}/phi/measurements.φ", repo_root());
+    let text = fs::read_to_string(&src).expect("phi/measurements.φ reads");
     let stations = parse_stations(&text);
     println!(
         "cgm_lat_partition: {} GIN stations · epoch {EPOCH_YEAR} · height {HEIGHT_KM} km · model cgm",

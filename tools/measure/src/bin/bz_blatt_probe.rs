@@ -928,7 +928,7 @@ fn main() {
         "Multiple-comparison correction over the pair set: Benjamini-Hochberg FDR over the tested directed pair set (the family), applied in the row above."
     );
     println!(
-        "GIC itself (electric): the FMI Mantsala asset (fmi_gic.bin, phi/sources.φ:8584, parsed as MAGIC_GIC/COMP_GIC_A in src/archivar/geo.rs:7,58) is paired by no probe — the Blatt measures dB/dt, the inductive driver, not the grid current."
+        "GIC itself (electric): the FMI Mantsala asset (fmi_gic.bin, phi/measurements.φ:8584, parsed as MAGIC_GIC/COMP_GIC_A in src/archivar/geo.rs:7,58) is paired by no probe — the Blatt measures dB/dt, the inductive driver, not the grid current."
     );
     println!(
         "GIC pairing: the FMI MAN (Mantsala) GIC site is paired by the co-located NUR (Nurmijarvi, 60.51°N 24.66°E, ~32 km) ground dB/dt — run this probe with --station NUR."

@@ -51,7 +51,7 @@ jobs:
     - if: matrix.shard == 1
       run: cargo test --release --features browser_relay --doc
     - if: matrix.shard == 1
-      run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
+      run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/measurements.φ
     - if: matrix.shard == 1
       run: cargo run -q -p omegaflow-register --release --bin cdn_reconcile -- --fail
     - if: matrix.shard == 1

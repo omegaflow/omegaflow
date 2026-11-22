@@ -15,7 +15,7 @@ list="$(mktemp "${TMPDIR:-/tmp}/cdnlist.XXXXXX")" || exit 2
 python3 - "$list" <<'PY'
 import sys, urllib.parse
 out = open(sys.argv[1], "w", encoding="utf-8")
-lines = open("phi/sources.φ", encoding="utf-8").read().split("\n")
+lines = open("phi/measurements.φ", encoding="utf-8").read().split("\n")
 cur = []
 blocks = []
 for l in lines:

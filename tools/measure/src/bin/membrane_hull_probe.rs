@@ -136,7 +136,7 @@ fn usage() {
         "  the three ingress paths are driven against one resting presence hull — rho_star = C_LIGHT*(now - star_epoch_min) + pad, the center read from the resting presence slot (enclosure_presences of an empty presence map)"
     );
     println!(
-        "  defaults: eph-dir data/ssd.jpl.nasa.gov, stars data/ssd.jpl.nasa.gov/dr3_stars.bin, dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin, sources phi/sources.φ, pad 1.0, now = the embedded-LSK system TDB (a missing input leaves that line absent — never fabricated)"
+        "  defaults: eph-dir data/ssd.jpl.nasa.gov, stars data/ssd.jpl.nasa.gov/dr3_stars.bin, dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin, sources phi/measurements.φ, pad 1.0, now = the embedded-LSK system TDB (a missing input leaves that line absent — never fabricated)"
     );
 }
 
@@ -160,7 +160,7 @@ fn main() {
     };
     let sources_path = match arg_value(&args, "--sources") {
         Some(p) => p,
-        None => "phi/sources.φ".to_string(),
+        None => "phi/measurements.φ".to_string(),
     };
     let pad = match arg_f64(&args, "--pad") {
         Some(p) if p.is_finite() => p,

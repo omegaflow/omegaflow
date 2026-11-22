@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 
-const DEFAULT_REGISTER: &str = "phi/sources.φ";
+const DEFAULT_REGISTER: &str = "phi/measurements.φ";
 const HAPI_URL_PREFIX: &str = "url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=";
 
 fn main() {

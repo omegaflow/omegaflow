@@ -1415,7 +1415,7 @@ fn witness_kind_token(token: &str) -> Option<WitnessKind> {
 }
 
 fn load_witnesses() -> Vec<WitnessRecord> {
-    match std::fs::read_to_string("phi/sources.φ") {
+    match std::fs::read_to_string("phi/measurements.φ") {
         Ok(content) => parse_witnesses(&content),
         Err(_) => Vec::new(),
     }
@@ -1962,7 +1962,7 @@ fn direction_angles(pairs: &[(f64, f64)]) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
 }
 
 fn run_direction_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
-    println!("=== direction query — circular form over phi/sources.φ ===");
+    println!("=== direction query — circular form over phi/measurements.φ ===");
     let Some(w) = find_witness(witnesses, name) else {
         println!("DIRECTION: pending — '{name}' stands in no witness block");
         return 0;
@@ -2215,7 +2215,7 @@ fn compare_spectral_epochs(aligned: &[(f64, f64, f64)]) -> Option<SpectralEpochC
 }
 
 fn run_spectral_query(name_arg: &str, witnesses: &[WitnessRecord]) -> i32 {
-    println!("=== spectral / substance / gestalt form over phi/sources.φ ===");
+    println!("=== spectral / substance / gestalt form over phi/measurements.φ ===");
     let names = spectral_epoch_names(name_arg);
     let Some(&first) = names.first() else {
         println!("SPECTRAL: pending — no witness named");
@@ -4311,7 +4311,7 @@ fn run_parity_witness(
     driver_name: Option<&str>,
     anchor: &QueryAnchor,
 ) -> i32 {
-    println!("=== parity bridge — witness register over phi/sources.φ ===");
+    println!("=== parity bridge — witness register over phi/measurements.φ ===");
     let Some(w) = find_witness(witnesses, name) else {
         println!("PARITY-WITNESS: pending — '{name}' stands in no witness block");
         return 0;
@@ -6320,7 +6320,7 @@ fn main() {
         ));
     }
     if sources.is_empty() {
-        eprintln!("phi/sources.φ carries no block — the register stays unread");
+        eprintln!("phi/measurements.φ carries no block — the register stays unread");
         exit(2);
     }
 

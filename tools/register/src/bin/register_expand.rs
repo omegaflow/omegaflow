@@ -291,7 +291,7 @@ fn main() {
     if mode == "compact" {
         let sources = match arg_value(&args, "--sources") {
             Some(v) => v,
-            None => "phi/sources.tsv".to_string(),
+            None => "phi/measurements.tsv".to_string(),
         };
         let select = match arg_value(&args, "--select") {
             Some(v) => v,

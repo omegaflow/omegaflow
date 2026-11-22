@@ -94,7 +94,7 @@ fn push_field(cur_extracts: &mut Vec<Extract>, fc: FieldConfig) {
 }
 
 pub fn load_sources() -> Vec<SourceConfig> {
-    let content = match std::fs::read_to_string("phi/sources.φ") {
+    let content = match std::fs::read_to_string("phi/measurements.φ") {
         Ok(c) => c,
         Err(_) => return Vec::new(),
     };
@@ -2979,11 +2979,11 @@ impl ChannelCouplingLayer {
 }
 
 pub fn load_channel_coupling_layer() -> ChannelCouplingLayer {
-    match std::fs::read_to_string("phi/sources.φ") {
+    match std::fs::read_to_string("phi/measurements.φ") {
         Ok(content) => ChannelCouplingLayer::from_sources(&parse_sources(&content), &content),
         Err(reason) => {
             eprintln!(
-                "channel couplings absent: phi/sources.φ not read ({reason}) — the layer is empty, no coupling applied"
+                "channel couplings absent: phi/measurements.φ not read ({reason}) — the layer is empty, no coupling applied"
             );
             ChannelCouplingLayer::from_sources(&[], "")
         }
@@ -4720,7 +4720,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn every_cdn_source_carries_its_origin_and_producer_or_is_a_reference() {
-        let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
+        let content = std::fs::read_to_string("phi/measurements.φ").expect("phi/measurements.φ reads");
         let mut missing: Vec<String> = Vec::new();
         let mut url = String::new();
         let mut cdn = false;
@@ -4763,7 +4763,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         use crate::mathematikerin::channel::{
             FIXED_CHANNELS, Medium, PdeType, TransportOp, mechanism_of, unit_token,
         };
-        let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
+        let content = std::fs::read_to_string("phi/measurements.φ").expect("phi/measurements.φ reads");
         let mut declared: Vec<(
             crate::mathematikerin::channel::Conserved,
             TransportOp,

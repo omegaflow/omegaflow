@@ -33,7 +33,7 @@ while IFS= read -r f; do
 done < "$tmp"
 
 # --- Gate 1 — nur die Register tragen `terms `-Zeilen -----------------------
-registries="phi/sources.φ phi/documents.φ research/sources/sources.tsv"
+registries="phi/measurements.φ phi/documents.φ research/sources/sources.tsv"
 while IFS= read -r f; do
     [ -f "$f" ] || continue
     case " $registries " in *" $f "*) continue ;; esac

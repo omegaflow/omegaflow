@@ -48,7 +48,7 @@ jobs:
               --eph-dir data/ssd.jpl.nasa.gov \
               --stars data/ssd.jpl.nasa.gov/dr3_stars.bin \
               --dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin \
-              --sources phi/sources.φ
+              --sources phi/measurements.φ
           } > membrane-hull-probe.txt
       - uses: actions/upload-artifact@v4
         if: always()

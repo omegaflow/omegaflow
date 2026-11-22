@@ -133,10 +133,10 @@ mod tests {
 
     #[test]
     fn a_repo_literal_in_a_write_call_counts() {
-        let text = "    std::fs::write(\"phi/sources.φ\", out).ok();\n";
+        let text = "    std::fs::write(\"phi/measurements.φ\", out).ok();\n";
         let hits = scan_text(text);
         assert_eq!(hits.len(), 1);
-        assert_eq!(hits[0].literal, "phi/sources.φ");
+        assert_eq!(hits[0].literal, "phi/measurements.φ");
     }
 
     #[test]
@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     fn a_message_that_names_a_path_is_not_a_write() {
-        let text = "    eprintln!(\"write phi/sources.φ: the register does not remember\");\n";
+        let text = "    eprintln!(\"write phi/measurements.φ: the register does not remember\");\n";
         assert!(scan_text(text).is_empty());
     }
 }

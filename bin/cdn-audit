@@ -1,6 +1,6 @@
 #!/bin/sh
 # Names every workflow line that publishes to the CDN around the licence check.
-# The only gate is bin/cdn-put -> phi/sources.φ + src/archivar/licences.tsv.
+# The only gate is bin/cdn-put -> phi/measurements.φ + src/archivar/licences.tsv.
 # `gh release create` only opens an empty release and is not a publication;
 # `--repo omegaflow/omegaflow` publishes the tool build, not a source asset.
 set -u

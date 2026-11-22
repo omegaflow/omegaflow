@@ -465,7 +465,7 @@ fn main() {
             }
         }
     }
-    if staged.contains(&"phi/sources.φ") {
+    if staged.contains(&"phi/measurements.φ") {
         match std::fs::read_to_string("docs/specs/force-unit-baseline.txt") {
             Ok(baseline) => {
                 let known: std::collections::HashSet<(String, String)> = baseline
@@ -478,14 +478,14 @@ fn main() {
                     })
                     .collect();
                 let out = Command::new("git")
-                    .args(["show", ":phi/sources.φ"])
+                    .args(["show", ":phi/measurements.φ"])
                     .output()
                     .expect("git");
                 let register = String::from_utf8_lossy(&out.stdout).to_string();
                 for issue in register_field_unit_issues(&register) {
                     if !known.contains(&(issue.force.clone(), issue.unit.clone())) {
                         eprintln!(
-                            "commit_check: phi/sources.φ:{}: force-unit-ratchet - the pair \"{}\" / \"{}\" is outside the registry and not in docs/specs/force-unit-baseline.txt",
+                            "commit_check: phi/measurements.φ:{}: force-unit-ratchet - the pair \"{}\" / \"{}\" is outside the registry and not in docs/specs/force-unit-baseline.txt",
                             issue.line, issue.force, issue.unit
                         );
                         fail = true;
@@ -494,7 +494,7 @@ fn main() {
             }
             Err(_) => {
                 eprintln!(
-                    "commit_check: docs/specs/force-unit-baseline.txt absent - the force-unit ratchet did not run for phi/sources.φ"
+                    "commit_check: docs/specs/force-unit-baseline.txt absent - the force-unit ratchet did not run for phi/measurements.φ"
                 );
                 fail = true;
             }
@@ -558,9 +558,9 @@ fn main() {
                 fail = true;
             }
         }
-        if path == "phi/sources.φ" {
+        if path == "phi/measurements.φ" {
             for (line, message) in unbacked_mirror_violations(&added) {
-                eprintln!("commit_check: phi/sources.φ:{line}: unbacked_mirror - {message}");
+                eprintln!("commit_check: phi/measurements.φ:{line}: unbacked_mirror - {message}");
                 fail = true;
             }
             let content = match std::fs::read_to_string(path) {
@@ -569,7 +569,7 @@ fn main() {
             };
             let file_lines: Vec<&str> = content.lines().collect();
             for (line, message) in ingest_terms_absent_violations(&file_lines) {
-                eprintln!("commit_check: phi/sources.φ:{line}: ingest-terms-absent - {message}");
+                eprintln!("commit_check: phi/measurements.φ:{line}: ingest-terms-absent - {message}");
                 fail = true;
             }
         }

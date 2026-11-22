@@ -8382,7 +8382,7 @@ fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
 
 #[test]
 fn test_phi_register_carries_measurements_not_ephemerides() {
-    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let content = std::fs::read_to_string("phi/measurements.φ").unwrap();
     let sources = super::parse_sources(&content);
     let leaks: Vec<&str> = sources
         .iter()
@@ -8398,7 +8398,7 @@ fn test_phi_register_carries_measurements_not_ephemerides() {
 
 #[test]
 fn omni2_daily_bin_carries_its_own_aggregation_names() {
-    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let content = std::fs::read_to_string("phi/measurements.φ").unwrap();
     let sources = super::parse_sources(&content);
     let daily = sources
         .iter()
@@ -8430,7 +8430,7 @@ fn omni2_daily_bin_carries_its_own_aggregation_names() {
 
 #[test]
 fn test_gracefo_l1b_tar_gz_yaml_source_parses() {
-    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let content = std::fs::read_to_string("phi/measurements.φ").unwrap();
     let sources = super::parse_sources(&content);
     let src = sources
         .iter()
@@ -11544,7 +11544,7 @@ fn iss_lis_register_field_matches_component_name() {
     let src = srcs
         .iter()
         .find(|s| s.format == "iss_lis")
-        .expect("phi/sources.φ registers the iss_lis source");
+        .expect("phi/measurements.φ registers the iss_lis source");
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the iss_lis block carries a field line");
     };
@@ -11611,7 +11611,7 @@ fn gosat_tanso3_register_field_matches_component_name() {
     let src = srcs
         .iter()
         .find(|s| s.format == "gosat_tanso3")
-        .expect("phi/sources.φ registers the gosat_tanso3 source");
+        .expect("phi/measurements.φ registers the gosat_tanso3 source");
     let names: Vec<&str> = src
         .extracts
         .iter()
@@ -11794,7 +11794,7 @@ fn trmm_lis_register_field_matches_component_name() {
     let src = srcs
         .iter()
         .find(|s| s.format == "trmm_lis")
-        .expect("phi/sources.φ registers the trmm_lis source");
+        .expect("phi/measurements.φ registers the trmm_lis source");
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the trmm_lis block carries a field line");
     };
@@ -11867,7 +11867,7 @@ fn glm_l2_register_field_matches_component_name() {
     let src = srcs
         .iter()
         .find(|s| s.format == "glm_l2")
-        .expect("phi/sources.φ registers the glm_l2 source");
+        .expect("phi/measurements.φ registers the glm_l2 source");
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the glm_l2 block carries a field line");
     };
@@ -11881,7 +11881,7 @@ fn glm_l1b_register_field_matches_component_name() {
     let src = srcs
         .iter()
         .find(|s| s.format == "glm_l1b")
-        .expect("phi/sources.φ registers the glm_l1b source");
+        .expect("phi/measurements.φ registers the glm_l1b source");
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the glm_l1b block carries a field line");
     };
@@ -12012,7 +12012,7 @@ fn noaa_nodd_register_field_matches_component_name() {
     let names = |format: &str| -> Vec<String> {
         let src = match srcs.iter().find(|s| s.format == format) {
             Some(s) => s,
-            None => panic!("phi/sources.φ registers {format}"),
+            None => panic!("phi/measurements.φ registers {format}"),
         };
         src.extracts
             .iter()
@@ -12183,7 +12183,7 @@ fn galileo_odr_register_field_matches_component_name() {
     let src = srcs
         .iter()
         .find(|s| s.format == "galileo_odr")
-        .expect("phi/sources.φ registers the galileo_odr source");
+        .expect("phi/measurements.φ registers the galileo_odr source");
     let names: Vec<&str> = src
         .extracts
         .iter()
@@ -12778,7 +12778,7 @@ fn voyager_saturn_register_field_names_match_components() {
     let src = srcs
         .iter()
         .find(|s| s.format == "voyager_saturn")
-        .expect("phi/sources.φ registers the voyager_saturn source");
+        .expect("phi/measurements.φ registers the voyager_saturn source");
     let names: Vec<&str> = src
         .extracts
         .iter()
@@ -12971,7 +12971,7 @@ fn drs_fits_register_field_names_match_components() {
     let src = srcs
         .iter()
         .find(|s| s.format == "drs_fits")
-        .expect("phi/sources.φ registers the drs_fits source");
+        .expect("phi/measurements.φ registers the drs_fits source");
     let names: Vec<&str> = src
         .extracts
         .iter()
@@ -13127,7 +13127,7 @@ fn odf_register_field_names_match_components() {
     ] {
         let src = match srcs.iter().find(|s| s.format == format) {
             Some(s) => s,
-            None => panic!("phi/sources.φ registers the {format} source"),
+            None => panic!("phi/measurements.φ registers the {format} source"),
         };
         let names: Vec<&str> = src
             .extracts
@@ -13211,7 +13211,7 @@ fn odr_register_field_names_match_components() {
     for (format, names) in expected {
         let src = match srcs.iter().find(|s| s.format == *format) {
             Some(s) => s,
-            None => panic!("phi/sources.φ registers the {format} source"),
+            None => panic!("phi/measurements.φ registers the {format} source"),
         };
         let field_names: Vec<&str> = src
             .extracts
@@ -13702,7 +13702,7 @@ fn test_extract_csv_zip_rows_per_row_position() {
 
 #[test]
 fn test_epa_aqs_source_registered() {
-    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let content = std::fs::read_to_string("phi/measurements.φ").unwrap();
     let sources = super::parse_sources(&content);
     let src = sources
         .iter()
@@ -14367,7 +14367,7 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
 
 #[test]
 fn test_chandrayaan_minirf_pds3_img_fields_declared() {
-    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let content = std::fs::read_to_string("phi/measurements.φ").unwrap();
     let sources = super::parse_sources(&content);
     let src = sources
         .iter()
@@ -14530,7 +14530,7 @@ fn test_waldo_ab_refuses_a_short_or_truncated_table() {
 
 #[test]
 fn every_timestamp_in_the_register_parses_as_rfc3339() {
-    let text = include_str!("../../phi/sources.φ");
+    let text = include_str!("../../phi/measurements.φ");
     let bytes = text.as_bytes();
     let mut checked = 0usize;
     let mut i = 0usize;

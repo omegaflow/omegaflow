@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 
-const DEFAULT_REGISTER: &str = "phi/sources.φ";
+const DEFAULT_REGISTER: &str = "phi/measurements.φ";
 
 const NO_CADENCE: u64 = 1 << 25;
 

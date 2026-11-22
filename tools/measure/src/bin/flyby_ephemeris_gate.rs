@@ -10,7 +10,7 @@ const RENEWED_SHA256: &str = "eee376effcb4def668a61d47ab7ea2e6f7b0b7cc3f884ea663
 const PERIGEE_UTC: &str = "2026-09-28T11:45:12Z";
 
 const SEALED_ASSET: &str = "ephemeris_juice_official.bin";
-const DEFAULT_SOURCES: &str = "phi/sources.φ";
+const DEFAULT_SOURCES: &str = "phi/measurements.φ";
 
 const DAY: f64 = 86400.0;
 const HOUR: f64 = 3600.0;

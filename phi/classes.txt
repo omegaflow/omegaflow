@@ -1,4 +1,4 @@
 # generated from bindend/orte.md — do not edit
-phi/sources.φ
+phi/measurements.φ
 phi/instruments.φ
 phi/documents.φ

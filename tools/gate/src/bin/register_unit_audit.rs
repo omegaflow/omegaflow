@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let mut path = "phi/sources.φ".to_string();
+    let mut path = "phi/measurements.φ".to_string();
     let mut pairs = false;
     let mut lines = false;
     let mut i = 1;

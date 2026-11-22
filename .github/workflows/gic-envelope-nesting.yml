@@ -54,7 +54,7 @@ jobs:
             awk -F'\t' -v f="$fam" '$2==f { print $1 }' /tmp/part.tsv > /tmp/fam.txt
           fi
           awk '/^station /{s=tolower($2)} /^cgm_lat /{if (s != "") { print s "\t" $2; s="" }}' \
-            phi/sources.φ > /tmp/lat.tsv
+            phi/measurements.φ > /tmp/lat.tsv
           awk 'NR==FNR { n[$1]=$2; next } { lat=n[$1]; if (lat=="") lat=-999; print $1 "\t" lat }' \
             /tmp/lat.tsv /tmp/fam.txt | sort -t$'\t' -k2,2gr > /tmp/order.tsv
           cut -f1 /tmp/order.tsv > /tmp/order.txt

@@ -3,7 +3,7 @@ use std::collections::BTreeSet;
 use std::fs;
 use std::process::Command;
 
-const PHI: &str = "phi/sources.φ";
+const PHI: &str = "phi/measurements.φ";
 
 fn work_root() -> std::path::PathBuf {
     match std::env::var_os("OMEGAFLOW_WORK") {

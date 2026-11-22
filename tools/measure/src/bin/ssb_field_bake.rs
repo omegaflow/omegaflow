@@ -47,7 +47,7 @@ fn usage() {
         "  the enclosure query at the resting presence (the SSB origin) over the measured hull — the records are baked as the field asset (26*f64 little-endian per record)"
     );
     println!(
-        "  defaults: sources phi/sources.φ, stars data/ssd.jpl.nasa.gov/dr3_stars.bin, dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin, out out/ssb_field.bin, now = embedded-LSK system TDB"
+        "  defaults: sources phi/measurements.φ, stars data/ssd.jpl.nasa.gov/dr3_stars.bin, dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin, out out/ssb_field.bin, now = embedded-LSK system TDB"
     );
 }
 
@@ -59,7 +59,7 @@ fn main() {
     }
     let sources_path = match arg_value(&args, "--sources") {
         Some(p) => p,
-        None => "phi/sources.φ".to_string(),
+        None => "phi/measurements.φ".to_string(),
     };
     let stars_path = match arg_value(&args, "--stars") {
         Some(p) => p,

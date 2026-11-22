@@ -2,7 +2,7 @@ use std::env;
 use std::fs;
 use std::process::exit;
 
-const DEFAULT_REGISTER: &str = "phi/sources.φ";
+const DEFAULT_REGISTER: &str = "phi/measurements.φ";
 
 fn usage() {
     eprintln!("usage: register_ttl_apply <rules.tsv> [--write] [--path <register>]");

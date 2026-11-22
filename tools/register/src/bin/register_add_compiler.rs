@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 
-const DEFAULT_REGISTER: &str = "phi/sources.φ";
+const DEFAULT_REGISTER: &str = "phi/measurements.φ";
 const PDS3_FORMAT: &str = "format pds3_fixed_width";
 const PDS3_COMPILER: &str = "compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs";
 

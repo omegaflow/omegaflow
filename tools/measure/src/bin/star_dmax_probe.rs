@@ -20,7 +20,7 @@ fn arg_parse(v: &str) -> Option<f64> {
 
 fn main() {
     let mut bin_path = String::from("sources/ssd.jpl.nasa.gov/dr3_stars.bin");
-    let mut sources_path = String::from("phi/sources.φ");
+    let mut sources_path = String::from("phi/measurements.φ");
     let mut floors: Vec<Floor> = Vec::new();
     let mut force_ref = 1.0f64;
     let mut expose_offsets: Vec<i32> = vec![0];

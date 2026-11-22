@@ -104,7 +104,7 @@ fn main() {
                 std::process::exit(2);
             }
         },
-        None => "phi/sources.φ".to_string(),
+        None => "phi/measurements.φ".to_string(),
     };
     let Ok(text) = fs::read_to_string(Path::new(&register)) else {
         eprintln!("date_and_placeholder_scan: {register} is unreadable");

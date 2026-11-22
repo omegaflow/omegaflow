@@ -263,12 +263,12 @@ fn main() {
     bodies.sort_by(|a, b| a.0.cmp(&b.0));
     if bodies.is_empty() {
         println!(
-            "weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void"
+            "weberin: phi/measurements.φ carries no ephemeris_binary/orbit_bin body — the body chain is void"
         );
         return;
     }
     println!(
-        "dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop/de-vs-epm/inpop-vs-epm lines) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map",
+        "dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop/de-vs-epm/inpop-vs-epm lines) | {} registered body worldline(s) from phi/measurements.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map",
         recs.len(),
         comets.len(),
         bodies.len(),

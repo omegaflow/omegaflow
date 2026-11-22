@@ -883,10 +883,10 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
     let mut lines: Vec<String> = vec![
         match &dash {
             Some(d) => format!(
-                "# recheck-live {}mechanical re-verification sweep over phi/sources.φ (live sources)",
+                "# recheck-live {}mechanical re-verification sweep over phi/measurements.φ (live sources)",
                 d
             ),
-            None => "# recheck-live mechanical re-verification sweep over phi/sources.φ (live sources)"
+            None => "# recheck-live mechanical re-verification sweep over phi/measurements.φ (live sources)"
                 .into(),
         },
         "# Classes: key-void (key marker absent in the environment) | drift-void (API drift — curation duty) | format-void (body format the sweep does not read — parser gap) | quiet-void (empty = truth) | refused (host answers 4xx/5xx — access state → phi/blocked_sources.φ ip-blocked/pending) | broken (fetch void — host unreachable, dead candidate)".into(),
@@ -1859,7 +1859,7 @@ fn register_maps() -> &'static RegisterMaps {
         let mut field_columns: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
         let mut quantities: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
         let mut unmodelled: usize = 0;
-        for line in include_str!("../../phi/sources.φ").lines() {
+        for line in include_str!("../../phi/measurements.φ").lines() {
             let p: Vec<&str> = register_tokens(line);
             let Some(head) = p.first().copied() else {
                 continue;
@@ -3154,10 +3154,10 @@ pub(crate) fn ci_body_verdict(src: &SourceConfig, raw: &str) -> CiBodyVerdict {
 pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
     let env = load_env();
     let sources = if dir == "phi" {
-        match std::fs::read_to_string("phi/sources.φ") {
+        match std::fs::read_to_string("phi/measurements.φ") {
             Ok(content) => load_sources_from(&content),
             Err(e) => {
-                eprintln!("ci-mode: read phi/sources.φ: {}", e);
+                eprintln!("ci-mode: read phi/measurements.φ: {}", e);
                 return 1;
             }
         }
@@ -3935,7 +3935,7 @@ pub fn draft_context_mode(path: &str) -> i32 {
 pub fn gate_learn_mode() -> i32 {
     let mut delta: Vec<(i32, String, String)> = Vec::new();
     let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
-    if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+    if let Ok(content) = std::fs::read_to_string("phi/measurements.φ") {
         for block in content.split("\n\n") {
             let mut witness = false;
             let mut url: Option<&str> = None;
@@ -4540,7 +4540,7 @@ mod probe_classify_tests {
 
     #[test]
     fn register_replay_reproduces_force_unit() {
-        let register = include_str!("../../phi/sources.φ");
+        let register = include_str!("../../phi/measurements.φ");
         let mut pairs: std::collections::BTreeMap<
             String,
             std::collections::BTreeSet<(String, String)>,

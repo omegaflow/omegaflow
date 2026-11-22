@@ -2,7 +2,7 @@
 # raw_mirror_blocks.sh <before> <sha>
 #
 # The generic register -> manifest actor for the compiler-less raw_mirror
-# blocks. It reads phi/sources.φ and mirrors the changed blocks that carry the
+# blocks. It reads phi/measurements.φ and mirrors the changed blocks that carry the
 # explicit manifestation line "harvest raw_mirror" through raw_mirror. The
 # manifestation line selects the actor; a bare format line does not.
 #
@@ -17,7 +17,7 @@ set -euo pipefail
 
 before="${1:?raw_mirror_blocks.sh <before> <sha>}"
 sha="${2:?raw_mirror_blocks.sh <before> <sha>}"
-register="phi/sources.φ"
+register="phi/measurements.φ"
 
 if [ "$before" = "0000000000000000000000000000000000000000" ]; then
   before="${sha}^"

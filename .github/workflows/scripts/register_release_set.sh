@@ -10,7 +10,7 @@
 set -euo pipefail
 netloc="${1:?usage: register_release_set.sh <netloc> [<prefix>] [<register>]}"
 prefix="${2:-}"
-register="${3:-phi/sources.φ}"
+register="${3:-phi/measurements.φ}"
 esc="${netloc//./\\.}"
 grep -oE "releases/download/${esc}/[^ \"]+" "$register" | xargs -r -n1 basename | sort -u \
   | { if [ -n "$prefix" ]; then grep "^${prefix}"; else cat; fi; }

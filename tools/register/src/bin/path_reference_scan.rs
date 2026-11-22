@@ -256,7 +256,7 @@ mod tests {
         assert!(is_cross_house("privat/free-voices.md"));
         assert!(is_cross_house("~/projects/omegaflow-work/ui-seats.md"));
         assert!(!is_cross_house("docs/concepts/tools-map.md"));
-        assert!(!is_cross_house("phi/sources.φ"));
+        assert!(!is_cross_house("phi/measurements.φ"));
     }
 
     #[test]

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# source_branch_guard — refuse a branch that bends phi/sources.φ to the parser.
+# source_branch_guard — refuse a branch that bends phi/measurements.φ to the parser.
 #
 # usage: bin/source_branch_guard [<base-ref>] [<head-ref>]
 #        defaults: base=main head=HEAD
@@ -16,7 +16,7 @@ set -euo pipefail
 
 base=${1:-main}
 head=${2:-HEAD}
-src="phi/sources.φ"
+src="phi/measurements.φ"
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT

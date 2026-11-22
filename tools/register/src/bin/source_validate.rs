@@ -140,7 +140,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use omegaflow::archivar::kernel_id_of;
 use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
 
-const DEFAULT_PATH: &str = "phi/sources.φ";
+const DEFAULT_PATH: &str = "phi/measurements.φ";
 fn default_specs() -> String {
     let work = match std::env::var_os("OMEGAFLOW_WORK") {
         Some(w) => std::path::PathBuf::from(w),

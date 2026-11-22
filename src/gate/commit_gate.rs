@@ -1479,7 +1479,7 @@ fn admitted_terms(token: &str) -> bool {
 
 fn check_phi_terms_admitted(path: &str, content: &str) -> Option<Verdict> {
     let trimmed = path.trim_start_matches("./");
-    if !trimmed.ends_with("phi/sources.φ") {
+    if !trimmed.ends_with("phi/measurements.φ") {
         return None;
     }
     for (idx, line) in content.lines().enumerate() {
@@ -1492,7 +1492,7 @@ fn check_phi_terms_admitted(path: &str, content: &str) -> Option<Verdict> {
                 severity: Severity::Hard,
                 rule: "phi-terms-unadmitted".to_string(),
                 line: idx + 1,
-                feedback: "an unadmitted licence token in phi/sources.φ — every source block carries an admitted licence; no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required / no-license / unclear are refused (measure the licence or remove the source)".to_string(),
+                feedback: "an unadmitted licence token in phi/measurements.φ — every source block carries an admitted licence; no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required / no-license / unclear are refused (measure the licence or remove the source)".to_string(),
                 quote: clip(line, 90),
             });
         }
@@ -2521,13 +2521,13 @@ pub fn prose_violation(line: &str) -> Option<&'static str> {
 }
 
 pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
-    if path != "phi/sources.φ" {
+    if path != "phi/measurements.φ" {
         return None;
     }
-    if path == "phi/sources.φ" && (line == "note" || line.starts_with("note ")) {
+    if path == "phi/measurements.φ" && (line == "note" || line.starts_with("note ")) {
         return Some("phi-sources-note");
     }
-    if path == "phi/sources.φ" {
+    if path == "phi/measurements.φ" {
         let trimmed = line.trim();
         if trimmed == "decline" || trimmed.starts_with("decline ") {
             let mut parts = trimmed.split_whitespace();
@@ -4760,7 +4760,7 @@ mod tests {
     #[test]
     fn fp_tool_unstable_pointer_only_in_docs_markdown() {
         let mut g = test_gate();
-        let args = tool_args("phi/sources.φ", &fx("unstable_pointer_offsite"));
+        let args = tool_args("phi/measurements.φ", &fx("unstable_pointer_offsite"));
         assert!(g.check_tool_call("edit", &args).is_none());
     }
 
@@ -4776,7 +4776,7 @@ mod tests {
     #[test]
     fn fp_tool_kt_is_knots_not_kilotons() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"phi/sources.φ","newString":"field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0\n"}"#;
+        let args = r#"{"filePath":"phi/measurements.φ","newString":"field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0\n"}"#;
         let v = g.check_tool_call("write", args).unwrap();
         assert_eq!(v.rule, "force-unit-gate");
     }
@@ -4784,7 +4784,7 @@ mod tests {
     #[test]
     fn fp_tool_kt_mass_is_the_mass_unit() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"phi/sources.φ","newString":"field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0\n"}"#;
+        let args = r#"{"filePath":"phi/measurements.φ","newString":"field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0\n"}"#;
         assert!(g.check_tool_call("write", args).is_none());
     }
 
@@ -5229,7 +5229,7 @@ mod tests {
     fn fn_register_classes_are_declared_and_prose_is_scoped_to_sources() {
         let classes = register_classes();
         assert_eq!(classes.len(), 11);
-        assert!(classes.iter().any(|p| p == "phi/sources.φ"));
+        assert!(classes.iter().any(|p| p == "phi/measurements.φ"));
         assert!(classes.iter().any(|p| p == "phi/instruments.φ"));
         assert!(classes.iter().any(|p| p == "phi/documents.φ"));
         assert!(classes.iter().any(|p| p == "phi/dust-maske.φ"));
@@ -5238,7 +5238,7 @@ mod tests {
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
         assert!(prose_violation_for("phi/documents.φ", "# kopf").is_none());
         assert_eq!(
-            prose_violation_for("phi/sources.φ", "# kopf"),
+            prose_violation_for("phi/measurements.φ", "# kopf"),
             Some("phi-register-comment")
         );
     }
@@ -5258,7 +5258,7 @@ mod tests {
     #[test]
     fn fp_sources_note_blocked_other_registers_kept() {
         assert_eq!(
-            prose_violation_for("phi/sources.φ", &fx("phi_sources_note")),
+            prose_violation_for("phi/measurements.φ", &fx("phi_sources_note")),
             Some("phi-sources-note")
         );
     }
@@ -5266,15 +5266,15 @@ mod tests {
     #[test]
     fn fp_sources_decline_token_closed_set() {
         assert_eq!(
-            prose_violation_for("phi/sources.φ", &fx("phi_sources_decline_valid")),
+            prose_violation_for("phi/measurements.φ", &fx("phi_sources_decline_valid")),
             None
         );
         assert_eq!(
-            prose_violation_for("phi/sources.φ", &fx("phi_sources_decline_bad_token")),
+            prose_violation_for("phi/measurements.φ", &fx("phi_sources_decline_bad_token")),
             Some("phi-sources-decline-token")
         );
         assert_eq!(
-            prose_violation_for("phi/sources.φ", "decline commercial"),
+            prose_violation_for("phi/measurements.φ", "decline commercial"),
             Some("phi-sources-decline-token")
         );
     }
@@ -5360,7 +5360,7 @@ mod tests {
     fn fn_register_classes_hold_registers_not_canon() {
         let classes = register_classes();
         assert_eq!(classes.len(), 1);
-        assert!(classes.iter().any(|p| p == "phi/sources.φ"));
+        assert!(classes.iter().any(|p| p == "phi/measurements.φ"));
         assert!(!classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
         assert!(!classes.iter().any(|p| p.starts_with("phi/pipeline/")));

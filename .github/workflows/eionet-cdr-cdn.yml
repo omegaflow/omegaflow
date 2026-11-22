@@ -1,5 +1,5 @@
 # workflow_dispatch only: the register block for cdr.eionet.europa.eu/eionet_cdr is not
-# yet in phi/sources.φ (Mountain's admission — it hangs on the point-source-kernel slot 2).
+# yet in phi/measurements.φ (Mountain's admission — it hangs on the point-source-kernel slot 2).
 # A push trigger would fire the verify step against an unregistered asset and leave a red
 # run; dispatch after the register lines land (Mountain: field/ttl after the kernel).
 name: eionet-cdr-cdn
