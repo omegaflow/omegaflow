@@ -5231,12 +5231,12 @@ mod tests {
         assert_eq!(classes.len(), 11);
         assert!(classes.iter().any(|p| p == "phi/sources.φ"));
         assert!(classes.iter().any(|p| p == "phi/instruments.φ"));
-        assert!(classes.iter().any(|p| p == "phi/digests.φ"));
+        assert!(classes.iter().any(|p| p == "phi/documents.φ"));
         assert!(classes.iter().any(|p| p == "phi/dust-maske.φ"));
         assert!(classes.iter().any(|p| p == "phi/scan_coverage.φ"));
         assert!(!classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
-        assert!(prose_violation_for("phi/digests.φ", "# kopf").is_none());
+        assert!(prose_violation_for("phi/documents.φ", "# kopf").is_none());
         assert_eq!(
             prose_violation_for("phi/sources.φ", "# kopf"),
             Some("phi-register-comment")

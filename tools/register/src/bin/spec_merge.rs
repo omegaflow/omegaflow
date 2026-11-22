@@ -4422,7 +4422,7 @@ fn doc_audit() {
     );
 }
 
-const DIGESTS: &str = "phi/digests.φ";
+const DIGESTS: &str = "phi/documents.φ";
 
 struct Digest {
     claims: Vec<(String, Vec<String>, String)>,

@@ -1,7 +1,7 @@
 # generated from bindend/orte.md — do not edit
 phi/sources.φ
 phi/instruments.φ
-phi/digests.φ
+phi/documents.φ
 phi/library.φ
 phi/bands.φ
 phi/scan_coverage.φ
