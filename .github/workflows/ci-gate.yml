@@ -45,6 +45,12 @@ jobs:
       RUSTFLAGS: -D warnings
     steps:
     - uses: actions/checkout@v7
+    - name: The granit keeps the current field contract
+      run: |
+        if grep -q "Kernel, Kraft, Einheit" docs/granit.md; then
+          echo "docs/granit.md carries the obsolete field contract" >&2
+          exit 1
+        fi
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo check
     - run: cargo check --features browser_relay
