@@ -13,7 +13,8 @@ fn main() {
             return;
         }
     };
-    let orbits = omegaflow::odf::parse_odf(&bytes).map(|v| v.len());
+    let orbits = omegaflow::odf::parse_odf(&bytes);
+    let count = orbits.as_ref().map(|v| v.len());
     let label = omegaflow::odf::PK_FILE_LABEL.to_be_bytes();
     let mut origin = None;
     for i in 0..8usize {
@@ -52,7 +53,19 @@ fn main() {
         "{} bytes, {} records, orbit rows {:?}, ramp rows {}",
         bytes.len(),
         blocks,
-        orbits,
+        count,
         ramps
     );
+    if let Some(rows) = orbits.as_ref()
+        && let (Some(first), Some(last)) = (rows.first(), rows.last())
+    {
+        println!(
+            "first t={:.3} type={} scid={} rx={} valid={}",
+            first.t_since_1950, first.data_type, first.scid, first.dss_rx, first.valid
+        );
+        println!(
+            "last  t={:.3} type={} scid={} rx={} valid={}",
+            last.t_since_1950, last.data_type, last.scid, last.dss_rx, last.valid
+        );
+    }
 }

@@ -78,7 +78,7 @@ pub fn orbit_record(words: &[u32; 9]) -> Option<OdOrbit> {
         } else {
             (
                 bits(words, 33, 42),
-                1.0e10,
+                1.0e3,
                 bits(words, 148, 153),
                 bits(words, 154, 155),
                 bits(words, 156, 157),
@@ -2628,6 +2628,32 @@ mod tests {
         assert_eq!(r.scid, 236);
         assert!((r.ref_hz - 2299812417.0).abs() < 1.0e-6);
         assert!((r.compression_s - 60.0).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn real_mro_format_2_record_keeps_the_millisecond_fraction() {
+        let first = [
+            0x7DD433D8, 0x7D000000, 0x0004F314, 0x273676CF, 0x504005C4, 0x0A254217, 0xE7CFEDD2,
+            0x00000000, 0x19000000,
+        ];
+        let last = [
+            0x7DD579C5, 0x7D000000, 0x000037BA, 0x1037AD0C, 0x4AD58654, 0x02254688, 0x63F11980,
+            0x00000000, 0x19000000,
+        ];
+        let a = orbit_record(&first).unwrap();
+        let z = orbit_record(&last).unwrap();
+        assert!((a.t_since_1950 - 2111058904.5).abs() < 1.0e-9);
+        assert!((z.t_since_1950 - 2111142341.5).abs() < 1.0e-9);
+        assert!((a.observable_hz - 324372.657945295).abs() < 1.0e-9);
+        assert_eq!(a.dss_rx, 65);
+        assert_eq!(a.dss_tx, 0);
+        assert_eq!(a.data_type, 11);
+        assert_eq!(a.downlink_band, 2);
+        assert_eq!(a.uplink_band, 0);
+        assert!(a.valid);
+        assert_eq!(a.scid, 74);
+        assert!((a.ref_hz - 2301696667.090).abs() < 1.0e-3);
+        assert_eq!(z.scid, 74);
     }
 
     #[test]
